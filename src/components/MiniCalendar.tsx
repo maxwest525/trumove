@@ -1,11 +1,9 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
-
 interface MiniCalendarProps {
   selectedDate: Date | null;
 }
 
-const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export const MiniCalendar = ({ selectedDate }: MiniCalendarProps) => {
   const displayDate = selectedDate || new Date();
@@ -30,15 +28,13 @@ export const MiniCalendar = ({ selectedDate }: MiniCalendarProps) => {
     <div className="tru-mini-calendar">
       {/* Header */}
       <div className="tru-mini-cal-header">
-        <ChevronLeft className="tru-mini-cal-nav" />
         <span className="tru-mini-cal-month">{MONTHS[month]} {year}</span>
-        <ChevronRight className="tru-mini-cal-nav" />
       </div>
       
       {/* Day names */}
       <div className="tru-mini-cal-days">
-        {DAYS.map(day => (
-          <span key={day} className="tru-mini-cal-dayname">{day}</span>
+        {DAYS.map((day, idx) => (
+          <span key={idx} className="tru-mini-cal-dayname">{day}</span>
         ))}
       </div>
       
@@ -53,16 +49,6 @@ export const MiniCalendar = ({ selectedDate }: MiniCalendarProps) => {
           </span>
         ))}
       </div>
-      
-      {/* Selected date display */}
-      {selectedDate && (
-        <div className="tru-mini-cal-selected">
-          <span className="tru-mini-cal-selected-label">Move Date</span>
-          <span className="tru-mini-cal-selected-date">
-            {MONTHS[month].slice(0, 3)} {selectedDay}, {year}
-          </span>
-        </div>
-      )}
     </div>
   );
 };
