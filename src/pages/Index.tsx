@@ -291,13 +291,34 @@ export default function Index() {
                       </div>
                     </div>
                     <div className="tru-form-flow-header">
-                      <div className="tru-flow-breadcrumb">
-                        <span className={cn("tru-flow-crumb", currentStep >= 1 && "is-active")}>Start Your TruMove</span>
-                        <span className="tru-flow-arrow">→</span>
-                        <span className={cn("tru-flow-crumb", currentStep >= 2 && "is-active")}>Build Inventory</span>
-                        <span className="tru-flow-arrow">→</span>
-                        <span className={cn("tru-flow-crumb", currentStep >= 3 && "is-active")}>Get a Quote</span>
-                      </div>
+                      <nav className="tru-flow-nav">
+                        <button 
+                          type="button"
+                          className={cn("tru-flow-nav-item", currentStep >= 1 && "is-active", currentStep === 1 && "is-current")}
+                          onClick={() => currentStep > 1 && setCurrentStep(1)}
+                          disabled={currentStep < 1}
+                        >
+                          Start Your TruMove
+                        </button>
+                        <span className="tru-flow-nav-arrow">→</span>
+                        <button 
+                          type="button"
+                          className={cn("tru-flow-nav-item", currentStep >= 2 && "is-active", currentStep === 2 && "is-current")}
+                          onClick={() => currentStep > 2 && setCurrentStep(2)}
+                          disabled={currentStep < 2}
+                        >
+                          Build Inventory
+                        </button>
+                        <span className="tru-flow-nav-arrow">→</span>
+                        <button 
+                          type="button"
+                          className={cn("tru-flow-nav-item", currentStep >= 3 && "is-active", currentStep === 3 && "is-current")}
+                          onClick={() => currentStep > 3 && setCurrentStep(3)}
+                          disabled={currentStep < 3}
+                        >
+                          Get a Quote
+                        </button>
+                      </nav>
                       {/* Truck Animation - Full Width Under Breadcrumb */}
                       <div className="tru-truck-line">
                         <div 
