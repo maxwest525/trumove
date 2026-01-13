@@ -42,9 +42,10 @@ const ZIP_LOOKUP: Record<string, string> = {
   "48201": "Detroit, MI",
 };
 
-interface ZipSuggestion {
+interface LocationSuggestion {
   zip: string;
   city: string;
+  display: string;
 }
 
 async function lookupZip(zip: string): Promise<string | null> {
@@ -59,15 +60,84 @@ async function lookupZip(zip: string): Promise<string | null> {
   return null;
 }
 
-async function searchZipSuggestions(partial: string): Promise<ZipSuggestion[]> {
-  const suggestions: ZipSuggestion[] = [];
-  // Search local lookup for matches
+async function searchLocations(query: string): Promise<LocationSuggestion[]> {
+  const suggestions: LocationSuggestion[] = [];
+  const queryLower = query.toLowerCase().trim();
+  const isNumeric = /^\d+$/.test(query);
+  
+  // Search local lookup for matches (both ZIP and city)
   for (const [zip, city] of Object.entries(ZIP_LOOKUP)) {
-    if (zip.startsWith(partial)) {
-      suggestions.push({ zip, city });
+    if (isNumeric) {
+      // If numeric, search by ZIP prefix
+      if (zip.startsWith(query)) {
+        suggestions.push({ zip, city, display: `${city} (${zip})` });
+      }
+    } else {
+      // If text, search by city name
+      if (city.toLowerCase().includes(queryLower)) {
+        suggestions.push({ zip, city, display: `${city} (${zip})` });
+      }
     }
   }
-  return suggestions.slice(0, 4);
+  
+  // If searching by city name and not enough local results, try the API
+  if (!isNumeric && suggestions.length < 4 && query.length >= 2) {
+    // Try a few common ZIP prefixes to find matching cities
+    const stateAbbrevs: Record<string, string[]> = {
+      'new york': ['100', '101', '102', '103', '104', '110', '111', '112', '113', '114'],
+      'los angeles': ['900', '901', '902', '903', '904'],
+      'chicago': ['606', '607', '608'],
+      'houston': ['770', '771', '772', '773', '774'],
+      'miami': ['331', '332', '333'],
+      'atlanta': ['303', '304', '305'],
+      'boston': ['021', '022'],
+      'seattle': ['981', '980'],
+      'denver': ['802', '803'],
+      'dallas': ['752', '753', '754'],
+      'san francisco': ['941', '940'],
+      'austin': ['787', '786'],
+      'phoenix': ['850', '851', '852'],
+      'orlando': ['328', '327', '326'],
+      'tampa': ['336', '335', '334'],
+    };
+    
+    for (const [cityKey, zips] of Object.entries(stateAbbrevs)) {
+      if (cityKey.includes(queryLower)) {
+        for (const zipPrefix of zips.slice(0, 2)) {
+          try {
+            const res = await fetch(`https://api.zippopotam.us/us/${zipPrefix}01`);
+            if (res.ok) {
+              const data = await res.json();
+              const cityName = `${data.places[0]["place name"]}, ${data.places[0]["state abbreviation"]}`;
+              const fullZip = data["post code"];
+              if (!suggestions.find(s => s.zip === fullZip)) {
+                suggestions.push({ zip: fullZip, city: cityName, display: `${cityName} (${fullZip})` });
+              }
+            }
+          } catch {}
+          if (suggestions.length >= 4) break;
+        }
+      }
+      if (suggestions.length >= 4) break;
+    }
+  }
+  
+  // If numeric and not enough local results, try API
+  if (isNumeric && suggestions.length < 4 && query.length >= 3) {
+    try {
+      const res = await fetch(`https://api.zippopotam.us/us/${query.padEnd(5, '0').slice(0, 5)}`);
+      if (res.ok) {
+        const data = await res.json();
+        const cityName = `${data.places[0]["place name"]}, ${data.places[0]["state abbreviation"]}`;
+        const fullZip = data["post code"];
+        if (!suggestions.find(s => s.zip === fullZip)) {
+          suggestions.push({ zip: fullZip, city: cityName, display: `${cityName} (${fullZip})` });
+        }
+      }
+    } catch {}
+  }
+  
+  return suggestions.slice(0, 5);
 }
 
 const MOVE_SIZES = [
@@ -89,8 +159,10 @@ export default function Index() {
   });
   const [fromCity, setFromCity] = useState("");
   const [toCity, setToCity] = useState("");
-  const [fromSuggestions, setFromSuggestions] = useState<ZipSuggestion[]>([]);
-  const [toSuggestions, setToSuggestions] = useState<ZipSuggestion[]>([]);
+  const [fromInput, setFromInput] = useState("");
+  const [toInput, setToInput] = useState("");
+  const [fromSuggestions, setFromSuggestions] = useState<LocationSuggestion[]>([]);
+  const [toSuggestions, setToSuggestions] = useState<LocationSuggestion[]>([]);
   const [showFromSuggestions, setShowFromSuggestions] = useState(false);
   const [showToSuggestions, setShowToSuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
@@ -115,14 +187,14 @@ export default function Index() {
   // Check if both ZIPs are valid for route line
   const bothZipsValid = zipOk(formData.fromZip) && zipOk(formData.toZip);
 
-  // ZIP lookup and suggestions effect
+  // Location lookup and suggestions effect
   useEffect(() => {
     if (zipOk(formData.fromZip)) {
       lookupZip(formData.fromZip).then(city => setFromCity(city || ""));
       setFromSuggestions([]);
       setShowFromSuggestions(false);
-    } else if (formData.fromZip.length >= 3) {
-      searchZipSuggestions(formData.fromZip).then(s => {
+    } else if (fromInput.length >= 2) {
+      searchLocations(fromInput).then(s => {
         setFromSuggestions(s);
         setShowFromSuggestions(s.length > 0);
       });
@@ -132,15 +204,15 @@ export default function Index() {
       setFromSuggestions([]);
       setShowFromSuggestions(false);
     }
-  }, [formData.fromZip]);
+  }, [formData.fromZip, fromInput]);
 
   useEffect(() => {
     if (zipOk(formData.toZip)) {
       lookupZip(formData.toZip).then(city => setToCity(city || ""));
       setToSuggestions([]);
       setShowToSuggestions(false);
-    } else if (formData.toZip.length >= 3) {
-      searchZipSuggestions(formData.toZip).then(s => {
+    } else if (toInput.length >= 2) {
+      searchLocations(toInput).then(s => {
         setToSuggestions(s);
         setShowToSuggestions(s.length > 0);
       });
@@ -150,7 +222,7 @@ export default function Index() {
       setToSuggestions([]);
       setShowToSuggestions(false);
     }
-  }, [formData.toZip]);
+  }, [formData.toZip, toInput]);
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -331,24 +403,31 @@ export default function Index() {
                       <div className="tru-form-step">
                         {/* ZIP Codes Side by Side with Route Line Between */}
                         <div className="tru-zip-row">
-                          {/* From ZIP */}
+                          {/* From Location */}
                           <div className="tru-input-group tru-zip-group">
-                            <label className="tru-input-label">Moving from ZIP</label>
+                            <label className="tru-input-label">Moving from</label>
                             <div className="tru-zip-field">
                               <div className={cn("tru-input-wrapper", errors.fromZip && "is-error")}>
                                 <input 
                                   ref={fromInputRef}
                                   type="text" 
                                   className="tru-input"
-                                  placeholder="90210"
-                                  value={formData.fromZip}
+                                  placeholder="ZIP or City"
+                                  value={zipOk(formData.fromZip) ? formData.fromZip : fromInput}
                                   onChange={e => {
-                                    const val = e.target.value.replace(/\D/g, "").slice(0, 5);
-                                    setFormData(p => ({ ...p, fromZip: val }));
-                                    if (zipOk(val)) setErrors(prev => ({ ...prev, fromZip: false }));
+                                    const val = e.target.value;
+                                    const isNumeric = /^\d+$/.test(val);
+                                    if (isNumeric) {
+                                      const numVal = val.slice(0, 5);
+                                      setFormData(p => ({ ...p, fromZip: numVal }));
+                                      setFromInput(numVal);
+                                      if (zipOk(numVal)) setErrors(prev => ({ ...prev, fromZip: false }));
+                                    } else {
+                                      setFromInput(val);
+                                      setFormData(p => ({ ...p, fromZip: "" }));
+                                    }
                                   }}
                                   onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
-                                  maxLength={5}
                                 />
                               </div>
                               {showFromSuggestions && fromSuggestions.length > 0 && (
@@ -360,17 +439,18 @@ export default function Index() {
                                       className="tru-zip-suggestion"
                                       onClick={() => {
                                         setFormData(p => ({ ...p, fromZip: s.zip }));
+                                        setFromInput(s.zip);
                                         setShowFromSuggestions(false);
+                                        setErrors(prev => ({ ...prev, fromZip: false }));
                                       }}
                                     >
-                                      <span className="tru-zip-suggestion-city">{s.city}</span>
-                                      <span className="tru-zip-suggestion-zip">{s.zip}</span>
+                                      <span className="tru-zip-suggestion-city">{s.display}</span>
                                     </button>
                                   ))}
                                 </div>
                               )}
                               {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
-                              {errors.fromZip && <span className="tru-field-error">Enter a valid 5-digit ZIP</span>}
+                              {errors.fromZip && <span className="tru-field-error">Select a location</span>}
                             </div>
                           </div>
 
@@ -382,24 +462,31 @@ export default function Index() {
                             <span className="tru-route-dot"></span>
                           </div>
 
-                          {/* To ZIP */}
+                          {/* To Location */}
                           <div className="tru-input-group tru-zip-group">
-                            <label className="tru-input-label">Moving to ZIP</label>
+                            <label className="tru-input-label">Moving to</label>
                             <div className="tru-zip-field">
                               <div className={cn("tru-input-wrapper", errors.toZip && "is-error")}>
                                 <input 
                                   ref={toInputRef}
                                   type="text" 
                                   className="tru-input"
-                                  placeholder="10001"
-                                  value={formData.toZip}
+                                  placeholder="ZIP or City"
+                                  value={zipOk(formData.toZip) ? formData.toZip : toInput}
                                   onChange={e => {
-                                    const val = e.target.value.replace(/\D/g, "").slice(0, 5);
-                                    setFormData(p => ({ ...p, toZip: val }));
-                                    if (zipOk(val)) setErrors(prev => ({ ...prev, toZip: false }));
+                                    const val = e.target.value;
+                                    const isNumeric = /^\d+$/.test(val);
+                                    if (isNumeric) {
+                                      const numVal = val.slice(0, 5);
+                                      setFormData(p => ({ ...p, toZip: numVal }));
+                                      setToInput(numVal);
+                                      if (zipOk(numVal)) setErrors(prev => ({ ...prev, toZip: false }));
+                                    } else {
+                                      setToInput(val);
+                                      setFormData(p => ({ ...p, toZip: "" }));
+                                    }
                                   }}
                                   onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
-                                  maxLength={5}
                                 />
                               </div>
                               {showToSuggestions && toSuggestions.length > 0 && (
@@ -411,17 +498,18 @@ export default function Index() {
                                       className="tru-zip-suggestion"
                                       onClick={() => {
                                         setFormData(p => ({ ...p, toZip: s.zip }));
+                                        setToInput(s.zip);
                                         setShowToSuggestions(false);
+                                        setErrors(prev => ({ ...prev, toZip: false }));
                                       }}
                                     >
-                                      <span className="tru-zip-suggestion-city">{s.city}</span>
-                                      <span className="tru-zip-suggestion-zip">{s.zip}</span>
+                                      <span className="tru-zip-suggestion-city">{s.display}</span>
                                     </button>
                                   ))}
                                 </div>
                               )}
                               {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
-                              {errors.toZip && <span className="tru-field-error">Enter a valid 5-digit ZIP</span>}
+                              {errors.toZip && <span className="tru-field-error">Select a location</span>}
                             </div>
                           </div>
                         </div>
