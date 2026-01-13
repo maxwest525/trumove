@@ -1533,26 +1533,13 @@
   margin-top: 8px;
   padding-top: 6px;
   border-top: 1px solid hsl(var(--tm-ink) / 0.06);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 4px;
 }
 
 .tru-form-disclaimer {
   font-size: 9px;
   font-weight: 400;
   color: hsl(var(--tm-ink) / 0.4);
-  text-align: left;
-  flex: 1;
-}
-
-.tru-form-secure {
-  font-size: 9px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.45);
-  text-align: right;
+  line-height: 1.4;
 }
 
 /* =============================================
