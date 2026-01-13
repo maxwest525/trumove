@@ -289,23 +289,24 @@
    ============================================= */
 .tru-truck-line {
   position: relative;
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
   height: 18px;
   margin-top: 0;
   overflow: hidden;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.15);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.12);
 }
 
 @keyframes truck-drive-in {
   0% { 
-    left: calc(100% + 16px);
+    left: -20px;
     opacity: 0; 
   }
   10% { 
     opacity: 1; 
   }
   100% { 
-    left: 0;
+    left: calc(100% - 16px);
     opacity: 1; 
   }
 }
@@ -317,7 +318,7 @@
 
 .tru-truck {
   position: absolute;
-  left: 0;
+  left: calc(100% - 16px);
   bottom: 1px;
   display: flex;
   align-items: center;
@@ -327,12 +328,12 @@
 }
 
 .tru-truck.is-animating {
-  animation: truck-drive-in 5s ease-out forwards;
+  animation: truck-drive-in 6s ease-out forwards;
 }
 
 .tru-truck.is-animating .tru-truck-icon {
   animation: truck-idle 1.5s ease-in-out infinite;
-  animation-delay: 5s;
+  animation-delay: 6s;
 }
 
 .tru-truck:hover {
@@ -348,8 +349,7 @@
 /* Header with logo and trust pills */
 .tru-form-header {
   margin-bottom: 16px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+  padding-bottom: 0;
 }
 
 .tru-form-header-top {
