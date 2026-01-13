@@ -342,7 +342,11 @@ export default function Index() {
                                   className="tru-input"
                                   placeholder="90210"
                                   value={formData.fromZip}
-                                  onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                  onChange={e => {
+                                    const val = e.target.value.replace(/\D/g, "").slice(0, 5);
+                                    setFormData(p => ({ ...p, fromZip: val }));
+                                    if (zipOk(val)) setErrors(prev => ({ ...prev, fromZip: false }));
+                                  }}
                                   onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
                                   maxLength={5}
                                 />
@@ -389,7 +393,11 @@ export default function Index() {
                                   className="tru-input"
                                   placeholder="10001"
                                   value={formData.toZip}
-                                  onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                  onChange={e => {
+                                    const val = e.target.value.replace(/\D/g, "").slice(0, 5);
+                                    setFormData(p => ({ ...p, toZip: val }));
+                                    if (zipOk(val)) setErrors(prev => ({ ...prev, toZip: false }));
+                                  }}
                                   onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
                                   maxLength={5}
                                 />
@@ -446,6 +454,7 @@ export default function Index() {
                                 selected={formData.moveDate || undefined}
                                 onSelect={(date) => {
                                   setFormData(p => ({ ...p, moveDate: date || null }));
+                                  if (date) setErrors(prev => ({ ...prev, moveDate: false }));
                                   setDatePopoverOpen(false);
                                 }}
                                 disabled={(date) => date < new Date()}
