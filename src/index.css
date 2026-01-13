@@ -419,6 +419,16 @@
   white-space: nowrap;
 }
 
+.tru-flow-crumb:first-child {
+  width: 140px;
+  text-align: right;
+}
+
+.tru-flow-crumb:last-child {
+  width: 140px;
+  text-align: left;
+}
+
 .tru-flow-crumb.is-active {
   color: hsl(var(--tm-ink) / 0.85);
 }
