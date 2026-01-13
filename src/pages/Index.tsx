@@ -405,16 +405,6 @@ export default function Index() {
                         <span className="tru-status-text">Online</span>
                       </div>
                     </div>
-                    {/* Truck Animation - Full Width Under Header */}
-                    <div className="tru-truck-line">
-                      <div 
-                        className={cn("tru-truck", truckAnimating && "is-animating")}
-                        onClick={replayTruck}
-                        title="Click to replay!"
-                      >
-                        <Truck className="tru-truck-icon" />
-                      </div>
-                    </div>
                   </div>
 
                   {/* Text-Only Progress Stepper */}
@@ -422,7 +412,7 @@ export default function Index() {
                     {stepLabels.map((label, idx) => (
                       <div key={label} className={`tru-stepper-step ${currentStep > idx + 1 ? "is-done" : ""} ${currentStep === idx + 1 ? "is-current" : ""}`}>
                         <span className="tru-stepper-label">{label}</span>
-                        {idx < stepLabels.length - 1 && <span className="tru-stepper-sep">—</span>}
+                        {idx < stepLabels.length - 1 && <span className="tru-stepper-sep" />}
                       </div>
                     ))}
                   </div>
@@ -842,15 +832,28 @@ export default function Index() {
                             </button>
                           </div>
                           
-                          {/* Back + Builder Row */}
+                          {/* Truck Animation + Builder Button */}
+                          <div className="tru-builder-section">
+                            <div className="tru-truck-line tru-truck-line-cta">
+                              <div 
+                                className={cn("tru-truck", truckAnimating && "is-animating")}
+                                onClick={replayTruck}
+                                title="Click to replay!"
+                              >
+                                <Truck className="tru-truck-icon" />
+                              </div>
+                            </div>
+                            <button type="button" className="tru-btn tru-btn-hero" onClick={() => handleIntent("builder")}>
+                              <span>Build My Move Online</span>
+                              <ArrowRight className="tru-btn-icon" />
+                            </button>
+                          </div>
+
+                          {/* Back Button */}
                           <div className="tru-action-row">
                             <button type="button" className="tru-back-link" onClick={prevStep}>
                               <ChevronLeft className="tru-back-icon" />
                               <span>Back</span>
-                            </button>
-                            <button type="button" className="tru-btn tru-btn-hero" onClick={() => handleIntent("builder")}>
-                              <span>Build My Move Online</span>
-                              <ArrowRight className="tru-btn-icon" />
                             </button>
                           </div>
                         </div>
