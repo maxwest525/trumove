@@ -23,21 +23,24 @@ export default function Header() {
           />
         </Link>
 
-        <nav className="flex justify-center items-center gap-[8px] flex-nowrap whitespace-nowrap min-w-0" aria-label="Primary">
+        <nav className="flex justify-center items-center gap-[6px] flex-nowrap whitespace-nowrap min-w-0" aria-label="Primary">
           {NAV.map((item, idx) => (
-            <div key={item.href} className="flex items-center gap-[8px]">
+            <div key={item.href} className="flex items-center gap-[6px]">
               <Link
                 to={item.href}
-                className={`relative no-underline text-foreground text-[19.5px] tracking-[0.08em] font-medium py-[12px] px-[6px] whitespace-nowrap uppercase transition-all duration-150 
-                  ${location.pathname === item.href ? "opacity-100" : "opacity-[0.86] hover:opacity-100 hover:-translate-y-[1px]"}
-                  after:content-[''] after:absolute after:left-[4px] after:right-[4px] after:bottom-[6px] after:h-[2px] after:rounded-[2px] after:bg-primary after:origin-left after:transition-transform after:duration-[180ms]
-                  ${location.pathname === item.href ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}
+                className={`group relative no-underline text-foreground text-[15px] tracking-[0.06em] font-medium py-[10px] px-[12px] whitespace-nowrap uppercase transition-all duration-200
+                  ${location.pathname === item.href ? "text-foreground" : "text-foreground/70 hover:text-foreground"}
                 `}
               >
                 {item.label}
+                <span 
+                  className={`absolute left-[12px] right-[12px] bottom-[6px] h-[2px] bg-[hsl(142,76%,45%)] transition-transform duration-300 ease-out origin-left
+                    ${location.pathname === item.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}
+                  `}
+                />
               </Link>
               {idx < NAV.length - 1 && (
-                <span className="w-[1px] h-[18px] bg-gradient-to-b from-transparent via-primary/40 to-transparent" />
+                <span className="text-muted-foreground/40 text-[14px] font-light select-none">|</span>
               )}
             </div>
           ))}
