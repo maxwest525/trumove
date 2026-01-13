@@ -1,44 +1,170 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
+import { Phone, Video, ArrowRight, ChevronLeft, Calendar } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
+
+// Simple ZIP to city lookup for common US cities
+const ZIP_LOOKUP: Record<string, string> = {
+  "90210": "Beverly Hills, CA",
+  "10001": "New York, NY",
+  "60601": "Chicago, IL",
+  "77001": "Houston, TX",
+  "85001": "Phoenix, AZ",
+  "19101": "Philadelphia, PA",
+  "78201": "San Antonio, TX",
+  "92101": "San Diego, CA",
+  "75201": "Dallas, TX",
+  "95101": "San Jose, CA",
+  "32801": "Orlando, FL",
+  "33101": "Miami, FL",
+  "98101": "Seattle, WA",
+  "80201": "Denver, CO",
+  "02101": "Boston, MA",
+  "20001": "Washington, DC",
+  "30301": "Atlanta, GA",
+  "89101": "Las Vegas, NV",
+  "97201": "Portland, OR",
+  "48201": "Detroit, MI",
+};
+
+async function lookupZip(zip: string): Promise<string | null> {
+  // First check local lookup
+  if (ZIP_LOOKUP[zip]) return ZIP_LOOKUP[zip];
+  
+  // Try API
+  try {
+    const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+    if (res.ok) {
+      const data = await res.json();
+      return `${data.places[0]["place name"]}, ${data.places[0]["state abbreviation"]}`;
+    }
+  } catch {}
+  return null;
+}
 
 export default function Index() {
   const navigate = useNavigate();
-  const [selectedPath, setSelectedPath] = useState<string>("");
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    fromZip: "", toZip: "", size: "", moveDate: "", phone: "", email: ""
+    fromZip: "", toZip: "", moveDate: null as Date | null, 
+    size: "", hasCar: null as boolean | null, needsPacking: null as boolean | null,
+    email: "", phone: ""
   });
+  const [fromCity, setFromCity] = useState("");
+  const [toCity, setToCity] = useState("");
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [formError, setFormError] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const zipOk = (z: string) => /^\d{5}$/.test(z.trim());
   const phoneOk = (p: string) => (p.replace(/\D/g, "")).length >= 10;
   const emailOk = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
-  const handleSubmit = () => {
+  // ZIP lookup effect
+  useEffect(() => {
+    if (zipOk(formData.fromZip)) {
+      lookupZip(formData.fromZip).then(city => setFromCity(city || ""));
+    } else {
+      setFromCity("");
+    }
+  }, [formData.fromZip]);
+
+  useEffect(() => {
+    if (zipOk(formData.toZip)) {
+      lookupZip(formData.toZip).then(city => setToCity(city || ""));
+    } else {
+      setToCity("");
+    }
+  }, [formData.toZip]);
+
+  const validateStep1 = () => {
     const newErrors: Record<string, boolean> = {};
     if (!zipOk(formData.fromZip)) newErrors.fromZip = true;
     if (!zipOk(formData.toZip)) newErrors.toZip = true;
-    if (!formData.size) newErrors.size = true;
     if (!formData.moveDate) newErrors.moveDate = true;
-    if (!phoneOk(formData.phone)) newErrors.phone = true;
-    if (!emailOk(formData.email)) newErrors.email = true;
-
     setErrors(newErrors);
-
-    if (!selectedPath) {
-      setFormError("Select Talk to a Specialist or Book a Virtual Meet to continue.");
-      return;
-    }
-
     if (Object.keys(newErrors).length > 0) {
-      setFormError("Please complete all fields. ZIP codes must be 5 digits.");
-      return;
+      setFormError("Please complete all fields with valid ZIP codes.");
+      return false;
     }
-
-    localStorage.setItem("tm_lead", JSON.stringify({ intent: selectedPath, ...formData, ts: Date.now() }));
     setFormError("");
+    return true;
   };
+
+  const validateStep2 = () => {
+    const newErrors: Record<string, boolean> = {};
+    if (!formData.size) newErrors.size = true;
+    if (formData.hasCar === null) newErrors.hasCar = true;
+    if (formData.needsPacking === null) newErrors.needsPacking = true;
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      setFormError("Please complete all selections.");
+      return false;
+    }
+    setFormError("");
+    return true;
+  };
+
+  const validateStep3 = () => {
+    const newErrors: Record<string, boolean> = {};
+    if (!emailOk(formData.email)) newErrors.email = true;
+    if (!phoneOk(formData.phone)) newErrors.phone = true;
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      setFormError("Please enter a valid email and phone number.");
+      return false;
+    }
+    setFormError("");
+    return true;
+  };
+
+  const nextStep = () => {
+    if (currentStep === 1 && !validateStep1()) return;
+    if (currentStep === 2 && !validateStep2()) return;
+    
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentStep(prev => Math.min(prev + 1, 3));
+      setIsAnimating(false);
+    }, 150);
+  };
+
+  const prevStep = () => {
+    setIsAnimating(true);
+    setFormError("");
+    setErrors({});
+    setTimeout(() => {
+      setCurrentStep(prev => Math.max(prev - 1, 1));
+      setIsAnimating(false);
+    }, 150);
+  };
+
+  const handleIntent = (intent: string) => {
+    if (!validateStep3()) return;
+    
+    localStorage.setItem("tm_lead", JSON.stringify({ 
+      intent, 
+      ...formData, 
+      moveDate: formData.moveDate?.toISOString(),
+      fromCity,
+      toCity,
+      ts: Date.now() 
+    }));
+    
+    // Navigate based on intent
+    if (intent === "specialist") {
+      window.location.href = "tel:+18001234567";
+    } else if (intent === "virtual") {
+      navigate("/book");
+    } else if (intent === "builder") {
+      navigate("/online-estimate");
+    }
+  };
+
+  const stepLabels = ["Location", "Details", "Contact"];
 
   return (
     <SiteShell>
@@ -75,39 +201,229 @@ export default function Index() {
                 <div className="tru-hero-note">No hidden fees, no endless phone calls, just one clean dashboard for your whole move.</div>
               </div>
 
-              {/* HERO FORM */}
+              {/* PREMIUM WIZARD CONSOLE */}
               <div className="tru-hero-visual">
-                <div id="truHeroQuoteCard">
-                  <div className="tru-form-micro">Secure Intake Console</div>
-                  <div className="tru-hero-form-title">Start your move</div>
-                  <div className="tru-hero-form-sub">Enter your move details, then choose how you want to proceed.</div>
-                  <form className="tru-hero-form" onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
-                    <div className="tru-hero-form-row two">
-                      <input type="text" className={`tru-hero-input ${errors.fromZip ? "is-error" : ""}`} placeholder="Moving from (ZIP)" value={formData.fromZip} onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value }))} />
-                      <input type="text" className={`tru-hero-input ${errors.toZip ? "is-error" : ""}`} placeholder="Moving to (ZIP)" value={formData.toZip} onChange={e => setFormData(p => ({ ...p, toZip: e.target.value }))} />
+                <div className="tru-console">
+                  {/* Corner brackets */}
+                  <div className="tru-console-bracket tru-console-bracket-tl"></div>
+                  <div className="tru-console-bracket tru-console-bracket-tr"></div>
+                  <div className="tru-console-bracket tru-console-bracket-bl"></div>
+                  <div className="tru-console-bracket tru-console-bracket-br"></div>
+                  
+                  {/* Logo watermark */}
+                  <div className="tru-console-watermark">TM</div>
+                  
+                  {/* Header */}
+                  <div className="tru-console-header">
+                    <div className="tru-console-status">
+                      <span className="tru-console-dot"></span>
                     </div>
-                    <div className="tru-hero-form-row two">
-                      <select className={`tru-hero-select ${errors.size ? "is-error" : ""}`} value={formData.size} onChange={e => setFormData(p => ({ ...p, size: e.target.value }))}>
-                        <option value="" disabled>Move size</option>
-                        <option value="Studio">Studio</option>
-                        <option value="1 Bedroom">1 Bedroom</option>
-                        <option value="2 Bedroom">2 Bedroom</option>
-                        <option value="3 Bedroom">3 Bedroom</option>
-                        <option value="4+ Bedroom">4+ Bedroom</option>
-                      </select>
-                      <input type="date" className={`tru-hero-input ${errors.moveDate ? "is-error" : ""}`} value={formData.moveDate} onChange={e => setFormData(p => ({ ...p, moveDate: e.target.value }))} />
-                    </div>
-                    <div className="tru-hero-form-row two">
-                      <input type="tel" className={`tru-hero-input ${errors.phone ? "is-error" : ""}`} placeholder="Mobile number" value={formData.phone} onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))} />
-                      <input type="email" className={`tru-hero-input ${errors.email ? "is-error" : ""}`} placeholder="Email" value={formData.email} onChange={e => setFormData(p => ({ ...p, email: e.target.value }))} />
-                    </div>
-                    <div className="tru-choice-wrap">
-                      <button type="button" className={`tru-choice-btn ${selectedPath === "specialist" ? "is-selected" : ""}`} onClick={() => setSelectedPath("specialist")}>Talk to a Specialist</button>
-                      <button type="button" className={`tru-choice-btn ${selectedPath === "virtual" ? "is-selected" : ""}`} onClick={() => setSelectedPath("virtual")}>Book a Virtual Meet</button>
-                    </div>
-                    <button className="tru-primary-cta" type="submit">Start building your move →</button>
-                    {formError && <div className="tru-hero-form-err">{formError}</div>}
-                  </form>
+                    <h2 className="tru-console-title">Start Your Move</h2>
+                    <p className="tru-console-tagline">AI-powered estimates. Smart carrier matching. Zero guesswork.</p>
+                    <p className="tru-console-support">Instant online estimates • Vetted movers • Online support</p>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="tru-progress">
+                    {stepLabels.map((label, idx) => (
+                      <div key={label} className="tru-progress-segment">
+                        <div className={`tru-progress-node ${currentStep > idx ? "is-complete" : ""} ${currentStep === idx + 1 ? "is-active" : ""}`}>
+                          <span className="tru-progress-node-inner">{idx + 1}</span>
+                        </div>
+                        <span className={`tru-progress-label ${currentStep >= idx + 1 ? "is-active" : ""}`}>{label}</span>
+                        {idx < stepLabels.length - 1 && (
+                          <div className={`tru-progress-line ${currentStep > idx + 1 ? "is-complete" : ""}`}></div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Form Content */}
+                  <div className={`tru-console-content ${isAnimating ? "is-animating" : ""}`}>
+                    {/* STEP 1: Location & Date */}
+                    {currentStep === 1 && (
+                      <div className="tru-step">
+                        <div className="tru-field-group">
+                          <label className="tru-field-label">CURRENT ZIP CODE</label>
+                          <input 
+                            type="text" 
+                            className={`tru-console-input ${errors.fromZip ? "is-error" : ""}`}
+                            placeholder="Enter ZIP code"
+                            value={formData.fromZip}
+                            onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                            maxLength={5}
+                          />
+                          {fromCity && <span className="tru-field-city">{fromCity}</span>}
+                        </div>
+
+                        <div className="tru-field-group">
+                          <label className="tru-field-label">DESTINATION</label>
+                          <input 
+                            type="text" 
+                            className={`tru-console-input ${errors.toZip ? "is-error" : ""}`}
+                            placeholder="Enter ZIP code"
+                            value={formData.toZip}
+                            onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                            maxLength={5}
+                          />
+                          {toCity && <span className="tru-field-city">{toCity}</span>}
+                        </div>
+
+                        <div className="tru-field-group">
+                          <label className="tru-field-label">MOVE DATE</label>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button 
+                                type="button"
+                                className={`tru-console-input tru-console-date-btn ${errors.moveDate ? "is-error" : ""}`}
+                              >
+                                <Calendar className="tru-date-icon" />
+                                <span className={formData.moveDate ? "" : "tru-placeholder"}>
+                                  {formData.moveDate ? format(formData.moveDate, "MMMM d, yyyy") : "Select a date"}
+                                </span>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <CalendarComponent
+                                mode="single"
+                                selected={formData.moveDate || undefined}
+                                onSelect={(date) => setFormData(p => ({ ...p, moveDate: date || null }))}
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+
+                        <button type="button" className="tru-console-cta" onClick={nextStep}>
+                          <span>Tell Us About Your Load</span>
+                          <ArrowRight className="tru-cta-arrow" />
+                        </button>
+                      </div>
+                    )}
+
+                    {/* STEP 2: Move Details */}
+                    {currentStep === 2 && (
+                      <div className="tru-step">
+                        <div className="tru-field-group">
+                          <label className="tru-field-label">MOVE SIZE</label>
+                          <select 
+                            className={`tru-console-input tru-console-select ${errors.size ? "is-error" : ""}`}
+                            value={formData.size}
+                            onChange={e => setFormData(p => ({ ...p, size: e.target.value }))}
+                          >
+                            <option value="" disabled>Select move size</option>
+                            <option value="Studio">Studio</option>
+                            <option value="1 Bedroom">1 Bedroom</option>
+                            <option value="2 Bedroom">2 Bedroom</option>
+                            <option value="3 Bedroom">3 Bedroom</option>
+                            <option value="4+ Bedroom">4+ Bedroom</option>
+                            <option value="Office">Office / Commercial</option>
+                          </select>
+                        </div>
+
+                        <div className="tru-field-group">
+                          <label className="tru-field-label">SHIPPING A CAR?</label>
+                          <div className={`tru-toggle-group ${errors.hasCar ? "is-error" : ""}`}>
+                            <button 
+                              type="button"
+                              className={`tru-toggle-btn ${formData.hasCar === true ? "is-selected" : ""}`}
+                              onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
+                            >
+                              Yes
+                            </button>
+                            <button 
+                              type="button"
+                              className={`tru-toggle-btn ${formData.hasCar === false ? "is-selected" : ""}`}
+                              onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
+                            >
+                              No
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="tru-field-group">
+                          <label className="tru-field-label">NEED PACKING HELP?</label>
+                          <div className={`tru-toggle-group ${errors.needsPacking ? "is-error" : ""}`}>
+                            <button 
+                              type="button"
+                              className={`tru-toggle-btn ${formData.needsPacking === true ? "is-selected" : ""}`}
+                              onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
+                            >
+                              Yes
+                            </button>
+                            <button 
+                              type="button"
+                              className={`tru-toggle-btn ${formData.needsPacking === false ? "is-selected" : ""}`}
+                              onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
+                            >
+                              No
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="tru-console-nav">
+                          <button type="button" className="tru-back-btn" onClick={prevStep}>
+                            <ChevronLeft className="tru-back-icon" />
+                            <span>Back</span>
+                          </button>
+                          <button type="button" className="tru-console-cta" onClick={nextStep}>
+                            <span>You're Almost Done</span>
+                            <ArrowRight className="tru-cta-arrow" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* STEP 3: Contact & Intent */}
+                    {currentStep === 3 && (
+                      <div className="tru-step">
+                        <div className="tru-field-group">
+                          <label className="tru-field-label">EMAIL</label>
+                          <input 
+                            type="email" 
+                            className={`tru-console-input ${errors.email ? "is-error" : ""}`}
+                            placeholder="your@email.com"
+                            value={formData.email}
+                            onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
+                          />
+                        </div>
+
+                        <div className="tru-field-group">
+                          <label className="tru-field-label">PHONE</label>
+                          <input 
+                            type="tel" 
+                            className={`tru-console-input ${errors.phone ? "is-error" : ""}`}
+                            placeholder="(555) 123-4567"
+                            value={formData.phone}
+                            onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
+                          />
+                        </div>
+
+                        <div className="tru-intent-group">
+                          <button type="button" className="tru-intent-btn" onClick={() => handleIntent("specialist")}>
+                            <Phone className="tru-intent-icon" />
+                            <span>Talk to a Specialist</span>
+                          </button>
+                          <button type="button" className="tru-intent-btn" onClick={() => handleIntent("virtual")}>
+                            <Video className="tru-intent-icon" />
+                            <span>Book a Virtual Meet</span>
+                          </button>
+                          <button type="button" className="tru-intent-btn tru-intent-btn-primary" onClick={() => handleIntent("builder")}>
+                            <ArrowRight className="tru-intent-icon" />
+                            <span>Try Our Move Builder</span>
+                          </button>
+                        </div>
+
+                        <button type="button" className="tru-back-btn tru-back-btn-center" onClick={prevStep}>
+                          <ChevronLeft className="tru-back-icon" />
+                          <span>Back</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {formError && <div className="tru-console-error">{formError}</div>}
+                  </div>
                 </div>
               </div>
             </div>
