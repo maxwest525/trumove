@@ -797,7 +797,7 @@
 
 .tru-zip-city-badge {
   display: block;
-  margin-top: 4px;
+  margin-top: 8px;
   font-size: 11px;
   font-weight: 600;
   color: hsl(var(--tm-ink) / 0.8);
