@@ -1013,7 +1013,11 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
-  max-width: 160px;
+}
+
+.tru-toggle-wide {
+  flex: 1;
+  max-width: none;
 }
 
 .tru-toggle-compact {
@@ -1057,16 +1061,17 @@
   height: 14px;
 }
 
-.tru-toggle-row {
+.tru-toggle-with-icon {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
 }
 
-.tru-toggle-label-icon {
-  width: 14px;
-  height: 14px;
-  color: hsl(var(--tm-ink) / 0.5);
+.tru-toggle-side-icon {
+  width: 24px;
+  height: 24px;
+  color: hsl(var(--tm-ink) / 0.25);
+  flex-shrink: 0;
 }
 
 /* Large Toggle Complete Icons - Fill Dead Space */
