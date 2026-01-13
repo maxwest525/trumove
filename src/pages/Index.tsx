@@ -199,7 +199,6 @@ export default function Index() {
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [formError, setFormError] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
-  const [truckAnimating, setTruckAnimating] = useState(true);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const fromInputRef = useRef<HTMLInputElement>(null);
   const toInputRef = useRef<HTMLInputElement>(null);
@@ -208,12 +207,6 @@ export default function Index() {
   const zipOk = (z: string) => /^\d{5}$/.test(z.trim());
   const phoneOk = (p: string) => (p.replace(/\D/g, "")).length >= 10;
   const emailOk = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
-
-  // Truck animation handler
-  const replayTruck = () => {
-    setTruckAnimating(false);
-    setTimeout(() => setTruckAnimating(true), 50);
-  };
 
   // Check if both ZIPs are valid for route line
   const bothZipsValid = zipOk(formData.fromZip) && zipOk(formData.toZip);
@@ -621,17 +614,6 @@ export default function Index() {
                           {/* Right Column: Map */}
                           <div className="tru-step1-map">
                             <MoveMap fromZip={formData.fromZip} toZip={formData.toZip} />
-                          </div>
-                        </div>
-
-                        {/* Truck Animation - Above CTA */}
-                        <div className="tru-truck-line">
-                          <div 
-                            className={cn("tru-truck", truckAnimating && "is-animating")}
-                            onClick={replayTruck}
-                            title="Click to replay!"
-                          >
-                            <Truck className="tru-truck-icon" />
                           </div>
                         </div>
 
