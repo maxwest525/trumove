@@ -290,61 +290,59 @@
 .tru-truck-line {
   position: relative;
   width: 100%;
-  height: 32px;
-  margin-bottom: 8px;
+  height: 36px;
+  margin-top: 12px;
   overflow: hidden;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
 }
 
 @keyframes truck-drive-in {
   0% { 
-    transform: translateX(100%) scaleX(-1); 
+    right: -40px;
     opacity: 0; 
   }
-  15% { 
+  10% { 
     opacity: 1; 
   }
   100% { 
-    transform: translateX(0) scaleX(-1); 
+    right: calc(100% - 40px);
     opacity: 1; 
   }
 }
 
 @keyframes truck-idle {
-  0%, 100% { transform: translateY(0) scaleX(-1); }
-  50% { transform: translateY(-1px) scaleX(-1); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
 }
 
 .tru-truck {
   position: absolute;
-  left: 8px;
+  right: calc(100% - 40px);
   bottom: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 150ms ease;
-  opacity: 0;
-  transform: translateX(100%) scaleX(-1);
+  transition: filter 150ms ease;
 }
 
 .tru-truck.is-animating {
-  animation: truck-drive-in 2.5s ease-out forwards;
+  animation: truck-drive-in 2s ease-out forwards;
 }
 
 .tru-truck.is-animating .tru-truck-icon {
-  animation: truck-idle 2s ease-in-out infinite;
-  animation-delay: 2.5s;
+  animation: truck-idle 1.5s ease-in-out infinite;
+  animation-delay: 2s;
 }
 
 .tru-truck:hover {
-  filter: brightness(0.8);
+  filter: brightness(0.7);
 }
 
 .tru-truck-icon {
-  width: 28px;
-  height: 28px;
-  color: hsl(var(--tm-ink) / 0.6);
+  width: 32px;
+  height: 32px;
+  color: hsl(var(--primary));
+  transform: scaleX(-1);
 }
 
 /* Header with logo and trust pills */

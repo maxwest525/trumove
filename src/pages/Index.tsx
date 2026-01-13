@@ -300,6 +300,16 @@ export default function Index() {
                         <span className="tru-flow-arrow">→</span>
                         <span className={cn("tru-flow-crumb", currentStep >= 3 && "is-active")}>Get a Quote</span>
                       </div>
+                      {/* Truck Animation - Full Width Under Breadcrumb */}
+                      <div className="tru-truck-line">
+                        <div 
+                          className={cn("tru-truck", truckAnimating && "is-animating")}
+                          onClick={replayTruck}
+                          title="Click to replay!"
+                        >
+                          <Truck className="tru-truck-icon" />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -321,17 +331,6 @@ export default function Index() {
                     {/* STEP 1: Location & Date */}
                     {currentStep === 1 && (
                       <div className="tru-form-step">
-                        {/* Truck Animation - Full Width Under Title */}
-                        <div className="tru-truck-line">
-                          <div 
-                            className={cn("tru-truck", truckAnimating && "is-animating")}
-                            onClick={replayTruck}
-                            title="Click to replay!"
-                          >
-                            <Truck className="tru-truck-icon" />
-                          </div>
-                        </div>
-
                         {/* ZIP Codes Side by Side with Route Line Between */}
                         <div className="tru-zip-row">
                           {/* From ZIP */}
