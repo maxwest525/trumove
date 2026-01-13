@@ -1013,10 +1013,11 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
+  max-width: 160px;
 }
 
 .tru-toggle-compact {
-  max-width: 140px;
+  max-width: 120px;
 }
 
 .tru-toggle-group.is-error .tru-toggle-btn {
@@ -1054,6 +1055,18 @@
 .tru-toggle-icon {
   width: 14px;
   height: 14px;
+}
+
+.tru-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tru-toggle-label-icon {
+  width: 14px;
+  height: 14px;
+  color: hsl(var(--tm-ink) / 0.5);
 }
 
 /* Large Toggle Complete Icons - Fill Dead Space */

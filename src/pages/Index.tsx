@@ -486,7 +486,10 @@ export default function Index() {
 
                         {/* Vehicle Toggle */}
                         <div className="tru-input-group">
-                          <label className="tru-input-label">Vehicle shipping?</label>
+                          <div className="tru-toggle-row">
+                            <Car className="tru-toggle-label-icon" />
+                            <label className="tru-input-label">Vehicle shipping?</label>
+                          </div>
                           <div className={`tru-toggle-group ${errors.hasCar ? "is-error" : ""}`}>
                             <button 
                               type="button"
@@ -508,7 +511,10 @@ export default function Index() {
 
                         {/* Packing Toggle */}
                         <div className="tru-input-group">
-                          <label className="tru-input-label">Need packing help?</label>
+                          <div className="tru-toggle-row">
+                            <Package className="tru-toggle-label-icon" />
+                            <label className="tru-input-label">Need packing help?</label>
+                          </div>
                           <div className={`tru-toggle-group ${errors.needsPacking ? "is-error" : ""}`}>
                             <button 
                               type="button"
