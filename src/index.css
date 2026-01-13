@@ -2212,27 +2212,32 @@
   opacity: 1;
 }
 
-/* Background glow trail */
+/* Background glow trail - black */
 .move-map-arc-bg {
-  stroke: hsl(var(--tm-green) / 0.2);
+  stroke: hsl(var(--tm-ink) / 0.15);
   stroke-width: 8;
   stroke-linecap: round;
 }
 
-/* Animated dashed arc */
+/* Animated dashed arc - black */
 .move-map-arc {
-  stroke: hsl(var(--tm-green));
+  stroke: hsl(var(--tm-ink));
   stroke-width: 3;
   stroke-dasharray: 12 8;
   stroke-linecap: round;
   animation: arc-dash 0.7s linear infinite;
-  filter: drop-shadow(0 0 4px hsl(var(--tm-green) / 0.5));
+  filter: drop-shadow(0 0 3px hsl(var(--tm-ink) / 0.3));
 }
 
 @keyframes arc-dash {
   to {
     stroke-dashoffset: -20;
   }
+}
+
+/* Traveling truck */
+.move-map-truck {
+  filter: drop-shadow(0 1px 2px hsl(var(--tm-ink) / 0.3));
 }
 
 .move-map-marker-dot {
@@ -2244,7 +2249,7 @@
 }
 
 .move-map-marker-to-dot {
-  fill: hsl(var(--tm-green));
+  fill: hsl(var(--tm-ink));
 }
 
 .move-map-marker-pulse {
@@ -2257,7 +2262,7 @@
 }
 
 .move-map-marker-to-pulse {
-  fill: hsl(var(--tm-green));
+  fill: hsl(var(--tm-ink));
 }
 
 @keyframes svg-marker-pulse {
