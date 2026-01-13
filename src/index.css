@@ -416,6 +416,8 @@
   letter-spacing: 0.03em;
   color: hsl(var(--tm-ink) / 0.35);
   transition: all 200ms ease;
+  flex: 1;
+  text-align: center;
 }
 
 .tru-flow-crumb.is-active {
