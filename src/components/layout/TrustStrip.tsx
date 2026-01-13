@@ -1,25 +1,50 @@
+import { Shield, BadgeCheck, Truck, Award } from "lucide-react";
+
 const TRUST = [
-  { tag: "USDOT", code: "USDOT", text: "USDOT Compliant" },
-  { tag: "INSURED", code: "BOND", text: "Bonded and Insured" },
-  { tag: "FMCSA", code: "FMCSA", text: "FMCSA Authorized Motor Carriers" },
-  { tag: "BROKER", code: "BRKR", text: "Licensed Interstate Moving Broker" },
+  { icon: Shield, text: "USDOT Compliant", accent: "gold" },
+  { icon: BadgeCheck, text: "Bonded & Insured", accent: "green" },
+  { icon: Truck, text: "FMCSA Authorized", accent: "gold" },
+  { icon: Award, text: "Licensed Broker", accent: "green" },
 ];
 
 export default function TrustStrip() {
   return (
-    <div className="bg-gradient-to-b from-[#070912] to-[#050610] border-b border-white/12" aria-label="Compliance and authority">
-      <div className="max-w-[1480px] mx-auto px-[16px] py-[10px]">
-        <div className="flex items-center justify-center gap-[26px] flex-wrap">
-          {TRUST.map((t) => (
-            <span key={t.tag} className="inline-flex items-center gap-[12px] whitespace-nowrap transition-transform duration-[140ms] hover:-translate-y-[1px]">
-              <span
-                className="w-[22px] h-[22px] relative inline-grid place-items-center flex-shrink-0 rounded-[8px] [clip-path:polygon(10%_0%,90%_0%,100%_20%,100%_80%,90%_100%,10%_100%,0%_80%,0%_20%)] border border-white/78 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.22),transparent_55%),linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0.06))] shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-1px_0_rgba(0,0,0,0.7),0_1px_0_rgba(0,0,0,0.6)] overflow-hidden before:content-[''] before:absolute before:inset-[4px] before:rounded-[6px] before:border before:border-white/40 before:opacity-95 after:content-[attr(data-code)] after:absolute after:inset-0 after:grid after:place-items-center after:text-[8.5px] after:font-black after:tracking-[0.14em] after:uppercase after:text-white/95 after:text-shadow-[0_1px_0_rgba(0,0,0,0.6)]"
-                data-code={t.code}
-                aria-hidden="true"
-              />
-              <span className="text-[10.5px] tracking-[0.16em] uppercase font-extrabold text-white/96">
+    <div 
+      className="bg-gradient-to-b from-[#070912] to-[#050610] border-b border-white/10" 
+      aria-label="Compliance and authority"
+    >
+      <div className="max-w-[1480px] mx-auto px-4 py-[6px]">
+        <div className="flex items-center justify-center gap-4 md:gap-6 flex-wrap">
+          {TRUST.map((t, idx) => (
+            <span 
+              key={t.text} 
+              className="inline-flex items-center gap-2 whitespace-nowrap group"
+            >
+              <span 
+                className={`
+                  w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0
+                  ${t.accent === "gold" 
+                    ? "bg-gradient-to-br from-amber-400/20 to-amber-600/10 border border-amber-400/30" 
+                    : "bg-gradient-to-br from-emerald-400/20 to-emerald-600/10 border border-emerald-400/30"
+                  }
+                  shadow-[0_0_8px_rgba(0,0,0,0.3)]
+                  group-hover:scale-105 transition-transform duration-150
+                `}
+              >
+                <t.icon 
+                  className={`w-2.5 h-2.5 ${
+                    t.accent === "gold" 
+                      ? "text-amber-400 drop-shadow-[0_0_4px_rgba(245,158,11,0.5)]" 
+                      : "text-emerald-400 drop-shadow-[0_0_4px_rgba(34,197,94,0.5)]"
+                  }`} 
+                />
+              </span>
+              <span className="text-[11px] tracking-[0.08em] uppercase font-semibold text-white/85">
                 {t.text}
               </span>
+              {idx < TRUST.length - 1 && (
+                <span className="hidden md:inline text-white/25 ml-2">•</span>
+              )}
             </span>
           ))}
         </div>
