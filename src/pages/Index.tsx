@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package, CalendarIcon, MapPin, Home, Truck, Mail } from "lucide-react";
+import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package, CalendarIcon, MapPin, Home, Truck, Mail, Boxes } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
@@ -466,6 +466,7 @@ export default function Index() {
                         </div>
 
                         <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
+                          <Boxes className="tru-btn-icon" />
                           <span>Continue with Online Move Builder</span>
                           <ArrowRight className="tru-btn-icon" />
                         </button>
