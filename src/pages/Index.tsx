@@ -876,7 +876,8 @@ export default function Index() {
 
                   {/* Trust footer */}
                   <div className="tru-form-footer">
-                    <span className="tru-form-disclaimer">By submitting, you agree we may contact you by phone, text, or email, including via automated technology. Consent is not required to purchase services. 🔒 Your info is secure & never sold.</span>
+                    <span className="tru-form-disclaimer">By submitting, you agree we may contact you by phone, text, or email, including via automated technology. Consent is not required to purchase services.</span>
+                    <span className="tru-form-secure">🔒 Your info is secure & never sold.</span>
                   </div>
                 </div>
               </div>
