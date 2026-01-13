@@ -1216,7 +1216,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .tru-back-link {
@@ -1267,7 +1267,7 @@
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 12px;
-  align-items: center;
+  align-items: stretch;
 }
 
 .tru-summary-main {
@@ -1280,12 +1280,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 80px;
 }
 
 /* Larger Truck for Summary - Fill Dead Space */
 .tru-summary-truck-lg {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   color: hsl(var(--tm-ink) / 0.15);
 }
 
@@ -1416,8 +1417,8 @@
 .tru-cta-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
 @media (max-width: 400px) {
