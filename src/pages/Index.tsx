@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package, Sparkles, Users, Zap } from "lucide-react";
+import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import logo from "@/assets/logo.png";
@@ -258,7 +258,7 @@ export default function Index() {
               {/* PREMIUM WIZARD CONSOLE - Narrow & Tall */}
               <div className="tru-hero-visual">
                 <div className="tru-form-card">
-                  {/* Header with Logo and Trust Pills */}
+                  {/* Stylized Header */}
                   <div className="tru-form-header">
                     <div className="tru-form-header-top">
                       <img src={logo} alt="TruMove" className="tru-form-logo" />
@@ -267,23 +267,12 @@ export default function Index() {
                         <span className="tru-status-text">Online</span>
                       </div>
                     </div>
-                    <div className="tru-form-title-block">
-                      <h2 className="tru-form-title">Start Your Move</h2>
-                      <p className="tru-form-subtitle">Enter your move details below</p>
-                    </div>
-                    <div className="tru-form-trust-pills">
-                      <span className="tru-trust-pill">
-                        <Sparkles className="w-3 h-3" />
-                        <span>AI-Powered</span>
-                      </span>
-                      <span className="tru-trust-pill">
-                        <Users className="w-3 h-3" />
-                        <span>Vetted Carriers</span>
-                      </span>
-                      <span className="tru-trust-pill">
-                        <Zap className="w-3 h-3" />
-                        <span>Instant Estimate</span>
-                      </span>
+                    <div className="tru-form-flow-header">
+                      <span className="tru-flow-step is-active">Start Your Move</span>
+                      <span className="tru-flow-arrow">→</span>
+                      <span className="tru-flow-step">Build Inventory</span>
+                      <span className="tru-flow-arrow">→</span>
+                      <span className="tru-flow-step">Get a Quote</span>
                     </div>
                   </div>
 

@@ -13,37 +13,25 @@ export default function TrustStrip() {
       className="bg-gradient-to-b from-[#070912] to-[#050610] border-b border-white/10" 
       aria-label="Compliance and authority"
     >
-      <div className="max-w-[1480px] mx-auto px-4 py-[6px]">
-        <div className="flex items-center justify-center gap-4 md:gap-6 flex-wrap">
+      <div className="max-w-[1480px] mx-auto px-4 py-[4px]">
+        <div className="flex items-center justify-center gap-6 md:gap-10 flex-wrap">
           {TRUST.map((t, idx) => (
             <span 
               key={t.text} 
-              className="inline-flex items-center gap-2 whitespace-nowrap group"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap group"
             >
-              <span 
-                className={`
-                  w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0
-                  ${t.accent === "gold" 
-                    ? "bg-gradient-to-br from-amber-400/20 to-amber-600/10 border border-amber-400/30" 
-                    : "bg-gradient-to-br from-emerald-400/20 to-emerald-600/10 border border-emerald-400/30"
-                  }
-                  shadow-[0_0_8px_rgba(0,0,0,0.3)]
-                  group-hover:scale-105 transition-transform duration-150
-                `}
-              >
-                <t.icon 
-                  className={`w-2.5 h-2.5 ${
-                    t.accent === "gold" 
-                      ? "text-amber-400 drop-shadow-[0_0_4px_rgba(245,158,11,0.5)]" 
-                      : "text-emerald-400 drop-shadow-[0_0_4px_rgba(34,197,94,0.5)]"
-                  }`} 
-                />
-              </span>
-              <span className="text-[11px] tracking-[0.08em] uppercase font-semibold text-white/85">
+              <t.icon 
+                className={`w-3 h-3 ${
+                  t.accent === "gold" 
+                    ? "text-amber-400/80" 
+                    : "text-emerald-400/80"
+                }`} 
+              />
+              <span className="text-[10px] tracking-[0.1em] uppercase font-semibold text-white/70">
                 {t.text}
               </span>
               {idx < TRUST.length - 1 && (
-                <span className="hidden md:inline text-white/25 ml-2">•</span>
+                <span className="hidden md:inline text-white/20 ml-4">•</span>
               )}
             </span>
           ))}
