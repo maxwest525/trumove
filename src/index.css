@@ -407,7 +407,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 6px;
 }
 
 .tru-flow-crumb {
@@ -795,7 +795,7 @@
 }
 
 .tru-zip-city-badge {
-  display: inline-block;
+  display: block;
   margin-top: 4px;
   font-size: 11px;
   font-weight: 600;
@@ -803,6 +803,10 @@
   background: hsl(var(--primary) / 0.12);
   padding: 3px 8px;
   border-radius: 4px;
+  text-align: center;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* =============================================
