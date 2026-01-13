@@ -10,7 +10,7 @@ const TRUST = [
 export default function TrustStrip() {
   return (
     <div 
-      className="bg-gradient-to-b from-[#070912] to-[#050610] border-b border-white/10" 
+      className="sticky top-0 z-50 bg-gradient-to-b from-[#070912] to-[#050610] border-b border-white/10" 
       aria-label="Compliance and authority"
     >
       <div className="max-w-[1480px] mx-auto px-4 py-[4px]">
