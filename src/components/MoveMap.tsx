@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import usMapImage from "@/assets/us_cropped.png";
 
 interface MoveMapProps {
   fromZip: string;
@@ -379,52 +380,7 @@ function generateArcPath(from: { x: number; y: number }, to: { x: number; y: num
   return `M ${from.x} ${from.y} Q ${cx} ${cy} ${to.x} ${to.y}`;
 }
 
-// Simplified but recognizable US continental outline
-const US_PATH = `
-  M 120 80 
-  C 130 75, 180 70, 220 72
-  L 280 75 L 340 80 L 400 78 L 450 75 L 500 72
-  C 520 70, 540 68, 560 72
-  L 570 80 L 560 95 L 575 105
-  C 590 100, 620 92, 650 95
-  L 680 105 L 695 125 
-  C 680 140, 700 155, 725 150
-  L 755 155 L 775 170
-  C 770 180, 785 185, 805 178
-  L 835 168 L 860 155 L 880 150
-  C 895 155, 905 148, 920 158
-  L 925 175
-  C 915 195, 895 205, 875 198
-  L 855 210 L 840 230 L 850 245
-  C 865 250, 880 248, 890 255
-  L 878 275 L 860 285 L 845 295
-  C 835 290, 820 295, 815 305
-  L 830 320 L 845 335
-  C 855 345, 850 365, 838 378
-  L 825 395
-  C 840 420, 850 450, 840 475
-  L 820 490 L 795 475 L 775 455
-  C 765 440, 755 420, 745 400
-  L 730 380 L 710 365
-  C 695 375, 680 370, 665 380
-  L 640 395 L 615 405
-  C 600 395, 580 398, 565 390
-  L 540 395 L 520 408
-  C 505 398, 485 395, 465 385
-  L 445 370 L 425 355 L 405 345
-  C 390 340, 375 350, 360 358
-  L 340 355 L 320 342
-  C 305 335, 285 328, 265 318
-  L 245 325 L 225 332
-  C 210 325, 190 318, 170 308
-  L 150 312 L 130 305
-  C 115 295, 100 280, 90 260
-  L 85 235 L 88 210
-  C 82 190, 78 170, 85 150
-  L 95 125 L 110 105
-  C 115 90, 118 82, 120 80
-  Z
-`;
+// US_PATH removed - now using image background
 
 export default function MoveMap({ fromZip, toZip }: MoveMapProps) {
   const fromPos = useMemo(() => getZipPosition(fromZip), [fromZip]);
@@ -443,10 +399,15 @@ export default function MoveMap({ fromZip, toZip }: MoveMapProps) {
         className="move-map-svg"
         preserveAspectRatio="xMidYMid meet"
       >
-        {/* US outline */}
-        <path
-          className="move-map-us-outline"
-          d={US_PATH}
+        {/* US map background image */}
+        <image
+          href={usMapImage}
+          x="0"
+          y="0"
+          width="960"
+          height="540"
+          preserveAspectRatio="xMidYMid slice"
+          className="move-map-bg-image"
         />
         
         {/* Arc path */}
