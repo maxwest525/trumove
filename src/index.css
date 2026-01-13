@@ -1530,16 +1530,23 @@
    FORM FOOTER
    ============================================= */
 .tru-form-footer {
-  margin-top: 14px;
-  padding-top: 10px;
+  margin-top: 8px;
+  padding-top: 6px;
   border-top: 1px solid hsl(var(--tm-ink) / 0.06);
-  text-align: center;
+  text-align: left;
+  line-height: 1.4;
 }
 
 .tru-form-secure {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   color: hsl(var(--tm-ink) / 0.45);
+}
+
+.tru-form-disclaimer {
+  font-size: 9px;
+  font-weight: 400;
+  color: hsl(var(--tm-ink) / 0.4);
 }
 
 /* =============================================
