@@ -2310,19 +2310,20 @@
 /* Step 1 Two Column Layout */
 .tru-step1-layout {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 .tru-step1-fields {
-  flex: 1;
+  width: 140px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .tru-step1-map {
-  width: 120px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 @media (max-width: 480px) {
@@ -2330,17 +2331,20 @@
     flex-direction: column;
   }
   
-  .tru-step1-map {
+  .tru-step1-fields {
     width: 100%;
-    height: 120px;
+  }
+  
+  .tru-step1-map {
+    height: 140px;
   }
 }
 
-/* Compact ZIP inputs */
+/* Ultra-compact ZIP inputs */
 .tru-zip-compact {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .tru-zip-compact .tru-input-group {
@@ -2349,37 +2353,43 @@
 
 .tru-zip-compact .tru-input-label {
   font-size: 9px;
-  margin-bottom: 2px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 1px;
+  color: hsl(var(--tm-ink) / 0.5);
 }
 
 .tru-zip-compact .tru-input-wrapper {
-  height: 32px;
+  height: 28px;
 }
 
 .tru-zip-compact .tru-input {
-  height: 32px;
-  font-size: 12px;
-  padding: 0 10px;
+  height: 28px;
+  font-size: 11px;
+  padding: 0 8px;
 }
 
 .tru-zip-compact .tru-zip-city-badge {
-  font-size: 8px;
-  padding: 2px 6px;
-  margin-top: 2px;
+  font-size: 7px;
+  padding: 1px 5px;
+  margin-top: 1px;
 }
 
-/* Date field compact */
+/* Date field ultra-compact */
 .tru-date-compact {
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 .tru-date-compact .tru-input-label {
   font-size: 9px;
-  margin-bottom: 2px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 1px;
+  color: hsl(var(--tm-ink) / 0.5);
 }
 
 .tru-date-compact .tru-date-input {
-  height: 32px;
-  font-size: 12px;
-  padding: 0 10px;
+  height: 28px;
+  font-size: 11px;
+  padding: 0 8px;
 }
