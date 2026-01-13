@@ -427,43 +427,48 @@ export default function Index() {
                           </div>
                         </div>
 
-                        {/* Date Picker with Popover */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Move Date</label>
-                          <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                            <PopoverTrigger asChild>
-                              <button
-                                type="button"
-                                className={cn(
-                                  "tru-date-input",
-                                  errors.moveDate && "is-error",
-                                  !formData.moveDate && "is-placeholder"
-                                )}
-                              >
-                                <CalendarIcon className="tru-date-icon" />
-                                <span>
-                                  {formData.moveDate 
-                                    ? formatDateWithOrdinal(formData.moveDate)
-                                    : "Select a date..."
-                                  }
-                                </span>
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="tru-date-popover" align="start">
-                              <CalendarComponent
-                                mode="single"
-                                selected={formData.moveDate || undefined}
-                                onSelect={(date) => {
-                                  setFormData(p => ({ ...p, moveDate: date || null }));
-                                  if (date) setErrors(prev => ({ ...prev, moveDate: false }));
-                                  setDatePopoverOpen(false);
-                                }}
-                                disabled={(date) => date < new Date()}
-                                className="tru-calendar-popup pointer-events-auto"
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          {errors.moveDate && <span className="tru-field-error">Please select a move date</span>}
+                        {/* Date Picker with Mini Calendar */}
+                        <div className="tru-date-row">
+                          <div className="tru-input-group tru-date-field">
+                            <label className="tru-input-label">Move Date</label>
+                            <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                              <PopoverTrigger asChild>
+                                <button
+                                  type="button"
+                                  className={cn(
+                                    "tru-date-input",
+                                    errors.moveDate && "is-error",
+                                    !formData.moveDate && "is-placeholder"
+                                  )}
+                                >
+                                  <CalendarIcon className="tru-date-icon" />
+                                  <span>
+                                    {formData.moveDate 
+                                      ? formatDateWithOrdinal(formData.moveDate)
+                                      : "Select a date..."
+                                    }
+                                  </span>
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className="tru-date-popover" align="start">
+                                <CalendarComponent
+                                  mode="single"
+                                  selected={formData.moveDate || undefined}
+                                  onSelect={(date) => {
+                                    setFormData(p => ({ ...p, moveDate: date || null }));
+                                    if (date) setErrors(prev => ({ ...prev, moveDate: false }));
+                                    setDatePopoverOpen(false);
+                                  }}
+                                  disabled={(date) => date < new Date()}
+                                  className="tru-calendar-popup pointer-events-auto"
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            {errors.moveDate && <span className="tru-field-error">Please select a move date</span>}
+                          </div>
+                          <div className="tru-mini-cal-wrapper">
+                            <MiniCalendar selectedDate={formData.moveDate} />
+                          </div>
                         </div>
 
                         <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
@@ -487,11 +492,6 @@ export default function Index() {
                               <span className="tru-cta-desc">Schedule your specialist</span>
                             </div>
                           </button>
-                        </div>
-                        
-                        {/* Decorative Calendar */}
-                        <div className="tru-step1-calendar">
-                          <MiniCalendar selectedDate={formData.moveDate} />
                         </div>
                       </div>
                     )}
