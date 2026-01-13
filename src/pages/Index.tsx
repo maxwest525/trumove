@@ -292,11 +292,11 @@ export default function Index() {
                     </div>
                     <div className="tru-form-flow-header">
                       <div className="tru-flow-breadcrumb">
-                        <span className={cn("tru-flow-crumb", currentStep >= 1 && "is-active")}>Start Your TruMove</span>
+                        <span className={cn("tru-flow-crumb", currentStep >= 1 && "is-active")}>Start TruMove</span>
                         <span className="tru-flow-sep">•</span>
                         <span className={cn("tru-flow-crumb", currentStep >= 2 && "is-active")}>Build Inventory</span>
                         <span className="tru-flow-sep">•</span>
-                        <span className={cn("tru-flow-crumb", currentStep >= 3 && "is-active")}>Get a Quote</span>
+                        <span className={cn("tru-flow-crumb", currentStep >= 3 && "is-active")}>Get Estimate</span>
                       </div>
                       {/* Truck Animation - Full Width Under Breadcrumb */}
                       <div className="tru-truck-line">
