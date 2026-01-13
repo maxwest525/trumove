@@ -405,16 +405,6 @@ export default function Index() {
                         <span className="tru-status-text">Online</span>
                       </div>
                     </div>
-                    {/* Truck Animation - Full Width Under Header */}
-                    <div className="tru-truck-line">
-                      <div 
-                        className={cn("tru-truck", truckAnimating && "is-animating")}
-                        onClick={replayTruck}
-                        title="Click to replay!"
-                      >
-                        <Truck className="tru-truck-icon" />
-                      </div>
-                    </div>
                   </div>
 
                   {/* Text-Only Progress Stepper */}
@@ -597,6 +587,17 @@ export default function Index() {
                           {/* Right Column: Map */}
                           <div className="tru-step1-map">
                             <MoveMap fromZip={formData.fromZip} toZip={formData.toZip} />
+                          </div>
+                        </div>
+
+                        {/* Truck Animation - Above CTA */}
+                        <div className="tru-truck-line">
+                          <div 
+                            className={cn("tru-truck", truckAnimating && "is-animating")}
+                            onClick={replayTruck}
+                            title="Click to replay!"
+                          >
+                            <Truck className="tru-truck-icon" />
                           </div>
                         </div>
 
