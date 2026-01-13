@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import usMapImage from "@/assets/us_cropped.png";
+import usMapImage from "@/assets/us_map_clean.png";
 
 interface MoveMapProps {
   fromZip: string;
