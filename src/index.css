@@ -2198,8 +2198,8 @@
   min-height: 140px;
   border-radius: 10px;
   overflow: hidden;
-  background: hsl(var(--tm-ink) / 0.02);
-  border: 1px solid hsl(var(--tm-ink) / 0.06);
+  background: #ffffff;
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
 }
 
 .move-map-svg {
@@ -2208,10 +2208,8 @@
   display: block;
 }
 
-.move-map-us-outline {
-  fill: hsl(var(--tm-ink) / 0.04);
-  stroke: hsl(var(--tm-ink) / 0.12);
-  stroke-width: 1;
+.move-map-bg-image {
+  opacity: 1;
 }
 
 .move-map-arc {
