@@ -272,15 +272,15 @@
 .tru-form-card {
   position: relative;
   width: 100%;
-  max-width: 540px;
-  border-radius: 20px;
+  max-width: 640px;
+  border-radius: 24px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
   box-shadow:
     0 1px 3px hsl(var(--tm-ink) / 0.04),
     0 12px 40px hsl(var(--tm-ink) / 0.08),
     0 0 0 1px hsl(var(--tm-ink) / 0.02);
-  padding: 32px;
+  padding: 40px;
   overflow: hidden;
 }
 
@@ -361,7 +361,7 @@
 }
 
 .tru-form-logo {
-  height: 24px;
+  height: 32px;
   width: auto;
 }
 
@@ -447,8 +447,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 18px;
-  padding: 0 0 18px 0;
+  margin-bottom: 24px;
+  padding: 0 0 24px 0;
   gap: 0;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.1);
 }
@@ -459,7 +459,7 @@
 }
 
 .tru-stepper-label {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -513,7 +513,7 @@
 .tru-form-step {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 /* =============================================
@@ -522,12 +522,12 @@
 .tru-input-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 16px;
 }
 
 .tru-input-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: hsl(var(--tm-ink) / 0.7);
@@ -537,11 +537,11 @@
   position: relative;
   display: flex;
   align-items: center;
-  height: 36px;
-  border-radius: 8px;
+  height: 44px;
+  border-radius: 10px;
   background: #ffffff;
   border: 1px solid hsl(var(--tm-ink) / 0.12);
-  padding: 0 10px;
+  padding: 0 14px;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
@@ -560,7 +560,7 @@
   height: 100%;
   border: none;
   background: transparent;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: hsl(var(--tm-ink));
   outline: none;
