@@ -2299,44 +2299,47 @@
   padding: 0 12px;
 }
 
-/* Step 1 Two Column Layout */
+/* Step 1 Layout - Fields First, Map Accent Below */
 .tru-step1-layout {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .tru-step1-fields {
-  width: 140px;
-  flex-shrink: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 14px;
 }
 
 .tru-step1-map {
-  flex: 1;
-  min-width: 0;
+  height: 100px;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  opacity: 0.9;
 }
 
 @media (max-width: 480px) {
   .tru-step1-layout {
-    flex-direction: column;
+    gap: 16px;
   }
   
   .tru-step1-fields {
-    width: 100%;
+    gap: 12px;
   }
   
   .tru-step1-map {
-    height: 140px;
+    height: 80px;
   }
 }
 
-/* Ultra-compact ZIP inputs */
+/* Large Prominent ZIP Inputs - PPC Optimized */
 .tru-zip-compact {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 14px;
 }
 
 .tru-zip-compact .tru-input-group {
@@ -2344,44 +2347,70 @@
 }
 
 .tru-zip-compact .tru-input-label {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  margin-bottom: 1px;
-  color: hsl(var(--tm-ink) / 0.5);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin-bottom: 6px;
+  color: hsl(var(--tm-ink) / 0.75);
 }
 
 .tru-zip-compact .tru-input-wrapper {
-  height: 28px;
+  height: 56px;
+  border-radius: 12px;
+  border: 2px solid hsl(var(--tm-ink) / 0.15);
+  box-shadow: 0 2px 10px hsl(var(--tm-ink) / 0.08);
+}
+
+.tru-zip-compact .tru-input-wrapper:focus-within {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.12);
 }
 
 .tru-zip-compact .tru-input {
-  height: 28px;
-  font-size: 11px;
-  padding: 0 8px;
+  height: 56px;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 0 16px;
+}
+
+.tru-zip-compact .tru-input::placeholder {
+  font-size: 15px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.4);
 }
 
 .tru-zip-compact .tru-zip-city-badge {
-  font-size: 7px;
-  padding: 1px 5px;
-  margin-top: 1px;
+  font-size: 11px;
+  padding: 4px 10px;
+  margin-top: 6px;
 }
 
-/* Date field ultra-compact */
+/* Date Field - Large and Prominent */
 .tru-date-compact {
   margin-top: 0;
 }
 
 .tru-date-compact .tru-input-label {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  margin-bottom: 1px;
-  color: hsl(var(--tm-ink) / 0.5);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin-bottom: 6px;
+  color: hsl(var(--tm-ink) / 0.75);
 }
 
 .tru-date-compact .tru-date-input {
-  height: 28px;
-  font-size: 11px;
-  padding: 0 8px;
+  height: 56px;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 2px solid hsl(var(--tm-ink) / 0.15);
+  box-shadow: 0 2px 10px hsl(var(--tm-ink) / 0.08);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.tru-date-compact .tru-date-input:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.12);
+  outline: none;
 }
