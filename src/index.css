@@ -1431,6 +1431,11 @@
   margin-bottom: 14px;
 }
 
+.tru-cta-grid-alt {
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
 @media (max-width: 400px) {
   .tru-cta-grid {
     grid-template-columns: 1fr;
