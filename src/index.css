@@ -394,52 +394,38 @@
   color: hsl(140 60% 35%);
 }
 
-/* Flow Header - Nav Focus */
+/* Flow Header - Breadcrumb Focus */
 .tru-form-flow-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 2px 0;
+  gap: 8px;
+  padding: 4px 0;
 }
 
-.tru-flow-nav {
+.tru-flow-breadcrumb {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  width: 100%;
-  max-width: 100%;
+  gap: 10px;
 }
 
-.tru-flow-nav-item {
-  white-space: nowrap;
-  font-size: 15px;
+.tru-flow-crumb {
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.22);
-  background: none;
-  border: none;
-  padding: 4px 0;
-  cursor: default;
+  letter-spacing: 0.03em;
+  color: hsl(var(--tm-ink) / 0.35);
   transition: all 200ms ease;
 }
 
-.tru-flow-nav-item.is-active {
-  color: hsl(var(--tm-ink) / 0.4);
+.tru-flow-crumb.is-active {
+  color: hsl(var(--tm-ink) / 0.85);
 }
 
-.tru-flow-nav-item.is-current {
-  color: hsl(var(--tm-ink) / 0.88);
-}
-
-.tru-flow-nav-item.is-active:not(.is-current) {
-  cursor: pointer;
-}
-
-.tru-flow-nav-item.is-active:not(.is-current):hover {
-  color: hsl(var(--primary));
+.tru-flow-arrow {
+  font-size: 14px;
+  color: hsl(var(--tm-ink) / 0.3);
+  font-weight: 600;
 }
 
 /* =============================================
