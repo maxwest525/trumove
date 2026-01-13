@@ -333,7 +333,7 @@ export default function Index() {
                         <div className="tru-zip-row">
                           {/* From ZIP */}
                           <div className="tru-input-group tru-zip-group">
-                            <label className="tru-input-label">From ZIP</label>
+                            <label className="tru-input-label">Moving from ZIP</label>
                             <div className="tru-zip-field">
                               <div className={cn("tru-input-wrapper", errors.fromZip && "is-error")}>
                                 <input 
@@ -380,7 +380,7 @@ export default function Index() {
 
                           {/* To ZIP */}
                           <div className="tru-input-group tru-zip-group">
-                            <label className="tru-input-label">To ZIP</label>
+                            <label className="tru-input-label">Moving to ZIP</label>
                             <div className="tru-zip-field">
                               <div className={cn("tru-input-wrapper", errors.toZip && "is-error")}>
                                 <input 
