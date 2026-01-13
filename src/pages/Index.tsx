@@ -227,10 +227,14 @@ export default function Index() {
   // Close suggestions on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (fromInputRef.current && !fromInputRef.current.parentElement?.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const fromContainer = fromInputRef.current?.closest('.tru-zip-field');
+      const toContainer = toInputRef.current?.closest('.tru-zip-field');
+      
+      if (fromContainer && !fromContainer.contains(target)) {
         setShowFromSuggestions(false);
       }
-      if (toInputRef.current && !toInputRef.current.parentElement?.contains(e.target as Node)) {
+      if (toContainer && !toContainer.contains(target)) {
         setShowToSuggestions(false);
       }
     };
