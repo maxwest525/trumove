@@ -293,7 +293,9 @@ export default function Index() {
                     <div className="tru-form-flow-header">
                       <div className="tru-flow-breadcrumb">
                         <span className={cn("tru-flow-crumb", currentStep >= 1 && "is-active")}>Start Your TruMove</span>
+                        <span className="tru-flow-sep">•</span>
                         <span className={cn("tru-flow-crumb", currentStep >= 2 && "is-active")}>Build Inventory</span>
+                        <span className="tru-flow-sep">•</span>
                         <span className={cn("tru-flow-crumb", currentStep >= 3 && "is-active")}>Get a Quote</span>
                       </div>
                       {/* Truck Animation - Full Width Under Breadcrumb */}
