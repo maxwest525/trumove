@@ -300,7 +300,6 @@ export default function Index() {
                         >
                           Start Your TruMove
                         </button>
-                        <span className="tru-flow-nav-arrow">→</span>
                         <button 
                           type="button"
                           className={cn("tru-flow-nav-item", currentStep >= 2 && "is-active", currentStep === 2 && "is-current")}
@@ -309,7 +308,6 @@ export default function Index() {
                         >
                           Build Inventory
                         </button>
-                        <span className="tru-flow-nav-arrow">→</span>
                         <button 
                           type="button"
                           className={cn("tru-flow-nav-item", currentStep >= 3 && "is-active", currentStep === 3 && "is-current")}
