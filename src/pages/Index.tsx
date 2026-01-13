@@ -280,18 +280,7 @@ export default function Index() {
               {/* PREMIUM WIZARD CONSOLE - Narrow & Tall */}
               <div className="tru-hero-visual">
                 <div className="tru-form-card">
-                  {/* Truck Animation */}
-                  <div className="tru-truck-container">
-                    <div 
-                      className={cn("tru-truck", truckAnimating && "is-animating")}
-                      onClick={replayTruck}
-                      title="Click to replay!"
-                    >
-                      <Truck className="tru-truck-icon" />
-                    </div>
-                  </div>
-
-                  {/* Stylized Header */}
+                  {/* Header */}
                   <div className="tru-form-header">
                     <div className="tru-form-header-top">
                       <img src={logo} alt="TruMove" className="tru-form-logo" />
@@ -302,11 +291,7 @@ export default function Index() {
                     </div>
                     <div className="tru-form-flow-header">
                       <h2 className="tru-flow-title">
-                        {currentStep === 1 && "Start Your Move"}
-                        {currentStep === 2 && "Tell Us About Your Load"}
-                        {currentStep === 3 && (
-                          <>Start your <span className="tru-flow-title-brand">TruMove</span> today</>
-                        )}
+                        Start your <span className="tru-flow-title-brand">TruMove</span>
                       </h2>
                       <div className="tru-flow-breadcrumb">
                         <span className={cn("tru-flow-crumb", currentStep >= 1 && "is-active")}>Start Your Move</span>
@@ -336,101 +321,108 @@ export default function Index() {
                     {/* STEP 1: Location & Date */}
                     {currentStep === 1 && (
                       <div className="tru-form-step">
-                        {/* ZIP Codes Side by Side with Route Line */}
-                        <div className="tru-zip-row-wrapper">
-                          <div className="tru-zip-row">
-                            {/* From ZIP */}
-                            <div className="tru-input-group">
-                              <label className="tru-input-label">From ZIP</label>
-                              <div className="tru-zip-field">
-                                <div className={cn("tru-input-wrapper", errors.fromZip && "is-error", zipOk(formData.fromZip) && "has-complete-icon")}>
-                                  <input 
-                                    ref={fromInputRef}
-                                    type="text" 
-                                    className="tru-input"
-                                    placeholder="90210"
-                                    value={formData.fromZip}
-                                    onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
-                                    onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
-                                    maxLength={5}
-                                  />
-                                  {zipOk(formData.fromZip) && (
-                                    <MapPin className="tru-field-complete-icon" />
-                                  )}
-                                </div>
-                                {showFromSuggestions && fromSuggestions.length > 0 && (
-                                  <div className="tru-zip-suggestions">
-                                    {fromSuggestions.map(s => (
-                                      <button
-                                        key={s.zip}
-                                        type="button"
-                                        className="tru-zip-suggestion"
-                                        onClick={() => {
-                                          setFormData(p => ({ ...p, fromZip: s.zip }));
-                                          setShowFromSuggestions(false);
-                                        }}
-                                      >
-                                        <span className="tru-zip-suggestion-city">{s.city}</span>
-                                        <span className="tru-zip-suggestion-zip">{s.zip}</span>
-                                      </button>
-                                    ))}
-                                  </div>
-                                )}
-                                {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
-                                {errors.fromZip && <span className="tru-field-error">Enter a valid 5-digit ZIP</span>}
-                              </div>
-                            </div>
+                        {/* Truck Animation - Full Width Under Title */}
+                        <div className="tru-truck-line">
+                          <div 
+                            className={cn("tru-truck", truckAnimating && "is-animating")}
+                            onClick={replayTruck}
+                            title="Click to replay!"
+                          >
+                            <Truck className="tru-truck-icon" />
+                          </div>
+                        </div>
 
-                            {/* To ZIP */}
-                            <div className="tru-input-group">
-                              <label className="tru-input-label">To ZIP</label>
-                              <div className="tru-zip-field">
-                                <div className={cn("tru-input-wrapper", errors.toZip && "is-error", zipOk(formData.toZip) && "has-complete-icon")}>
-                                  <input 
-                                    ref={toInputRef}
-                                    type="text" 
-                                    className="tru-input"
-                                    placeholder="10001"
-                                    value={formData.toZip}
-                                    onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
-                                    onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
-                                    maxLength={5}
-                                  />
-                                  {zipOk(formData.toZip) && (
-                                    <MapPin className="tru-field-complete-icon" />
-                                  )}
-                                </div>
-                                {showToSuggestions && toSuggestions.length > 0 && (
-                                  <div className="tru-zip-suggestions">
-                                    {toSuggestions.map(s => (
-                                      <button
-                                        key={s.zip}
-                                        type="button"
-                                        className="tru-zip-suggestion"
-                                        onClick={() => {
-                                          setFormData(p => ({ ...p, toZip: s.zip }));
-                                          setShowToSuggestions(false);
-                                        }}
-                                      >
-                                        <span className="tru-zip-suggestion-city">{s.city}</span>
-                                        <span className="tru-zip-suggestion-zip">{s.zip}</span>
-                                      </button>
-                                    ))}
-                                  </div>
+                        {/* ZIP Codes Side by Side with Route Line Between */}
+                        <div className="tru-zip-row">
+                          {/* From ZIP */}
+                          <div className="tru-input-group tru-zip-group">
+                            <label className="tru-input-label">From ZIP</label>
+                            <div className="tru-zip-field">
+                              <div className={cn("tru-input-wrapper tru-input-short", errors.fromZip && "is-error")}>
+                                <input 
+                                  ref={fromInputRef}
+                                  type="text" 
+                                  className="tru-input"
+                                  placeholder="90210"
+                                  value={formData.fromZip}
+                                  onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                  onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
+                                  maxLength={5}
+                                />
+                                {zipOk(formData.fromZip) && (
+                                  <MapPin className="tru-field-complete-icon-lg" />
                                 )}
-                                {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
-                                {errors.toZip && <span className="tru-field-error">Enter a valid 5-digit ZIP</span>}
                               </div>
+                              {showFromSuggestions && fromSuggestions.length > 0 && (
+                                <div className="tru-zip-suggestions">
+                                  {fromSuggestions.map(s => (
+                                    <button
+                                      key={s.zip}
+                                      type="button"
+                                      className="tru-zip-suggestion"
+                                      onClick={() => {
+                                        setFormData(p => ({ ...p, fromZip: s.zip }));
+                                        setShowFromSuggestions(false);
+                                      }}
+                                    >
+                                      <span className="tru-zip-suggestion-city">{s.city}</span>
+                                      <span className="tru-zip-suggestion-zip">{s.zip}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                              {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
+                              {errors.fromZip && <span className="tru-field-error">Enter a valid 5-digit ZIP</span>}
                             </div>
                           </div>
-                          
-                          {/* Route Line */}
-                          <div className={cn("tru-route-line", bothZipsValid && "is-visible")}>
-                            <div className="tru-route-line-inner">
-                              <span className="tru-route-dot"></span>
-                              <span className="tru-route-dashes"></span>
-                              <span className="tru-route-arrow">→</span>
-                              <span className="tru-route-dot"></span>
+
+                          {/* Route Line Between ZIPs */}
+                          <div className={cn("tru-route-connector", bothZipsValid && "is-visible")}>
+                            <span className="tru-route-dot"></span>
+                            <span className="tru-route-dashes"></span>
+                            <span className="tru-route-arrow">→</span>
+                            <span className="tru-route-dot"></span>
+                          </div>
+
+                          {/* To ZIP */}
+                          <div className="tru-input-group tru-zip-group">
+                            <label className="tru-input-label">To ZIP</label>
+                            <div className="tru-zip-field">
+                              <div className={cn("tru-input-wrapper tru-input-short", errors.toZip && "is-error")}>
+                                <input 
+                                  ref={toInputRef}
+                                  type="text" 
+                                  className="tru-input"
+                                  placeholder="10001"
+                                  value={formData.toZip}
+                                  onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                  onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
+                                  maxLength={5}
+                                />
+                                {zipOk(formData.toZip) && (
+                                  <MapPin className="tru-field-complete-icon-lg" />
+                                )}
+                              </div>
+                              {showToSuggestions && toSuggestions.length > 0 && (
+                                <div className="tru-zip-suggestions">
+                                  {toSuggestions.map(s => (
+                                    <button
+                                      key={s.zip}
+                                      type="button"
+                                      className="tru-zip-suggestion"
+                                      onClick={() => {
+                                        setFormData(p => ({ ...p, toZip: s.zip }));
+                                        setShowToSuggestions(false);
+                                      }}
+                                    >
+                                      <span className="tru-zip-suggestion-city">{s.city}</span>
+                                      <span className="tru-zip-suggestion-zip">{s.zip}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                              {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
+                              {errors.toZip && <span className="tru-field-error">Enter a valid 5-digit ZIP</span>}
                             </div>
                           </div>
                         </div>
@@ -438,13 +430,13 @@ export default function Index() {
                         {/* Date Picker with Popover */}
                         <div className="tru-input-group">
                           <label className="tru-input-label">Move Date</label>
-                          <div className={cn("tru-date-field", formData.moveDate && "has-complete-icon")}>
+                          <div className="tru-date-row">
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button
                                   type="button"
                                   className={cn(
-                                    "tru-date-input",
+                                    "tru-date-input tru-date-short",
                                     errors.moveDate && "is-error",
                                     !formData.moveDate && "is-placeholder"
                                   )}
@@ -469,7 +461,10 @@ export default function Index() {
                               </PopoverContent>
                             </Popover>
                             {formData.moveDate && (
-                              <CalendarIcon className="tru-field-complete-icon tru-field-complete-icon-date" />
+                              <div className="tru-date-complete-icon">
+                                <CalendarIcon className="tru-calendar-check-icon" />
+                                <Check className="tru-calendar-check-mark" />
+                              </div>
                             )}
                           </div>
                           {errors.moveDate && <span className="tru-field-error">Please select a move date</span>}
@@ -503,64 +498,97 @@ export default function Index() {
                           </div>
                         </div>
 
-                        {/* Vehicle Toggle */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Include vehicle shipping?</label>
-                          <div className={`tru-toggle-group ${errors.hasCar ? "is-error" : ""}`}>
-                            <button 
-                              type="button"
-                              className={cn("tru-toggle-btn", formData.hasCar === true && "is-active")}
-                              onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
-                            >
-                              <Car className="tru-toggle-icon" />
-                              <span>Yes</span>
-                            </button>
-                            <button 
-                              type="button"
-                              className={cn("tru-toggle-btn", formData.hasCar === false && "is-active")}
-                              onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
-                            >
-                              <span>No</span>
-                            </button>
+                        {/* Vehicle Toggle - Compact */}
+                        <div className="tru-toggle-row">
+                          <div className="tru-input-group tru-toggle-field">
+                            <label className="tru-input-label">Vehicle shipping?</label>
+                            <div className={`tru-toggle-group tru-toggle-compact ${errors.hasCar ? "is-error" : ""}`}>
+                              <button 
+                                type="button"
+                                className={cn("tru-toggle-btn", formData.hasCar === true && "is-active")}
+                                onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
+                              >
+                                <span>Yes</span>
+                              </button>
+                              <button 
+                                type="button"
+                                className={cn("tru-toggle-btn", formData.hasCar === false && "is-active")}
+                                onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
+                              >
+                                <span>No</span>
+                              </button>
+                            </div>
                           </div>
-                          {errors.hasCar && <span className="tru-field-error">Please select an option</span>}
-                        </div>
-
-                        {/* Packing Toggle */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Need packing help?</label>
-                          <div className={`tru-toggle-group ${errors.needsPacking ? "is-error" : ""}`}>
-                            <button 
-                              type="button"
-                              className={cn("tru-toggle-btn", formData.needsPacking === true && "is-active")}
-                              onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
-                            >
-                              <Package className="tru-toggle-icon" />
-                              <span>Yes</span>
-                            </button>
-                            <button 
-                              type="button"
-                              className={cn("tru-toggle-btn", formData.needsPacking === false && "is-active")}
-                              onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
-                            >
-                              <span>No</span>
-                            </button>
-                          </div>
-                          {errors.needsPacking && <span className="tru-field-error">Please select an option</span>}
-                        </div>
-
-                        {/* Completion Icons for Toggles */}
-                        <div className="tru-toggle-complete-row">
                           {formData.hasCar === true && (
-                            <span className="tru-toggle-complete-badge">
-                              <Car className="tru-toggle-complete-icon" />
-                              <span>Vehicle</span>
+                            <Car className="tru-toggle-complete-icon-lg" />
+                          )}
+                        </div>
+                        {errors.hasCar && <span className="tru-field-error">Please select an option</span>}
+
+                        {/* Packing Toggle - Compact */}
+                        <div className="tru-toggle-row">
+                          <div className="tru-input-group tru-toggle-field">
+                            <label className="tru-input-label">Need packing help?</label>
+                            <div className={`tru-toggle-group tru-toggle-compact ${errors.needsPacking ? "is-error" : ""}`}>
+                              <button 
+                                type="button"
+                                className={cn("tru-toggle-btn", formData.needsPacking === true && "is-active")}
+                                onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
+                              >
+                                <span>Yes</span>
+                              </button>
+                              <button 
+                                type="button"
+                                className={cn("tru-toggle-btn", formData.needsPacking === false && "is-active")}
+                                onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
+                              >
+                                <span>No</span>
+                              </button>
+                            </div>
+                          </div>
+                          {formData.needsPacking === true && (
+                            <Package className="tru-toggle-complete-icon-lg" />
+                          )}
+                        </div>
+                        {errors.needsPacking && <span className="tru-field-error">Please select an option</span>}
+
+                        {/* Summary Pills - Show Selected Values */}
+                        <div className="tru-selection-pills">
+                          {bothZipsValid && (
+                            <span className="tru-selection-pill">
+                              <MapPin className="tru-selection-pill-icon" />
+                              {formData.fromZip} → {formData.toZip}
+                            </span>
+                          )}
+                          {formData.moveDate && (
+                            <span className="tru-selection-pill">
+                              <CalendarIcon className="tru-selection-pill-icon" />
+                              {format(formData.moveDate, "MMM d")}
+                              {(() => {
+                                const day = formData.moveDate.getDate();
+                                const suffix = day === 1 || day === 21 || day === 31 ? 'st'
+                                  : day === 2 || day === 22 ? 'nd'
+                                  : day === 3 || day === 23 ? 'rd' : 'th';
+                                return suffix;
+                              })()}
+                            </span>
+                          )}
+                          {formData.size && (
+                            <span className="tru-selection-pill">
+                              <Home className="tru-selection-pill-icon" />
+                              {formData.size}
+                            </span>
+                          )}
+                          {formData.hasCar === true && (
+                            <span className="tru-selection-pill">
+                              <Car className="tru-selection-pill-icon" />
+                              Vehicle
                             </span>
                           )}
                           {formData.needsPacking === true && (
-                            <span className="tru-toggle-complete-badge">
-                              <Package className="tru-toggle-complete-icon" />
-                              <span>Packing</span>
+                            <span className="tru-selection-pill">
+                              <Package className="tru-selection-pill-icon" />
+                              Packing
                             </span>
                           )}
                         </div>
@@ -581,40 +609,44 @@ export default function Index() {
                     {/* STEP 3: Contact & Intent */}
                     {currentStep === 3 && (
                       <div className="tru-form-step">
-                        {/* Contact Fields */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Email</label>
-                          <div className={cn("tru-input-wrapper", errors.email && "is-error", emailOk(formData.email) && "has-complete-icon")}>
-                            <input 
-                              type="email" 
-                              className="tru-input"
-                              placeholder="you@email.com"
-                              value={formData.email}
-                              onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-                            />
-                            {emailOk(formData.email) && (
-                              <Mail className="tru-field-complete-icon" />
-                            )}
+                        {/* Contact Fields - Shortened with Big Icons */}
+                        <div className="tru-contact-row">
+                          <div className="tru-input-group tru-contact-field">
+                            <label className="tru-input-label">Email</label>
+                            <div className={cn("tru-input-wrapper tru-input-short", errors.email && "is-error")}>
+                              <input 
+                                type="email" 
+                                className="tru-input"
+                                placeholder="you@email.com"
+                                value={formData.email}
+                                onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
+                              />
+                            </div>
                           </div>
-                          {errors.email && <span className="tru-field-error">Enter a valid email address</span>}
+                          {emailOk(formData.email) && (
+                            <Mail className="tru-contact-complete-icon" />
+                          )}
                         </div>
+                        {errors.email && <span className="tru-field-error">Enter a valid email address</span>}
 
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Phone</label>
-                          <div className={cn("tru-input-wrapper", errors.phone && "is-error", phoneOk(formData.phone) && "has-complete-icon")}>
-                            <input 
-                              type="tel" 
-                              className="tru-input"
-                              placeholder="(555) 123-4567"
-                              value={formData.phone}
-                              onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
-                            />
-                            {phoneOk(formData.phone) && (
-                              <Phone className="tru-field-complete-icon" />
-                            )}
+                        <div className="tru-contact-row">
+                          <div className="tru-input-group tru-contact-field">
+                            <label className="tru-input-label">Phone</label>
+                            <div className={cn("tru-input-wrapper tru-input-short", errors.phone && "is-error")}>
+                              <input 
+                                type="tel" 
+                                className="tru-input"
+                                placeholder="(555) 123-4567"
+                                value={formData.phone}
+                                onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
+                              />
+                            </div>
                           </div>
-                          {errors.phone && <span className="tru-field-error">Enter a valid phone number</span>}
+                          {phoneOk(formData.phone) && (
+                            <Phone className="tru-contact-complete-icon" />
+                          )}
                         </div>
+                        {errors.phone && <span className="tru-field-error">Enter a valid phone number</span>}
 
                         {/* Move Summary */}
                         <div className="tru-move-summary">
@@ -645,7 +677,7 @@ export default function Index() {
                               </div>
                             </div>
                             <div className="tru-summary-decoration">
-                              <Truck className="tru-summary-truck" />
+                              <Truck className="tru-summary-truck-lg" />
                             </div>
                           </div>
                         </div>
