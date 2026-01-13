@@ -13,7 +13,7 @@ export default function Header() {
   const location = useLocation();
 
   return (
-    <header className="sticky top-[44px] z-[80] bg-white/92 backdrop-blur-[10px] border-b border-border/40">
+    <header className="sticky top-0 z-[80] bg-white/92 backdrop-blur-[10px] border-b border-border/40">
       <div className="max-w-[1480px] mx-auto px-[26px] py-[14px] grid grid-cols-[auto_1fr_auto] items-center gap-x-[26px]">
         <Link to="/" className="flex items-center flex-shrink-0" aria-label="TruMove Home">
           <img

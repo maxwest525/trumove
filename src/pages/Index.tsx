@@ -364,7 +364,7 @@ export default function Index() {
     }
   };
 
-  const stepLabels = ["Location", "Details", "Contact"];
+  const stepLabels = ["Start TruMove", "Build Inventory", "Get Estimate"];
 
   return (
     <SiteShell>
@@ -405,36 +405,24 @@ export default function Index() {
                         <span className="tru-status-text">Online</span>
                       </div>
                     </div>
-                    <div className="tru-form-flow-header">
-                      <div className="tru-flow-breadcrumb">
-                        <span className={cn("tru-flow-crumb", currentStep >= 1 && "is-active")}>Start TruMove</span>
-                        <span className="tru-flow-sep">•</span>
-                        <span className={cn("tru-flow-crumb", currentStep >= 2 && "is-active")}>Build Inventory</span>
-                        <span className="tru-flow-sep">•</span>
-                        <span className={cn("tru-flow-crumb", currentStep >= 3 && "is-active")}>Get Estimate</span>
-                      </div>
-                      {/* Truck Animation - Full Width Under Breadcrumb */}
-                      <div className="tru-truck-line">
-                        <div 
-                          className={cn("tru-truck", truckAnimating && "is-animating")}
-                          onClick={replayTruck}
-                          title="Click to replay!"
-                        >
-                          <Truck className="tru-truck-icon" />
-                        </div>
+                    {/* Truck Animation - Full Width Under Header */}
+                    <div className="tru-truck-line">
+                      <div 
+                        className={cn("tru-truck", truckAnimating && "is-animating")}
+                        onClick={replayTruck}
+                        title="Click to replay!"
+                      >
+                        <Truck className="tru-truck-icon" />
                       </div>
                     </div>
                   </div>
 
-                  {/* Refined Progress Stepper */}
+                  {/* Text-Only Progress Stepper */}
                   <div className="tru-stepper">
                     {stepLabels.map((label, idx) => (
                       <div key={label} className={`tru-stepper-step ${currentStep > idx + 1 ? "is-done" : ""} ${currentStep === idx + 1 ? "is-current" : ""}`}>
-                        <div className="tru-stepper-indicator">
-                          {currentStep > idx + 1 ? <Check className="tru-stepper-check" /> : <span>{idx + 1}</span>}
-                        </div>
                         <span className="tru-stepper-label">{label}</span>
-                        {idx < stepLabels.length - 1 && <div className="tru-stepper-connector" />}
+                        {idx < stepLabels.length - 1 && <span className="tru-stepper-sep">—</span>}
                       </div>
                     ))}
                   </div>

@@ -440,7 +440,7 @@
 }
 
 /* =============================================
-   REFINED STEPPER - Outlined, Dotted Connectors
+   TEXT-ONLY STEPPER - Clean & Minimal
    ============================================= */
 .tru-stepper {
   display: flex;
@@ -454,74 +454,32 @@
 .tru-stepper-step {
   display: flex;
   align-items: center;
-  position: relative;
-}
-
-.tru-stepper-indicator {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid hsl(var(--tm-ink) / 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink) / 0.35);
-  flex-shrink: 0;
-  transition: all 200ms ease;
-  position: relative;
-  z-index: 2;
-}
-
-.tru-stepper-step.is-current .tru-stepper-indicator {
-  background: hsl(var(--tm-ink));
-  border-color: hsl(var(--tm-ink));
-  color: #ffffff;
-  box-shadow: 0 0 0 4px hsl(var(--tm-ink) / 0.1);
-}
-
-.tru-stepper-step.is-done .tru-stepper-indicator {
-  background: #ffffff;
-  border-color: hsl(var(--primary));
-  border-width: 2px;
-  color: hsl(var(--primary));
-}
-
-.tru-stepper-check {
-  width: 12px;
-  height: 12px;
-  color: hsl(var(--primary));
 }
 
 .tru-stepper-label {
-  margin-left: 6px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.35);
+  color: hsl(var(--tm-ink) / 0.32);
   white-space: nowrap;
-  transition: color 200ms ease;
+  transition: all 200ms ease;
 }
 
-.tru-stepper-step.is-current .tru-stepper-label,
+.tru-stepper-step.is-current .tru-stepper-label {
+  color: hsl(var(--tm-ink));
+  font-weight: 800;
+}
+
 .tru-stepper-step.is-done .tru-stepper-label {
-  color: hsl(var(--tm-ink) / 0.8);
+  color: hsl(var(--tm-ink) / 0.55);
 }
 
-.tru-stepper-connector {
-  width: 24px;
-  height: 0;
-  border-top: 2px dotted hsl(var(--tm-ink) / 0.12);
-  margin: 0 8px;
-  transition: border-color 200ms ease;
-}
-
-.tru-stepper-step.is-done .tru-stepper-connector {
-  border-top-style: solid;
-  border-color: hsl(var(--primary) / 0.5);
+.tru-stepper-sep {
+  margin: 0 10px;
+  font-size: 11px;
+  color: hsl(var(--tm-ink) / 0.2);
+  font-weight: 400;
 }
 
 /* =============================================
