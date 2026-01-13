@@ -407,12 +407,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 32px;
 }
 
 .tru-flow-nav-item {
-  flex: 1 1 0;
-  min-width: 160px;
-  text-align: center;
+  white-space: nowrap;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -420,7 +419,7 @@
   color: hsl(var(--tm-ink) / 0.22);
   background: none;
   border: none;
-  padding: 4px 16px;
+  padding: 4px 0;
   cursor: default;
   transition: all 200ms ease;
 }
