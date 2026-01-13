@@ -1525,6 +1525,14 @@
   text-align: center;
 }
 
+.tru-form-disclaimer {
+  margin-top: 16px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: hsl(var(--tm-ink) / 0.5);
+  text-align: center;
+}
+
 /* =============================================
    FORM FOOTER
    ============================================= */
