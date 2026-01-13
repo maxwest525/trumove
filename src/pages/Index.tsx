@@ -591,11 +591,11 @@ export default function Index() {
                     {/* STEP 3: Contact & Intent */}
                     {currentStep === 3 && (
                       <div className="tru-form-step">
-                        {/* Contact Fields - Shortened with Big Icons */}
-                        <div className="tru-contact-row">
-                          <div className="tru-input-group tru-contact-field">
-                            <label className="tru-input-label">Email</label>
-                            <div className={cn("tru-input-wrapper tru-input-short", errors.email && "is-error")}>
+                        {/* Contact Fields with End Icons */}
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Email</label>
+                          <div className="tru-input-with-icon">
+                            <div className={cn("tru-input-wrapper", errors.email && "is-error")}>
                               <input 
                                 type="email" 
                                 className="tru-input"
@@ -604,17 +604,17 @@ export default function Index() {
                                 onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
                               />
                             </div>
+                            {emailOk(formData.email) && (
+                              <Mail className="tru-toggle-side-icon active" />
+                            )}
                           </div>
-                          {emailOk(formData.email) && (
-                            <Mail className="tru-contact-complete-icon" />
-                          )}
                         </div>
                         {errors.email && <span className="tru-field-error">Enter a valid email address</span>}
 
-                        <div className="tru-contact-row">
-                          <div className="tru-input-group tru-contact-field">
-                            <label className="tru-input-label">Phone</label>
-                            <div className={cn("tru-input-wrapper tru-input-short", errors.phone && "is-error")}>
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Phone</label>
+                          <div className="tru-input-with-icon">
+                            <div className={cn("tru-input-wrapper", errors.phone && "is-error")}>
                               <input 
                                 type="tel" 
                                 className="tru-input"
@@ -623,10 +623,10 @@ export default function Index() {
                                 onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
                               />
                             </div>
+                            {phoneOk(formData.phone) && (
+                              <Phone className="tru-toggle-side-icon active" />
+                            )}
                           </div>
-                          {phoneOk(formData.phone) && (
-                            <Phone className="tru-contact-complete-icon" />
-                          )}
                         </div>
                         {errors.phone && <span className="tru-field-error">Enter a valid phone number</span>}
 
