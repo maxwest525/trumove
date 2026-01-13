@@ -466,7 +466,7 @@ export default function Index() {
                         </div>
 
                         <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
-                          <span>Tell Us About Your Load</span>
+                          <span>Continue with Online Move Builder</span>
                           <ArrowRight className="tru-btn-icon" />
                         </button>
 
