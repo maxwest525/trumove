@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import logo from "@/assets/logo.png";
 import { cn } from "@/lib/utils";
+import { MiniCalendar } from "@/components/MiniCalendar";
 
 // Format date with ordinal suffix (Jan 1st, 2026)
 const formatDateWithOrdinal = (date: Date) => {
@@ -328,7 +329,7 @@ export default function Index() {
                   <div className={`tru-form-body ${isAnimating ? "is-animating" : ""}`}>
                     {/* STEP 1: Location & Date */}
                     {currentStep === 1 && (
-                      <div className="tru-form-step">
+                      <div className="tru-form-step tru-step-with-calendar">
                         {/* ZIP Codes Side by Side with Route Line Between */}
                         <div className="tru-zip-row">
                           {/* From ZIP */}
@@ -486,6 +487,11 @@ export default function Index() {
                               <span className="tru-cta-desc">Schedule your specialist</span>
                             </div>
                           </button>
+                        </div>
+                        
+                        {/* Decorative Calendar */}
+                        <div className="tru-step1-calendar">
+                          <MiniCalendar selectedDate={formData.moveDate} />
                         </div>
                       </div>
                     )}

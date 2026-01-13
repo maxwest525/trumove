@@ -2177,3 +2177,116 @@
 .tru-contact-secondary-btn .chevron {
   font-size: 14px;
 }
+
+/* =============================================
+   STEP 1 WITH CALENDAR LAYOUT
+   ============================================= */
+.tru-step-with-calendar {
+  position: relative;
+}
+
+.tru-step1-calendar {
+  display: none;
+}
+
+@media (min-width: 500px) {
+  .tru-step1-calendar {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed hsl(var(--tm-ink) / 0.1);
+  }
+}
+
+/* Mini Calendar Styles */
+.tru-mini-calendar {
+  width: 200px;
+  padding: 12px;
+  background: hsl(var(--tm-ink) / 0.02);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 10px;
+}
+
+.tru-mini-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tru-mini-cal-month {
+  font-size: 11px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink) / 0.8);
+}
+
+.tru-mini-cal-nav {
+  width: 14px;
+  height: 14px;
+  color: hsl(var(--tm-ink) / 0.25);
+}
+
+.tru-mini-cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.tru-mini-cal-dayname {
+  font-size: 9px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.4);
+  text-align: center;
+  padding: 2px;
+}
+
+.tru-mini-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.tru-mini-cal-day {
+  font-size: 10px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.5);
+  text-align: center;
+  padding: 4px 2px;
+  border-radius: 4px;
+  transition: all 150ms ease;
+}
+
+.tru-mini-cal-day.is-empty {
+  visibility: hidden;
+}
+
+.tru-mini-cal-day.is-selected {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-weight: 700;
+}
+
+.tru-mini-cal-selected {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
+  text-align: center;
+}
+
+.tru-mini-cal-selected-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.4);
+  margin-bottom: 2px;
+}
+
+.tru-mini-cal-selected-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink) / 0.9);
+}
