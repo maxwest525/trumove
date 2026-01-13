@@ -97,6 +97,7 @@ export default function Index() {
   const [formError, setFormError] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
   const [truckAnimating, setTruckAnimating] = useState(true);
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const fromInputRef = useRef<HTMLInputElement>(null);
   const toInputRef = useRef<HTMLInputElement>(null);
 
@@ -423,7 +424,7 @@ export default function Index() {
                         {/* Date Picker with Popover */}
                         <div className="tru-input-group">
                           <label className="tru-input-label">Move Date</label>
-                          <Popover>
+                          <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                             <PopoverTrigger asChild>
                               <button
                                 type="button"
@@ -446,7 +447,10 @@ export default function Index() {
                               <CalendarComponent
                                 mode="single"
                                 selected={formData.moveDate || undefined}
-                                onSelect={(date) => setFormData(p => ({ ...p, moveDate: date || null }))}
+                                onSelect={(date) => {
+                                  setFormData(p => ({ ...p, moveDate: date || null }));
+                                  setDatePopoverOpen(false);
+                                }}
                                 disabled={(date) => date < new Date()}
                                 className="tru-calendar-popup pointer-events-auto"
                               />
