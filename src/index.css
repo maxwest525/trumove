@@ -130,9 +130,13 @@
 
 .tru-hero-grid {
   display: grid;
-  grid-template-columns: 1fr 480px;
+  grid-template-columns: 1fr 1.4fr;
   gap: 48px;
   align-items: start;
+}
+
+.tru-hero-grid > div:first-child {
+  max-width: 400px;
 }
 
 @media (max-width: 1024px) {
@@ -168,21 +172,21 @@
 }
 
 .tru-hero-title {
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
   font-weight: 900;
   letter-spacing: -0.03em;
-  line-height: 1.08;
+  line-height: 1.1;
   color: hsl(var(--tm-ink));
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .tru-hero-sub {
-  font-size: 17px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.55;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.68);
-  max-width: 520px;
-  margin-bottom: 24px;
+  max-width: 380px;
+  margin-bottom: 20px;
 }
 
 .tru-hero-bullets {
@@ -272,7 +276,7 @@
 .tru-form-card {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 540px;
   border-radius: 20px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
