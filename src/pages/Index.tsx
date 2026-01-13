@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package } from "lucide-react";
+import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package, CalendarIcon, MapPin, Home, Truck } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import logo from "@/assets/logo.png";
 import { cn } from "@/lib/utils";
@@ -268,11 +269,18 @@ export default function Index() {
                       </div>
                     </div>
                     <div className="tru-form-flow-header">
-                      <span className="tru-flow-step is-active">Start Your Move</span>
-                      <span className="tru-flow-arrow">→</span>
-                      <span className="tru-flow-step">Build Inventory</span>
-                      <span className="tru-flow-arrow">→</span>
-                      <span className="tru-flow-step">Get a Quote</span>
+                      <h2 className="tru-flow-title">
+                        {currentStep === 1 && "Start Your Move"}
+                        {currentStep === 2 && "Tell Us About Your Load"}
+                        {currentStep === 3 && "Ready to Get Moving"}
+                      </h2>
+                      <div className="tru-flow-breadcrumb">
+                        <span className={cn("tru-flow-crumb", currentStep >= 1 && "is-active")}>Start Your Move</span>
+                        <span className="tru-flow-arrow">→</span>
+                        <span className={cn("tru-flow-crumb", currentStep >= 2 && "is-active")}>Build Inventory</span>
+                        <span className="tru-flow-arrow">→</span>
+                        <span className={cn("tru-flow-crumb", currentStep >= 3 && "is-active")}>Get a Quote</span>
+                      </div>
                     </div>
                   </div>
 
@@ -294,94 +302,125 @@ export default function Index() {
                     {/* STEP 1: Location & Date */}
                     {currentStep === 1 && (
                       <div className="tru-form-step">
-                        {/* From ZIP with suggestions */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Moving From</label>
-                          <div className="tru-zip-field">
-                            <div className={`tru-input-wrapper ${errors.fromZip ? "is-error" : ""}`}>
-                              <input 
-                                ref={fromInputRef}
-                                type="text" 
-                                className="tru-input"
-                                placeholder="90210"
-                                value={formData.fromZip}
-                                onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
-                                onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
-                                maxLength={5}
-                              />
-                            </div>
-                            {showFromSuggestions && fromSuggestions.length > 0 && (
-                              <div className="tru-zip-suggestions">
-                                {fromSuggestions.map(s => (
-                                  <button
-                                    key={s.zip}
-                                    type="button"
-                                    className="tru-zip-suggestion"
-                                    onClick={() => {
-                                      setFormData(p => ({ ...p, fromZip: s.zip }));
-                                      setShowFromSuggestions(false);
-                                    }}
-                                  >
-                                    <span className="tru-zip-suggestion-city">{s.city}</span>
-                                    <span className="tru-zip-suggestion-zip">{s.zip}</span>
-                                  </button>
-                                ))}
+                        {/* ZIP Codes Side by Side */}
+                        <div className="tru-zip-row">
+                          {/* From ZIP */}
+                          <div className="tru-input-group">
+                            <label className="tru-input-label">From ZIP</label>
+                            <div className="tru-zip-field">
+                              <div className={`tru-input-wrapper ${errors.fromZip ? "is-error" : ""}`}>
+                                <input 
+                                  ref={fromInputRef}
+                                  type="text" 
+                                  className="tru-input"
+                                  placeholder="90210"
+                                  value={formData.fromZip}
+                                  onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                  onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
+                                  maxLength={5}
+                                />
                               </div>
-                            )}
-                            {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
+                              {showFromSuggestions && fromSuggestions.length > 0 && (
+                                <div className="tru-zip-suggestions">
+                                  {fromSuggestions.map(s => (
+                                    <button
+                                      key={s.zip}
+                                      type="button"
+                                      className="tru-zip-suggestion"
+                                      onClick={() => {
+                                        setFormData(p => ({ ...p, fromZip: s.zip }));
+                                        setShowFromSuggestions(false);
+                                      }}
+                                    >
+                                      <span className="tru-zip-suggestion-city">{s.city}</span>
+                                      <span className="tru-zip-suggestion-zip">{s.zip}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                              {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
+                              {errors.fromZip && <span className="tru-field-error">Enter a valid 5-digit ZIP</span>}
+                            </div>
+                          </div>
+
+                          {/* To ZIP */}
+                          <div className="tru-input-group">
+                            <label className="tru-input-label">To ZIP</label>
+                            <div className="tru-zip-field">
+                              <div className={`tru-input-wrapper ${errors.toZip ? "is-error" : ""}`}>
+                                <input 
+                                  ref={toInputRef}
+                                  type="text" 
+                                  className="tru-input"
+                                  placeholder="10001"
+                                  value={formData.toZip}
+                                  onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                  onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
+                                  maxLength={5}
+                                />
+                              </div>
+                              {showToSuggestions && toSuggestions.length > 0 && (
+                                <div className="tru-zip-suggestions">
+                                  {toSuggestions.map(s => (
+                                    <button
+                                      key={s.zip}
+                                      type="button"
+                                      className="tru-zip-suggestion"
+                                      onClick={() => {
+                                        setFormData(p => ({ ...p, toZip: s.zip }));
+                                        setShowToSuggestions(false);
+                                      }}
+                                    >
+                                      <span className="tru-zip-suggestion-city">{s.city}</span>
+                                      <span className="tru-zip-suggestion-zip">{s.zip}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                              {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
+                              {errors.toZip && <span className="tru-field-error">Enter a valid 5-digit ZIP</span>}
+                            </div>
                           </div>
                         </div>
 
-                        {/* To ZIP with suggestions */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Moving To</label>
-                          <div className="tru-zip-field">
-                            <div className={`tru-input-wrapper ${errors.toZip ? "is-error" : ""}`}>
-                              <input 
-                                ref={toInputRef}
-                                type="text" 
-                                className="tru-input"
-                                placeholder="10001"
-                                value={formData.toZip}
-                                onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
-                                onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
-                                maxLength={5}
-                              />
-                            </div>
-                            {showToSuggestions && toSuggestions.length > 0 && (
-                              <div className="tru-zip-suggestions">
-                                {toSuggestions.map(s => (
-                                  <button
-                                    key={s.zip}
-                                    type="button"
-                                    className="tru-zip-suggestion"
-                                    onClick={() => {
-                                      setFormData(p => ({ ...p, toZip: s.zip }));
-                                      setShowToSuggestions(false);
-                                    }}
-                                  >
-                                    <span className="tru-zip-suggestion-city">{s.city}</span>
-                                    <span className="tru-zip-suggestion-zip">{s.zip}</span>
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                            {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
-                          </div>
-                        </div>
-
-                        {/* Inline Calendar */}
+                        {/* Date Picker with Popover */}
                         <div className="tru-input-group">
                           <label className="tru-input-label">Move Date</label>
-                          <div className={`tru-calendar-inline ${errors.moveDate ? "is-error" : ""}`}>
-                            <CalendarComponent
-                              mode="single"
-                              selected={formData.moveDate || undefined}
-                              onSelect={(date) => setFormData(p => ({ ...p, moveDate: date || null }))}
-                              disabled={(date) => date < new Date()}
-                              className="tru-calendar"
-                            />
-                          </div>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                type="button"
+                                className={cn(
+                                  "tru-date-input",
+                                  errors.moveDate && "is-error",
+                                  !formData.moveDate && "is-placeholder"
+                                )}
+                              >
+                                <CalendarIcon className="tru-date-icon" />
+                                <span>
+                                  {formData.moveDate 
+                                    ? format(formData.moveDate, "EEEE, MMMM d, yyyy")
+                                    : "Select a date..."
+                                  }
+                                </span>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="tru-date-popover" align="start">
+                              <CalendarComponent
+                                mode="single"
+                                selected={formData.moveDate || undefined}
+                                onSelect={(date) => setFormData(p => ({ ...p, moveDate: date || null }))}
+                                disabled={(date) => date < new Date()}
+                                className="tru-calendar-popup pointer-events-auto"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          {formData.moveDate && (
+                            <span className="tru-date-selected">
+                              ✓ {format(formData.moveDate, "EEEE, MMMM d, yyyy")}
+                            </span>
+                          )}
+                          {errors.moveDate && <span className="tru-field-error">Please select a move date</span>}
                         </div>
 
                         <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
@@ -432,6 +471,7 @@ export default function Index() {
                               <span>No</span>
                             </button>
                           </div>
+                          {errors.hasCar && <span className="tru-field-error">Please select an option</span>}
                         </div>
 
                         {/* Packing Toggle */}
@@ -454,6 +494,7 @@ export default function Index() {
                               <span>No</span>
                             </button>
                           </div>
+                          {errors.needsPacking && <span className="tru-field-error">Please select an option</span>}
                         </div>
 
                         <div className="tru-btn-row">
@@ -472,6 +513,7 @@ export default function Index() {
                     {/* STEP 3: Contact & Intent */}
                     {currentStep === 3 && (
                       <div className="tru-form-step">
+                        {/* Contact Fields */}
                         <div className="tru-input-group">
                           <label className="tru-input-label">Email</label>
                           <div className={`tru-input-wrapper ${errors.email ? "is-error" : ""}`}>
@@ -483,6 +525,7 @@ export default function Index() {
                               onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
                             />
                           </div>
+                          {errors.email && <span className="tru-field-error">Enter a valid email address</span>}
                         </div>
 
                         <div className="tru-input-group">
@@ -496,36 +539,69 @@ export default function Index() {
                               onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
                             />
                           </div>
+                          {errors.phone && <span className="tru-field-error">Enter a valid phone number</span>}
                         </div>
 
+                        {/* Move Summary */}
+                        <div className="tru-move-summary">
+                          <div className="tru-summary-header">Your Move Summary</div>
+                          <div className="tru-summary-content">
+                            <div className="tru-summary-row">
+                              <MapPin className="tru-summary-icon" />
+                              <span>{fromCity || formData.fromZip} → {toCity || formData.toZip}</span>
+                            </div>
+                            <div className="tru-summary-row">
+                              <CalendarIcon className="tru-summary-icon" />
+                              <span>{formData.moveDate ? format(formData.moveDate, "EEE, MMM d, yyyy") : "Date not set"}</span>
+                            </div>
+                            <div className="tru-summary-badges">
+                              <span className="tru-summary-badge">
+                                <Home className="tru-summary-badge-icon" />
+                                {formData.size || "Size TBD"}
+                              </span>
+                              <span className="tru-summary-badge">
+                                <Truck className="tru-summary-badge-icon" />
+                                {formData.hasCar ? "Vehicle" : "No Vehicle"}
+                              </span>
+                              <span className="tru-summary-badge">
+                                <Package className="tru-summary-badge-icon" />
+                                {formData.needsPacking ? "Packing" : "No Packing"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* CTA Section */}
                         <div className="tru-cta-section">
-                          <p className="tru-cta-prompt">How would you like to proceed?</p>
                           <div className="tru-cta-grid">
                             <button type="button" className="tru-cta-option" onClick={() => handleIntent("specialist")}>
                               <Phone className="tru-cta-icon" />
                               <div className="tru-cta-content">
-                                <span className="tru-cta-title">Talk to a Specialist</span>
+                                <span className="tru-cta-title">Talk to Specialist</span>
                                 <span className="tru-cta-desc">Get personalized guidance</span>
                               </div>
                             </button>
                             <button type="button" className="tru-cta-option" onClick={() => handleIntent("virtual")}>
                               <Video className="tru-cta-icon" />
                               <div className="tru-cta-content">
-                                <span className="tru-cta-title">Book a Virtual Meet</span>
+                                <span className="tru-cta-title">Book Virtual Meet</span>
                                 <span className="tru-cta-desc">Walk your home with us</span>
                               </div>
                             </button>
                           </div>
-                          <button type="button" className="tru-btn tru-btn-builder" onClick={() => handleIntent("builder")}>
-                            <span>Build My Move Online</span>
-                            <ArrowRight className="tru-btn-icon" />
-                          </button>
+                          
+                          {/* Back + Builder Row */}
+                          <div className="tru-action-row">
+                            <button type="button" className="tru-back-link" onClick={prevStep}>
+                              <ChevronLeft className="tru-back-icon" />
+                              <span>Back</span>
+                            </button>
+                            <button type="button" className="tru-btn tru-btn-hero" onClick={() => handleIntent("builder")}>
+                              <span>Build My Move Online</span>
+                              <ArrowRight className="tru-btn-icon" />
+                            </button>
+                          </div>
                         </div>
-
-                        <button type="button" className="tru-btn tru-btn-ghost tru-btn-center" onClick={prevStep}>
-                          <ChevronLeft className="tru-btn-icon-left" />
-                          <span>Back</span>
-                        </button>
                       </div>
                     )}
 
