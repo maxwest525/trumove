@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Phone, Video, ArrowRight, ChevronLeft, Calendar } from "lucide-react";
+import { Phone, Video, ArrowRight, ChevronLeft, Calendar, Check, Truck } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import logo from "@/assets/logo.png";
 
 // Simple ZIP to city lookup for common US cities
 const ZIP_LOOKUP: Record<string, string> = {
@@ -201,85 +202,85 @@ export default function Index() {
                 <div className="tru-hero-note">No hidden fees, no endless phone calls, just one clean dashboard for your whole move.</div>
               </div>
 
-              {/* PREMIUM WIZARD CONSOLE */}
+              {/* PREMIUM WIZARD CONSOLE - Light Theme with Dark Accents */}
               <div className="tru-hero-visual">
-                <div className="tru-console">
-                  {/* Corner brackets */}
-                  <div className="tru-console-bracket tru-console-bracket-tl"></div>
-                  <div className="tru-console-bracket tru-console-bracket-tr"></div>
-                  <div className="tru-console-bracket tru-console-bracket-bl"></div>
-                  <div className="tru-console-bracket tru-console-bracket-br"></div>
-                  
-                  {/* Logo watermark */}
-                  <div className="tru-console-watermark">TM</div>
-                  
-                  {/* Header */}
-                  <div className="tru-console-header">
-                    <div className="tru-console-status">
-                      <span className="tru-console-dot"></span>
+                <div className="tru-form-card">
+                  {/* Header with Logo */}
+                  <div className="tru-form-header">
+                    <div className="tru-form-header-top">
+                      <img src={logo} alt="TruMove" className="tru-form-logo" />
+                      <div className="tru-form-status">
+                        <span className="tru-status-dot"></span>
+                        <span className="tru-status-text">Online</span>
+                      </div>
                     </div>
-                    <h2 className="tru-console-title">Start Your Move</h2>
-                    <p className="tru-console-tagline">AI-powered estimates. Smart carrier matching. Zero guesswork.</p>
-                    <p className="tru-console-support">Instant online estimates • Vetted movers • Online support</p>
+                    <div className="tru-form-title-block">
+                      <h2 className="tru-form-title">Get Your Quote</h2>
+                      <p className="tru-form-subtitle">AI-powered estimates • Smart carrier matching</p>
+                    </div>
                   </div>
 
-                  {/* Progress Bar */}
-                  <div className="tru-progress">
+                  {/* Refined Progress Bar */}
+                  <div className="tru-stepper">
                     {stepLabels.map((label, idx) => (
-                      <div key={label} className="tru-progress-segment">
-                        <div className={`tru-progress-node ${currentStep > idx ? "is-complete" : ""} ${currentStep === idx + 1 ? "is-active" : ""}`}>
-                          <span className="tru-progress-node-inner">{idx + 1}</span>
+                      <div key={label} className={`tru-stepper-step ${currentStep > idx + 1 ? "is-done" : ""} ${currentStep === idx + 1 ? "is-current" : ""}`}>
+                        <div className="tru-stepper-indicator">
+                          {currentStep > idx + 1 ? <Check className="tru-stepper-check" /> : <span>{idx + 1}</span>}
                         </div>
-                        <span className={`tru-progress-label ${currentStep >= idx + 1 ? "is-active" : ""}`}>{label}</span>
-                        {idx < stepLabels.length - 1 && (
-                          <div className={`tru-progress-line ${currentStep > idx + 1 ? "is-complete" : ""}`}></div>
-                        )}
+                        <span className="tru-stepper-label">{label}</span>
+                        {idx < stepLabels.length - 1 && <div className="tru-stepper-connector" />}
                       </div>
                     ))}
                   </div>
 
                   {/* Form Content */}
-                  <div className={`tru-console-content ${isAnimating ? "is-animating" : ""}`}>
+                  <div className={`tru-form-body ${isAnimating ? "is-animating" : ""}`}>
                     {/* STEP 1: Location & Date */}
                     {currentStep === 1 && (
-                      <div className="tru-step">
-                        <div className="tru-field-group">
-                          <label className="tru-field-label">CURRENT ZIP CODE</label>
-                          <input 
-                            type="text" 
-                            className={`tru-console-input ${errors.fromZip ? "is-error" : ""}`}
-                            placeholder="Enter ZIP code"
-                            value={formData.fromZip}
-                            onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
-                            maxLength={5}
-                          />
-                          {fromCity && <span className="tru-field-city">{fromCity}</span>}
+                      <div className="tru-form-step">
+                        <div className="tru-input-row">
+                          <div className="tru-input-group">
+                            <label className="tru-input-label">Moving From</label>
+                            <div className={`tru-input-wrapper ${errors.fromZip ? "is-error" : ""} ${fromCity ? "has-city" : ""}`}>
+                              <input 
+                                type="text" 
+                                className="tru-input"
+                                placeholder="ZIP code"
+                                value={formData.fromZip}
+                                onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                maxLength={5}
+                              />
+                              {fromCity && <span className="tru-input-city">{fromCity}</span>}
+                            </div>
+                          </div>
+
+                          <div className="tru-input-group">
+                            <label className="tru-input-label">Moving To</label>
+                            <div className={`tru-input-wrapper ${errors.toZip ? "is-error" : ""} ${toCity ? "has-city" : ""}`}>
+                              <input 
+                                type="text" 
+                                className="tru-input"
+                                placeholder="ZIP code"
+                                value={formData.toZip}
+                                onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                maxLength={5}
+                              />
+                              {toCity && <span className="tru-input-city">{toCity}</span>}
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="tru-field-group">
-                          <label className="tru-field-label">DESTINATION</label>
-                          <input 
-                            type="text" 
-                            className={`tru-console-input ${errors.toZip ? "is-error" : ""}`}
-                            placeholder="Enter ZIP code"
-                            value={formData.toZip}
-                            onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
-                            maxLength={5}
-                          />
-                          {toCity && <span className="tru-field-city">{toCity}</span>}
-                        </div>
-
-                        <div className="tru-field-group">
-                          <label className="tru-field-label">MOVE DATE</label>
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Move Date</label>
                           <Popover>
                             <PopoverTrigger asChild>
                               <button 
                                 type="button"
-                                className={`tru-console-input tru-console-date-btn ${errors.moveDate ? "is-error" : ""}`}
+                                className={`tru-input-wrapper tru-date-trigger ${errors.moveDate ? "is-error" : ""}`}
                               >
-                                <Calendar className="tru-date-icon" />
-                                <span className={formData.moveDate ? "" : "tru-placeholder"}>
-                                  {formData.moveDate ? format(formData.moveDate, "MMMM d, yyyy") : "Select a date"}
+                                <Calendar className="tru-input-icon" />
+                                <span className={formData.moveDate ? "tru-date-value" : "tru-date-placeholder"}>
+                                  {formData.moveDate ? format(formData.moveDate, "MMM d, yyyy") : "Select date"}
                                 </span>
                               </button>
                             </PopoverTrigger>
@@ -295,81 +296,87 @@ export default function Index() {
                           </Popover>
                         </div>
 
-                        <button type="button" className="tru-console-cta" onClick={nextStep}>
-                          <span>Tell Us About Your Load</span>
-                          <ArrowRight className="tru-cta-arrow" />
+                        <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
+                          <span>Continue</span>
+                          <ArrowRight className="tru-btn-icon" />
                         </button>
                       </div>
                     )}
 
                     {/* STEP 2: Move Details */}
                     {currentStep === 2 && (
-                      <div className="tru-step">
-                        <div className="tru-field-group">
-                          <label className="tru-field-label">MOVE SIZE</label>
-                          <select 
-                            className={`tru-console-input tru-console-select ${errors.size ? "is-error" : ""}`}
-                            value={formData.size}
-                            onChange={e => setFormData(p => ({ ...p, size: e.target.value }))}
-                          >
-                            <option value="" disabled>Select move size</option>
-                            <option value="Studio">Studio</option>
-                            <option value="1 Bedroom">1 Bedroom</option>
-                            <option value="2 Bedroom">2 Bedroom</option>
-                            <option value="3 Bedroom">3 Bedroom</option>
-                            <option value="4+ Bedroom">4+ Bedroom</option>
-                            <option value="Office">Office / Commercial</option>
-                          </select>
+                      <div className="tru-form-step">
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Move Size</label>
+                          <div className={`tru-input-wrapper tru-select-wrapper ${errors.size ? "is-error" : ""}`}>
+                            <select 
+                              className="tru-input tru-select"
+                              value={formData.size}
+                              onChange={e => setFormData(p => ({ ...p, size: e.target.value }))}
+                            >
+                              <option value="" disabled>Choose size</option>
+                              <option value="Studio">Studio</option>
+                              <option value="1 Bedroom">1 Bedroom</option>
+                              <option value="2 Bedroom">2 Bedroom</option>
+                              <option value="3 Bedroom">3 Bedroom</option>
+                              <option value="4+ Bedroom">4+ Bedroom</option>
+                              <option value="Office">Office / Commercial</option>
+                            </select>
+                          </div>
                         </div>
 
-                        <div className="tru-field-group">
-                          <label className="tru-field-label">SHIPPING A CAR?</label>
-                          <div className={`tru-toggle-group ${errors.hasCar ? "is-error" : ""}`}>
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Shipping a vehicle?</label>
+                          <div className={`tru-choice-group ${errors.hasCar ? "is-error" : ""}`}>
                             <button 
                               type="button"
-                              className={`tru-toggle-btn ${formData.hasCar === true ? "is-selected" : ""}`}
+                              className={`tru-choice-btn ${formData.hasCar === true ? "is-active" : ""}`}
                               onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
                             >
-                              Yes
+                              <span className="tru-choice-check">{formData.hasCar === true && <Check />}</span>
+                              <span>Yes, include vehicle</span>
                             </button>
                             <button 
                               type="button"
-                              className={`tru-toggle-btn ${formData.hasCar === false ? "is-selected" : ""}`}
+                              className={`tru-choice-btn ${formData.hasCar === false ? "is-active" : ""}`}
                               onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
                             >
-                              No
+                              <span className="tru-choice-check">{formData.hasCar === false && <Check />}</span>
+                              <span>No vehicle</span>
                             </button>
                           </div>
                         </div>
 
-                        <div className="tru-field-group">
-                          <label className="tru-field-label">NEED PACKING HELP?</label>
-                          <div className={`tru-toggle-group ${errors.needsPacking ? "is-error" : ""}`}>
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Need packing services?</label>
+                          <div className={`tru-choice-group ${errors.needsPacking ? "is-error" : ""}`}>
                             <button 
                               type="button"
-                              className={`tru-toggle-btn ${formData.needsPacking === true ? "is-selected" : ""}`}
+                              className={`tru-choice-btn ${formData.needsPacking === true ? "is-active" : ""}`}
                               onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
                             >
-                              Yes
+                              <span className="tru-choice-check">{formData.needsPacking === true && <Check />}</span>
+                              <span>Yes, help me pack</span>
                             </button>
                             <button 
                               type="button"
-                              className={`tru-toggle-btn ${formData.needsPacking === false ? "is-selected" : ""}`}
+                              className={`tru-choice-btn ${formData.needsPacking === false ? "is-active" : ""}`}
                               onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
                             >
-                              No
+                              <span className="tru-choice-check">{formData.needsPacking === false && <Check />}</span>
+                              <span>I'll pack myself</span>
                             </button>
                           </div>
                         </div>
 
-                        <div className="tru-console-nav">
-                          <button type="button" className="tru-back-btn" onClick={prevStep}>
-                            <ChevronLeft className="tru-back-icon" />
+                        <div className="tru-btn-row">
+                          <button type="button" className="tru-btn tru-btn-ghost" onClick={prevStep}>
+                            <ChevronLeft className="tru-btn-icon-left" />
                             <span>Back</span>
                           </button>
-                          <button type="button" className="tru-console-cta" onClick={nextStep}>
-                            <span>You're Almost Done</span>
-                            <ArrowRight className="tru-cta-arrow" />
+                          <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
+                            <span>Continue</span>
+                            <ArrowRight className="tru-btn-icon" />
                           </button>
                         </div>
                       </div>
@@ -377,52 +384,73 @@ export default function Index() {
 
                     {/* STEP 3: Contact & Intent */}
                     {currentStep === 3 && (
-                      <div className="tru-step">
-                        <div className="tru-field-group">
-                          <label className="tru-field-label">EMAIL</label>
-                          <input 
-                            type="email" 
-                            className={`tru-console-input ${errors.email ? "is-error" : ""}`}
-                            placeholder="your@email.com"
-                            value={formData.email}
-                            onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-                          />
+                      <div className="tru-form-step">
+                        <div className="tru-input-row">
+                          <div className="tru-input-group">
+                            <label className="tru-input-label">Email</label>
+                            <div className={`tru-input-wrapper ${errors.email ? "is-error" : ""}`}>
+                              <input 
+                                type="email" 
+                                className="tru-input"
+                                placeholder="you@email.com"
+                                value={formData.email}
+                                onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="tru-input-group">
+                            <label className="tru-input-label">Phone</label>
+                            <div className={`tru-input-wrapper ${errors.phone ? "is-error" : ""}`}>
+                              <input 
+                                type="tel" 
+                                className="tru-input"
+                                placeholder="(555) 123-4567"
+                                value={formData.phone}
+                                onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
+                              />
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="tru-field-group">
-                          <label className="tru-field-label">PHONE</label>
-                          <input 
-                            type="tel" 
-                            className={`tru-console-input ${errors.phone ? "is-error" : ""}`}
-                            placeholder="(555) 123-4567"
-                            value={formData.phone}
-                            onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
-                          />
+                        <div className="tru-cta-section">
+                          <p className="tru-cta-prompt">How would you like to proceed?</p>
+                          <div className="tru-cta-grid">
+                            <button type="button" className="tru-cta-option" onClick={() => handleIntent("specialist")}>
+                              <Phone className="tru-cta-icon" />
+                              <div className="tru-cta-content">
+                                <span className="tru-cta-title">Talk to a Specialist</span>
+                                <span className="tru-cta-desc">Get personalized guidance</span>
+                              </div>
+                            </button>
+                            <button type="button" className="tru-cta-option" onClick={() => handleIntent("virtual")}>
+                              <Video className="tru-cta-icon" />
+                              <div className="tru-cta-content">
+                                <span className="tru-cta-title">Book a Virtual Meet</span>
+                                <span className="tru-cta-desc">Walk your home with us</span>
+                              </div>
+                            </button>
+                          </div>
+                          <button type="button" className="tru-btn tru-btn-builder" onClick={() => handleIntent("builder")}>
+                            <Truck className="tru-btn-icon-left" />
+                            <span>Build My Move Online</span>
+                            <ArrowRight className="tru-btn-icon" />
+                          </button>
                         </div>
 
-                        <div className="tru-intent-group">
-                          <button type="button" className="tru-intent-btn" onClick={() => handleIntent("specialist")}>
-                            <Phone className="tru-intent-icon" />
-                            <span>Talk to a Specialist</span>
-                          </button>
-                          <button type="button" className="tru-intent-btn" onClick={() => handleIntent("virtual")}>
-                            <Video className="tru-intent-icon" />
-                            <span>Book a Virtual Meet</span>
-                          </button>
-                          <button type="button" className="tru-intent-btn tru-intent-btn-primary" onClick={() => handleIntent("builder")}>
-                            <ArrowRight className="tru-intent-icon" />
-                            <span>Try Our Move Builder</span>
-                          </button>
-                        </div>
-
-                        <button type="button" className="tru-back-btn tru-back-btn-center" onClick={prevStep}>
-                          <ChevronLeft className="tru-back-icon" />
+                        <button type="button" className="tru-btn tru-btn-ghost tru-btn-center" onClick={prevStep}>
+                          <ChevronLeft className="tru-btn-icon-left" />
                           <span>Back</span>
                         </button>
                       </div>
                     )}
 
-                    {formError && <div className="tru-console-error">{formError}</div>}
+                    {formError && <div className="tru-form-error">{formError}</div>}
+                  </div>
+
+                  {/* Trust footer */}
+                  <div className="tru-form-footer">
+                    <span className="tru-form-secure">🔒 Your info is secure & never sold</span>
                   </div>
                 </div>
               </div>
