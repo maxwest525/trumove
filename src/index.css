@@ -291,8 +291,9 @@
   position: relative;
   width: 90%;
   margin: 0 auto;
-  height: 18px;
-  margin-top: 0;
+  height: 28px;
+  margin-top: 8px;
+  margin-bottom: 12px;
   overflow: hidden;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.12);
 }
