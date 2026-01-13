@@ -604,9 +604,7 @@ export default function Index() {
                                 onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
                               />
                             </div>
-                            {emailOk(formData.email) && (
-                              <Mail className="tru-toggle-side-icon active" />
-                            )}
+                            <Mail className={`tru-toggle-side-icon ${emailOk(formData.email) ? "active" : ""}`} />
                           </div>
                         </div>
                         {errors.email && <span className="tru-field-error">Enter a valid email address</span>}
@@ -623,9 +621,7 @@ export default function Index() {
                                 onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
                               />
                             </div>
-                            {phoneOk(formData.phone) && (
-                              <Phone className="tru-toggle-side-icon active" />
-                            )}
+                            <Phone className={`tru-toggle-side-icon ${phoneOk(formData.phone) ? "active" : ""}`} />
                           </div>
                         </div>
                         {errors.phone && <span className="tru-field-error">Enter a valid phone number</span>}
