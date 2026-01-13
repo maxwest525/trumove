@@ -2214,23 +2214,80 @@
 }
 
 /* =============================================
-   Move Map Component
+   Move Map Component - SVG Version
    ============================================= */
 
 .move-map-container {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 180px;
-  border-radius: 12px;
+  min-height: 140px;
+  border-radius: 10px;
   overflow: hidden;
-  background: hsl(var(--tm-ink) / 0.03);
+  background: hsl(var(--tm-ink) / 0.02);
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
 }
 
-.move-map {
+.move-map-svg {
   width: 100%;
   height: 100%;
-  min-height: 180px;
+  display: block;
+}
+
+.move-map-us-outline {
+  fill: hsl(var(--tm-ink) / 0.04);
+  stroke: hsl(var(--tm-ink) / 0.12);
+  stroke-width: 1;
+}
+
+.move-map-arc {
+  stroke: hsl(var(--tm-green));
+  stroke-width: 2.5;
+  stroke-dasharray: 6 3;
+  stroke-linecap: round;
+  animation: arc-dash 1s linear infinite;
+}
+
+@keyframes arc-dash {
+  to {
+    stroke-dashoffset: -9;
+  }
+}
+
+.move-map-marker-dot {
+  transition: all 300ms ease;
+}
+
+.move-map-marker-from-dot {
+  fill: hsl(var(--tm-ink));
+}
+
+.move-map-marker-to-dot {
+  fill: hsl(var(--tm-green));
+}
+
+.move-map-marker-pulse {
+  opacity: 0.3;
+  animation: svg-marker-pulse 2s infinite;
+}
+
+.move-map-marker-from-pulse {
+  fill: hsl(var(--tm-ink));
+}
+
+.move-map-marker-to-pulse {
+  fill: hsl(var(--tm-green));
+}
+
+@keyframes svg-marker-pulse {
+  0%, 100% {
+    r: 8;
+    opacity: 0.3;
+  }
+  50% {
+    r: 12;
+    opacity: 0.15;
+  }
 }
 
 .move-map-placeholder {
@@ -2239,139 +2296,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--tm-ink) / 0.02);
   pointer-events: none;
 }
 
 .move-map-placeholder span {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.35);
+  color: hsl(var(--tm-ink) / 0.3);
   text-align: center;
-  padding: 0 16px;
-}
-
-/* Map Markers */
-.move-map-marker {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 3px solid #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  animation: marker-pulse 2s infinite;
-}
-
-.move-map-marker-from {
-  background: hsl(var(--tm-ink));
-}
-
-.move-map-marker-to {
-  background: hsl(var(--tm-green));
-}
-
-@keyframes marker-pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  }
-  50% {
-    transform: scale(1.15);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-  }
-}
-
-/* Token Prompt */
-.move-map-token-prompt {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  min-height: 180px;
-  padding: 16px;
-  background: hsl(var(--tm-ink) / 0.02);
-  border-radius: 12px;
-  border: 1px dashed hsl(var(--tm-ink) / 0.12);
-}
-
-.move-map-token-content {
-  text-align: center;
-  max-width: 200px;
-}
-
-.move-map-token-icon {
-  font-size: 28px;
-  margin-bottom: 8px;
-}
-
-.move-map-token-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-  margin-bottom: 4px;
-}
-
-.move-map-token-desc {
-  font-size: 11px;
-  color: hsl(var(--tm-ink) / 0.5);
-  margin-bottom: 12px;
-}
-
-.move-map-token-desc a {
-  color: hsl(var(--tm-green));
-  text-decoration: underline;
-}
-
-.move-map-token-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.move-map-token-input {
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 8px;
-  border: 1px solid hsl(var(--tm-ink) / 0.15);
-  background: #ffffff;
-  font-size: 11px;
-  color: hsl(var(--tm-ink));
-}
-
-.move-map-token-input:focus {
-  outline: none;
-  border-color: hsl(var(--tm-green));
-}
-
-.move-map-token-btn {
-  height: 32px;
-  border-radius: 8px;
-  background: hsl(var(--tm-ink));
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: opacity 150ms ease;
-}
-
-.move-map-token-btn:hover {
-  opacity: 0.9;
+  padding: 0 12px;
 }
 
 /* Step 1 Two Column Layout */
 .tru-step1-layout {
   display: flex;
-  gap: 16px;
+  gap: 12px;
 }
 
 .tru-step1-fields {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .tru-step1-map {
-  width: 140px;
+  width: 120px;
   flex-shrink: 0;
 }
 
@@ -2382,7 +2332,7 @@
   
   .tru-step1-map {
     width: 100%;
-    height: 140px;
+    height: 120px;
   }
 }
 
@@ -2390,7 +2340,7 @@
 .tru-zip-compact {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .tru-zip-compact .tru-input-group {
@@ -2398,27 +2348,38 @@
 }
 
 .tru-zip-compact .tru-input-label {
-  font-size: 10px;
-  margin-bottom: 4px;
+  font-size: 9px;
+  margin-bottom: 2px;
+}
+
+.tru-zip-compact .tru-input-wrapper {
+  height: 32px;
 }
 
 .tru-zip-compact .tru-input {
-  height: 38px;
-  font-size: 13px;
+  height: 32px;
+  font-size: 12px;
+  padding: 0 10px;
 }
 
 .tru-zip-compact .tru-zip-city-badge {
-  font-size: 9px;
-  padding: 3px 8px;
+  font-size: 8px;
+  padding: 2px 6px;
+  margin-top: 2px;
 }
 
 /* Date field compact */
+.tru-date-compact {
+  margin-top: 2px;
+}
+
 .tru-date-compact .tru-input-label {
-  font-size: 10px;
-  margin-bottom: 4px;
+  font-size: 9px;
+  margin-bottom: 2px;
 }
 
 .tru-date-compact .tru-date-input {
-  height: 38px;
-  font-size: 13px;
+  height: 32px;
+  font-size: 12px;
+  padding: 0 10px;
 }
