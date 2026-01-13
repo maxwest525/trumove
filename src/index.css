@@ -425,7 +425,7 @@
 .tru-flow-sep {
   font-size: 10px;
   color: hsl(var(--tm-ink) / 0.25);
-  margin: 0 8px;
+  margin: 0 5px;
 }
 
 /* =============================================
