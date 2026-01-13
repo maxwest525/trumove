@@ -14,7 +14,7 @@ export default function TrustStrip() {
       aria-label="Compliance and authority"
     >
       <div className="max-w-[1480px] mx-auto px-4 py-[4px]">
-        <div className="flex items-center justify-center gap-6 md:gap-10 flex-wrap">
+        <div className="flex items-center justify-center gap-8 md:gap-16 flex-wrap">
           {TRUST.map((t, idx) => (
             <span 
               key={t.text} 
@@ -27,11 +27,11 @@ export default function TrustStrip() {
                     : "text-emerald-400/80"
                 }`} 
               />
-              <span className="text-[10px] tracking-[0.1em] uppercase font-semibold text-white/70">
+              <span className="text-[10px] tracking-[0.1em] uppercase font-semibold text-white/90">
                 {t.text}
               </span>
               {idx < TRUST.length - 1 && (
-                <span className="hidden md:inline text-white/20 ml-4">•</span>
+                <span className="hidden md:inline text-white/20 ml-8">•</span>
               )}
             </span>
           ))}
