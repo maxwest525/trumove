@@ -872,6 +872,11 @@ export default function Index() {
                     )}
 
                     {formError && <div className="tru-form-error">{formError}</div>}
+
+                    {/* Disclaimer */}
+                    <p className="tru-form-disclaimer">
+                      By submitting, you agree we may contact you by phone, text, or email, including via automated technology. Consent is not required to purchase services.
+                    </p>
                   </div>
 
                   {/* Trust footer */}
