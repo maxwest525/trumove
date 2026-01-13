@@ -460,6 +460,24 @@ export default function Index() {
                           <span>Tell Us About Your Load</span>
                           <ArrowRight className="tru-btn-icon" />
                         </button>
+
+                        {/* Alternative CTA Options */}
+                        <div className="tru-cta-grid tru-cta-grid-alt">
+                          <button type="button" className="tru-cta-option" onClick={() => handleIntent("specialist")}>
+                            <Phone className="tru-cta-icon" />
+                            <div className="tru-cta-content">
+                              <span className="tru-cta-title">Talk to Specialist</span>
+                              <span className="tru-cta-desc">Get personalized guidance</span>
+                            </div>
+                          </button>
+                          <button type="button" className="tru-cta-option" onClick={() => handleIntent("virtual")}>
+                            <Video className="tru-cta-icon" />
+                            <div className="tru-cta-content">
+                              <span className="tru-cta-title">Book Virtual Meet</span>
+                              <span className="tru-cta-desc">Schedule your specialist</span>
+                            </div>
+                          </button>
+                        </div>
                       </div>
                     )}
 
