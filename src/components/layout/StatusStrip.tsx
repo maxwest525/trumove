@@ -68,7 +68,7 @@ export default function StatusStrip() {
 
   return (
     <div
-      className={`h-[44px] border-b border-border/40 bg-gradient-to-b from-white/98 to-white overflow-hidden ${paused ? "is-paused" : ""}`}
+      className={`sticky top-0 z-[90] h-[44px] border-b border-border/40 bg-gradient-to-b from-white/98 to-white overflow-hidden ${paused ? "is-paused" : ""}`}
       aria-label="Platform capabilities"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
