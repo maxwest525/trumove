@@ -409,12 +409,46 @@ export default function Index() {
 
                   {/* Text-Only Progress Stepper */}
                   <div className="tru-stepper">
-                    {stepLabels.map((label, idx) => (
-                      <div key={label} className={`tru-stepper-step ${currentStep > idx + 1 ? "is-done" : ""} ${currentStep === idx + 1 ? "is-current" : ""}`}>
-                        <span className="tru-stepper-label">{label}</span>
-                        {idx < stepLabels.length - 1 && <span className="tru-stepper-divider">|</span>}
-                      </div>
-                    ))}
+                    {stepLabels.map((label, idx) => {
+                      const stepNum = idx + 1;
+                      const isDone = currentStep > stepNum;
+                      const isCurrent = currentStep === stepNum;
+                      const canNavigate = isDone || isCurrent;
+                      
+                      const handleStepClick = () => {
+                        if (isCurrent || isAnimating) return;
+                        
+                        // Going backward is always allowed
+                        if (stepNum < currentStep) {
+                          setIsAnimating(true);
+                          setFormError("");
+                          setErrors({});
+                          setTimeout(() => {
+                            setCurrentStep(stepNum);
+                            setIsAnimating(false);
+                          }, 150);
+                        }
+                      };
+                      
+                      return (
+                        <div 
+                          key={label} 
+                          className={`tru-stepper-step ${isDone ? "is-done" : ""} ${isCurrent ? "is-current" : ""} ${canNavigate ? "is-clickable" : ""}`}
+                          onClick={handleStepClick}
+                          role={canNavigate ? "button" : undefined}
+                          tabIndex={canNavigate ? 0 : undefined}
+                          onKeyDown={(e) => {
+                            if (canNavigate && (e.key === "Enter" || e.key === " ")) {
+                              e.preventDefault();
+                              handleStepClick();
+                            }
+                          }}
+                        >
+                          <span className="tru-stepper-label">{label}</span>
+                          {idx < stepLabels.length - 1 && <span className="tru-stepper-divider">|</span>}
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Form Content */}
