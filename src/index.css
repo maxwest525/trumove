@@ -130,7 +130,7 @@
 
 .tru-hero-grid {
   display: grid;
-  grid-template-columns: 1fr 420px;
+  grid-template-columns: 1fr 480px;
   gap: 48px;
   align-items: start;
 }
@@ -272,7 +272,7 @@
 .tru-form-card {
   position: relative;
   width: 100%;
-  max-width: 380px;
+  max-width: 480px;
   border-radius: 20px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
@@ -280,7 +280,7 @@
     0 1px 3px hsl(var(--tm-ink) / 0.04),
     0 12px 40px hsl(var(--tm-ink) / 0.08),
     0 0 0 1px hsl(var(--tm-ink) / 0.02);
-  padding: 20px;
+  padding: 24px;
   overflow: hidden;
 }
 
@@ -333,50 +333,35 @@
   color: hsl(140 60% 35%);
 }
 
-.tru-form-title-block {
-  text-align: left;
-  margin-bottom: 10px;
-}
-
-.tru-form-title {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: hsl(var(--tm-ink));
-  margin: 0 0 2px;
-}
-
-.tru-form-subtitle {
-  font-size: 12px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.55);
-  margin: 0;
-}
-
-/* Trust Pills in Header */
-.tru-form-trust-pills {
+/* Stylized Flow Header */
+.tru-form-flow-header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.tru-trust-pill {
-  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, hsl(var(--tm-ink) / 0.04), hsl(var(--tm-ink) / 0.02));
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.7);
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, hsl(var(--tm-ink)) 0%, hsl(var(--tm-ink) / 0.85) 100%);
+  border-radius: 10px;
+  margin-top: 2px;
 }
 
-.tru-trust-pill svg {
-  color: hsl(var(--primary));
+.tru-flow-step {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: hsl(0 0% 100% / 0.45);
+  transition: all 200ms ease;
+}
+
+.tru-flow-step.is-active {
+  color: #ffffff;
+  text-shadow: 0 0 12px hsl(var(--primary) / 0.6);
+}
+
+.tru-flow-arrow {
+  font-size: 12px;
+  color: hsl(var(--primary) / 0.7);
+  font-weight: 600;
 }
 
 /* =============================================
@@ -604,11 +589,11 @@
 }
 
 /* =============================================
-   INLINE CALENDAR
+   INLINE CALENDAR - Compact
    ============================================= */
 .tru-calendar-inline {
   border: 1px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 10px;
+  border-radius: 8px;
   background: #ffffff;
   overflow: hidden;
 }
@@ -619,11 +604,11 @@
 
 .tru-calendar-inline .tru-calendar {
   width: 100%;
-  padding: 8px;
+  padding: 6px;
 }
 
 .tru-calendar-inline .rdp {
-  --rdp-cell-size: 32px;
+  --rdp-cell-size: 26px;
   --rdp-accent-color: hsl(var(--tm-ink));
   --rdp-background-color: hsl(var(--tm-ink) / 0.05);
   margin: 0;
@@ -634,38 +619,38 @@
 }
 
 .tru-calendar-inline .rdp-caption {
-  padding: 0 0 8px;
+  padding: 0 0 4px;
 }
 
 .tru-calendar-inline .rdp-caption_label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
 }
 
 .tru-calendar-inline .rdp-nav_button {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
 }
 
 .tru-calendar-inline .rdp-head_cell {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   color: hsl(var(--tm-ink) / 0.5);
   text-transform: uppercase;
 }
 
 .tru-calendar-inline .rdp-cell {
-  padding: 1px;
+  padding: 0;
 }
 
 .tru-calendar-inline .rdp-day {
-  width: 32px;
-  height: 32px;
-  font-size: 12px;
+  width: 26px;
+  height: 26px;
+  font-size: 11px;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: 5px;
 }
 
 .tru-calendar-inline .rdp-day_selected {
