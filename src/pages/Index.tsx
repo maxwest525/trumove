@@ -291,11 +291,8 @@ export default function Index() {
                       </div>
                     </div>
                     <div className="tru-form-flow-header">
-                      <h2 className="tru-flow-title">
-                        Start your <span className="tru-flow-title-brand">TruMove</span>
-                      </h2>
                       <div className="tru-flow-breadcrumb">
-                        <span className={cn("tru-flow-crumb", currentStep >= 1 && "is-active")}>Start Your Move</span>
+                        <span className={cn("tru-flow-crumb", currentStep >= 1 && "is-active")}>Start Your TruMove</span>
                         <span className="tru-flow-arrow">→</span>
                         <span className={cn("tru-flow-crumb", currentStep >= 2 && "is-active")}>Build Inventory</span>
                         <span className="tru-flow-arrow">→</span>
