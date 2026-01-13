@@ -18,28 +18,61 @@ const formatDateWithOrdinal = (date: Date) => {
   return format(date, `MMM d`) + suffix + format(date, `, yyyy`);
 };
 
-// Simple ZIP to city lookup for common US cities
+// Expanded ZIP to city lookup for common US cities
 const ZIP_LOOKUP: Record<string, string> = {
-  "90210": "Beverly Hills, CA",
-  "10001": "New York, NY",
-  "60601": "Chicago, IL",
-  "77001": "Houston, TX",
-  "85001": "Phoenix, AZ",
-  "19101": "Philadelphia, PA",
-  "78201": "San Antonio, TX",
-  "92101": "San Diego, CA",
-  "75201": "Dallas, TX",
-  "95101": "San Jose, CA",
-  "32801": "Orlando, FL",
-  "33101": "Miami, FL",
-  "98101": "Seattle, WA",
-  "80201": "Denver, CO",
-  "02101": "Boston, MA",
-  "20001": "Washington, DC",
-  "30301": "Atlanta, GA",
-  "89101": "Las Vegas, NV",
-  "97201": "Portland, OR",
-  "48201": "Detroit, MI",
+  // California
+  "90210": "Beverly Hills, CA", "90001": "Los Angeles, CA", "90012": "Los Angeles, CA",
+  "92101": "San Diego, CA", "95101": "San Jose, CA", "94102": "San Francisco, CA",
+  "94601": "Oakland, CA", "92801": "Anaheim, CA", "92627": "Costa Mesa, CA",
+  "90802": "Long Beach, CA", "93301": "Bakersfield, CA", "95814": "Sacramento, CA",
+  "92612": "Irvine, CA", "91101": "Pasadena, CA", "92701": "Santa Ana, CA",
+  // New York
+  "10001": "New York, NY", "10016": "New York, NY", "10019": "New York, NY",
+  "11201": "Brooklyn, NY", "10451": "Bronx, NY", "11101": "Queens, NY",
+  "10301": "Staten Island, NY", "10701": "Yonkers, NY", "12201": "Albany, NY",
+  "14201": "Buffalo, NY", "13201": "Syracuse, NY", "14604": "Rochester, NY",
+  // Texas
+  "77001": "Houston, TX", "77002": "Houston, TX", "75201": "Dallas, TX",
+  "78201": "San Antonio, TX", "73301": "Austin, TX", "78701": "Austin, TX",
+  "76101": "Fort Worth, TX", "79901": "El Paso, TX", "78401": "Corpus Christi, TX",
+  "79401": "Lubbock, TX", "76001": "Arlington, TX", "75001": "Addison, TX",
+  // Florida
+  "33101": "Miami, FL", "33139": "Miami Beach, FL", "32801": "Orlando, FL",
+  "33602": "Tampa, FL", "33301": "Fort Lauderdale, FL", "33401": "West Palm Beach, FL",
+  "32301": "Tallahassee, FL", "32099": "Jacksonville, FL", "33901": "Fort Myers, FL",
+  "34201": "Bradenton, FL", "33498": "Boca Raton, FL", "34102": "Naples, FL",
+  // Illinois
+  "60601": "Chicago, IL", "60602": "Chicago, IL", "60614": "Chicago, IL",
+  "61101": "Rockford, IL", "62701": "Springfield, IL", "61602": "Peoria, IL",
+  // Other major cities
+  "85001": "Phoenix, AZ", "85701": "Tucson, AZ", "85201": "Mesa, AZ",
+  "19101": "Philadelphia, PA", "15201": "Pittsburgh, PA",
+  "98101": "Seattle, WA", "98401": "Tacoma, WA", "99201": "Spokane, WA",
+  "80201": "Denver, CO", "80901": "Colorado Springs, CO", "80301": "Boulder, CO",
+  "02101": "Boston, MA", "02139": "Cambridge, MA", "01101": "Springfield, MA",
+  "20001": "Washington, DC", "20500": "Washington, DC",
+  "30301": "Atlanta, GA", "31401": "Savannah, GA", "30901": "Augusta, GA",
+  "89101": "Las Vegas, NV", "89501": "Reno, NV",
+  "97201": "Portland, OR", "97401": "Eugene, OR",
+  "48201": "Detroit, MI", "49501": "Grand Rapids, MI", "48601": "Saginaw, MI",
+  "55401": "Minneapolis, MN", "55101": "Saint Paul, MN",
+  "63101": "St. Louis, MO", "64101": "Kansas City, MO",
+  "28201": "Charlotte, NC", "27601": "Raleigh, NC", "27401": "Greensboro, NC",
+  "37201": "Nashville, TN", "38101": "Memphis, TN", "37901": "Knoxville, TN",
+  "46201": "Indianapolis, IN", "46801": "Fort Wayne, IN",
+  "44101": "Cleveland, OH", "43201": "Columbus, OH", "45201": "Cincinnati, OH",
+  "53201": "Milwaukee, WI", "53701": "Madison, WI",
+  "70112": "New Orleans, LA", "70801": "Baton Rouge, LA",
+  "84101": "Salt Lake City, UT", "84601": "Provo, UT",
+  "23219": "Richmond, VA", "23451": "Virginia Beach, VA", "22301": "Alexandria, VA",
+  "21201": "Baltimore, MD", "20901": "Silver Spring, MD",
+  "06101": "Hartford, CT", "06510": "New Haven, CT",
+  "87101": "Albuquerque, NM", "87501": "Santa Fe, NM",
+  "73101": "Oklahoma City, OK", "74101": "Tulsa, OK",
+  "40201": "Louisville, KY", "40501": "Lexington, KY",
+  "29401": "Charleston, SC", "29201": "Columbia, SC",
+  "35201": "Birmingham, AL", "36101": "Montgomery, AL",
+  "96801": "Honolulu, HI", "99501": "Anchorage, AK",
 };
 
 interface LocationSuggestion {
@@ -165,6 +198,8 @@ export default function Index() {
   const [toSuggestions, setToSuggestions] = useState<LocationSuggestion[]>([]);
   const [showFromSuggestions, setShowFromSuggestions] = useState(false);
   const [showToSuggestions, setShowToSuggestions] = useState(false);
+  const [fromLoading, setFromLoading] = useState(false);
+  const [toLoading, setToLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [formError, setFormError] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
@@ -193,16 +228,20 @@ export default function Index() {
       lookupZip(formData.fromZip).then(city => setFromCity(city || ""));
       setFromSuggestions([]);
       setShowFromSuggestions(false);
+      setFromLoading(false);
     } else if (fromInput.length >= 2) {
+      setFromLoading(true);
       searchLocations(fromInput).then(s => {
         setFromSuggestions(s);
         setShowFromSuggestions(s.length > 0);
+        setFromLoading(false);
       });
       setFromCity("");
     } else {
       setFromCity("");
       setFromSuggestions([]);
       setShowFromSuggestions(false);
+      setFromLoading(false);
     }
   }, [formData.fromZip, fromInput]);
 
@@ -211,16 +250,20 @@ export default function Index() {
       lookupZip(formData.toZip).then(city => setToCity(city || ""));
       setToSuggestions([]);
       setShowToSuggestions(false);
+      setToLoading(false);
     } else if (toInput.length >= 2) {
+      setToLoading(true);
       searchLocations(toInput).then(s => {
         setToSuggestions(s);
         setShowToSuggestions(s.length > 0);
+        setToLoading(false);
       });
       setToCity("");
     } else {
       setToCity("");
       setToSuggestions([]);
       setShowToSuggestions(false);
+      setToLoading(false);
     }
   }, [formData.toZip, toInput]);
 
@@ -434,25 +477,32 @@ export default function Index() {
                                   onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
                                 />
                               </div>
-                              {showFromSuggestions && fromSuggestions.length > 0 && (
+                              {(showFromSuggestions && fromSuggestions.length > 0) || fromLoading ? (
                                 <div className="tru-zip-suggestions">
-                                  {fromSuggestions.map(s => (
-                                    <button
-                                      key={s.zip}
-                                      type="button"
-                                      className="tru-zip-suggestion"
-                                      onClick={() => {
-                                        setFormData(p => ({ ...p, fromZip: s.zip }));
-                                        setFromInput(s.zip);
-                                        setShowFromSuggestions(false);
-                                        setErrors(prev => ({ ...prev, fromZip: false }));
-                                      }}
-                                    >
-                                      <span className="tru-zip-suggestion-city">{s.display}</span>
-                                    </button>
-                                  ))}
+                                  {fromLoading ? (
+                                    <div className="tru-zip-loading">
+                                      <span className="tru-zip-loading-spinner" />
+                                      <span>Searching...</span>
+                                    </div>
+                                  ) : (
+                                    fromSuggestions.map(s => (
+                                      <button
+                                        key={s.zip}
+                                        type="button"
+                                        className="tru-zip-suggestion"
+                                        onClick={() => {
+                                          setFormData(p => ({ ...p, fromZip: s.zip }));
+                                          setFromInput(s.zip);
+                                          setShowFromSuggestions(false);
+                                          setErrors(prev => ({ ...prev, fromZip: false }));
+                                        }}
+                                      >
+                                        <span className="tru-zip-suggestion-city">{s.display}</span>
+                                      </button>
+                                    ))
+                                  )}
                                 </div>
-                              )}
+                              ) : null}
                               {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
                               {errors.fromZip && <span className="tru-field-error">Select a location</span>}
                             </div>
@@ -493,25 +543,32 @@ export default function Index() {
                                   onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
                                 />
                               </div>
-                              {showToSuggestions && toSuggestions.length > 0 && (
+                              {(showToSuggestions && toSuggestions.length > 0) || toLoading ? (
                                 <div className="tru-zip-suggestions">
-                                  {toSuggestions.map(s => (
-                                    <button
-                                      key={s.zip}
-                                      type="button"
-                                      className="tru-zip-suggestion"
-                                      onClick={() => {
-                                        setFormData(p => ({ ...p, toZip: s.zip }));
-                                        setToInput(s.zip);
-                                        setShowToSuggestions(false);
-                                        setErrors(prev => ({ ...prev, toZip: false }));
-                                      }}
-                                    >
-                                      <span className="tru-zip-suggestion-city">{s.display}</span>
-                                    </button>
-                                  ))}
+                                  {toLoading ? (
+                                    <div className="tru-zip-loading">
+                                      <span className="tru-zip-loading-spinner" />
+                                      <span>Searching...</span>
+                                    </div>
+                                  ) : (
+                                    toSuggestions.map(s => (
+                                      <button
+                                        key={s.zip}
+                                        type="button"
+                                        className="tru-zip-suggestion"
+                                        onClick={() => {
+                                          setFormData(p => ({ ...p, toZip: s.zip }));
+                                          setToInput(s.zip);
+                                          setShowToSuggestions(false);
+                                          setErrors(prev => ({ ...prev, toZip: false }));
+                                        }}
+                                      >
+                                        <span className="tru-zip-suggestion-city">{s.display}</span>
+                                      </button>
+                                    ))
+                                  )}
                                 </div>
-                              )}
+                              ) : null}
                               {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
                               {errors.toZip && <span className="tru-field-error">Select a location</span>}
                             </div>

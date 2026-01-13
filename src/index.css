@@ -795,6 +795,29 @@
   border-radius: 4px;
 }
 
+.tru-zip-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  font-size: 12px;
+  color: hsl(var(--tm-ink) / 0.6);
+}
+
+.tru-zip-loading-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  border-top-color: hsl(var(--primary));
+  border-radius: 50%;
+  animation: tru-spin 0.6s linear infinite;
+}
+
+@keyframes tru-spin {
+  to { transform: rotate(360deg); }
+}
+
 .tru-zip-city-badge {
   display: block;
   margin-top: 8px;
