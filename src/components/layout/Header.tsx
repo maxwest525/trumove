@@ -23,19 +23,23 @@ export default function Header() {
           />
         </Link>
 
-        <nav className="flex justify-center gap-[26px] flex-nowrap whitespace-nowrap min-w-0" aria-label="Primary">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={`relative no-underline text-foreground text-[19.5px] tracking-[0.08em] font-medium py-[12px] px-[6px] whitespace-nowrap uppercase transition-all duration-150 
-                ${location.pathname === item.href ? "opacity-100" : "opacity-[0.86] hover:opacity-100 hover:-translate-y-[1px]"}
-                after:content-[''] after:absolute after:left-[4px] after:right-[4px] after:bottom-[6px] after:h-[2px] after:rounded-[2px] after:bg-primary after:origin-left after:transition-transform after:duration-[180ms]
-                ${location.pathname === item.href ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}
-              `}
-            >
-              {item.label}
-            </Link>
+        <nav className="flex justify-center items-center gap-[8px] flex-nowrap whitespace-nowrap min-w-0" aria-label="Primary">
+          {NAV.map((item, idx) => (
+            <div key={item.href} className="flex items-center gap-[8px]">
+              <Link
+                to={item.href}
+                className={`relative no-underline text-foreground text-[19.5px] tracking-[0.08em] font-medium py-[12px] px-[6px] whitespace-nowrap uppercase transition-all duration-150 
+                  ${location.pathname === item.href ? "opacity-100" : "opacity-[0.86] hover:opacity-100 hover:-translate-y-[1px]"}
+                  after:content-[''] after:absolute after:left-[4px] after:right-[4px] after:bottom-[6px] after:h-[2px] after:rounded-[2px] after:bg-primary after:origin-left after:transition-transform after:duration-[180ms]
+                  ${location.pathname === item.href ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}
+                `}
+              >
+                {item.label}
+              </Link>
+              {idx < NAV.length - 1 && (
+                <span className="w-[1px] h-[18px] bg-gradient-to-b from-transparent via-primary/40 to-transparent" />
+              )}
+            </div>
           ))}
         </nav>
 
