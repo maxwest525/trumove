@@ -7,15 +7,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import logo from "@/assets/logo.png";
 import { cn } from "@/lib/utils";
+import MoveMap from "@/components/MoveMap";
 
-// Format date with ordinal suffix (Jan 1st, 2026)
-const formatDateWithOrdinal = (date: Date) => {
-  const day = date.getDate();
-  const suffix = day === 1 || day === 21 || day === 31 ? 'st'
-    : day === 2 || day === 22 ? 'nd'
-    : day === 3 || day === 23 ? 'rd'
-    : 'th';
-  return format(date, `MMM d`) + suffix + format(date, `, yyyy`);
+// Format date as MM/DD/YY
+const formatShortDate = (date: Date) => {
+  return format(date, "MM/dd/yy");
 };
 
 // Expanded ZIP to city lookup for common US cities
@@ -448,170 +444,172 @@ export default function Index() {
                     {/* STEP 1: Location & Date */}
                     {currentStep === 1 && (
                       <div className="tru-form-step">
-                        {/* ZIP Codes Side by Side with Route Line Between */}
-                        <div className="tru-zip-row">
-                          {/* From Location */}
-                          <div className="tru-input-group tru-zip-group">
-                            <label className="tru-input-label">Moving from</label>
-                            <div className="tru-zip-field">
-                              <div className={cn("tru-input-wrapper", errors.fromZip && "is-error")}>
-                                <input 
-                                  ref={fromInputRef}
-                                  type="text" 
-                                  className="tru-input"
-                                  placeholder="ZIP or City"
-                                  value={zipOk(formData.fromZip) ? formData.fromZip : fromInput}
-                                  onChange={e => {
-                                    const val = e.target.value;
-                                    const isNumeric = /^\d+$/.test(val);
-                                    if (isNumeric) {
-                                      const numVal = val.slice(0, 5);
-                                      setFormData(p => ({ ...p, fromZip: numVal }));
-                                      setFromInput(numVal);
-                                      if (zipOk(numVal)) setErrors(prev => ({ ...prev, fromZip: false }));
-                                    } else {
-                                      setFromInput(val);
-                                      setFormData(p => ({ ...p, fromZip: "" }));
-                                    }
-                                  }}
-                                  onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
-                                />
-                              </div>
-                              {(showFromSuggestions && fromSuggestions.length > 0) || fromLoading ? (
-                                <div className="tru-zip-suggestions">
-                                  {fromLoading ? (
-                                    <div className="tru-zip-loading">
-                                      <span className="tru-zip-loading-spinner" />
-                                      <span>Searching...</span>
+                        {/* Two Column Layout: Fields + Map */}
+                        <div className="tru-step1-layout">
+                          {/* Left Column: Stacked Fields */}
+                          <div className="tru-step1-fields">
+                            {/* From Location */}
+                            <div className="tru-zip-compact">
+                              <div className="tru-input-group tru-zip-group">
+                                <label className="tru-input-label">Move from</label>
+                                <div className="tru-zip-field">
+                                  <div className={cn("tru-input-wrapper", errors.fromZip && "is-error")}>
+                                    <input 
+                                      ref={fromInputRef}
+                                      type="text" 
+                                      className="tru-input"
+                                      placeholder="ZIP or City"
+                                      value={zipOk(formData.fromZip) ? formData.fromZip : fromInput}
+                                      onChange={e => {
+                                        const val = e.target.value;
+                                        const isNumeric = /^\d+$/.test(val);
+                                        if (isNumeric) {
+                                          const numVal = val.slice(0, 5);
+                                          setFormData(p => ({ ...p, fromZip: numVal }));
+                                          setFromInput(numVal);
+                                          if (zipOk(numVal)) setErrors(prev => ({ ...prev, fromZip: false }));
+                                        } else {
+                                          setFromInput(val);
+                                          setFormData(p => ({ ...p, fromZip: "" }));
+                                        }
+                                      }}
+                                      onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
+                                    />
+                                  </div>
+                                  {(showFromSuggestions && fromSuggestions.length > 0) || fromLoading ? (
+                                    <div className="tru-zip-suggestions">
+                                      {fromLoading ? (
+                                        <div className="tru-zip-loading">
+                                          <span className="tru-zip-loading-spinner" />
+                                          <span>Searching...</span>
+                                        </div>
+                                      ) : (
+                                        fromSuggestions.map(s => (
+                                          <button
+                                            key={s.zip}
+                                            type="button"
+                                            className="tru-zip-suggestion"
+                                            onClick={() => {
+                                              setFormData(p => ({ ...p, fromZip: s.zip }));
+                                              setFromInput(s.zip);
+                                              setShowFromSuggestions(false);
+                                              setErrors(prev => ({ ...prev, fromZip: false }));
+                                            }}
+                                          >
+                                            <span className="tru-zip-suggestion-city">{s.display}</span>
+                                          </button>
+                                        ))
+                                      )}
                                     </div>
-                                  ) : (
-                                    fromSuggestions.map(s => (
-                                      <button
-                                        key={s.zip}
-                                        type="button"
-                                        className="tru-zip-suggestion"
-                                        onClick={() => {
-                                          setFormData(p => ({ ...p, fromZip: s.zip }));
-                                          setFromInput(s.zip);
-                                          setShowFromSuggestions(false);
-                                          setErrors(prev => ({ ...prev, fromZip: false }));
-                                        }}
-                                      >
-                                        <span className="tru-zip-suggestion-city">{s.display}</span>
-                                      </button>
-                                    ))
-                                  )}
+                                  ) : null}
+                                  {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
+                                  {errors.fromZip && <span className="tru-field-error">Select a location</span>}
                                 </div>
-                              ) : null}
-                              {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
-                              {errors.fromZip && <span className="tru-field-error">Select a location</span>}
+                              </div>
+
+                              {/* To Location */}
+                              <div className="tru-input-group tru-zip-group">
+                                <label className="tru-input-label">Move to</label>
+                                <div className="tru-zip-field">
+                                  <div className={cn("tru-input-wrapper", errors.toZip && "is-error")}>
+                                    <input 
+                                      ref={toInputRef}
+                                      type="text" 
+                                      className="tru-input"
+                                      placeholder="ZIP or City"
+                                      value={zipOk(formData.toZip) ? formData.toZip : toInput}
+                                      onChange={e => {
+                                        const val = e.target.value;
+                                        const isNumeric = /^\d+$/.test(val);
+                                        if (isNumeric) {
+                                          const numVal = val.slice(0, 5);
+                                          setFormData(p => ({ ...p, toZip: numVal }));
+                                          setToInput(numVal);
+                                          if (zipOk(numVal)) setErrors(prev => ({ ...prev, toZip: false }));
+                                        } else {
+                                          setToInput(val);
+                                          setFormData(p => ({ ...p, toZip: "" }));
+                                        }
+                                      }}
+                                      onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
+                                    />
+                                  </div>
+                                  {(showToSuggestions && toSuggestions.length > 0) || toLoading ? (
+                                    <div className="tru-zip-suggestions">
+                                      {toLoading ? (
+                                        <div className="tru-zip-loading">
+                                          <span className="tru-zip-loading-spinner" />
+                                          <span>Searching...</span>
+                                        </div>
+                                      ) : (
+                                        toSuggestions.map(s => (
+                                          <button
+                                            key={s.zip}
+                                            type="button"
+                                            className="tru-zip-suggestion"
+                                            onClick={() => {
+                                              setFormData(p => ({ ...p, toZip: s.zip }));
+                                              setToInput(s.zip);
+                                              setShowToSuggestions(false);
+                                              setErrors(prev => ({ ...prev, toZip: false }));
+                                            }}
+                                          >
+                                            <span className="tru-zip-suggestion-city">{s.display}</span>
+                                          </button>
+                                        ))
+                                      )}
+                                    </div>
+                                  ) : null}
+                                  {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
+                                  {errors.toZip && <span className="tru-field-error">Select a location</span>}
+                                </div>
+                              </div>
+
+                              {/* Date Picker */}
+                              <div className="tru-input-group tru-date-compact">
+                                <label className="tru-input-label">Move date</label>
+                                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                                  <PopoverTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className={cn(
+                                        "tru-date-input",
+                                        errors.moveDate && "is-error",
+                                        !formData.moveDate && "is-placeholder"
+                                      )}
+                                    >
+                                      <CalendarIcon className="tru-date-icon" />
+                                      <span>
+                                        {formData.moveDate 
+                                          ? formatShortDate(formData.moveDate)
+                                          : "MM/DD/YY"
+                                        }
+                                      </span>
+                                    </button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="tru-date-popover" align="start">
+                                    <CalendarComponent
+                                      mode="single"
+                                      selected={formData.moveDate || undefined}
+                                      onSelect={(date) => {
+                                        setFormData(p => ({ ...p, moveDate: date || null }));
+                                        if (date) setErrors(prev => ({ ...prev, moveDate: false }));
+                                        setDatePopoverOpen(false);
+                                      }}
+                                      disabled={(date) => date < new Date()}
+                                      className="tru-calendar-popup pointer-events-auto"
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                {errors.moveDate && <span className="tru-field-error">Please select a move date</span>}
+                              </div>
                             </div>
                           </div>
 
-                          {/* Route Line Between ZIPs */}
-                          <div className={cn("tru-route-connector", bothZipsValid && "is-visible")}>
-                            <span className="tru-route-dot"></span>
-                            <span className="tru-route-dashes"></span>
-                            <span className="tru-route-arrow">→</span>
-                            <span className="tru-route-dot"></span>
+                          {/* Right Column: Map */}
+                          <div className="tru-step1-map">
+                            <MoveMap fromZip={formData.fromZip} toZip={formData.toZip} />
                           </div>
-
-                          {/* To Location */}
-                          <div className="tru-input-group tru-zip-group">
-                            <label className="tru-input-label">Moving to</label>
-                            <div className="tru-zip-field">
-                              <div className={cn("tru-input-wrapper", errors.toZip && "is-error")}>
-                                <input 
-                                  ref={toInputRef}
-                                  type="text" 
-                                  className="tru-input"
-                                  placeholder="ZIP or City"
-                                  value={zipOk(formData.toZip) ? formData.toZip : toInput}
-                                  onChange={e => {
-                                    const val = e.target.value;
-                                    const isNumeric = /^\d+$/.test(val);
-                                    if (isNumeric) {
-                                      const numVal = val.slice(0, 5);
-                                      setFormData(p => ({ ...p, toZip: numVal }));
-                                      setToInput(numVal);
-                                      if (zipOk(numVal)) setErrors(prev => ({ ...prev, toZip: false }));
-                                    } else {
-                                      setToInput(val);
-                                      setFormData(p => ({ ...p, toZip: "" }));
-                                    }
-                                  }}
-                                  onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
-                                />
-                              </div>
-                              {(showToSuggestions && toSuggestions.length > 0) || toLoading ? (
-                                <div className="tru-zip-suggestions">
-                                  {toLoading ? (
-                                    <div className="tru-zip-loading">
-                                      <span className="tru-zip-loading-spinner" />
-                                      <span>Searching...</span>
-                                    </div>
-                                  ) : (
-                                    toSuggestions.map(s => (
-                                      <button
-                                        key={s.zip}
-                                        type="button"
-                                        className="tru-zip-suggestion"
-                                        onClick={() => {
-                                          setFormData(p => ({ ...p, toZip: s.zip }));
-                                          setToInput(s.zip);
-                                          setShowToSuggestions(false);
-                                          setErrors(prev => ({ ...prev, toZip: false }));
-                                        }}
-                                      >
-                                        <span className="tru-zip-suggestion-city">{s.display}</span>
-                                      </button>
-                                    ))
-                                  )}
-                                </div>
-                              ) : null}
-                              {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
-                              {errors.toZip && <span className="tru-field-error">Select a location</span>}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Date Picker with Popover */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Move Date</label>
-                          <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                            <PopoverTrigger asChild>
-                              <button
-                                type="button"
-                                className={cn(
-                                  "tru-date-input",
-                                  errors.moveDate && "is-error",
-                                  !formData.moveDate && "is-placeholder"
-                                )}
-                              >
-                                <CalendarIcon className="tru-date-icon" />
-                                <span>
-                                  {formData.moveDate 
-                                    ? formatDateWithOrdinal(formData.moveDate)
-                                    : "Select a date..."
-                                  }
-                                </span>
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="tru-date-popover" align="start">
-                              <CalendarComponent
-                                mode="single"
-                                selected={formData.moveDate || undefined}
-                                onSelect={(date) => {
-                                  setFormData(p => ({ ...p, moveDate: date || null }));
-                                  if (date) setErrors(prev => ({ ...prev, moveDate: false }));
-                                  setDatePopoverOpen(false);
-                                }}
-                                disabled={(date) => date < new Date()}
-                                className="tru-calendar-popup pointer-events-auto"
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          {errors.moveDate && <span className="tru-field-error">Please select a move date</span>}
                         </div>
 
                         <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
@@ -814,7 +812,7 @@ export default function Index() {
                               </div>
                               <div className="tru-summary-row">
                                 <CalendarIcon className="tru-summary-icon-dark" />
-                                <span>{formData.moveDate ? formatDateWithOrdinal(formData.moveDate) : "Date not set"}</span>
+                                <span>{formData.moveDate ? formatShortDate(formData.moveDate) : "Date not set"}</span>
                               </div>
                               <div className="tru-summary-badges">
                                 <span className="tru-summary-badge">
