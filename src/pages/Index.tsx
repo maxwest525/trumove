@@ -486,50 +486,50 @@ export default function Index() {
 
                         {/* Vehicle Toggle */}
                         <div className="tru-input-group">
-                          <div className="tru-toggle-row">
-                            <Car className="tru-toggle-label-icon" />
-                            <label className="tru-input-label">Vehicle shipping?</label>
-                          </div>
-                          <div className={`tru-toggle-group ${errors.hasCar ? "is-error" : ""}`}>
-                            <button 
-                              type="button"
-                              className={cn("tru-toggle-btn", formData.hasCar === true && "is-active")}
-                              onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
-                            >
-                              <span>Yes</span>
-                            </button>
-                            <button 
-                              type="button"
-                              className={cn("tru-toggle-btn", formData.hasCar === false && "is-active")}
-                              onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
-                            >
-                              <span>No</span>
-                            </button>
+                          <label className="tru-input-label">Vehicle shipping?</label>
+                          <div className="tru-toggle-with-icon">
+                            <div className={`tru-toggle-group tru-toggle-wide ${errors.hasCar ? "is-error" : ""}`}>
+                              <button 
+                                type="button"
+                                className={cn("tru-toggle-btn", formData.hasCar === true && "is-active")}
+                                onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
+                              >
+                                <span>Yes</span>
+                              </button>
+                              <button 
+                                type="button"
+                                className={cn("tru-toggle-btn", formData.hasCar === false && "is-active")}
+                                onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
+                              >
+                                <span>No</span>
+                              </button>
+                            </div>
+                            <Car className="tru-toggle-side-icon" />
                           </div>
                         </div>
                         {errors.hasCar && <span className="tru-field-error">Please select an option</span>}
 
                         {/* Packing Toggle */}
                         <div className="tru-input-group">
-                          <div className="tru-toggle-row">
-                            <Package className="tru-toggle-label-icon" />
-                            <label className="tru-input-label">Need packing help?</label>
-                          </div>
-                          <div className={`tru-toggle-group ${errors.needsPacking ? "is-error" : ""}`}>
-                            <button 
-                              type="button"
-                              className={cn("tru-toggle-btn", formData.needsPacking === true && "is-active")}
-                              onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
-                            >
-                              <span>Yes</span>
-                            </button>
-                            <button 
-                              type="button"
-                              className={cn("tru-toggle-btn", formData.needsPacking === false && "is-active")}
-                              onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
-                            >
-                              <span>No</span>
-                            </button>
+                          <label className="tru-input-label">Need packing help?</label>
+                          <div className="tru-toggle-with-icon">
+                            <div className={`tru-toggle-group tru-toggle-wide ${errors.needsPacking ? "is-error" : ""}`}>
+                              <button 
+                                type="button"
+                                className={cn("tru-toggle-btn", formData.needsPacking === true && "is-active")}
+                                onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
+                              >
+                                <span>Yes</span>
+                              </button>
+                              <button 
+                                type="button"
+                                className={cn("tru-toggle-btn", formData.needsPacking === false && "is-active")}
+                                onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
+                              >
+                                <span>No</span>
+                              </button>
+                            </div>
+                            <Package className="tru-toggle-side-icon" />
                           </div>
                         </div>
                         {errors.needsPacking && <span className="tru-field-error">Please select an option</span>}
