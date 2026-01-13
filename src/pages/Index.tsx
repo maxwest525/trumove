@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Phone, Video, ArrowRight, ChevronLeft, Calendar, Check, Truck } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package, Sparkles, Users, Zap } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import logo from "@/assets/logo.png";
+import { cn } from "@/lib/utils";
 
 // Simple ZIP to city lookup for common US cities
 const ZIP_LOOKUP: Record<string, string> = {
@@ -31,11 +31,13 @@ const ZIP_LOOKUP: Record<string, string> = {
   "48201": "Detroit, MI",
 };
 
+interface ZipSuggestion {
+  zip: string;
+  city: string;
+}
+
 async function lookupZip(zip: string): Promise<string | null> {
-  // First check local lookup
   if (ZIP_LOOKUP[zip]) return ZIP_LOOKUP[zip];
-  
-  // Try API
   try {
     const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
     if (res.ok) {
@@ -45,6 +47,26 @@ async function lookupZip(zip: string): Promise<string | null> {
   } catch {}
   return null;
 }
+
+async function searchZipSuggestions(partial: string): Promise<ZipSuggestion[]> {
+  const suggestions: ZipSuggestion[] = [];
+  // Search local lookup for matches
+  for (const [zip, city] of Object.entries(ZIP_LOOKUP)) {
+    if (zip.startsWith(partial)) {
+      suggestions.push({ zip, city });
+    }
+  }
+  return suggestions.slice(0, 4);
+}
+
+const MOVE_SIZES = [
+  { value: "Studio", label: "Studio" },
+  { value: "1 Bedroom", label: "1 Bed" },
+  { value: "2 Bedroom", label: "2 Bed" },
+  { value: "3 Bedroom", label: "3 Bed" },
+  { value: "4+ Bedroom", label: "4+ Bed" },
+  { value: "Office", label: "Office" },
+];
 
 export default function Index() {
   const navigate = useNavigate();
@@ -56,30 +78,70 @@ export default function Index() {
   });
   const [fromCity, setFromCity] = useState("");
   const [toCity, setToCity] = useState("");
+  const [fromSuggestions, setFromSuggestions] = useState<ZipSuggestion[]>([]);
+  const [toSuggestions, setToSuggestions] = useState<ZipSuggestion[]>([]);
+  const [showFromSuggestions, setShowFromSuggestions] = useState(false);
+  const [showToSuggestions, setShowToSuggestions] = useState(false);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [formError, setFormError] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
+  const fromInputRef = useRef<HTMLInputElement>(null);
+  const toInputRef = useRef<HTMLInputElement>(null);
 
   const zipOk = (z: string) => /^\d{5}$/.test(z.trim());
   const phoneOk = (p: string) => (p.replace(/\D/g, "")).length >= 10;
   const emailOk = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
-  // ZIP lookup effect
+  // ZIP lookup and suggestions effect
   useEffect(() => {
     if (zipOk(formData.fromZip)) {
       lookupZip(formData.fromZip).then(city => setFromCity(city || ""));
+      setFromSuggestions([]);
+      setShowFromSuggestions(false);
+    } else if (formData.fromZip.length >= 3) {
+      searchZipSuggestions(formData.fromZip).then(s => {
+        setFromSuggestions(s);
+        setShowFromSuggestions(s.length > 0);
+      });
+      setFromCity("");
     } else {
       setFromCity("");
+      setFromSuggestions([]);
+      setShowFromSuggestions(false);
     }
   }, [formData.fromZip]);
 
   useEffect(() => {
     if (zipOk(formData.toZip)) {
       lookupZip(formData.toZip).then(city => setToCity(city || ""));
+      setToSuggestions([]);
+      setShowToSuggestions(false);
+    } else if (formData.toZip.length >= 3) {
+      searchZipSuggestions(formData.toZip).then(s => {
+        setToSuggestions(s);
+        setShowToSuggestions(s.length > 0);
+      });
+      setToCity("");
     } else {
       setToCity("");
+      setToSuggestions([]);
+      setShowToSuggestions(false);
     }
   }, [formData.toZip]);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (fromInputRef.current && !fromInputRef.current.parentElement?.contains(e.target as Node)) {
+        setShowFromSuggestions(false);
+      }
+      if (toInputRef.current && !toInputRef.current.parentElement?.contains(e.target as Node)) {
+        setShowToSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const validateStep1 = () => {
     const newErrors: Record<string, boolean> = {};
@@ -155,7 +217,6 @@ export default function Index() {
       ts: Date.now() 
     }));
     
-    // Navigate based on intent
     if (intent === "specialist") {
       window.location.href = "tel:+18001234567";
     } else if (intent === "virtual") {
@@ -191,21 +252,13 @@ export default function Index() {
                     <span>See how TruMove works</span><span className="chevron">→</span>
                   </button>
                 </div>
-                <div className="tru-hero-trustbar">
-                  {[{code:"USDOT",label:"USDOT Compliant"},{code:"BOND",label:"Bonded and Insured"},{code:"FMCSA",label:"FMCSA Authorized Carriers"},{code:"BRKR",label:"Licensed Interstate Broker"}].map(t => (
-                    <div key={t.code} className="tru-hero-trustitem">
-                      <span className="tru-hero-trustseal" data-code={t.code}></span>
-                      <span className="tru-hero-trustlabel">{t.label}</span>
-                    </div>
-                  ))}
-                </div>
                 <div className="tru-hero-note">No hidden fees, no endless phone calls, just one clean dashboard for your whole move.</div>
               </div>
 
-              {/* PREMIUM WIZARD CONSOLE - Light Theme with Dark Accents */}
+              {/* PREMIUM WIZARD CONSOLE - Narrow & Tall */}
               <div className="tru-hero-visual">
                 <div className="tru-form-card">
-                  {/* Header with Logo */}
+                  {/* Header with Logo and Trust Pills */}
                   <div className="tru-form-header">
                     <div className="tru-form-header-top">
                       <img src={logo} alt="TruMove" className="tru-form-logo" />
@@ -215,12 +268,26 @@ export default function Index() {
                       </div>
                     </div>
                     <div className="tru-form-title-block">
-                      <h2 className="tru-form-title">Get Your Quote</h2>
-                      <p className="tru-form-subtitle">AI-powered estimates • Smart carrier matching</p>
+                      <h2 className="tru-form-title">Start Your Move</h2>
+                      <p className="tru-form-subtitle">Enter your move details below</p>
+                    </div>
+                    <div className="tru-form-trust-pills">
+                      <span className="tru-trust-pill">
+                        <Sparkles className="w-3 h-3" />
+                        <span>AI-Powered</span>
+                      </span>
+                      <span className="tru-trust-pill">
+                        <Users className="w-3 h-3" />
+                        <span>Vetted Carriers</span>
+                      </span>
+                      <span className="tru-trust-pill">
+                        <Zap className="w-3 h-3" />
+                        <span>Instant Estimate</span>
+                      </span>
                     </div>
                   </div>
 
-                  {/* Refined Progress Bar */}
+                  {/* Refined Progress Stepper */}
                   <div className="tru-stepper">
                     {stepLabels.map((label, idx) => (
                       <div key={label} className={`tru-stepper-step ${currentStep > idx + 1 ? "is-done" : ""} ${currentStep === idx + 1 ? "is-current" : ""}`}>
@@ -238,66 +305,98 @@ export default function Index() {
                     {/* STEP 1: Location & Date */}
                     {currentStep === 1 && (
                       <div className="tru-form-step">
-                        <div className="tru-input-row">
-                          <div className="tru-input-group">
-                            <label className="tru-input-label">Moving From</label>
-                            <div className={`tru-input-wrapper ${errors.fromZip ? "is-error" : ""} ${fromCity ? "has-city" : ""}`}>
+                        {/* From ZIP with suggestions */}
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Moving From</label>
+                          <div className="tru-zip-field">
+                            <div className={`tru-input-wrapper ${errors.fromZip ? "is-error" : ""}`}>
                               <input 
+                                ref={fromInputRef}
                                 type="text" 
                                 className="tru-input"
-                                placeholder="ZIP code"
+                                placeholder="90210"
                                 value={formData.fromZip}
                                 onChange={e => setFormData(p => ({ ...p, fromZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
                                 maxLength={5}
                               />
-                              {fromCity && <span className="tru-input-city">{fromCity}</span>}
                             </div>
-                          </div>
-
-                          <div className="tru-input-group">
-                            <label className="tru-input-label">Moving To</label>
-                            <div className={`tru-input-wrapper ${errors.toZip ? "is-error" : ""} ${toCity ? "has-city" : ""}`}>
-                              <input 
-                                type="text" 
-                                className="tru-input"
-                                placeholder="ZIP code"
-                                value={formData.toZip}
-                                onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
-                                maxLength={5}
-                              />
-                              {toCity && <span className="tru-input-city">{toCity}</span>}
-                            </div>
+                            {showFromSuggestions && fromSuggestions.length > 0 && (
+                              <div className="tru-zip-suggestions">
+                                {fromSuggestions.map(s => (
+                                  <button
+                                    key={s.zip}
+                                    type="button"
+                                    className="tru-zip-suggestion"
+                                    onClick={() => {
+                                      setFormData(p => ({ ...p, fromZip: s.zip }));
+                                      setShowFromSuggestions(false);
+                                    }}
+                                  >
+                                    <span className="tru-zip-suggestion-city">{s.city}</span>
+                                    <span className="tru-zip-suggestion-zip">{s.zip}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                            {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
                           </div>
                         </div>
 
+                        {/* To ZIP with suggestions */}
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Moving To</label>
+                          <div className="tru-zip-field">
+                            <div className={`tru-input-wrapper ${errors.toZip ? "is-error" : ""}`}>
+                              <input 
+                                ref={toInputRef}
+                                type="text" 
+                                className="tru-input"
+                                placeholder="10001"
+                                value={formData.toZip}
+                                onChange={e => setFormData(p => ({ ...p, toZip: e.target.value.replace(/\D/g, "").slice(0, 5) }))}
+                                onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
+                                maxLength={5}
+                              />
+                            </div>
+                            {showToSuggestions && toSuggestions.length > 0 && (
+                              <div className="tru-zip-suggestions">
+                                {toSuggestions.map(s => (
+                                  <button
+                                    key={s.zip}
+                                    type="button"
+                                    className="tru-zip-suggestion"
+                                    onClick={() => {
+                                      setFormData(p => ({ ...p, toZip: s.zip }));
+                                      setShowToSuggestions(false);
+                                    }}
+                                  >
+                                    <span className="tru-zip-suggestion-city">{s.city}</span>
+                                    <span className="tru-zip-suggestion-zip">{s.zip}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                            {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
+                          </div>
+                        </div>
+
+                        {/* Inline Calendar */}
                         <div className="tru-input-group">
                           <label className="tru-input-label">Move Date</label>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button 
-                                type="button"
-                                className={`tru-input-wrapper tru-date-trigger ${errors.moveDate ? "is-error" : ""}`}
-                              >
-                                <Calendar className="tru-input-icon" />
-                                <span className={formData.moveDate ? "tru-date-value" : "tru-date-placeholder"}>
-                                  {formData.moveDate ? format(formData.moveDate, "MMM d, yyyy") : "Select date"}
-                                </span>
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <CalendarComponent
-                                mode="single"
-                                selected={formData.moveDate || undefined}
-                                onSelect={(date) => setFormData(p => ({ ...p, moveDate: date || null }))}
-                                disabled={(date) => date < new Date()}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
+                          <div className={`tru-calendar-inline ${errors.moveDate ? "is-error" : ""}`}>
+                            <CalendarComponent
+                              mode="single"
+                              selected={formData.moveDate || undefined}
+                              onSelect={(date) => setFormData(p => ({ ...p, moveDate: date || null }))}
+                              disabled={(date) => date < new Date()}
+                              className="tru-calendar"
+                            />
+                          </div>
                         </div>
 
                         <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
-                          <span>Continue</span>
+                          <span>Tell Us About Your Load</span>
                           <ArrowRight className="tru-btn-icon" />
                         </button>
                       </div>
@@ -306,65 +405,64 @@ export default function Index() {
                     {/* STEP 2: Move Details */}
                     {currentStep === 2 && (
                       <div className="tru-form-step">
+                        {/* Move Size Grid */}
                         <div className="tru-input-group">
                           <label className="tru-input-label">Move Size</label>
-                          <div className={`tru-input-wrapper tru-select-wrapper ${errors.size ? "is-error" : ""}`}>
-                            <select 
-                              className="tru-input tru-select"
-                              value={formData.size}
-                              onChange={e => setFormData(p => ({ ...p, size: e.target.value }))}
-                            >
-                              <option value="" disabled>Choose size</option>
-                              <option value="Studio">Studio</option>
-                              <option value="1 Bedroom">1 Bedroom</option>
-                              <option value="2 Bedroom">2 Bedroom</option>
-                              <option value="3 Bedroom">3 Bedroom</option>
-                              <option value="4+ Bedroom">4+ Bedroom</option>
-                              <option value="Office">Office / Commercial</option>
-                            </select>
+                          <div className={`tru-size-grid ${errors.size ? "is-error" : ""}`}>
+                            {MOVE_SIZES.map(size => (
+                              <button
+                                key={size.value}
+                                type="button"
+                                className={cn("tru-size-btn", formData.size === size.value && "is-selected")}
+                                onClick={() => setFormData(p => ({ ...p, size: size.value }))}
+                              >
+                                {formData.size === size.value && <Check className="tru-size-check" />}
+                                <span>{size.label}</span>
+                              </button>
+                            ))}
                           </div>
                         </div>
 
+                        {/* Vehicle Toggle */}
                         <div className="tru-input-group">
-                          <label className="tru-input-label">Shipping a vehicle?</label>
-                          <div className={`tru-choice-group ${errors.hasCar ? "is-error" : ""}`}>
+                          <label className="tru-input-label">Include vehicle shipping?</label>
+                          <div className={`tru-toggle-group ${errors.hasCar ? "is-error" : ""}`}>
                             <button 
                               type="button"
-                              className={`tru-choice-btn ${formData.hasCar === true ? "is-active" : ""}`}
+                              className={cn("tru-toggle-btn", formData.hasCar === true && "is-active")}
                               onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
                             >
-                              <span className="tru-choice-check">{formData.hasCar === true && <Check />}</span>
-                              <span>Yes, include vehicle</span>
+                              <Car className="tru-toggle-icon" />
+                              <span>Yes</span>
                             </button>
                             <button 
                               type="button"
-                              className={`tru-choice-btn ${formData.hasCar === false ? "is-active" : ""}`}
+                              className={cn("tru-toggle-btn", formData.hasCar === false && "is-active")}
                               onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
                             >
-                              <span className="tru-choice-check">{formData.hasCar === false && <Check />}</span>
-                              <span>No vehicle</span>
+                              <span>No</span>
                             </button>
                           </div>
                         </div>
 
+                        {/* Packing Toggle */}
                         <div className="tru-input-group">
-                          <label className="tru-input-label">Need packing services?</label>
-                          <div className={`tru-choice-group ${errors.needsPacking ? "is-error" : ""}`}>
+                          <label className="tru-input-label">Need packing help?</label>
+                          <div className={`tru-toggle-group ${errors.needsPacking ? "is-error" : ""}`}>
                             <button 
                               type="button"
-                              className={`tru-choice-btn ${formData.needsPacking === true ? "is-active" : ""}`}
+                              className={cn("tru-toggle-btn", formData.needsPacking === true && "is-active")}
                               onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
                             >
-                              <span className="tru-choice-check">{formData.needsPacking === true && <Check />}</span>
-                              <span>Yes, help me pack</span>
+                              <Package className="tru-toggle-icon" />
+                              <span>Yes</span>
                             </button>
                             <button 
                               type="button"
-                              className={`tru-choice-btn ${formData.needsPacking === false ? "is-active" : ""}`}
+                              className={cn("tru-toggle-btn", formData.needsPacking === false && "is-active")}
                               onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
                             >
-                              <span className="tru-choice-check">{formData.needsPacking === false && <Check />}</span>
-                              <span>I'll pack myself</span>
+                              <span>No</span>
                             </button>
                           </div>
                         </div>
@@ -385,31 +483,29 @@ export default function Index() {
                     {/* STEP 3: Contact & Intent */}
                     {currentStep === 3 && (
                       <div className="tru-form-step">
-                        <div className="tru-input-row">
-                          <div className="tru-input-group">
-                            <label className="tru-input-label">Email</label>
-                            <div className={`tru-input-wrapper ${errors.email ? "is-error" : ""}`}>
-                              <input 
-                                type="email" 
-                                className="tru-input"
-                                placeholder="you@email.com"
-                                value={formData.email}
-                                onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-                              />
-                            </div>
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Email</label>
+                          <div className={`tru-input-wrapper ${errors.email ? "is-error" : ""}`}>
+                            <input 
+                              type="email" 
+                              className="tru-input"
+                              placeholder="you@email.com"
+                              value={formData.email}
+                              onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
+                            />
                           </div>
+                        </div>
 
-                          <div className="tru-input-group">
-                            <label className="tru-input-label">Phone</label>
-                            <div className={`tru-input-wrapper ${errors.phone ? "is-error" : ""}`}>
-                              <input 
-                                type="tel" 
-                                className="tru-input"
-                                placeholder="(555) 123-4567"
-                                value={formData.phone}
-                                onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
-                              />
-                            </div>
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Phone</label>
+                          <div className={`tru-input-wrapper ${errors.phone ? "is-error" : ""}`}>
+                            <input 
+                              type="tel" 
+                              className="tru-input"
+                              placeholder="(555) 123-4567"
+                              value={formData.phone}
+                              onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
+                            />
                           </div>
                         </div>
 
@@ -432,7 +528,6 @@ export default function Index() {
                             </button>
                           </div>
                           <button type="button" className="tru-btn tru-btn-builder" onClick={() => handleIntent("builder")}>
-                            <Truck className="tru-btn-icon-left" />
                             <span>Build My Move Online</span>
                             <ArrowRight className="tru-btn-icon" />
                           </button>
