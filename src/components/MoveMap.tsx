@@ -410,13 +410,22 @@ export default function MoveMap({ fromZip, toZip }: MoveMapProps) {
           className="move-map-bg-image"
         />
         
-        {/* Arc path */}
+        {/* Arc path with background trail */}
         {arcPath && (
-          <path
-            d={arcPath}
-            className="move-map-arc"
-            fill="none"
-          />
+          <>
+            {/* Background glow trail */}
+            <path
+              d={arcPath}
+              className="move-map-arc-bg"
+              fill="none"
+            />
+            {/* Animated dashed foreground */}
+            <path
+              d={arcPath}
+              className="move-map-arc"
+              fill="none"
+            />
+          </>
         )}
         
         {/* From marker */}
