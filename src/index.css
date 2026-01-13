@@ -549,6 +549,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  margin-bottom: 12px;
 }
 
 .tru-input-label {
@@ -1072,6 +1073,12 @@
   height: 24px;
   color: hsl(var(--tm-ink) / 0.25);
   flex-shrink: 0;
+  transition: color 200ms ease, opacity 200ms ease;
+}
+
+.tru-toggle-side-icon.active {
+  color: hsl(var(--tm-ink));
+  opacity: 1;
 }
 
 /* Large Toggle Complete Icons - Fill Dead Space */
