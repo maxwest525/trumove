@@ -410,7 +410,7 @@ export default function MoveMap({ fromZip, toZip }: MoveMapProps) {
           className="move-map-bg-image"
         />
         
-        {/* Arc path with background trail */}
+        {/* Arc path with background trail and traveling truck */}
         {arcPath && (
           <>
             {/* Background glow trail */}
@@ -425,6 +425,22 @@ export default function MoveMap({ fromZip, toZip }: MoveMapProps) {
               className="move-map-arc"
               fill="none"
             />
+            {/* Traveling truck icon */}
+            <g className="move-map-truck">
+              <animateMotion
+                dur="4s"
+                repeatCount="indefinite"
+                path={arcPath}
+                rotate="auto"
+              />
+              {/* Truck SVG scaled and centered */}
+              <g transform="translate(-10, -10) scale(0.85)">
+                <rect x="1" y="3" width="15" height="13" rx="2" fill="hsl(var(--tm-ink))" />
+                <path d="M16 8h4l3 4v5h-7V8z" fill="hsl(var(--tm-ink))" />
+                <circle cx="5.5" cy="18.5" r="2.5" fill="hsl(var(--background))" stroke="hsl(var(--tm-ink))" strokeWidth="1.5" />
+                <circle cx="18.5" cy="18.5" r="2.5" fill="hsl(var(--background))" stroke="hsl(var(--tm-ink))" strokeWidth="1.5" />
+              </g>
+            </g>
           </>
         )}
         
