@@ -272,7 +272,7 @@
 .tru-form-card {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 540px;
   border-radius: 20px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
@@ -280,7 +280,7 @@
     0 1px 3px hsl(var(--tm-ink) / 0.04),
     0 12px 40px hsl(var(--tm-ink) / 0.08),
     0 0 0 1px hsl(var(--tm-ink) / 0.02);
-  padding: 24px;
+  padding: 32px;
   overflow: hidden;
 }
 
