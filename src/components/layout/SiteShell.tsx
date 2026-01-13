@@ -11,9 +11,11 @@ interface SiteShellProps {
 export default function SiteShell({ children }: SiteShellProps) {
   return (
     <div className="min-h-screen flex flex-col bg-white text-foreground font-sans">
-      <StatusStrip />
-      <Header />
-      <TrustStrip />
+      <div className="sticky top-0 z-[90]">
+        <StatusStrip />
+        <Header />
+        <TrustStrip />
+      </div>
       <main className="flex-1 w-full">{children}</main>
       <Footer />
     </div>
