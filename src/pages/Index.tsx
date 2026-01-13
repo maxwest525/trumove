@@ -412,7 +412,7 @@ export default function Index() {
                     {stepLabels.map((label, idx) => (
                       <div key={label} className={`tru-stepper-step ${currentStep > idx + 1 ? "is-done" : ""} ${currentStep === idx + 1 ? "is-current" : ""}`}>
                         <span className="tru-stepper-label">{label}</span>
-                        {idx < stepLabels.length - 1 && <span className="tru-stepper-sep">—</span>}
+                        {idx < stepLabels.length - 1 && <span className="tru-stepper-divider">|</span>}
                       </div>
                     ))}
                   </div>

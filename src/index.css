@@ -476,11 +476,11 @@
   color: hsl(var(--tm-ink) / 0.55);
 }
 
-.tru-stepper-sep {
-  margin: 0 10px;
-  font-size: 11px;
-  color: hsl(var(--tm-ink) / 0.2);
-  font-weight: 400;
+.tru-stepper-divider {
+  margin: 0 12px;
+  font-size: 14px;
+  color: hsl(var(--tm-ink) / 0.25);
+  font-weight: 300;
 }
 
 /* =============================================
