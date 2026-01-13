@@ -337,7 +337,7 @@ export default function Index() {
                           <div className="tru-input-group tru-zip-group">
                             <label className="tru-input-label">From ZIP</label>
                             <div className="tru-zip-field">
-                              <div className={cn("tru-input-wrapper tru-input-short", errors.fromZip && "is-error")}>
+                              <div className={cn("tru-input-wrapper", errors.fromZip && "is-error")}>
                                 <input 
                                   ref={fromInputRef}
                                   type="text" 
@@ -348,9 +348,6 @@ export default function Index() {
                                   onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
                                   maxLength={5}
                                 />
-                                {zipOk(formData.fromZip) && (
-                                  <MapPin className="tru-field-complete-icon-lg" />
-                                )}
                               </div>
                               {showFromSuggestions && fromSuggestions.length > 0 && (
                                 <div className="tru-zip-suggestions">
@@ -387,7 +384,7 @@ export default function Index() {
                           <div className="tru-input-group tru-zip-group">
                             <label className="tru-input-label">To ZIP</label>
                             <div className="tru-zip-field">
-                              <div className={cn("tru-input-wrapper tru-input-short", errors.toZip && "is-error")}>
+                              <div className={cn("tru-input-wrapper", errors.toZip && "is-error")}>
                                 <input 
                                   ref={toInputRef}
                                   type="text" 
@@ -398,9 +395,6 @@ export default function Index() {
                                   onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
                                   maxLength={5}
                                 />
-                                {zipOk(formData.toZip) && (
-                                  <MapPin className="tru-field-complete-icon-lg" />
-                                )}
                               </div>
                               {showToSuggestions && toSuggestions.length > 0 && (
                                 <div className="tru-zip-suggestions">
@@ -429,43 +423,35 @@ export default function Index() {
                         {/* Date Picker with Popover */}
                         <div className="tru-input-group">
                           <label className="tru-input-label">Move Date</label>
-                          <div className="tru-date-row">
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <button
-                                  type="button"
-                                  className={cn(
-                                    "tru-date-input tru-date-short",
-                                    errors.moveDate && "is-error",
-                                    !formData.moveDate && "is-placeholder"
-                                  )}
-                                >
-                                  <CalendarIcon className="tru-date-icon" />
-                                  <span>
-                                    {formData.moveDate 
-                                      ? formatDateWithOrdinal(formData.moveDate)
-                                      : "Select a date..."
-                                    }
-                                  </span>
-                                </button>
-                              </PopoverTrigger>
-                              <PopoverContent className="tru-date-popover" align="start">
-                                <CalendarComponent
-                                  mode="single"
-                                  selected={formData.moveDate || undefined}
-                                  onSelect={(date) => setFormData(p => ({ ...p, moveDate: date || null }))}
-                                  disabled={(date) => date < new Date()}
-                                  className="tru-calendar-popup pointer-events-auto"
-                                />
-                              </PopoverContent>
-                            </Popover>
-                            {formData.moveDate && (
-                              <div className="tru-date-complete-icon">
-                                <CalendarIcon className="tru-calendar-check-icon" />
-                                <Check className="tru-calendar-check-mark" />
-                              </div>
-                            )}
-                          </div>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                type="button"
+                                className={cn(
+                                  "tru-date-input",
+                                  errors.moveDate && "is-error",
+                                  !formData.moveDate && "is-placeholder"
+                                )}
+                              >
+                                <CalendarIcon className="tru-date-icon" />
+                                <span>
+                                  {formData.moveDate 
+                                    ? formatDateWithOrdinal(formData.moveDate)
+                                    : "Select a date..."
+                                  }
+                                </span>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="tru-date-popover" align="start">
+                              <CalendarComponent
+                                mode="single"
+                                selected={formData.moveDate || undefined}
+                                onSelect={(date) => setFormData(p => ({ ...p, moveDate: date || null }))}
+                                disabled={(date) => date < new Date()}
+                                className="tru-calendar-popup pointer-events-auto"
+                              />
+                            </PopoverContent>
+                          </Popover>
                           {errors.moveDate && <span className="tru-field-error">Please select a move date</span>}
                         </div>
 
@@ -497,57 +483,47 @@ export default function Index() {
                           </div>
                         </div>
 
-                        {/* Vehicle Toggle - Compact */}
-                        <div className="tru-toggle-row">
-                          <div className="tru-input-group tru-toggle-field">
-                            <label className="tru-input-label">Vehicle shipping?</label>
-                            <div className={`tru-toggle-group tru-toggle-compact ${errors.hasCar ? "is-error" : ""}`}>
-                              <button 
-                                type="button"
-                                className={cn("tru-toggle-btn", formData.hasCar === true && "is-active")}
-                                onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
-                              >
-                                <span>Yes</span>
-                              </button>
-                              <button 
-                                type="button"
-                                className={cn("tru-toggle-btn", formData.hasCar === false && "is-active")}
-                                onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
-                              >
-                                <span>No</span>
-                              </button>
-                            </div>
+                        {/* Vehicle Toggle */}
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Vehicle shipping?</label>
+                          <div className={`tru-toggle-group ${errors.hasCar ? "is-error" : ""}`}>
+                            <button 
+                              type="button"
+                              className={cn("tru-toggle-btn", formData.hasCar === true && "is-active")}
+                              onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
+                            >
+                              <span>Yes</span>
+                            </button>
+                            <button 
+                              type="button"
+                              className={cn("tru-toggle-btn", formData.hasCar === false && "is-active")}
+                              onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
+                            >
+                              <span>No</span>
+                            </button>
                           </div>
-                          {formData.hasCar === true && (
-                            <Car className="tru-toggle-complete-icon-lg" />
-                          )}
                         </div>
                         {errors.hasCar && <span className="tru-field-error">Please select an option</span>}
 
-                        {/* Packing Toggle - Compact */}
-                        <div className="tru-toggle-row">
-                          <div className="tru-input-group tru-toggle-field">
-                            <label className="tru-input-label">Need packing help?</label>
-                            <div className={`tru-toggle-group tru-toggle-compact ${errors.needsPacking ? "is-error" : ""}`}>
-                              <button 
-                                type="button"
-                                className={cn("tru-toggle-btn", formData.needsPacking === true && "is-active")}
-                                onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
-                              >
-                                <span>Yes</span>
-                              </button>
-                              <button 
-                                type="button"
-                                className={cn("tru-toggle-btn", formData.needsPacking === false && "is-active")}
-                                onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
-                              >
-                                <span>No</span>
-                              </button>
-                            </div>
+                        {/* Packing Toggle */}
+                        <div className="tru-input-group">
+                          <label className="tru-input-label">Need packing help?</label>
+                          <div className={`tru-toggle-group ${errors.needsPacking ? "is-error" : ""}`}>
+                            <button 
+                              type="button"
+                              className={cn("tru-toggle-btn", formData.needsPacking === true && "is-active")}
+                              onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
+                            >
+                              <span>Yes</span>
+                            </button>
+                            <button 
+                              type="button"
+                              className={cn("tru-toggle-btn", formData.needsPacking === false && "is-active")}
+                              onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
+                            >
+                              <span>No</span>
+                            </button>
                           </div>
-                          {formData.needsPacking === true && (
-                            <Package className="tru-toggle-complete-icon-lg" />
-                          )}
                         </div>
                         {errors.needsPacking && <span className="tru-field-error">Please select an option</span>}
 
