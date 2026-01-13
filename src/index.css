@@ -284,6 +284,67 @@
   overflow: hidden;
 }
 
+/* =============================================
+   TRUCK ANIMATION
+   ============================================= */
+@keyframes truck-drive-in {
+  0% { 
+    transform: translateX(120%); 
+    opacity: 0; 
+  }
+  15% { 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translateX(0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes truck-idle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
+}
+
+.tru-truck-container {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 8px 8px;
+  overflow: hidden;
+}
+
+.tru-truck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: transform 150ms ease;
+  opacity: 0;
+  transform: translateX(120%);
+}
+
+.tru-truck.is-animating {
+  animation: truck-drive-in 2.5s ease-out forwards;
+}
+
+.tru-truck.is-animating .tru-truck-icon {
+  animation: truck-idle 2s ease-in-out infinite;
+  animation-delay: 2.5s;
+}
+
+.tru-truck:hover {
+  transform: scale(1.1);
+}
+
+.tru-truck-icon {
+  width: 24px;
+  height: 24px;
+  color: hsl(var(--tm-ink) / 0.6);
+  transform: scaleX(-1);
+}
+
 /* Header with logo and trust pills */
 .tru-form-header {
   margin-bottom: 16px;
@@ -346,11 +407,17 @@
 .tru-flow-title {
   font-size: 18px;
   font-weight: 800;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: hsl(var(--tm-ink));
   text-align: center;
   position: relative;
+  text-shadow: 0 1px 2px hsl(var(--tm-ink) / 0.08);
+}
+
+.tru-flow-title-brand {
+  color: hsl(var(--primary));
+  text-shadow: 0 0 8px hsl(var(--primary) / 0.3);
 }
 
 .tru-flow-title::after {
@@ -549,8 +616,12 @@
 }
 
 /* =============================================
-   ZIP ROW - Side by Side Layout
+   ZIP ROW - Side by Side Layout with Route Line
    ============================================= */
+.tru-zip-row-wrapper {
+  position: relative;
+}
+
 .tru-zip-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -561,6 +632,100 @@
   .tru-zip-row {
     grid-template-columns: 1fr;
   }
+}
+
+/* Route Line Connecting ZIP Fields */
+.tru-route-line {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+  opacity: 0;
+  transform: scaleX(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tru-route-line.is-visible {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.tru-route-line-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tru-route-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--tm-ink) / 0.4);
+}
+
+.tru-route-dashes {
+  width: 60px;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    hsl(var(--tm-ink) / 0.3) 0px,
+    hsl(var(--tm-ink) / 0.3) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  animation: route-dash-move 1s linear infinite;
+}
+
+@keyframes route-dash-move {
+  from { background-position: 0 0; }
+  to { background-position: 8px 0; }
+}
+
+.tru-route-arrow {
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+/* Field Complete Icon */
+.tru-field-complete-icon {
+  width: 14px;
+  height: 14px;
+  color: hsl(var(--tm-ink) / 0.45);
+  flex-shrink: 0;
+  animation: scale-in 0.2s ease-out;
+}
+
+@keyframes scale-in {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.tru-input-wrapper.has-complete-icon {
+  padding-right: 32px;
+}
+
+.tru-input-wrapper .tru-field-complete-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Date Field Complete Icon */
+.tru-date-field {
+  position: relative;
+}
+
+.tru-date-field.has-complete-icon .tru-date-input {
+  padding-right: 36px;
+}
+
+.tru-field-complete-icon-date {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 /* =============================================
@@ -930,28 +1095,28 @@
     inset 0 1px 0 hsl(var(--primary) / 0.2);
 }
 
-/* Hero Button - Most Emphasized */
+/* Hero Button - Dark with Green Accent */
 .tru-btn-hero {
   flex: 1;
   height: 44px;
-  background: hsl(var(--primary));
-  color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink));
+  color: #ffffff;
   font-size: 13px;
   font-weight: 700;
-  border: none;
+  border: 1px solid hsl(var(--primary) / 0.4);
   border-radius: 8px;
   box-shadow: 
-    0 4px 16px hsl(var(--primary) / 0.35),
-    0 1px 2px hsl(var(--tm-ink) / 0.1);
+    0 4px 16px hsl(var(--tm-ink) / 0.35),
+    0 0 8px hsl(var(--primary) / 0.15);
   transition: all 150ms ease;
 }
 
 .tru-btn-hero:hover {
-  background: hsl(120 100% 48%);
+  background: hsl(222 47% 18%);
   transform: translateY(-2px);
   box-shadow: 
-    0 6px 24px hsl(var(--primary) / 0.45),
-    0 2px 4px hsl(var(--tm-ink) / 0.15);
+    0 6px 24px hsl(var(--tm-ink) / 0.45),
+    0 0 12px hsl(var(--primary) / 0.25);
 }
 
 .tru-btn-hero:active {
@@ -1010,6 +1175,31 @@
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
 }
 
+.tru-summary-content-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.tru-summary-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tru-summary-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tru-summary-truck {
+  width: 48px;
+  height: 48px;
+  color: hsl(var(--tm-ink) / 0.12);
+}
+
 .tru-summary-content {
   display: flex;
   flex-direction: column;
@@ -1029,6 +1219,13 @@
   width: 14px;
   height: 14px;
   color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.tru-summary-icon-dark {
+  width: 14px;
+  height: 14px;
+  color: hsl(var(--tm-ink) / 0.6);
   flex-shrink: 0;
 }
 
@@ -1056,6 +1253,33 @@
   width: 10px;
   height: 10px;
   color: hsl(var(--tm-ink) / 0.4);
+}
+
+/* Toggle Complete Row */
+.tru-toggle-complete-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 24px;
+}
+
+.tru-toggle-complete-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: hsl(var(--tm-ink) / 0.06);
+  font-size: 10px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.7);
+  animation: scale-in 0.2s ease-out;
+}
+
+.tru-toggle-complete-icon {
+  width: 12px;
+  height: 12px;
+  color: hsl(var(--tm-ink) / 0.5);
 }
 
 .tru-btn-icon {
