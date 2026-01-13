@@ -261,7 +261,7 @@
 }
 
 /* =============================================
-   REFINED FORM CARD - Narrow & Tall
+   REFINED FORM CARD - Wider & More Spacious
    ============================================= */
 .tru-hero-visual {
   position: relative;
@@ -272,7 +272,7 @@
 .tru-form-card {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 580px;
   border-radius: 20px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
@@ -280,7 +280,7 @@
     0 1px 3px hsl(var(--tm-ink) / 0.04),
     0 12px 40px hsl(var(--tm-ink) / 0.08),
     0 0 0 1px hsl(var(--tm-ink) / 0.02);
-  padding: 24px;
+  padding: 28px 32px;
   overflow: hidden;
 }
 
@@ -440,15 +440,16 @@
 }
 
 /* =============================================
-   TEXT-ONLY STEPPER - Clean & Minimal
+   TEXT-ONLY STEPPER - Clean & Centered
    ============================================= */
 .tru-stepper {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 18px;
-  padding: 0;
+  margin-bottom: 24px;
+  padding: 16px 0;
   gap: 0;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
 }
 
 .tru-stepper-step {
@@ -457,13 +458,14 @@
 }
 
 .tru-stepper-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: hsl(var(--tm-ink) / 0.32);
   white-space: nowrap;
   transition: all 200ms ease;
+  padding: 0 4px;
 }
 
 .tru-stepper-step.is-current .tru-stepper-label {
@@ -476,10 +478,25 @@
 }
 
 .tru-stepper-sep {
-  margin: 0 10px;
-  font-size: 11px;
-  color: hsl(var(--tm-ink) / 0.2);
-  font-weight: 400;
+  display: flex;
+  align-items: center;
+  margin: 0 16px;
+  gap: 4px;
+}
+
+.tru-stepper-sep::before,
+.tru-stepper-sep::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: hsl(var(--tm-ink) / 0.15);
+}
+
+.tru-stepper-sep::after {
+  width: 6px;
+  height: 6px;
+  background: hsl(var(--primary) / 0.4);
 }
 
 /* =============================================
@@ -497,17 +514,17 @@
 .tru-form-step {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 /* =============================================
-   INPUT GROUPS - Compact, Clean
+   INPUT GROUPS - More Spacious
    ============================================= */
 .tru-input-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 .tru-input-label {
@@ -521,11 +538,11 @@
   position: relative;
   display: flex;
   align-items: center;
-  height: 36px;
-  border-radius: 8px;
+  height: 42px;
+  border-radius: 10px;
   background: #ffffff;
   border: 1px solid hsl(var(--tm-ink) / 0.12);
-  padding: 0 10px;
+  padding: 0 14px;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
@@ -544,7 +561,7 @@
   height: 100%;
   border: none;
   background: transparent;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: hsl(var(--tm-ink));
   outline: none;
@@ -1466,6 +1483,28 @@
   font-size: 10px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.5);
+}
+
+/* Builder Section with Truck */
+.tru-builder-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
+}
+
+.tru-truck-line-cta {
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.12);
+}
+
+.tru-builder-section .tru-btn-hero {
+  width: 100%;
 }
 
 /* =============================================
