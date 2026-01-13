@@ -350,7 +350,8 @@
 /* Header with logo and trust pills */
 .tru-form-header {
   margin-bottom: 16px;
-  padding-bottom: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.1);
 }
 
 .tru-form-header-top {
