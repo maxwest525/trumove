@@ -1,20 +1,17 @@
 import { useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
 import MoveMap from "@/components/MoveMap";
-import TechIndicatorStrip from "@/components/TechIndicatorStrip";
 import FloatingChatButton from "@/components/FloatingChatButton";
-import MoveGlance from "@/components/estimate/MoveGlance";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
-import logo from "@/assets/logo.png";
 import { 
-  Shield, Cpu, Video, Boxes, Calculator, Search, CheckCircle, 
+  Shield, Video, Boxes, Calculator, Search, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
-  CalendarIcon, Sparkles, Car, Package, ChevronLeft
+  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck
 } from "lucide-react";
 
 // ZIP lookup
@@ -48,29 +45,29 @@ const MOVE_SIZES = [
 ];
 
 // AI Messages based on context
-function getAiMessage(step: number, fromCity: string, toCity: string, distance: number, moveDate: Date | null): string {
+function getAiHint(step: number, fromCity: string, toCity: string, distance: number, moveDate: Date | null): string {
   switch (step) {
     case 2:
-      return `Perfect! ${fromCity.split(',')[0]} — we have vetted movers ready in your area.`;
+      return `📍 ${fromCity.split(',')[0]} — vetted movers ready in your area`;
     case 3:
       if (distance > 0) {
-        return `${distance.toLocaleString()} miles! Analyzing the best carriers for this route...`;
+        return `🚛 ${distance.toLocaleString()} miles — analyzing best carriers for this route`;
       }
-      return "Great route! We're analyzing the best carriers for you.";
+      return "🚛 Great route — analyzing carriers now";
     case 4:
       if (moveDate) {
         const month = format(moveDate, 'MMMM');
         const isLowSeason = [0, 1, 2, 10, 11].includes(moveDate.getMonth());
         if (isLowSeason) {
-          return `${month} is a great time to move — typically 15-20% lower demand than summer.`;
+          return `📅 ${month} — typically 15-20% lower rates`;
         }
-        return `${month} is peak season, but we'll find you competitive rates.`;
+        return `📅 ${month} — peak season, finding competitive rates`;
       }
-      return "Great timing! Let's find the best carriers for your date.";
+      return "";
     case 5:
-      return "Almost there! Select your move size to see your estimate.";
+      return "📦 Select size to calculate your estimate";
     case 6:
-      return "Perfect! Last step — where should we send your detailed quote?";
+      return "✉️ We'll email your detailed quote (no spam, ever)";
     default:
       return "";
   }
@@ -99,11 +96,41 @@ export default function Index() {
   const distance = useMemo(() => calculateDistance(fromZip, toZip), [fromZip, toZip]);
   const moveType = distance > 150 ? "long-distance" : "local";
 
-  // AI message for current step
-  const aiMessage = useMemo(() => 
-    getAiMessage(step, fromCity, toCity, distance, moveDate),
+  // AI hint for current step
+  const aiHint = useMemo(() => 
+    getAiHint(step, fromCity, toCity, distance, moveDate),
     [step, fromCity, toCity, distance, moveDate]
   );
+
+  // Calculate estimate
+  const estimate = useMemo(() => {
+    if (!size) return null;
+    
+    const sizeWeights: Record<string, number> = {
+      'Studio': 2000,
+      '1 Bedroom': 3000,
+      '2 Bedroom': 5000,
+      '3 Bedroom': 7000,
+      '4+ Bedroom': 10000,
+      'Office': 4000,
+    };
+    const weight = sizeWeights[size] || 4000;
+    const base = calculateEstimate(weight, distance, moveType);
+    
+    let min = base.min;
+    let max = base.max;
+    
+    if (hasCar) {
+      min += 800;
+      max += 1200;
+    }
+    if (needsPacking) {
+      min += Math.round(weight * 0.15);
+      max += Math.round(weight * 0.25);
+    }
+    
+    return { min, max };
+  }, [size, distance, moveType, hasCar, needsPacking]);
 
   // Handle ZIP changes
   const handleFromZipChange = useCallback(async (value: string) => {
@@ -169,96 +196,44 @@ export default function Index() {
     }
   };
 
-  // Render completed badges
-  const renderCompletedBadges = () => {
-    const badges = [];
-    if (step > 1 && fromCity) {
-      badges.push(
-        <span key="from" className="tru-confirmed-badge">
-          <CheckCircle className="w-3.5 h-3.5" />
-          <span>{fromCity}</span>
-        </span>
-      );
-    }
-    if (step > 2 && toCity) {
-      badges.push(
-        <span key="to" className="tru-confirmed-badge">
-          <CheckCircle className="w-3.5 h-3.5" />
-          <span>{toCity}</span>
-        </span>
-      );
-    }
-    if (step > 3 && moveDate) {
-      badges.push(
-        <span key="date" className="tru-confirmed-badge">
-          <CheckCircle className="w-3.5 h-3.5" />
-          <span>{format(moveDate, "MMM d, yyyy")}</span>
-        </span>
-      );
-    }
-    if (step > 4 && size) {
-      badges.push(
-        <span key="size" className="tru-confirmed-badge">
-          <CheckCircle className="w-3.5 h-3.5" />
-          <span>{size}</span>
-        </span>
-      );
-    }
-    return badges.length > 0 ? (
-      <div className="tru-confirmed-badges">{badges}</div>
-    ) : null;
-  };
-
-  // Render progress dots
-  const renderProgressDots = () => (
-    <div className="tru-progress-dots">
-      {[1, 2, 3, 4, 5, 6].map((n) => (
-        <span
-          key={n}
-          className={`tru-progress-dot ${n < step ? 'is-complete' : ''} ${n === step ? 'is-current' : ''}`}
-        />
-      ))}
-    </div>
-  );
+  const hasRoute = fromZip.length === 5 && toZip.length === 5;
 
   return (
     <SiteShell>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-          {/* HERO - Side-by-side: Form + Glance Dashboard */}
+          {/* HERO - Unified Smart Quote Builder */}
           <section className="tru-hero">
-            <div className="tru-hero-split">
-              {/* LEFT: The Conversation Card */}
-              <div className="tru-form-card">
-                {/* Card Header: Logo only */}
-                <div className="tru-form-header">
-                  <div className="tru-form-header-top">
-                    <img src={logo} alt="TruMove" className="tru-form-logo" />
-                  </div>
+            <div className="tru-quote-builder">
+              {/* Progress Header */}
+              <div className="tru-qb-header">
+                <span className="tru-qb-step">Step {step} of 6</span>
+                <div className="tru-qb-progress-bar">
+                  <div 
+                    className="tru-qb-progress-fill" 
+                    style={{ width: `${(step / 6) * 100}%` }} 
+                  />
                 </div>
+                <div className="tru-qb-status">
+                  <span className="tru-status-dot is-online" />
+                  <span className="tru-qb-status-text">ONLINE</span>
+                </div>
+              </div>
 
-                {/* AI Feedback Bubble */}
-                {step > 1 && aiMessage && (
-                  <div className="tru-ai-bubble">
-                    <div className="tru-ai-icon">
-                      <Sparkles className="w-4 h-4" />
-                    </div>
-                    <p className="tru-ai-text">{aiMessage}</p>
-                  </div>
-                )}
-
-                {/* TYPEFORM STEPS */}
-                <div className="tru-focus-hero">
+              {/* Main Body: Form + Dashboard Side by Side */}
+              <div className="tru-qb-body">
+                {/* LEFT: Conversation Area */}
+                <div className="tru-qb-main">
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
-                    <div className="tru-focus-step">
-                      <h1 className="tru-focus-question">Where are you moving from?</h1>
-                      <p className="tru-focus-subtitle">Enter your current ZIP code</p>
+                    <div className="tru-qb-step-content">
+                      <h1 className="tru-qb-question">Where are you moving from?</h1>
+                      <p className="tru-qb-subtitle">Enter your current ZIP code</p>
                       
-                      <div className="tru-focus-input-wrap">
+                      <div className="tru-qb-input-wrap">
                         <input
                           type="text"
-                          className="tru-focus-input"
+                          className="tru-qb-input"
                           placeholder="Enter ZIP..."
                           maxLength={5}
                           value={fromZip}
@@ -269,15 +244,12 @@ export default function Index() {
                       </div>
                       
                       {fromCity && (
-                        <div className="tru-focus-city-badge">
-                          <MapPin className="w-3.5 h-3.5" />
-                          <span>{fromCity}</span>
-                        </div>
+                        <p className="tru-qb-ai-hint">📍 {fromCity} — vetted movers ready</p>
                       )}
 
                       <button
                         type="button"
-                        className="tru-focus-continue"
+                        className="tru-qb-continue"
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
@@ -285,20 +257,20 @@ export default function Index() {
                         <ArrowRight className="w-5 h-5" />
                       </button>
                       
-                      <p className="tru-focus-hint">Press Enter ↵</p>
+                      <p className="tru-qb-hint">Press Enter ↵</p>
                     </div>
                   )}
 
                   {/* Step 2: To ZIP */}
                   {step === 2 && (
-                    <div className="tru-focus-step">
-                      <h1 className="tru-focus-question">Where are you moving to?</h1>
-                      <p className="tru-focus-subtitle">Enter your destination ZIP code</p>
+                    <div className="tru-qb-step-content">
+                      <h1 className="tru-qb-question">Where are you moving to?</h1>
+                      <p className="tru-qb-subtitle">Enter your destination ZIP code</p>
                       
-                      <div className="tru-focus-input-wrap">
+                      <div className="tru-qb-input-wrap">
                         <input
                           type="text"
-                          className="tru-focus-input"
+                          className="tru-qb-input"
                           placeholder="Enter ZIP..."
                           maxLength={5}
                           value={toZip}
@@ -308,16 +280,11 @@ export default function Index() {
                         />
                       </div>
                       
-                      {toCity && (
-                        <div className="tru-focus-city-badge">
-                          <MapPin className="w-3.5 h-3.5" />
-                          <span>{toCity}</span>
-                        </div>
-                      )}
+                      {aiHint && <p className="tru-qb-ai-hint">{aiHint}</p>}
 
                       <button
                         type="button"
-                        className="tru-focus-continue"
+                        className="tru-qb-continue"
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
@@ -325,7 +292,7 @@ export default function Index() {
                         <ArrowRight className="w-5 h-5" />
                       </button>
 
-                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                      <button type="button" className="tru-qb-back" onClick={goBack}>
                         <ChevronLeft className="w-4 h-4" />
                         <span>Back</span>
                       </button>
@@ -334,34 +301,38 @@ export default function Index() {
 
                   {/* Step 3: Move Date */}
                   {step === 3 && (
-                    <div className="tru-focus-step">
-                      <h1 className="tru-focus-question">When would you like to move?</h1>
-                      <p className="tru-focus-subtitle">This helps us match you with available carriers</p>
+                    <div className="tru-qb-step-content">
+                      <h1 className="tru-qb-question">When would you like to move?</h1>
+                      <p className="tru-qb-subtitle">This helps us match you with available carriers</p>
                       
-                      <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                        <PopoverTrigger asChild>
-                          <button type="button" className="tru-focus-date-btn">
-                            <CalendarIcon className="tru-focus-input-icon" />
-                            <span>{moveDate ? format(moveDate, "MMMM d, yyyy") : "Select a date"}</span>
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent className="form-date-popover" align="center">
-                          <CalendarComponent
-                            mode="single"
-                            selected={moveDate || undefined}
-                            onSelect={(date) => {
-                              setMoveDate(date || null);
-                              setDatePopoverOpen(false);
-                            }}
-                            disabled={(date) => date < new Date()}
-                            className="pointer-events-auto"
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      <div className="tru-qb-input-wrap">
+                        <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                          <PopoverTrigger asChild>
+                            <button type="button" className="tru-qb-date-btn">
+                              <CalendarIcon className="w-5 h-5" />
+                              <span>{moveDate ? format(moveDate, "MMMM d, yyyy") : "Select a date"}</span>
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="form-date-popover" align="center">
+                            <CalendarComponent
+                              mode="single"
+                              selected={moveDate || undefined}
+                              onSelect={(date) => {
+                                setMoveDate(date || null);
+                                setDatePopoverOpen(false);
+                              }}
+                              disabled={(date) => date < new Date()}
+                              className="pointer-events-auto"
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+
+                      {aiHint && <p className="tru-qb-ai-hint">{aiHint}</p>}
 
                       <button
                         type="button"
-                        className="tru-focus-continue"
+                        className="tru-qb-continue"
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
@@ -369,7 +340,7 @@ export default function Index() {
                         <ArrowRight className="w-5 h-5" />
                       </button>
 
-                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                      <button type="button" className="tru-qb-back" onClick={goBack}>
                         <ChevronLeft className="w-4 h-4" />
                         <span>Back</span>
                       </button>
@@ -378,16 +349,16 @@ export default function Index() {
 
                   {/* Step 4: Move Size */}
                   {step === 4 && (
-                    <div className="tru-focus-step">
-                      <h1 className="tru-focus-question">What size is your move?</h1>
-                      <p className="tru-focus-subtitle">This helps us estimate weight and find the right carriers</p>
+                    <div className="tru-qb-step-content">
+                      <h1 className="tru-qb-question">What size is your move?</h1>
+                      <p className="tru-qb-subtitle">This helps us estimate weight and find the right carriers</p>
                       
-                      <div className="tru-focus-size-grid">
+                      <div className="tru-qb-size-grid">
                         {MOVE_SIZES.map((s) => (
                           <button
                             key={s.value}
                             type="button"
-                            className={`tru-focus-size-btn ${size === s.value ? 'is-active' : ''}`}
+                            className={`tru-qb-size-btn ${size === s.value ? 'is-active' : ''}`}
                             onClick={() => {
                               setSize(s.value);
                               setTimeout(() => setStep(5), 200);
@@ -398,7 +369,7 @@ export default function Index() {
                         ))}
                       </div>
 
-                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                      <button type="button" className="tru-qb-back" onClick={goBack}>
                         <ChevronLeft className="w-4 h-4" />
                         <span>Back</span>
                       </button>
@@ -407,48 +378,48 @@ export default function Index() {
 
                   {/* Step 5: Additional Options */}
                   {step === 5 && (
-                    <div className="tru-focus-step">
-                      <h1 className="tru-focus-question">Any additional services?</h1>
-                      <p className="tru-focus-subtitle">Select any that apply (optional)</p>
+                    <div className="tru-qb-step-content">
+                      <h1 className="tru-qb-question">Any additional services?</h1>
+                      <p className="tru-qb-subtitle">Select any that apply (optional)</p>
                       
-                      <div className="tru-focus-toggles-vertical">
+                      <div className="tru-qb-toggles">
                         <button
                           type="button"
-                          className={`tru-focus-toggle-card ${hasCar ? 'is-active' : ''}`}
+                          className={`tru-qb-toggle-card ${hasCar ? 'is-active' : ''}`}
                           onClick={() => setHasCar(!hasCar)}
                         >
-                          <Car className="tru-focus-toggle-icon" />
-                          <div className="tru-focus-toggle-content">
-                            <span className="tru-focus-toggle-title">Vehicle Transport</span>
-                            <span className="tru-focus-toggle-desc">Ship a car with your move</span>
+                          <Car className="tru-qb-toggle-icon" />
+                          <div className="tru-qb-toggle-content">
+                            <span className="tru-qb-toggle-title">Vehicle Transport</span>
+                            <span className="tru-qb-toggle-desc">Ship a car with your move</span>
                           </div>
-                          <span className="tru-focus-toggle-indicator">{hasCar ? 'Yes' : 'No'}</span>
+                          <span className="tru-qb-toggle-indicator">{hasCar ? 'Yes' : 'No'}</span>
                         </button>
                         
                         <button
                           type="button"
-                          className={`tru-focus-toggle-card ${needsPacking ? 'is-active' : ''}`}
+                          className={`tru-qb-toggle-card ${needsPacking ? 'is-active' : ''}`}
                           onClick={() => setNeedsPacking(!needsPacking)}
                         >
-                          <Package className="tru-focus-toggle-icon" />
-                          <div className="tru-focus-toggle-content">
-                            <span className="tru-focus-toggle-title">Packing Service</span>
-                            <span className="tru-focus-toggle-desc">We pack everything for you</span>
+                          <Package className="tru-qb-toggle-icon" />
+                          <div className="tru-qb-toggle-content">
+                            <span className="tru-qb-toggle-title">Packing Service</span>
+                            <span className="tru-qb-toggle-desc">We pack everything for you</span>
                           </div>
-                          <span className="tru-focus-toggle-indicator">{needsPacking ? 'Yes' : 'No'}</span>
+                          <span className="tru-qb-toggle-indicator">{needsPacking ? 'Yes' : 'No'}</span>
                         </button>
                       </div>
 
                       <button
                         type="button"
-                        className="tru-focus-continue tru-btn-mechanical"
+                        className="tru-qb-continue"
                         onClick={goNext}
                       >
                         <span>Continue</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
 
-                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                      <button type="button" className="tru-qb-back" onClick={goBack}>
                         <ChevronLeft className="w-4 h-4" />
                         <span>Back</span>
                       </button>
@@ -457,15 +428,15 @@ export default function Index() {
 
                   {/* Step 6: Contact */}
                   {step === 6 && (
-                    <form className="tru-focus-step" onSubmit={handleSubmit}>
-                      <h1 className="tru-focus-question">Where should we send your quote?</h1>
-                      <p className="tru-focus-subtitle">We'll email your detailed estimate (no spam, ever)</p>
+                    <form className="tru-qb-step-content" onSubmit={handleSubmit}>
+                      <h1 className="tru-qb-question">Where should we send your quote?</h1>
+                      <p className="tru-qb-subtitle">We'll email your detailed estimate (no spam, ever)</p>
                       
-                      <div className="tru-focus-contact-fields">
-                        <div className="tru-focus-input-wrap">
+                      <div className="tru-qb-contact-fields">
+                        <div className="tru-qb-input-wrap">
                           <input
                             type="email"
-                            className="tru-focus-input"
+                            className="tru-qb-input"
                             placeholder="you@email.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -474,10 +445,10 @@ export default function Index() {
                           />
                         </div>
                         
-                        <div className="tru-focus-input-wrap">
+                        <div className="tru-qb-input-wrap">
                           <input
                             type="tel"
-                            className="tru-focus-input"
+                            className="tru-qb-input"
                             placeholder="Phone (optional)"
                             value={phone}
                             onChange={(e) => setPhoneNum(e.target.value)}
@@ -487,52 +458,114 @@ export default function Index() {
 
                       <button
                         type="submit"
-                        className="tru-focus-submit"
+                        className="tru-qb-submit"
                         disabled={!canContinue()}
                       >
                         <span>Get My Quote</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
 
-                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                      <button type="button" className="tru-qb-back" onClick={goBack}>
                         <ChevronLeft className="w-4 h-4" />
                         <span>Back</span>
                       </button>
                       
-                      <p className="tru-focus-disclaimer">
-                        By submitting, you agree we may contact you by phone, text, or email, 
-                        including via automated technology. Consent is not required to purchase services.
-                        <span className="tru-focus-disclaimer-secure">⭐ Your info is secure & never sold.</span>
+                      <p className="tru-qb-disclaimer">
+                        By submitting, you agree we may contact you by phone, text, or email.
+                        <span className="tru-qb-disclaimer-secure"> ⭐ Your info is secure & never sold.</span>
                       </p>
                     </form>
                   )}
                 </div>
 
-                {/* Progress Dots */}
-                {renderProgressDots()}
+                {/* RIGHT: Live Dashboard Panel */}
+                <div className="tru-qb-panel">
+                  {/* Map Area */}
+                  <div className="tru-qb-map">
+                    {hasRoute ? (
+                      <MoveMap fromZip={fromZip} toZip={toZip} />
+                    ) : (
+                      <div className="tru-qb-map-empty">
+                        <Truck className="w-6 h-6 text-muted-foreground/30" />
+                        <span>Enter ZIPs to see your route</span>
+                      </div>
+                    )}
+                  </div>
 
-                {/* Tech Indicator Strip */}
-                <TechIndicatorStrip />
+                  {/* Route Info */}
+                  <div className="tru-qb-info">
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">From</span>
+                      <span className="tru-qb-info-value">{fromCity || "—"}</span>
+                    </div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">To</span>
+                      <span className="tru-qb-info-value">{toCity || "—"}</span>
+                    </div>
+                    {distance > 0 && (
+                      <div className="tru-qb-info-row">
+                        <span className="tru-qb-info-label">Distance</span>
+                        <span className="tru-qb-info-value">{distance.toLocaleString()} mi</span>
+                      </div>
+                    )}
+                    {moveDate && (
+                      <div className="tru-qb-info-row">
+                        <span className="tru-qb-info-label">Date</span>
+                        <span className="tru-qb-info-value">{format(moveDate, "MMM d, yyyy")}</span>
+                      </div>
+                    )}
+                    {size && (
+                      <div className="tru-qb-info-row">
+                        <span className="tru-qb-info-label">Size</span>
+                        <span className="tru-qb-info-value">{size}</span>
+                      </div>
+                    )}
+                    {(hasCar || needsPacking) && (
+                      <div className="tru-qb-info-row">
+                        <span className="tru-qb-info-label">Add-ons</span>
+                        <span className="tru-qb-info-value">
+                          {[hasCar && "Vehicle", needsPacking && "Packing"].filter(Boolean).join(", ")}
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
-                {/* Footer Disclaimer */}
-                <p className="tru-form-disclaimer">
-                  Your info is secure & never sold.
-                </p>
+                  {/* Estimate */}
+                  <div className="tru-qb-estimate">
+                    <div className="tru-qb-estimate-header">
+                      <DollarSign className="w-4 h-4" />
+                      <span>YOUR ESTIMATE</span>
+                    </div>
+                    {estimate ? (
+                      <div className="tru-qb-estimate-value">
+                        {formatCurrency(estimate.min)} – {formatCurrency(estimate.max)}
+                      </div>
+                    ) : (
+                      <div className="tru-qb-estimate-empty">
+                        Select move size to see estimate
+                      </div>
+                    )}
+                  </div>
+
+                  {/* CTA Buttons */}
+                  <div className="tru-qb-ctas">
+                    <a href="tel:+16097277647" className="tru-qb-cta-secondary">
+                      <Phone className="w-4 h-4" />
+                      <span>Call Now</span>
+                    </a>
+                    <Link to="/book" className="tru-qb-cta-primary">
+                      <Video className="w-4 h-4" />
+                      <span>Video Consult</span>
+                    </Link>
+                  </div>
+                </div>
               </div>
 
-              {/* RIGHT: Move at a Glance Dashboard */}
-              <MoveGlance
-                fromZip={fromZip}
-                toZip={toZip}
-                fromCity={fromCity}
-                toCity={toCity}
-                distance={distance}
-                moveType={moveType as "local" | "long-distance"}
-                moveDate={moveDate}
-                size={size}
-                hasCar={hasCar}
-                needsPacking={needsPacking}
-              />
+              {/* Compact Tech Ticker */}
+              <div className="tru-qb-ticker">
+                <Lock className="w-3.5 h-3.5" />
+                <span>256-bit encryption • 47 AI-vetted carriers • FMCSA verified</span>
+              </div>
             </div>
           </section>
 
