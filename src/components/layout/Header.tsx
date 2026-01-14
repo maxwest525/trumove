@@ -1,59 +1,137 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Sparkles, Phone, Video, Shield, BadgeCheck } from "lucide-react";
 import logo from "@/assets/logo.png";
+import ChatModal from "@/components/chat/ChatModal";
 
 const NAV = [
   { href: "/", label: "Home" },
-  { href: "/online-estimate", label: "Get an Estimate" },
-  { href: "/vetting", label: "Carrier Standards" },
+  { href: "/online-estimate", label: "Get Quote" },
+  { href: "/vetting", label: "Carrier Vetting" },
   { href: "/faq", label: "FAQ" },
   { href: "/about", label: "About" },
 ];
 
+const TRUST_BADGES = [
+  { icon: Shield, text: "USDOT" },
+  { icon: BadgeCheck, text: "FMCSA" },
+];
+
 export default function Header() {
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   return (
-    <header className="bg-white/92 backdrop-blur-[10px] border-b border-border/40">
-      <div className="max-w-[1480px] mx-auto px-[26px] py-[14px] grid grid-cols-[auto_1fr_auto] items-center gap-x-[26px]">
-        <Link to="/" className="flex items-center flex-shrink-0" aria-label="TruMove Home">
-          <img
-            className="w-[280px] h-[62px] block"
-            src={logo}
-            alt="TruMove"
-          />
-        </Link>
-
-        <nav className="flex justify-center gap-[26px] flex-nowrap whitespace-nowrap min-w-0" aria-label="Primary">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={`relative no-underline text-foreground text-[19.5px] tracking-[0.08em] font-medium py-[12px] px-[6px] whitespace-nowrap uppercase transition-all duration-150 
-                ${location.pathname === item.href ? "opacity-100" : "opacity-[0.86] hover:opacity-100 hover:-translate-y-[1px]"}
-                after:content-[''] after:absolute after:left-[4px] after:right-[4px] after:bottom-[6px] after:h-[2px] after:rounded-[2px] after:bg-primary after:origin-left after:transition-transform after:duration-[180ms]
-                ${location.pathname === item.href ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}
-              `}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-[10px] whitespace-nowrap flex-shrink-0">
-          <a
-            className="relative inline-flex items-center gap-[10px] h-[40px] px-[16px] rounded-full no-underline whitespace-nowrap text-[12.5px] font-semibold tracking-[0.1em] uppercase text-foreground border border-primary/40 bg-gradient-to-b from-primary/18 to-primary/6 shadow-[0_14px_30px_hsl(var(--tm-ink)/0.1),inset_0_1px_0_rgba(255,255,255,0.7)] transition-all duration-150 hover:-translate-y-[1px] hover:border-primary/55 hover:shadow-[0_20px_44px_hsl(var(--tm-ink)/0.14),inset_0_1px_0_rgba(255,255,255,0.8)] hover:bg-gradient-to-b hover:from-white/94 hover:to-primary/8 before:content-[''] before:w-[10px] before:h-[10px] before:rounded-full before:bg-[radial-gradient(circle_at_30%_30%,#ffffff_0%,transparent_40%),radial-gradient(circle_at_center,hsl(var(--primary))_0%,hsl(var(--primary))_62%,hsl(var(--primary)/0.18)_100%)] before:shadow-[0_0_0_4px_hsl(var(--primary)/0.14)] before:flex-shrink-0"
-            href="tel:+10000000000"
-          >
-            Call Us Now
-          </a>
-          <Link
-            className="relative inline-flex items-center gap-[10px] h-[40px] px-[16px] rounded-full no-underline whitespace-nowrap text-[12.5px] font-semibold tracking-[0.1em] uppercase text-foreground border border-primary/40 bg-gradient-to-b from-primary/18 to-primary/6 shadow-[0_14px_30px_hsl(var(--tm-ink)/0.1),inset_0_1px_0_rgba(255,255,255,0.7)] transition-all duration-150 hover:-translate-y-[1px] hover:border-primary/55 hover:shadow-[0_20px_44px_hsl(var(--tm-ink)/0.14),inset_0_1px_0_rgba(255,255,255,0.8)] hover:bg-gradient-to-b hover:from-white/94 hover:to-primary/8 before:content-[''] before:w-[10px] before:h-[10px] before:rounded-full before:bg-[radial-gradient(circle_at_30%_30%,#ffffff_0%,transparent_40%),radial-gradient(circle_at_center,hsl(var(--primary))_0%,hsl(var(--primary))_62%,hsl(var(--primary)/0.18)_100%)] before:shadow-[0_0_0_4px_hsl(var(--primary)/0.14)] before:flex-shrink-0"
-            to="/book"
-          >
-            Book a Consult
+    <>
+      <header className="header-main">
+        <div className="header-inner">
+          {/* Logo */}
+          <Link to="/" className="header-logo" aria-label="TruMove Home">
+            <img src={logo} alt="TruMove" />
           </Link>
+
+          {/* Desktop Nav */}
+          <nav className="header-nav" aria-label="Primary">
+            {NAV.map((item) => (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={`header-nav-link ${location.pathname === item.href ? "is-active" : ""}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Trust Badges - Desktop */}
+          <div className="header-trust">
+            {TRUST_BADGES.map((badge) => (
+              <span key={badge.text} className="header-trust-badge">
+                <badge.icon className="w-3 h-3" />
+                <span>{badge.text}</span>
+              </span>
+            ))}
+          </div>
+
+          {/* Action Cluster */}
+          <div className="header-actions">
+            <button 
+              type="button" 
+              className="header-btn header-btn-chat"
+              onClick={() => setChatOpen(true)}
+              aria-label="Open AI Chat"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>AI Chat</span>
+            </button>
+            <a href="tel:+18001234567" className="header-btn header-btn-call">
+              <Phone className="w-4 h-4" />
+              <span>Call</span>
+            </a>
+            <Link to="/book" className="header-btn header-btn-primary">
+              <Video className="w-4 h-4" />
+              <span>Book Consult</span>
+            </Link>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button 
+            type="button" 
+            className="header-mobile-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
-      </div>
-    </header>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="header-mobile-menu">
+            <nav className="header-mobile-nav">
+              {NAV.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={`header-mobile-link ${location.pathname === item.href ? "is-active" : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="header-mobile-actions">
+              <button 
+                type="button" 
+                className="header-mobile-btn"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setChatOpen(true);
+                }}
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>AI Chat</span>
+              </button>
+              <a href="tel:+18001234567" className="header-mobile-btn">
+                <Phone className="w-4 h-4" />
+                <span>Call Now</span>
+              </a>
+              <Link 
+                to="/book" 
+                className="header-mobile-btn is-primary"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Video className="w-4 h-4" />
+                <span>Book Video Consult</span>
+              </Link>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Chat Modal */}
+      <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+    </>
   );
 }
