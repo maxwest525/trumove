@@ -5,6 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import MoveMap from "@/components/MoveMap";
 import TechIndicatorStrip from "@/components/TechIndicatorStrip";
 import FloatingChatButton from "@/components/FloatingChatButton";
+import MoveGlance from "@/components/estimate/MoveGlance";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { calculateDistance } from "@/lib/distanceCalculator";
@@ -224,12 +225,12 @@ export default function Index() {
     <SiteShell>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-          {/* HERO - Single Centered Card */}
+          {/* HERO - Side-by-side: Form + Glance Dashboard */}
           <section className="tru-hero">
-            <div className="tru-hero-visual">
-              {/* THE CARD FRAME */}
+            <div className="tru-hero-split">
+              {/* LEFT: The Conversation Card */}
               <div className="tru-form-card">
-                {/* Card Header: Logo only - status is in main header */}
+                {/* Card Header: Logo only */}
                 <div className="tru-form-header">
                   <div className="tru-form-header-top">
                     <img src={logo} alt="TruMove" className="tru-form-logo" />
@@ -507,52 +508,6 @@ export default function Index() {
                   )}
                 </div>
 
-                {/* Map Reveal (after step 2) */}
-                {step >= 3 && fromCity && toCity && (
-                  <div className="tru-map-reveal">
-                    <MoveMap fromZip={fromZip} toZip={toZip} />
-                    {distance > 0 && (
-                      <div className="tru-route-info">
-                        <Route className="w-4 h-4" />
-                        <span>{distance.toLocaleString()} miles · {moveType === 'long-distance' ? 'Long Distance' : 'Local'}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Live Estimate (after step 4) */}
-                {step >= 5 && size && (() => {
-                  const sizeWeights: Record<string, number> = {
-                    'Studio': 2000,
-                    '1 Bedroom': 3000,
-                    '2 Bedroom': 5000,
-                    '3 Bedroom': 7000,
-                    '4+ Bedroom': 10000,
-                    'Office': 4000,
-                  };
-                  const weight = sizeWeights[size] || 4000;
-                  const estimate = calculateEstimate(weight, distance, moveType as 'local' | 'long-distance');
-                  let adjustedMin = estimate.min;
-                  let adjustedMax = estimate.max;
-                  if (hasCar) {
-                    adjustedMin += 800;
-                    adjustedMax += 1200;
-                  }
-                  if (needsPacking) {
-                    adjustedMin += Math.round(weight * 0.15);
-                    adjustedMax += Math.round(weight * 0.25);
-                  }
-                  return (
-                    <div className="tru-live-estimate">
-                      <span className="tru-estimate-label">Your Estimate</span>
-                      <span className="tru-estimate-value">
-                        {formatCurrency(adjustedMin)} – {formatCurrency(adjustedMax)}
-                      </span>
-                      <span className="tru-estimate-note">Based on {size} · {distance > 0 ? `${distance.toLocaleString()} mi` : 'local'}</span>
-                    </div>
-                  );
-                })()}
-
                 {/* Progress Dots */}
                 {renderProgressDots()}
 
@@ -564,6 +519,20 @@ export default function Index() {
                   Your info is secure & never sold.
                 </p>
               </div>
+
+              {/* RIGHT: Move at a Glance Dashboard */}
+              <MoveGlance
+                fromZip={fromZip}
+                toZip={toZip}
+                fromCity={fromCity}
+                toCity={toCity}
+                distance={distance}
+                moveType={moveType as "local" | "long-distance"}
+                moveDate={moveDate}
+                size={size}
+                hasCar={hasCar}
+                needsPacking={needsPacking}
+              />
             </div>
           </section>
 
