@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package, CalendarIcon, MapPin, Home, Truck, Mail, Boxes, Brain, Sparkles } from "lucide-react";
+import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package, CalendarIcon, MapPin, Home, Truck, Boxes, Radio, Rocket, Lock, Target } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import logo from "@/assets/logo.png";
 import { cn } from "@/lib/utils";
 import MoveMap from "@/components/MoveMap";
-import TechIndicatorStrip from "@/components/TechIndicatorStrip";
+import MissionControlStrip from "@/components/MissionControlStrip";
 
 // Format date as MM/DD/YY
 const formatShortDate = (date: Date) => {
@@ -125,23 +124,46 @@ async function searchLocations(query: string): Promise<LocationSuggestion[]> {
 }
 
 const MOVE_SIZES = [
-  { value: "Studio", label: "Studio" },
-  { value: "1 Bedroom", label: "1 Bed" },
-  { value: "2 Bedroom", label: "2 Bed" },
-  { value: "3 Bedroom", label: "3 Bed" },
-  { value: "4+ Bedroom", label: "4+ Bed" },
-  { value: "Office", label: "Office" },
+  { value: "Studio", label: "STUDIO" },
+  { value: "1 Bedroom", label: "1-BED" },
+  { value: "2 Bedroom", label: "2-BED" },
+  { value: "3 Bedroom", label: "3-BED" },
+  { value: "4+ Bedroom", label: "4+-BED" },
+  { value: "Office", label: "OFFICE" },
 ];
 
-// Focus mode step labels
-const FOCUS_STEPS = ['from', 'to', 'date', 'size', 'vehicle', 'packing', 'email', 'phone', 'complete'] as const;
-type FocusStep = typeof FOCUS_STEPS[number];
+// Mission phases (steps)
+const MISSION_PHASES = ['origin', 'destination', 'launch-window', 'payload', 'vehicle', 'services', 'comms-email', 'comms-phone', 'launch'] as const;
+type MissionPhase = typeof MISSION_PHASES[number];
+
+const PHASE_LABELS: Record<MissionPhase, string> = {
+  'origin': 'MISSION BRIEFING',
+  'destination': 'DESTINATION LOCK',
+  'launch-window': 'LAUNCH WINDOW',
+  'payload': 'PAYLOAD ANALYSIS',
+  'vehicle': 'VEHICLE TRANSPORT',
+  'services': 'SERVICE MODULE',
+  'comms-email': 'COMMS SETUP',
+  'comms-phone': 'COMMS VERIFY',
+  'launch': 'LAUNCH SEQUENCE',
+};
+
+// Generate mission ID
+const generateMissionId = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = 'TM-';
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
 
 export default function Index() {
   const navigate = useNavigate();
+  const [missionId] = useState(generateMissionId);
   
-  // Focus mode state
-  const [focusStep, setFocusStep] = useState<FocusStep>('from');
+  // Mission phase state
+  const [currentPhase, setCurrentPhase] = useState<MissionPhase>('origin');
   const [aiMessage, setAiMessage] = useState("");
   const [showEstimate, setShowEstimate] = useState(false);
   const [estimateRange, setEstimateRange] = useState({ min: 0, max: 0 });
@@ -170,7 +192,7 @@ export default function Index() {
   const phoneOk = (p: string) => (p.replace(/\D/g, "")).length >= 10;
   const emailOk = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
-  // Calculate rough estimate based on current data
+  // Calculate rough estimate
   const calculateEstimate = () => {
     let base = 1500;
     
@@ -188,7 +210,7 @@ export default function Index() {
     return { min: Math.round(base - variance), max: Math.round(base + variance) };
   };
 
-  // Location lookup effect
+  // Location lookup effects
   useEffect(() => {
     if (zipOk(formData.fromZip)) {
       lookupZip(formData.fromZip).then(city => setFromCity(city || ""));
@@ -229,8 +251,8 @@ export default function Index() {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
-      const fromContainer = fromInputRef.current?.closest('.tru-focus-input-wrap');
-      const toContainer = toInputRef.current?.closest('.tru-focus-input-wrap');
+      const fromContainer = fromInputRef.current?.closest('.mc-input-wrap');
+      const toContainer = toInputRef.current?.closest('.mc-input-wrap');
       
       if (fromContainer && !fromContainer.contains(target)) {
         setShowFromSuggestions(false);
@@ -251,80 +273,80 @@ export default function Index() {
     }
   }, [formData.size, formData.hasCar, formData.needsPacking]);
 
-  // Get current step index for progress
-  const currentStepIndex = FOCUS_STEPS.indexOf(focusStep);
-  const completedSteps = currentStepIndex;
+  // Get current phase index
+  const currentPhaseIndex = MISSION_PHASES.indexOf(currentPhase);
+  const completedPhases = currentPhaseIndex;
 
-  // AI Message generator
-  const generateAiMessage = (step: FocusStep) => {
-    switch (step) {
-      case 'to':
+  // AI Message generator (mission control style)
+  const generateAiMessage = (phase: MissionPhase) => {
+    switch (phase) {
+      case 'destination':
         return fromCity 
-          ? `Perfect! ${fromCity.split(',')[0]} — we have vetted movers ready in your area.`
-          : "Got it! We have vetted movers ready in your area.";
-      case 'date':
+          ? `ORIGIN CONFIRMED: ${fromCity.split(',')[0].toUpperCase()}. VETTED CARRIERS IN SECTOR. AWAITING DESTINATION COORDINATES.`
+          : "ORIGIN LOCK ACQUIRED. SCANNING FOR DESTINATION TARGET.";
+      case 'launch-window':
         if (fromCity && toCity) {
-          return `${toCity.split(',')[0]} confirmed! Analyzing the best carriers for this route...`;
+          return `TRAJECTORY CONFIRMED: ${fromCity.split(',')[0].toUpperCase()} → ${toCity.split(',')[0].toUpperCase()}. SELECT OPTIMAL LAUNCH WINDOW.`;
         }
-        return "Destination locked in! Analyzing the best carriers for this route...";
-      case 'size':
+        return "DESTINATION LOCKED. ANALYZING CARRIER AVAILABILITY WINDOWS.";
+      case 'payload':
         if (formData.moveDate) {
-          const month = format(formData.moveDate, "MMMM");
-          return `${month} is a great time to move — typically 15% lower demand than summer.`;
+          const month = format(formData.moveDate, "MMMM").toUpperCase();
+          return `${month} WINDOW SELECTED. DEMAND ANALYSIS: 15% BELOW PEAK. FAVORABLE CONDITIONS.`;
         }
-        return "Date saved! Now let's size up your move.";
+        return "LAUNCH WINDOW CONFIRMED. AWAITING PAYLOAD SPECIFICATIONS.";
       case 'vehicle':
-        return `${formData.size} move noted. Our AI is already filtering carriers with the right equipment.`;
-      case 'packing':
+        return `PAYLOAD CLASS: ${formData.size.toUpperCase()}. FILTERING CARRIERS WITH MATCHING EQUIPMENT.`;
+      case 'services':
         return formData.hasCar 
-          ? "We'll include auto transport carriers in your options."
-          : "No problem — household items only.";
-      case 'email':
+          ? "VEHICLE TRANSPORT MODULE: ACTIVATED. AUTO CARRIERS QUEUED."
+          : "VEHICLE TRANSPORT: NEGATIVE. PROCEEDING WITH HOUSEHOLD CARGO ONLY.";
+      case 'comms-email':
         return formData.needsPacking
-          ? "Packing services added! This typically adds 1-2 crew members to your move."
-          : "Got it — you'll handle packing. That keeps costs down!";
-      case 'phone':
-        return "Almost done! Just need your phone for move-day coordination.";
-      case 'complete':
-        return "You're all set! Choose how you'd like to proceed.";
+          ? "PACKING SERVICE MODULE: ONLINE. +1-2 CREW MEMBERS ALLOCATED."
+          : "PACKING: SELF-SERVICE SELECTED. COST OPTIMIZATION ENABLED.";
+      case 'comms-phone':
+        return "PRIMARY COMMS CHANNEL ESTABLISHED. SECONDARY VERIFICATION REQUIRED.";
+      case 'launch':
+        return "ALL SYSTEMS GO. READY FOR LAUNCH SEQUENCE INITIATION.";
       default:
         return "";
     }
   };
 
-  // Handle step advancement
-  const advanceStep = () => {
-    const nextIndex = currentStepIndex + 1;
-    if (nextIndex < FOCUS_STEPS.length) {
-      const nextStep = FOCUS_STEPS[nextIndex];
-      setAiMessage(generateAiMessage(nextStep));
-      setFocusStep(nextStep);
+  // Handle phase advancement
+  const advancePhase = () => {
+    const nextIndex = currentPhaseIndex + 1;
+    if (nextIndex < MISSION_PHASES.length) {
+      const nextPhase = MISSION_PHASES[nextIndex];
+      setAiMessage(generateAiMessage(nextPhase));
+      setCurrentPhase(nextPhase);
     }
   };
 
-  // Validate current step
-  const validateCurrentStep = (): boolean => {
+  // Validate current phase
+  const validateCurrentPhase = (): boolean => {
     setErrors({});
-    switch (focusStep) {
-      case 'from':
+    switch (currentPhase) {
+      case 'origin':
         if (!zipOk(formData.fromZip)) {
           setErrors({ fromZip: true });
           return false;
         }
         return true;
-      case 'to':
+      case 'destination':
         if (!zipOk(formData.toZip)) {
           setErrors({ toZip: true });
           return false;
         }
         return true;
-      case 'date':
+      case 'launch-window':
         if (!formData.moveDate) {
           setErrors({ moveDate: true });
           return false;
         }
         return true;
-      case 'size':
+      case 'payload':
         if (!formData.size) {
           setErrors({ size: true });
           return false;
@@ -336,19 +358,19 @@ export default function Index() {
           return false;
         }
         return true;
-      case 'packing':
+      case 'services':
         if (formData.needsPacking === null) {
           setErrors({ needsPacking: true });
           return false;
         }
         return true;
-      case 'email':
+      case 'comms-email':
         if (!emailOk(formData.email)) {
           setErrors({ email: true });
           return false;
         }
         return true;
-      case 'phone':
+      case 'comms-phone':
         if (!phoneOk(formData.phone)) {
           setErrors({ phone: true });
           return false;
@@ -360,12 +382,12 @@ export default function Index() {
   };
 
   const handleContinue = () => {
-    if (validateCurrentStep()) {
-      advanceStep();
+    if (validateCurrentPhase()) {
+      advancePhase();
     }
   };
 
-  // Handle Enter key for text inputs
+  // Handle Enter key
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -373,11 +395,11 @@ export default function Index() {
     }
   };
 
-  // Go back to previous step
+  // Go back to previous phase
   const goBack = () => {
-    const prevIndex = currentStepIndex - 1;
+    const prevIndex = currentPhaseIndex - 1;
     if (prevIndex >= 0) {
-      setFocusStep(FOCUS_STEPS[prevIndex]);
+      setCurrentPhase(MISSION_PHASES[prevIndex]);
       setAiMessage("");
     }
   };
@@ -385,6 +407,7 @@ export default function Index() {
   const handleIntent = (intent: string) => {
     localStorage.setItem("tm_lead", JSON.stringify({ 
       intent, 
+      missionId,
       ...formData, 
       moveDate: formData.moveDate?.toISOString(),
       fromCity,
@@ -401,55 +424,60 @@ export default function Index() {
     }
   };
 
-  // Render progress dots
+  // Render progress dots (square for mission control)
   const renderProgressDots = () => (
-    <div className="tru-progress-dots">
-      {FOCUS_STEPS.slice(0, -1).map((step, idx) => (
+    <div className="mc-progress-dots">
+      {MISSION_PHASES.slice(0, -1).map((phase, idx) => (
         <span 
-          key={step} 
+          key={phase} 
           className={cn(
-            "tru-progress-dot",
-            idx < completedSteps && "is-complete",
-            idx === completedSteps && "is-current"
+            "mc-progress-dot",
+            idx < completedPhases && "is-complete",
+            idx === completedPhases && "is-current"
           )} 
         />
       ))}
     </div>
   );
 
-  // Render confirmed badges for completed fields
-  const renderConfirmedBadge = (text: string) => (
-    <div className="tru-confirmed-badge">
-      <Check className="tru-confirmed-badge-icon" />
+  // Render lock badge for confirmed data
+  const renderLockBadge = (text: string) => (
+    <div className="mc-lock-badge">
+      <Lock className="mc-lock-icon" />
       <span>{text}</span>
     </div>
   );
 
-  // Render AI bubble
+  // Render AI comms bubble
   const renderAiBubble = () => {
     if (!aiMessage) return null;
     return (
-      <div className="tru-ai-bubble">
-        <Brain className="tru-ai-icon" />
-        <span className="tru-ai-text">{aiMessage}</span>
+      <div className="mc-ai-bubble">
+        <Radio className="mc-ai-icon" />
+        <span className="mc-ai-text">{aiMessage}</span>
       </div>
     );
   };
 
-  // Render the appropriate step content
-  const renderStepContent = () => {
-    switch (focusStep) {
-      case 'from':
+  // Render phase content
+  const renderPhaseContent = () => {
+    switch (currentPhase) {
+      case 'origin':
         return (
-          <div className="tru-focus-hero">
-            <h2 className="tru-focus-question">Where are you moving from?</h2>
-            <p className="tru-focus-subtext">Enter your current ZIP code or city</p>
-            <div className="tru-focus-input-wrap">
+          <div className="mc-content">
+            <div className="mc-phase-indicator">
+              <span className="mc-phase-badge">{PHASE_LABELS[currentPhase]}</span>
+              <span className="mc-phase-number">PHASE {currentPhaseIndex + 1} OF {MISSION_PHASES.length}</span>
+            </div>
+            <h2 className="mc-question">Enter Origin Coordinates</h2>
+            <p className="mc-subtext">Input your current sector ZIP code</p>
+            <div className="mc-input-wrap" style={{ position: 'relative' }}>
+              <span className="mc-input-label">ORIGIN ZIP</span>
               <input
                 ref={fromInputRef}
                 type="text"
-                className={cn("tru-focus-input", errors.fromZip && "is-error")}
-                placeholder="ZIP or City"
+                className={cn("mc-input", errors.fromZip && "is-error", zipOk(formData.fromZip) && "is-confirmed")}
+                placeholder="00000"
                 value={zipOk(formData.fromZip) ? formData.fromZip : fromInput}
                 onChange={e => {
                   const val = e.target.value;
@@ -469,12 +497,13 @@ export default function Index() {
                 autoFocus
               />
               {showFromSuggestions && fromSuggestions.length > 0 && (
-                <div className="tru-zip-suggestions" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8 }}>
+                <div className="tru-zip-suggestions" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8, background: 'hsl(220 20% 8%)', border: '1px solid hsl(180 100% 50% / 0.3)' }}>
                   {fromSuggestions.map(s => (
                     <button
                       key={s.zip}
                       type="button"
                       className="tru-zip-suggestion"
+                      style={{ color: 'hsl(180 100% 50%)' }}
                       onClick={() => {
                         setFormData(p => ({ ...p, fromZip: s.zip }));
                         setFromInput(s.zip);
@@ -482,40 +511,49 @@ export default function Index() {
                         setErrors({});
                       }}
                     >
-                      <span className="tru-zip-suggestion-city">{s.display}</span>
+                      <span className="tru-zip-suggestion-city" style={{ color: 'hsl(180 100% 50%)' }}>{s.display}</span>
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            {fromCity && <div className="tru-confirmed-badge" style={{ marginTop: 12 }}><MapPin className="tru-confirmed-badge-icon" /><span>{fromCity}</span></div>}
+            {fromCity && (
+              <div className="mc-coordinate">
+                <Target className="mc-coordinate-icon" />
+                <span className="mc-coordinate-text">{fromCity}</span>
+              </div>
+            )}
             <button 
               type="button" 
-              className="tru-focus-continue" 
+              className={cn("mc-launch-btn", zipOk(formData.fromZip) && "is-ready")}
               onClick={handleContinue}
               disabled={!zipOk(formData.fromZip)}
             >
-              <span>Continue</span>
-              <ArrowRight className="tru-focus-continue-icon" />
+              <span>Confirm Origin</span>
+              <ArrowRight className="mc-launch-icon" />
             </button>
-            <TechIndicatorStrip />
+            <MissionControlStrip />
             {renderProgressDots()}
           </div>
         );
 
-      case 'to':
+      case 'destination':
         return (
-          <div className="tru-focus-hero">
-            {renderConfirmedBadge(fromCity || formData.fromZip)}
-            <h2 className="tru-focus-question">Where are you moving to?</h2>
-            <p className="tru-focus-subtext">Enter your destination ZIP code or city</p>
+          <div className="mc-content">
+            {renderLockBadge(fromCity || formData.fromZip)}
+            <div className="mc-phase-indicator">
+              <span className="mc-phase-badge">{PHASE_LABELS[currentPhase]}</span>
+            </div>
+            <h2 className="mc-question">Lock Destination Target</h2>
+            <p className="mc-subtext">Enter destination sector coordinates</p>
             {renderAiBubble()}
-            <div className="tru-focus-input-wrap">
+            <div className="mc-input-wrap" style={{ position: 'relative' }}>
+              <span className="mc-input-label">DESTINATION ZIP</span>
               <input
                 ref={toInputRef}
                 type="text"
-                className={cn("tru-focus-input", errors.toZip && "is-error")}
-                placeholder="ZIP or City"
+                className={cn("mc-input", errors.toZip && "is-error", zipOk(formData.toZip) && "is-confirmed")}
+                placeholder="00000"
                 value={zipOk(formData.toZip) ? formData.toZip : toInput}
                 onChange={e => {
                   const val = e.target.value;
@@ -535,12 +573,13 @@ export default function Index() {
                 autoFocus
               />
               {showToSuggestions && toSuggestions.length > 0 && (
-                <div className="tru-zip-suggestions" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8 }}>
+                <div className="tru-zip-suggestions" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8, background: 'hsl(220 20% 8%)', border: '1px solid hsl(180 100% 50% / 0.3)' }}>
                   {toSuggestions.map(s => (
                     <button
                       key={s.zip}
                       type="button"
                       className="tru-zip-suggestion"
+                      style={{ color: 'hsl(180 100% 50%)' }}
                       onClick={() => {
                         setFormData(p => ({ ...p, toZip: s.zip }));
                         setToInput(s.zip);
@@ -548,58 +587,62 @@ export default function Index() {
                         setErrors({});
                       }}
                     >
-                      <span className="tru-zip-suggestion-city">{s.display}</span>
+                      <span className="tru-zip-suggestion-city" style={{ color: 'hsl(180 100% 50%)' }}>{s.display}</span>
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            {toCity && <div className="tru-confirmed-badge" style={{ marginTop: 12 }}><MapPin className="tru-confirmed-badge-icon" /><span>{toCity}</span></div>}
+            {toCity && (
+              <div className="mc-coordinate">
+                <Target className="mc-coordinate-icon" />
+                <span className="mc-coordinate-text">{toCity}</span>
+              </div>
+            )}
             <button 
               type="button" 
-              className="tru-focus-continue" 
+              className={cn("mc-launch-btn", zipOk(formData.toZip) && "is-ready")}
               onClick={handleContinue}
               disabled={!zipOk(formData.toZip)}
             >
-              <span>Continue</span>
-              <ArrowRight className="tru-focus-continue-icon" />
+              <span>Lock Target</span>
+              <ArrowRight className="mc-launch-icon" />
             </button>
-            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
-              <ChevronLeft className="tru-back-icon" />
-              <span>Back</span>
+            <button type="button" className="mc-back-link" onClick={goBack}>
+              <ChevronLeft className="mc-back-icon" />
+              <span>Previous Phase</span>
             </button>
             {renderProgressDots()}
           </div>
         );
 
-      case 'date':
+      case 'launch-window':
         return (
-          <div className="tru-focus-hero">
-            {renderConfirmedBadge(`${fromCity || formData.fromZip} → ${toCity || formData.toZip}`)}
-            <h2 className="tru-focus-question">When would you like to move?</h2>
-            <p className="tru-focus-subtext">Pick your ideal move date</p>
+          <div className="mc-content">
+            {renderLockBadge(`${fromCity || formData.fromZip} → ${toCity || formData.toZip}`)}
+            <div className="mc-phase-indicator">
+              <span className="mc-phase-badge">{PHASE_LABELS[currentPhase]}</span>
+            </div>
+            <h2 className="mc-question">Select Launch Window</h2>
+            <p className="mc-subtext">Choose optimal mission date</p>
             {renderAiBubble()}
             
-            {/* Show map reveal */}
-            <div className="tru-map-reveal">
+            <div className="mc-map-reveal">
               <MoveMap fromZip={formData.fromZip} toZip={formData.toZip} />
             </div>
 
-            <div className="tru-focus-input-wrap" style={{ marginTop: 20 }}>
+            <div className="mc-input-wrap" style={{ marginTop: 20 }}>
               <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                 <PopoverTrigger asChild>
                   <button
                     type="button"
-                    className={cn(
-                      "tru-focus-date-btn",
-                      !formData.moveDate && "is-placeholder"
-                    )}
+                    className={cn("mc-date-btn", !formData.moveDate && "is-placeholder")}
                   >
-                    <CalendarIcon className="tru-focus-date-icon" />
+                    <CalendarIcon className="mc-date-icon" />
                     <span>
                       {formData.moveDate 
-                        ? format(formData.moveDate, "MMMM d, yyyy")
-                        : "Select a date"
+                        ? format(formData.moveDate, "yyyy-MM-dd").toUpperCase()
+                        : "SELECT DATE"
                       }
                     </span>
                   </button>
@@ -620,47 +663,50 @@ export default function Index() {
             </div>
             <button 
               type="button" 
-              className="tru-focus-continue" 
+              className={cn("mc-launch-btn", formData.moveDate && "is-ready")}
               onClick={handleContinue}
               disabled={!formData.moveDate}
             >
-              <span>Continue</span>
-              <ArrowRight className="tru-focus-continue-icon" />
+              <span>Confirm Window</span>
+              <ArrowRight className="mc-launch-icon" />
             </button>
-            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
-              <ChevronLeft className="tru-back-icon" />
-              <span>Back</span>
+            <button type="button" className="mc-back-link" onClick={goBack}>
+              <ChevronLeft className="mc-back-icon" />
+              <span>Previous Phase</span>
             </button>
             {renderProgressDots()}
           </div>
         );
 
-      case 'size':
+      case 'payload':
         return (
-          <div className="tru-focus-hero">
-            {renderConfirmedBadge(formData.moveDate ? format(formData.moveDate, "MMM d, yyyy") : "")}
-            <h2 className="tru-focus-question">What size is your move?</h2>
-            <p className="tru-focus-subtext">This helps us match you with the right carriers</p>
+          <div className="mc-content">
+            {renderLockBadge(formData.moveDate ? format(formData.moveDate, "yyyy-MM-dd") : "")}
+            <div className="mc-phase-indicator">
+              <span className="mc-phase-badge">{PHASE_LABELS[currentPhase]}</span>
+            </div>
+            <h2 className="mc-question">Classify Payload Size</h2>
+            <p className="mc-subtext">Select cargo classification</p>
             {renderAiBubble()}
-            <div className="tru-focus-size-grid">
+            <div className="mc-systems-grid">
               {MOVE_SIZES.map(size => (
                 <button
                   key={size.value}
                   type="button"
-                  className={cn("tru-focus-size-btn", formData.size === size.value && "is-selected")}
+                  className={cn("mc-system-btn", formData.size === size.value && "is-selected")}
                   onClick={() => {
                     setFormData(p => ({ ...p, size: size.value }));
                     setTimeout(handleContinue, 300);
                   }}
                 >
-                  {formData.size === size.value && <Check className="tru-focus-size-check" />}
                   <span>{size.label}</span>
+                  <span className="mc-system-status">{formData.size === size.value ? "GO" : "STANDBY"}</span>
                 </button>
               ))}
             </div>
-            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 24 }}>
-              <ChevronLeft className="tru-back-icon" />
-              <span>Back</span>
+            <button type="button" className="mc-back-link" onClick={goBack} style={{ marginTop: 24 }}>
+              <ChevronLeft className="mc-back-icon" />
+              <span>Previous Phase</span>
             </button>
             {renderProgressDots()}
           </div>
@@ -668,117 +714,127 @@ export default function Index() {
 
       case 'vehicle':
         return (
-          <div className="tru-focus-hero">
-            {renderConfirmedBadge(formData.size)}
-            <h2 className="tru-focus-question">Shipping a vehicle?</h2>
-            <p className="tru-focus-subtext">We can include auto transport in your quote</p>
+          <div className="mc-content">
+            {renderLockBadge(formData.size)}
+            <div className="mc-phase-indicator">
+              <span className="mc-phase-badge">{PHASE_LABELS[currentPhase]}</span>
+            </div>
+            <h2 className="mc-question">Vehicle Transport Module?</h2>
+            <p className="mc-subtext">Include auto carrier in mission</p>
             {renderAiBubble()}
             
             {showEstimate && (
-              <div className="tru-live-estimate">
-                <span className="tru-estimate-label">Estimated Range</span>
-                <span className="tru-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
-                <span className="tru-estimate-note">Refining as you answer...</span>
+              <div className="mc-estimate">
+                <span className="mc-estimate-label">Mission Cost Analysis</span>
+                <span className="mc-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
+                <span className="mc-estimate-note">CALCULATING...</span>
               </div>
             )}
 
-            <div className="tru-focus-toggle-group" style={{ marginTop: 24 }}>
+            <div className="mc-go-nogo" style={{ marginTop: 24 }}>
               <button
                 type="button"
-                className={cn("tru-focus-toggle-btn", formData.hasCar === true && "is-active")}
+                className={cn("mc-go-btn is-go", formData.hasCar === true && "is-active")}
                 onClick={() => {
                   setFormData(p => ({ ...p, hasCar: true }));
                   setTimeout(handleContinue, 300);
                 }}
               >
-                <Car className="tru-focus-toggle-icon" />
-                <span>Yes</span>
+                <Car className="mc-go-icon" />
+                <span>GO</span>
               </button>
               <button
                 type="button"
-                className={cn("tru-focus-toggle-btn", formData.hasCar === false && "is-active")}
+                className={cn("mc-go-btn is-nogo", formData.hasCar === false && "is-active")}
                 onClick={() => {
                   setFormData(p => ({ ...p, hasCar: false }));
                   setTimeout(handleContinue, 300);
                 }}
               >
-                <span>No</span>
+                <span>NO-GO</span>
               </button>
             </div>
-            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 24 }}>
-              <ChevronLeft className="tru-back-icon" />
-              <span>Back</span>
+            <button type="button" className="mc-back-link" onClick={goBack} style={{ marginTop: 24 }}>
+              <ChevronLeft className="mc-back-icon" />
+              <span>Previous Phase</span>
             </button>
             {renderProgressDots()}
           </div>
         );
 
-      case 'packing':
+      case 'services':
         return (
-          <div className="tru-focus-hero">
-            {formData.hasCar && renderConfirmedBadge("Vehicle included")}
-            <h2 className="tru-focus-question">Need packing help?</h2>
-            <p className="tru-focus-subtext">Professional packers can save you time and stress</p>
+          <div className="mc-content">
+            {formData.hasCar && renderLockBadge("VEHICLE MODULE: GO")}
+            <div className="mc-phase-indicator">
+              <span className="mc-phase-badge">{PHASE_LABELS[currentPhase]}</span>
+            </div>
+            <h2 className="mc-question">Packing Service Module?</h2>
+            <p className="mc-subtext">Deploy professional packing crew</p>
             {renderAiBubble()}
             
             {showEstimate && (
-              <div className="tru-live-estimate">
-                <span className="tru-estimate-label">Estimated Range</span>
-                <span className="tru-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
-                <span className="tru-estimate-note">Refining as you answer...</span>
+              <div className="mc-estimate">
+                <span className="mc-estimate-label">Mission Cost Analysis</span>
+                <span className="mc-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
+                <span className="mc-estimate-note">REFINING...</span>
               </div>
             )}
 
-            <div className="tru-focus-toggle-group" style={{ marginTop: 24 }}>
+            <div className="mc-go-nogo" style={{ marginTop: 24 }}>
               <button
                 type="button"
-                className={cn("tru-focus-toggle-btn", formData.needsPacking === true && "is-active")}
+                className={cn("mc-go-btn is-go", formData.needsPacking === true && "is-active")}
                 onClick={() => {
                   setFormData(p => ({ ...p, needsPacking: true }));
                   setTimeout(handleContinue, 300);
                 }}
               >
-                <Package className="tru-focus-toggle-icon" />
-                <span>Yes</span>
+                <Package className="mc-go-icon" />
+                <span>GO</span>
               </button>
               <button
                 type="button"
-                className={cn("tru-focus-toggle-btn", formData.needsPacking === false && "is-active")}
+                className={cn("mc-go-btn is-nogo", formData.needsPacking === false && "is-active")}
                 onClick={() => {
                   setFormData(p => ({ ...p, needsPacking: false }));
                   setTimeout(handleContinue, 300);
                 }}
               >
-                <span>No</span>
+                <span>NO-GO</span>
               </button>
             </div>
-            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 24 }}>
-              <ChevronLeft className="tru-back-icon" />
-              <span>Back</span>
+            <button type="button" className="mc-back-link" onClick={goBack} style={{ marginTop: 24 }}>
+              <ChevronLeft className="mc-back-icon" />
+              <span>Previous Phase</span>
             </button>
             {renderProgressDots()}
           </div>
         );
 
-      case 'email':
+      case 'comms-email':
         return (
-          <div className="tru-focus-hero">
-            <h2 className="tru-focus-question">What's your email?</h2>
-            <p className="tru-focus-subtext">We'll send your quote and move details here</p>
+          <div className="mc-content">
+            <div className="mc-phase-indicator">
+              <span className="mc-phase-badge">{PHASE_LABELS[currentPhase]}</span>
+            </div>
+            <h2 className="mc-question">Primary Comms Channel</h2>
+            <p className="mc-subtext">Mission briefings will be transmitted here</p>
             {renderAiBubble()}
             
             {showEstimate && (
-              <div className="tru-live-estimate">
-                <span className="tru-estimate-label">Your Estimate</span>
-                <span className="tru-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
+              <div className="mc-estimate">
+                <span className="mc-estimate-label">Mission Estimate</span>
+                <span className="mc-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
               </div>
             )}
 
-            <div className="tru-focus-input-wrap" style={{ marginTop: 24 }}>
+            <div className="mc-input-wrap" style={{ marginTop: 24 }}>
+              <span className="mc-input-label">EMAIL FREQUENCY</span>
               <input
                 type="email"
-                className={cn("tru-focus-input", errors.email && "is-error")}
-                placeholder="you@email.com"
+                className={cn("mc-input", errors.email && "is-error")}
+                placeholder="CALLSIGN@DOMAIN.COM"
                 value={formData.email}
                 onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
                 onKeyDown={handleKeyDown}
@@ -787,32 +843,36 @@ export default function Index() {
             </div>
             <button 
               type="button" 
-              className="tru-focus-continue" 
+              className={cn("mc-launch-btn", emailOk(formData.email) && "is-ready")}
               onClick={handleContinue}
               disabled={!emailOk(formData.email)}
             >
-              <span>Continue</span>
-              <ArrowRight className="tru-focus-continue-icon" />
+              <span>Verify Channel</span>
+              <ArrowRight className="mc-launch-icon" />
             </button>
-            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
-              <ChevronLeft className="tru-back-icon" />
-              <span>Back</span>
+            <button type="button" className="mc-back-link" onClick={goBack} style={{ marginTop: 12 }}>
+              <ChevronLeft className="mc-back-icon" />
+              <span>Previous Phase</span>
             </button>
             {renderProgressDots()}
           </div>
         );
 
-      case 'phone':
+      case 'comms-phone':
         return (
-          <div className="tru-focus-hero">
-            <h2 className="tru-focus-question">What's your phone number?</h2>
-            <p className="tru-focus-subtext">For move-day coordination only — no spam, ever</p>
+          <div className="mc-content">
+            <div className="mc-phase-indicator">
+              <span className="mc-phase-badge">{PHASE_LABELS[currentPhase]}</span>
+            </div>
+            <h2 className="mc-question">Secondary Comms Link</h2>
+            <p className="mc-subtext">For mission-day coordination only</p>
             {renderAiBubble()}
-            <div className="tru-focus-input-wrap">
+            <div className="mc-input-wrap">
+              <span className="mc-input-label">VOICE FREQUENCY</span>
               <input
                 type="tel"
-                className={cn("tru-focus-input", errors.phone && "is-error")}
-                placeholder="(555) 123-4567"
+                className={cn("mc-input", errors.phone && "is-error")}
+                placeholder="(000) 000-0000"
                 value={formData.phone}
                 onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
                 onKeyDown={handleKeyDown}
@@ -821,100 +881,101 @@ export default function Index() {
             </div>
             <button 
               type="button" 
-              className="tru-focus-continue" 
+              className={cn("mc-launch-btn is-ready")}
               onClick={handleContinue}
               disabled={!phoneOk(formData.phone)}
             >
-              <span>Get My Quote</span>
-              <Sparkles className="tru-focus-continue-icon" />
+              <Rocket className="mc-launch-icon" />
+              <span>Initiate Launch</span>
             </button>
-            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
-              <ChevronLeft className="tru-back-icon" />
-              <span>Back</span>
+            <button type="button" className="mc-back-link" onClick={goBack} style={{ marginTop: 12 }}>
+              <ChevronLeft className="mc-back-icon" />
+              <span>Previous Phase</span>
             </button>
             {renderProgressDots()}
           </div>
         );
 
-      case 'complete':
+      case 'launch':
         return (
-          <div className="tru-focus-hero">
-            <div className="tru-confirmed-badge" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid hsl(142 76% 36%)' }}>
-              <Check className="tru-confirmed-badge-icon" style={{ color: 'hsl(142 76% 36%)' }} />
-              <span style={{ color: 'hsl(142 76% 30%)' }}>Quote Ready!</span>
+          <div className="mc-content">
+            <div className="mc-lock-badge" style={{ background: 'hsl(120 100% 50% / 0.15)', borderColor: 'hsl(120 100% 50% / 0.5)' }}>
+              <Check className="mc-lock-icon" style={{ color: 'hsl(120 100% 50%)' }} />
+              <span style={{ color: 'hsl(120 100% 50%)' }}>ALL SYSTEMS GO</span>
             </div>
-            <h2 className="tru-focus-question">You're all set!</h2>
-            <p className="tru-focus-subtext">Choose how you'd like to proceed</p>
+            <div className="mc-phase-indicator">
+              <span className="mc-phase-badge" style={{ color: 'hsl(120 100% 50%)', borderColor: 'hsl(120 100% 50% / 0.5)', background: 'hsl(120 100% 50% / 0.1)' }}>{PHASE_LABELS[currentPhase]}</span>
+            </div>
+            <h2 className="mc-question">Mission Ready</h2>
+            <p className="mc-subtext">Select launch configuration</p>
             {renderAiBubble()}
             
             {showEstimate && (
-              <div className="tru-live-estimate">
-                <span className="tru-estimate-label">Your Estimated Move</span>
-                <span className="tru-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
-                <span className="tru-estimate-note">{fromCity || formData.fromZip} → {toCity || formData.toZip}</span>
+              <div className="mc-estimate" style={{ borderColor: 'hsl(120 100% 50%)' }}>
+                <span className="mc-estimate-label">Mission Cost Projection</span>
+                <span className="mc-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
+                <span className="mc-estimate-note">{fromCity || formData.fromZip} → {toCity || formData.toZip}</span>
               </div>
             )}
 
             {/* Move Summary */}
-            <div className="tru-move-summary" style={{ maxWidth: 380, width: '100%', marginTop: 20 }}>
-              <div className="tru-summary-header">Your Move Summary</div>
-              <div className="tru-summary-content">
-                <div className="tru-summary-row">
-                  <MapPin className="tru-summary-icon-dark" />
-                  <span>{fromCity || formData.fromZip} → {toCity || formData.toZip}</span>
-                </div>
-                <div className="tru-summary-row">
-                  <CalendarIcon className="tru-summary-icon-dark" />
-                  <span>{formData.moveDate ? format(formData.moveDate, "MMMM d, yyyy") : "Date not set"}</span>
-                </div>
-                <div className="tru-summary-badges">
-                  <span className="tru-summary-badge">
-                    <Home className="tru-summary-badge-icon" />
-                    {formData.size}
+            <div className="mc-summary" style={{ marginTop: 16 }}>
+              <div className="mc-summary-header">Mission Parameters</div>
+              <div className="mc-summary-row">
+                <MapPin className="mc-summary-icon" />
+                <span>{fromCity || formData.fromZip} → {toCity || formData.toZip}</span>
+              </div>
+              <div className="mc-summary-row">
+                <CalendarIcon className="mc-summary-icon" />
+                <span>{formData.moveDate ? format(formData.moveDate, "yyyy-MM-dd") : "TBD"}</span>
+              </div>
+              <div className="mc-summary-badges">
+                <span className="mc-summary-badge">
+                  <Home className="mc-summary-badge-icon" />
+                  {formData.size}
+                </span>
+                {formData.hasCar && (
+                  <span className="mc-summary-badge">
+                    <Car className="mc-summary-badge-icon" />
+                    VEHICLE
                   </span>
-                  {formData.hasCar && (
-                    <span className="tru-summary-badge">
-                      <Car className="tru-summary-badge-icon" />
-                      Vehicle
-                    </span>
-                  )}
-                  {formData.needsPacking && (
-                    <span className="tru-summary-badge">
-                      <Package className="tru-summary-badge-icon" />
-                      Packing
-                    </span>
-                  )}
-                </div>
+                )}
+                {formData.needsPacking && (
+                  <span className="mc-summary-badge">
+                    <Package className="mc-summary-badge-icon" />
+                    PACKING
+                  </span>
+                )}
               </div>
             </div>
 
             {/* CTA Options */}
-            <div className="tru-cta-grid" style={{ maxWidth: 380, width: '100%', marginTop: 20 }}>
-              <button type="button" className="tru-cta-option" onClick={() => handleIntent("specialist")}>
-                <Phone className="tru-cta-icon" />
-                <div className="tru-cta-content">
-                  <span className="tru-cta-title">Talk to Specialist</span>
-                  <span className="tru-cta-desc">Get personalized guidance</span>
+            <div className="mc-cta-grid">
+              <button type="button" className="mc-cta-option" onClick={() => handleIntent("specialist")}>
+                <Phone className="mc-cta-icon" />
+                <div className="mc-cta-content">
+                  <span className="mc-cta-title">Voice Comms</span>
+                  <span className="mc-cta-desc">Direct specialist link</span>
                 </div>
               </button>
-              <button type="button" className="tru-cta-option" onClick={() => handleIntent("virtual")}>
-                <Video className="tru-cta-icon" />
-                <div className="tru-cta-content">
-                  <span className="tru-cta-title">Book Virtual Meet</span>
-                  <span className="tru-cta-desc">Schedule your specialist</span>
+              <button type="button" className="mc-cta-option" onClick={() => handleIntent("virtual")}>
+                <Video className="mc-cta-icon" />
+                <div className="mc-cta-content">
+                  <span className="mc-cta-title">Video Brief</span>
+                  <span className="mc-cta-desc">Schedule walkthrough</span>
                 </div>
               </button>
             </div>
             
-            <button type="button" className="tru-focus-continue" onClick={() => handleIntent("builder")} style={{ marginTop: 16 }}>
-              <Boxes className="tru-focus-continue-icon" style={{ marginRight: 4 }} />
-              <span>Build My Move Online</span>
-              <ArrowRight className="tru-focus-continue-icon" />
+            <button type="button" className="mc-launch-btn is-ready" onClick={() => handleIntent("builder")} style={{ marginTop: 16 }}>
+              <Boxes className="mc-launch-icon" style={{ marginRight: 4 }} />
+              <span>Full Mission Control</span>
+              <ArrowRight className="mc-launch-icon" />
             </button>
             
-            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
-              <ChevronLeft className="tru-back-icon" />
-              <span>Edit answers</span>
+            <button type="button" className="mc-back-link" onClick={goBack} style={{ marginTop: 12 }}>
+              <ChevronLeft className="mc-back-icon" />
+              <span>Edit Parameters</span>
             </button>
           </div>
         );
@@ -951,29 +1012,29 @@ export default function Index() {
                 <div className="tru-hero-note">No hidden fees, no endless phone calls, just one clean dashboard for your whole move.</div>
               </div>
 
-              {/* PREMIUM WIZARD CONSOLE - Now with Focus Mode */}
+              {/* MISSION CONTROL CONSOLE */}
               <div className="tru-hero-visual">
-                <div className="tru-form-card">
-                  {/* Header */}
-                  <div className="tru-form-header">
-                    <div className="tru-form-header-top">
-                      <img src={logo} alt="TruMove" className="tru-form-logo" />
-                      <div className="tru-form-status">
-                        <span className="tru-status-dot"></span>
-                        <span className="tru-status-text">Online</span>
-                      </div>
+                <div className="mc-form-card">
+                  {/* Mission Header */}
+                  <div className="mc-header">
+                    <div className="mc-header-left">
+                      <span className="mc-logo-text">TruMove</span>
+                      <span className="mc-mission-id">{missionId}</span>
+                    </div>
+                    <div className="mc-status-indicator">
+                      <span className="mc-status-light"></span>
+                      <span className="mc-status-text">Online</span>
                     </div>
                   </div>
 
-                  {/* Focus Mode Content */}
-                  <div className="tru-form-body">
-                    {renderStepContent()}
+                  {/* Mission Body */}
+                  <div className="mc-body">
+                    {renderPhaseContent()}
                   </div>
 
-                  {/* Trust footer */}
-                  <div className="tru-form-footer">
-                    <span className="tru-form-disclaimer">By submitting, you agree we may contact you by phone, text, or email, including via automated technology. Consent is not required to purchase services.</span>
-                    <span className="tru-form-secure">🔒 Your info is secure & never sold.</span>
+                  {/* Footer */}
+                  <div className="mc-footer">
+                    ENCRYPTED TRANSMISSION • DATA NEVER SOLD • MISSION CONTROL v2.0
                   </div>
                 </div>
               </div>
