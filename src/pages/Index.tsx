@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package, CalendarIcon, MapPin, Home, Truck, Mail, Boxes } from "lucide-react";
+import { Phone, Video, ArrowRight, ChevronLeft, Check, Car, Package, CalendarIcon, MapPin, Home, Truck, Mail, Boxes, Brain, Sparkles } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import logo from "@/assets/logo.png";
 import { cn } from "@/lib/utils";
 import MoveMap from "@/components/MoveMap";
+import TechIndicatorStrip from "@/components/TechIndicatorStrip";
 
 // Format date as MM/DD/YY
 const formatShortDate = (date: Date) => {
@@ -94,64 +95,18 @@ async function searchLocations(query: string): Promise<LocationSuggestion[]> {
   const queryLower = query.toLowerCase().trim();
   const isNumeric = /^\d+$/.test(query);
   
-  // Search local lookup for matches (both ZIP and city)
   for (const [zip, city] of Object.entries(ZIP_LOOKUP)) {
     if (isNumeric) {
-      // If numeric, search by ZIP prefix
       if (zip.startsWith(query)) {
         suggestions.push({ zip, city, display: `${city} (${zip})` });
       }
     } else {
-      // If text, search by city name
       if (city.toLowerCase().includes(queryLower)) {
         suggestions.push({ zip, city, display: `${city} (${zip})` });
       }
     }
   }
   
-  // If searching by city name and not enough local results, try the API
-  if (!isNumeric && suggestions.length < 4 && query.length >= 2) {
-    // Try a few common ZIP prefixes to find matching cities
-    const stateAbbrevs: Record<string, string[]> = {
-      'new york': ['100', '101', '102', '103', '104', '110', '111', '112', '113', '114'],
-      'los angeles': ['900', '901', '902', '903', '904'],
-      'chicago': ['606', '607', '608'],
-      'houston': ['770', '771', '772', '773', '774'],
-      'miami': ['331', '332', '333'],
-      'atlanta': ['303', '304', '305'],
-      'boston': ['021', '022'],
-      'seattle': ['981', '980'],
-      'denver': ['802', '803'],
-      'dallas': ['752', '753', '754'],
-      'san francisco': ['941', '940'],
-      'austin': ['787', '786'],
-      'phoenix': ['850', '851', '852'],
-      'orlando': ['328', '327', '326'],
-      'tampa': ['336', '335', '334'],
-    };
-    
-    for (const [cityKey, zips] of Object.entries(stateAbbrevs)) {
-      if (cityKey.includes(queryLower)) {
-        for (const zipPrefix of zips.slice(0, 2)) {
-          try {
-            const res = await fetch(`https://api.zippopotam.us/us/${zipPrefix}01`);
-            if (res.ok) {
-              const data = await res.json();
-              const cityName = `${data.places[0]["place name"]}, ${data.places[0]["state abbreviation"]}`;
-              const fullZip = data["post code"];
-              if (!suggestions.find(s => s.zip === fullZip)) {
-                suggestions.push({ zip: fullZip, city: cityName, display: `${cityName} (${fullZip})` });
-              }
-            }
-          } catch {}
-          if (suggestions.length >= 4) break;
-        }
-      }
-      if (suggestions.length >= 4) break;
-    }
-  }
-  
-  // If numeric and not enough local results, try API
   if (isNumeric && suggestions.length < 4 && query.length >= 3) {
     try {
       const res = await fetch(`https://api.zippopotam.us/us/${query.padEnd(5, '0').slice(0, 5)}`);
@@ -178,9 +133,19 @@ const MOVE_SIZES = [
   { value: "Office", label: "Office" },
 ];
 
+// Focus mode step labels
+const FOCUS_STEPS = ['from', 'to', 'date', 'size', 'vehicle', 'packing', 'email', 'phone', 'complete'] as const;
+type FocusStep = typeof FOCUS_STEPS[number];
+
 export default function Index() {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
+  
+  // Focus mode state
+  const [focusStep, setFocusStep] = useState<FocusStep>('from');
+  const [aiMessage, setAiMessage] = useState("");
+  const [showEstimate, setShowEstimate] = useState(false);
+  const [estimateRange, setEstimateRange] = useState({ min: 0, max: 0 });
+  
   const [formData, setFormData] = useState({
     fromZip: "", toZip: "", moveDate: null as Date | null, 
     size: "", hasCar: null as boolean | null, needsPacking: null as boolean | null,
@@ -194,12 +159,9 @@ export default function Index() {
   const [toSuggestions, setToSuggestions] = useState<LocationSuggestion[]>([]);
   const [showFromSuggestions, setShowFromSuggestions] = useState(false);
   const [showToSuggestions, setShowToSuggestions] = useState(false);
-  const [fromLoading, setFromLoading] = useState(false);
-  const [toLoading, setToLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, boolean>>({});
-  const [formError, setFormError] = useState("");
-  const [isAnimating, setIsAnimating] = useState(false);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  
   const fromInputRef = useRef<HTMLInputElement>(null);
   const toInputRef = useRef<HTMLInputElement>(null);
 
@@ -208,29 +170,40 @@ export default function Index() {
   const phoneOk = (p: string) => (p.replace(/\D/g, "")).length >= 10;
   const emailOk = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
-  // Check if both ZIPs are valid for route line
-  const bothZipsValid = zipOk(formData.fromZip) && zipOk(formData.toZip);
+  // Calculate rough estimate based on current data
+  const calculateEstimate = () => {
+    let base = 1500;
+    
+    if (formData.size === "Studio") base = 800;
+    else if (formData.size === "1 Bedroom") base = 1200;
+    else if (formData.size === "2 Bedroom") base = 2200;
+    else if (formData.size === "3 Bedroom") base = 3500;
+    else if (formData.size === "4+ Bedroom") base = 5000;
+    else if (formData.size === "Office") base = 3000;
+    
+    if (formData.hasCar) base += 800;
+    if (formData.needsPacking) base += 600;
+    
+    const variance = base * 0.2;
+    return { min: Math.round(base - variance), max: Math.round(base + variance) };
+  };
 
-  // Location lookup and suggestions effect
+  // Location lookup effect
   useEffect(() => {
     if (zipOk(formData.fromZip)) {
       lookupZip(formData.fromZip).then(city => setFromCity(city || ""));
       setFromSuggestions([]);
       setShowFromSuggestions(false);
-      setFromLoading(false);
     } else if (fromInput.length >= 2) {
-      setFromLoading(true);
       searchLocations(fromInput).then(s => {
         setFromSuggestions(s);
         setShowFromSuggestions(s.length > 0);
-        setFromLoading(false);
       });
       setFromCity("");
     } else {
       setFromCity("");
       setFromSuggestions([]);
       setShowFromSuggestions(false);
-      setFromLoading(false);
     }
   }, [formData.fromZip, fromInput]);
 
@@ -239,20 +212,16 @@ export default function Index() {
       lookupZip(formData.toZip).then(city => setToCity(city || ""));
       setToSuggestions([]);
       setShowToSuggestions(false);
-      setToLoading(false);
     } else if (toInput.length >= 2) {
-      setToLoading(true);
       searchLocations(toInput).then(s => {
         setToSuggestions(s);
         setShowToSuggestions(s.length > 0);
-        setToLoading(false);
       });
       setToCity("");
     } else {
       setToCity("");
       setToSuggestions([]);
       setShowToSuggestions(false);
-      setToLoading(false);
     }
   }, [formData.toZip, toInput]);
 
@@ -260,8 +229,8 @@ export default function Index() {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
-      const fromContainer = fromInputRef.current?.closest('.tru-zip-field');
-      const toContainer = toInputRef.current?.closest('.tru-zip-field');
+      const fromContainer = fromInputRef.current?.closest('.tru-focus-input-wrap');
+      const toContainer = toInputRef.current?.closest('.tru-focus-input-wrap');
       
       if (fromContainer && !fromContainer.contains(target)) {
         setShowFromSuggestions(false);
@@ -274,71 +243,146 @@ export default function Index() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const validateStep1 = () => {
-    const newErrors: Record<string, boolean> = {};
-    if (!zipOk(formData.fromZip)) newErrors.fromZip = true;
-    if (!zipOk(formData.toZip)) newErrors.toZip = true;
-    if (!formData.moveDate) newErrors.moveDate = true;
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      setFormError("Please complete all fields with valid ZIP codes.");
-      return false;
+  // Update estimate when relevant fields change
+  useEffect(() => {
+    if (formData.size) {
+      setEstimateRange(calculateEstimate());
+      setShowEstimate(true);
     }
-    setFormError("");
-    return true;
-  };
+  }, [formData.size, formData.hasCar, formData.needsPacking]);
 
-  const validateStep2 = () => {
-    const newErrors: Record<string, boolean> = {};
-    if (!formData.size) newErrors.size = true;
-    if (formData.hasCar === null) newErrors.hasCar = true;
-    if (formData.needsPacking === null) newErrors.needsPacking = true;
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      setFormError("Please complete all selections.");
-      return false;
+  // Get current step index for progress
+  const currentStepIndex = FOCUS_STEPS.indexOf(focusStep);
+  const completedSteps = currentStepIndex;
+
+  // AI Message generator
+  const generateAiMessage = (step: FocusStep) => {
+    switch (step) {
+      case 'to':
+        return fromCity 
+          ? `Perfect! ${fromCity.split(',')[0]} — we have vetted movers ready in your area.`
+          : "Got it! We have vetted movers ready in your area.";
+      case 'date':
+        if (fromCity && toCity) {
+          return `${toCity.split(',')[0]} confirmed! Analyzing the best carriers for this route...`;
+        }
+        return "Destination locked in! Analyzing the best carriers for this route...";
+      case 'size':
+        if (formData.moveDate) {
+          const month = format(formData.moveDate, "MMMM");
+          return `${month} is a great time to move — typically 15% lower demand than summer.`;
+        }
+        return "Date saved! Now let's size up your move.";
+      case 'vehicle':
+        return `${formData.size} move noted. Our AI is already filtering carriers with the right equipment.`;
+      case 'packing':
+        return formData.hasCar 
+          ? "We'll include auto transport carriers in your options."
+          : "No problem — household items only.";
+      case 'email':
+        return formData.needsPacking
+          ? "Packing services added! This typically adds 1-2 crew members to your move."
+          : "Got it — you'll handle packing. That keeps costs down!";
+      case 'phone':
+        return "Almost done! Just need your phone for move-day coordination.";
+      case 'complete':
+        return "You're all set! Choose how you'd like to proceed.";
+      default:
+        return "";
     }
-    setFormError("");
-    return true;
   };
 
-  const validateStep3 = () => {
-    const newErrors: Record<string, boolean> = {};
-    if (!emailOk(formData.email)) newErrors.email = true;
-    if (!phoneOk(formData.phone)) newErrors.phone = true;
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      setFormError("Please enter a valid email and phone number.");
-      return false;
+  // Handle step advancement
+  const advanceStep = () => {
+    const nextIndex = currentStepIndex + 1;
+    if (nextIndex < FOCUS_STEPS.length) {
+      const nextStep = FOCUS_STEPS[nextIndex];
+      setAiMessage(generateAiMessage(nextStep));
+      setFocusStep(nextStep);
     }
-    setFormError("");
-    return true;
   };
 
-  const nextStep = () => {
-    if (currentStep === 1 && !validateStep1()) return;
-    if (currentStep === 2 && !validateStep2()) return;
-    
-    setIsAnimating(true);
-    setTimeout(() => {
-      setCurrentStep(prev => Math.min(prev + 1, 3));
-      setIsAnimating(false);
-    }, 150);
-  };
-
-  const prevStep = () => {
-    setIsAnimating(true);
-    setFormError("");
+  // Validate current step
+  const validateCurrentStep = (): boolean => {
     setErrors({});
-    setTimeout(() => {
-      setCurrentStep(prev => Math.max(prev - 1, 1));
-      setIsAnimating(false);
-    }, 150);
+    switch (focusStep) {
+      case 'from':
+        if (!zipOk(formData.fromZip)) {
+          setErrors({ fromZip: true });
+          return false;
+        }
+        return true;
+      case 'to':
+        if (!zipOk(formData.toZip)) {
+          setErrors({ toZip: true });
+          return false;
+        }
+        return true;
+      case 'date':
+        if (!formData.moveDate) {
+          setErrors({ moveDate: true });
+          return false;
+        }
+        return true;
+      case 'size':
+        if (!formData.size) {
+          setErrors({ size: true });
+          return false;
+        }
+        return true;
+      case 'vehicle':
+        if (formData.hasCar === null) {
+          setErrors({ hasCar: true });
+          return false;
+        }
+        return true;
+      case 'packing':
+        if (formData.needsPacking === null) {
+          setErrors({ needsPacking: true });
+          return false;
+        }
+        return true;
+      case 'email':
+        if (!emailOk(formData.email)) {
+          setErrors({ email: true });
+          return false;
+        }
+        return true;
+      case 'phone':
+        if (!phoneOk(formData.phone)) {
+          setErrors({ phone: true });
+          return false;
+        }
+        return true;
+      default:
+        return true;
+    }
+  };
+
+  const handleContinue = () => {
+    if (validateCurrentStep()) {
+      advanceStep();
+    }
+  };
+
+  // Handle Enter key for text inputs
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleContinue();
+    }
+  };
+
+  // Go back to previous step
+  const goBack = () => {
+    const prevIndex = currentStepIndex - 1;
+    if (prevIndex >= 0) {
+      setFocusStep(FOCUS_STEPS[prevIndex]);
+      setAiMessage("");
+    }
   };
 
   const handleIntent = (intent: string) => {
-    if (!validateStep3()) return;
-    
     localStorage.setItem("tm_lead", JSON.stringify({ 
       intent, 
       ...formData, 
@@ -357,7 +401,528 @@ export default function Index() {
     }
   };
 
-  const stepLabels = ["Start TruMove", "Build Inventory", "Get Estimate"];
+  // Render progress dots
+  const renderProgressDots = () => (
+    <div className="tru-progress-dots">
+      {FOCUS_STEPS.slice(0, -1).map((step, idx) => (
+        <span 
+          key={step} 
+          className={cn(
+            "tru-progress-dot",
+            idx < completedSteps && "is-complete",
+            idx === completedSteps && "is-current"
+          )} 
+        />
+      ))}
+    </div>
+  );
+
+  // Render confirmed badges for completed fields
+  const renderConfirmedBadge = (text: string) => (
+    <div className="tru-confirmed-badge">
+      <Check className="tru-confirmed-badge-icon" />
+      <span>{text}</span>
+    </div>
+  );
+
+  // Render AI bubble
+  const renderAiBubble = () => {
+    if (!aiMessage) return null;
+    return (
+      <div className="tru-ai-bubble">
+        <Brain className="tru-ai-icon" />
+        <span className="tru-ai-text">{aiMessage}</span>
+      </div>
+    );
+  };
+
+  // Render the appropriate step content
+  const renderStepContent = () => {
+    switch (focusStep) {
+      case 'from':
+        return (
+          <div className="tru-focus-hero">
+            <h2 className="tru-focus-question">Where are you moving from?</h2>
+            <p className="tru-focus-subtext">Enter your current ZIP code or city</p>
+            <div className="tru-focus-input-wrap">
+              <input
+                ref={fromInputRef}
+                type="text"
+                className={cn("tru-focus-input", errors.fromZip && "is-error")}
+                placeholder="ZIP or City"
+                value={zipOk(formData.fromZip) ? formData.fromZip : fromInput}
+                onChange={e => {
+                  const val = e.target.value;
+                  const isNumeric = /^\d+$/.test(val);
+                  if (isNumeric) {
+                    const numVal = val.slice(0, 5);
+                    setFormData(p => ({ ...p, fromZip: numVal }));
+                    setFromInput(numVal);
+                    if (zipOk(numVal)) setErrors({});
+                  } else {
+                    setFromInput(val);
+                    setFormData(p => ({ ...p, fromZip: "" }));
+                  }
+                }}
+                onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+              />
+              {showFromSuggestions && fromSuggestions.length > 0 && (
+                <div className="tru-zip-suggestions" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8 }}>
+                  {fromSuggestions.map(s => (
+                    <button
+                      key={s.zip}
+                      type="button"
+                      className="tru-zip-suggestion"
+                      onClick={() => {
+                        setFormData(p => ({ ...p, fromZip: s.zip }));
+                        setFromInput(s.zip);
+                        setShowFromSuggestions(false);
+                        setErrors({});
+                      }}
+                    >
+                      <span className="tru-zip-suggestion-city">{s.display}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {fromCity && <div className="tru-confirmed-badge" style={{ marginTop: 12 }}><MapPin className="tru-confirmed-badge-icon" /><span>{fromCity}</span></div>}
+            <button 
+              type="button" 
+              className="tru-focus-continue" 
+              onClick={handleContinue}
+              disabled={!zipOk(formData.fromZip)}
+            >
+              <span>Continue</span>
+              <ArrowRight className="tru-focus-continue-icon" />
+            </button>
+            <TechIndicatorStrip />
+            {renderProgressDots()}
+          </div>
+        );
+
+      case 'to':
+        return (
+          <div className="tru-focus-hero">
+            {renderConfirmedBadge(fromCity || formData.fromZip)}
+            <h2 className="tru-focus-question">Where are you moving to?</h2>
+            <p className="tru-focus-subtext">Enter your destination ZIP code or city</p>
+            {renderAiBubble()}
+            <div className="tru-focus-input-wrap">
+              <input
+                ref={toInputRef}
+                type="text"
+                className={cn("tru-focus-input", errors.toZip && "is-error")}
+                placeholder="ZIP or City"
+                value={zipOk(formData.toZip) ? formData.toZip : toInput}
+                onChange={e => {
+                  const val = e.target.value;
+                  const isNumeric = /^\d+$/.test(val);
+                  if (isNumeric) {
+                    const numVal = val.slice(0, 5);
+                    setFormData(p => ({ ...p, toZip: numVal }));
+                    setToInput(numVal);
+                    if (zipOk(numVal)) setErrors({});
+                  } else {
+                    setToInput(val);
+                    setFormData(p => ({ ...p, toZip: "" }));
+                  }
+                }}
+                onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+              />
+              {showToSuggestions && toSuggestions.length > 0 && (
+                <div className="tru-zip-suggestions" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 8 }}>
+                  {toSuggestions.map(s => (
+                    <button
+                      key={s.zip}
+                      type="button"
+                      className="tru-zip-suggestion"
+                      onClick={() => {
+                        setFormData(p => ({ ...p, toZip: s.zip }));
+                        setToInput(s.zip);
+                        setShowToSuggestions(false);
+                        setErrors({});
+                      }}
+                    >
+                      <span className="tru-zip-suggestion-city">{s.display}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {toCity && <div className="tru-confirmed-badge" style={{ marginTop: 12 }}><MapPin className="tru-confirmed-badge-icon" /><span>{toCity}</span></div>}
+            <button 
+              type="button" 
+              className="tru-focus-continue" 
+              onClick={handleContinue}
+              disabled={!zipOk(formData.toZip)}
+            >
+              <span>Continue</span>
+              <ArrowRight className="tru-focus-continue-icon" />
+            </button>
+            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
+              <ChevronLeft className="tru-back-icon" />
+              <span>Back</span>
+            </button>
+            {renderProgressDots()}
+          </div>
+        );
+
+      case 'date':
+        return (
+          <div className="tru-focus-hero">
+            {renderConfirmedBadge(`${fromCity || formData.fromZip} → ${toCity || formData.toZip}`)}
+            <h2 className="tru-focus-question">When would you like to move?</h2>
+            <p className="tru-focus-subtext">Pick your ideal move date</p>
+            {renderAiBubble()}
+            
+            {/* Show map reveal */}
+            <div className="tru-map-reveal">
+              <MoveMap fromZip={formData.fromZip} toZip={formData.toZip} />
+            </div>
+
+            <div className="tru-focus-input-wrap" style={{ marginTop: 20 }}>
+              <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className={cn(
+                      "tru-focus-date-btn",
+                      !formData.moveDate && "is-placeholder"
+                    )}
+                  >
+                    <CalendarIcon className="tru-focus-date-icon" />
+                    <span>
+                      {formData.moveDate 
+                        ? format(formData.moveDate, "MMMM d, yyyy")
+                        : "Select a date"
+                      }
+                    </span>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="tru-date-popover" align="center">
+                  <CalendarComponent
+                    mode="single"
+                    selected={formData.moveDate || undefined}
+                    onSelect={(date) => {
+                      setFormData(p => ({ ...p, moveDate: date || null }));
+                      setDatePopoverOpen(false);
+                    }}
+                    disabled={(date) => date < new Date()}
+                    className="tru-calendar-popup pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <button 
+              type="button" 
+              className="tru-focus-continue" 
+              onClick={handleContinue}
+              disabled={!formData.moveDate}
+            >
+              <span>Continue</span>
+              <ArrowRight className="tru-focus-continue-icon" />
+            </button>
+            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
+              <ChevronLeft className="tru-back-icon" />
+              <span>Back</span>
+            </button>
+            {renderProgressDots()}
+          </div>
+        );
+
+      case 'size':
+        return (
+          <div className="tru-focus-hero">
+            {renderConfirmedBadge(formData.moveDate ? format(formData.moveDate, "MMM d, yyyy") : "")}
+            <h2 className="tru-focus-question">What size is your move?</h2>
+            <p className="tru-focus-subtext">This helps us match you with the right carriers</p>
+            {renderAiBubble()}
+            <div className="tru-focus-size-grid">
+              {MOVE_SIZES.map(size => (
+                <button
+                  key={size.value}
+                  type="button"
+                  className={cn("tru-focus-size-btn", formData.size === size.value && "is-selected")}
+                  onClick={() => {
+                    setFormData(p => ({ ...p, size: size.value }));
+                    setTimeout(handleContinue, 300);
+                  }}
+                >
+                  {formData.size === size.value && <Check className="tru-focus-size-check" />}
+                  <span>{size.label}</span>
+                </button>
+              ))}
+            </div>
+            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 24 }}>
+              <ChevronLeft className="tru-back-icon" />
+              <span>Back</span>
+            </button>
+            {renderProgressDots()}
+          </div>
+        );
+
+      case 'vehicle':
+        return (
+          <div className="tru-focus-hero">
+            {renderConfirmedBadge(formData.size)}
+            <h2 className="tru-focus-question">Shipping a vehicle?</h2>
+            <p className="tru-focus-subtext">We can include auto transport in your quote</p>
+            {renderAiBubble()}
+            
+            {showEstimate && (
+              <div className="tru-live-estimate">
+                <span className="tru-estimate-label">Estimated Range</span>
+                <span className="tru-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
+                <span className="tru-estimate-note">Refining as you answer...</span>
+              </div>
+            )}
+
+            <div className="tru-focus-toggle-group" style={{ marginTop: 24 }}>
+              <button
+                type="button"
+                className={cn("tru-focus-toggle-btn", formData.hasCar === true && "is-active")}
+                onClick={() => {
+                  setFormData(p => ({ ...p, hasCar: true }));
+                  setTimeout(handleContinue, 300);
+                }}
+              >
+                <Car className="tru-focus-toggle-icon" />
+                <span>Yes</span>
+              </button>
+              <button
+                type="button"
+                className={cn("tru-focus-toggle-btn", formData.hasCar === false && "is-active")}
+                onClick={() => {
+                  setFormData(p => ({ ...p, hasCar: false }));
+                  setTimeout(handleContinue, 300);
+                }}
+              >
+                <span>No</span>
+              </button>
+            </div>
+            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 24 }}>
+              <ChevronLeft className="tru-back-icon" />
+              <span>Back</span>
+            </button>
+            {renderProgressDots()}
+          </div>
+        );
+
+      case 'packing':
+        return (
+          <div className="tru-focus-hero">
+            {formData.hasCar && renderConfirmedBadge("Vehicle included")}
+            <h2 className="tru-focus-question">Need packing help?</h2>
+            <p className="tru-focus-subtext">Professional packers can save you time and stress</p>
+            {renderAiBubble()}
+            
+            {showEstimate && (
+              <div className="tru-live-estimate">
+                <span className="tru-estimate-label">Estimated Range</span>
+                <span className="tru-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
+                <span className="tru-estimate-note">Refining as you answer...</span>
+              </div>
+            )}
+
+            <div className="tru-focus-toggle-group" style={{ marginTop: 24 }}>
+              <button
+                type="button"
+                className={cn("tru-focus-toggle-btn", formData.needsPacking === true && "is-active")}
+                onClick={() => {
+                  setFormData(p => ({ ...p, needsPacking: true }));
+                  setTimeout(handleContinue, 300);
+                }}
+              >
+                <Package className="tru-focus-toggle-icon" />
+                <span>Yes</span>
+              </button>
+              <button
+                type="button"
+                className={cn("tru-focus-toggle-btn", formData.needsPacking === false && "is-active")}
+                onClick={() => {
+                  setFormData(p => ({ ...p, needsPacking: false }));
+                  setTimeout(handleContinue, 300);
+                }}
+              >
+                <span>No</span>
+              </button>
+            </div>
+            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 24 }}>
+              <ChevronLeft className="tru-back-icon" />
+              <span>Back</span>
+            </button>
+            {renderProgressDots()}
+          </div>
+        );
+
+      case 'email':
+        return (
+          <div className="tru-focus-hero">
+            <h2 className="tru-focus-question">What's your email?</h2>
+            <p className="tru-focus-subtext">We'll send your quote and move details here</p>
+            {renderAiBubble()}
+            
+            {showEstimate && (
+              <div className="tru-live-estimate">
+                <span className="tru-estimate-label">Your Estimate</span>
+                <span className="tru-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
+              </div>
+            )}
+
+            <div className="tru-focus-input-wrap" style={{ marginTop: 24 }}>
+              <input
+                type="email"
+                className={cn("tru-focus-input", errors.email && "is-error")}
+                placeholder="you@email.com"
+                value={formData.email}
+                onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
+                onKeyDown={handleKeyDown}
+                autoFocus
+              />
+            </div>
+            <button 
+              type="button" 
+              className="tru-focus-continue" 
+              onClick={handleContinue}
+              disabled={!emailOk(formData.email)}
+            >
+              <span>Continue</span>
+              <ArrowRight className="tru-focus-continue-icon" />
+            </button>
+            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
+              <ChevronLeft className="tru-back-icon" />
+              <span>Back</span>
+            </button>
+            {renderProgressDots()}
+          </div>
+        );
+
+      case 'phone':
+        return (
+          <div className="tru-focus-hero">
+            <h2 className="tru-focus-question">What's your phone number?</h2>
+            <p className="tru-focus-subtext">For move-day coordination only — no spam, ever</p>
+            {renderAiBubble()}
+            <div className="tru-focus-input-wrap">
+              <input
+                type="tel"
+                className={cn("tru-focus-input", errors.phone && "is-error")}
+                placeholder="(555) 123-4567"
+                value={formData.phone}
+                onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
+                onKeyDown={handleKeyDown}
+                autoFocus
+              />
+            </div>
+            <button 
+              type="button" 
+              className="tru-focus-continue" 
+              onClick={handleContinue}
+              disabled={!phoneOk(formData.phone)}
+            >
+              <span>Get My Quote</span>
+              <Sparkles className="tru-focus-continue-icon" />
+            </button>
+            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
+              <ChevronLeft className="tru-back-icon" />
+              <span>Back</span>
+            </button>
+            {renderProgressDots()}
+          </div>
+        );
+
+      case 'complete':
+        return (
+          <div className="tru-focus-hero">
+            <div className="tru-confirmed-badge" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid hsl(142 76% 36%)' }}>
+              <Check className="tru-confirmed-badge-icon" style={{ color: 'hsl(142 76% 36%)' }} />
+              <span style={{ color: 'hsl(142 76% 30%)' }}>Quote Ready!</span>
+            </div>
+            <h2 className="tru-focus-question">You're all set!</h2>
+            <p className="tru-focus-subtext">Choose how you'd like to proceed</p>
+            {renderAiBubble()}
+            
+            {showEstimate && (
+              <div className="tru-live-estimate">
+                <span className="tru-estimate-label">Your Estimated Move</span>
+                <span className="tru-estimate-value">${estimateRange.min.toLocaleString()} - ${estimateRange.max.toLocaleString()}</span>
+                <span className="tru-estimate-note">{fromCity || formData.fromZip} → {toCity || formData.toZip}</span>
+              </div>
+            )}
+
+            {/* Move Summary */}
+            <div className="tru-move-summary" style={{ maxWidth: 380, width: '100%', marginTop: 20 }}>
+              <div className="tru-summary-header">Your Move Summary</div>
+              <div className="tru-summary-content">
+                <div className="tru-summary-row">
+                  <MapPin className="tru-summary-icon-dark" />
+                  <span>{fromCity || formData.fromZip} → {toCity || formData.toZip}</span>
+                </div>
+                <div className="tru-summary-row">
+                  <CalendarIcon className="tru-summary-icon-dark" />
+                  <span>{formData.moveDate ? format(formData.moveDate, "MMMM d, yyyy") : "Date not set"}</span>
+                </div>
+                <div className="tru-summary-badges">
+                  <span className="tru-summary-badge">
+                    <Home className="tru-summary-badge-icon" />
+                    {formData.size}
+                  </span>
+                  {formData.hasCar && (
+                    <span className="tru-summary-badge">
+                      <Car className="tru-summary-badge-icon" />
+                      Vehicle
+                    </span>
+                  )}
+                  {formData.needsPacking && (
+                    <span className="tru-summary-badge">
+                      <Package className="tru-summary-badge-icon" />
+                      Packing
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Options */}
+            <div className="tru-cta-grid" style={{ maxWidth: 380, width: '100%', marginTop: 20 }}>
+              <button type="button" className="tru-cta-option" onClick={() => handleIntent("specialist")}>
+                <Phone className="tru-cta-icon" />
+                <div className="tru-cta-content">
+                  <span className="tru-cta-title">Talk to Specialist</span>
+                  <span className="tru-cta-desc">Get personalized guidance</span>
+                </div>
+              </button>
+              <button type="button" className="tru-cta-option" onClick={() => handleIntent("virtual")}>
+                <Video className="tru-cta-icon" />
+                <div className="tru-cta-content">
+                  <span className="tru-cta-title">Book Virtual Meet</span>
+                  <span className="tru-cta-desc">Schedule your specialist</span>
+                </div>
+              </button>
+            </div>
+            
+            <button type="button" className="tru-focus-continue" onClick={() => handleIntent("builder")} style={{ marginTop: 16 }}>
+              <Boxes className="tru-focus-continue-icon" style={{ marginRight: 4 }} />
+              <span>Build My Move Online</span>
+              <ArrowRight className="tru-focus-continue-icon" />
+            </button>
+            
+            <button type="button" className="tru-back-link" onClick={goBack} style={{ marginTop: 12 }}>
+              <ChevronLeft className="tru-back-icon" />
+              <span>Edit answers</span>
+            </button>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <SiteShell>
@@ -386,7 +951,7 @@ export default function Index() {
                 <div className="tru-hero-note">No hidden fees, no endless phone calls, just one clean dashboard for your whole move.</div>
               </div>
 
-              {/* PREMIUM WIZARD CONSOLE - Narrow & Tall */}
+              {/* PREMIUM WIZARD CONSOLE - Now with Focus Mode */}
               <div className="tru-hero-visual">
                 <div className="tru-form-card">
                   {/* Header */}
@@ -400,481 +965,9 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Text-Only Progress Stepper */}
-                  <div className="tru-stepper">
-                    {stepLabels.map((label, idx) => {
-                      const stepNum = idx + 1;
-                      const isDone = currentStep > stepNum;
-                      const isCurrent = currentStep === stepNum;
-                      const canNavigate = isDone || isCurrent;
-                      
-                      const handleStepClick = () => {
-                        if (isCurrent || isAnimating) return;
-                        
-                        // Going backward is always allowed
-                        if (stepNum < currentStep) {
-                          setIsAnimating(true);
-                          setFormError("");
-                          setErrors({});
-                          setTimeout(() => {
-                            setCurrentStep(stepNum);
-                            setIsAnimating(false);
-                          }, 150);
-                        }
-                      };
-                      
-                      return (
-                        <div 
-                          key={label} 
-                          className={`tru-stepper-step ${isDone ? "is-done" : ""} ${isCurrent ? "is-current" : ""} ${canNavigate ? "is-clickable" : ""}`}
-                          onClick={handleStepClick}
-                          role={canNavigate ? "button" : undefined}
-                          tabIndex={canNavigate ? 0 : undefined}
-                          onKeyDown={(e) => {
-                            if (canNavigate && (e.key === "Enter" || e.key === " ")) {
-                              e.preventDefault();
-                              handleStepClick();
-                            }
-                          }}
-                        >
-                          <span className="tru-stepper-label">{label}</span>
-                          {idx < stepLabels.length - 1 && <span className="tru-stepper-divider">|</span>}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Form Content */}
-                  <div className={`tru-form-body ${isAnimating ? "is-animating" : ""}`}>
-                    {/* STEP 1: Location & Date */}
-                    {currentStep === 1 && (
-                      <div className="tru-form-step">
-                        {/* Two Column Layout: Fields + Map */}
-                        <div className="tru-step1-layout">
-                          {/* Left Column: Stacked Fields */}
-                          <div className="tru-step1-fields">
-                            {/* From Location */}
-                            <div className="tru-zip-compact">
-                              <div className="tru-input-group tru-zip-group">
-                                <label className="tru-input-label">Move from</label>
-                                <div className="tru-zip-field">
-                                  <div className={cn("tru-input-wrapper", errors.fromZip && "is-error")}>
-                                    <input 
-                                      ref={fromInputRef}
-                                      type="text" 
-                                      className="tru-input"
-                                      placeholder="ZIP or City"
-                                      value={zipOk(formData.fromZip) ? formData.fromZip : fromInput}
-                                      onChange={e => {
-                                        const val = e.target.value;
-                                        const isNumeric = /^\d+$/.test(val);
-                                        if (isNumeric) {
-                                          const numVal = val.slice(0, 5);
-                                          setFormData(p => ({ ...p, fromZip: numVal }));
-                                          setFromInput(numVal);
-                                          if (zipOk(numVal)) setErrors(prev => ({ ...prev, fromZip: false }));
-                                        } else {
-                                          setFromInput(val);
-                                          setFormData(p => ({ ...p, fromZip: "" }));
-                                        }
-                                      }}
-                                      onFocus={() => fromSuggestions.length > 0 && setShowFromSuggestions(true)}
-                                    />
-                                  </div>
-                                  {(showFromSuggestions && fromSuggestions.length > 0) || fromLoading ? (
-                                    <div className="tru-zip-suggestions">
-                                      {fromLoading ? (
-                                        <div className="tru-zip-loading">
-                                          <span className="tru-zip-loading-spinner" />
-                                          <span>Searching...</span>
-                                        </div>
-                                      ) : (
-                                        fromSuggestions.map(s => (
-                                          <button
-                                            key={s.zip}
-                                            type="button"
-                                            className="tru-zip-suggestion"
-                                            onClick={() => {
-                                              setFormData(p => ({ ...p, fromZip: s.zip }));
-                                              setFromInput(s.zip);
-                                              setShowFromSuggestions(false);
-                                              setErrors(prev => ({ ...prev, fromZip: false }));
-                                            }}
-                                          >
-                                            <span className="tru-zip-suggestion-city">{s.display}</span>
-                                          </button>
-                                        ))
-                                      )}
-                                    </div>
-                                  ) : null}
-                                  {fromCity && <span className="tru-zip-city-badge">{fromCity}</span>}
-                                  {errors.fromZip && <span className="tru-field-error">Select a location</span>}
-                                </div>
-                              </div>
-
-                              {/* To Location */}
-                              <div className="tru-input-group tru-zip-group">
-                                <label className="tru-input-label">Move to</label>
-                                <div className="tru-zip-field">
-                                  <div className={cn("tru-input-wrapper", errors.toZip && "is-error")}>
-                                    <input 
-                                      ref={toInputRef}
-                                      type="text" 
-                                      className="tru-input"
-                                      placeholder="ZIP or City"
-                                      value={zipOk(formData.toZip) ? formData.toZip : toInput}
-                                      onChange={e => {
-                                        const val = e.target.value;
-                                        const isNumeric = /^\d+$/.test(val);
-                                        if (isNumeric) {
-                                          const numVal = val.slice(0, 5);
-                                          setFormData(p => ({ ...p, toZip: numVal }));
-                                          setToInput(numVal);
-                                          if (zipOk(numVal)) setErrors(prev => ({ ...prev, toZip: false }));
-                                        } else {
-                                          setToInput(val);
-                                          setFormData(p => ({ ...p, toZip: "" }));
-                                        }
-                                      }}
-                                      onFocus={() => toSuggestions.length > 0 && setShowToSuggestions(true)}
-                                    />
-                                  </div>
-                                  {(showToSuggestions && toSuggestions.length > 0) || toLoading ? (
-                                    <div className="tru-zip-suggestions">
-                                      {toLoading ? (
-                                        <div className="tru-zip-loading">
-                                          <span className="tru-zip-loading-spinner" />
-                                          <span>Searching...</span>
-                                        </div>
-                                      ) : (
-                                        toSuggestions.map(s => (
-                                          <button
-                                            key={s.zip}
-                                            type="button"
-                                            className="tru-zip-suggestion"
-                                            onClick={() => {
-                                              setFormData(p => ({ ...p, toZip: s.zip }));
-                                              setToInput(s.zip);
-                                              setShowToSuggestions(false);
-                                              setErrors(prev => ({ ...prev, toZip: false }));
-                                            }}
-                                          >
-                                            <span className="tru-zip-suggestion-city">{s.display}</span>
-                                          </button>
-                                        ))
-                                      )}
-                                    </div>
-                                  ) : null}
-                                  {toCity && <span className="tru-zip-city-badge">{toCity}</span>}
-                                  {errors.toZip && <span className="tru-field-error">Select a location</span>}
-                                </div>
-                              </div>
-
-                              {/* Date Picker */}
-                              <div className="tru-input-group tru-date-compact">
-                                <label className="tru-input-label">Move date</label>
-                                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                                  <PopoverTrigger asChild>
-                                    <button
-                                      type="button"
-                                      className={cn(
-                                        "tru-date-input",
-                                        errors.moveDate && "is-error",
-                                        !formData.moveDate && "is-placeholder"
-                                      )}
-                                    >
-                                      <CalendarIcon className="tru-date-icon" />
-                                      <span>
-                                        {formData.moveDate 
-                                          ? formatShortDate(formData.moveDate)
-                                          : "MM/DD/YY"
-                                        }
-                                      </span>
-                                    </button>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="tru-date-popover" align="start">
-                                    <CalendarComponent
-                                      mode="single"
-                                      selected={formData.moveDate || undefined}
-                                      onSelect={(date) => {
-                                        setFormData(p => ({ ...p, moveDate: date || null }));
-                                        if (date) setErrors(prev => ({ ...prev, moveDate: false }));
-                                        setDatePopoverOpen(false);
-                                      }}
-                                      disabled={(date) => date < new Date()}
-                                      className="tru-calendar-popup pointer-events-auto"
-                                    />
-                                  </PopoverContent>
-                                </Popover>
-                                {errors.moveDate && <span className="tru-field-error">Please select a move date</span>}
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Right Column: Map */}
-                          <div className="tru-step1-map">
-                            <MoveMap fromZip={formData.fromZip} toZip={formData.toZip} />
-                          </div>
-                        </div>
-
-                        <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
-                          <Boxes className="tru-btn-icon" />
-                          <span>Continue with Online Move Builder</span>
-                          <ArrowRight className="tru-btn-icon" />
-                        </button>
-
-                        {/* Alternative CTA Options */}
-                        <div className="tru-cta-grid tru-cta-grid-alt">
-                          <a href="tel:+18001234567" className="tru-cta-option">
-                            <Phone className="tru-cta-icon" />
-                            <div className="tru-cta-content">
-                              <span className="tru-cta-title">Talk to Specialist</span>
-                              <span className="tru-cta-desc">Get personalized guidance</span>
-                            </div>
-                          </a>
-                          <button type="button" className="tru-cta-option" onClick={() => navigate("/book")}>
-                            <Video className="tru-cta-icon" />
-                            <div className="tru-cta-content">
-                              <span className="tru-cta-title">Book Virtual Meet</span>
-                              <span className="tru-cta-desc">Schedule your specialist</span>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* STEP 2: Move Details */}
-                    {currentStep === 2 && (
-                      <div className="tru-form-step">
-                        {/* Move Size Grid */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Move Size</label>
-                          <div className={`tru-size-grid ${errors.size ? "is-error" : ""}`}>
-                            {MOVE_SIZES.map(size => (
-                              <button
-                                key={size.value}
-                                type="button"
-                                className={cn("tru-size-btn", formData.size === size.value && "is-selected")}
-                                onClick={() => setFormData(p => ({ ...p, size: size.value }))}
-                              >
-                                {formData.size === size.value && <Check className="tru-size-check" />}
-                                <span>{size.label}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Vehicle Toggle */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Shipping a vehicle?</label>
-                          <div className="tru-toggle-with-icon">
-                            <div className={`tru-toggle-group tru-toggle-wide ${errors.hasCar ? "is-error" : ""}`}>
-                              <button 
-                                type="button"
-                                className={cn("tru-toggle-btn", formData.hasCar === true && "is-active")}
-                                onClick={() => setFormData(p => ({ ...p, hasCar: true }))}
-                              >
-                                <span>Yes</span>
-                              </button>
-                              <button 
-                                type="button"
-                                className={cn("tru-toggle-btn", formData.hasCar === false && "is-active")}
-                                onClick={() => setFormData(p => ({ ...p, hasCar: false }))}
-                              >
-                                <span>No</span>
-                              </button>
-                            </div>
-                            <Car className={`tru-toggle-side-icon ${formData.hasCar === true ? "active" : ""}`} />
-                          </div>
-                        </div>
-                        {errors.hasCar && <span className="tru-field-error">Please select an option</span>}
-
-                        {/* Packing Toggle */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Need packing help?</label>
-                          <div className="tru-toggle-with-icon">
-                            <div className={`tru-toggle-group tru-toggle-wide ${errors.needsPacking ? "is-error" : ""}`}>
-                              <button 
-                                type="button"
-                                className={cn("tru-toggle-btn", formData.needsPacking === true && "is-active")}
-                                onClick={() => setFormData(p => ({ ...p, needsPacking: true }))}
-                              >
-                                <span>Yes</span>
-                              </button>
-                              <button 
-                                type="button"
-                                className={cn("tru-toggle-btn", formData.needsPacking === false && "is-active")}
-                                onClick={() => setFormData(p => ({ ...p, needsPacking: false }))}
-                              >
-                                <span>No</span>
-                              </button>
-                            </div>
-                            <Package className={`tru-toggle-side-icon ${formData.needsPacking === true ? "active" : ""}`} />
-                          </div>
-                        </div>
-                        {errors.needsPacking && <span className="tru-field-error">Please select an option</span>}
-
-                        {/* Summary Pills - Show Selected Values */}
-                        <div className="tru-selection-pills">
-                          {bothZipsValid && (
-                            <span className="tru-selection-pill">
-                              <MapPin className="tru-selection-pill-icon" />
-                              {formData.fromZip} → {formData.toZip}
-                            </span>
-                          )}
-                          {formData.moveDate && (
-                            <span className="tru-selection-pill">
-                              <CalendarIcon className="tru-selection-pill-icon" />
-                              {format(formData.moveDate, "MMM d")}
-                              {(() => {
-                                const day = formData.moveDate.getDate();
-                                const suffix = day === 1 || day === 21 || day === 31 ? 'st'
-                                  : day === 2 || day === 22 ? 'nd'
-                                  : day === 3 || day === 23 ? 'rd' : 'th';
-                                return suffix;
-                              })()}
-                            </span>
-                          )}
-                          {formData.size && (
-                            <span className="tru-selection-pill">
-                              <Home className="tru-selection-pill-icon" />
-                              {formData.size}
-                            </span>
-                          )}
-                          {formData.hasCar === true && (
-                            <span className="tru-selection-pill">
-                              <Car className="tru-selection-pill-icon" />
-                              Vehicle
-                            </span>
-                          )}
-                          {formData.needsPacking === true && (
-                            <span className="tru-selection-pill">
-                              <Package className="tru-selection-pill-icon" />
-                              Packing
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="tru-btn-row">
-                          <button type="button" className="tru-back-link" onClick={prevStep}>
-                            <ChevronLeft className="tru-back-icon" />
-                            <span>Back</span>
-                          </button>
-                          <button type="button" className="tru-btn tru-btn-primary" onClick={nextStep}>
-                            <span>Continue</span>
-                            <ArrowRight className="tru-btn-icon" />
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* STEP 3: Contact & Intent */}
-                    {currentStep === 3 && (
-                      <div className="tru-form-step">
-                        {/* Contact Fields with End Icons */}
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Email</label>
-                          <div className="tru-input-with-icon">
-                            <div className={cn("tru-input-wrapper", errors.email && "is-error")}>
-                              <input 
-                                type="email" 
-                                className="tru-input"
-                                placeholder="you@email.com"
-                                value={formData.email}
-                                onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-                              />
-                            </div>
-                            <Mail className={`tru-toggle-side-icon ${emailOk(formData.email) ? "active" : ""}`} />
-                          </div>
-                        </div>
-                        {errors.email && <span className="tru-field-error">Enter a valid email address</span>}
-
-                        <div className="tru-input-group">
-                          <label className="tru-input-label">Phone</label>
-                          <div className="tru-input-with-icon">
-                            <div className={cn("tru-input-wrapper", errors.phone && "is-error")}>
-                              <input 
-                                type="tel" 
-                                className="tru-input"
-                                placeholder="(555) 123-4567"
-                                value={formData.phone}
-                                onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
-                              />
-                            </div>
-                            <Phone className={`tru-toggle-side-icon ${phoneOk(formData.phone) ? "active" : ""}`} />
-                          </div>
-                        </div>
-                        {errors.phone && <span className="tru-field-error">Enter a valid phone number</span>}
-
-                        {/* Move Summary */}
-                        <div className="tru-move-summary">
-                          <div className="tru-summary-header">Your Move Summary</div>
-                          <div className="tru-summary-content-grid">
-                            <div className="tru-summary-main">
-                              <div className="tru-summary-row">
-                                <MapPin className="tru-summary-icon-dark" />
-                                <span>{fromCity || formData.fromZip} → {toCity || formData.toZip}</span>
-                              </div>
-                              <div className="tru-summary-row">
-                                <CalendarIcon className="tru-summary-icon-dark" />
-                                <span>{formData.moveDate ? formatShortDate(formData.moveDate) : "Date not set"}</span>
-                              </div>
-                              <div className="tru-summary-badges">
-                                <span className="tru-summary-badge">
-                                  <Home className="tru-summary-badge-icon" />
-                                  {formData.size || "Size TBD"}
-                                </span>
-                                <span className="tru-summary-badge">
-                                  <Car className="tru-summary-badge-icon" />
-                                  {formData.hasCar ? "Vehicle" : "No Vehicle"}
-                                </span>
-                                <span className="tru-summary-badge">
-                                  <Package className="tru-summary-badge-icon" />
-                                  {formData.needsPacking ? "Packing" : "No Packing"}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="tru-summary-decoration">
-                              <Truck className="tru-summary-truck-lg" />
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* CTA Section */}
-                        <div className="tru-cta-section">
-                          <div className="tru-cta-grid">
-                            <button type="button" className="tru-cta-option" onClick={() => handleIntent("specialist")}>
-                              <Phone className="tru-cta-icon" />
-                              <div className="tru-cta-content">
-                                <span className="tru-cta-title">Talk to Specialist</span>
-                                <span className="tru-cta-desc">Get personalized guidance</span>
-                              </div>
-                            </button>
-                            <button type="button" className="tru-cta-option" onClick={() => handleIntent("virtual")}>
-                              <Video className="tru-cta-icon" />
-                              <div className="tru-cta-content">
-                                <span className="tru-cta-title">Book Virtual Meet</span>
-                                <span className="tru-cta-desc">Schedule your specialist</span>
-                              </div>
-                            </button>
-                          </div>
-                          
-                          {/* Back + Builder Row */}
-                          <div className="tru-action-row">
-                            <button type="button" className="tru-back-link" onClick={prevStep}>
-                              <ChevronLeft className="tru-back-icon" />
-                              <span>Back</span>
-                            </button>
-                            <button type="button" className="tru-btn tru-btn-hero" onClick={() => handleIntent("builder")}>
-                              <span>Build My Move Online</span>
-                              <ArrowRight className="tru-btn-icon" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {formError && <div className="tru-form-error">{formError}</div>}
+                  {/* Focus Mode Content */}
+                  <div className="tru-form-body">
+                    {renderStepContent()}
                   </div>
 
                   {/* Trust footer */}
