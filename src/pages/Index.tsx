@@ -2,12 +2,14 @@ import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
-import LiveMoveDashboard from "@/components/estimate/LiveMoveDashboard";
+import MoveMap from "@/components/MoveMap";
 import TechIndicatorStrip from "@/components/TechIndicatorStrip";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { calculateDistance } from "@/lib/distanceCalculator";
+import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
+import logo from "@/assets/logo.png";
 import { 
   Shield, Cpu, Video, Boxes, Calculator, Search, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
@@ -222,31 +224,37 @@ export default function Index() {
     <SiteShell>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-          {/* HERO - Hybrid Typeform + Live Dashboard */}
-          <section className="hero-hybrid">
-            <div className="hero-hybrid-inner">
-              {/* Left: Typeform-Style Single Question Flow */}
-              <div className="hero-form-column">
-                <div className="tru-focus-hero">
-                  {/* Online Status */}
-                  <div className="tru-online-status">
-                    <span className="tru-online-dot"></span>
-                    <span>ONLINE</span>
-                  </div>
-
-                  {/* Completed Badges */}
-                  {renderCompletedBadges()}
-
-                  {/* AI Feedback Bubble */}
-                  {step > 1 && aiMessage && (
-                    <div className="tru-ai-bubble">
-                      <div className="tru-ai-icon">
-                        <Sparkles className="w-4 h-4" />
-                      </div>
-                      <p className="tru-ai-text">{aiMessage}</p>
+          {/* HERO - Single Centered Card */}
+          <section className="tru-hero">
+            <div className="tru-hero-visual">
+              {/* THE CARD FRAME */}
+              <div className="tru-form-card">
+                {/* Card Header: Logo + ONLINE */}
+                <div className="tru-form-header">
+                  <div className="tru-form-header-top">
+                    <img src={logo} alt="TruMove" className="tru-form-logo" />
+                    <div className="tru-form-status">
+                      <span className="tru-status-dot" />
+                      <span className="tru-status-text">ONLINE</span>
                     </div>
-                  )}
+                  </div>
+                </div>
 
+                {/* Completed Badges Row */}
+                {renderCompletedBadges()}
+
+                {/* AI Feedback Bubble */}
+                {step > 1 && aiMessage && (
+                  <div className="tru-ai-bubble">
+                    <div className="tru-ai-icon">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <p className="tru-ai-text">{aiMessage}</p>
+                  </div>
+                )}
+
+                {/* TYPEFORM STEPS */}
+                <div className="tru-focus-hero">
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
                     <div className="tru-focus-step">
@@ -254,7 +262,6 @@ export default function Index() {
                       <p className="tru-focus-subtitle">Enter your current ZIP code</p>
                       
                       <div className="tru-focus-input-wrap">
-                        <MapPin className="tru-focus-input-icon" />
                         <input
                           type="text"
                           className="tru-focus-input"
@@ -295,7 +302,6 @@ export default function Index() {
                       <p className="tru-focus-subtitle">Enter your destination ZIP code</p>
                       
                       <div className="tru-focus-input-wrap">
-                        <MapPin className="tru-focus-input-icon" />
                         <input
                           type="text"
                           className="tru-focus-input"
@@ -390,7 +396,6 @@ export default function Index() {
                             className={`tru-focus-size-btn ${size === s.value ? 'is-active' : ''}`}
                             onClick={() => {
                               setSize(s.value);
-                              // Auto-advance after selection
                               setTimeout(() => setStep(5), 200);
                             }}
                           >
@@ -506,31 +511,64 @@ export default function Index() {
                       </p>
                     </form>
                   )}
-
-                  {/* Progress Dots */}
-                  {renderProgressDots()}
-
-                  {/* Tech Indicator Strip */}
-                  <TechIndicatorStrip />
                 </div>
-              </div>
 
-              {/* Right: Live Dashboard */}
-              <div className="hero-dashboard-column">
-                <LiveMoveDashboard
-                  fromZip={fromZip}
-                  toZip={toZip}
-                  fromCity={fromCity}
-                  toCity={toCity}
-                  distance={distance}
-                  moveDate={moveDate}
-                  moveType={moveType}
-                  size={size}
-                  itemCount={0}
-                  totalWeight={0}
-                  hasCar={hasCar}
-                  needsPacking={needsPacking}
-                />
+                {/* Map Reveal (after step 2) */}
+                {step >= 3 && fromCity && toCity && (
+                  <div className="tru-map-reveal">
+                    <MoveMap fromZip={fromZip} toZip={toZip} />
+                    {distance > 0 && (
+                      <div className="tru-route-info">
+                        <Route className="w-4 h-4" />
+                        <span>{distance.toLocaleString()} miles · {moveType === 'long-distance' ? 'Long Distance' : 'Local'}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Live Estimate (after step 4) */}
+                {step >= 5 && size && (() => {
+                  const sizeWeights: Record<string, number> = {
+                    'Studio': 2000,
+                    '1 Bedroom': 3000,
+                    '2 Bedroom': 5000,
+                    '3 Bedroom': 7000,
+                    '4+ Bedroom': 10000,
+                    'Office': 4000,
+                  };
+                  const weight = sizeWeights[size] || 4000;
+                  const estimate = calculateEstimate(weight, distance, moveType as 'local' | 'long-distance');
+                  let adjustedMin = estimate.min;
+                  let adjustedMax = estimate.max;
+                  if (hasCar) {
+                    adjustedMin += 800;
+                    adjustedMax += 1200;
+                  }
+                  if (needsPacking) {
+                    adjustedMin += Math.round(weight * 0.15);
+                    adjustedMax += Math.round(weight * 0.25);
+                  }
+                  return (
+                    <div className="tru-live-estimate">
+                      <span className="tru-estimate-label">Your Estimate</span>
+                      <span className="tru-estimate-value">
+                        {formatCurrency(adjustedMin)} – {formatCurrency(adjustedMax)}
+                      </span>
+                      <span className="tru-estimate-note">Based on {size} · {distance > 0 ? `${distance.toLocaleString()} mi` : 'local'}</span>
+                    </div>
+                  );
+                })()}
+
+                {/* Progress Dots */}
+                {renderProgressDots()}
+
+                {/* Tech Indicator Strip */}
+                <TechIndicatorStrip />
+
+                {/* Footer Disclaimer */}
+                <p className="tru-form-disclaimer">
+                  Your info is secure & never sold.
+                </p>
               </div>
             </div>
           </section>

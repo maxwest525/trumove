@@ -1569,11 +1569,14 @@
 }
 
 .tru-form-disclaimer {
-  font-size: 9px;
-  font-weight: 400;
-  color: hsl(var(--tm-ink) / 0.4);
+  font-size: 11px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.45);
   line-height: 1.4;
-  text-align: left;
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
 }
 
 .tru-form-secure {
@@ -2764,13 +2767,38 @@
   animation: focus-fade-in 0.3s ease-out;
 }
 
+/* Confirmed Badges Container */
+.tru-confirmed-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
 .tru-confirmed-badge-icon {
   width: 14px;
   height: 14px;
   color: hsl(var(--primary));
 }
 
-/* Tech Indicator Strip */
+/* Route Info Strip */
+.tru-route-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, hsl(var(--tm-ink) / 0.03), hsl(var(--tm-ink) / 0.06));
+  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+.tru-route-info svg {
+  color: hsl(var(--primary));
+}
 .tru-tech-strip {
   display: flex;
   flex-direction: column;
@@ -2829,8 +2857,10 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  width: 100%;
+  max-width: 320px;
+  margin: 24px auto 0;
   padding: 20px 32px;
-  margin-top: 24px;
   background: linear-gradient(135deg, #f0fdf4, #dcfce7);
   border: 2px solid hsl(142 76% 36%);
   border-radius: 16px;
@@ -2872,8 +2902,8 @@
 /* Map Reveal Container */
 .tru-map-reveal {
   width: 100%;
-  max-width: 380px;
-  margin-top: 20px;
+  max-width: 420px;
+  margin: 20px auto 0;
   border-radius: 16px;
   overflow: hidden;
   border: 2px solid hsl(var(--tm-ink) / 0.1);
