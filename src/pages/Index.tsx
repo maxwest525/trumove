@@ -1,47 +1,310 @@
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
-import ChatContainer from "@/components/chat/ChatContainer";
+import LiveMoveDashboard from "@/components/estimate/LiveMoveDashboard";
 import MoveMap from "@/components/MoveMap";
-import { Shield, Cpu, Video, Boxes, Calculator, Search, CheckCircle, MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight } from "lucide-react";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { 
+  Shield, Cpu, Video, Boxes, Calculator, Search, CheckCircle, 
+  MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
+  CalendarIcon, Sparkles, Car, Package
+} from "lucide-react";
+
+// ZIP lookup
+const ZIP_LOOKUP: Record<string, string> = {
+  "90210": "Beverly Hills, CA", "90001": "Los Angeles, CA", "10001": "New York, NY",
+  "10016": "New York, NY", "77001": "Houston, TX", "60601": "Chicago, IL",
+  "33101": "Miami, FL", "85001": "Phoenix, AZ", "98101": "Seattle, WA",
+  "80201": "Denver, CO", "02101": "Boston, MA", "20001": "Washington, DC",
+};
+
+async function lookupZip(zip: string): Promise<string | null> {
+  if (ZIP_LOOKUP[zip]) return ZIP_LOOKUP[zip];
+  try {
+    const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+    if (res.ok) {
+      const data = await res.json();
+      return `${data.places[0]["place name"]}, ${data.places[0]["state abbreviation"]}`;
+    }
+  } catch {}
+  return null;
+}
+
+const MOVE_SIZES = [
+  { label: "Studio", value: "Studio" },
+  { label: "1 Bedroom", value: "1 Bedroom" },
+  { label: "2 Bedroom", value: "2 Bedroom" },
+  { label: "3 Bedroom", value: "3 Bedroom" },
+  { label: "4+ Bedroom", value: "4+ Bedroom" },
+  { label: "Office", value: "Office" },
+];
 
 export default function Index() {
   const navigate = useNavigate();
+  
+  // Form state
+  const [fromZip, setFromZip] = useState("");
+  const [toZip, setToZip] = useState("");
+  const [fromCity, setFromCity] = useState("");
+  const [toCity, setToCity] = useState("");
+  const [moveDate, setMoveDate] = useState<Date | null>(null);
+  const [size, setSize] = useState("");
+  const [hasCar, setHasCar] = useState(false);
+  const [needsPacking, setNeedsPacking] = useState(false);
+  const [email, setEmail] = useState("");
+  const [phone, setPhoneNum] = useState("");
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  
+  // Calculate distance (simplified)
+  const distance = fromZip && toZip ? Math.floor(Math.random() * 2000) + 200 : 0;
+  const moveType = distance > 150 ? "long-distance" : "local";
+
+  // Handle ZIP changes
+  const handleFromZipChange = useCallback(async (value: string) => {
+    setFromZip(value);
+    if (value.length === 5) {
+      const city = await lookupZip(value);
+      setFromCity(city || "");
+    } else {
+      setFromCity("");
+    }
+  }, []);
+
+  const handleToZipChange = useCallback(async (value: string) => {
+    setToZip(value);
+    if (value.length === 5) {
+      const city = await lookupZip(value);
+      setToCity(city || "");
+    } else {
+      setToCity("");
+    }
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Store lead data
+    localStorage.setItem("tm_lead", JSON.stringify({
+      fromZip, toZip, fromCity, toCity, moveDate: moveDate?.toISOString(),
+      size, hasCar, needsPacking, email, phone, ts: Date.now()
+    }));
+    navigate("/online-estimate");
+  };
+
+  const isFormValid = fromZip.length === 5 && toZip.length === 5 && size && email;
 
   return (
     <SiteShell>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-          {/* HERO */}
-          <section className="tru-hero">
-            <div className="tru-hero-grid">
-              <div>
-                <div className="tru-hero-pill">
-                  <span className="tru-hero-pill-dot"></span>
-                  <span>Long-Distance Moving Specialists</span>
+          {/* HERO - Hybrid Quote Builder */}
+          <section className="hero-hybrid">
+            <div className="hero-hybrid-inner">
+              {/* Left: Quote Builder Form */}
+              <div className="hero-form-column">
+                <div className="hero-form-intro">
+                  <div className="hero-pill">
+                    <span className="hero-pill-dot"></span>
+                    <span>Long-Distance Moving Specialists</span>
+                  </div>
+                  <h1 className="hero-title">Build Your Move. See It Come Together.</h1>
+                  <p className="hero-subtitle">
+                    Build your quote step-by-step and watch your move take shape in real-time. 
+                    No hidden fees, no callbacks you didn't ask for.
+                  </p>
+                  <div className="hero-badges">
+                    <span className="hero-badge"><Cpu className="w-3.5 h-3.5" /><span>AI-Powered</span></span>
+                    <span className="hero-badge"><Shield className="w-3.5 h-3.5" /><span>FMCSA-Verified</span></span>
+                    <span className="hero-badge"><Video className="w-3.5 h-3.5" /><span>Video Consults</span></span>
+                  </div>
                 </div>
-                <h1 className="tru-hero-title">Long-Distance Moves. Done Differently.</h1>
-                <p className="tru-hero-sub">
-                  TruMove is the only platform where you build your own inventory, get instant AI pricing, 
-                  and vet movers using real federal data — all before you talk to anyone.
-                </p>
-                <div className="tru-hero-bullets">
-                  <div className="tru-hero-badge"><Cpu className="w-3.5 h-3.5 text-primary" /><span>AI-Powered Quotes</span></div>
-                  <div className="tru-hero-badge"><Shield className="w-3.5 h-3.5 text-primary" /><span>FMCSA-Verified Carriers</span></div>
-                  <div className="tru-hero-badge"><Video className="w-3.5 h-3.5 text-primary" /><span>Video Consultations</span></div>
-                </div>
-                <div className="tru-hero-actions">
-                  <button className="tru-btn-primary-lg" type="button" onClick={() => navigate("/estimate")}>
-                    <span>Get Your Quote</span><ArrowRight className="w-4 h-4" />
+
+                {/* Quote Form */}
+                <form className="hero-form" onSubmit={handleSubmit}>
+                  {/* Step 1: Route */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <span className="form-section-num">1</span>
+                      <span className="form-section-title">Your Route</span>
+                    </div>
+                    <div className="form-row-2col">
+                      <div className="form-field">
+                        <label className="form-label">From ZIP</label>
+                        <div className="form-input-wrap">
+                          <MapPin className="form-input-icon" />
+                          <input
+                            type="text"
+                            className="form-input"
+                            placeholder="e.g. 90210"
+                            maxLength={5}
+                            value={fromZip}
+                            onChange={(e) => handleFromZipChange(e.target.value.replace(/\D/g, ""))}
+                          />
+                        </div>
+                        {fromCity && <span className="form-city-badge">{fromCity}</span>}
+                      </div>
+                      <div className="form-field">
+                        <label className="form-label">To ZIP</label>
+                        <div className="form-input-wrap">
+                          <MapPin className="form-input-icon" />
+                          <input
+                            type="text"
+                            className="form-input"
+                            placeholder="e.g. 10001"
+                            maxLength={5}
+                            value={toZip}
+                            onChange={(e) => handleToZipChange(e.target.value.replace(/\D/g, ""))}
+                          />
+                        </div>
+                        {toCity && <span className="form-city-badge">{toCity}</span>}
+                      </div>
+                    </div>
+                    <div className="form-field">
+                      <label className="form-label">Move Date</label>
+                      <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                        <PopoverTrigger asChild>
+                          <button type="button" className="form-date-btn">
+                            <CalendarIcon className="form-input-icon" />
+                            <span>{moveDate ? format(moveDate, "MMMM d, yyyy") : "Select a date"}</span>
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="form-date-popover" align="start">
+                          <CalendarComponent
+                            mode="single"
+                            selected={moveDate || undefined}
+                            onSelect={(date) => {
+                              setMoveDate(date || null);
+                              setDatePopoverOpen(false);
+                            }}
+                            disabled={(date) => date < new Date()}
+                            className="pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </div>
+
+                  {/* Step 2: Move Size */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <span className="form-section-num">2</span>
+                      <span className="form-section-title">Move Size</span>
+                    </div>
+                    <div className="form-chips">
+                      {MOVE_SIZES.map((s) => (
+                        <button
+                          key={s.value}
+                          type="button"
+                          className={`form-chip ${size === s.value ? "is-active" : ""}`}
+                          onClick={() => setSize(s.value)}
+                        >
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Step 3: Additional Options */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <span className="form-section-num">3</span>
+                      <span className="form-section-title">Additional Options</span>
+                    </div>
+                    <div className="form-toggles">
+                      <button
+                        type="button"
+                        className={`form-toggle ${hasCar ? "is-active" : ""}`}
+                        onClick={() => setHasCar(!hasCar)}
+                      >
+                        <Car className="w-4 h-4" />
+                        <span>Vehicle Transport</span>
+                        <span className="form-toggle-indicator">{hasCar ? "Yes" : "No"}</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`form-toggle ${needsPacking ? "is-active" : ""}`}
+                        onClick={() => setNeedsPacking(!needsPacking)}
+                      >
+                        <Package className="w-4 h-4" />
+                        <span>Packing Service</span>
+                        <span className="form-toggle-indicator">{needsPacking ? "Yes" : "No"}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Step 4: Contact */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <span className="form-section-num">4</span>
+                      <span className="form-section-title">Your Contact</span>
+                    </div>
+                    <div className="form-row-2col">
+                      <div className="form-field">
+                        <label className="form-label">Email</label>
+                        <input
+                          type="email"
+                          className="form-input"
+                          placeholder="you@email.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </div>
+                      <div className="form-field">
+                        <label className="form-label">Phone (optional)</label>
+                        <input
+                          type="tel"
+                          className="form-input"
+                          placeholder="(555) 123-4567"
+                          value={phone}
+                          onChange={(e) => setPhoneNum(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Submit */}
+                  <button 
+                    type="submit" 
+                    className="form-submit"
+                    disabled={!isFormValid}
+                  >
+                    <span>Get My Quote</span>
+                    <ArrowRight className="w-5 h-5" />
                   </button>
-                  <button className="tru-hero-btn-secondary" type="button" onClick={() => navigate("/vetting")}>
-                    <span>How We Vet Carriers</span>
-                  </button>
-                </div>
+
+                  {/* AI Chat Alternative */}
+                  <div className="form-alt">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    <span>Prefer to chat? Use the</span>
+                    <button type="button" className="form-alt-link" onClick={() => {
+                      // This will be handled by the header's ChatModal
+                      const chatBtn = document.querySelector('.header-btn-chat') as HTMLButtonElement;
+                      chatBtn?.click();
+                    }}>
+                      AI Assistant
+                    </button>
+                    <span>in the header</span>
+                  </div>
+                </form>
               </div>
 
-              {/* CONCIERGE CHAT */}
-              <div className="tru-hero-visual">
-                <ChatContainer />
+              {/* Right: Live Dashboard */}
+              <div className="hero-dashboard-column">
+                <LiveMoveDashboard
+                  fromZip={fromZip}
+                  toZip={toZip}
+                  fromCity={fromCity}
+                  toCity={toCity}
+                  distance={distance}
+                  moveDate={moveDate}
+                  moveType={moveType}
+                  size={size}
+                  itemCount={0}
+                  totalWeight={0}
+                  hasCar={hasCar}
+                  needsPacking={needsPacking}
+                />
               </div>
             </div>
           </section>
@@ -54,14 +317,14 @@ export default function Index() {
               <p className="tru-diff-sub">Most moving sites collect your info and sell it to brokers. We built something different.</p>
               
               <div className="tru-diff-grid">
-                <article className="tru-diff-card" onClick={() => navigate("/estimate")}>
+                <article className="tru-diff-card" onClick={() => navigate("/online-estimate")}>
                   <div className="tru-diff-icon"><Boxes className="w-6 h-6" /></div>
                   <h3 className="tru-diff-card-title">Build Your Own Inventory</h3>
                   <p className="tru-diff-card-text">Pick rooms, add items, watch your move build itself. Our AI estimates weight and size so you know exactly what you're shipping.</p>
                   <span className="tru-diff-cta">Try the Inventory Builder <ArrowRight className="w-3.5 h-3.5" /></span>
                 </article>
 
-                <article className="tru-diff-card" onClick={() => navigate("/estimate")}>
+                <article className="tru-diff-card" onClick={() => navigate("/online-estimate")}>
                   <div className="tru-diff-icon"><Calculator className="w-6 h-6" /></div>
                   <h3 className="tru-diff-card-title">Instant AI Pricing</h3>
                   <p className="tru-diff-card-text">No waiting for callbacks. Enter your route and see a live price range in seconds — not a bait-and-switch lowball.</p>
@@ -257,8 +520,8 @@ export default function Index() {
               <h2 className="tru-final-cta-title">Ready to move?</h2>
               <p className="tru-final-cta-sub">Get your free quote in 60 seconds. No spam, no callbacks you didn't ask for.</p>
               <div className="tru-final-cta-actions">
-                <button className="tru-btn-primary-xl" onClick={() => navigate("/estimate")}>
-                  <span>Get Your Free Quote</span><ArrowRight className="w-5 h-5" />
+                <button className="tru-btn-primary-xl" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                  <span>Build Your Quote</span><ArrowRight className="w-5 h-5" />
                 </button>
                 <div className="tru-final-cta-or">or</div>
                 <a href="tel:+18005551234" className="tru-final-cta-phone">

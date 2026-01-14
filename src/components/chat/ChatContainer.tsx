@@ -102,9 +102,12 @@ export default function ChatContainer() {
     return { min: Math.round(base - variance), max: Math.round(base + variance) };
   };
 
-  // Scroll to bottom
+  // Scroll to bottom within container only (not entire page)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = messagesEndRef.current?.closest('.chat-messages');
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages, isTyping]);
 
   // Initialize with greeting
