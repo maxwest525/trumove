@@ -229,19 +229,12 @@ export default function Index() {
             <div className="tru-hero-visual">
               {/* THE CARD FRAME */}
               <div className="tru-form-card">
-                {/* Card Header: Logo + ONLINE */}
+                {/* Card Header: Logo only - status is in main header */}
                 <div className="tru-form-header">
                   <div className="tru-form-header-top">
                     <img src={logo} alt="TruMove" className="tru-form-logo" />
-                    <div className="tru-form-status">
-                      <span className="tru-status-dot" />
-                      <span className="tru-status-text">ONLINE</span>
-                    </div>
                   </div>
                 </div>
-
-                {/* Completed Badges Row */}
-                {renderCompletedBadges()}
 
                 {/* AI Feedback Bubble */}
                 {step > 1 && aiMessage && (
@@ -417,13 +410,13 @@ export default function Index() {
                       <h1 className="tru-focus-question">Any additional services?</h1>
                       <p className="tru-focus-subtitle">Select any that apply (optional)</p>
                       
-                      <div className="tru-focus-toggles">
+                      <div className="tru-focus-toggles-vertical">
                         <button
                           type="button"
-                          className={`tru-focus-toggle-btn ${hasCar ? 'is-active' : ''}`}
+                          className={`tru-focus-toggle-card ${hasCar ? 'is-active' : ''}`}
                           onClick={() => setHasCar(!hasCar)}
                         >
-                          <Car className="w-5 h-5" />
+                          <Car className="tru-focus-toggle-icon" />
                           <div className="tru-focus-toggle-content">
                             <span className="tru-focus-toggle-title">Vehicle Transport</span>
                             <span className="tru-focus-toggle-desc">Ship a car with your move</span>
@@ -433,10 +426,10 @@ export default function Index() {
                         
                         <button
                           type="button"
-                          className={`tru-focus-toggle-btn ${needsPacking ? 'is-active' : ''}`}
+                          className={`tru-focus-toggle-card ${needsPacking ? 'is-active' : ''}`}
                           onClick={() => setNeedsPacking(!needsPacking)}
                         >
-                          <Package className="w-5 h-5" />
+                          <Package className="tru-focus-toggle-icon" />
                           <div className="tru-focus-toggle-content">
                             <span className="tru-focus-toggle-title">Packing Service</span>
                             <span className="tru-focus-toggle-desc">We pack everything for you</span>
@@ -447,7 +440,7 @@ export default function Index() {
 
                       <button
                         type="button"
-                        className="tru-focus-continue"
+                        className="tru-focus-continue tru-btn-mechanical"
                         onClick={goNext}
                       >
                         <span>Continue</span>
@@ -506,7 +499,8 @@ export default function Index() {
                       </button>
                       
                       <p className="tru-focus-disclaimer">
-                        By submitting, you agree we may contact you by phone, text, or email.<br/>
+                        By submitting, you agree we may contact you by phone, text, or email, 
+                        including via automated technology. Consent is not required to purchase services.
                         <span className="tru-focus-disclaimer-secure">⭐ Your info is secure & never sold.</span>
                       </p>
                     </form>
