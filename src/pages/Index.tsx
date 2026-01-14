@@ -1,15 +1,17 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
 import LiveMoveDashboard from "@/components/estimate/LiveMoveDashboard";
-import MoveMap from "@/components/MoveMap";
+import TechIndicatorStrip from "@/components/TechIndicatorStrip";
+import FloatingChatButton from "@/components/FloatingChatButton";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { calculateDistance } from "@/lib/distanceCalculator";
 import { 
   Shield, Cpu, Video, Boxes, Calculator, Search, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
-  CalendarIcon, Sparkles, Car, Package
+  CalendarIcon, Sparkles, Car, Package, ChevronLeft
 } from "lucide-react";
 
 // ZIP lookup
@@ -18,6 +20,7 @@ const ZIP_LOOKUP: Record<string, string> = {
   "10016": "New York, NY", "77001": "Houston, TX", "60601": "Chicago, IL",
   "33101": "Miami, FL", "85001": "Phoenix, AZ", "98101": "Seattle, WA",
   "80201": "Denver, CO", "02101": "Boston, MA", "20001": "Washington, DC",
+  "33431": "Boca Raton, FL", "33432": "Boca Raton, FL", "33433": "Boca Raton, FL",
 };
 
 async function lookupZip(zip: string): Promise<string | null> {
@@ -34,15 +37,47 @@ async function lookupZip(zip: string): Promise<string | null> {
 
 const MOVE_SIZES = [
   { label: "Studio", value: "Studio" },
-  { label: "1 Bedroom", value: "1 Bedroom" },
-  { label: "2 Bedroom", value: "2 Bedroom" },
-  { label: "3 Bedroom", value: "3 Bedroom" },
-  { label: "4+ Bedroom", value: "4+ Bedroom" },
+  { label: "1 Bed", value: "1 Bedroom" },
+  { label: "2 Bed", value: "2 Bedroom" },
+  { label: "3 Bed", value: "3 Bedroom" },
+  { label: "4+ Bed", value: "4+ Bedroom" },
   { label: "Office", value: "Office" },
 ];
 
+// AI Messages based on context
+function getAiMessage(step: number, fromCity: string, toCity: string, distance: number, moveDate: Date | null): string {
+  switch (step) {
+    case 2:
+      return `Perfect! ${fromCity.split(',')[0]} — we have vetted movers ready in your area.`;
+    case 3:
+      if (distance > 0) {
+        return `${distance.toLocaleString()} miles! Analyzing the best carriers for this route...`;
+      }
+      return "Great route! We're analyzing the best carriers for you.";
+    case 4:
+      if (moveDate) {
+        const month = format(moveDate, 'MMMM');
+        const isLowSeason = [0, 1, 2, 10, 11].includes(moveDate.getMonth());
+        if (isLowSeason) {
+          return `${month} is a great time to move — typically 15-20% lower demand than summer.`;
+        }
+        return `${month} is peak season, but we'll find you competitive rates.`;
+      }
+      return "Great timing! Let's find the best carriers for your date.";
+    case 5:
+      return "Almost there! Select your move size to see your estimate.";
+    case 6:
+      return "Perfect! Last step — where should we send your detailed quote?";
+    default:
+      return "";
+  }
+}
+
 export default function Index() {
   const navigate = useNavigate();
+  
+  // Step tracking (1-6)
+  const [step, setStep] = useState(1);
   
   // Form state
   const [fromZip, setFromZip] = useState("");
@@ -57,9 +92,15 @@ export default function Index() {
   const [phone, setPhoneNum] = useState("");
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   
-  // Calculate distance (simplified)
-  const distance = fromZip && toZip ? Math.floor(Math.random() * 2000) + 200 : 0;
+  // Calculate real distance
+  const distance = useMemo(() => calculateDistance(fromZip, toZip), [fromZip, toZip]);
   const moveType = distance > 150 ? "long-distance" : "local";
+
+  // AI message for current step
+  const aiMessage = useMemo(() => 
+    getAiMessage(step, fromCity, toCity, distance, moveDate),
+    [step, fromCity, toCity, distance, moveDate]
+  );
 
   // Handle ZIP changes
   const handleFromZipChange = useCallback(async (value: string) => {
@@ -92,84 +133,219 @@ export default function Index() {
     navigate("/online-estimate");
   };
 
-  const isFormValid = fromZip.length === 5 && toZip.length === 5 && size && email;
+  // Step validation
+  const canContinue = () => {
+    switch (step) {
+      case 1: return fromZip.length === 5 && fromCity;
+      case 2: return toZip.length === 5 && toCity;
+      case 3: return moveDate !== null;
+      case 4: return size !== "";
+      case 5: return true; // Options are optional
+      case 6: return email.includes("@");
+      default: return false;
+    }
+  };
+
+  const goNext = () => {
+    if (canContinue() && step < 6) {
+      setStep(step + 1);
+    }
+  };
+
+  const goBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
+  // Handle Enter key
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && canContinue()) {
+      e.preventDefault();
+      goNext();
+    }
+  };
+
+  // Render completed badges
+  const renderCompletedBadges = () => {
+    const badges = [];
+    if (step > 1 && fromCity) {
+      badges.push(
+        <span key="from" className="tru-confirmed-badge">
+          <CheckCircle className="w-3.5 h-3.5" />
+          <span>{fromCity}</span>
+        </span>
+      );
+    }
+    if (step > 2 && toCity) {
+      badges.push(
+        <span key="to" className="tru-confirmed-badge">
+          <CheckCircle className="w-3.5 h-3.5" />
+          <span>{toCity}</span>
+        </span>
+      );
+    }
+    if (step > 3 && moveDate) {
+      badges.push(
+        <span key="date" className="tru-confirmed-badge">
+          <CheckCircle className="w-3.5 h-3.5" />
+          <span>{format(moveDate, "MMM d, yyyy")}</span>
+        </span>
+      );
+    }
+    if (step > 4 && size) {
+      badges.push(
+        <span key="size" className="tru-confirmed-badge">
+          <CheckCircle className="w-3.5 h-3.5" />
+          <span>{size}</span>
+        </span>
+      );
+    }
+    return badges.length > 0 ? (
+      <div className="tru-confirmed-badges">{badges}</div>
+    ) : null;
+  };
+
+  // Render progress dots
+  const renderProgressDots = () => (
+    <div className="tru-progress-dots">
+      {[1, 2, 3, 4, 5, 6].map((n) => (
+        <span
+          key={n}
+          className={`tru-progress-dot ${n < step ? 'is-complete' : ''} ${n === step ? 'is-current' : ''}`}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <SiteShell>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-          {/* HERO - Hybrid Quote Builder */}
+          {/* HERO - Hybrid Typeform + Live Dashboard */}
           <section className="hero-hybrid">
             <div className="hero-hybrid-inner">
-              {/* Left: Quote Builder Form */}
+              {/* Left: Typeform-Style Single Question Flow */}
               <div className="hero-form-column">
-                <div className="hero-form-intro">
-                  <div className="hero-pill">
-                    <span className="hero-pill-dot"></span>
-                    <span>Long-Distance Moving Specialists</span>
+                <div className="tru-focus-hero">
+                  {/* Online Status */}
+                  <div className="tru-online-status">
+                    <span className="tru-online-dot"></span>
+                    <span>ONLINE</span>
                   </div>
-                  <h1 className="hero-title">Build Your Move. See It Come Together.</h1>
-                  <p className="hero-subtitle">
-                    Build your quote step-by-step and watch your move take shape in real-time. 
-                    No hidden fees, no callbacks you didn't ask for.
-                  </p>
-                  <div className="hero-badges">
-                    <span className="hero-badge"><Cpu className="w-3.5 h-3.5" /><span>AI-Powered</span></span>
-                    <span className="hero-badge"><Shield className="w-3.5 h-3.5" /><span>FMCSA-Verified</span></span>
-                    <span className="hero-badge"><Video className="w-3.5 h-3.5" /><span>Video Consults</span></span>
-                  </div>
-                </div>
 
-                {/* Quote Form */}
-                <form className="hero-form" onSubmit={handleSubmit}>
-                  {/* Step 1: Route */}
-                  <div className="form-section">
-                    <div className="form-section-header">
-                      <span className="form-section-num">1</span>
-                      <span className="form-section-title">Your Route</span>
-                    </div>
-                    <div className="form-row-2col">
-                      <div className="form-field">
-                        <label className="form-label">From ZIP</label>
-                        <div className="form-input-wrap">
-                          <MapPin className="form-input-icon" />
-                          <input
-                            type="text"
-                            className="form-input"
-                            placeholder="e.g. 90210"
-                            maxLength={5}
-                            value={fromZip}
-                            onChange={(e) => handleFromZipChange(e.target.value.replace(/\D/g, ""))}
-                          />
-                        </div>
-                        {fromCity && <span className="form-city-badge">{fromCity}</span>}
+                  {/* Completed Badges */}
+                  {renderCompletedBadges()}
+
+                  {/* AI Feedback Bubble */}
+                  {step > 1 && aiMessage && (
+                    <div className="tru-ai-bubble">
+                      <div className="tru-ai-icon">
+                        <Sparkles className="w-4 h-4" />
                       </div>
-                      <div className="form-field">
-                        <label className="form-label">To ZIP</label>
-                        <div className="form-input-wrap">
-                          <MapPin className="form-input-icon" />
-                          <input
-                            type="text"
-                            className="form-input"
-                            placeholder="e.g. 10001"
-                            maxLength={5}
-                            value={toZip}
-                            onChange={(e) => handleToZipChange(e.target.value.replace(/\D/g, ""))}
-                          />
-                        </div>
-                        {toCity && <span className="form-city-badge">{toCity}</span>}
-                      </div>
+                      <p className="tru-ai-text">{aiMessage}</p>
                     </div>
-                    <div className="form-field">
-                      <label className="form-label">Move Date</label>
+                  )}
+
+                  {/* Step 1: From ZIP */}
+                  {step === 1 && (
+                    <div className="tru-focus-step">
+                      <h1 className="tru-focus-question">Where are you moving from?</h1>
+                      <p className="tru-focus-subtitle">Enter your current ZIP code</p>
+                      
+                      <div className="tru-focus-input-wrap">
+                        <MapPin className="tru-focus-input-icon" />
+                        <input
+                          type="text"
+                          className="tru-focus-input"
+                          placeholder="Enter ZIP..."
+                          maxLength={5}
+                          value={fromZip}
+                          onChange={(e) => handleFromZipChange(e.target.value.replace(/\D/g, ""))}
+                          onKeyDown={handleKeyDown}
+                          autoFocus
+                        />
+                      </div>
+                      
+                      {fromCity && (
+                        <div className="tru-focus-city-badge">
+                          <MapPin className="w-3.5 h-3.5" />
+                          <span>{fromCity}</span>
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        className="tru-focus-continue"
+                        disabled={!canContinue()}
+                        onClick={goNext}
+                      >
+                        <span>Continue</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </button>
+                      
+                      <p className="tru-focus-hint">Press Enter ↵</p>
+                    </div>
+                  )}
+
+                  {/* Step 2: To ZIP */}
+                  {step === 2 && (
+                    <div className="tru-focus-step">
+                      <h1 className="tru-focus-question">Where are you moving to?</h1>
+                      <p className="tru-focus-subtitle">Enter your destination ZIP code</p>
+                      
+                      <div className="tru-focus-input-wrap">
+                        <MapPin className="tru-focus-input-icon" />
+                        <input
+                          type="text"
+                          className="tru-focus-input"
+                          placeholder="Enter ZIP..."
+                          maxLength={5}
+                          value={toZip}
+                          onChange={(e) => handleToZipChange(e.target.value.replace(/\D/g, ""))}
+                          onKeyDown={handleKeyDown}
+                          autoFocus
+                        />
+                      </div>
+                      
+                      {toCity && (
+                        <div className="tru-focus-city-badge">
+                          <MapPin className="w-3.5 h-3.5" />
+                          <span>{toCity}</span>
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        className="tru-focus-continue"
+                        disabled={!canContinue()}
+                        onClick={goNext}
+                      >
+                        <span>Continue</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </button>
+
+                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Step 3: Move Date */}
+                  {step === 3 && (
+                    <div className="tru-focus-step">
+                      <h1 className="tru-focus-question">When would you like to move?</h1>
+                      <p className="tru-focus-subtitle">This helps us match you with available carriers</p>
+                      
                       <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                         <PopoverTrigger asChild>
-                          <button type="button" className="form-date-btn">
-                            <CalendarIcon className="form-input-icon" />
+                          <button type="button" className="tru-focus-date-btn">
+                            <CalendarIcon className="tru-focus-input-icon" />
                             <span>{moveDate ? format(moveDate, "MMMM d, yyyy") : "Select a date"}</span>
                           </button>
                         </PopoverTrigger>
-                        <PopoverContent className="form-date-popover" align="start">
+                        <PopoverContent className="form-date-popover" align="center">
                           <CalendarComponent
                             mode="single"
                             selected={moveDate || undefined}
@@ -182,111 +358,161 @@ export default function Index() {
                           />
                         </PopoverContent>
                       </Popover>
-                    </div>
-                  </div>
 
-                  {/* Step 2: Move Size */}
-                  <div className="form-section">
-                    <div className="form-section-header">
-                      <span className="form-section-num">2</span>
-                      <span className="form-section-title">Move Size</span>
+                      <button
+                        type="button"
+                        className="tru-focus-continue"
+                        disabled={!canContinue()}
+                        onClick={goNext}
+                      >
+                        <span>Continue</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </button>
+
+                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back</span>
+                      </button>
                     </div>
-                    <div className="form-chips">
-                      {MOVE_SIZES.map((s) => (
+                  )}
+
+                  {/* Step 4: Move Size */}
+                  {step === 4 && (
+                    <div className="tru-focus-step">
+                      <h1 className="tru-focus-question">What size is your move?</h1>
+                      <p className="tru-focus-subtitle">This helps us estimate weight and find the right carriers</p>
+                      
+                      <div className="tru-focus-size-grid">
+                        {MOVE_SIZES.map((s) => (
+                          <button
+                            key={s.value}
+                            type="button"
+                            className={`tru-focus-size-btn ${size === s.value ? 'is-active' : ''}`}
+                            onClick={() => {
+                              setSize(s.value);
+                              // Auto-advance after selection
+                              setTimeout(() => setStep(5), 200);
+                            }}
+                          >
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Step 5: Additional Options */}
+                  {step === 5 && (
+                    <div className="tru-focus-step">
+                      <h1 className="tru-focus-question">Any additional services?</h1>
+                      <p className="tru-focus-subtitle">Select any that apply (optional)</p>
+                      
+                      <div className="tru-focus-toggles">
                         <button
-                          key={s.value}
                           type="button"
-                          className={`form-chip ${size === s.value ? "is-active" : ""}`}
-                          onClick={() => setSize(s.value)}
+                          className={`tru-focus-toggle-btn ${hasCar ? 'is-active' : ''}`}
+                          onClick={() => setHasCar(!hasCar)}
                         >
-                          {s.label}
+                          <Car className="w-5 h-5" />
+                          <div className="tru-focus-toggle-content">
+                            <span className="tru-focus-toggle-title">Vehicle Transport</span>
+                            <span className="tru-focus-toggle-desc">Ship a car with your move</span>
+                          </div>
+                          <span className="tru-focus-toggle-indicator">{hasCar ? 'Yes' : 'No'}</span>
                         </button>
-                      ))}
-                    </div>
-                  </div>
+                        
+                        <button
+                          type="button"
+                          className={`tru-focus-toggle-btn ${needsPacking ? 'is-active' : ''}`}
+                          onClick={() => setNeedsPacking(!needsPacking)}
+                        >
+                          <Package className="w-5 h-5" />
+                          <div className="tru-focus-toggle-content">
+                            <span className="tru-focus-toggle-title">Packing Service</span>
+                            <span className="tru-focus-toggle-desc">We pack everything for you</span>
+                          </div>
+                          <span className="tru-focus-toggle-indicator">{needsPacking ? 'Yes' : 'No'}</span>
+                        </button>
+                      </div>
 
-                  {/* Step 3: Additional Options */}
-                  <div className="form-section">
-                    <div className="form-section-header">
-                      <span className="form-section-num">3</span>
-                      <span className="form-section-title">Additional Options</span>
-                    </div>
-                    <div className="form-toggles">
                       <button
                         type="button"
-                        className={`form-toggle ${hasCar ? "is-active" : ""}`}
-                        onClick={() => setHasCar(!hasCar)}
+                        className="tru-focus-continue"
+                        onClick={goNext}
                       >
-                        <Car className="w-4 h-4" />
-                        <span>Vehicle Transport</span>
-                        <span className="form-toggle-indicator">{hasCar ? "Yes" : "No"}</span>
+                        <span>Continue</span>
+                        <ArrowRight className="w-5 h-5" />
                       </button>
+
+                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Step 6: Contact */}
+                  {step === 6 && (
+                    <form className="tru-focus-step" onSubmit={handleSubmit}>
+                      <h1 className="tru-focus-question">Where should we send your quote?</h1>
+                      <p className="tru-focus-subtitle">We'll email your detailed estimate (no spam, ever)</p>
+                      
+                      <div className="tru-focus-contact-fields">
+                        <div className="tru-focus-input-wrap">
+                          <input
+                            type="email"
+                            className="tru-focus-input"
+                            placeholder="you@email.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            autoFocus
+                          />
+                        </div>
+                        
+                        <div className="tru-focus-input-wrap">
+                          <input
+                            type="tel"
+                            className="tru-focus-input"
+                            placeholder="Phone (optional)"
+                            value={phone}
+                            onChange={(e) => setPhoneNum(e.target.value)}
+                          />
+                        </div>
+                      </div>
+
                       <button
-                        type="button"
-                        className={`form-toggle ${needsPacking ? "is-active" : ""}`}
-                        onClick={() => setNeedsPacking(!needsPacking)}
+                        type="submit"
+                        className="tru-focus-submit"
+                        disabled={!canContinue()}
                       >
-                        <Package className="w-4 h-4" />
-                        <span>Packing Service</span>
-                        <span className="form-toggle-indicator">{needsPacking ? "Yes" : "No"}</span>
+                        <span>Get My Quote</span>
+                        <ArrowRight className="w-5 h-5" />
                       </button>
-                    </div>
-                  </div>
 
-                  {/* Step 4: Contact */}
-                  <div className="form-section">
-                    <div className="form-section-header">
-                      <span className="form-section-num">4</span>
-                      <span className="form-section-title">Your Contact</span>
-                    </div>
-                    <div className="form-row-2col">
-                      <div className="form-field">
-                        <label className="form-label">Email</label>
-                        <input
-                          type="email"
-                          className="form-input"
-                          placeholder="you@email.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                      </div>
-                      <div className="form-field">
-                        <label className="form-label">Phone (optional)</label>
-                        <input
-                          type="tel"
-                          className="form-input"
-                          placeholder="(555) 123-4567"
-                          value={phone}
-                          onChange={(e) => setPhoneNum(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                      <button type="button" className="tru-focus-back" onClick={goBack}>
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back</span>
+                      </button>
+                      
+                      <p className="tru-focus-disclaimer">
+                        By submitting, you agree we may contact you by phone, text, or email.<br/>
+                        <span className="tru-focus-disclaimer-secure">⭐ Your info is secure & never sold.</span>
+                      </p>
+                    </form>
+                  )}
 
-                  {/* Submit */}
-                  <button 
-                    type="submit" 
-                    className="form-submit"
-                    disabled={!isFormValid}
-                  >
-                    <span>Get My Quote</span>
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
+                  {/* Progress Dots */}
+                  {renderProgressDots()}
 
-                  {/* AI Chat Alternative */}
-                  <div className="form-alt">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    <span>Prefer to chat? Use the</span>
-                    <button type="button" className="form-alt-link" onClick={() => {
-                      // This will be handled by the header's ChatModal
-                      const chatBtn = document.querySelector('.header-btn-chat') as HTMLButtonElement;
-                      chatBtn?.click();
-                    }}>
-                      AI Assistant
-                    </button>
-                    <span>in the header</span>
-                  </div>
-                </form>
+                  {/* Tech Indicator Strip */}
+                  <TechIndicatorStrip />
+                </div>
               </div>
 
               {/* Right: Live Dashboard */}
@@ -376,7 +602,11 @@ export default function Index() {
                 </div>
               </div>
               <div className="tru-expertise-map">
-                <MoveMap fromZip="90210" toZip="10001" />
+                {/* Use form ZIPs if available, otherwise show sample route */}
+                <div className="tru-map-placeholder">
+                  <MapPin className="w-8 h-8 text-primary/40" />
+                  <span>Enter your route above to see it on the map</span>
+                </div>
               </div>
             </div>
           </section>
@@ -533,6 +763,9 @@ export default function Index() {
           </section>
         </div>
       </div>
+
+      {/* Floating Chat Button */}
+      <FloatingChatButton />
     </SiteShell>
   );
 }
