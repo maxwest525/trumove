@@ -2670,16 +2670,97 @@
 .tru-focus-toggle-icon {
   width: 22px;
   height: 22px;
+  color: hsl(var(--tm-ink) / 0.4);
+  flex-shrink: 0;
 }
 
-/* AI Feedback Bubble */
+/* Vertical Toggle Cards - Better spacing for Step 5 */
+.tru-focus-toggles-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  animation: focus-fade-in 0.4s ease-out 0.15s both;
+}
+
+.tru-focus-toggle-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 2px solid hsl(var(--tm-ink) / 0.12);
+  border-radius: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 180ms ease;
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-focus-toggle-card:hover {
+  border-color: hsl(var(--tm-ink) / 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px hsl(var(--tm-ink) / 0.1);
+}
+
+.tru-focus-toggle-card.is-active {
+  background: hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 6px 20px hsl(var(--primary) / 0.15);
+}
+
+.tru-focus-toggle-card .tru-focus-toggle-icon {
+  color: hsl(var(--tm-ink) / 0.4);
+}
+
+.tru-focus-toggle-card.is-active .tru-focus-toggle-icon {
+  color: hsl(var(--primary));
+}
+
+.tru-focus-toggle-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tru-focus-toggle-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-focus-toggle-desc {
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.55);
+}
+
+.tru-focus-toggle-indicator {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: hsl(var(--tm-ink) / 0.08);
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+.tru-focus-toggle-card.is-active .tru-focus-toggle-indicator {
+  background: hsl(var(--primary) / 0.2);
+  color: hsl(120 50% 30%);
+}
+
+/* AI Feedback Bubble - Centered */
 .tru-ai-bubble {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   width: 100%;
   max-width: 380px;
-  margin-top: 20px;
+  margin: 20px auto 0;
   padding: 14px 18px;
   background: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--primary) / 0.03));
   border-left: 4px solid hsl(var(--primary));
@@ -2810,6 +2891,41 @@
   margin-top: 20px;
 }
 
+/* Tech Chip Styling - Styled badge with icon circle */
+.tru-tech-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--primary) / 0.03));
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 999px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tru-tech-chip.is-transitioning {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.tru-tech-chip-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: hsl(var(--primary) / 0.15);
+  border-radius: 50%;
+  color: hsl(140 60% 35%);
+}
+
+.tru-tech-chip-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.8);
+}
+
+/* Legacy support */
 .tru-tech-item {
   display: flex;
   align-items: center;
@@ -2922,7 +3038,7 @@
   }
 }
 
-/* Continue Button for Focus Mode */
+/* Continue Button for Focus Mode - Centered */
 .tru-focus-continue {
   display: flex;
   align-items: center;
@@ -2931,7 +3047,7 @@
   width: 100%;
   max-width: 280px;
   height: 56px;
-  margin-top: 24px;
+  margin: 24px auto 0;
   padding: 0 28px;
   border-radius: 14px;
   background: hsl(var(--tm-ink));
@@ -5046,4 +5162,192 @@
 
 .form-alt-link:hover {
   color: hsl(120 80% 35%);
+}
+
+/* =============================================
+   FOCUS MODE - ADDITIONAL STYLES
+   ============================================= */
+
+/* Focus City Badge - Centered */
+.tru-focus-city-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px auto 0;
+  padding: 8px 16px;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(140 60% 30%);
+  animation: focus-fade-in 0.3s ease-out;
+}
+
+.tru-focus-city-badge svg {
+  color: hsl(var(--primary));
+}
+
+/* Focus Back Button - Styled properly */
+.tru-focus-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 12px 20px;
+  background: transparent;
+  border: 2px solid hsl(var(--tm-ink) / 0.12);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink) / 0.6);
+  cursor: pointer;
+  transition: all 200ms ease;
+  animation: focus-fade-in 0.4s ease-out 0.3s both;
+}
+
+.tru-focus-back:hover {
+  border-color: hsl(var(--tm-ink) / 0.3);
+  color: hsl(var(--tm-ink));
+  transform: translateY(-1px);
+}
+
+.tru-focus-back:active {
+  transform: translateY(0);
+}
+
+/* Focus Contact Fields - Centered container */
+.tru-focus-contact-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  animation: focus-fade-in 0.4s ease-out 0.1s both;
+}
+
+/* Focus Disclaimer - Full legal text */
+.tru-focus-disclaimer {
+  margin-top: 20px;
+  max-width: 340px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: hsl(var(--tm-ink) / 0.5);
+  text-align: center;
+  animation: focus-fade-in 0.4s ease-out 0.35s both;
+}
+
+.tru-focus-disclaimer-secure {
+  display: block;
+  margin-top: 8px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+/* Focus Submit Button - Green primary */
+.tru-focus-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 280px;
+  height: 56px;
+  margin: 24px auto 0;
+  padding: 0 28px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(120 100% 48%) 100%);
+  border: 2px solid hsl(120 80% 35%);
+  border-bottom: 5px solid hsl(120 80% 25%);
+  color: hsl(var(--tm-ink));
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 80ms ease;
+  box-shadow: 0 4px 0 hsl(120 80% 25% / 0.5);
+  animation: focus-fade-in 0.4s ease-out 0.25s both;
+}
+
+.tru-focus-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 hsl(120 80% 25% / 0.5);
+}
+
+.tru-focus-submit:active:not(:disabled) {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+  box-shadow: none;
+}
+
+.tru-focus-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mechanical Keyboard Button Effect */
+.tru-btn-mechanical {
+  position: relative;
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%) !important;
+  border: 2px solid hsl(var(--tm-ink) / 0.15) !important;
+  border-bottom: 5px solid hsl(var(--tm-ink) / 0.25) !important;
+  box-shadow: 0 4px 0 hsl(var(--tm-ink) / 0.1) !important;
+  color: hsl(var(--tm-ink)) !important;
+}
+
+.tru-btn-mechanical:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 hsl(var(--tm-ink) / 0.1) !important;
+}
+
+.tru-btn-mechanical:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px !important;
+  box-shadow: none !important;
+}
+
+.tru-btn-mechanical.is-primary {
+  background: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(120 100% 48%) 100%) !important;
+  border-color: hsl(120 80% 35%) !important;
+  border-bottom-color: hsl(120 80% 25%) !important;
+  color: hsl(var(--tm-ink)) !important;
+  box-shadow: 0 4px 0 hsl(120 80% 25% / 0.5) !important;
+}
+
+/* Focus Step Container - Ensure centering */
+.tru-focus-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  animation: focus-fade-in 0.4s ease-out;
+}
+
+/* CTA Buttons Container */
+.tru-cta-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .tru-cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Focus Subtitle - Centered */
+.tru-focus-subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.55);
+  margin-bottom: 24px;
+  text-align: center;
+  animation: focus-fade-in 0.4s ease-out 0.1s both;
 }

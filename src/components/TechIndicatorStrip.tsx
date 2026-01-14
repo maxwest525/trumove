@@ -31,9 +31,11 @@ export default function TechIndicatorStrip() {
 
   return (
     <div className="tru-tech-strip">
-      <div className={`tru-tech-item ${isTransitioning ? "is-transitioning" : ""}`}>
-        <Icon className="tru-tech-icon" />
-        <span className="tru-tech-text">{currentFeature.text}</span>
+      <div className={`tru-tech-chip ${isTransitioning ? "is-transitioning" : ""}`}>
+        <span className="tru-tech-chip-icon">
+          <Icon className="w-4 h-4" />
+        </span>
+        <span className="tru-tech-chip-text">{currentFeature.text}</span>
       </div>
       <div className="tru-tech-dots">
         {TECH_FEATURES.map((_, idx) => (

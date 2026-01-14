@@ -7,6 +7,7 @@ import ChatModal from "@/components/chat/ChatModal";
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/online-estimate", label: "Get Quote" },
+  { href: "/property-lookup", label: "Property Lookup" },
   { href: "/vetting", label: "Carrier Vetting" },
   { href: "/faq", label: "FAQ" },
   { href: "/about", label: "About" },
