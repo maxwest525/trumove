@@ -291,29 +291,21 @@ export default function Index() {
               <div className="tru-quote-builder">
                 {/* Form Header - Plan Match Move Workflow */}
                 <div className="tru-qb-form-header">
+                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
                   <div className="tru-qb-workflow">
-                    <div className={`tru-qb-workflow-step ${step <= 4 ? 'is-active' : step > 4 ? 'is-complete' : ''}`}>
+                    <div className="tru-qb-workflow-step">
                       <span className="tru-qb-workflow-num">1</span>
-                      <div className="tru-qb-workflow-info">
-                        <span className="tru-qb-workflow-title">Plan</span>
-                        <span className="tru-qb-workflow-desc">Build your inventory with AI</span>
-                      </div>
+                      <span className="tru-qb-workflow-title">Plan</span>
                     </div>
                     <span className="tru-qb-workflow-arrow">→</span>
-                    <div className={`tru-qb-workflow-step ${step === 5 ? 'is-active' : step > 5 ? 'is-complete' : ''}`}>
+                    <div className="tru-qb-workflow-step">
                       <span className="tru-qb-workflow-num">2</span>
-                      <div className="tru-qb-workflow-info">
-                        <span className="tru-qb-workflow-title">Match</span>
-                        <span className="tru-qb-workflow-desc">We find vetted carriers</span>
-                      </div>
+                      <span className="tru-qb-workflow-title">Match</span>
                     </div>
                     <span className="tru-qb-workflow-arrow">→</span>
-                    <div className={`tru-qb-workflow-step ${step === 6 ? 'is-active' : ''}`}>
+                    <div className="tru-qb-workflow-step">
                       <span className="tru-qb-workflow-num">3</span>
-                      <div className="tru-qb-workflow-info">
-                        <span className="tru-qb-workflow-title">Move</span>
-                        <span className="tru-qb-workflow-desc">Book at the best rate</span>
-                      </div>
+                      <span className="tru-qb-workflow-title">Move</span>
                     </div>
                   </div>
                 </div>
@@ -579,10 +571,7 @@ export default function Index() {
                 <div className="tru-qb-panel">
                   {/* Simple Summary */}
                   <div className="tru-qb-summary">
-                    <div className="tru-qb-summary-header">
-                      <img src={logoImg} alt="TruMove" className="tru-qb-summary-logo" />
-                      <div className="tru-qb-summary-title">AI MOVE BUILDER</div>
-                    </div>
+                    <div className="tru-qb-summary-title">START YOUR AI MOVE BUILDER</div>
                     <div className="tru-qb-info-row">
                       <span className="tru-qb-info-label">From</span>
                       <span className="tru-qb-info-value">{fromCity || "—"}</span>
@@ -668,12 +657,6 @@ export default function Index() {
                     )}
                   </div>
                 </div>
-              </div>
-
-              {/* Form Footer Disclaimer */}
-              <div className="tru-qb-disclaimer">
-                <span>By submitting, you agree we may contact you by phone, text, or email.</span>
-                <span className="tru-qb-disclaimer-secure">⭐ Your info is secure & never sold.</span>
               </div>
 
               {/* Compact Tech Ticker */}
