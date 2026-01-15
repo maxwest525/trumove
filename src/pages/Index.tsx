@@ -230,53 +230,68 @@ export default function Index() {
         {/* HERO - Split Layout: Company Info + Quote Builder */}
           <section className="tru-hero">
             <div className="tru-hero-grid">
-              {/* LEFT: Company Info */}
+              {/* LEFT: Company Info - Stacked Sections */}
               <div className="tru-hero-content">
-                <div className="tru-hero-pill">
-                  <span className="tru-hero-pill-dot" />
-                  <span>AI-Powered Moving</span>
+                {/* Section 1: Quick Intro */}
+                <div className="tru-hero-intro">
+                  <h1 className="tru-hero-title">Your move, simplified.</h1>
+                  <p className="tru-hero-sub">
+                    Get an instant quote from FMCSA-verified carriers. No brokers, no spam, no surprises.
+                  </p>
+                  <button 
+                    className="tru-hero-cta-arrow"
+                    onClick={() => quoteBuilderRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    <span>Start your quote</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
                 </div>
-                
-                <h1 className="tru-hero-title">Your move, simplified.</h1>
-                
-                <p className="tru-hero-sub">
-                  Stop getting ghosted by brokers. TruMove connects you directly with FMCSA-verified carriers—no middlemen, no spam, no surprises. Just transparent pricing and real movers who show up.
-                </p>
-                
-                {/* Feature Highlights */}
-                <div className="tru-hero-features">
-                  <div className="tru-hero-feature">
-                    <div className="tru-hero-feature-icon">
-                      <Shield className="w-5 h-5" />
-                    </div>
-                    <div className="tru-hero-feature-text">
-                      <span className="tru-hero-feature-title">FMCSA Verified</span>
-                      <span className="tru-hero-feature-desc">Every carrier is licensed & insured</span>
-                    </div>
-                  </div>
-                  <div className="tru-hero-feature">
-                    <div className="tru-hero-feature-icon">
+
+                {/* Section 2: Why TruMove (Brief) */}
+                <div className="tru-hero-why">
+                  <h3 className="tru-hero-why-title">Why TruMove?</h3>
+                  <ul className="tru-hero-why-list">
+                    <li>
+                      <Shield className="w-4 h-4" />
+                      <span>FMCSA-verified carriers only</span>
+                    </li>
+                    <li>
+                      <DollarSign className="w-4 h-4" />
+                      <span>Binding quotes — price is locked</span>
+                    </li>
+                    <li>
+                      <Phone className="w-4 h-4" />
+                      <span>Zero spam calls, ever</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Section 3: Feature Pill Buttons */}
+                <div className="tru-hero-tools">
+                  <h4 className="tru-hero-tools-label">Plan your move</h4>
+                  <div className="tru-hero-tools-grid">
+                    <Link to="/online-estimate" className="tru-hero-tool-pill">
                       <Sparkles className="w-5 h-5" />
-                    </div>
-                    <div className="tru-hero-feature-text">
-                      <span className="tru-hero-feature-title">AI-Powered Quotes</span>
-                      <span className="tru-hero-feature-desc">Instant pricing, no callbacks</span>
-                    </div>
-                  </div>
-                  <div className="tru-hero-feature">
-                    <div className="tru-hero-feature-icon">
-                      <Users className="w-5 h-5" />
-                    </div>
-                    <div className="tru-hero-feature-text">
-                      <span className="tru-hero-feature-title">Direct to Carriers</span>
-                      <span className="tru-hero-feature-desc">No brokers, no spam calls</span>
-                    </div>
+                      <span>AI Move Builder</span>
+                    </Link>
+                    <Link to="/book" className="tru-hero-tool-pill">
+                      <Video className="w-5 h-5" />
+                      <span>Video Consult</span>
+                    </Link>
+                    <a href="tel:+16097277647" className="tru-hero-tool-pill">
+                      <Headphones className="w-5 h-5" />
+                      <span>Talk to Specialist</span>
+                    </a>
+                    <Link to="/vetting" className="tru-hero-tool-pill">
+                      <Shield className="w-5 h-5" />
+                      <span>Carrier Data</span>
+                    </Link>
                   </div>
                 </div>
-                
-                {/* Social Proof */}
-                <div className="tru-hero-social-proof">
-                  <div className="tru-hero-rating">
+
+                {/* Section 4: Social Proof */}
+                <div className="tru-hero-proof">
+                  <div className="tru-hero-stars-row">
                     <div className="tru-hero-stars">
                       {[1,2,3,4,5].map((i) => (
                         <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -284,12 +299,12 @@ export default function Index() {
                     </div>
                     <span className="tru-hero-rating-text">4.9/5 from 2,400+ moves</span>
                   </div>
-                  <div className="tru-hero-trust-badges">
-                    <span className="tru-hero-trust-badge">
+                  <div className="tru-hero-badges">
+                    <span className="tru-hero-badge-pill">
                       <Award className="w-4 h-4" />
                       Top Rated 2024
                     </span>
-                    <span className="tru-hero-trust-badge">
+                    <span className="tru-hero-badge-pill">
                       <CheckCircle className="w-4 h-4" />
                       BBB Accredited
                     </span>
@@ -300,23 +315,6 @@ export default function Index() {
               {/* RIGHT: Quote Builder */}
               <div className="tru-hero-visual" ref={quoteBuilderRef}>
                 <div className="tru-quote-builder">
-                  {/* Progress Header */}
-                  <div className="tru-qb-header">
-                    <span className="tru-qb-step">Step {step} of 6</span>
-                    <div className="tru-qb-progress-bar">
-                      <div 
-                        className="tru-qb-progress-fill" 
-                        style={{ width: `${(step / 6) * 100}%` }} 
-                      />
-                    </div>
-                    
-                    
-                    <div className="tru-qb-status">
-                      <span className="tru-status-dot is-online" />
-                      <span className="tru-qb-status-text">ONLINE</span>
-                    </div>
-                  </div>
-
               {/* Main Body: Form + Dashboard Side by Side */}
               <div className="tru-qb-body">
                 {/* LEFT: Conversation Area */}
@@ -324,7 +322,7 @@ export default function Index() {
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
-                      <p className="tru-qb-quote-cta">Get your instant moving quote</p>
+                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">Where are you moving from?</h1>
                       <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
                       
@@ -359,6 +357,7 @@ export default function Index() {
                   {/* Step 2: To ZIP */}
                   {step === 2 && (
                     <div className="tru-qb-step-content" key="step-2">
+                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">Where are you moving to?</h1>
                       <p className="tru-qb-subtitle">Enter your destination ZIP code</p>
                       
@@ -400,6 +399,7 @@ export default function Index() {
                   {/* Step 3: Move Date */}
                   {step === 3 && (
                     <div className="tru-qb-step-content" key="step-3">
+                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">When would you like to move?</h1>
                       <p className="tru-qb-subtitle">This helps us match you with available carriers</p>
                       
@@ -448,6 +448,7 @@ export default function Index() {
                   {/* Step 4: Move Size */}
                   {step === 4 && (
                     <div className="tru-qb-step-content" key="step-4">
+                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">What size is your move?</h1>
                       <p className="tru-qb-subtitle">This helps us estimate weight and find the right carriers</p>
                       
@@ -477,6 +478,7 @@ export default function Index() {
                   {/* Step 5: Additional Options */}
                   {step === 5 && (
                     <div className="tru-qb-step-content" key="step-5">
+                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">Any additional services?</h1>
                       <p className="tru-qb-subtitle">Select any that apply (optional)</p>
                       
@@ -527,6 +529,7 @@ export default function Index() {
                   {/* Step 6: Contact */}
                   {step === 6 && (
                     <form className="tru-qb-step-content" key="step-6" onSubmit={handleSubmit}>
+                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">Where should we send your quote?</h1>
                       <p className="tru-qb-subtitle">We'll email your detailed estimate (no spam, ever)</p>
                       

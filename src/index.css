@@ -130,8 +130,8 @@
 
 .tru-hero-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 56px;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 64px;
   align-items: start;
 }
 
@@ -144,6 +144,186 @@
     grid-template-columns: 1fr;
     gap: 40px;
   }
+}
+
+/* =============================================
+   REDESIGNED HERO LEFT COLUMN - Stacked Sections
+   ============================================= */
+.tru-hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Section 1: Quick Intro */
+.tru-hero-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tru-hero-intro .tru-hero-title {
+  margin-bottom: 0;
+}
+
+.tru-hero-intro .tru-hero-sub {
+  margin-bottom: 0;
+  max-width: 420px;
+}
+
+.tru-hero-cta-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: hsl(var(--primary));
+  font-weight: 700;
+  font-size: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: gap 200ms ease;
+}
+
+.tru-hero-cta-arrow:hover {
+  gap: 12px;
+}
+
+.tru-hero-cta-arrow svg {
+  transition: transform 200ms ease;
+}
+
+.tru-hero-cta-arrow:hover svg {
+  transform: translateX(4px);
+}
+
+/* Section 2: Why TruMove */
+.tru-hero-why {
+  padding: 20px 24px;
+  background: hsl(var(--tm-ink) / 0.03);
+  border-radius: 16px;
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-hero-why-title {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: hsl(var(--tm-ink) / 0.5);
+  margin-bottom: 14px;
+}
+
+.tru-hero-why-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tru-hero-why-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.85);
+}
+
+.tru-hero-why-list li svg {
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+/* Section 3: Feature Pill Buttons */
+.tru-hero-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tru-hero-tools-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: hsl(var(--tm-ink) / 0.45);
+}
+
+.tru-hero-tools-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tru-hero-tool-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: white;
+  border: 1px solid hsl(var(--tm-ink) / 0.12);
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
+}
+
+.tru-hero-tool-pill:hover {
+  background: hsl(var(--primary));
+  color: hsl(var(--tm-ink));
+  border-color: hsl(var(--primary));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px hsl(var(--primary) / 0.3);
+}
+
+.tru-hero-tool-pill svg {
+  color: hsl(var(--primary));
+  transition: color 0.2s ease;
+}
+
+.tru-hero-tool-pill:hover svg {
+  color: hsl(var(--tm-ink));
+}
+
+/* Section 4: Social Proof */
+.tru-hero-proof {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tru-hero-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tru-hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tru-hero-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: hsl(var(--tm-ink) / 0.05);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+.tru-hero-badge-pill svg {
+  color: hsl(var(--primary));
 }
 
 .tru-hero-pill {
@@ -5946,13 +6126,13 @@
 /* Main Body: Side by Side */
 .tru-qb-body {
   display: flex;
-  min-height: 420px;
+  min-height: 480px;
 }
 
 /* Left: Conversation Area */
 .tru-qb-main {
   flex: 1 1 55%;
-  padding: 40px 32px;
+  padding: 48px 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -5960,10 +6140,10 @@
 
 /* Right: Dashboard Panel */
 .tru-qb-panel {
-  flex: 0 0 300px;
+  flex: 0 0 320px;
   background: hsl(var(--tm-ink) / 0.02);
   border-left: 1px solid hsl(var(--tm-ink) / 0.06);
-  padding: 24px 20px;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -5978,20 +6158,25 @@
   /* Animation moved to micro-interactions section */
 }
 
-.tru-qb-quote-cta {
+/* Step Indicator - Inline */
+.tru-qb-step-indicator {
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.15em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink));
-  background: hsl(var(--tm-ink) / 0.06);
-  padding: 6px 14px;
+  color: hsl(var(--tm-ink) / 0.4);
+  margin-bottom: 12px;
+  padding: 4px 12px;
+  background: hsl(var(--tm-ink) / 0.04);
   border-radius: 20px;
-  margin-bottom: 16px;
+}
+
+.tru-qb-quote-cta {
+  display: none; /* Hidden - replaced by step indicator */
 }
 
 .tru-qb-question {
-  font-size: clamp(20px, 3.5vw, 26px);
+  font-size: clamp(22px, 3.5vw, 28px);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: hsl(var(--tm-ink));
