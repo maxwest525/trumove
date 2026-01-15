@@ -262,6 +262,90 @@
   font-weight: 600;
   color: hsl(var(--tm-ink) / 0.56);
   max-width: 480px;
+  display: flex;
+  align-items: center;
+}
+
+/* =============================================
+   ELEGANT CTA CARDS (per reference image)
+   ============================================= */
+.tru-hero-ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tru-cta-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 200ms ease;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.06);
+  cursor: pointer;
+}
+
+.tru-cta-card:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px hsl(var(--tm-ink) / 0.1);
+}
+
+.tru-cta-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: hsl(var(--primary) / 0.1);
+  border-radius: 12px;
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.tru-cta-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tru-cta-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-cta-card-desc {
+  font-size: 13px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.55);
+}
+
+/* =============================================
+   AI MOVE BUILDER BRANDING
+   ============================================= */
+.tru-qb-branding {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  margin-bottom: 12px;
+  background: hsl(var(--tm-ink));
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: hsl(var(--primary));
+}
+
+.tru-qb-branding svg {
+  animation: sparkle-pulse 2s ease-in-out infinite;
 }
 
 /* =============================================
@@ -270,7 +354,8 @@
 .tru-hero-visual {
   position: relative;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .tru-form-card {
