@@ -7022,7 +7022,7 @@
   flex: 0 0 360px;
   background: hsl(var(--tm-ink) / 0.02);
   border-left: 1px solid hsl(var(--tm-ink) / 0.06);
-  padding: 20px 24px;
+  padding: 0 24px 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -7033,6 +7033,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding-top: 12px;
 }
 
 .tru-qb-summary-title {
@@ -7046,9 +7047,8 @@
   text-transform: uppercase;
   color: hsl(var(--tm-ink) / 0.5);
   text-align: center;
-  padding-bottom: 8px;
-  margin-top: -4px;
-  margin-bottom: 4px;
+  padding: 6px 0;
+  margin: 0;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
 }
 
