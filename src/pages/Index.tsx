@@ -289,41 +289,35 @@ export default function Index() {
             {/* Centered Quote Builder */}
             <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
-                {/* Form Header - Logo Only */}
+                {/* Form Header - Logo + Progress Pills */}
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
+                  <div className="tru-qb-progress-pills">
+                    <div className={`tru-qb-progress-pill ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
+                      <span className="tru-qb-progress-num">1</span>
+                      <span className="tru-qb-progress-label">Plan</span>
+                    </div>
+                    <div className="tru-qb-progress-connector">
+                      <div className={`tru-qb-progress-line ${step > 4 ? 'is-filled' : ''}`} />
+                    </div>
+                    <div className={`tru-qb-progress-pill ${step === 5 ? 'is-active' : step > 5 ? 'is-done' : ''}`}>
+                      <span className="tru-qb-progress-num">2</span>
+                      <span className="tru-qb-progress-label">Match</span>
+                    </div>
+                    <div className="tru-qb-progress-connector">
+                      <div className={`tru-qb-progress-line ${step > 5 ? 'is-filled' : ''}`} />
+                    </div>
+                    <div className={`tru-qb-progress-pill ${step === 6 ? 'is-active' : ''}`}>
+                      <span className="tru-qb-progress-num">3</span>
+                      <span className="tru-qb-progress-label">Move</span>
+                    </div>
+                  </div>
                 </div>
 
                   {/* Main Body: Form + Dashboard Side by Side */}
                   <div className="tru-qb-body">
                 {/* LEFT: Conversation Area */}
                 <div className="tru-qb-main">
-                  {/* Workflow Pills - Status Bar */}
-                  <div className="tru-qb-workflow-status">
-                    <div className={`tru-qb-workflow-pill ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
-                      <span className="tru-qb-pill-num">1</span>
-                      <div className="tru-qb-pill-content">
-                        <span className="tru-qb-pill-title">Plan</span>
-                        <span className="tru-qb-pill-desc">Share your move details</span>
-                      </div>
-                    </div>
-                    <span className="tru-qb-workflow-arrow">→</span>
-                    <div className={`tru-qb-workflow-pill ${step === 5 ? 'is-active' : step > 5 ? 'is-done' : ''}`}>
-                      <span className="tru-qb-pill-num">2</span>
-                      <div className="tru-qb-pill-content">
-                        <span className="tru-qb-pill-title">Match</span>
-                        <span className="tru-qb-pill-desc">We find top carriers</span>
-                      </div>
-                    </div>
-                    <span className="tru-qb-workflow-arrow">→</span>
-                    <div className={`tru-qb-workflow-pill ${step === 6 ? 'is-active' : ''}`}>
-                      <span className="tru-qb-pill-num">3</span>
-                      <div className="tru-qb-pill-content">
-                        <span className="tru-qb-pill-title">Move</span>
-                        <span className="tru-qb-pill-desc">Book & relax</span>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
