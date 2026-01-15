@@ -6336,102 +6336,71 @@
   overflow: hidden;
 }
 
-/* Form Header - Plan Match Move Workflow */
+/* Form Header - Compact Plan Match Move */
 .tru-qb-form-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 20px;
-  background: white;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
+  padding: 14px 24px;
+  background: hsl(var(--tm-ink));
+  border-radius: 20px 20px 0 0;
 }
 
 .tru-qb-workflow {
   display: flex;
-  align-items: flex-start;
-  gap: 0;
-  width: 100%;
-  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
 }
 
 .tru-qb-workflow-step {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex: 1;
+  align-items: center;
+  gap: 8px;
 }
 
 .tru-qb-workflow-num {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 6px;
   background: hsl(var(--primary));
   color: hsl(var(--tm-ink));
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   flex-shrink: 0;
 }
 
-.tru-qb-workflow-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
-.tru-qb-workflow-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: hsl(var(--tm-ink));
-}
-
-.tru-qb-workflow-desc {
-  font-size: 12px;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.55);
-  line-height: 1.4;
+.tru-qb-workflow-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
 }
 
 .tru-qb-workflow-arrow {
-  font-size: 16px;
-  color: hsl(var(--tm-ink) / 0.25);
-  margin: 6px 8px 0;
-  flex-shrink: 0;
+  font-size: 14px;
+  color: hsl(0 0% 100% / 0.35);
+  margin: 0 10px;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 500px) {
   .tru-qb-form-header {
-    padding: 16px;
+    padding: 12px 16px;
   }
   
-  .tru-qb-workflow {
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .tru-qb-workflow-arrow {
-    display: none;
-  }
-  
-  .tru-qb-workflow-step {
-    gap: 10px;
-  }
-  
-  .tru-qb-workflow-num {
-    width: 28px;
-    height: 28px;
+  .tru-qb-workflow-label {
     font-size: 12px;
   }
   
-  .tru-qb-workflow-title {
-    font-size: 14px;
+  .tru-qb-workflow-num {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
   }
   
-  .tru-qb-workflow-desc {
-    font-size: 11px;
+  .tru-qb-workflow-arrow {
+    margin: 0 6px;
   }
 }
 
@@ -7415,6 +7384,25 @@
 
 .tru-carrier-ready svg {
   color: hsl(var(--primary));
+}
+
+/* Federal Data Badge */
+.tru-qb-federal-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: hsl(var(--tm-ink) / 0.03);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.6);
+  margin-top: 8px;
+}
+
+.tru-qb-federal-badge svg {
+  color: hsl(var(--primary));
+  flex-shrink: 0;
 }
 
 .tru-carrier-phase {
