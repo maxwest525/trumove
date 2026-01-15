@@ -7010,7 +7010,7 @@
   padding: 24px 36px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 /* Right: Dashboard Panel */
