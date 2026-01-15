@@ -30,6 +30,10 @@ import {
   Hammer,
   Package,
   Bath,
+  LayoutGrid,
+  List,
+  ChevronLeft,
+  ChevronRight,
   type LucideIcon
 } from "lucide-react";
 import { ROOM_SUGGESTIONS, type InventoryItem } from "@/lib/priceCalculator";
@@ -121,6 +125,8 @@ const getItemIcon = (itemName: string, roomId: string): LucideIcon => {
   return roomConfig?.icon || Box;
 };
 
+const ITEMS_PER_PAGE_OPTIONS = [9, 12, 18, 24];
+
 export default function InventoryBuilder({ 
   onAddItem, 
   inventoryItems = [], 
@@ -132,6 +138,9 @@ export default function InventoryBuilder({
   const [activeRoom, setActiveRoom] = useState('Living Room');
   const [searchQuery, setSearchQuery] = useState('');
   const [itemQuantities, setItemQuantities] = useState<Record<string, number>>({});
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [itemsPerPage, setItemsPerPage] = useState(9);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Get all items for search with room info
   const allItemsWithRoom = useMemo(() => {
@@ -163,6 +172,19 @@ export default function InventoryBuilder({
   }, [inventoryItems]);
 
   const suggestions = ROOM_SUGGESTIONS[activeRoom] || [];
+  
+  // Pagination
+  const totalPages = Math.ceil(suggestions.length / itemsPerPage);
+  const paginatedSuggestions = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return suggestions.slice(start, start + itemsPerPage);
+  }, [suggestions, currentPage, itemsPerPage]);
+
+  // Reset page when room changes
+  const handleRoomChange = (roomId: string) => {
+    setActiveRoom(roomId);
+    setCurrentPage(1);
+  };
 
   const getItemQuantity = (itemName: string, room: string) => {
     const key = `${room}-${itemName}`;
@@ -223,7 +245,7 @@ export default function InventoryBuilder({
             <button
               key={room.id}
               type="button"
-              onClick={() => setActiveRoom(room.id)}
+              onClick={() => handleRoomChange(room.id)}
               className={cn(
                 "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all",
                 isActive 
@@ -322,42 +344,172 @@ export default function InventoryBuilder({
           </div>
         )}
 
-        {/* Room Section Header */}
+        {/* Room Section Header with View Controls */}
         {!searchQuery && (
           <>
-            <div className="flex items-center gap-2 px-1">
-              <div className="h-px flex-1 bg-border/40" />
-              <span className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground">
-                {activeRoom}
-              </span>
-              <div className="h-px flex-1 bg-border/40" />
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-2 flex-1">
+                <div className="h-px flex-1 bg-border/40" />
+                <span className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground">
+                  {activeRoom}
+                </span>
+                <div className="h-px flex-1 bg-border/40" />
+              </div>
+              
+              {/* View Toggle & Items Per Page */}
+              <div className="flex items-center gap-2 ml-3">
+                {/* View Mode Toggle */}
+                <div className="flex rounded-lg border border-border/60 bg-muted/30 p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('grid')}
+                    className={cn(
+                      "p-1.5 rounded-md transition-all",
+                      viewMode === 'grid' 
+                        ? "bg-primary text-primary-foreground shadow-sm" 
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('list')}
+                    className={cn(
+                      "p-1.5 rounded-md transition-all",
+                      viewMode === 'list' 
+                        ? "bg-primary text-primary-foreground shadow-sm" 
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <List className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                
+                {/* Items Per Page Selector */}
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="h-7 px-2 text-[10px] font-semibold rounded-md border border-border/60 bg-muted/30 text-foreground cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/40"
+                >
+                  {ITEMS_PER_PAGE_OPTIONS.map(num => (
+                    <option key={num} value={num}>{num} items</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            {/* Item Grid - Only show active room items */}
+            {/* Item Grid/List - Only show active room items */}
             {suggestions.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {suggestions.map((item) => (
-                  <ItemCard
-                    key={item.name}
-                    item={item}
-                    room={activeRoom}
-                    quantity={getItemQuantity(item.name, activeRoom)}
-                    onAdd={() => handleQuantityChange(item, activeRoom, 1)}
-                    onRemove={() => handleQuantityChange(item, activeRoom, -1)}
-                    icon={getItemIcon(item.name, activeRoom)}
-                  />
-                ))}
+              <>
+                {viewMode === 'grid' ? (
+                  <div className="grid grid-cols-3 gap-3">
+                    {paginatedSuggestions.map((item) => (
+                      <ItemCard
+                        key={item.name}
+                        item={item}
+                        room={activeRoom}
+                        quantity={getItemQuantity(item.name, activeRoom)}
+                        onAdd={() => handleQuantityChange(item, activeRoom, 1)}
+                        onRemove={() => handleQuantityChange(item, activeRoom, -1)}
+                        icon={getItemIcon(item.name, activeRoom)}
+                      />
+                    ))}
+                    
+                    {/* Add Custom Item Card - only on last page or if less than itemsPerPage */}
+                    {currentPage === totalPages && (
+                      <button
+                        type="button"
+                        onClick={() => {/* TODO: Open custom item modal */}}
+                        className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all min-h-[120px] text-muted-foreground hover:text-foreground"
+                      >
+                        <Plus className="w-6 h-6" />
+                        <span className="text-xs font-semibold text-center">Add Custom</span>
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {paginatedSuggestions.map((item) => (
+                      <ItemListRow
+                        key={item.name}
+                        item={item}
+                        room={activeRoom}
+                        quantity={getItemQuantity(item.name, activeRoom)}
+                        onAdd={() => handleQuantityChange(item, activeRoom, 1)}
+                        onRemove={() => handleQuantityChange(item, activeRoom, -1)}
+                        icon={getItemIcon(item.name, activeRoom)}
+                      />
+                    ))}
+                    
+                    {/* Add Custom Item Row - only on last page */}
+                    {currentPage === totalPages && (
+                      <button
+                        type="button"
+                        onClick={() => {/* TODO: Open custom item modal */}}
+                        className="w-full flex items-center gap-3 p-3 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all text-muted-foreground hover:text-foreground"
+                      >
+                        <Plus className="w-5 h-5" />
+                        <span className="text-sm font-semibold">Add Custom Item</span>
+                      </button>
+                    )}
+                  </div>
+                )}
                 
-                {/* Add Custom Item Card */}
-                <button
-                  type="button"
-                  onClick={() => {/* TODO: Open custom item modal */}}
-                  className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all min-h-[120px] text-muted-foreground hover:text-foreground"
-                >
-                  <Plus className="w-6 h-6" />
-                  <span className="text-xs font-semibold text-center">Add Custom</span>
-                </button>
-              </div>
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className={cn(
+                        "p-1.5 rounded-lg transition-all",
+                        currentPage === 1 
+                          ? "text-muted-foreground/40 cursor-not-allowed" 
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() => setCurrentPage(page)}
+                          className={cn(
+                            "w-7 h-7 rounded-lg text-xs font-semibold transition-all",
+                            page === currentPage 
+                              ? "bg-primary text-primary-foreground" 
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          )}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className={cn(
+                        "p-1.5 rounded-lg transition-all",
+                        currentPage === totalPages 
+                          ? "text-muted-foreground/40 cursor-not-allowed" 
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                 <Package className="w-10 h-10 mb-3 opacity-40" />
@@ -433,6 +585,80 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon 
         
         <span className={cn(
           "text-sm font-bold tabular-nums",
+          quantity > 0 ? "text-primary" : "text-muted-foreground"
+        )}>
+          {quantity}
+        </span>
+        
+        <button
+          type="button"
+          onClick={onAdd}
+          className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-all"
+        >
+          <Plus className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// List Row Component for List View
+interface ItemListRowProps {
+  item: { name: string; defaultWeight: number; cubicFeet?: number };
+  room: string;
+  quantity: number;
+  onAdd: () => void;
+  onRemove: () => void;
+  icon: LucideIcon;
+}
+
+function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon }: ItemListRowProps) {
+  return (
+    <div className={cn(
+      "flex items-center gap-3 p-3 rounded-xl border transition-all",
+      quantity > 0 
+        ? "border-primary/40 bg-primary/5 shadow-sm" 
+        : "border-border/60 bg-card hover:border-primary/20"
+    )}>
+      {/* Item Icon */}
+      <div className={cn(
+        "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+        quantity > 0 ? "bg-primary/10" : "bg-muted/40"
+      )}>
+        <Icon className={cn(
+          "w-5 h-5",
+          quantity > 0 ? "text-primary" : "text-muted-foreground/60"
+        )} />
+      </div>
+      
+      {/* Item Info */}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-foreground truncate">
+          {item.name}
+        </p>
+        <p className="text-[10px] text-muted-foreground">
+          ~{item.cubicFeet || Math.ceil(item.defaultWeight / 7)} cu.ft • {item.defaultWeight} lbs
+        </p>
+      </div>
+      
+      {/* Quantity Controls */}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={onRemove}
+          disabled={quantity === 0}
+          className={cn(
+            "w-7 h-7 rounded-full flex items-center justify-center transition-all",
+            quantity > 0 
+              ? "bg-muted hover:bg-muted-foreground/20 text-foreground" 
+              : "bg-muted/50 text-muted-foreground/50 cursor-not-allowed"
+          )}
+        >
+          <Minus className="w-3.5 h-3.5" />
+        </button>
+        
+        <span className={cn(
+          "w-6 text-center text-sm font-bold tabular-nums",
           quantity > 0 ? "text-primary" : "text-muted-foreground"
         )}>
           {quantity}
