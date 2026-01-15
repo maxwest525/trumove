@@ -8,6 +8,7 @@ export interface InventoryItem {
   quantity: number;
   weightEach: number;
   cubicFeet?: number;
+  specialHandling?: boolean;
 }
 
 export interface MoveDetails {
