@@ -231,35 +231,102 @@ export default function Index() {
     <SiteShell>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-          {/* HERO - Unified Smart Quote Builder */}
+        {/* HERO - Split Layout: Company Info + Quote Builder */}
           <section className="tru-hero">
-            <div className="tru-quote-builder" ref={quoteBuilderRef}>
-              {/* Progress Header */}
-              <div className="tru-qb-header">
-                <span className="tru-qb-step">Step {step} of 6</span>
-                <div className="tru-qb-progress-bar">
-                  <div 
-                    className="tru-qb-progress-fill" 
-                    style={{ width: `${(step / 6) * 100}%` }} 
-                  />
+            <div className="tru-hero-grid">
+              {/* LEFT: Company Info */}
+              <div className="tru-hero-content">
+                <div className="tru-hero-pill">
+                  <span className="tru-hero-pill-dot" />
+                  <span>AI-Powered Moving</span>
                 </div>
                 
-                {/* AI Chat Toggle */}
-                <button 
-                  className="tru-qb-chat-toggle"
-                  onClick={() => setChatOpen(true)}
-                  title="Switch to AI Chat"
-                  type="button"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>AI Chat</span>
-                </button>
+                <h1 className="tru-hero-title">Your move, simplified.</h1>
                 
-                <div className="tru-qb-status">
-                  <span className="tru-status-dot is-online" />
-                  <span className="tru-qb-status-text">ONLINE</span>
+                <p className="tru-hero-sub">
+                  Get instant quotes from FMCSA-verified carriers. No brokers, no spam—just transparent pricing from vetted movers.
+                </p>
+                
+                {/* Trust Badges */}
+                <div className="tru-hero-bullets">
+                  <span className="tru-hero-badge">
+                    <span className="tru-hero-badge-dot" />
+                    AI-Vetted Carriers
+                  </span>
+                  <span className="tru-hero-badge">
+                    <span className="tru-hero-badge-dot" />
+                    FMCSA Verified
+                  </span>
+                  <span className="tru-hero-badge">
+                    <span className="tru-hero-badge-dot" />
+                    No Spam, Ever
+                  </span>
                 </div>
+                
+                {/* Elegant CTA Cards */}
+                <div className="tru-hero-ctas">
+                  <a href="tel:+16097277647" className="tru-cta-card">
+                    <div className="tru-cta-card-icon">
+                      <Phone className="w-5 h-5" />
+                    </div>
+                    <div className="tru-cta-card-content">
+                      <span className="tru-cta-card-title">Talk to Specialist</span>
+                      <span className="tru-cta-card-desc">Get personalized guidance</span>
+                    </div>
+                  </a>
+                  
+                  <Link to="/book" className="tru-cta-card">
+                    <div className="tru-cta-card-icon">
+                      <Video className="w-5 h-5" />
+                    </div>
+                    <div className="tru-cta-card-content">
+                      <span className="tru-cta-card-title">Book Virtual Meet</span>
+                      <span className="tru-cta-card-desc">Schedule your specialist</span>
+                    </div>
+                  </Link>
+                </div>
+                
+                <p className="tru-hero-note">
+                  <Shield className="w-4 h-4 inline-block mr-1 text-primary" />
+                  Trusted by 2,400+ moves nationwide
+                </p>
               </div>
+              
+              {/* RIGHT: Quote Builder */}
+              <div className="tru-hero-visual" ref={quoteBuilderRef}>
+                {/* AI Move Builder Branding */}
+                <div className="tru-qb-branding">
+                  <Sparkles className="w-4 h-4" />
+                  <span>AI Move Builder</span>
+                </div>
+                
+                <div className="tru-quote-builder">
+                  {/* Progress Header */}
+                  <div className="tru-qb-header">
+                    <span className="tru-qb-step">Step {step} of 6</span>
+                    <div className="tru-qb-progress-bar">
+                      <div 
+                        className="tru-qb-progress-fill" 
+                        style={{ width: `${(step / 6) * 100}%` }} 
+                      />
+                    </div>
+                    
+                    {/* AI Chat Toggle */}
+                    <button 
+                      className="tru-qb-chat-toggle"
+                      onClick={() => setChatOpen(true)}
+                      title="Switch to AI Chat"
+                      type="button"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      <span>AI Chat</span>
+                    </button>
+                    
+                    <div className="tru-qb-status">
+                      <span className="tru-status-dot is-online" />
+                      <span className="tru-qb-status-text">ONLINE</span>
+                    </div>
+                  </div>
 
               {/* Main Body: Form + Dashboard Side by Side */}
               <div className="tru-qb-body">
@@ -602,10 +669,12 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* Compact Tech Ticker */}
-              <div className="tru-qb-ticker">
-                <Lock className="w-3.5 h-3.5" />
-                <span>{tickerContent}</span>
+                  {/* Compact Tech Ticker */}
+                  <div className="tru-qb-ticker">
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>{tickerContent}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
