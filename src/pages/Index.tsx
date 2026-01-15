@@ -291,27 +291,34 @@ export default function Index() {
               <div className="tru-quote-builder">
                 {/* Form Header */}
                 <div className="tru-qb-form-header">
-                  {/* Logo + Title centered */}
-                  <div className="tru-qb-header-title-wrap">
-                    <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                    <span className="tru-qb-header-title">Start Your AI Move Builder</span>
-                  </div>
+                  {/* Logo above Title */}
+                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
+                  <span className="tru-qb-header-title">Start Your AI Move Builder</span>
                   
-                  {/* Centered Workflow Steps */}
-                  <div className="tru-qb-workflow">
-                    <div className={`tru-qb-workflow-step ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
-                      <span className="tru-qb-workflow-num">1</span>
-                      <span className="tru-qb-workflow-title">Plan</span>
+                  {/* Workflow Steps with Pills */}
+                  <div className="tru-qb-workflow-full">
+                    <div className={`tru-qb-workflow-pill ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
+                      <span className="tru-qb-pill-num">1</span>
+                      <div className="tru-qb-pill-content">
+                        <span className="tru-qb-pill-title">Plan</span>
+                        <span className="tru-qb-pill-desc">Share your move details</span>
+                      </div>
                     </div>
                     <span className="tru-qb-workflow-arrow">→</span>
-                    <div className={`tru-qb-workflow-step ${step === 5 ? 'is-active' : step > 5 ? 'is-done' : ''}`}>
-                      <span className="tru-qb-workflow-num">2</span>
-                      <span className="tru-qb-workflow-title">Match</span>
+                    <div className={`tru-qb-workflow-pill ${step === 5 ? 'is-active' : step > 5 ? 'is-done' : ''}`}>
+                      <span className="tru-qb-pill-num">2</span>
+                      <div className="tru-qb-pill-content">
+                        <span className="tru-qb-pill-title">Match</span>
+                        <span className="tru-qb-pill-desc">We find top carriers</span>
+                      </div>
                     </div>
                     <span className="tru-qb-workflow-arrow">→</span>
-                    <div className={`tru-qb-workflow-step ${step === 6 ? 'is-active' : ''}`}>
-                      <span className="tru-qb-workflow-num">3</span>
-                      <span className="tru-qb-workflow-title">Move</span>
+                    <div className={`tru-qb-workflow-pill ${step === 6 ? 'is-active' : ''}`}>
+                      <span className="tru-qb-pill-num">3</span>
+                      <div className="tru-qb-pill-content">
+                        <span className="tru-qb-pill-title">Move</span>
+                        <span className="tru-qb-pill-desc">Book & relax</span>
+                      </div>
                     </div>
                   </div>
                 </div>
