@@ -6486,32 +6486,26 @@
 /* Form Header - Plan Match Move Workflow */
 .tru-qb-form-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 20px 20px 16px;
+  gap: 16px;
+  padding: 14px 20px;
   background: #ffffff;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
   border-radius: 20px 20px 0 0;
 }
 
 .tru-qb-header-top-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  display: none;
 }
 
 .tru-qb-header-logo {
   height: 28px;
   width: auto;
+  flex-shrink: 0;
 }
 
 .tru-qb-header-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-  letter-spacing: -0.01em;
+  display: none;
 }
 
 /* Full Workflow Pills */
@@ -7053,6 +7047,31 @@
   color: hsl(var(--tm-ink) / 0.4);
   text-align: center;
   padding: 16px;
+}
+
+/* Map Stats Row - Below Map */
+.tru-qb-map-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px 16px;
+  background: hsl(var(--tm-ink) / 0.04);
+  border-radius: 10px;
+  margin-top: 8px;
+}
+
+.tru-qb-map-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-qb-map-stat svg {
+  color: hsl(var(--primary));
 }
 
 .tru-qb-info {
