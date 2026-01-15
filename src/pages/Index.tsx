@@ -299,12 +299,6 @@ export default function Index() {
               
               {/* RIGHT: Quote Builder */}
               <div className="tru-hero-visual" ref={quoteBuilderRef}>
-                {/* AI Move Builder Branding */}
-                <div className="tru-qb-branding">
-                  <Sparkles className="w-4 h-4" />
-                  <span>AI Move Builder</span>
-                </div>
-                
                 <div className="tru-quote-builder">
                   {/* Progress Header */}
                   <div className="tru-qb-header">
@@ -334,22 +328,21 @@ export default function Index() {
                       <h1 className="tru-qb-question">Where are you moving from?</h1>
                       <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
                       
-                      <div className="tru-qb-input-wrap">
+                      <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                         <input
                           type="text"
                           className="tru-qb-input"
-                          placeholder="Enter ZIP..."
+                          placeholder="Enter ZIP"
                           maxLength={5}
                           value={fromZip}
                           onChange={(e) => handleFromZipChange(e.target.value.replace(/\D/g, ""))}
                           onKeyDown={handleKeyDown}
                           autoFocus
                         />
+                        {fromCity && (
+                          <div className="tru-qb-zip-city">{fromCity}</div>
+                        )}
                       </div>
-                      
-                      {fromCity && (
-                        <p className="tru-qb-ai-hint">📍 {fromCity} — vetted movers ready</p>
-                      )}
 
                       <button
                         type="button"
@@ -369,17 +362,20 @@ export default function Index() {
                       <h1 className="tru-qb-question">Where are you moving to?</h1>
                       <p className="tru-qb-subtitle">Enter your destination ZIP code</p>
                       
-                      <div className="tru-qb-input-wrap">
+                      <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                         <input
                           type="text"
                           className="tru-qb-input"
-                          placeholder="Enter ZIP..."
+                          placeholder="Enter ZIP"
                           maxLength={5}
                           value={toZip}
                           onChange={(e) => handleToZipChange(e.target.value.replace(/\D/g, ""))}
                           onKeyDown={handleKeyDown}
                           autoFocus
                         />
+                        {toCity && (
+                          <div className="tru-qb-zip-city">{toCity}</div>
+                        )}
                       </div>
                       
                       {aiHint && <p className="tru-qb-ai-hint">{aiHint}</p>}
@@ -597,32 +593,26 @@ export default function Index() {
                       <span className="tru-qb-info-label">To</span>
                       <span className="tru-qb-info-value">{toCity || "—"}</span>
                     </div>
-                    {distance > 0 && (
-                      <div className="tru-qb-info-row">
-                        <span className="tru-qb-info-label">Distance</span>
-                        <span className="tru-qb-info-value">{distance.toLocaleString()} mi</span>
-                      </div>
-                    )}
-                    {moveDate && (
-                      <div className="tru-qb-info-row">
-                        <span className="tru-qb-info-label">Date</span>
-                        <span className="tru-qb-info-value">{format(moveDate, "MMM d, yyyy")}</span>
-                      </div>
-                    )}
-                    {size && (
-                      <div className="tru-qb-info-row">
-                        <span className="tru-qb-info-label">Size</span>
-                        <span className="tru-qb-info-value">{size}</span>
-                      </div>
-                    )}
-                    {(hasCar || needsPacking) && (
-                      <div className="tru-qb-info-row">
-                        <span className="tru-qb-info-label">Add-ons</span>
-                        <span className="tru-qb-info-value">
-                          {[hasCar && "Vehicle", needsPacking && "Packing"].filter(Boolean).join(", ")}
-                        </span>
-                      </div>
-                    )}
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">Distance</span>
+                      <span className="tru-qb-info-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                    </div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">Date</span>
+                      <span className="tru-qb-info-value">{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
+                    </div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">Size</span>
+                      <span className="tru-qb-info-value">{size || "—"}</span>
+                    </div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">Add-ons</span>
+                      <span className="tru-qb-info-value">
+                        {(hasCar || needsPacking) 
+                          ? [hasCar && "Vehicle", needsPacking && "Packing"].filter(Boolean).join(", ")
+                          : "—"}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Estimate */}
