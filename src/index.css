@@ -8596,39 +8596,41 @@
   color: hsl(var(--tm-ink) / 0.4);
 }
 
-/* Toggle Row */
+/* Toggle Row - Horizontal inline buttons */
 .tru-wizard-toggle-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 10px;
 }
 
 .tru-wizard-toggle-btn {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 16px;
-  border-radius: 14px;
-  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
   background: #ffffff;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .tru-wizard-toggle-btn:hover {
-  border-color: hsl(var(--primary) / 0.3);
-  background: hsl(var(--primary) / 0.04);
+  border-color: hsl(var(--tm-ink) / 0.25);
+  background: hsl(var(--tm-ink) / 0.02);
 }
 
 .tru-wizard-toggle-btn.is-active {
-  border-color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink));
 }
 
 .tru-wizard-toggle-btn svg {
+  width: 18px;
+  height: 18px;
   color: hsl(var(--tm-ink) / 0.5);
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
 }
 
 .tru-wizard-toggle-btn.is-active svg {
@@ -8637,11 +8639,16 @@
 
 .tru-wizard-toggle-btn span {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   color: hsl(var(--tm-ink));
+  transition: color 0.15s ease;
 }
 
-/* Pills */
+.tru-wizard-toggle-btn.is-active span {
+  color: #ffffff;
+}
+
+/* Pills - Compact inline style */
 .tru-wizard-pills {
   display: flex;
   flex-wrap: wrap;
@@ -8649,86 +8656,92 @@
 }
 
 .tru-wizard-pill {
-  padding: 10px 18px;
-  border-radius: 999px;
-  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
   background: #ffffff;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: hsl(var(--tm-ink));
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .tru-wizard-pill:hover {
-  border-color: hsl(var(--primary) / 0.3);
-  background: hsl(var(--primary) / 0.04);
+  border-color: hsl(var(--tm-ink) / 0.25);
+  background: hsl(var(--tm-ink) / 0.02);
 }
 
 .tru-wizard-pill.is-active {
-  border-color: hsl(var(--primary));
-  background: hsl(var(--primary));
-  color: hsl(var(--tm-ink));
+  border-color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink));
+  color: #ffffff;
 }
 
-/* Date Button */
+/* Date Button - Clean style */
 .tru-wizard-date-btn {
   display: flex;
   align-items: center;
   gap: 12px;
   width: 100%;
-  height: 52px;
+  height: 48px;
   padding: 0 16px;
-  border-radius: 12px;
-  border: 2px solid hsl(var(--tm-ink) / 0.12);
+  border-radius: 10px;
+  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
   background: #ffffff;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: hsl(var(--tm-ink));
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .tru-wizard-date-btn:hover {
-  border-color: hsl(var(--primary) / 0.3);
+  border-color: hsl(var(--tm-ink) / 0.25);
 }
 
 .tru-wizard-date-btn svg {
-  color: hsl(var(--primary));
+  color: hsl(var(--tm-ink) / 0.5);
 }
 
-/* Option Cards */
+/* Option Cards - Horizontal compact */
 .tru-wizard-option-cards {
   display: flex;
-  flex-direction: column;
   gap: 8px;
 }
 
 .tru-wizard-option-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  padding: 14px 12px;
+  border-radius: 10px;
+  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
   background: #ffffff;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  text-align: center;
 }
 
 .tru-wizard-option-card:hover {
-  border-color: hsl(var(--primary) / 0.3);
-  background: hsl(var(--primary) / 0.04);
+  border-color: hsl(var(--tm-ink) / 0.25);
+  background: hsl(var(--tm-ink) / 0.02);
 }
 
 .tru-wizard-option-card.is-active {
-  border-color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink));
 }
 
 .tru-wizard-option-card svg {
+  width: 20px;
+  height: 20px;
   color: hsl(var(--tm-ink) / 0.5);
   flex-shrink: 0;
+  transition: color 0.15s ease;
 }
 
 .tru-wizard-option-card.is-active svg {
@@ -8736,43 +8749,51 @@
 }
 
 .tru-wizard-option-card span {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: hsl(var(--tm-ink));
-  flex: 1;
+  transition: color 0.15s ease;
+}
+
+.tru-wizard-option-card.is-active span {
+  color: #ffffff;
 }
 
 .tru-wizard-option-card .check-icon {
-  color: hsl(var(--primary));
-  margin-left: auto;
+  display: none;
 }
 
-/* Continue Button */
+/* Continue Button - Bold dark style */
 .tru-wizard-continue {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  height: 52px;
-  border-radius: 12px;
+  height: 48px;
+  border-radius: 10px;
   border: none;
-  background: linear-gradient(135deg, hsl(var(--primary)), hsl(140 70% 45%));
-  color: hsl(var(--tm-ink));
-  font-size: 16px;
+  background: hsl(var(--tm-ink));
+  color: #ffffff;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.2);
 }
 
 .tru-wizard-continue:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px hsl(var(--primary) / 0.4);
+  background: hsl(222 47% 18%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.3);
 }
 
 .tru-wizard-continue:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+}
+
+.tru-wizard-continue svg {
+  color: hsl(var(--primary));
 }
 
 /* Back Button */
@@ -8785,11 +8806,11 @@
   padding: 10px;
   border: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--tm-ink) / 0.45);
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
 }
 
 .tru-wizard-back:hover {
@@ -8801,11 +8822,20 @@
   position: relative;
 }
 
-.tru-estimate-bg-blur {
-  filter: blur(4px);
-  opacity: 0.4;
+.tru-estimate-bg-preview {
+  opacity: 0.6;
   pointer-events: none;
   user-select: none;
+  position: relative;
+}
+
+.tru-estimate-bg-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, hsl(var(--background)) 100%);
+  z-index: 5;
+  pointer-events: none;
 }
 
 .tru-estimate-wizard-container {
@@ -8821,10 +8851,14 @@
   }
   
   .tru-wizard-toggle-row {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
   
   .tru-wizard-pills {
     justify-content: center;
+  }
+  
+  .tru-wizard-option-cards {
+    flex-direction: column;
   }
 }
