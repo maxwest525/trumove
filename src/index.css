@@ -5412,6 +5412,18 @@
   transition: all 150ms ease;
 }
 
+.header-btn-quote {
+  background: hsl(var(--tm-ink));
+  color: white;
+  border: 1px solid hsl(var(--tm-ink));
+}
+
+.header-btn-quote:hover {
+  background: hsl(222 47% 18%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.3);
+}
+
 .header-btn-chat {
   background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.08));
   color: hsl(var(--tm-ink));
@@ -6469,7 +6481,8 @@
    =========================== */
 
 .tru-quote-builder {
-  max-width: 100%;
+  max-width: 960px;
+  width: 100%;
   margin: 0 auto;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 2px solid hsl(var(--tm-ink) / 0.1);
@@ -6841,13 +6854,13 @@
 /* Main Body: Side by Side */
 .tru-qb-body {
   display: flex;
-  min-height: 480px;
+  min-height: 380px;
 }
 
 /* Left: Conversation Area */
 .tru-qb-main {
   flex: 1 1 55%;
-  padding: 48px 40px;
+  padding: 36px 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -6855,13 +6868,13 @@
 
 /* Right: Dashboard Panel */
 .tru-qb-panel {
-  flex: 0 0 320px;
+  flex: 0 0 340px;
   background: hsl(var(--tm-ink) / 0.02);
   border-left: 1px solid hsl(var(--tm-ink) / 0.06);
-  padding: 28px 24px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 /* Summary Section */

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Sparkles, Phone, Video, Shield, BadgeCheck } from "lucide-react";
+import { Menu, X, Sparkles, Phone, Video, Shield, BadgeCheck, FileText } from "lucide-react";
 import logo from "@/assets/logo.png";
 import ChatModal from "@/components/chat/ChatModal";
 
@@ -22,6 +22,13 @@ export default function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+
+  const scrollToQuoteBuilder = () => {
+    const quoteBuilder = document.querySelector('.tru-quote-builder');
+    if (quoteBuilder) {
+      quoteBuilder.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   return (
     <>
@@ -57,6 +64,17 @@ export default function Header() {
 
           {/* Action Cluster */}
           <div className="header-actions">
+            {location.pathname === "/" && (
+              <button 
+                type="button" 
+                className="header-btn header-btn-quote"
+                onClick={scrollToQuoteBuilder}
+                aria-label="Build your quote"
+              >
+                <FileText className="w-4 h-4" />
+                <span>Build Quote</span>
+              </button>
+            )}
             <button 
               type="button" 
               className="header-btn header-btn-chat"
@@ -66,7 +84,7 @@ export default function Header() {
               <Sparkles className="w-4 h-4" />
               <span>AI Chat</span>
             </button>
-            <a href="tel:+18001234567" className="header-btn header-btn-call">
+            <a href="tel:+16097277647" className="header-btn header-btn-call">
               <Phone className="w-4 h-4" />
               <span>Call</span>
             </a>
@@ -114,7 +132,7 @@ export default function Header() {
                 <Sparkles className="w-4 h-4" />
                 <span>AI Chat</span>
               </button>
-              <a href="tel:+18001234567" className="header-mobile-btn">
+              <a href="tel:+16097277647" className="header-mobile-btn">
                 <Phone className="w-4 h-4" />
                 <span>Call Now</span>
               </a>
