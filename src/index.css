@@ -6455,12 +6455,26 @@
 /* Form Header - Plan Match Move Workflow */
 .tru-qb-form-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 20px;
-  padding: 12px 20px;
+  gap: 14px;
+  padding: 20px 20px 16px;
   background: #ffffff;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
   border-radius: 20px 20px 0 0;
+}
+
+.tru-qb-header-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tru-qb-header-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  letter-spacing: -0.01em;
 }
 
 .tru-qb-header-logo {
@@ -6472,14 +6486,45 @@
 .tru-qb-workflow {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  flex: 1;
 }
 
 .tru-qb-workflow-step {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: default;
+  transition: all 0.2s ease;
+}
+
+.tru-qb-workflow-step:hover {
+  background: hsl(var(--tm-ink) / 0.04);
+}
+
+/* Active workflow step */
+.tru-qb-workflow-step.is-active {
+  background: hsl(var(--primary) / 0.1);
+}
+
+.tru-qb-workflow-step.is-active .tru-qb-workflow-num {
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2);
+}
+
+.tru-qb-workflow-step.is-active .tru-qb-workflow-title {
+  color: hsl(140 60% 30%);
+}
+
+/* Done workflow step */
+.tru-qb-workflow-step.is-done .tru-qb-workflow-num {
+  background: hsl(var(--tm-ink) / 0.15);
+  color: hsl(var(--tm-ink) / 0.6);
+}
+
+.tru-qb-workflow-step.is-done .tru-qb-workflow-title {
+  color: hsl(var(--tm-ink) / 0.5);
 }
 
 .tru-qb-workflow-num {
@@ -6494,12 +6539,14 @@
   font-size: 12px;
   font-weight: 800;
   flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
 .tru-qb-workflow-title {
   font-size: 13px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
+  transition: all 0.2s ease;
 }
 
 .tru-qb-workflow-arrow {
@@ -6511,15 +6558,17 @@
 
 @media (max-width: 640px) {
   .tru-qb-form-header {
-    flex-direction: column;
-    align-items: flex-start;
+    padding: 16px 16px 14px;
     gap: 12px;
-    padding: 14px 16px;
   }
   
   .tru-qb-workflow {
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
+  }
+  
+  .tru-qb-workflow-step {
+    padding: 4px 8px;
   }
 }
 

@@ -289,21 +289,27 @@ export default function Index() {
             {/* Centered Quote Builder */}
             <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
-                {/* Form Header - Plan Match Move Workflow */}
+                {/* Form Header */}
                 <div className="tru-qb-form-header">
-                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
+                  {/* Logo + Title centered */}
+                  <div className="tru-qb-header-title-wrap">
+                    <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
+                    <span className="tru-qb-header-title">Start Your AI Move Builder</span>
+                  </div>
+                  
+                  {/* Centered Workflow Steps */}
                   <div className="tru-qb-workflow">
-                    <div className="tru-qb-workflow-step">
+                    <div className={`tru-qb-workflow-step ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
                       <span className="tru-qb-workflow-num">1</span>
                       <span className="tru-qb-workflow-title">Plan</span>
                     </div>
                     <span className="tru-qb-workflow-arrow">→</span>
-                    <div className="tru-qb-workflow-step">
+                    <div className={`tru-qb-workflow-step ${step === 5 ? 'is-active' : step > 5 ? 'is-done' : ''}`}>
                       <span className="tru-qb-workflow-num">2</span>
                       <span className="tru-qb-workflow-title">Match</span>
                     </div>
                     <span className="tru-qb-workflow-arrow">→</span>
-                    <div className="tru-qb-workflow-step">
+                    <div className={`tru-qb-workflow-step ${step === 6 ? 'is-active' : ''}`}>
                       <span className="tru-qb-workflow-num">3</span>
                       <span className="tru-qb-workflow-title">Move</span>
                     </div>
