@@ -11,12 +11,13 @@ export default function OnlineEstimate() {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [inventoryUnlocked, setInventoryUnlocked] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
-  const [moveDetails, setMoveDetails] = useState<MoveDetails>({
+const [moveDetails, setMoveDetails] = useState<MoveDetails>({
     fromLocation: '',
     toLocation: '',
     distance: 0,
     moveType: 'auto',
     moveDate: '',
+    homeSize: '' as MoveDetails['homeSize'],
   });
   const [contactInfo, setContactInfo] = useState({
     name: '',

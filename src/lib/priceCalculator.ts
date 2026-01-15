@@ -16,6 +16,7 @@ export interface MoveDetails {
   distance: number;
   moveType: 'local' | 'long-distance' | 'auto';
   moveDate: string;
+  homeSize: 'studio' | '1br' | '2br' | '3br' | '4br+';
 }
 
 // Industry standard: 7 lbs per cubic foot (from DOT/carrier standards)
