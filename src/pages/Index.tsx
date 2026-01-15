@@ -291,9 +291,11 @@ export default function Index() {
               <div className="tru-quote-builder">
                 {/* Form Header */}
                 <div className="tru-qb-form-header">
-                  {/* Logo above Title */}
-                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  <span className="tru-qb-header-title">Start Your AI Move Builder</span>
+                  {/* Top row: Logo left, Title right */}
+                  <div className="tru-qb-header-top-row">
+                    <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
+                    <span className="tru-qb-header-title">Start Your AI Move Builder</span>
+                  </div>
                   
                   {/* Workflow Steps with Pills */}
                   <div className="tru-qb-workflow-full">
