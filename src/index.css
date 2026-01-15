@@ -6484,6 +6484,38 @@
   border-radius: 20px 20px 0 0;
 }
 
+/* Status Bar - Under header */
+.tru-qb-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: hsl(var(--tm-ink) / 0.02);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-qb-status-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.5);
+  white-space: nowrap;
+}
+
+.tru-qb-status-progress {
+  flex: 1;
+  height: 4px;
+  background: hsl(var(--tm-ink) / 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.tru-qb-status-fill {
+  height: 100%;
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(140 80% 45%));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
 .tru-qb-header-logo {
   height: 28px;
   width: auto;
