@@ -8888,30 +8888,31 @@
 /* Background inventory builder - visible behind wizard */
 .tru-estimate-bg-inventory {
   position: relative;
-  margin-top: -60px; /* Overlap with wizard to show more inventory */
-  padding-top: 90px; /* Compensate for overlap */
+  margin-top: -40px;
+  padding-top: 60px;
   border-radius: 24px;
   overflow: hidden;
-  min-height: 520px; /* Show more items */
+  min-height: 400px;
 }
 
 .tru-estimate-bg-inventory-inner {
-  opacity: 1;
+  opacity: 0.6;
+  filter: blur(2px);
   pointer-events: none;
   user-select: none;
 }
 
-/* Lock overlay - lighter to show items better */
+/* Lock overlay - proper blur to show items as secondary */
 .tru-estimate-lock-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, 
-    hsl(var(--background) / 0.05) 0%, 
-    hsl(var(--background) / 0.15) 30%,
-    hsl(var(--background) / 0.5) 70%,
-    hsl(var(--background) / 0.9) 100%
+    hsl(var(--background) / 0.2) 0%, 
+    hsl(var(--background) / 0.4) 40%,
+    hsl(var(--background) / 0.7) 80%,
+    hsl(var(--background) / 0.95) 100%
   );
-  backdrop-filter: blur(0.5px);
+  backdrop-filter: blur(3px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8936,6 +8937,79 @@
 
 .tru-estimate-lock-message svg {
   color: hsl(var(--primary));
+}
+
+/* =============================================
+   FLOATING INVENTORY SUMMARY
+   ============================================= */
+@keyframes float-summary-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tru-inventory-float-summary {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 100px;
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.15), 0 2px 8px hsl(var(--tm-ink) / 0.1);
+  z-index: 50;
+  animation: float-summary-in 0.3s ease-out;
+}
+
+.tru-inventory-float-summary .summary-icon {
+  color: hsl(var(--primary));
+}
+
+.tru-inventory-float-summary .summary-count {
+  font-weight: 800;
+  color: hsl(var(--foreground));
+}
+
+.tru-inventory-float-summary .summary-weight {
+  color: hsl(var(--muted-foreground));
+  font-weight: 600;
+}
+
+/* =============================================
+   ITEM TRANSITION ANIMATIONS
+   ============================================= */
+@keyframes item-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+@keyframes item-add-pulse {
+  0% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+  70% { box-shadow: 0 0 0 10px hsl(var(--primary) / 0); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0); }
+}
+
+@keyframes quantity-bump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.tru-item-just-added {
+  animation: item-pop 0.25s ease-out, item-add-pulse 0.4s ease-out;
+}
+
+.tru-quantity-bump {
+  animation: quantity-bump 0.2s ease-out;
 }
 
 /* Responsive */
@@ -8966,8 +9040,15 @@
   }
   
   .tru-estimate-bg-inventory {
-    margin-top: -40px;
-    padding-top: 60px;
-    min-height: 400px;
+    margin-top: -30px;
+    padding-top: 50px;
+    min-height: 320px;
+  }
+  
+  .tru-inventory-float-summary {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    justify-content: center;
   }
 }
