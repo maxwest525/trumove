@@ -289,11 +289,17 @@ export default function Index() {
             {/* Centered Quote Builder */}
             <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
-                {/* Form Header - Logo + Workflow Pills */}
+                {/* Form Header - Logo Only */}
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  <div className="tru-qb-header-divider" />
-                  <div className="tru-qb-workflow-full">
+                </div>
+
+                  {/* Main Body: Form + Dashboard Side by Side */}
+                  <div className="tru-qb-body">
+                {/* LEFT: Conversation Area */}
+                <div className="tru-qb-main">
+                  {/* Workflow Pills - Status Bar */}
+                  <div className="tru-qb-workflow-status">
                     <div className={`tru-qb-workflow-pill ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
                       <span className="tru-qb-pill-num">1</span>
                       <div className="tru-qb-pill-content">
@@ -318,12 +324,7 @@ export default function Index() {
                       </div>
                     </div>
                   </div>
-                </div>
 
-                  {/* Main Body: Form + Dashboard Side by Side */}
-                  <div className="tru-qb-body">
-                {/* LEFT: Conversation Area */}
-                <div className="tru-qb-main">
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
