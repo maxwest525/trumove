@@ -289,13 +289,9 @@ export default function Index() {
             {/* Centered Quote Builder */}
             <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
-                {/* Form Header */}
+                {/* Form Header - Logo + Workflow Pills */}
                 <div className="tru-qb-form-header">
-                  {/* Top row: Logo left, Title right */}
-                  <div className="tru-qb-header-top-row">
-                    <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                    <span className="tru-qb-header-title">Start Your AI Move Builder</span>
-                  </div>
+                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
                   
                   {/* Workflow Steps with Pills */}
                   <div className="tru-qb-workflow-full">
@@ -617,43 +613,24 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Carrier Search Animation */}
-                  <div className="tru-qb-carrier-search">
-                    {isSearchingCarriers ? (
-                      <div className="tru-carrier-searching">
-                        {searchPhase === 1 && (
-                          <div className="tru-carrier-phase tru-carrier-phase-1">
-                            <Radar className="w-4 h-4 tru-radar-spin" />
-                            <span>Scanning carriers in {fromCity?.split(',')[1]?.trim() || 'your area'}<span className="tru-dots-animate">...</span></span>
-                          </div>
-                        )}
-                        {searchPhase === 2 && (
-                          <div className="tru-carrier-phase tru-carrier-phase-2">
-                            <div className="tru-carrier-progress-bar">
-                              <div className="tru-carrier-progress-fill" style={{ width: `${(carrierCount / 47) * 100}%` }}></div>
-                            </div>
-                            <span>Analyzing {carrierCount} carriers...</span>
-                          </div>
-                        )}
-                        {searchPhase === 3 && (
-                          <div className="tru-carrier-phase tru-carrier-phase-3">
-                            <CheckCircle className="w-4 h-4" />
-                            <span>{foundCarriers} vetted carriers found</span>
-                          </div>
-                        )}
-                      </div>
-                    ) : foundCarriers > 0 ? (
-                      <div className="tru-carrier-ready">
-                        <CheckCircle className="w-4 h-4" />
-                        <span>{foundCarriers} vetted carriers ready</span>
-                      </div>
-                    ) : null}
-                  </div>
-
-                  {/* Map Area */}
+                  {/* Map Area - Moved Up */}
                   <div className="tru-qb-map">
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
                   </div>
+
+                  {/* Stats Row - Below Map */}
+                  {distance > 0 && (
+                    <div className="tru-qb-map-stats">
+                      <div className="tru-qb-map-stat">
+                        <Route className="w-4 h-4" />
+                        <span>{distance.toLocaleString()} miles</span>
+                      </div>
+                      <div className="tru-qb-map-stat">
+                        <Clock className="w-4 h-4" />
+                        <span>~{Math.ceil(distance / 500)} day{Math.ceil(distance / 500) > 1 ? 's' : ''} transit</span>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Estimate */}
                   <div className="tru-qb-estimate">
