@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -9,6 +9,23 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam5
 interface MapboxMoveMapProps {
   fromZip?: string;
   toZip?: string;
+}
+
+// Geocode a ZIP code using Mapbox API for precise coordinates
+async function geocodeZip(zip: string): Promise<[number, number] | null> {
+  try {
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${zip}.json?country=US&types=postcode&access_token=${MAPBOX_TOKEN}`
+    );
+    const data = await response.json();
+    if (data.features && data.features.length > 0) {
+      return data.features[0].center as [number, number];
+    }
+    return null;
+  } catch (e) {
+    console.warn('Geocoding failed:', e);
+    return null;
+  }
 }
 
 // Approximate lat/lng positions for ZIP prefixes
@@ -308,9 +325,24 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [fromCoords, setFromCoords] = useState<[number, number] | null>(null);
+  const [toCoords, setToCoords] = useState<[number, number] | null>(null);
 
-  const fromCoords = useMemo(() => fromZip ? getZipCoords(fromZip) : null, [fromZip]);
-  const toCoords = useMemo(() => toZip ? getZipCoords(toZip) : null, [toZip]);
+  // Geocode ZIP codes when they change
+  useEffect(() => {
+    const fetchCoords = async () => {
+      const [fromResult, toResult] = await Promise.all([
+        fromZip ? geocodeZip(fromZip) : Promise.resolve(null),
+        toZip ? geocodeZip(toZip) : Promise.resolve(null)
+      ]);
+      
+      // Fall back to lookup table if geocoding fails
+      setFromCoords(fromResult || (fromZip ? getZipCoords(fromZip) : null));
+      setToCoords(toResult || (toZip ? getZipCoords(toZip) : null));
+    };
+
+    fetchCoords();
+  }, [fromZip, toZip]);
 
   // Click only - no hover delay
   const handleExpandClick = useCallback((e: React.MouseEvent) => {
