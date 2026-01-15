@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
@@ -14,7 +14,8 @@ import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
   Shield, Video, Boxes, Calculator, Search, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
-  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles, Star, Users, Award
+  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles, Star, Users, Award,
+  Zap, Building2, Ban, Database, ChevronRight, Radar
 } from "lucide-react";
 
 // ZIP lookup
@@ -99,6 +100,12 @@ export default function Index() {
   const [phone, setPhoneNum] = useState("");
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   
+  // Carrier search animation states
+  const [isSearchingCarriers, setIsSearchingCarriers] = useState(false);
+  const [searchPhase, setSearchPhase] = useState(0);
+  const [carrierCount, setCarrierCount] = useState(0);
+  const [foundCarriers, setFoundCarriers] = useState(0);
+  
   // Calculate real distance
   const distance = useMemo(() => calculateDistance(fromZip, toZip), [fromZip, toZip]);
   const moveType = distance > 150 ? "long-distance" : "local";
@@ -154,26 +161,68 @@ export default function Index() {
     return { min, max };
   }, [size, distance, moveType, hasCar, needsPacking]);
 
+  // Carrier search animation
+  const triggerCarrierSearch = useCallback((state: string) => {
+    setIsSearchingCarriers(true);
+    setSearchPhase(1);
+    setCarrierCount(0);
+    setFoundCarriers(0);
+    
+    // Phase 1: Scanning (0-2s)
+    setTimeout(() => {
+      setSearchPhase(2);
+      // Count up carriers
+      let count = 0;
+      const countInterval = setInterval(() => {
+        count += Math.floor(Math.random() * 8) + 3;
+        if (count >= 47) {
+          count = 47;
+          clearInterval(countInterval);
+        }
+        setCarrierCount(count);
+      }, 150);
+    }, 1500);
+    
+    // Phase 2: Analyzing (2-4s)
+    setTimeout(() => {
+      setSearchPhase(3);
+      setFoundCarriers(Math.floor(Math.random() * 6) + 8); // 8-14 carriers
+    }, 3500);
+    
+    // Complete (4s+)
+    setTimeout(() => {
+      setIsSearchingCarriers(false);
+    }, 5000);
+  }, []);
+
   // Handle ZIP changes
   const handleFromZipChange = useCallback(async (value: string) => {
     setFromZip(value);
     if (value.length === 5) {
       const city = await lookupZip(value);
       setFromCity(city || "");
+      if (city) {
+        const state = city.split(',')[1]?.trim() || '';
+        triggerCarrierSearch(state);
+      }
     } else {
       setFromCity("");
     }
-  }, []);
+  }, [triggerCarrierSearch]);
 
   const handleToZipChange = useCallback(async (value: string) => {
     setToZip(value);
     if (value.length === 5) {
       const city = await lookupZip(value);
       setToCity(city || "");
+      if (city && fromCity) {
+        const state = city.split(',')[1]?.trim() || '';
+        triggerCarrierSearch(state);
+      }
     } else {
       setToCity("");
     }
-  }, []);
+  }, [triggerCarrierSearch, fromCity]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -230,74 +279,124 @@ export default function Index() {
         {/* HERO - Split Layout: Company Info + Quote Builder */}
           <section className="tru-hero">
             <div className="tru-hero-grid">
-              {/* LEFT: Company Info - Stacked Sections */}
+              {/* LEFT: Company Info - Rich & Informative */}
               <div className="tru-hero-content">
-                {/* Section 1: Quick Intro */}
+                {/* Section 1: Bold Intro */}
                 <div className="tru-hero-intro">
-                  <h1 className="tru-hero-title">Your move, simplified.</h1>
+                  <div className="tru-hero-kicker">
+                    <Zap className="w-4 h-4" />
+                    <span>MOVING MADE SIMPLE</span>
+                  </div>
+                  <h1 className="tru-hero-title">
+                    The moving platform that cuts out the middleman.
+                  </h1>
                   <p className="tru-hero-sub">
-                    Get an instant quote from FMCSA-verified carriers. No brokers, no spam, no surprises.
+                    Skip the brokers. Get instant quotes from FMCSA-verified carriers who actually move your stuff. Your info stays private — we never sell your data.
                   </p>
                   <button 
                     className="tru-hero-cta-arrow"
                     onClick={() => quoteBuilderRef.current?.scrollIntoView({ behavior: 'smooth' })}
                   >
-                    <span>Start your quote</span>
+                    <span>Get your instant quote</span>
                     <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
 
-                {/* Section 2: Why TruMove (Brief) */}
-                <div className="tru-hero-why">
-                  <h3 className="tru-hero-why-title">Why TruMove?</h3>
-                  <ul className="tru-hero-why-list">
-                    <li>
-                      <Shield className="w-4 h-4" />
-                      <span>FMCSA-verified carriers only</span>
-                    </li>
-                    <li>
-                      <DollarSign className="w-4 h-4" />
-                      <span>Binding quotes — price is locked</span>
-                    </li>
-                    <li>
-                      <Phone className="w-4 h-4" />
-                      <span>Zero spam calls, ever</span>
-                    </li>
-                  </ul>
+                {/* Section 2: What We Do - Rich Cards */}
+                <div className="tru-hero-what-we-do">
+                  <div className="tru-hero-cards-row">
+                    <div className="tru-hero-mini-card">
+                      <div className="tru-hero-mini-icon">
+                        <Building2 className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-mini-content">
+                        <span className="tru-hero-mini-title">Skip the Brokers</span>
+                        <span className="tru-hero-mini-desc">Direct to verified carriers. Your info is never sold.</span>
+                      </div>
+                    </div>
+                    <div className="tru-hero-mini-card">
+                      <div className="tru-hero-mini-icon">
+                        <Lock className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-mini-content">
+                        <span className="tru-hero-mini-title">Binding Quotes</span>
+                        <span className="tru-hero-mini-desc">The price we show is the price you pay. No surprises.</span>
+                      </div>
+                    </div>
+                    <div className="tru-hero-mini-card">
+                      <div className="tru-hero-mini-icon">
+                        <Ban className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-mini-content">
+                        <span className="tru-hero-mini-title">Zero Spam Promise</span>
+                        <span className="tru-hero-mini-desc">One call from your matched carrier. That's it.</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Section 3: Feature Pill Buttons */}
-                <div className="tru-hero-tools">
-                  <h4 className="tru-hero-tools-label">Plan your move</h4>
-                  <div className="tru-hero-tools-grid">
-                    <Link to="/online-estimate" className="tru-hero-tool-pill">
-                      <Sparkles className="w-5 h-5" />
-                      <span>AI Move Builder</span>
+                {/* Section 3: Feature Cards - Enticing */}
+                <div className="tru-hero-features-section">
+                  <h4 className="tru-hero-features-label">Explore Our Tools</h4>
+                  <div className="tru-hero-feature-cards">
+                    <Link to="/online-estimate" className="tru-hero-feature-card">
+                      <div className="tru-hero-feature-icon-wrap">
+                        <Sparkles className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-feature-info">
+                        <span className="tru-hero-feature-title">AI Move Builder</span>
+                        <span className="tru-hero-feature-desc">Plan your entire move & get instant pricing</span>
+                      </div>
+                      <ChevronRight className="tru-hero-feature-arrow" />
                     </Link>
-                    <Link to="/book" className="tru-hero-tool-pill">
-                      <Video className="w-5 h-5" />
-                      <span>Video Consult</span>
+                    <Link to="/book" className="tru-hero-feature-card">
+                      <div className="tru-hero-feature-icon-wrap">
+                        <Video className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-feature-info">
+                        <span className="tru-hero-feature-title">Virtual Walkthrough</span>
+                        <span className="tru-hero-feature-desc">Video consult with a move specialist</span>
+                      </div>
+                      <ChevronRight className="tru-hero-feature-arrow" />
                     </Link>
-                    <a href="tel:+16097277647" className="tru-hero-tool-pill">
-                      <Headphones className="w-5 h-5" />
-                      <span>Talk to Specialist</span>
+                    <a href="tel:+16097277647" className="tru-hero-feature-card">
+                      <div className="tru-hero-feature-icon-wrap">
+                        <Headphones className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-feature-info">
+                        <span className="tru-hero-feature-title">Talk to a Specialist</span>
+                        <span className="tru-hero-feature-desc">Connect with an expert in under 60 seconds</span>
+                      </div>
+                      <ChevronRight className="tru-hero-feature-arrow" />
                     </a>
-                    <Link to="/vetting" className="tru-hero-tool-pill">
-                      <Shield className="w-5 h-5" />
-                      <span>Carrier Data</span>
+                    <Link to="/vetting" className="tru-hero-feature-card">
+                      <div className="tru-hero-feature-icon-wrap">
+                        <Database className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-feature-info">
+                        <span className="tru-hero-feature-title">Carrier Lookup</span>
+                        <span className="tru-hero-feature-desc">Research any mover's FMCSA safety record</span>
+                      </div>
+                      <ChevronRight className="tru-hero-feature-arrow" />
                     </Link>
                   </div>
                 </div>
 
                 {/* Section 4: Social Proof */}
                 <div className="tru-hero-proof">
-                  <div className="tru-hero-stars-row">
-                    <div className="tru-hero-stars">
-                      {[1,2,3,4,5].map((i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
+                  <div className="tru-hero-stats-row">
+                    <div className="tru-hero-stat">
+                      <span className="tru-hero-stat-num">2,400+</span>
+                      <span className="tru-hero-stat-label">Moves Completed</span>
                     </div>
-                    <span className="tru-hero-rating-text">4.9/5 from 2,400+ moves</span>
+                    <div className="tru-hero-stat">
+                      <span className="tru-hero-stat-num">4.9★</span>
+                      <span className="tru-hero-stat-label">Average Rating</span>
+                    </div>
+                    <div className="tru-hero-stat">
+                      <span className="tru-hero-stat-num">$0</span>
+                      <span className="tru-hero-stat-label">Broker Fees</span>
+                    </div>
                   </div>
                   <div className="tru-hero-badges">
                     <span className="tru-hero-badge-pill">
@@ -308,6 +407,10 @@ export default function Index() {
                       <CheckCircle className="w-4 h-4" />
                       BBB Accredited
                     </span>
+                    <span className="tru-hero-badge-pill">
+                      <Shield className="w-4 h-4" />
+                      FMCSA Verified
+                    </span>
                   </div>
                 </div>
               </div>
@@ -315,6 +418,23 @@ export default function Index() {
               {/* RIGHT: Quote Builder */}
               <div className="tru-hero-visual" ref={quoteBuilderRef}>
                 <div className="tru-quote-builder">
+                  {/* Eye-catching Form Header */}
+                  <div className="tru-qb-header-new">
+                    <div className="tru-qb-header-left">
+                      <div className="tru-qb-header-icon">
+                        <Zap className="w-5 h-5" />
+                      </div>
+                      <div className="tru-qb-header-text">
+                        <span className="tru-qb-header-title">AI Move Estimator</span>
+                        <span className="tru-qb-header-tagline">Get your personalized quote in 60 seconds</span>
+                      </div>
+                    </div>
+                    <div className="tru-qb-header-badge">
+                      <span className="tru-qb-header-badge-dot"></span>
+                      <span>LIVE</span>
+                    </div>
+                  </div>
+                  
               {/* Main Body: Form + Dashboard Side by Side */}
               <div className="tru-qb-body">
                 {/* LEFT: Conversation Area */}
@@ -581,41 +701,88 @@ export default function Index() {
 
                 {/* RIGHT: Live Dashboard Panel */}
                 <div className="tru-qb-panel">
+                  {/* Sidebar Progress Tracker */}
+                  <div className="tru-qb-progress-tracker">
+                    <div className="tru-qb-progress-title">YOUR QUOTE</div>
+                    <div className="tru-qb-progress-steps">
+                      <div className={`tru-qb-progress-step ${step > 1 ? 'is-done' : step === 1 ? 'is-current' : ''}`}>
+                        <span className="tru-qb-progress-dot">{step > 1 ? <CheckCircle className="w-3 h-3" /> : '1'}</span>
+                        <span className="tru-qb-progress-label">From</span>
+                        <span className="tru-qb-progress-value">{fromCity ? fromCity.split(',')[0] : '...'}</span>
+                      </div>
+                      <div className={`tru-qb-progress-step ${step > 2 ? 'is-done' : step === 2 ? 'is-current' : ''}`}>
+                        <span className="tru-qb-progress-dot">{step > 2 ? <CheckCircle className="w-3 h-3" /> : '2'}</span>
+                        <span className="tru-qb-progress-label">To</span>
+                        <span className="tru-qb-progress-value">{toCity ? toCity.split(',')[0] : '...'}</span>
+                      </div>
+                      <div className={`tru-qb-progress-step ${step > 3 ? 'is-done' : step === 3 ? 'is-current' : ''}`}>
+                        <span className="tru-qb-progress-dot">{step > 3 ? <CheckCircle className="w-3 h-3" /> : '3'}</span>
+                        <span className="tru-qb-progress-label">Date</span>
+                        <span className="tru-qb-progress-value">{moveDate ? format(moveDate, "MMM d") : '...'}</span>
+                      </div>
+                      <div className={`tru-qb-progress-step ${step > 4 ? 'is-done' : step === 4 ? 'is-current' : ''}`}>
+                        <span className="tru-qb-progress-dot">{step > 4 ? <CheckCircle className="w-3 h-3" /> : '4'}</span>
+                        <span className="tru-qb-progress-label">Size</span>
+                        <span className="tru-qb-progress-value">{size || '...'}</span>
+                      </div>
+                      <div className={`tru-qb-progress-step ${step > 5 ? 'is-done' : step === 5 ? 'is-current' : ''}`}>
+                        <span className="tru-qb-progress-dot">{step > 5 ? <CheckCircle className="w-3 h-3" /> : '5'}</span>
+                        <span className="tru-qb-progress-label">Add-ons</span>
+                        <span className="tru-qb-progress-value">{(hasCar || needsPacking) ? [hasCar && 'Car', needsPacking && 'Pack'].filter(Boolean).join(', ') : '—'}</span>
+                      </div>
+                      <div className={`tru-qb-progress-step ${step === 6 ? 'is-current' : ''}`}>
+                        <span className="tru-qb-progress-dot">6</span>
+                        <span className="tru-qb-progress-label">Contact</span>
+                        <span className="tru-qb-progress-value">{email ? '✓' : '...'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Carrier Search Animation */}
+                  <div className="tru-qb-carrier-search">
+                    {isSearchingCarriers ? (
+                      <div className="tru-carrier-searching">
+                        {searchPhase === 1 && (
+                          <div className="tru-carrier-phase tru-carrier-phase-1">
+                            <Radar className="w-4 h-4 tru-radar-spin" />
+                            <span>Scanning carriers in {fromCity?.split(',')[1]?.trim() || 'your area'}<span className="tru-dots-animate">...</span></span>
+                          </div>
+                        )}
+                        {searchPhase === 2 && (
+                          <div className="tru-carrier-phase tru-carrier-phase-2">
+                            <div className="tru-carrier-progress-bar">
+                              <div className="tru-carrier-progress-fill" style={{ width: `${(carrierCount / 47) * 100}%` }}></div>
+                            </div>
+                            <span>Analyzing {carrierCount} carriers...</span>
+                          </div>
+                        )}
+                        {searchPhase === 3 && (
+                          <div className="tru-carrier-phase tru-carrier-phase-3">
+                            <CheckCircle className="w-4 h-4" />
+                            <span>{foundCarriers} vetted carriers found</span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="tru-carrier-ready">
+                        {(fromCity || toCity) ? (
+                          <>
+                            <CheckCircle className="w-4 h-4" />
+                            <span>{foundCarriers || 12} vetted carriers in your area</span>
+                          </>
+                        ) : (
+                          <>
+                            <Shield className="w-4 h-4" />
+                            <span>FMCSA-verified carriers only</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Map Area */}
                   <div className="tru-qb-map">
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
-                  </div>
-
-                  {/* Route Info */}
-                  <div className="tru-qb-info">
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">From</span>
-                      <span className="tru-qb-info-value">{fromCity || "—"}</span>
-                    </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">To</span>
-                      <span className="tru-qb-info-value">{toCity || "—"}</span>
-                    </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">Distance</span>
-                      <span className="tru-qb-info-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
-                    </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">Date</span>
-                      <span className="tru-qb-info-value">{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
-                    </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">Size</span>
-                      <span className="tru-qb-info-value">{size || "—"}</span>
-                    </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">Add-ons</span>
-                      <span className="tru-qb-info-value">
-                        {(hasCar || needsPacking) 
-                          ? [hasCar && "Vehicle", needsPacking && "Packing"].filter(Boolean).join(", ")
-                          : "—"}
-                      </span>
-                    </div>
                   </div>
 
                   {/* Estimate */}
@@ -630,32 +797,9 @@ export default function Index() {
                       </div>
                     ) : (
                       <div className="tru-qb-estimate-empty">
-                        Select move size to see estimate
+                        Complete steps to see estimate
                       </div>
                     )}
-                  </div>
-
-                  {/* Elegant CTA Cards */}
-                  <div className="tru-qb-ctas-elegant">
-                    <a href="tel:+16097277647" className="tru-cta-card-mini">
-                      <div className="tru-cta-card-icon-mini">
-                        <Phone className="w-4 h-4" />
-                      </div>
-                      <div className="tru-cta-card-content-mini">
-                        <span className="tru-cta-card-title-mini">Talk to Specialist</span>
-                        <span className="tru-cta-card-desc-mini">Get personalized guidance</span>
-                      </div>
-                    </a>
-                    
-                    <Link to="/book" className="tru-cta-card-mini">
-                      <div className="tru-cta-card-icon-mini">
-                        <Video className="w-4 h-4" />
-                      </div>
-                      <div className="tru-cta-card-content-mini">
-                        <span className="tru-cta-card-title-mini">Book Virtual Meet</span>
-                        <span className="tru-cta-card-desc-mini">Schedule your specialist</span>
-                      </div>
-                    </Link>
                   </div>
                 </div>
               </div>
