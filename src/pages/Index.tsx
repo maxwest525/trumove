@@ -2,8 +2,7 @@ import { useState, useCallback, useMemo, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
-import MoveMap from "@/components/MoveMap";
-import MapboxHeroMap from "@/components/MapboxHeroMap";
+import MapboxMoveMap from "@/components/MapboxMoveMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import FloatingQuoteButton from "@/components/FloatingQuoteButton";
 import Confetti from "@/components/Confetti";
@@ -300,9 +299,6 @@ export default function Index() {
                     </span>
                   </div>
                 </div>
-                
-                {/* Enticing Map */}
-                <MapboxHeroMap />
               </div>
               
               {/* RIGHT: Quote Builder */}
@@ -604,7 +600,7 @@ export default function Index() {
                   {/* Map Area */}
                   <div className="tru-qb-map">
                     {hasRoute ? (
-                      <MoveMap fromZip={fromZip} toZip={toZip} />
+                      <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
                     ) : (
                       <div className="tru-qb-map-empty">
                         <Truck className="w-6 h-6 text-muted-foreground/30" />
