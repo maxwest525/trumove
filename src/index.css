@@ -6769,12 +6769,17 @@
   }
 }
 
-/* Header Divider between logo and workflow */
-.tru-qb-header-divider {
-  width: 1px;
-  height: 32px;
-  background: hsl(var(--tm-ink) / 0.12);
-  flex-shrink: 0;
+/* Workflow Status - Inside main content area */
+.tru-qb-workflow-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  background: hsl(var(--tm-ink) / 0.02);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 16px;
 }
 
 /* Decorated Question with underline accent */
