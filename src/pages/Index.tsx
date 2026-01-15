@@ -5,6 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import FloatingQuoteButton from "@/components/FloatingQuoteButton";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
 import logoImg from "@/assets/logo.png";
 
 import ChatModal from "@/components/chat/ChatModal";
@@ -16,7 +17,7 @@ import {
   Shield, Video, Boxes, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
-  Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3
+  Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap
 } from "lucide-react";
 
 // ZIP lookup
@@ -289,6 +290,12 @@ export default function Index() {
             {/* Centered Quote Builder */}
             <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
+                {/* Skip Button - Top Right */}
+                <Link to="/online-estimate" className="tru-qb-skip-btn">
+                  <Zap className="w-4 h-4" />
+                  <span>Skip to Estimate Builder</span>
+                </Link>
+
                 {/* Form Header - Logo + Progress Pills */}
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
@@ -306,26 +313,31 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Step 1: From ZIP */}
+                  {/* Step 1: From Location */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
                       <h1 className="tru-qb-question tru-qb-question-decorated">Where are you moving from?</h1>
-                      <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
+                      <p className="tru-qb-subtitle">Enter your city or ZIP code</p>
                       
                       <div className="tru-qb-input-wrap tru-qb-zip-wrap">
-                        <input
-                          type="text"
-                          className="tru-qb-input"
-                          placeholder="Enter ZIP"
-                          maxLength={5}
+                        <LocationAutocomplete
                           value={fromZip}
-                          onChange={(e) => handleFromZipChange(e.target.value.replace(/\D/g, ""))}
-                          onKeyDown={handleKeyDown}
+                          onValueChange={(val) => {
+                            // Only update if it's a ZIP or partial
+                            if (/^\d*$/.test(val)) {
+                              handleFromZipChange(val);
+                            }
+                          }}
+                          onLocationSelect={(city, zip) => {
+                            setFromZip(zip);
+                            setFromCity(city);
+                            const state = city.split(',')[1]?.trim() || '';
+                            triggerCarrierSearch(state);
+                          }}
+                          placeholder="City or ZIP code"
                           autoFocus
+                          onKeyDown={handleKeyDown}
                         />
-                        {fromCity && (
-                          <div className="tru-qb-zip-city">{fromCity}</div>
-                        )}
                       </div>
 
                       <button
@@ -340,26 +352,32 @@ export default function Index() {
                     </div>
                   )}
 
-                  {/* Step 2: To ZIP */}
+                  {/* Step 2: To Location */}
                   {step === 2 && (
                     <div className="tru-qb-step-content" key="step-2">
                       <h1 className="tru-qb-question">Where are you moving to?</h1>
-                      <p className="tru-qb-subtitle">Enter your destination ZIP code</p>
+                      <p className="tru-qb-subtitle">Enter your destination city or ZIP code</p>
                       
                       <div className="tru-qb-input-wrap tru-qb-zip-wrap">
-                        <input
-                          type="text"
-                          className="tru-qb-input"
-                          placeholder="Enter ZIP"
-                          maxLength={5}
+                        <LocationAutocomplete
                           value={toZip}
-                          onChange={(e) => handleToZipChange(e.target.value.replace(/\D/g, ""))}
-                          onKeyDown={handleKeyDown}
+                          onValueChange={(val) => {
+                            if (/^\d*$/.test(val)) {
+                              handleToZipChange(val);
+                            }
+                          }}
+                          onLocationSelect={(city, zip) => {
+                            setToZip(zip);
+                            setToCity(city);
+                            if (fromCity) {
+                              const state = city.split(',')[1]?.trim() || '';
+                              triggerCarrierSearch(state);
+                            }
+                          }}
+                          placeholder="City or ZIP code"
                           autoFocus
+                          onKeyDown={handleKeyDown}
                         />
-                        {toCity && (
-                          <div className="tru-qb-zip-city">{toCity}</div>
-                        )}
                       </div>
                       
                       <button
