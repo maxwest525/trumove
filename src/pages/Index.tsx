@@ -653,7 +653,6 @@ export default function Index() {
 
               {/* TruMove Tools Section - Inside Form */}
               <div className="tru-qb-tools">
-                <h4 className="tru-qb-tools-label">Powered by TruMove Tools</h4>
                 <div className="tru-qb-tools-grid">
                   <Link to="/online-estimate" className="tru-qb-tool-card">
                     <div className="tru-qb-tool-icon">
@@ -694,10 +693,9 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* Compact Tech Ticker */}
-              <div className="tru-qb-ticker">
-                <Lock className="w-3.5 h-3.5" />
-                <span>{tickerContent}</span>
+              {/* Footer - Powered by TruMove Tools */}
+              <div className="tru-qb-footer">
+                <span>Powered by TruMove Tools</span>
               </div>
             </div>
             </div>
