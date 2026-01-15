@@ -580,7 +580,7 @@ export default function Index() {
                   <div className="tru-qb-summary">
                     <div className="tru-qb-summary-title">
                       <img src={logoImg} alt="TruMove" className="tru-qb-summary-logo" />
-                      <span>Summary</span>
+                      <span>Move Summary</span>
                     </div>
                     <div className="tru-qb-info-row">
                       <span className="tru-qb-info-label">From</span>
