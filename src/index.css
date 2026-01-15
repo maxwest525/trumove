@@ -779,25 +779,21 @@
 }
 
 /* =============================================
-   AI MOVE BUILDER BRANDING
+   ZIP CODE CITY DISPLAY
    ============================================= */
-.tru-qb-branding {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  margin-bottom: 12px;
-  background: hsl(var(--tm-ink));
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: hsl(var(--primary));
+.tru-qb-zip-wrap {
+  position: relative;
 }
 
-.tru-qb-branding svg {
-  animation: sparkle-pulse 2s ease-in-out infinite;
+.tru-qb-zip-city {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.7);
+  padding: 6px 12px;
+  background: hsl(var(--tm-ink) / 0.04);
+  border-radius: 8px;
+  border-left: 3px solid hsl(var(--primary));
 }
 
 /* =============================================
@@ -5987,8 +5983,8 @@
   font-weight: 800;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink) / 0.06);
   padding: 6px 14px;
   border-radius: 20px;
   margin-bottom: 16px;
