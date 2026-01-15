@@ -289,11 +289,13 @@ export default function Index() {
             {/* Centered Quote Builder */}
             <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
-                {/* Form Header - Logo + Workflow Pills */}
+                {/* Form Header - Logo Only */}
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  
-                  {/* Workflow Steps with Pills */}
+                </div>
+                
+                {/* Workflow Pills - Moved below header */}
+                <div className="tru-qb-workflow-strip">
                   <div className="tru-qb-workflow-full">
                     <div className={`tru-qb-workflow-pill ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
                       <span className="tru-qb-pill-num">1</span>
@@ -320,6 +322,7 @@ export default function Index() {
                     </div>
                   </div>
                 </div>
+
                   {/* Main Body: Form + Dashboard Side by Side */}
                   <div className="tru-qb-body">
                 {/* LEFT: Conversation Area */}
@@ -327,8 +330,7 @@ export default function Index() {
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
-                      <h2 className="tru-qb-hero-cta">Start your <span className="tru-qb-hero-brand">TruMove</span> below</h2>
-                      <h1 className="tru-qb-question">Where are you moving from?</h1>
+                      <h1 className="tru-qb-question tru-qb-question-decorated">Where are you moving from?</h1>
                       <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
                       
                       <div className="tru-qb-input-wrap tru-qb-zip-wrap">
