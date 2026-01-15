@@ -328,35 +328,43 @@ export default function InventoryBuilder({
             <div className="flex items-center gap-2 px-1">
               <div className="h-px flex-1 bg-border/40" />
               <span className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground">
-                {activeRoom} Items
+                {activeRoom}
               </span>
               <div className="h-px flex-1 bg-border/40" />
             </div>
 
-            {/* Item Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {suggestions.slice(0, 16).map((item) => (
-                <ItemCard
-                  key={item.name}
-                  item={item}
-                  room={activeRoom}
-                  quantity={getItemQuantity(item.name, activeRoom)}
-                  onAdd={() => handleQuantityChange(item, activeRoom, 1)}
-                  onRemove={() => handleQuantityChange(item, activeRoom, -1)}
-                  icon={getItemIcon(item.name, activeRoom)}
-                />
-              ))}
-              
-              {/* Add Custom Item Card */}
-              <button
-                type="button"
-                onClick={() => {/* TODO: Open custom item modal */}}
-                className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all min-h-[120px] text-muted-foreground hover:text-foreground"
-              >
-                <Plus className="w-6 h-6" />
-                <span className="text-xs font-semibold text-center">Add Custom Item</span>
-              </button>
-            </div>
+            {/* Item Grid - Only show active room items */}
+            {suggestions.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {suggestions.map((item) => (
+                  <ItemCard
+                    key={item.name}
+                    item={item}
+                    room={activeRoom}
+                    quantity={getItemQuantity(item.name, activeRoom)}
+                    onAdd={() => handleQuantityChange(item, activeRoom, 1)}
+                    onRemove={() => handleQuantityChange(item, activeRoom, -1)}
+                    icon={getItemIcon(item.name, activeRoom)}
+                  />
+                ))}
+                
+                {/* Add Custom Item Card */}
+                <button
+                  type="button"
+                  onClick={() => {/* TODO: Open custom item modal */}}
+                  className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all min-h-[120px] text-muted-foreground hover:text-foreground"
+                >
+                  <Plus className="w-6 h-6" />
+                  <span className="text-xs font-semibold text-center">Add Custom</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Package className="w-10 h-10 mb-3 opacity-40" />
+                <p className="text-sm font-medium">No items in this room</p>
+                <p className="text-xs mt-1">Try searching or select another room</p>
+              </div>
+            )}
           </>
         )}
       </div>
