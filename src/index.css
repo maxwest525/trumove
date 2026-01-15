@@ -5364,35 +5364,12 @@
   background: hsl(var(--primary) / 0.1);
 }
 
-.header-trust {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: 8px;
-  padding-left: 16px;
-  border-left: 1px solid hsl(var(--tm-line));
-}
-
-.header-trust-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.55);
-}
-
-.header-trust-badge svg {
-  color: hsl(var(--primary));
-}
-
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-left: 16px;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: auto;
 }
 
 .header-btn {
