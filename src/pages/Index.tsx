@@ -53,12 +53,12 @@ const MOVE_SIZES = [
 function getAiHint(step: number, fromCity: string, toCity: string, distance: number, moveDate: Date | null): string {
   switch (step) {
     case 2:
-      return `📍 ${fromCity.split(',')[0]} — vetted movers ready in your area`;
+      return "";
     case 3:
       if (distance > 0) {
         return `🚛 ${distance.toLocaleString()} miles — analyzing best carriers for this route`;
       }
-      return "🚛 Great route — analyzing carriers now";
+      return "";
     case 4:
       if (moveDate) {
         const month = format(moveDate, 'MMMM');
@@ -72,7 +72,7 @@ function getAiHint(step: number, fromCity: string, toCity: string, distance: num
     case 5:
       return "📦 Select size to calculate your estimate";
     case 6:
-      return "✉️ We'll email your detailed quote (no spam, ever)";
+      return "";
     default:
       return "";
   }
@@ -651,55 +651,55 @@ export default function Index() {
                 </div>
               </div>
 
+              {/* TruMove Tools Section - Inside Form */}
+              <div className="tru-qb-tools">
+                <h4 className="tru-qb-tools-label">Powered by TruMove Tools</h4>
+                <div className="tru-qb-tools-grid">
+                  <Link to="/online-estimate" className="tru-qb-tool-card">
+                    <div className="tru-qb-tool-icon">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div className="tru-qb-tool-info">
+                      <span className="tru-qb-tool-title">AI Inventory Builder</span>
+                      <span className="tru-qb-tool-desc">Create your item list in minutes</span>
+                    </div>
+                  </Link>
+                  <Link to="/vetting" className="tru-qb-tool-card">
+                    <div className="tru-qb-tool-icon">
+                      <Database className="w-5 h-5" />
+                    </div>
+                    <div className="tru-qb-tool-info">
+                      <span className="tru-qb-tool-title">FMCSA Carrier Lookup</span>
+                      <span className="tru-qb-tool-desc">Check any mover's safety record</span>
+                    </div>
+                  </Link>
+                  <Link to="/book" className="tru-qb-tool-card">
+                    <div className="tru-qb-tool-icon">
+                      <Video className="w-5 h-5" />
+                    </div>
+                    <div className="tru-qb-tool-info">
+                      <span className="tru-qb-tool-title">Video Walkthrough</span>
+                      <span className="tru-qb-tool-desc">Show your home for accurate pricing</span>
+                    </div>
+                  </Link>
+                  <a href="tel:+16097277647" className="tru-qb-tool-card">
+                    <div className="tru-qb-tool-icon">
+                      <Headphones className="w-5 h-5" />
+                    </div>
+                    <div className="tru-qb-tool-info">
+                      <span className="tru-qb-tool-title">Move Specialists</span>
+                      <span className="tru-qb-tool-desc">Real humans to answer questions</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
               {/* Compact Tech Ticker */}
               <div className="tru-qb-ticker">
                 <Lock className="w-3.5 h-3.5" />
                 <span>{tickerContent}</span>
               </div>
             </div>
-            </div>
-
-            {/* TruMove Tools Section - Below Form */}
-            <div className="tru-hero-tools">
-              <h4 className="tru-hero-tools-label">Powered by TruMove Tools</h4>
-              <div className="tru-hero-tools-grid">
-                <Link to="/online-estimate" className="tru-hero-tool-card">
-                  <div className="tru-hero-tool-icon">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
-                  <div className="tru-hero-tool-info">
-                    <span className="tru-hero-tool-title">AI Inventory Builder</span>
-                    <span className="tru-hero-tool-desc">Create your item list in minutes</span>
-                  </div>
-                </Link>
-                <Link to="/vetting" className="tru-hero-tool-card">
-                  <div className="tru-hero-tool-icon">
-                    <Database className="w-5 h-5" />
-                  </div>
-                  <div className="tru-hero-tool-info">
-                    <span className="tru-hero-tool-title">FMCSA Carrier Lookup</span>
-                    <span className="tru-hero-tool-desc">Check any mover's safety record</span>
-                  </div>
-                </Link>
-                <Link to="/book" className="tru-hero-tool-card">
-                  <div className="tru-hero-tool-icon">
-                    <Video className="w-5 h-5" />
-                  </div>
-                  <div className="tru-hero-tool-info">
-                    <span className="tru-hero-tool-title">Video Walkthrough</span>
-                    <span className="tru-hero-tool-desc">Show your home for accurate pricing</span>
-                  </div>
-                </Link>
-                <a href="tel:+16097277647" className="tru-hero-tool-card">
-                  <div className="tru-hero-tool-icon">
-                    <Headphones className="w-5 h-5" />
-                  </div>
-                  <div className="tru-hero-tool-info">
-                    <span className="tru-hero-tool-title">Move Specialists</span>
-                    <span className="tru-hero-tool-desc">Real humans to answer questions</span>
-                  </div>
-                </a>
-              </div>
             </div>
           </section>
 
