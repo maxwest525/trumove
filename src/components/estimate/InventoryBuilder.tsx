@@ -6,7 +6,21 @@ interface InventoryBuilderProps {
   onAddItem: (item: Omit<InventoryItem, 'id'>) => void;
 }
 
-const ROOMS = ['Living Room', 'Bedroom', 'Kitchen', 'Garage', 'Office', 'Other'];
+const ROOMS = [
+  'Living Room', 
+  'Dining Room', 
+  'Bedroom', 
+  'Kitchen', 
+  'Appliances', 
+  'Office', 
+  'Nursery', 
+  'Patio & Outdoor', 
+  'Garage', 
+  'Exercise & Sports', 
+  'Electronics', 
+  'Boxes & Cartons', 
+  'Miscellaneous'
+];
 
 export default function InventoryBuilder({ onAddItem }: InventoryBuilderProps) {
   const [activeRoom, setActiveRoom] = useState('Living Room');
