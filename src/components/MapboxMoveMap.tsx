@@ -2,7 +2,10 @@ import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { X, Maximize2 } from 'lucide-react';
+import { X, Maximize2, MapPin, Route, Clock } from 'lucide-react';
+
+// Animation duration in ms (10 seconds for full route)
+const ANIMATION_DURATION = 10000;
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam51OGJrcGFiIn0.tN-ZMle93ctK7PIt9kU7JA';
 
@@ -130,6 +133,18 @@ function getBearing(start: [number, number], end: [number, number]): number {
   return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
 }
 
+// Calculate distance between coords in miles
+function calculateDistanceBetweenCoords(from: [number, number], to: [number, number]): number {
+  const R = 3959; // Earth radius in miles
+  const dLat = (to[1] - from[1]) * Math.PI / 180;
+  const dLon = (to[0] - from[0]) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(from[1] * Math.PI / 180) * Math.cos(to[1] * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return Math.round(R * c);
+}
+
 // Truck SVG icon
 const TRUCK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18h2a1 1 0 0 0 1-1v-3.28a1 1 0 0 0-.684-.948l-1.923-.641a1 1 0 0 1-.684-.949V8a2 2 0 0 1 2-2h2.586a1 1 0 0 1 .707.293l2.414 2.414a1 1 0 0 1 .293.707V17a1 1 0 0 1-1 1h-1"/><circle cx="7" cy="18" r="2"/><circle cx="19" cy="18" r="2"/></svg>`;
 
@@ -251,24 +266,30 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
           .addTo(map.current);
         markersRef.current.push(truckMarker);
 
-        // Animate truck
-        let step = 0;
-        const animateTruck = () => {
-          if (step < lineCoords.length - 1) {
-            step++;
-            const pos = lineCoords[step];
-            const nextPos = lineCoords[Math.min(step + 1, lineCoords.length - 1)];
-            const bearing = getBearing(pos, nextPos);
-            truckMarker.setLngLat(pos);
-            truckMarker.setRotation(bearing - 90);
+        // Animate truck with slower speed
+        let startTime: number | null = null;
+        const totalSteps = lineCoords.length;
+        
+        const animateTruck = (timestamp: number) => {
+          if (!startTime) startTime = timestamp;
+          const elapsed = timestamp - startTime;
+          const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
+          const step = Math.floor(progress * (totalSteps - 1));
+          
+          const pos = lineCoords[step];
+          const nextPos = lineCoords[Math.min(step + 1, totalSteps - 1)];
+          const bearing = getBearing(pos, nextPos);
+          truckMarker.setLngLat(pos);
+          truckMarker.setRotation(bearing - 90);
+          
+          if (progress < 1) {
             animationRef.current = requestAnimationFrame(animateTruck);
           } else {
-            // Loop animation
+            // Loop animation after pause
             setTimeout(() => {
-              step = 0;
-              truckMarker.setLngLat(lineCoords[0]);
+              startTime = null;
               animationRef.current = requestAnimationFrame(animateTruck);
-            }, 1000);
+            }, 2000);
           }
         };
         animationRef.current = requestAnimationFrame(animateTruck);
@@ -289,6 +310,12 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
     };
   }, [fromCoords, toCoords]);
 
+  // Calculate distance for info display
+  const distance = fromCoords && toCoords 
+    ? calculateDistanceBetweenCoords(fromCoords, toCoords) 
+    : 0;
+  const transitDays = Math.ceil(distance / 500);
+
   return (
     <div className="mapbox-expanded-overlay" onClick={onClose}>
       <div className="mapbox-expanded-container" onClick={e => e.stopPropagation()}>
@@ -299,6 +326,20 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
           <X className="w-5 h-5 text-foreground" />
         </button>
         <div ref={mapContainer} className="w-full h-full" />
+        
+        {/* Route info panel */}
+        {distance > 0 && (
+          <div className="expanded-map-info">
+            <div className="expanded-map-stat">
+              <Route className="w-4 h-4" />
+              <span>{distance.toLocaleString()} miles</span>
+            </div>
+            <div className="expanded-map-stat">
+              <Clock className="w-4 h-4" />
+              <span>~{transitDays} day{transitDays > 1 ? 's' : ''} transit</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -316,20 +357,9 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
   const fromCoords = useMemo(() => fromZip ? getZipCoords(fromZip) : null, [fromZip]);
   const toCoords = useMemo(() => toZip ? getZipCoords(toZip) : null, [toZip]);
 
-  const handleMouseEnter = useCallback(() => {
-    if (fromCoords && toCoords) {
-      hoverTimerRef.current = setTimeout(() => setIsExpanded(true), 400);
-    }
-  }, [fromCoords, toCoords]);
-
-  const handleMouseLeave = useCallback(() => {
-    if (hoverTimerRef.current) {
-      clearTimeout(hoverTimerRef.current);
-      hoverTimerRef.current = null;
-    }
-  }, []);
-
-  const handleClick = useCallback(() => {
+  // Click only - no hover delay
+  const handleExpandClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
     if (fromCoords && toCoords) {
       setIsExpanded(true);
     }
@@ -495,46 +525,44 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
       .addTo(map.current);
     markersRef.current.push(truckMarker);
 
-    // Animate route drawing and truck
-    let step = 0;
+    // Animate route drawing and truck with time-based throttle (10 seconds)
+    let startTime: number | null = null;
     const totalSteps = lineCoords.length;
-    const animate = () => {
+    
+    const animate = (timestamp: number) => {
       if (!map.current) return;
       
-      if (step < totalSteps) {
-        step += 2;
-        const visibleCoords = lineCoords.slice(0, Math.min(step, totalSteps));
-        
-        const source = map.current.getSource('route-progress') as mapboxgl.GeoJSONSource;
-        if (source) {
-          source.setData({
-            type: 'Feature',
-            properties: {},
-            geometry: { type: 'LineString', coordinates: visibleCoords }
-          });
-        }
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
+      const currentStep = Math.floor(progress * totalSteps);
+      
+      // Update route line
+      const visibleCoords = lineCoords.slice(0, Math.max(currentStep, 1));
+      const source = map.current.getSource('route-progress') as mapboxgl.GeoJSONSource;
+      if (source) {
+        source.setData({
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'LineString', coordinates: visibleCoords }
+        });
+      }
 
-        // Move truck
-        const truckPos = lineCoords[Math.min(step, totalSteps - 1)];
-        const nextPos = lineCoords[Math.min(step + 1, totalSteps - 1)];
-        const bearing = getBearing(truckPos, nextPos);
-        truckMarker.setLngLat(truckPos);
-        truckMarker.setRotation(bearing - 90);
+      // Move truck
+      const truckPos = lineCoords[Math.min(currentStep, totalSteps - 1)];
+      const nextPos = lineCoords[Math.min(currentStep + 1, totalSteps - 1)];
+      const bearing = getBearing(truckPos, nextPos);
+      truckMarker.setLngLat(truckPos);
+      truckMarker.setRotation(bearing - 90);
 
+      if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
-        // Continue truck loop
-        const loopTruck = () => {
-          if (!map.current) return;
-          step = (step + 1) % totalSteps;
-          const truckPos = lineCoords[step];
-          const nextPos = lineCoords[(step + 1) % totalSteps];
-          const bearing = getBearing(truckPos, nextPos);
-          truckMarker.setLngLat(truckPos);
-          truckMarker.setRotation(bearing - 90);
-          animationRef.current = requestAnimationFrame(loopTruck);
-        };
-        animationRef.current = requestAnimationFrame(loopTruck);
+        // Loop after 2 second pause
+        setTimeout(() => {
+          startTime = null;
+          animationRef.current = requestAnimationFrame(animate);
+        }, 2000);
       }
     };
     
@@ -550,18 +578,29 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
 
   return (
     <>
-      <div 
-        className="mapbox-move-map-wrapper"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleClick}
-      >
-        <div ref={mapContainer} className="mapbox-move-map" />
-        {fromCoords && toCoords && (
-          <div className="map-expand-hint">
-            <Maximize2 className="w-3 h-3 mr-1 inline" />
-            Click to expand
+      <div className="mapbox-move-map-wrapper">
+        {/* Loading skeleton */}
+        {!isMapLoaded && (
+          <div className="mapbox-skeleton">
+            <div className="mapbox-skeleton-shimmer" />
+            <div className="mapbox-skeleton-content">
+              <MapPin className="w-8 h-8 text-muted-foreground/40" />
+              <span>Loading map...</span>
+            </div>
           </div>
+        )}
+        
+        <div ref={mapContainer} className="mapbox-move-map" />
+        
+        {/* Expand button - only show when route exists */}
+        {fromCoords && toCoords && (
+          <button 
+            onClick={handleExpandClick}
+            className="map-expand-button"
+          >
+            <Maximize2 className="w-4 h-4" />
+            <span>Expand</span>
+          </button>
         )}
       </div>
       
