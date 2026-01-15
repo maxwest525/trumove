@@ -1,4 +1,4 @@
-import { useState, useEffect, RefObject } from 'react';
+import { RefObject } from 'react';
 import { Calculator, Sparkles } from 'lucide-react';
 
 interface FloatingQuoteButtonProps {
@@ -7,30 +7,12 @@ interface FloatingQuoteButtonProps {
 }
 
 export default function FloatingQuoteButton({ quoteBuilderRef, onChatOpen }: FloatingQuoteButtonProps) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // Show button when quote builder is NOT visible
-        setIsVisible(!entry.isIntersecting);
-      },
-      { threshold: 0.1, rootMargin: '-100px 0px 0px 0px' }
-    );
-
-    if (quoteBuilderRef.current) {
-      observer.observe(quoteBuilderRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [quoteBuilderRef]);
-
   const scrollToQuoteBuilder = () => {
     quoteBuilderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   return (
-    <div className={`tru-floating-quote ${isVisible ? 'is-visible' : ''}`}>
+    <div className="tru-floating-quote is-visible">
       {/* Main Button - Jump to Quote Builder */}
       <button className="tru-floating-quote-btn" onClick={scrollToQuoteBuilder}>
         <Calculator className="w-5 h-5" />

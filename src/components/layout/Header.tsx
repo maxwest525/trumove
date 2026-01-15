@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Sparkles, Phone, Video, Shield, BadgeCheck, FileText } from "lucide-react";
+import { Menu, X, Sparkles, Phone, Video } from "lucide-react";
 import logo from "@/assets/logo.png";
 import ChatModal from "@/components/chat/ChatModal";
 
@@ -13,22 +13,10 @@ const NAV = [
   { href: "/about", label: "About" },
 ];
 
-const TRUST_BADGES = [
-  { icon: Shield, text: "USDOT" },
-  { icon: BadgeCheck, text: "FMCSA" },
-];
-
 export default function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-
-  const scrollToQuoteBuilder = () => {
-    const quoteBuilder = document.querySelector('.tru-quote-builder');
-    if (quoteBuilder) {
-      quoteBuilder.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
 
   return (
     <>
@@ -52,29 +40,8 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Trust Badges - Desktop */}
-          <div className="header-trust">
-            {TRUST_BADGES.map((badge) => (
-              <span key={badge.text} className="header-trust-badge">
-                <badge.icon className="w-3 h-3" />
-                <span>{badge.text}</span>
-              </span>
-            ))}
-          </div>
-
-          {/* Action Cluster */}
+          {/* Action Cluster - Centered */}
           <div className="header-actions">
-            {location.pathname === "/" && (
-              <button 
-                type="button" 
-                className="header-btn header-btn-quote"
-                onClick={scrollToQuoteBuilder}
-                aria-label="Build your quote"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Build Quote</span>
-              </button>
-            )}
             <button 
               type="button" 
               className="header-btn header-btn-chat"
