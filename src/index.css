@@ -6277,13 +6277,11 @@
 
 /* Panel Styles */
 .tru-qb-map {
-  height: 140px;
+  height: 160px;
   background: hsl(var(--tm-ink) / 0.03);
   border-radius: 12px;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
 }
 
 .tru-qb-map-empty {
