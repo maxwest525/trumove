@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import { 
   ArrowRight, ChevronLeft, User, Phone, Mail, MapPin, Home, Building2, 
@@ -7,6 +7,7 @@ import {
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 export interface ExtendedMoveDetails {
   // Contact
@@ -54,7 +55,13 @@ const FLOOR_OPTIONS = [
 
 export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   const [step, setStep] = useState(1);
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const prevStep = useRef(1);
+
+  useEffect(() => {
+    prevStep.current = step;
+  }, [step]);
   
   const [details, setDetails] = useState<ExtendedMoveDetails>({
     name: '',
@@ -98,6 +105,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   const goNext = () => {
     if (canContinue()) {
       if (step < 5) {
+        setDirection('forward');
         setStep(step + 1);
       } else {
         onComplete(details);
@@ -107,6 +115,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
   const goBack = () => {
     if (step > 1) {
+      setDirection('backward');
       setStep(step - 1);
     }
   };
@@ -133,7 +142,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 1: Contact Information */}
       {step === 1 && (
-        <div className="tru-wizard-step" key="step-1">
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-1">
           <div className="tru-wizard-header">
             <h2 className="tru-wizard-question">Let's start with your contact info</h2>
             <p className="tru-wizard-subtitle">We'll use this to send your personalized quote</p>
@@ -141,49 +150,49 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
           <div className="tru-wizard-form">
             <div className="tru-wizard-input-group">
-              <label className="tru-wizard-label">
-                <User className="w-4 h-4" />
-                Full Name
-              </label>
-              <input
-                type="text"
-                value={details.name}
-                onChange={(e) => updateDetails({ name: e.target.value })}
-                onKeyDown={handleKeyDown}
-                placeholder="John Smith"
-                className="tru-wizard-input"
-                autoFocus
-              />
+              <label className="tru-wizard-label">Full Name</label>
+              <div className="tru-wizard-input-wrapper">
+                <User className="tru-wizard-input-icon" />
+                <input
+                  type="text"
+                  value={details.name}
+                  onChange={(e) => updateDetails({ name: e.target.value })}
+                  onKeyDown={handleKeyDown}
+                  placeholder="John Smith"
+                  className="tru-wizard-input has-icon"
+                  autoFocus
+                />
+              </div>
             </div>
 
             <div className="tru-wizard-input-group">
-              <label className="tru-wizard-label">
-                <Phone className="w-4 h-4" />
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                value={details.phone}
-                onChange={(e) => updateDetails({ phone: e.target.value })}
-                onKeyDown={handleKeyDown}
-                placeholder="(555) 123-4567"
-                className="tru-wizard-input"
-              />
+              <label className="tru-wizard-label">Phone Number</label>
+              <div className="tru-wizard-input-wrapper">
+                <Phone className="tru-wizard-input-icon" />
+                <input
+                  type="tel"
+                  value={details.phone}
+                  onChange={(e) => updateDetails({ phone: e.target.value })}
+                  onKeyDown={handleKeyDown}
+                  placeholder="(555) 123-4567"
+                  className="tru-wizard-input has-icon"
+                />
+              </div>
             </div>
 
             <div className="tru-wizard-input-group">
-              <label className="tru-wizard-label">
-                <Mail className="w-4 h-4" />
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={details.email}
-                onChange={(e) => updateDetails({ email: e.target.value })}
-                onKeyDown={handleKeyDown}
-                placeholder="john@example.com"
-                className="tru-wizard-input"
-              />
+              <label className="tru-wizard-label">Email Address</label>
+              <div className="tru-wizard-input-wrapper">
+                <Mail className="tru-wizard-input-icon" />
+                <input
+                  type="email"
+                  value={details.email}
+                  onChange={(e) => updateDetails({ email: e.target.value })}
+                  onKeyDown={handleKeyDown}
+                  placeholder="john@example.com"
+                  className="tru-wizard-input has-icon"
+                />
+              </div>
             </div>
           </div>
 
@@ -201,7 +210,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 2: Moving FROM Details */}
       {step === 2 && (
-        <div className="tru-wizard-step" key="step-2">
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-2">
           <div className="tru-wizard-header">
             <h2 className="tru-wizard-question">Where are you moving from?</h2>
             <p className="tru-wizard-subtitle">Enter your current address details</p>
@@ -209,17 +218,18 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
           <div className="tru-wizard-form">
             <div className="tru-wizard-input-group">
-              <label className="tru-wizard-label">
-                <MapPin className="w-4 h-4" />
-                Location
-              </label>
-              <LocationAutocomplete
-                value={details.fromLocation}
-                onValueChange={(val) => updateDetails({ fromLocation: val })}
-                onLocationSelect={(city) => updateDetails({ fromLocation: city })}
-                placeholder="City or ZIP code"
-                onKeyDown={handleKeyDown}
-              />
+              <label className="tru-wizard-label">Location</label>
+              <div className="tru-wizard-input-wrapper">
+                <MapPin className="tru-wizard-input-icon" />
+                <LocationAutocomplete
+                  value={details.fromLocation}
+                  onValueChange={(val) => updateDetails({ fromLocation: val })}
+                  onLocationSelect={(city) => updateDetails({ fromLocation: city })}
+                  placeholder="City or ZIP code"
+                  onKeyDown={handleKeyDown}
+                  className="tru-wizard-input has-icon"
+                />
+              </div>
             </div>
 
             <div className="tru-wizard-input-group">
@@ -247,10 +257,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
             {details.fromPropertyType === 'apartment' && (
               <>
                 <div className="tru-wizard-input-group animate-fade-in">
-                  <label className="tru-wizard-label">
-                    <MoveVertical className="w-4 h-4" />
-                    What floor?
-                  </label>
+                  <label className="tru-wizard-label">What floor?</label>
                   <div className="tru-wizard-pills">
                     {FLOOR_OPTIONS.map((floor) => (
                       <button
@@ -266,10 +273,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 </div>
 
                 <div className="tru-wizard-input-group animate-fade-in">
-                  <label className="tru-wizard-label">
-                    <ArrowUpDown className="w-4 h-4" />
-                    Access type
-                  </label>
+                  <label className="tru-wizard-label">Access type</label>
                   <div className="tru-wizard-toggle-row">
                     <button
                       type="button"
@@ -328,7 +332,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 3: Moving TO Details */}
       {step === 3 && (
-        <div className="tru-wizard-step" key="step-3">
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-3">
           <div className="tru-wizard-header">
             <h2 className="tru-wizard-question">Where are you moving to?</h2>
             <p className="tru-wizard-subtitle">Enter your destination address details</p>
@@ -336,17 +340,18 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
           <div className="tru-wizard-form">
             <div className="tru-wizard-input-group">
-              <label className="tru-wizard-label">
-                <MapPin className="w-4 h-4" />
-                Location
-              </label>
-              <LocationAutocomplete
-                value={details.toLocation}
-                onValueChange={(val) => updateDetails({ toLocation: val })}
-                onLocationSelect={(city) => updateDetails({ toLocation: city })}
-                placeholder="City or ZIP code"
-                onKeyDown={handleKeyDown}
-              />
+              <label className="tru-wizard-label">Location</label>
+              <div className="tru-wizard-input-wrapper">
+                <MapPin className="tru-wizard-input-icon" />
+                <LocationAutocomplete
+                  value={details.toLocation}
+                  onValueChange={(val) => updateDetails({ toLocation: val })}
+                  onLocationSelect={(city) => updateDetails({ toLocation: city })}
+                  placeholder="City or ZIP code"
+                  onKeyDown={handleKeyDown}
+                  className="tru-wizard-input has-icon"
+                />
+              </div>
             </div>
 
             <div className="tru-wizard-input-group">
@@ -374,10 +379,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
             {details.toPropertyType === 'apartment' && (
               <>
                 <div className="tru-wizard-input-group animate-fade-in">
-                  <label className="tru-wizard-label">
-                    <MoveVertical className="w-4 h-4" />
-                    What floor?
-                  </label>
+                  <label className="tru-wizard-label">What floor?</label>
                   <div className="tru-wizard-pills">
                     {FLOOR_OPTIONS.map((floor) => (
                       <button
@@ -393,10 +395,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 </div>
 
                 <div className="tru-wizard-input-group animate-fade-in">
-                  <label className="tru-wizard-label">
-                    <ArrowUpDown className="w-4 h-4" />
-                    Access type
-                  </label>
+                  <label className="tru-wizard-label">Access type</label>
                   <div className="tru-wizard-toggle-row">
                     <button
                       type="button"
@@ -439,7 +438,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 4: Move Date */}
       {step === 4 && (
-        <div className="tru-wizard-step" key="step-4">
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-4">
           <div className="tru-wizard-header">
             <h2 className="tru-wizard-question">When would you like to move?</h2>
             <p className="tru-wizard-subtitle">Select your target move date</p>
@@ -447,10 +446,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
           <div className="tru-wizard-form">
             <div className="tru-wizard-input-group">
-              <label className="tru-wizard-label">
-                <CalendarIcon className="w-4 h-4" />
-                Move Date
-              </label>
+              <label className="tru-wizard-label">Move Date</label>
               <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                 <PopoverTrigger asChild>
                   <button type="button" className="tru-wizard-date-btn">
@@ -497,7 +493,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 5: Parking Distance */}
       {step === 5 && (
-        <div className="tru-wizard-step" key="step-5">
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-5">
           <div className="tru-wizard-header">
             <h2 className="tru-wizard-question">How far is parking from the entrance?</h2>
             <p className="tru-wizard-subtitle">This helps us estimate carry distance for your move</p>
