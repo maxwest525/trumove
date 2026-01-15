@@ -281,63 +281,23 @@ export default function Index() {
             <div className="tru-hero-grid">
               {/* LEFT: Company Info - Rich & Informative */}
               <div className="tru-hero-content">
-                {/* Section 1: Bold Intro */}
+                {/* Section 1: Passion-Driven Intro */}
                 <div className="tru-hero-intro">
                   <div className="tru-hero-kicker">
                     <Sparkles className="w-4 h-4" />
-                    <span>MOVING MADE SIMPLE</span>
+                    <span>TRUMOVE</span>
                   </div>
                   <h1 className="tru-hero-title">
-                    The moving platform that cuts out the middleman.
+                    Finally, a moving experience you can trust.
                   </h1>
                   <p className="tru-hero-sub">
-                    Skip the brokers. Get instant quotes from FMCSA-verified carriers who actually move your stuff. Your info stays private — we never sell your data.
+                    We built TruMove because the moving industry is broken — hidden fees, unreliable carriers, and your info sold to the highest bidder. We connect you directly with FMCSA-verified carriers through a process you can actually trust.
                   </p>
-                  <button 
-                    className="tru-hero-cta-arrow"
-                    onClick={() => quoteBuilderRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                  >
-                    <span>Get your instant quote</span>
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
                 </div>
 
-                {/* Section 2: What We Do - Rich Cards */}
-                <div className="tru-hero-what-we-do">
-                  <div className="tru-hero-cards-row">
-                    <div className="tru-hero-mini-card">
-                      <div className="tru-hero-mini-icon">
-                        <Search className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-mini-content">
-                        <span className="tru-hero-mini-title">Transparent Process</span>
-                        <span className="tru-hero-mini-desc">See exactly how we find and vet your carriers.</span>
-                      </div>
-                    </div>
-                    <div className="tru-hero-mini-card">
-                      <div className="tru-hero-mini-icon">
-                        <Calculator className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-mini-content">
-                        <span className="tru-hero-mini-title">Smart Estimates</span>
-                        <span className="tru-hero-mini-desc">AI-powered pricing based on your home, inventory & route.</span>
-                      </div>
-                    </div>
-                    <div className="tru-hero-mini-card">
-                      <div className="tru-hero-mini-icon">
-                        <Lock className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-mini-content">
-                        <span className="tru-hero-mini-title">Your Data Stays Private</span>
-                        <span className="tru-hero-mini-desc">We never sell your info to third parties.</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 3: Feature Cards - Enticing */}
+                {/* Section 2: Features FIRST - Primary Focus */}
                 <div className="tru-hero-features-section">
-                  <h4 className="tru-hero-features-label">Explore Our Tools</h4>
+                  <h4 className="tru-hero-features-label">Our Tools</h4>
                   <div className="tru-hero-feature-cards">
                     <Link to="/online-estimate" className="tru-hero-feature-card">
                       <div className="tru-hero-feature-icon-wrap">
@@ -345,7 +305,7 @@ export default function Index() {
                       </div>
                       <div className="tru-hero-feature-info">
                         <span className="tru-hero-feature-title">AI Move Builder</span>
-                        <span className="tru-hero-feature-desc">Build your inventory list & get an estimate</span>
+                        <span className="tru-hero-feature-desc">Map your belongings, get instant pricing — no phone calls needed</span>
                       </div>
                       <ChevronRight className="tru-hero-feature-arrow" />
                     </Link>
@@ -354,8 +314,8 @@ export default function Index() {
                         <Video className="w-5 h-5" />
                       </div>
                       <div className="tru-hero-feature-info">
-                        <span className="tru-hero-feature-title">Virtual Walkthrough</span>
-                        <span className="tru-hero-feature-desc">Walk through your home with a specialist</span>
+                        <span className="tru-hero-feature-title">Video Walkthrough</span>
+                        <span className="tru-hero-feature-desc">Show a specialist your home from your phone</span>
                       </div>
                       <ChevronRight className="tru-hero-feature-arrow" />
                     </Link>
@@ -364,8 +324,8 @@ export default function Index() {
                         <Headphones className="w-5 h-5" />
                       </div>
                       <div className="tru-hero-feature-info">
-                        <span className="tru-hero-feature-title">Talk to a Specialist</span>
-                        <span className="tru-hero-feature-desc">Speak with a move coordinator</span>
+                        <span className="tru-hero-feature-title">Call a Move Expert</span>
+                        <span className="tru-hero-feature-desc">Real humans, real answers — connect instantly</span>
                       </div>
                       <ChevronRight className="tru-hero-feature-arrow" />
                     </a>
@@ -375,17 +335,51 @@ export default function Index() {
                       </div>
                       <div className="tru-hero-feature-info">
                         <span className="tru-hero-feature-title">Carrier Lookup</span>
-                        <span className="tru-hero-feature-desc">Access federal safety data on any carrier</span>
+                        <span className="tru-hero-feature-desc">Search any mover's federal safety record</span>
                       </div>
                       <ChevronRight className="tru-hero-feature-arrow" />
                     </Link>
                   </div>
                 </div>
+
+                {/* Section 3: Secondary Info - Compact Row */}
+                <div className="tru-hero-trust-row">
+                  <div className="tru-hero-trust-item">
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Transparent Process</span>
+                  </div>
+                  <div className="tru-hero-trust-item">
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Smart AI Estimates</span>
+                  </div>
+                  <div className="tru-hero-trust-item">
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Private & Secure</span>
+                  </div>
+                </div>
               </div>
+
               
               {/* RIGHT: Quote Builder */}
               <div className="tru-hero-visual" ref={quoteBuilderRef}>
                 <div className="tru-quote-builder">
+                  {/* Form Header */}
+                  <div className="tru-qb-form-header">
+                    <div className="tru-qb-form-header-content">
+                      <h3 className="tru-qb-form-title">Build Your Estimate</h3>
+                      <p className="tru-qb-form-subtitle">Answer 6 quick questions to get your personalized quote</p>
+                    </div>
+                    <div className="tru-qb-progress-dots">
+                      {[1, 2, 3, 4, 5, 6].map((s) => (
+                        <div 
+                          key={s} 
+                          className={`tru-qb-dot ${s < step ? 'is-complete' : ''} ${s === step ? 'is-current' : ''}`}
+                        >
+                          {s < step && <CheckCircle className="w-3 h-3" />}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                   {/* Main Body: Form + Dashboard Side by Side */}
                   <div className="tru-qb-body">
                 {/* LEFT: Conversation Area */}
@@ -393,7 +387,6 @@ export default function Index() {
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
-                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">Where are you moving from?</h1>
                       <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
                       
@@ -428,7 +421,6 @@ export default function Index() {
                   {/* Step 2: To ZIP */}
                   {step === 2 && (
                     <div className="tru-qb-step-content" key="step-2">
-                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">Where are you moving to?</h1>
                       <p className="tru-qb-subtitle">Enter your destination ZIP code</p>
                       
@@ -470,7 +462,6 @@ export default function Index() {
                   {/* Step 3: Move Date */}
                   {step === 3 && (
                     <div className="tru-qb-step-content" key="step-3">
-                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">When would you like to move?</h1>
                       <p className="tru-qb-subtitle">This helps us match you with available carriers</p>
                       
@@ -519,7 +510,6 @@ export default function Index() {
                   {/* Step 4: Move Size */}
                   {step === 4 && (
                     <div className="tru-qb-step-content" key="step-4">
-                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">What size is your move?</h1>
                       <p className="tru-qb-subtitle">This helps us estimate weight and find the right carriers</p>
                       
@@ -549,7 +539,6 @@ export default function Index() {
                   {/* Step 5: Additional Options */}
                   {step === 5 && (
                     <div className="tru-qb-step-content" key="step-5">
-                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">Any additional services?</h1>
                       <p className="tru-qb-subtitle">Select any that apply (optional)</p>
                       
@@ -600,7 +589,6 @@ export default function Index() {
                   {/* Step 6: Contact */}
                   {step === 6 && (
                     <form className="tru-qb-step-content" key="step-6" onSubmit={handleSubmit}>
-                      <span className="tru-qb-step-indicator">Step {step} of 6</span>
                       <h1 className="tru-qb-question">Where should we send your quote?</h1>
                       <p className="tru-qb-subtitle">We'll email your detailed estimate (no spam, ever)</p>
                       
@@ -633,7 +621,7 @@ export default function Index() {
                         className="tru-qb-submit"
                         disabled={!canContinue()}
                       >
-                        <span>Get My Quote</span>
+                        <span>Start My Quote</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
 
