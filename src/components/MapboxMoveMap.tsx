@@ -4,9 +4,6 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { X, Maximize2, MapPin, Route, Clock } from 'lucide-react';
 
-// Animation duration in ms (10 seconds for full route)
-const ANIMATION_DURATION = 10000;
-
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam51OGJrcGFiIn0.tN-ZMle93ctK7PIt9kU7JA';
 
 interface MapboxMoveMapProps {
@@ -123,16 +120,6 @@ function createArcLine(start: [number, number], end: [number, number], steps: nu
   return coords;
 }
 
-function getBearing(start: [number, number], end: [number, number]): number {
-  const lng1 = start[0] * Math.PI / 180;
-  const lng2 = end[0] * Math.PI / 180;
-  const lat1 = start[1] * Math.PI / 180;
-  const lat2 = end[1] * Math.PI / 180;
-  const y = Math.sin(lng2 - lng1) * Math.cos(lat2);
-  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
-  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-}
-
 // Calculate distance between coords in miles
 function calculateDistanceBetweenCoords(from: [number, number], to: [number, number]): number {
   const R = 3959; // Earth radius in miles
@@ -145,9 +132,6 @@ function calculateDistanceBetweenCoords(from: [number, number], to: [number, num
   return Math.round(R * c);
 }
 
-// Truck SVG icon
-const TRUCK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18h2a1 1 0 0 0 1-1v-3.28a1 1 0 0 0-.684-.948l-1.923-.641a1 1 0 0 1-.684-.949V8a2 2 0 0 1 2-2h2.586a1 1 0 0 1 .707.293l2.414 2.414a1 1 0 0 1 .293.707V17a1 1 0 0 1-1 1h-1"/><circle cx="7" cy="18" r="2"/><circle cx="19" cy="18" r="2"/></svg>`;
-
 interface ExpandedMapViewProps {
   fromCoords: [number, number] | null;
   toCoords: [number, number] | null;
@@ -158,7 +142,6 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
-  const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -167,7 +150,7 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'mapbox://styles/mapbox/streets-v12',
       center: [-98.5795, 39.8283],
       zoom: 3,
       pitch: 25,
@@ -176,19 +159,31 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
 
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
+    // Handle errors gracefully (e.g., 403 for terrain)
+    map.current.on('error', (e) => {
+      const err = e.error as { status?: number; url?: string } | undefined;
+      if (err?.status === 403) {
+        console.warn('Mapbox resource not available:', err.url);
+      }
+    });
+
     map.current.on('load', () => {
       if (!map.current) return;
 
-      // Add terrain
-      map.current.addSource('mapbox-dem', {
-        type: 'raster-dem',
-        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
-        tileSize: 512,
-        maxzoom: 14
-      });
-      map.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.2 });
+      // Try to add terrain (may fail if token doesn't have access)
+      try {
+        map.current.addSource('mapbox-dem', {
+          type: 'raster-dem',
+          url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+          tileSize: 512,
+          maxzoom: 14
+        });
+        map.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.2 });
+      } catch (e) {
+        console.warn('Terrain not available with this token');
+      }
 
-      // Add fog
+      // Add fog (works without terrain)
       map.current.setFog({
         color: 'rgb(255, 255, 255)',
         'high-color': 'rgb(200, 210, 230)',
@@ -210,17 +205,6 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
         });
 
         map.current.addLayer({
-          id: 'route-line',
-          type: 'line',
-          source: 'route',
-          paint: {
-            'line-color': '#00ff6a',
-            'line-width': 4,
-            'line-opacity': 0.9,
-          }
-        });
-
-        map.current.addLayer({
           id: 'route-glow',
           type: 'line',
           source: 'route',
@@ -229,6 +213,17 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
             'line-width': 12,
             'line-opacity': 0.2,
             'line-blur': 8
+          }
+        });
+
+        map.current.addLayer({
+          id: 'route-line',
+          type: 'line',
+          source: 'route',
+          paint: {
+            'line-color': '#00ff6a',
+            'line-width': 4,
+            'line-opacity': 0.9,
           }
         });
 
@@ -257,43 +252,6 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
           .addTo(map.current);
         markersRef.current.push(destMarker);
 
-        // Add truck marker
-        const truckEl = document.createElement('div');
-        truckEl.className = 'mapbox-truck-marker';
-        truckEl.innerHTML = TRUCK_SVG;
-        const truckMarker = new mapboxgl.Marker({ element: truckEl, anchor: 'center' })
-          .setLngLat(lineCoords[0])
-          .addTo(map.current);
-        markersRef.current.push(truckMarker);
-
-        // Animate truck with slower speed
-        let startTime: number | null = null;
-        const totalSteps = lineCoords.length;
-        
-        const animateTruck = (timestamp: number) => {
-          if (!startTime) startTime = timestamp;
-          const elapsed = timestamp - startTime;
-          const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
-          const step = Math.floor(progress * (totalSteps - 1));
-          
-          const pos = lineCoords[step];
-          const nextPos = lineCoords[Math.min(step + 1, totalSteps - 1)];
-          const bearing = getBearing(pos, nextPos);
-          truckMarker.setLngLat(pos);
-          truckMarker.setRotation(bearing - 90);
-          
-          if (progress < 1) {
-            animationRef.current = requestAnimationFrame(animateTruck);
-          } else {
-            // Loop animation after pause
-            setTimeout(() => {
-              startTime = null;
-              animationRef.current = requestAnimationFrame(animateTruck);
-            }, 2000);
-          }
-        };
-        animationRef.current = requestAnimationFrame(animateTruck);
-
         // Fit bounds
         const bounds = new mapboxgl.LngLatBounds();
         bounds.extend(fromCoords);
@@ -303,7 +261,6 @@ function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps
     });
 
     return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
       markersRef.current.forEach(m => m.remove());
       markersRef.current = [];
       map.current?.remove();
@@ -349,8 +306,6 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
-  const animationRef = useRef<number | null>(null);
-  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -373,26 +328,40 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'mapbox://styles/mapbox/streets-v12',
       center: [-98.5795, 39.8283],
       zoom: 3,
       pitch: 20,
       interactive: false,
     });
 
+    // Handle errors gracefully (e.g., 403 for terrain)
+    map.current.on('error', (e) => {
+      const err = e.error as { status?: number; url?: string } | undefined;
+      if (err?.status === 403) {
+        console.warn('Mapbox resource not available:', err.url);
+        // Still set map as loaded even if terrain fails
+        if (!isMapLoaded) setIsMapLoaded(true);
+      }
+    });
+
     map.current.on('load', () => {
       if (!map.current) return;
 
-      // Add terrain
-      map.current.addSource('mapbox-dem', {
-        type: 'raster-dem',
-        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
-        tileSize: 512,
-        maxzoom: 14
-      });
-      map.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.2 });
+      // Try to add terrain (may fail if token doesn't have access)
+      try {
+        map.current.addSource('mapbox-dem', {
+          type: 'raster-dem',
+          url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+          tileSize: 512,
+          maxzoom: 14
+        });
+        map.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.2 });
+      } catch (e) {
+        console.warn('Terrain not available with this token');
+      }
 
-      // Add fog
+      // Add fog (works without terrain)
       map.current.setFog({
         color: 'rgb(255, 255, 255)',
         'high-color': 'rgb(200, 210, 230)',
@@ -403,8 +372,6 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
     });
 
     return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       markersRef.current.forEach(m => m.remove());
       markersRef.current = [];
       map.current?.remove();
@@ -415,12 +382,6 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
   useEffect(() => {
     if (!map.current || !isMapLoaded) return;
 
-    // Cancel any ongoing animation
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-      animationRef.current = null;
-    }
-
     // Clear old markers
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
@@ -428,9 +389,7 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
     // Remove old layers/sources
     if (map.current.getLayer('route-line')) map.current.removeLayer('route-line');
     if (map.current.getLayer('route-glow')) map.current.removeLayer('route-glow');
-    if (map.current.getLayer('route-progress')) map.current.removeLayer('route-progress');
     if (map.current.getSource('route')) map.current.removeSource('route');
-    if (map.current.getSource('route-progress')) map.current.removeSource('route-progress');
 
     if (!fromCoords || !toCoords) {
       // Reset view
@@ -446,7 +405,7 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
     // Create arc coordinates
     const lineCoords = createArcLine(fromCoords, toCoords, 100);
     
-    // Add full route (invisible initially)
+    // Add full route
     map.current.addSource('route', {
       type: 'geojson',
       data: {
@@ -469,20 +428,11 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
       }
     });
 
-    // Add progress source for animation
-    map.current.addSource('route-progress', {
-      type: 'geojson',
-      data: {
-        type: 'Feature',
-        properties: {},
-        geometry: { type: 'LineString', coordinates: [lineCoords[0]] }
-      }
-    });
-
+    // Add route line
     map.current.addLayer({
-      id: 'route-progress',
+      id: 'route-line',
       type: 'line',
-      source: 'route-progress',
+      source: 'route',
       paint: {
         'line-color': '#00ff6a',
         'line-width': 4,
@@ -515,58 +465,6 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
       .setLngLat(toCoords)
       .addTo(map.current);
     markersRef.current.push(destMarker);
-
-    // Add truck marker
-    const truckEl = document.createElement('div');
-    truckEl.className = 'mapbox-truck-marker';
-    truckEl.innerHTML = TRUCK_SVG;
-    const truckMarker = new mapboxgl.Marker({ element: truckEl, anchor: 'center' })
-      .setLngLat(lineCoords[0])
-      .addTo(map.current);
-    markersRef.current.push(truckMarker);
-
-    // Animate route drawing and truck with time-based throttle (10 seconds)
-    let startTime: number | null = null;
-    const totalSteps = lineCoords.length;
-    
-    const animate = (timestamp: number) => {
-      if (!map.current) return;
-      
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
-      const currentStep = Math.floor(progress * totalSteps);
-      
-      // Update route line
-      const visibleCoords = lineCoords.slice(0, Math.max(currentStep, 1));
-      const source = map.current.getSource('route-progress') as mapboxgl.GeoJSONSource;
-      if (source) {
-        source.setData({
-          type: 'Feature',
-          properties: {},
-          geometry: { type: 'LineString', coordinates: visibleCoords }
-        });
-      }
-
-      // Move truck
-      const truckPos = lineCoords[Math.min(currentStep, totalSteps - 1)];
-      const nextPos = lineCoords[Math.min(currentStep + 1, totalSteps - 1)];
-      const bearing = getBearing(truckPos, nextPos);
-      truckMarker.setLngLat(truckPos);
-      truckMarker.setRotation(bearing - 90);
-
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animate);
-      } else {
-        // Loop after 2 second pause
-        setTimeout(() => {
-          startTime = null;
-          animationRef.current = requestAnimationFrame(animate);
-        }, 2000);
-      }
-    };
-    
-    animationRef.current = requestAnimationFrame(animate);
 
     // Fit to bounds
     map.current.fitBounds(bounds, {
