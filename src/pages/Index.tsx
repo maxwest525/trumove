@@ -276,102 +276,46 @@ export default function Index() {
     <SiteShell>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-        {/* HERO - Split Layout: Company Info + Quote Builder */}
-          <section className="tru-hero">
-            <div className="tru-hero-grid">
-              {/* LEFT: Company Info - Marketplace Focused */}
-              <div className="tru-hero-content">
-                {/* Section 1: Marketplace Value Prop */}
-                <div className="tru-hero-intro">
-                  <h1 className="tru-hero-title">
-                    Find the right mover at the best rate.
-                  </h1>
-                  <p className="tru-hero-sub">
-                    We use federal SAFER Web data to match you with licensed, vetted carriers — our goal is to get you the cheapest rate possible. No phone calls, no spam.
-                  </p>
-                </div>
+        {/* HERO - Centered Form Layout */}
+          <section className="tru-hero tru-hero-centered">
+            {/* Hero Headline */}
+            <div className="tru-hero-headline">
+              <h1 className="tru-hero-title-centered">
+                Let TruMove find the right mover at the best rate.
+              </h1>
+            </div>
 
-
-                {/* Section 4: TruMove Tools - What Makes Us Different */}
-                <div className="tru-hero-features-section">
-                  <h4 className="tru-hero-features-label">Powered by TruMove Tools</h4>
-                  <div className="tru-hero-feature-cards">
-                    <Link to="/online-estimate" className="tru-hero-feature-card">
-                      <div className="tru-hero-feature-icon-wrap">
-                        <Sparkles className="w-5 h-5" />
+            {/* Centered Quote Builder */}
+            <div className="tru-hero-form-wrapper" ref={quoteBuilderRef}>
+              <div className="tru-quote-builder">
+                {/* Form Header - Plan Match Move Workflow */}
+                <div className="tru-qb-form-header">
+                  <div className="tru-qb-workflow">
+                    <div className="tru-qb-workflow-step">
+                      <span className="tru-qb-workflow-num">1</span>
+                      <div className="tru-qb-workflow-info">
+                        <span className="tru-qb-workflow-title">Plan</span>
+                        <span className="tru-qb-workflow-desc">Build your inventory with AI tools or talk to a specialist</span>
                       </div>
-                      <div className="tru-hero-feature-info">
-                        <span className="tru-hero-feature-title">AI Inventory Builder</span>
-                        <span className="tru-hero-feature-desc">Create your item list in minutes — our AI calculates weight & cost</span>
+                    </div>
+                    <span className="tru-qb-workflow-arrow">→</span>
+                    <div className="tru-qb-workflow-step">
+                      <span className="tru-qb-workflow-num">2</span>
+                      <div className="tru-qb-workflow-info">
+                        <span className="tru-qb-workflow-title">Match</span>
+                        <span className="tru-qb-workflow-desc">We analyze federal SAFER data to find best rates</span>
                       </div>
-                      <ChevronRight className="tru-hero-feature-arrow" />
-                    </Link>
-                    <Link to="/vetting" className="tru-hero-feature-card">
-                      <div className="tru-hero-feature-icon-wrap">
-                        <Database className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-feature-info">
-                        <span className="tru-hero-feature-title">FMCSA Carrier Lookup</span>
-                        <span className="tru-hero-feature-desc">Check any mover's safety record, insurance & complaints</span>
-                      </div>
-                      <ChevronRight className="tru-hero-feature-arrow" />
-                    </Link>
-                    <Link to="/book" className="tru-hero-feature-card">
-                      <div className="tru-hero-feature-icon-wrap">
-                        <Video className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-feature-info">
-                        <span className="tru-hero-feature-title">Video Walkthrough</span>
-                        <span className="tru-hero-feature-desc">Show a specialist your home for accurate pricing</span>
-                      </div>
-                      <ChevronRight className="tru-hero-feature-arrow" />
-                    </Link>
-                    <a href="tel:+16097277647" className="tru-hero-feature-card">
-                      <div className="tru-hero-feature-icon-wrap">
-                        <Headphones className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-feature-info">
-                        <span className="tru-hero-feature-title">Move Specialists</span>
-                        <span className="tru-hero-feature-desc">Real humans to answer questions — no pushy sales</span>
-                      </div>
-                      <ChevronRight className="tru-hero-feature-arrow" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              
-              {/* RIGHT: Quote Builder */}
-              <div className="tru-hero-visual" ref={quoteBuilderRef}>
-                <div className="tru-quote-builder">
-                  {/* Form Header - Plan Match Move Workflow */}
-                  <div className="tru-qb-form-header">
-                    <div className="tru-qb-workflow">
-                      <div className="tru-qb-workflow-step">
-                        <span className="tru-qb-workflow-num">1</span>
-                        <div className="tru-qb-workflow-info">
-                          <span className="tru-qb-workflow-title">Plan</span>
-                          <span className="tru-qb-workflow-desc">Build your inventory with AI tools or talk to a specialist</span>
-                        </div>
-                      </div>
-                      <span className="tru-qb-workflow-arrow">→</span>
-                      <div className="tru-qb-workflow-step">
-                        <span className="tru-qb-workflow-num">2</span>
-                        <div className="tru-qb-workflow-info">
-                          <span className="tru-qb-workflow-title">Match</span>
-                          <span className="tru-qb-workflow-desc">We analyze federal SAFER data to find best rates</span>
-                        </div>
-                      </div>
-                      <span className="tru-qb-workflow-arrow">→</span>
-                      <div className="tru-qb-workflow-step">
-                        <span className="tru-qb-workflow-num">3</span>
-                        <div className="tru-qb-workflow-info">
-                          <span className="tru-qb-workflow-title">Move</span>
-                          <span className="tru-qb-workflow-desc">Get matched with the right mover at the best rate</span>
-                        </div>
+                    </div>
+                    <span className="tru-qb-workflow-arrow">→</span>
+                    <div className="tru-qb-workflow-step">
+                      <span className="tru-qb-workflow-num">3</span>
+                      <div className="tru-qb-workflow-info">
+                        <span className="tru-qb-workflow-title">Move</span>
+                        <span className="tru-qb-workflow-desc">Get matched with the right mover at the best rate</span>
                       </div>
                     </div>
                   </div>
+                </div>
                   {/* Main Body: Form + Dashboard Side by Side */}
                   <div className="tru-qb-body">
                 {/* LEFT: Conversation Area */}
@@ -695,12 +639,7 @@ export default function Index() {
                         <CheckCircle className="w-4 h-4" />
                         <span>{foundCarriers} vetted carriers ready</span>
                       </div>
-                    ) : (
-                      <div className="tru-carrier-ready">
-                        <Database className="w-4 h-4" />
-                        <span>Powered by federal SAFER Web data</span>
-                      </div>
-                    )}
+                    ) : null}
                   </div>
 
                   {/* Map Area */}
@@ -724,21 +663,57 @@ export default function Index() {
                       </div>
                     )}
                   </div>
-                  
-                  {/* Federal Data Badge */}
-                  <div className="tru-qb-federal-badge">
-                    <Database className="w-4 h-4" />
-                    <span>Powered by federal SAFER Web data</span>
-                  </div>
                 </div>
               </div>
 
-                  {/* Compact Tech Ticker */}
-                  <div className="tru-qb-ticker">
-                    <Lock className="w-3.5 h-3.5" />
-                    <span>{tickerContent}</span>
+              {/* Compact Tech Ticker */}
+              <div className="tru-qb-ticker">
+                <Lock className="w-3.5 h-3.5" />
+                <span>{tickerContent}</span>
+              </div>
+            </div>
+            </div>
+
+            {/* TruMove Tools Section - Below Form */}
+            <div className="tru-hero-tools">
+              <h4 className="tru-hero-tools-label">Powered by TruMove Tools</h4>
+              <div className="tru-hero-tools-grid">
+                <Link to="/online-estimate" className="tru-hero-tool-card">
+                  <div className="tru-hero-tool-icon">
+                    <Sparkles className="w-5 h-5" />
                   </div>
-                </div>
+                  <div className="tru-hero-tool-info">
+                    <span className="tru-hero-tool-title">AI Inventory Builder</span>
+                    <span className="tru-hero-tool-desc">Create your item list in minutes</span>
+                  </div>
+                </Link>
+                <Link to="/vetting" className="tru-hero-tool-card">
+                  <div className="tru-hero-tool-icon">
+                    <Database className="w-5 h-5" />
+                  </div>
+                  <div className="tru-hero-tool-info">
+                    <span className="tru-hero-tool-title">FMCSA Carrier Lookup</span>
+                    <span className="tru-hero-tool-desc">Check any mover's safety record</span>
+                  </div>
+                </Link>
+                <Link to="/book" className="tru-hero-tool-card">
+                  <div className="tru-hero-tool-icon">
+                    <Video className="w-5 h-5" />
+                  </div>
+                  <div className="tru-hero-tool-info">
+                    <span className="tru-hero-tool-title">Video Walkthrough</span>
+                    <span className="tru-hero-tool-desc">Show your home for accurate pricing</span>
+                  </div>
+                </Link>
+                <a href="tel:+16097277647" className="tru-hero-tool-card">
+                  <div className="tru-hero-tool-icon">
+                    <Headphones className="w-5 h-5" />
+                  </div>
+                  <div className="tru-hero-tool-info">
+                    <span className="tru-hero-tool-title">Move Specialists</span>
+                    <span className="tru-hero-tool-desc">Real humans to answer questions</span>
+                  </div>
+                </a>
               </div>
             </div>
           </section>
