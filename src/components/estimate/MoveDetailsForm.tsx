@@ -1,26 +1,18 @@
 import { useEffect, useState } from "react";
 import { type MoveDetails, determineMoveType } from "@/lib/priceCalculator";
 import { calculateDistance } from "@/lib/distanceCalculator";
-import { MapPin, Calendar, ArrowUpDown, Package } from "lucide-react";
+import { MapPin, Calendar, ArrowUpDown, Package, ArrowRight } from "lucide-react";
 
 interface MoveDetailsFormProps {
   moveDetails: MoveDetails;
   onUpdate: (updates: Partial<MoveDetails>) => void;
-  contactInfo: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  onContactUpdate: (updates: Partial<{ name: string; email: string; phone: string }>) => void;
-  onSubmit: () => void;
+  onProceed: () => void;
 }
 
 export default function MoveDetailsForm({ 
   moveDetails, 
   onUpdate, 
-  contactInfo, 
-  onContactUpdate,
-  onSubmit 
+  onProceed 
 }: MoveDetailsFormProps) {
   const [hasStairs, setHasStairs] = useState(false);
   const [needsPacking, setNeedsPacking] = useState(false);
@@ -43,6 +35,8 @@ export default function MoveDetailsForm({
       }
     }
   }, [moveDetails.fromLocation, moveDetails.toLocation, onUpdate]);
+
+  const canProceed = moveDetails.fromLocation && moveDetails.toLocation && moveDetails.moveDate;
 
   return (
     <div className="space-y-4">
@@ -124,38 +118,15 @@ export default function MoveDetailsForm({
         </button>
       </div>
 
-      {/* Contact Info - Compact */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-border/40">
-        <input
-          type="text"
-          value={contactInfo.name}
-          onChange={(e) => onContactUpdate({ name: e.target.value })}
-          placeholder="Full name"
-          className="h-10 px-3 rounded-lg border border-border/60 bg-background text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-        />
-        <input
-          type="email"
-          value={contactInfo.email}
-          onChange={(e) => onContactUpdate({ email: e.target.value })}
-          placeholder="Email"
-          className="h-10 px-3 rounded-lg border border-border/60 bg-background text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-        />
-        <input
-          type="tel"
-          value={contactInfo.phone}
-          onChange={(e) => onContactUpdate({ phone: e.target.value })}
-          placeholder="Phone"
-          className="h-10 px-3 rounded-lg border border-border/60 bg-background text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-        />
-      </div>
-
-      {/* Submit */}
+      {/* Proceed Button */}
       <button
         type="button"
-        onClick={onSubmit}
-        className="w-full h-11 rounded-lg bg-primary text-primary-foreground text-sm font-bold tracking-wide uppercase transition-all hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2"
+        onClick={onProceed}
+        disabled={!canProceed}
+        className="w-full h-11 rounded-lg bg-primary text-primary-foreground text-sm font-bold tracking-wide uppercase transition-all hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
       >
-        Finalize Estimate →
+        Proceed to Inventory
+        <ArrowRight className="w-4 h-4" />
       </button>
     </div>
   );
