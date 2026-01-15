@@ -382,26 +382,26 @@ export default function Index() {
               {/* RIGHT: Quote Builder */}
               <div className="tru-hero-visual" ref={quoteBuilderRef}>
                 <div className="tru-quote-builder">
-                  {/* Form Header - Enhanced */}
-                  <div className="tru-qb-form-header tru-qb-form-header-enhanced">
-                    <div className="tru-qb-header-accent"></div>
-                    <div className="tru-qb-form-header-content">
-                      <div className="tru-qb-header-badge">
-                        <BarChart3 className="w-4 h-4" />
-                        <span>AI-POWERED</span>
+                  {/* Form Header - Plan Match Move Workflow */}
+                  <div className="tru-qb-form-header">
+                    <div className="tru-qb-workflow">
+                      <div className="tru-qb-workflow-step">
+                        <span className="tru-qb-workflow-num">1</span>
+                        <span className="tru-qb-workflow-label">Plan</span>
                       </div>
-                      <h3 className="tru-qb-form-title">Build Your Estimate</h3>
-                      <p className="tru-qb-form-subtitle">6 questions • Pricing from federal data</p>
+                      <div className="tru-qb-workflow-arrow">→</div>
+                      <div className="tru-qb-workflow-step">
+                        <span className="tru-qb-workflow-num">2</span>
+                        <span className="tru-qb-workflow-label">Match</span>
+                      </div>
+                      <div className="tru-qb-workflow-arrow">→</div>
+                      <div className="tru-qb-workflow-step">
+                        <span className="tru-qb-workflow-num">3</span>
+                        <span className="tru-qb-workflow-label">Move</span>
+                      </div>
                     </div>
-                    <div className="tru-qb-progress-dots">
-                      {[1, 2, 3, 4, 5, 6].map((s) => (
-                        <div 
-                          key={s} 
-                          className={`tru-qb-dot ${s < step ? 'is-complete' : ''} ${s === step ? 'is-current' : ''}`}
-                        >
-                          {s < step && <CheckCircle className="w-3 h-3" />}
-                        </div>
-                      ))}
+                    <div className="tru-qb-step-indicator">
+                      Step {step} of 6
                     </div>
                   </div>
                   {/* Main Body: Form + Dashboard Side by Side */}
