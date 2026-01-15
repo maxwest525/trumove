@@ -327,6 +327,10 @@ export default function Index() {
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
+                      <div className="tru-qb-floating-prompt">
+                        <span className="tru-qb-floating-icon">✨</span>
+                        <span>Let's build your personalized moving quote</span>
+                      </div>
                       <h1 className="tru-qb-question">Where are you moving from?</h1>
                       <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
                       
