@@ -6769,13 +6769,12 @@
   }
 }
 
-/* Workflow Strip - Positioned below form header */
-.tru-qb-workflow-strip {
-  display: flex;
-  justify-content: center;
-  padding: 20px 24px;
-  background: hsl(var(--tm-ink) / 0.015);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+/* Header Divider between logo and workflow */
+.tru-qb-header-divider {
+  width: 1px;
+  height: 32px;
+  background: hsl(var(--tm-ink) / 0.12);
+  flex-shrink: 0;
 }
 
 /* Decorated Question with underline accent */

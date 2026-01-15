@@ -289,13 +289,10 @@ export default function Index() {
             {/* Centered Quote Builder */}
             <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
-                {/* Form Header - Logo Only */}
+                {/* Form Header - Logo + Workflow Pills */}
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                </div>
-                
-                {/* Workflow Pills - Moved below header */}
-                <div className="tru-qb-workflow-strip">
+                  <div className="tru-qb-header-divider" />
                   <div className="tru-qb-workflow-full">
                     <div className={`tru-qb-workflow-pill ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
                       <span className="tru-qb-pill-num">1</span>
