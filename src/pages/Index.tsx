@@ -380,8 +380,6 @@ export default function Index() {
                         )}
                       </div>
                       
-                      {aiHint && <p className="tru-qb-ai-hint">{aiHint}</p>}
-
                       <button
                         type="button"
                         className="tru-qb-continue"
@@ -427,8 +425,6 @@ export default function Index() {
                           </PopoverContent>
                         </Popover>
                       </div>
-
-                      {aiHint && <p className="tru-qb-ai-hint">{aiHint}</p>}
 
                       <button
                         type="button"
@@ -561,9 +557,27 @@ export default function Index() {
                         className="tru-qb-submit"
                         disabled={!canContinue()}
                       >
-                        <span>Start My Quote</span>
-                        <ArrowRight className="w-5 h-5" />
+                        <Sparkles className="w-5 h-5" />
+                        <span>Continue to AI Inventory Builder</span>
                       </button>
+                      
+                      <div className="tru-qb-alt-options">
+                        <span className="tru-qb-alt-or">or</span>
+                        <div className="tru-qb-alt-btns">
+                          <button 
+                            type="button" 
+                            className="tru-qb-alt-btn"
+                            onClick={() => navigate("/book")}
+                          >
+                            <Video className="w-4 h-4" />
+                            <span>Video Consult</span>
+                          </button>
+                          <a href="tel:+16097277647" className="tru-qb-alt-btn">
+                            <Phone className="w-4 h-4" />
+                            <span>Call Us</span>
+                          </a>
+                        </div>
+                      </div>
 
                       <button type="button" className="tru-qb-back" onClick={goBack}>
                         <ChevronLeft className="w-4 h-4" />
@@ -582,7 +596,7 @@ export default function Index() {
                 <div className="tru-qb-panel">
                   {/* Simple Summary */}
                   <div className="tru-qb-summary">
-                    <div className="tru-qb-summary-title">START YOUR AI MOVE BUILDER</div>
+                    <div className="tru-qb-summary-title">Move Summary</div>
                     <div className="tru-qb-info-row">
                       <span className="tru-qb-info-label">From</span>
                       <span className="tru-qb-info-value">{fromCity || "—"}</span>
