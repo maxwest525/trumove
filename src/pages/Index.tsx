@@ -5,6 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import FloatingQuoteButton from "@/components/FloatingQuoteButton";
+import logoImg from "@/assets/logo.png";
 
 import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -286,33 +287,25 @@ export default function Index() {
             </div>
 
             {/* Centered Quote Builder */}
-            <div className="tru-hero-form-wrapper" ref={quoteBuilderRef}>
+            <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
                 {/* Form Header - Plan Match Move Workflow */}
                 <div className="tru-qb-form-header">
+                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
                   <div className="tru-qb-workflow">
                     <div className="tru-qb-workflow-step">
                       <span className="tru-qb-workflow-num">1</span>
-                      <div className="tru-qb-workflow-info">
-                        <span className="tru-qb-workflow-title">Plan</span>
-                        <span className="tru-qb-workflow-desc">Build your inventory with AI tools or talk to a specialist</span>
-                      </div>
+                      <span className="tru-qb-workflow-title">Plan</span>
                     </div>
                     <span className="tru-qb-workflow-arrow">→</span>
                     <div className="tru-qb-workflow-step">
                       <span className="tru-qb-workflow-num">2</span>
-                      <div className="tru-qb-workflow-info">
-                        <span className="tru-qb-workflow-title">Match</span>
-                        <span className="tru-qb-workflow-desc">We analyze federal SAFER data to find best rates</span>
-                      </div>
+                      <span className="tru-qb-workflow-title">Match</span>
                     </div>
                     <span className="tru-qb-workflow-arrow">→</span>
                     <div className="tru-qb-workflow-step">
                       <span className="tru-qb-workflow-num">3</span>
-                      <div className="tru-qb-workflow-info">
-                        <span className="tru-qb-workflow-title">Move</span>
-                        <span className="tru-qb-workflow-desc">Get matched with the right mover at the best rate</span>
-                      </div>
+                      <span className="tru-qb-workflow-title">Move</span>
                     </div>
                   </div>
                 </div>
