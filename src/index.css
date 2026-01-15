@@ -8876,6 +8876,8 @@
    ============================================= */
 .tru-estimate-overlay {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .tru-estimate-wizard-container {
@@ -8886,27 +8888,30 @@
 /* Background inventory builder - visible behind wizard */
 .tru-estimate-bg-inventory {
   position: relative;
-  margin-top: 24px;
+  margin-top: -60px; /* Overlap with wizard to show more inventory */
+  padding-top: 90px; /* Compensate for overlap */
   border-radius: 24px;
   overflow: hidden;
+  min-height: 520px; /* Show more items */
 }
 
 .tru-estimate-bg-inventory-inner {
-  opacity: 0.95;
+  opacity: 1;
   pointer-events: none;
   user-select: none;
 }
 
-/* Lock overlay */
+/* Lock overlay - lighter to show items better */
 .tru-estimate-lock-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, 
-    hsl(var(--background) / 0.1) 0%, 
-    hsl(var(--background) / 0.6) 50%,
-    hsl(var(--background) / 0.95) 100%
+    hsl(var(--background) / 0.05) 0%, 
+    hsl(var(--background) / 0.15) 30%,
+    hsl(var(--background) / 0.5) 70%,
+    hsl(var(--background) / 0.9) 100%
   );
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(0.5px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8958,5 +8963,11 @@
   
   .tru-wizard-continue {
     height: 52px;
+  }
+  
+  .tru-estimate-bg-inventory {
+    margin-top: -40px;
+    padding-top: 60px;
+    min-height: 400px;
   }
 }
