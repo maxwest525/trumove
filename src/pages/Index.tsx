@@ -319,12 +319,6 @@ export default function Index() {
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Hero CTA - Right below header */}
-                  <div className="tru-qb-hero-banner">
-                    <span className="tru-qb-hero-label">Step 1</span>
-                    <h2 className="tru-qb-hero-title">Start with your current location</h2>
-                  </div>
                 </div>
                   {/* Main Body: Form + Dashboard Side by Side */}
                   <div className="tru-qb-body">
@@ -333,8 +327,9 @@ export default function Index() {
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
+                      <h2 className="tru-qb-hero-cta">Enter your ZIP code to get started with your move</h2>
                       <h1 className="tru-qb-question">Where are you moving from?</h1>
-                      <p className="tru-qb-subtitle">Enter your current ZIP code</p>
+                      <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
                       
                       <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                         <input
