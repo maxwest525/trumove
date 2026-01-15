@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
 import MoveMap from "@/components/MoveMap";
-import HeroMap from "@/components/HeroMap";
+import MapboxHeroMap from "@/components/MapboxHeroMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import FloatingQuoteButton from "@/components/FloatingQuoteButton";
 import Confetti from "@/components/Confetti";
@@ -302,7 +302,7 @@ export default function Index() {
                 </div>
                 
                 {/* Enticing Map */}
-                <HeroMap />
+                <MapboxHeroMap />
               </div>
               
               {/* RIGHT: Quote Builder */}
