@@ -6340,56 +6340,99 @@
 .tru-qb-form-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 24px;
-  background: hsl(var(--tm-ink));
-  border-radius: 20px 20px 0 0;
+  justify-content: center;
+  padding: 24px 20px;
+  background: white;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
 }
 
 .tru-qb-workflow {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 0;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .tru-qb-workflow-step {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
 }
 
 .tru-qb-workflow-num {
-  width: 22px;
-  height: 22px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 8px;
   background: hsl(var(--primary));
   color: hsl(var(--tm-ink));
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
+  flex-shrink: 0;
 }
 
-.tru-qb-workflow-label {
-  font-size: 14px;
-  font-weight: 700;
-  color: white;
-  letter-spacing: 0.02em;
+.tru-qb-workflow-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.tru-qb-workflow-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-qb-workflow-desc {
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.55);
+  line-height: 1.4;
 }
 
 .tru-qb-workflow-arrow {
-  font-size: 14px;
-  color: hsl(0 0% 100% / 0.4);
-  margin: 0 4px;
+  font-size: 16px;
+  color: hsl(var(--tm-ink) / 0.25);
+  margin: 6px 8px 0;
+  flex-shrink: 0;
 }
 
-.tru-qb-step-indicator {
-  font-size: 13px;
-  font-weight: 600;
-  color: hsl(0 0% 100% / 0.6);
-  white-space: nowrap;
+@media (max-width: 700px) {
+  .tru-qb-form-header {
+    padding: 16px;
+  }
+  
+  .tru-qb-workflow {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .tru-qb-workflow-arrow {
+    display: none;
+  }
+  
+  .tru-qb-workflow-step {
+    gap: 10px;
+  }
+  
+  .tru-qb-workflow-num {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .tru-qb-workflow-title {
+    font-size: 14px;
+  }
+  
+  .tru-qb-workflow-desc {
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 600px) {
