@@ -16,10 +16,10 @@ interface MoveDetailsFormProps {
 
 const HOME_SIZES = [
   { value: 'studio', label: 'Studio' },
-  { value: '1br', label: '1 BR' },
-  { value: '2br', label: '2 BR' },
-  { value: '3br', label: '3 BR' },
-  { value: '4br+', label: '4+ BR' },
+  { value: '1br', label: '1BR' },
+  { value: '2br', label: '2BR' },
+  { value: '3br', label: '3BR' },
+  { value: '4br+', label: '4+' },
 ] as const;
 
 export default function MoveDetailsForm({ 
@@ -58,49 +58,7 @@ export default function MoveDetailsForm({
 
   return (
     <div className="space-y-4">
-      {/* Home Size Selector */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <Home className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="text-xs font-semibold text-muted-foreground">Home Size</span>
-        </div>
-        <div className="flex gap-2">
-          {HOME_SIZES.map((size) => (
-            <button
-              key={size.value}
-              type="button"
-              onClick={() => onUpdate({ homeSize: size.value })}
-              className={cn(
-                "flex-1 h-10 rounded-lg text-xs font-bold transition-all",
-                moveDetails.homeSize === size.value
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "bg-muted/60 text-foreground/70 hover:bg-muted hover:text-foreground border border-border/40"
-              )}
-            >
-              {size.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Route Summary Strip */}
-      {moveDetails.distance > 0 && (
-        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20">
-          <MapPin className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs font-bold text-foreground">
-            {moveDetails.distance.toLocaleString()} mi
-          </span>
-          <span className={`text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full ${
-            moveDetails.moveType === 'long-distance' 
-              ? 'bg-amber-500/20 text-amber-600' 
-              : 'bg-emerald-500/20 text-emerald-600'
-          }`}>
-            {moveDetails.moveType === 'long-distance' ? 'Long Distance' : 'Local'}
-          </span>
-        </div>
-      )}
-
-      {/* Location Inputs */}
+      {/* Location Inputs - TOP */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <div className="flex items-center gap-2 mb-2">
@@ -134,41 +92,86 @@ export default function MoveDetailsForm({
         </div>
       </div>
 
-      {/* Move Date Picker */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="text-xs font-semibold text-muted-foreground">Target Move Date</span>
+      {/* Route Summary Strip */}
+      {moveDetails.distance > 0 && (
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20">
+          <MapPin className="w-3.5 h-3.5 text-primary" />
+          <span className="text-xs font-bold text-foreground">
+            {moveDetails.distance.toLocaleString()} mi
+          </span>
+          <span className={`text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full ${
+            moveDetails.moveType === 'long-distance' 
+              ? 'bg-amber-500/20 text-amber-600' 
+              : 'bg-emerald-500/20 text-emerald-600'
+          }`}>
+            {moveDetails.moveType === 'long-distance' ? 'Long Distance' : 'Local'}
+          </span>
         </div>
-        <Popover open={dateOpen} onOpenChange={setDateOpen}>
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              className={cn(
-                "w-full h-11 px-4 rounded-lg border border-border/60 bg-background text-sm font-medium text-left flex items-center gap-3 transition-all hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20",
-                !selectedDate && "text-muted-foreground/60"
-              )}
-            >
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              {selectedDate ? format(selectedDate, "MMMM d, yyyy") : "Select your move date"}
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <CalendarComponent
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => {
-                if (date) {
-                  onUpdate({ moveDate: format(date, "yyyy-MM-dd") });
-                  setDateOpen(false);
-                }
-              }}
-              disabled={(date) => date < new Date()}
-              initialFocus
-              className={cn("p-3 pointer-events-auto")}
-            />
-          </PopoverContent>
-        </Popover>
+      )}
+
+      {/* Move Date + Home Size - SAME ROW */}
+      <div className="flex gap-3">
+        {/* Move Date Picker - Compact */}
+        <div className="w-[140px] flex-shrink-0">
+          <div className="flex items-center gap-2 mb-2">
+            <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-xs font-semibold text-muted-foreground">Date</span>
+          </div>
+          <Popover open={dateOpen} onOpenChange={setDateOpen}>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  "w-full h-10 px-3 rounded-lg border border-border/60 bg-background text-xs font-medium text-left flex items-center gap-2 transition-all hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20",
+                  !selectedDate && "text-muted-foreground/60"
+                )}
+              >
+                <Calendar className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                {selectedDate ? format(selectedDate, "MMM d, yyyy") : "Select"}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => {
+                  if (date) {
+                    onUpdate({ moveDate: format(date, "yyyy-MM-dd") });
+                    setDateOpen(false);
+                  }
+                }}
+                disabled={(date) => date < new Date()}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {/* Home Size Selector */}
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <Home className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-xs font-semibold text-muted-foreground">Home Size</span>
+          </div>
+          <div className="flex gap-1.5">
+            {HOME_SIZES.map((size) => (
+              <button
+                key={size.value}
+                type="button"
+                onClick={() => onUpdate({ homeSize: size.value })}
+                className={cn(
+                  "flex-1 h-10 rounded-lg text-xs font-bold transition-all",
+                  moveDetails.homeSize === size.value
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "bg-muted/60 text-foreground/70 hover:bg-muted hover:text-foreground border border-border/40"
+                )}
+              >
+                {size.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Quick Options - Inline */}
