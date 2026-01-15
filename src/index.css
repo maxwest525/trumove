@@ -6336,118 +6336,78 @@
   overflow: hidden;
 }
 
-/* Form Header */
+/* Form Header - Plan Match Move Workflow */
 .tru-qb-form-header {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 20px 28px;
-  background: linear-gradient(180deg, hsl(var(--tm-ink) / 0.02), transparent);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
-}
-
-/* Enhanced Form Header */
-.tru-qb-form-header.tru-qb-form-header-enhanced {
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.04), hsl(var(--primary) / 0.01));
-  border-bottom: 2px solid hsl(var(--primary) / 0.15);
-  padding: 24px 28px 20px;
-}
-
-.tru-qb-header-accent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(140 70% 45%));
+  gap: 16px;
+  padding: 16px 24px;
+  background: hsl(var(--tm-ink));
   border-radius: 20px 20px 0 0;
 }
 
-.tru-qb-header-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: hsl(var(--primary) / 0.12);
-  color: hsl(var(--tm-ink));
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  margin-bottom: 6px;
-}
-
-.tru-qb-header-badge svg {
-  color: hsl(var(--primary));
-}
-
-.tru-qb-form-header-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.tru-qb-form-title {
-  font-size: 18px;
-  font-weight: 800;
-  color: hsl(var(--tm-ink));
-  margin: 0;
-}
-
-.tru-qb-form-header-enhanced .tru-qb-form-title {
-  font-size: 20px;
-}
-
-.tru-qb-form-subtitle {
-  font-size: 13px;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.55);
-  margin: 0;
-}
-
-/* Progress Dots */
-.tru-qb-progress-dots {
+.tru-qb-workflow {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.tru-qb-dot {
+.tru-qb-workflow-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tru-qb-workflow-num {
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
   border-radius: 50%;
-  background: hsl(var(--tm-ink) / 0.08);
-  transition: all 200ms ease;
-}
-
-.tru-qb-dot.is-complete {
   background: hsl(var(--primary));
-}
-
-.tru-qb-dot.is-complete svg {
   color: hsl(var(--tm-ink));
+  font-size: 12px;
+  font-weight: 800;
 }
 
-.tru-qb-dot.is-current {
-  background: hsl(var(--tm-ink));
-  box-shadow: 0 0 0 4px hsl(var(--tm-ink) / 0.15);
+.tru-qb-workflow-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.02em;
+}
+
+.tru-qb-workflow-arrow {
+  font-size: 14px;
+  color: hsl(0 0% 100% / 0.4);
+  margin: 0 4px;
+}
+
+.tru-qb-step-indicator {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(0 0% 100% / 0.6);
+  white-space: nowrap;
 }
 
 @media (max-width: 600px) {
   .tru-qb-form-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 10px;
+    padding: 14px 20px;
   }
   
-  .tru-qb-progress-dots {
-    align-self: stretch;
-    justify-content: space-between;
+  .tru-qb-workflow-label {
+    font-size: 12px;
+  }
+  
+  .tru-qb-workflow-num {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
   }
 }
 
