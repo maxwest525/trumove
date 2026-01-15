@@ -493,10 +493,138 @@
 /* =============================================
    MAPBOX MOVE MAP - Quote Builder Panel
    ============================================= */
+.mapbox-move-map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.mapbox-move-map-wrapper:hover {
+  transform: scale(1.02);
+}
+
 .mapbox-move-map {
   width: 100%;
   height: 100%;
   border-radius: 12px;
+}
+
+/* Enhanced marker container */
+.mapbox-marker-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+/* Multi-ring ripple effect */
+.mapbox-marker-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: hsl(var(--primary) / 0.25);
+  transform: translate(-50%, -50%);
+  animation: ripple-expand 2.5s ease-out infinite;
+}
+
+.mapbox-marker-ripple:nth-child(2) {
+  animation-delay: 0.8s;
+}
+
+@keyframes ripple-expand {
+  0% { 
+    transform: translate(-50%, -50%) scale(0.3); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translate(-50%, -50%) scale(2.5); 
+    opacity: 0; 
+  }
+}
+
+/* Marker dot variants */
+.mapbox-marker-dot.origin,
+.mapbox-marker-dot.destination {
+  width: 14px;
+  height: 14px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.5);
+  z-index: 2;
+}
+
+.mapbox-marker-dot.destination {
+  width: 16px;
+  height: 16px;
+}
+
+/* Truck marker */
+.mapbox-truck-marker {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.3);
+  transition: transform 0.1s linear;
+  color: hsl(var(--tm-ink));
+}
+
+/* Expanded map overlay */
+.mapbox-expanded-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--tm-ink) / 0.6);
+  backdrop-filter: blur(8px);
+  animation: fade-in 0.2s ease-out;
+}
+
+.mapbox-expanded-container {
+  position: relative;
+  width: 85vw;
+  height: 75vh;
+  max-width: 1200px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 40px 120px hsl(var(--tm-ink) / 0.4);
+  animation: scale-in 0.25s ease-out;
+}
+
+/* Expand hint */
+.map-expand-hint {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 6px 12px;
+  background: hsl(var(--tm-ink) / 0.85);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.mapbox-move-map-wrapper:hover .map-expand-hint {
+  opacity: 1;
 }
 
 .mapbox-token-input {

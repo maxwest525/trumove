@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { X, Maximize2 } from 'lucide-react';
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldHJ3b2YwYXF4M2tvajNsbTFpNTdjIn0.DXcMYHvBRP8vJQM8KKdRLg';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam51OGJrcGFiIn0.tN-ZMle93ctK7PIt9kU7JA';
 
 interface MapboxMoveMapProps {
   fromZip?: string;
@@ -118,14 +120,220 @@ function createArcLine(start: [number, number], end: [number, number], steps: nu
   return coords;
 }
 
+function getBearing(start: [number, number], end: [number, number]): number {
+  const lng1 = start[0] * Math.PI / 180;
+  const lng2 = end[0] * Math.PI / 180;
+  const lat1 = start[1] * Math.PI / 180;
+  const lat2 = end[1] * Math.PI / 180;
+  const y = Math.sin(lng2 - lng1) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
+// Truck SVG icon
+const TRUCK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18h2a1 1 0 0 0 1-1v-3.28a1 1 0 0 0-.684-.948l-1.923-.641a1 1 0 0 1-.684-.949V8a2 2 0 0 1 2-2h2.586a1 1 0 0 1 .707.293l2.414 2.414a1 1 0 0 1 .293.707V17a1 1 0 0 1-1 1h-1"/><circle cx="7" cy="18" r="2"/><circle cx="19" cy="18" r="2"/></svg>`;
+
+interface ExpandedMapViewProps {
+  fromCoords: [number, number] | null;
+  toCoords: [number, number] | null;
+  onClose: () => void;
+}
+
+function ExpandedMapView({ fromCoords, toCoords, onClose }: ExpandedMapViewProps) {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const animationRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!mapContainer.current) return;
+
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+    
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [-98.5795, 39.8283],
+      zoom: 3,
+      pitch: 25,
+      interactive: true,
+    });
+
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    map.current.on('load', () => {
+      if (!map.current) return;
+
+      // Add terrain
+      map.current.addSource('mapbox-dem', {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        tileSize: 512,
+        maxzoom: 14
+      });
+      map.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.2 });
+
+      // Add fog
+      map.current.setFog({
+        color: 'rgb(255, 255, 255)',
+        'high-color': 'rgb(200, 210, 230)',
+        'horizon-blend': 0.1
+      });
+
+      // Add route if coords available
+      if (fromCoords && toCoords) {
+        const lineCoords = createArcLine(fromCoords, toCoords, 100);
+        
+        // Add full route
+        map.current.addSource('route', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: { type: 'LineString', coordinates: lineCoords }
+          }
+        });
+
+        map.current.addLayer({
+          id: 'route-line',
+          type: 'line',
+          source: 'route',
+          paint: {
+            'line-color': '#00ff6a',
+            'line-width': 4,
+            'line-opacity': 0.9,
+          }
+        });
+
+        map.current.addLayer({
+          id: 'route-glow',
+          type: 'line',
+          source: 'route',
+          paint: {
+            'line-color': '#00ff6a',
+            'line-width': 12,
+            'line-opacity': 0.2,
+            'line-blur': 8
+          }
+        });
+
+        // Add markers
+        const originEl = document.createElement('div');
+        originEl.className = 'mapbox-marker-container';
+        originEl.innerHTML = `
+          <div class="mapbox-marker-ripple"></div>
+          <div class="mapbox-marker-ripple"></div>
+          <div class="mapbox-marker-dot origin"></div>
+        `;
+        const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
+          .setLngLat(fromCoords)
+          .addTo(map.current);
+        markersRef.current.push(originMarker);
+
+        const destEl = document.createElement('div');
+        destEl.className = 'mapbox-marker-container';
+        destEl.innerHTML = `
+          <div class="mapbox-marker-ripple"></div>
+          <div class="mapbox-marker-ripple"></div>
+          <div class="mapbox-marker-dot destination"></div>
+        `;
+        const destMarker = new mapboxgl.Marker({ element: destEl, anchor: 'center' })
+          .setLngLat(toCoords)
+          .addTo(map.current);
+        markersRef.current.push(destMarker);
+
+        // Add truck marker
+        const truckEl = document.createElement('div');
+        truckEl.className = 'mapbox-truck-marker';
+        truckEl.innerHTML = TRUCK_SVG;
+        const truckMarker = new mapboxgl.Marker({ element: truckEl, anchor: 'center' })
+          .setLngLat(lineCoords[0])
+          .addTo(map.current);
+        markersRef.current.push(truckMarker);
+
+        // Animate truck
+        let step = 0;
+        const animateTruck = () => {
+          if (step < lineCoords.length - 1) {
+            step++;
+            const pos = lineCoords[step];
+            const nextPos = lineCoords[Math.min(step + 1, lineCoords.length - 1)];
+            const bearing = getBearing(pos, nextPos);
+            truckMarker.setLngLat(pos);
+            truckMarker.setRotation(bearing - 90);
+            animationRef.current = requestAnimationFrame(animateTruck);
+          } else {
+            // Loop animation
+            setTimeout(() => {
+              step = 0;
+              truckMarker.setLngLat(lineCoords[0]);
+              animationRef.current = requestAnimationFrame(animateTruck);
+            }, 1000);
+          }
+        };
+        animationRef.current = requestAnimationFrame(animateTruck);
+
+        // Fit bounds
+        const bounds = new mapboxgl.LngLatBounds();
+        bounds.extend(fromCoords);
+        bounds.extend(toCoords);
+        map.current.fitBounds(bounds, { padding: 80, maxZoom: 6 });
+      }
+    });
+
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      markersRef.current.forEach(m => m.remove());
+      markersRef.current = [];
+      map.current?.remove();
+    };
+  }, [fromCoords, toCoords]);
+
+  return (
+    <div className="mapbox-expanded-overlay" onClick={onClose}>
+      <div className="mapbox-expanded-container" onClick={e => e.stopPropagation()}>
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-full shadow-lg hover:bg-white transition-colors"
+        >
+          <X className="w-5 h-5 text-foreground" />
+        </button>
+        <div ref={mapContainer} className="w-full h-full" />
+      </div>
+    </div>
+  );
+}
+
 export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const animationRef = useRef<number | null>(null);
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const fromCoords = useMemo(() => fromZip ? getZipCoords(fromZip) : null, [fromZip]);
   const toCoords = useMemo(() => toZip ? getZipCoords(toZip) : null, [toZip]);
+
+  const handleMouseEnter = useCallback(() => {
+    if (fromCoords && toCoords) {
+      hoverTimerRef.current = setTimeout(() => setIsExpanded(true), 400);
+    }
+  }, [fromCoords, toCoords]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+  }, []);
+
+  const handleClick = useCallback(() => {
+    if (fromCoords && toCoords) {
+      setIsExpanded(true);
+    }
+  }, [fromCoords, toCoords]);
 
   // Initialize map
   useEffect(() => {
@@ -138,14 +346,35 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
       style: 'mapbox://styles/mapbox/light-v11',
       center: [-98.5795, 39.8283],
       zoom: 3,
+      pitch: 20,
       interactive: false,
     });
 
     map.current.on('load', () => {
+      if (!map.current) return;
+
+      // Add terrain
+      map.current.addSource('mapbox-dem', {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        tileSize: 512,
+        maxzoom: 14
+      });
+      map.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.2 });
+
+      // Add fog
+      map.current.setFog({
+        color: 'rgb(255, 255, 255)',
+        'high-color': 'rgb(200, 210, 230)',
+        'horizon-blend': 0.1
+      });
+
       setIsMapLoaded(true);
     });
 
     return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
       markersRef.current.forEach(m => m.remove());
       markersRef.current = [];
       map.current?.remove();
@@ -156,81 +385,160 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
   useEffect(() => {
     if (!map.current || !isMapLoaded) return;
 
+    // Cancel any ongoing animation
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+
     // Clear old markers
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
 
     // Remove old layers/sources
     if (map.current.getLayer('route-line')) map.current.removeLayer('route-line');
-    if (map.current.getLayer('route-dash')) map.current.removeLayer('route-dash');
+    if (map.current.getLayer('route-glow')) map.current.removeLayer('route-glow');
+    if (map.current.getLayer('route-progress')) map.current.removeLayer('route-progress');
     if (map.current.getSource('route')) map.current.removeSource('route');
+    if (map.current.getSource('route-progress')) map.current.removeSource('route-progress');
 
     if (!fromCoords || !toCoords) {
       // Reset view
-      map.current.flyTo({ center: [-98.5795, 39.8283], zoom: 3 });
+      map.current.flyTo({ center: [-98.5795, 39.8283], zoom: 3, pitch: 20 });
       return;
     }
 
-    // Calculate bounds and center
+    // Calculate bounds
     const bounds = new mapboxgl.LngLatBounds();
     bounds.extend(fromCoords);
     bounds.extend(toCoords);
 
-    // Add route line
-    const lineCoords = createArcLine(fromCoords, toCoords, 50);
+    // Create arc coordinates
+    const lineCoords = createArcLine(fromCoords, toCoords, 100);
     
+    // Add full route (invisible initially)
     map.current.addSource('route', {
       type: 'geojson',
       data: {
         type: 'Feature',
         properties: {},
-        geometry: {
-          type: 'LineString',
-          coordinates: lineCoords
-        }
+        geometry: { type: 'LineString', coordinates: lineCoords }
       }
     });
 
+    // Add glow layer
     map.current.addLayer({
-      id: 'route-line',
+      id: 'route-glow',
       type: 'line',
       source: 'route',
       paint: {
         'line-color': '#00ff6a',
-        'line-width': 3,
-        'line-opacity': 0.9,
+        'line-width': 12,
+        'line-opacity': 0.2,
+        'line-blur': 8
+      }
+    });
+
+    // Add progress source for animation
+    map.current.addSource('route-progress', {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        properties: {},
+        geometry: { type: 'LineString', coordinates: [lineCoords[0]] }
       }
     });
 
     map.current.addLayer({
-      id: 'route-dash',
+      id: 'route-progress',
       type: 'line',
-      source: 'route',
+      source: 'route-progress',
       paint: {
-        'line-color': '#ffffff',
-        'line-width': 1,
-        'line-opacity': 0.5,
-        'line-dasharray': [2, 2]
+        'line-color': '#00ff6a',
+        'line-width': 4,
+        'line-opacity': 0.9,
       }
     });
 
-    // Add origin marker
+    // Add origin marker with ripples
     const originEl = document.createElement('div');
-    originEl.className = 'mapbox-marker';
-    originEl.innerHTML = `<div class="mapbox-marker-pulse"></div><div class="mapbox-marker-dot"></div>`;
+    originEl.className = 'mapbox-marker-container';
+    originEl.innerHTML = `
+      <div class="mapbox-marker-ripple"></div>
+      <div class="mapbox-marker-ripple"></div>
+      <div class="mapbox-marker-dot origin"></div>
+    `;
     const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
       .setLngLat(fromCoords)
       .addTo(map.current);
     markersRef.current.push(originMarker);
 
-    // Add destination marker
+    // Add destination marker with ripples
     const destEl = document.createElement('div');
-    destEl.className = 'mapbox-marker';
-    destEl.innerHTML = `<div class="mapbox-marker-pulse"></div><div class="mapbox-marker-dot"></div>`;
+    destEl.className = 'mapbox-marker-container';
+    destEl.innerHTML = `
+      <div class="mapbox-marker-ripple"></div>
+      <div class="mapbox-marker-ripple"></div>
+      <div class="mapbox-marker-dot destination"></div>
+    `;
     const destMarker = new mapboxgl.Marker({ element: destEl, anchor: 'center' })
       .setLngLat(toCoords)
       .addTo(map.current);
     markersRef.current.push(destMarker);
+
+    // Add truck marker
+    const truckEl = document.createElement('div');
+    truckEl.className = 'mapbox-truck-marker';
+    truckEl.innerHTML = TRUCK_SVG;
+    const truckMarker = new mapboxgl.Marker({ element: truckEl, anchor: 'center' })
+      .setLngLat(lineCoords[0])
+      .addTo(map.current);
+    markersRef.current.push(truckMarker);
+
+    // Animate route drawing and truck
+    let step = 0;
+    const totalSteps = lineCoords.length;
+    const animate = () => {
+      if (!map.current) return;
+      
+      if (step < totalSteps) {
+        step += 2;
+        const visibleCoords = lineCoords.slice(0, Math.min(step, totalSteps));
+        
+        const source = map.current.getSource('route-progress') as mapboxgl.GeoJSONSource;
+        if (source) {
+          source.setData({
+            type: 'Feature',
+            properties: {},
+            geometry: { type: 'LineString', coordinates: visibleCoords }
+          });
+        }
+
+        // Move truck
+        const truckPos = lineCoords[Math.min(step, totalSteps - 1)];
+        const nextPos = lineCoords[Math.min(step + 1, totalSteps - 1)];
+        const bearing = getBearing(truckPos, nextPos);
+        truckMarker.setLngLat(truckPos);
+        truckMarker.setRotation(bearing - 90);
+
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        // Continue truck loop
+        const loopTruck = () => {
+          if (!map.current) return;
+          step = (step + 1) % totalSteps;
+          const truckPos = lineCoords[step];
+          const nextPos = lineCoords[(step + 1) % totalSteps];
+          const bearing = getBearing(truckPos, nextPos);
+          truckMarker.setLngLat(truckPos);
+          truckMarker.setRotation(bearing - 90);
+          animationRef.current = requestAnimationFrame(loopTruck);
+        };
+        animationRef.current = requestAnimationFrame(loopTruck);
+      }
+    };
+    
+    animationRef.current = requestAnimationFrame(animate);
 
     // Fit to bounds
     map.current.fitBounds(bounds, {
@@ -240,5 +548,31 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
 
   }, [fromCoords, toCoords, isMapLoaded]);
 
-  return <div ref={mapContainer} className="mapbox-move-map" />;
+  return (
+    <>
+      <div 
+        className="mapbox-move-map-wrapper"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
+      >
+        <div ref={mapContainer} className="mapbox-move-map" />
+        {fromCoords && toCoords && (
+          <div className="map-expand-hint">
+            <Maximize2 className="w-3 h-3 mr-1 inline" />
+            Click to expand
+          </div>
+        )}
+      </div>
+      
+      {isExpanded && createPortal(
+        <ExpandedMapView 
+          fromCoords={fromCoords} 
+          toCoords={toCoords} 
+          onClose={() => setIsExpanded(false)} 
+        />,
+        document.body
+      )}
+    </>
+  );
 }
