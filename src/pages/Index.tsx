@@ -14,8 +14,8 @@ import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
   Shield, Video, Boxes, Calculator, Search, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
-  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles, Star, Users, Award,
-  Zap, Building2, Ban, Database, ChevronRight, Radar
+  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
+  Database, ChevronRight, Radar
 } from "lucide-react";
 
 // ZIP lookup
@@ -284,7 +284,7 @@ export default function Index() {
                 {/* Section 1: Bold Intro */}
                 <div className="tru-hero-intro">
                   <div className="tru-hero-kicker">
-                    <Zap className="w-4 h-4" />
+                    <Sparkles className="w-4 h-4" />
                     <span>MOVING MADE SIMPLE</span>
                   </div>
                   <h1 className="tru-hero-title">
@@ -307,11 +307,20 @@ export default function Index() {
                   <div className="tru-hero-cards-row">
                     <div className="tru-hero-mini-card">
                       <div className="tru-hero-mini-icon">
-                        <Building2 className="w-5 h-5" />
+                        <Search className="w-5 h-5" />
                       </div>
                       <div className="tru-hero-mini-content">
-                        <span className="tru-hero-mini-title">Skip the Brokers</span>
-                        <span className="tru-hero-mini-desc">Direct to verified carriers. Your info is never sold.</span>
+                        <span className="tru-hero-mini-title">Transparent Process</span>
+                        <span className="tru-hero-mini-desc">See exactly how we find and vet your carriers.</span>
+                      </div>
+                    </div>
+                    <div className="tru-hero-mini-card">
+                      <div className="tru-hero-mini-icon">
+                        <Calculator className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-mini-content">
+                        <span className="tru-hero-mini-title">Smart Estimates</span>
+                        <span className="tru-hero-mini-desc">AI-powered pricing based on your home, inventory & route.</span>
                       </div>
                     </div>
                     <div className="tru-hero-mini-card">
@@ -319,17 +328,8 @@ export default function Index() {
                         <Lock className="w-5 h-5" />
                       </div>
                       <div className="tru-hero-mini-content">
-                        <span className="tru-hero-mini-title">Binding Quotes</span>
-                        <span className="tru-hero-mini-desc">The price we show is the price you pay. No surprises.</span>
-                      </div>
-                    </div>
-                    <div className="tru-hero-mini-card">
-                      <div className="tru-hero-mini-icon">
-                        <Ban className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-mini-content">
-                        <span className="tru-hero-mini-title">Zero Spam Promise</span>
-                        <span className="tru-hero-mini-desc">One call from your matched carrier. That's it.</span>
+                        <span className="tru-hero-mini-title">Your Data Stays Private</span>
+                        <span className="tru-hero-mini-desc">We never sell your info to third parties.</span>
                       </div>
                     </div>
                   </div>
@@ -345,7 +345,7 @@ export default function Index() {
                       </div>
                       <div className="tru-hero-feature-info">
                         <span className="tru-hero-feature-title">AI Move Builder</span>
-                        <span className="tru-hero-feature-desc">Plan your entire move & get instant pricing</span>
+                        <span className="tru-hero-feature-desc">Build your inventory list & get an estimate</span>
                       </div>
                       <ChevronRight className="tru-hero-feature-arrow" />
                     </Link>
@@ -355,7 +355,7 @@ export default function Index() {
                       </div>
                       <div className="tru-hero-feature-info">
                         <span className="tru-hero-feature-title">Virtual Walkthrough</span>
-                        <span className="tru-hero-feature-desc">Video consult with a move specialist</span>
+                        <span className="tru-hero-feature-desc">Walk through your home with a specialist</span>
                       </div>
                       <ChevronRight className="tru-hero-feature-arrow" />
                     </Link>
@@ -365,7 +365,7 @@ export default function Index() {
                       </div>
                       <div className="tru-hero-feature-info">
                         <span className="tru-hero-feature-title">Talk to a Specialist</span>
-                        <span className="tru-hero-feature-desc">Connect with an expert in under 60 seconds</span>
+                        <span className="tru-hero-feature-desc">Speak with a move coordinator</span>
                       </div>
                       <ChevronRight className="tru-hero-feature-arrow" />
                     </a>
@@ -375,42 +375,10 @@ export default function Index() {
                       </div>
                       <div className="tru-hero-feature-info">
                         <span className="tru-hero-feature-title">Carrier Lookup</span>
-                        <span className="tru-hero-feature-desc">Research any mover's FMCSA safety record</span>
+                        <span className="tru-hero-feature-desc">Access federal safety data on any carrier</span>
                       </div>
                       <ChevronRight className="tru-hero-feature-arrow" />
                     </Link>
-                  </div>
-                </div>
-
-                {/* Section 4: Social Proof */}
-                <div className="tru-hero-proof">
-                  <div className="tru-hero-stats-row">
-                    <div className="tru-hero-stat">
-                      <span className="tru-hero-stat-num">2,400+</span>
-                      <span className="tru-hero-stat-label">Moves Completed</span>
-                    </div>
-                    <div className="tru-hero-stat">
-                      <span className="tru-hero-stat-num">4.9★</span>
-                      <span className="tru-hero-stat-label">Average Rating</span>
-                    </div>
-                    <div className="tru-hero-stat">
-                      <span className="tru-hero-stat-num">$0</span>
-                      <span className="tru-hero-stat-label">Broker Fees</span>
-                    </div>
-                  </div>
-                  <div className="tru-hero-badges">
-                    <span className="tru-hero-badge-pill">
-                      <Award className="w-4 h-4" />
-                      Top Rated 2024
-                    </span>
-                    <span className="tru-hero-badge-pill">
-                      <CheckCircle className="w-4 h-4" />
-                      BBB Accredited
-                    </span>
-                    <span className="tru-hero-badge-pill">
-                      <Shield className="w-4 h-4" />
-                      FMCSA Verified
-                    </span>
                   </div>
                 </div>
               </div>
@@ -418,25 +386,8 @@ export default function Index() {
               {/* RIGHT: Quote Builder */}
               <div className="tru-hero-visual" ref={quoteBuilderRef}>
                 <div className="tru-quote-builder">
-                  {/* Eye-catching Form Header */}
-                  <div className="tru-qb-header-new">
-                    <div className="tru-qb-header-left">
-                      <div className="tru-qb-header-icon">
-                        <Zap className="w-5 h-5" />
-                      </div>
-                      <div className="tru-qb-header-text">
-                        <span className="tru-qb-header-title">AI Move Estimator</span>
-                        <span className="tru-qb-header-tagline">Get your personalized quote in 60 seconds</span>
-                      </div>
-                    </div>
-                    <div className="tru-qb-header-badge">
-                      <span className="tru-qb-header-badge-dot"></span>
-                      <span>LIVE</span>
-                    </div>
-                  </div>
-                  
-              {/* Main Body: Form + Dashboard Side by Side */}
-              <div className="tru-qb-body">
+                  {/* Main Body: Form + Dashboard Side by Side */}
+                  <div className="tru-qb-body">
                 {/* LEFT: Conversation Area */}
                 <div className="tru-qb-main">
                   {/* Step 1: From ZIP */}
@@ -701,40 +652,36 @@ export default function Index() {
 
                 {/* RIGHT: Live Dashboard Panel */}
                 <div className="tru-qb-panel">
-                  {/* Sidebar Progress Tracker */}
-                  <div className="tru-qb-progress-tracker">
-                    <div className="tru-qb-progress-title">YOUR QUOTE</div>
-                    <div className="tru-qb-progress-steps">
-                      <div className={`tru-qb-progress-step ${step > 1 ? 'is-done' : step === 1 ? 'is-current' : ''}`}>
-                        <span className="tru-qb-progress-dot">{step > 1 ? <CheckCircle className="w-3 h-3" /> : '1'}</span>
-                        <span className="tru-qb-progress-label">From</span>
-                        <span className="tru-qb-progress-value">{fromCity ? fromCity.split(',')[0] : '...'}</span>
-                      </div>
-                      <div className={`tru-qb-progress-step ${step > 2 ? 'is-done' : step === 2 ? 'is-current' : ''}`}>
-                        <span className="tru-qb-progress-dot">{step > 2 ? <CheckCircle className="w-3 h-3" /> : '2'}</span>
-                        <span className="tru-qb-progress-label">To</span>
-                        <span className="tru-qb-progress-value">{toCity ? toCity.split(',')[0] : '...'}</span>
-                      </div>
-                      <div className={`tru-qb-progress-step ${step > 3 ? 'is-done' : step === 3 ? 'is-current' : ''}`}>
-                        <span className="tru-qb-progress-dot">{step > 3 ? <CheckCircle className="w-3 h-3" /> : '3'}</span>
-                        <span className="tru-qb-progress-label">Date</span>
-                        <span className="tru-qb-progress-value">{moveDate ? format(moveDate, "MMM d") : '...'}</span>
-                      </div>
-                      <div className={`tru-qb-progress-step ${step > 4 ? 'is-done' : step === 4 ? 'is-current' : ''}`}>
-                        <span className="tru-qb-progress-dot">{step > 4 ? <CheckCircle className="w-3 h-3" /> : '4'}</span>
-                        <span className="tru-qb-progress-label">Size</span>
-                        <span className="tru-qb-progress-value">{size || '...'}</span>
-                      </div>
-                      <div className={`tru-qb-progress-step ${step > 5 ? 'is-done' : step === 5 ? 'is-current' : ''}`}>
-                        <span className="tru-qb-progress-dot">{step > 5 ? <CheckCircle className="w-3 h-3" /> : '5'}</span>
-                        <span className="tru-qb-progress-label">Add-ons</span>
-                        <span className="tru-qb-progress-value">{(hasCar || needsPacking) ? [hasCar && 'Car', needsPacking && 'Pack'].filter(Boolean).join(', ') : '—'}</span>
-                      </div>
-                      <div className={`tru-qb-progress-step ${step === 6 ? 'is-current' : ''}`}>
-                        <span className="tru-qb-progress-dot">6</span>
-                        <span className="tru-qb-progress-label">Contact</span>
-                        <span className="tru-qb-progress-value">{email ? '✓' : '...'}</span>
-                      </div>
+                  {/* Simple Summary */}
+                  <div className="tru-qb-summary">
+                    <div className="tru-qb-summary-title">YOUR QUOTE</div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">From</span>
+                      <span className="tru-qb-info-value">{fromCity || "—"}</span>
+                    </div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">To</span>
+                      <span className="tru-qb-info-value">{toCity || "—"}</span>
+                    </div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">Distance</span>
+                      <span className="tru-qb-info-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                    </div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">Date</span>
+                      <span className="tru-qb-info-value">{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
+                    </div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">Size</span>
+                      <span className="tru-qb-info-value">{size || "—"}</span>
+                    </div>
+                    <div className="tru-qb-info-row">
+                      <span className="tru-qb-info-label">Add-ons</span>
+                      <span className="tru-qb-info-value">
+                        {(hasCar || needsPacking) 
+                          ? [hasCar && "Vehicle", needsPacking && "Packing"].filter(Boolean).join(", ")
+                          : "—"}
+                      </span>
                     </div>
                   </div>
 
