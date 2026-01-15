@@ -5982,6 +5982,18 @@
   /* Animation moved to micro-interactions section */
 }
 
+.tru-qb-quote-cta {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
 .tru-qb-question {
   font-size: clamp(20px, 3.5vw, 26px);
   font-weight: 800;

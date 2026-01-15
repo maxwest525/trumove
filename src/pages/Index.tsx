@@ -5,7 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import FloatingQuoteButton from "@/components/FloatingQuoteButton";
-import Confetti from "@/components/Confetti";
+
 import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -83,8 +83,7 @@ export default function Index() {
   // Step tracking (1-6)
   const [step, setStep] = useState(1);
   
-  // Celebration & Chat state
-  const [showCelebration, setShowCelebration] = useState(false);
+  // Chat state
   const [chatOpen, setChatOpen] = useState(false);
   
   // Form state
@@ -178,7 +177,6 @@ export default function Index() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setShowCelebration(true);
     
     // Store lead data
     localStorage.setItem("tm_lead", JSON.stringify({
@@ -186,10 +184,8 @@ export default function Index() {
       size, hasCar, needsPacking, email, phone, ts: Date.now()
     }));
     
-    // Delay navigation to show celebration
-    setTimeout(() => {
-      navigate("/online-estimate");
-    }, 2000);
+    // Navigate directly
+    navigate("/online-estimate");
   };
 
   // Step validation
@@ -320,16 +316,6 @@ export default function Index() {
                       />
                     </div>
                     
-                    {/* AI Chat Toggle */}
-                    <button 
-                      className="tru-qb-chat-toggle"
-                      onClick={() => setChatOpen(true)}
-                      title="Switch to AI Chat"
-                      type="button"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      <span>AI Chat</span>
-                    </button>
                     
                     <div className="tru-qb-status">
                       <span className="tru-status-dot is-online" />
@@ -344,8 +330,9 @@ export default function Index() {
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
+                      <p className="tru-qb-quote-cta">Get your instant moving quote</p>
                       <h1 className="tru-qb-question">Where are you moving from?</h1>
-                      <p className="tru-qb-subtitle">Enter your current ZIP code</p>
+                      <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
                       
                       <div className="tru-qb-input-wrap">
                         <input
@@ -373,8 +360,6 @@ export default function Index() {
                         <span>Continue</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
-                      
-                      <p className="tru-qb-hint">Press Enter ↵</p>
                     </div>
                   )}
 
@@ -921,9 +906,7 @@ export default function Index() {
         </div>
       </div>
 
-      {/* Confetti Celebration */}
-      <Confetti show={showCelebration} />
-      
+
       {/* Chat Modal */}
       <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       
