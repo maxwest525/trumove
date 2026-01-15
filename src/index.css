@@ -6512,9 +6512,9 @@
 .tru-qb-workflow-full {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
+  justify-content: flex-start;
+  gap: 16px;
+  flex: 1;
 }
 
 .tru-qb-workflow-pill {
@@ -6601,16 +6601,17 @@
 }
 
 .tru-qb-workflow-arrow {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 300;
-  color: hsl(var(--tm-ink) / 0.25);
+  color: hsl(var(--tm-ink) / 0.3);
   flex-shrink: 0;
+  margin: 0 4px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .tru-qb-workflow-full {
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
   }
   
   .tru-qb-workflow-pill {
@@ -6628,7 +6629,15 @@
 
 @media (max-width: 480px) {
   .tru-qb-form-header {
-    padding: 18px 16px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .tru-qb-workflow-full {
+    width: 100%;
+    justify-content: space-between;
   }
   
   .tru-qb-workflow-pill {
@@ -6645,6 +6654,103 @@
   
   .tru-qb-pill-title {
     font-size: 12px;
+  }
+}
+
+/* Tools Section - Inside Form */
+.tru-qb-tools {
+  padding: 20px 24px;
+  background: hsl(var(--tm-ink) / 0.02);
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-qb-tools-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.45);
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.tru-qb-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.tru-qb-tool-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: white;
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.tru-qb-tool-card:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.08);
+  transform: translateY(-2px);
+}
+
+.tru-qb-tool-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 10px;
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.tru-qb-tool-icon svg {
+  stroke-width: 2.5;
+}
+
+.tru-qb-tool-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tru-qb-tool-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-qb-tool-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.55);
+  line-height: 1.3;
+}
+
+@media (max-width: 900px) {
+  .tru-qb-tools-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .tru-qb-tools {
+    padding: 16px;
+  }
+  
+  .tru-qb-tools-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tru-qb-tool-card {
+    padding: 10px 12px;
   }
 }
 
