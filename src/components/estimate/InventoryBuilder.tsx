@@ -1,12 +1,49 @@
 import { useState, useMemo } from "react";
-import { Plus, Minus, Search, X, Sofa, Bed, UtensilsCrossed, Tv, Box, Dumbbell, TreePine, Wrench, Baby, Laptop } from "lucide-react";
+import { 
+  Plus, 
+  Minus, 
+  Search, 
+  X, 
+  Sofa, 
+  Bed, 
+  UtensilsCrossed, 
+  Tv, 
+  Box, 
+  Dumbbell, 
+  TreePine, 
+  Wrench, 
+  Baby, 
+  Laptop,
+  Trash2,
+  ShieldCheck,
+  Lamp,
+  Armchair,
+  Music,
+  Snowflake,
+  BookOpen,
+  Archive,
+  Table,
+  Coffee,
+  Utensils,
+  Monitor,
+  FileBox,
+  Hammer,
+  Package,
+  Bath,
+  type LucideIcon
+} from "lucide-react";
 import { ROOM_SUGGESTIONS, type InventoryItem } from "@/lib/priceCalculator";
 import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface InventoryBuilderProps {
   onAddItem: (item: Omit<InventoryItem, 'id'>) => void;
   inventoryItems?: InventoryItem[];
   onUpdateQuantity?: (id: string, quantity: number) => void;
+  onClearAll?: () => void;
+  specialHandling?: boolean;
+  onSpecialHandlingChange?: (value: boolean) => void;
 }
 
 const ROOM_CONFIG = [
@@ -23,7 +60,75 @@ const ROOM_CONFIG = [
   { id: 'Boxes & Cartons', label: 'Boxes', icon: Box },
 ];
 
-export default function InventoryBuilder({ onAddItem, inventoryItems = [], onUpdateQuantity }: InventoryBuilderProps) {
+// Icon mapping for inventory items based on item name keywords
+const getItemIcon = (itemName: string, roomId: string): LucideIcon => {
+  const name = itemName.toLowerCase();
+  
+  // Specific item keywords - Seating
+  if (name.includes('sofa') || name.includes('couch') || name.includes('loveseat') || name.includes('sectional')) return Sofa;
+  if (name.includes('armchair') || name.includes('recliner') || name.includes('rocker') || name.includes('overstuffed')) return Armchair;
+  
+  // Beds
+  if (name.includes('bed') || name.includes('mattress') || name.includes('bunk')) return Bed;
+  
+  // Entertainment & Electronics
+  if (name.includes('tv') || name.includes('television') || name.includes('entertainment') || name.includes('stereo')) return Tv;
+  if (name.includes('computer') || name.includes('monitor') || name.includes('printer') || name.includes('scanner')) return Monitor;
+  
+  // Lighting
+  if (name.includes('lamp') || name.includes('light')) return Lamp;
+  
+  // Office & Desk
+  if (name.includes('desk')) return Laptop;
+  if (name.includes('bookcase') || name.includes('bookshelf') || name.includes('shelf')) return BookOpen;
+  if (name.includes('file cabinet') || name.includes('credenza')) return FileBox;
+  
+  // Kitchen & Appliances
+  if (name.includes('refrigerator') || name.includes('freezer')) return Snowflake;
+  if (name.includes('washer') || name.includes('dryer')) return Archive;
+  if (name.includes('microwave') || name.includes('dishwasher') || name.includes('stove') || name.includes('oven') || name.includes('range')) return Utensils;
+  if (name.includes('coffee')) return Coffee;
+  
+  // Musical Instruments
+  if (name.includes('piano') || name.includes('organ') || name.includes('keyboard')) return Music;
+  
+  // Storage & Furniture
+  if (name.includes('dresser') || name.includes('chest') || name.includes('wardrobe') || name.includes('armoire')) return Archive;
+  if (name.includes('table') || name.includes('nightstand') || name.includes('stand')) return Table;
+  if (name.includes('chair')) return Armchair;
+  if (name.includes('mirror')) return Monitor;
+  
+  // Exercise & Sports
+  if (name.includes('treadmill') || name.includes('elliptical') || name.includes('weight') || name.includes('gym') || name.includes('bike')) return Dumbbell;
+  
+  // Baby & Nursery
+  if (name.includes('crib') || name.includes('changing') || name.includes('highchair') || name.includes('stroller') || name.includes('playpen')) return Baby;
+  
+  // Outdoor & Patio
+  if (name.includes('grill') || name.includes('patio') || name.includes('outdoor') || name.includes('umbrella') || name.includes('lawn')) return TreePine;
+  
+  // Garage & Tools
+  if (name.includes('tool') || name.includes('workbench') || name.includes('mower') || name.includes('ladder')) return Hammer;
+  
+  // Boxes & Packaging
+  if (name.includes('box') || name.includes('carton')) return Package;
+  
+  // Bathroom
+  if (name.includes('bath') || name.includes('hamper') || name.includes('medicine')) return Bath;
+  
+  // Fallback to room-based icon
+  const roomConfig = ROOM_CONFIG.find(r => r.id === roomId);
+  return roomConfig?.icon || Box;
+};
+
+export default function InventoryBuilder({ 
+  onAddItem, 
+  inventoryItems = [], 
+  onUpdateQuantity,
+  onClearAll,
+  specialHandling = false,
+  onSpecialHandlingChange 
+}: InventoryBuilderProps) {
   const [activeRoom, setActiveRoom] = useState('Living Room');
   const [searchQuery, setSearchQuery] = useState('');
   const [itemQuantities, setItemQuantities] = useState<Record<string, number>>({});
@@ -78,16 +183,36 @@ export default function InventoryBuilder({ onAddItem, inventoryItems = [], onUpd
         quantity: 1,
         weightEach: item.defaultWeight,
         cubicFeet: item.cubicFeet,
+        specialHandling: specialHandling,
       });
     }
   };
+
+  const handleClearAll = () => {
+    setItemQuantities({});
+    onClearAll?.();
+  };
+
+  const totalItems = Object.values(itemQuantities).reduce((sum, qty) => sum + qty, 0);
 
   return (
     <div className="flex gap-4 min-h-[400px]">
       {/* Left Sidebar - Room Navigation */}
       <div className="w-44 flex-shrink-0 space-y-1">
-        <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-3 px-2">
-          My Inventory
+        <div className="flex items-center justify-between mb-3 px-2">
+          <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground">
+            My Inventory
+          </div>
+          {totalItems > 0 && (
+            <button
+              type="button"
+              onClick={handleClearAll}
+              className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              <Trash2 className="w-3 h-3" />
+              Clear
+            </button>
+          )}
         </div>
         {ROOM_CONFIG.map((room) => {
           const Icon = room.icon;
@@ -123,25 +248,55 @@ export default function InventoryBuilder({ onAddItem, inventoryItems = [], onUpd
 
       {/* Right Content - Item Grid */}
       <div className="flex-1 space-y-4">
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search all items..."
-            className="w-full h-10 pl-10 pr-10 rounded-lg border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-muted flex items-center justify-center hover:bg-muted-foreground/20"
+        {/* Search Bar & Special Handling Toggle */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search all items..."
+              className="w-full h-10 pl-10 pr-10 rounded-lg border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-muted flex items-center justify-center hover:bg-muted-foreground/20"
+              >
+                <X className="w-3 h-3 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+          
+          {/* Special Handling Toggle */}
+          <div className={cn(
+            "flex items-center gap-2 px-3 py-2 rounded-lg border transition-all",
+            specialHandling 
+              ? "border-amber-500/50 bg-amber-500/10" 
+              : "border-border/60 bg-card"
+          )}>
+            <ShieldCheck className={cn(
+              "w-4 h-4",
+              specialHandling ? "text-amber-600" : "text-muted-foreground"
+            )} />
+            <Label 
+              htmlFor="special-handling" 
+              className={cn(
+                "text-xs font-semibold cursor-pointer whitespace-nowrap",
+                specialHandling ? "text-amber-700" : "text-muted-foreground"
+              )}
             >
-              <X className="w-3 h-3 text-muted-foreground" />
-            </button>
-          )}
+              Fragile Items
+            </Label>
+            <Switch
+              id="special-handling"
+              checked={specialHandling}
+              onCheckedChange={onSpecialHandlingChange}
+              className="ml-1 scale-90"
+            />
+          </div>
         </div>
 
         {/* Search Results */}
@@ -160,6 +315,7 @@ export default function InventoryBuilder({ onAddItem, inventoryItems = [], onUpd
                   onAdd={() => handleQuantityChange(item, item.room, 1)}
                   onRemove={() => handleQuantityChange(item, item.room, -1)}
                   showRoom
+                  icon={getItemIcon(item.name, item.room)}
                 />
               ))}
             </div>
@@ -187,6 +343,7 @@ export default function InventoryBuilder({ onAddItem, inventoryItems = [], onUpd
                   quantity={getItemQuantity(item.name, activeRoom)}
                   onAdd={() => handleQuantityChange(item, activeRoom, 1)}
                   onRemove={() => handleQuantityChange(item, activeRoom, -1)}
+                  icon={getItemIcon(item.name, activeRoom)}
                 />
               ))}
               
@@ -215,9 +372,10 @@ interface ItemCardProps {
   onAdd: () => void;
   onRemove: () => void;
   showRoom?: boolean;
+  icon: LucideIcon;
 }
 
-function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom }: ItemCardProps) {
+function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon }: ItemCardProps) {
   return (
     <div className={cn(
       "flex flex-col p-3 rounded-xl border transition-all",
@@ -225,9 +383,15 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom }: ItemCardP
         ? "border-primary/40 bg-primary/5 shadow-sm" 
         : "border-border/60 bg-card hover:border-primary/20"
     )}>
-      {/* Item Icon Placeholder */}
-      <div className="w-full h-14 rounded-lg bg-muted/40 flex items-center justify-center mb-2">
-        <Box className="w-6 h-6 text-muted-foreground/50" />
+      {/* Item Icon */}
+      <div className={cn(
+        "w-full h-14 rounded-lg flex items-center justify-center mb-2",
+        quantity > 0 ? "bg-primary/10" : "bg-muted/40"
+      )}>
+        <Icon className={cn(
+          "w-7 h-7",
+          quantity > 0 ? "text-primary" : "text-muted-foreground/60"
+        )} />
       </div>
       
       {/* Item Name */}
