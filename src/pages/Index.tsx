@@ -14,7 +14,7 @@ import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
   Shield, Video, Boxes, CheckCircle, 
-  MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
+  MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3
 } from "lucide-react";
@@ -328,8 +328,12 @@ export default function Index() {
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
                       <div className="tru-qb-floating-prompt">
-                        <span className="tru-qb-floating-icon">✨</span>
-                        <span>Let's build your personalized moving quote</span>
+                        <span className="tru-qb-floating-headline">Let's build your personalized moving quote</span>
+                        <span className="tru-qb-floating-cta">
+                          <span>👇</span>
+                          <span>Start by entering your ZIP code below</span>
+                          <ArrowDown className="w-4 h-4" />
+                        </span>
                       </div>
                       <h1 className="tru-qb-question">Where are you moving from?</h1>
                       <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
