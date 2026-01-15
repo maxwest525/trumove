@@ -267,63 +267,307 @@
 }
 
 /* =============================================
-   ELEGANT CTA CARDS (per reference image)
+   HERO FEATURES LIST
    ============================================= */
-.tru-hero-ctas {
+.tru-hero-features {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
-.tru-cta-card {
+.tru-hero-feature {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 14px;
-  padding: 16px 20px;
-  background: #ffffff;
-  border: 1px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 14px;
-  text-decoration: none;
-  transition: all 200ms ease;
-  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.06);
-  cursor: pointer;
 }
 
-.tru-cta-card:hover {
-  border-color: hsl(var(--primary) / 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px hsl(var(--tm-ink) / 0.1);
-}
-
-.tru-cta-card-icon {
+.tru-hero-feature-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background: hsl(var(--primary) / 0.1);
   border-radius: 12px;
   color: hsl(var(--primary));
   flex-shrink: 0;
 }
 
-.tru-cta-card-content {
+.tru-hero-feature-text {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.tru-cta-card-title {
-  font-size: 15px;
+.tru-hero-feature-title {
+  font-size: 14px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
 }
 
-.tru-cta-card-desc {
+.tru-hero-feature-desc {
   font-size: 13px;
   font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.6);
+}
+
+/* =============================================
+   HERO SOCIAL PROOF
+   ============================================= */
+.tru-hero-social-proof {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tru-hero-rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tru-hero-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.tru-hero-rating-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+.tru-hero-trust-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tru-hero-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: hsl(var(--tm-ink) / 0.05);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+.tru-hero-trust-badge svg {
+  color: hsl(var(--primary));
+}
+
+/* =============================================
+   HERO MAP - Enticing Animated Map
+   ============================================= */
+.tru-hero-map {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(135deg, hsl(210 40% 98%) 0%, hsl(210 30% 95%) 100%);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  box-shadow: 
+    0 4px 20px hsl(var(--tm-ink) / 0.08),
+    inset 0 0 60px hsl(var(--primary) / 0.03);
+}
+
+.tru-hero-map-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, hsl(var(--primary) / 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.tru-hero-map-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.tru-hero-map-image {
+  opacity: 0.25;
+  filter: saturate(0) contrast(1.1);
+}
+
+/* Route animations */
+.tru-hero-route {
+  opacity: 0.4;
+  transition: opacity 0.6s ease;
+}
+
+.tru-hero-route.is-active {
+  opacity: 1;
+}
+
+.tru-hero-route-line {
+  stroke-dashoffset: 0;
+  animation: route-dash 3s linear infinite;
+}
+
+@keyframes route-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.tru-hero-route-dot {
+  filter: url(#glow);
+}
+
+.tru-hero-route-pulse {
+  animation: route-pulse 2s ease-out infinite;
+}
+
+@keyframes route-pulse {
+  0% {
+    r: 8;
+    opacity: 0.8;
+  }
+  100% {
+    r: 24;
+    opacity: 0;
+  }
+}
+
+.tru-hero-route-label {
+  font-size: 11px;
+  font-weight: 700;
+  fill: hsl(var(--tm-ink));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tru-hero-truck-group {
+  animation: truck-travel 8s ease-in-out infinite;
+}
+
+@keyframes truck-travel {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(100px, -50px);
+  }
+  50% {
+    transform: translate(200px, 20px);
+  }
+  75% {
+    transform: translate(50px, 30px);
+  }
+}
+
+/* Map stats overlay */
+.tru-hero-map-stats {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 16px;
+  background: hsl(var(--tm-ink) / 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
+}
+
+.tru-hero-map-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.tru-hero-map-stat-num {
+  font-size: 16px;
+  font-weight: 800;
+  color: hsl(var(--primary));
+}
+
+.tru-hero-map-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* =============================================
+   ELEGANT CTA CARDS (panel version)
+   ============================================= */
+.tru-qb-ctas-elegant {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tru-cta-card-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 200ms ease;
+  box-shadow: 0 2px 6px hsl(var(--tm-ink) / 0.04);
+  cursor: pointer;
+}
+
+.tru-cta-card-mini:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px hsl(var(--tm-ink) / 0.08);
+}
+
+.tru-cta-card-icon-mini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: hsl(var(--primary) / 0.1);
+  border-radius: 10px;
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.tru-cta-card-content-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tru-cta-card-title-mini {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-cta-card-desc-mini {
+  font-size: 11px;
+  font-weight: 500;
   color: hsl(var(--tm-ink) / 0.55);
+}
+
+/* Remove old CTA styles */
+.tru-hero-ctas,
+.tru-cta-card,
+.tru-cta-card-icon,
+.tru-cta-card-content,
+.tru-cta-card-title,
+.tru-cta-card-desc {
+  display: none;
 }
 
 /* =============================================
