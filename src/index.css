@@ -6486,18 +6486,21 @@
 
 /* Status Bar - Flush to top of left content area */
 .tru-qb-status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 12px 16px;
-  margin: -24px -36px 20px -36px;
   background: hsl(var(--tm-ink) / 0.02);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
 }
 
 @media (max-width: 768px) {
   .tru-qb-status-bar {
-    margin: -32px -20px 20px -20px;
+    padding: 10px 12px;
   }
 }
 
@@ -7010,7 +7013,8 @@
   padding: 24px 36px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
+  position: relative;
 }
 
 /* Right: Dashboard Panel */
