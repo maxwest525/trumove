@@ -291,13 +291,6 @@ export default function Index() {
                   </p>
                 </div>
 
-                {/* Section 3: Don't Want a Stranger Callout */}
-                <div className="tru-hero-no-visit">
-                  <div className="tru-hero-no-visit-content">
-                    <span className="tru-hero-no-visit-title">Don't want a stranger in your home?</span>
-                    <span className="tru-hero-no-visit-desc">Build your inventory online with our AI tools — no in-home visit required.</span>
-                  </div>
-                </div>
 
                 {/* Section 4: TruMove Tools - What Makes Us Different */}
                 <div className="tru-hero-features-section">
@@ -351,31 +344,22 @@ export default function Index() {
               {/* RIGHT: Quote Builder */}
               <div className="tru-hero-visual" ref={quoteBuilderRef}>
                 <div className="tru-quote-builder">
-                  {/* Form Header - Plan Match Move Workflow */}
+                  {/* Form Header - Compact Plan Match Move */}
                   <div className="tru-qb-form-header">
                     <div className="tru-qb-workflow">
-                      <div className="tru-qb-workflow-step">
-                        <div className="tru-qb-workflow-num">1</div>
-                        <div className="tru-qb-workflow-info">
-                          <span className="tru-qb-workflow-title">Plan</span>
-                          <span className="tru-qb-workflow-desc">Build your inventory with AI tools or talk to a specialist</span>
-                        </div>
+                      <div className="tru-qb-workflow-step is-active">
+                        <span className="tru-qb-workflow-num">1</span>
+                        <span className="tru-qb-workflow-label">Plan</span>
                       </div>
-                      <div className="tru-qb-workflow-arrow">→</div>
+                      <span className="tru-qb-workflow-arrow">→</span>
                       <div className="tru-qb-workflow-step">
-                        <div className="tru-qb-workflow-num">2</div>
-                        <div className="tru-qb-workflow-info">
-                          <span className="tru-qb-workflow-title">Match</span>
-                          <span className="tru-qb-workflow-desc">We analyze federal SAFER data to find best rates</span>
-                        </div>
+                        <span className="tru-qb-workflow-num">2</span>
+                        <span className="tru-qb-workflow-label">Match</span>
                       </div>
-                      <div className="tru-qb-workflow-arrow">→</div>
+                      <span className="tru-qb-workflow-arrow">→</span>
                       <div className="tru-qb-workflow-step">
-                        <div className="tru-qb-workflow-num">3</div>
-                        <div className="tru-qb-workflow-info">
-                          <span className="tru-qb-workflow-title">Move</span>
-                          <span className="tru-qb-workflow-desc">Get matched with the right mover at the best rate</span>
-                        </div>
+                        <span className="tru-qb-workflow-num">3</span>
+                        <span className="tru-qb-workflow-label">Move</span>
                       </div>
                     </div>
                   </div>
@@ -641,7 +625,7 @@ export default function Index() {
                 <div className="tru-qb-panel">
                   {/* Simple Summary */}
                   <div className="tru-qb-summary">
-                    <div className="tru-qb-summary-title">YOUR QUOTE</div>
+                    <div className="tru-qb-summary-title">START YOUR AI MOVE BUILDER</div>
                     <div className="tru-qb-info-row">
                       <span className="tru-qb-info-label">From</span>
                       <span className="tru-qb-info-value">{fromCity || "—"}</span>
@@ -699,17 +683,8 @@ export default function Index() {
                       </div>
                     ) : (
                       <div className="tru-carrier-ready">
-                        {(fromCity || toCity) ? (
-                          <>
-                            <CheckCircle className="w-4 h-4" />
-                            <span>{foundCarriers || 12} vetted carriers in your area</span>
-                          </>
-                        ) : (
-                          <>
-                            <Database className="w-4 h-4" />
-                            <span>Powered by federal SAFER Web data</span>
-                          </>
-                        )}
+                        <CheckCircle className="w-4 h-4" />
+                        <span>{foundCarriers || 12} vetted carriers ready</span>
                       </div>
                     )}
                   </div>
@@ -734,6 +709,12 @@ export default function Index() {
                         Complete steps to see estimate
                       </div>
                     )}
+                  </div>
+                  
+                  {/* Federal Data Badge */}
+                  <div className="tru-qb-federal-badge">
+                    <Database className="w-4 h-4" />
+                    <span>Powered by federal SAFER Web data</span>
                   </div>
                 </div>
               </div>
