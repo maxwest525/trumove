@@ -6457,96 +6457,116 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: 20px 20px 16px;
+  gap: 8px;
+  padding: 24px 20px 20px;
   background: #ffffff;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
   border-radius: 20px 20px 0 0;
 }
 
-.tru-qb-header-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.tru-qb-header-logo {
+  height: 32px;
+  width: auto;
 }
 
 .tru-qb-header-title {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.01em;
+  margin-bottom: 8px;
 }
 
-.tru-qb-header-logo {
-  height: 28px;
-  width: auto;
-  flex-shrink: 0;
-}
-
-.tru-qb-workflow {
+/* Full Workflow Pills */
+.tru-qb-workflow-full {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
+  width: 100%;
 }
 
-.tru-qb-workflow-step {
+.tru-qb-workflow-pill {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: default;
-  transition: all 0.2s ease;
+  gap: 10px;
+  padding: 10px 16px;
+  background: hsl(var(--tm-ink) / 0.03);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 12px;
+  transition: all 0.25s ease;
 }
 
-.tru-qb-workflow-step:hover {
-  background: hsl(var(--tm-ink) / 0.04);
+.tru-qb-workflow-pill:hover {
+  background: hsl(var(--tm-ink) / 0.06);
+  border-color: hsl(var(--tm-ink) / 0.12);
 }
 
-/* Active workflow step */
-.tru-qb-workflow-step.is-active {
+/* Active workflow pill */
+.tru-qb-workflow-pill.is-active {
   background: hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary) / 0.25);
 }
 
-.tru-qb-workflow-step.is-active .tru-qb-workflow-num {
-  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2);
+.tru-qb-workflow-pill.is-active .tru-qb-pill-num {
+  animation: pill-pulse 2s ease-in-out infinite;
 }
 
-.tru-qb-workflow-step.is-active .tru-qb-workflow-title {
-  color: hsl(140 60% 30%);
+@keyframes pill-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 0 6px hsl(var(--primary) / 0);
+  }
 }
 
-/* Done workflow step */
-.tru-qb-workflow-step.is-done .tru-qb-workflow-num {
-  background: hsl(var(--tm-ink) / 0.15);
+.tru-qb-workflow-pill.is-active .tru-qb-pill-title {
+  color: hsl(140 60% 28%);
+}
+
+/* Done workflow pill */
+.tru-qb-workflow-pill.is-done {
+  opacity: 0.6;
+}
+
+.tru-qb-workflow-pill.is-done .tru-qb-pill-num {
+  background: hsl(var(--tm-ink) / 0.2);
   color: hsl(var(--tm-ink) / 0.6);
 }
 
-.tru-qb-workflow-step.is-done .tru-qb-workflow-title {
-  color: hsl(var(--tm-ink) / 0.5);
-}
-
-.tru-qb-workflow-num {
-  width: 24px;
-  height: 24px;
+.tru-qb-pill-num {
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 8px;
   background: linear-gradient(135deg, hsl(var(--primary)), hsl(140 80% 45%));
   color: hsl(var(--tm-ink));
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
-.tru-qb-workflow-title {
+.tru-qb-pill-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tru-qb-pill-title {
   font-size: 13px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
   transition: all 0.2s ease;
+}
+
+.tru-qb-pill-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.5);
 }
 
 .tru-qb-workflow-arrow {
@@ -6556,19 +6576,44 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .tru-qb-workflow-full {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .tru-qb-workflow-pill {
+    padding: 8px 12px;
+  }
+  
+  .tru-qb-pill-desc {
+    display: none;
+  }
+  
+  .tru-qb-workflow-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
   .tru-qb-form-header {
-    padding: 16px 16px 14px;
-    gap: 12px;
+    padding: 18px 16px 16px;
   }
   
-  .tru-qb-workflow {
-    width: 100%;
+  .tru-qb-workflow-pill {
+    flex: 1;
     justify-content: center;
+    padding: 8px 10px;
   }
   
-  .tru-qb-workflow-step {
-    padding: 4px 8px;
+  .tru-qb-pill-num {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+  
+  .tru-qb-pill-title {
+    font-size: 12px;
   }
 }
 
