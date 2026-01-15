@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
 import MoveMap from "@/components/MoveMap";
+import HeroMap from "@/components/HeroMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import FloatingQuoteButton from "@/components/FloatingQuoteButton";
 import Confetti from "@/components/Confetti";
@@ -14,7 +15,7 @@ import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
   Shield, Video, Boxes, Calculator, Search, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
-  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles
+  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles, Star, Users, Award
 } from "lucide-react";
 
 // ZIP lookup
@@ -244,52 +245,64 @@ export default function Index() {
                 <h1 className="tru-hero-title">Your move, simplified.</h1>
                 
                 <p className="tru-hero-sub">
-                  Get instant quotes from FMCSA-verified carriers. No brokers, no spam—just transparent pricing from vetted movers.
+                  Stop getting ghosted by brokers. TruMove connects you directly with FMCSA-verified carriers—no middlemen, no spam, no surprises. Just transparent pricing and real movers who show up.
                 </p>
                 
-                {/* Trust Badges */}
-                <div className="tru-hero-bullets">
-                  <span className="tru-hero-badge">
-                    <span className="tru-hero-badge-dot" />
-                    AI-Vetted Carriers
-                  </span>
-                  <span className="tru-hero-badge">
-                    <span className="tru-hero-badge-dot" />
-                    FMCSA Verified
-                  </span>
-                  <span className="tru-hero-badge">
-                    <span className="tru-hero-badge-dot" />
-                    No Spam, Ever
-                  </span>
+                {/* Feature Highlights */}
+                <div className="tru-hero-features">
+                  <div className="tru-hero-feature">
+                    <div className="tru-hero-feature-icon">
+                      <Shield className="w-5 h-5" />
+                    </div>
+                    <div className="tru-hero-feature-text">
+                      <span className="tru-hero-feature-title">FMCSA Verified</span>
+                      <span className="tru-hero-feature-desc">Every carrier is licensed & insured</span>
+                    </div>
+                  </div>
+                  <div className="tru-hero-feature">
+                    <div className="tru-hero-feature-icon">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div className="tru-hero-feature-text">
+                      <span className="tru-hero-feature-title">AI-Powered Quotes</span>
+                      <span className="tru-hero-feature-desc">Instant pricing, no callbacks</span>
+                    </div>
+                  </div>
+                  <div className="tru-hero-feature">
+                    <div className="tru-hero-feature-icon">
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <div className="tru-hero-feature-text">
+                      <span className="tru-hero-feature-title">Direct to Carriers</span>
+                      <span className="tru-hero-feature-desc">No brokers, no spam calls</span>
+                    </div>
+                  </div>
                 </div>
                 
-                {/* Elegant CTA Cards */}
-                <div className="tru-hero-ctas">
-                  <a href="tel:+16097277647" className="tru-cta-card">
-                    <div className="tru-cta-card-icon">
-                      <Phone className="w-5 h-5" />
+                {/* Social Proof */}
+                <div className="tru-hero-social-proof">
+                  <div className="tru-hero-rating">
+                    <div className="tru-hero-stars">
+                      {[1,2,3,4,5].map((i) => (
+                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      ))}
                     </div>
-                    <div className="tru-cta-card-content">
-                      <span className="tru-cta-card-title">Talk to Specialist</span>
-                      <span className="tru-cta-card-desc">Get personalized guidance</span>
-                    </div>
-                  </a>
-                  
-                  <Link to="/book" className="tru-cta-card">
-                    <div className="tru-cta-card-icon">
-                      <Video className="w-5 h-5" />
-                    </div>
-                    <div className="tru-cta-card-content">
-                      <span className="tru-cta-card-title">Book Virtual Meet</span>
-                      <span className="tru-cta-card-desc">Schedule your specialist</span>
-                    </div>
-                  </Link>
+                    <span className="tru-hero-rating-text">4.9/5 from 2,400+ moves</span>
+                  </div>
+                  <div className="tru-hero-trust-badges">
+                    <span className="tru-hero-trust-badge">
+                      <Award className="w-4 h-4" />
+                      Top Rated 2024
+                    </span>
+                    <span className="tru-hero-trust-badge">
+                      <CheckCircle className="w-4 h-4" />
+                      BBB Accredited
+                    </span>
+                  </div>
                 </div>
                 
-                <p className="tru-hero-note">
-                  <Shield className="w-4 h-4 inline-block mr-1 text-primary" />
-                  Trusted by 2,400+ moves nationwide
-                </p>
+                {/* Enticing Map */}
+                <HeroMap />
               </div>
               
               {/* RIGHT: Quote Builder */}
@@ -655,15 +668,26 @@ export default function Index() {
                     )}
                   </div>
 
-                  {/* CTA Buttons */}
-                  <div className="tru-qb-ctas">
-                    <a href="tel:+16097277647" className="tru-qb-cta-secondary">
-                      <Phone className="w-4 h-4" />
-                      <span>Call Now</span>
+                  {/* Elegant CTA Cards */}
+                  <div className="tru-qb-ctas-elegant">
+                    <a href="tel:+16097277647" className="tru-cta-card-mini">
+                      <div className="tru-cta-card-icon-mini">
+                        <Phone className="w-4 h-4" />
+                      </div>
+                      <div className="tru-cta-card-content-mini">
+                        <span className="tru-cta-card-title-mini">Talk to Specialist</span>
+                        <span className="tru-cta-card-desc-mini">Get personalized guidance</span>
+                      </div>
                     </a>
-                    <Link to="/book" className="tru-qb-cta-primary">
-                      <Video className="w-4 h-4" />
-                      <span>Video Consult</span>
+                    
+                    <Link to="/book" className="tru-cta-card-mini">
+                      <div className="tru-cta-card-icon-mini">
+                        <Video className="w-4 h-4" />
+                      </div>
+                      <div className="tru-cta-card-content-mini">
+                        <span className="tru-cta-card-title-mini">Book Virtual Meet</span>
+                        <span className="tru-cta-card-desc-mini">Schedule your specialist</span>
+                      </div>
                     </Link>
                   </div>
                 </div>
