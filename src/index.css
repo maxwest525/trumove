@@ -6472,6 +6472,7 @@
 .tru-qb-form-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 20px;
   padding: 14px 24px;
   background: #ffffff;
@@ -7254,9 +7255,6 @@
 
 /* Skip button in header */
 .tru-qb-skip-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -7270,6 +7268,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .tru-qb-skip-btn:hover {

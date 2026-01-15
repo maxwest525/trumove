@@ -290,15 +290,13 @@ export default function Index() {
             {/* Centered Quote Builder */}
             <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
-                {/* Skip Button - Top Right */}
-                <Link to="/online-estimate" className="tru-qb-skip-btn">
-                  <Zap className="w-4 h-4" />
-                  <span>Skip to Estimate Builder</span>
-                </Link>
-
-                {/* Form Header - Logo + Progress Pills */}
+                {/* Form Header - Logo + Skip Button */}
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
+                  <Link to="/online-estimate" className="tru-qb-skip-btn">
+                    <Zap className="w-4 h-4" />
+                    <span>Skip to Estimate Builder</span>
+                  </Link>
                 </div>
 
                   {/* Main Body: Form + Dashboard Side by Side */}
@@ -630,7 +628,24 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Map Area - Moved Up */}
+                  {/* Estimate - Above Map */}
+                  <div className="tru-qb-estimate">
+                    <div className="tru-qb-estimate-header">
+                      <DollarSign className="w-4 h-4" />
+                      <span>YOUR ESTIMATE</span>
+                    </div>
+                    {estimate ? (
+                      <div className="tru-qb-estimate-value">
+                        {formatCurrency(estimate.min)} – {formatCurrency(estimate.max)}
+                      </div>
+                    ) : (
+                      <div className="tru-qb-estimate-empty">
+                        Complete steps to see estimate
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Map Area */}
                   <div className="tru-qb-map">
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
                   </div>
@@ -648,23 +663,6 @@ export default function Index() {
                       </div>
                     </div>
                   )}
-
-                  {/* Estimate */}
-                  <div className="tru-qb-estimate">
-                    <div className="tru-qb-estimate-header">
-                      <DollarSign className="w-4 h-4" />
-                      <span>YOUR ESTIMATE</span>
-                    </div>
-                    {estimate ? (
-                      <div className="tru-qb-estimate-value">
-                        {formatCurrency(estimate.min)} – {formatCurrency(estimate.max)}
-                      </div>
-                    ) : (
-                      <div className="tru-qb-estimate-empty">
-                        Complete steps to see estimate
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
 
