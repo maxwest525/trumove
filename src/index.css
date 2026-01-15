@@ -491,6 +491,25 @@
 }
 
 /* =============================================
+   MAPBOX MOVE MAP - Quote Builder Panel
+   ============================================= */
+.mapbox-move-map {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+.mapbox-token-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 16px;
+  text-align: center;
+}
+
+/* =============================================
    ELEGANT CTA CARDS (panel version)
    ============================================= */
 .tru-qb-ctas-elegant {
