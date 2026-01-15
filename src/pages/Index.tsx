@@ -292,26 +292,6 @@ export default function Index() {
                 {/* Form Header - Logo + Progress Pills */}
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  <div className="tru-qb-progress-pills">
-                    <div className={`tru-qb-progress-pill ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
-                      <span className="tru-qb-progress-num">1</span>
-                      <span className="tru-qb-progress-label">Plan</span>
-                    </div>
-                    <div className="tru-qb-progress-connector">
-                      <div className={`tru-qb-progress-line ${step > 4 ? 'is-filled' : ''}`} />
-                    </div>
-                    <div className={`tru-qb-progress-pill ${step === 5 ? 'is-active' : step > 5 ? 'is-done' : ''}`}>
-                      <span className="tru-qb-progress-num">2</span>
-                      <span className="tru-qb-progress-label">Match</span>
-                    </div>
-                    <div className="tru-qb-progress-connector">
-                      <div className={`tru-qb-progress-line ${step > 5 ? 'is-filled' : ''}`} />
-                    </div>
-                    <div className={`tru-qb-progress-pill ${step === 6 ? 'is-active' : ''}`}>
-                      <span className="tru-qb-progress-num">3</span>
-                      <span className="tru-qb-progress-label">Move</span>
-                    </div>
-                  </div>
                 </div>
 
                   {/* Main Body: Form + Dashboard Side by Side */}
@@ -598,7 +578,10 @@ export default function Index() {
                 <div className="tru-qb-panel">
                   {/* Simple Summary */}
                   <div className="tru-qb-summary">
-                    <div className="tru-qb-summary-title">Move Summary</div>
+                    <div className="tru-qb-summary-title">
+                      <img src={logoImg} alt="TruMove" className="tru-qb-summary-logo" />
+                      <span>Summary</span>
+                    </div>
                     <div className="tru-qb-info-row">
                       <span className="tru-qb-info-label">From</span>
                       <span className="tru-qb-info-value">{fromCity || "—"}</span>
