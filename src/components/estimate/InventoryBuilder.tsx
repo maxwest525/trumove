@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { 
   Plus, 
   Minus, 
@@ -34,12 +34,14 @@ import {
   List,
   ChevronLeft,
   ChevronRight,
+  Scale,
   type LucideIcon
 } from "lucide-react";
 import { ROOM_SUGGESTIONS, type InventoryItem } from "@/lib/priceCalculator";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { CustomItemModal } from "./CustomItemModal";
 
 interface InventoryBuilderProps {
   onAddItem: (item: Omit<InventoryItem, 'id'>) => void;
@@ -141,6 +143,9 @@ export default function InventoryBuilder({
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [itemsPerPage, setItemsPerPage] = useState(9);
   const [currentPage, setCurrentPage] = useState(1);
+  const [customModalOpen, setCustomModalOpen] = useState(false);
+  const [recentlyUpdated, setRecentlyUpdated] = useState<string | null>(null);
+  const prevTotalRef = useRef(0);
 
   // Get all items for search with room info
   const allItemsWithRoom = useMemo(() => {
@@ -198,6 +203,12 @@ export default function InventoryBuilder({
     
     setItemQuantities(prev => ({ ...prev, [key]: newQty }));
     
+    // Trigger animation
+    if (delta > 0) {
+      setRecentlyUpdated(key);
+      setTimeout(() => setRecentlyUpdated(null), 300);
+    }
+    
     if (delta > 0) {
       onAddItem({
         name: item.name,
@@ -210,12 +221,51 @@ export default function InventoryBuilder({
     }
   };
 
+  const handleAddCustomItem = (customItem: {
+    name: string;
+    room: string;
+    weight: number;
+    cubicFeet: number;
+    quantity: number;
+    fragile: boolean;
+  }) => {
+    const key = `${customItem.room}-${customItem.name}`;
+    setItemQuantities(prev => ({ ...prev, [key]: (prev[key] || 0) + customItem.quantity }));
+    setRecentlyUpdated(key);
+    setTimeout(() => setRecentlyUpdated(null), 300);
+    
+    onAddItem({
+      name: customItem.name,
+      room: customItem.room,
+      quantity: customItem.quantity,
+      weightEach: customItem.weight,
+      cubicFeet: customItem.cubicFeet,
+      specialHandling: customItem.fragile,
+    });
+  };
+
   const handleClearAll = () => {
     setItemQuantities({});
     onClearAll?.();
   };
 
   const totalItems = Object.values(itemQuantities).reduce((sum, qty) => sum + qty, 0);
+  
+  // Calculate total weight for floating summary
+  const totalWeight = useMemo(() => {
+    let weight = 0;
+    for (const [key, qty] of Object.entries(itemQuantities)) {
+      if (qty <= 0) continue;
+      const [room, ...nameParts] = key.split('-');
+      const itemName = nameParts.join('-');
+      const roomItems = ROOM_SUGGESTIONS[room] || [];
+      const item = roomItems.find(i => i.name === itemName);
+      if (item) {
+        weight += item.defaultWeight * qty;
+      }
+    }
+    return weight;
+  }, [itemQuantities]);
 
   return (
     <div className="flex gap-4 min-h-[400px]">
@@ -407,23 +457,27 @@ export default function InventoryBuilder({
               <>
                 {viewMode === 'grid' ? (
                   <div className="grid grid-cols-3 gap-3">
-                    {paginatedSuggestions.map((item) => (
-                      <ItemCard
-                        key={item.name}
-                        item={item}
-                        room={activeRoom}
-                        quantity={getItemQuantity(item.name, activeRoom)}
-                        onAdd={() => handleQuantityChange(item, activeRoom, 1)}
-                        onRemove={() => handleQuantityChange(item, activeRoom, -1)}
-                        icon={getItemIcon(item.name, activeRoom)}
-                      />
-                    ))}
+                    {paginatedSuggestions.map((item) => {
+                      const key = `${activeRoom}-${item.name}`;
+                      return (
+                        <ItemCard
+                          key={item.name}
+                          item={item}
+                          room={activeRoom}
+                          quantity={getItemQuantity(item.name, activeRoom)}
+                          onAdd={() => handleQuantityChange(item, activeRoom, 1)}
+                          onRemove={() => handleQuantityChange(item, activeRoom, -1)}
+                          icon={getItemIcon(item.name, activeRoom)}
+                          isAnimating={recentlyUpdated === key}
+                        />
+                      );
+                    })}
                     
                     {/* Add Custom Item Card - only on last page or if less than itemsPerPage */}
                     {currentPage === totalPages && (
                       <button
                         type="button"
-                        onClick={() => {/* TODO: Open custom item modal */}}
+                        onClick={() => setCustomModalOpen(true)}
                         className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all min-h-[120px] text-muted-foreground hover:text-foreground"
                       >
                         <Plus className="w-6 h-6" />
@@ -433,23 +487,27 @@ export default function InventoryBuilder({
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {paginatedSuggestions.map((item) => (
-                      <ItemListRow
-                        key={item.name}
-                        item={item}
-                        room={activeRoom}
-                        quantity={getItemQuantity(item.name, activeRoom)}
-                        onAdd={() => handleQuantityChange(item, activeRoom, 1)}
-                        onRemove={() => handleQuantityChange(item, activeRoom, -1)}
-                        icon={getItemIcon(item.name, activeRoom)}
-                      />
-                    ))}
+                    {paginatedSuggestions.map((item) => {
+                      const key = `${activeRoom}-${item.name}`;
+                      return (
+                        <ItemListRow
+                          key={item.name}
+                          item={item}
+                          room={activeRoom}
+                          quantity={getItemQuantity(item.name, activeRoom)}
+                          onAdd={() => handleQuantityChange(item, activeRoom, 1)}
+                          onRemove={() => handleQuantityChange(item, activeRoom, -1)}
+                          icon={getItemIcon(item.name, activeRoom)}
+                          isAnimating={recentlyUpdated === key}
+                        />
+                      );
+                    })}
                     
                     {/* Add Custom Item Row - only on last page */}
                     {currentPage === totalPages && (
                       <button
                         type="button"
-                        onClick={() => {/* TODO: Open custom item modal */}}
+                        onClick={() => setCustomModalOpen(true)}
                         className="w-full flex items-center gap-3 p-3 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all text-muted-foreground hover:text-foreground"
                       >
                         <Plus className="w-5 h-5" />
@@ -520,6 +578,25 @@ export default function InventoryBuilder({
           </>
         )}
       </div>
+
+      {/* Floating Inventory Summary */}
+      {totalItems > 0 && (
+        <div className="tru-inventory-float-summary">
+          <Package className="w-4 h-4 summary-icon" />
+          <span className="summary-count">{totalItems} items</span>
+          <span className="text-muted-foreground">•</span>
+          <Scale className="w-3.5 h-3.5 text-muted-foreground" />
+          <span className="summary-weight">~{totalWeight.toLocaleString()} lbs</span>
+        </div>
+      )}
+
+      {/* Custom Item Modal */}
+      <CustomItemModal
+        isOpen={customModalOpen}
+        onClose={() => setCustomModalOpen(false)}
+        onAdd={handleAddCustomItem}
+        defaultRoom={activeRoom}
+      />
     </div>
   );
 }
@@ -533,15 +610,17 @@ interface ItemCardProps {
   onRemove: () => void;
   showRoom?: boolean;
   icon: LucideIcon;
+  isAnimating?: boolean;
 }
 
-function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon }: ItemCardProps) {
+function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon, isAnimating }: ItemCardProps) {
   return (
     <div className={cn(
       "flex flex-col p-3 rounded-xl border transition-all",
       quantity > 0 
         ? "border-primary/40 bg-primary/5 shadow-sm" 
-        : "border-border/60 bg-card hover:border-primary/20"
+        : "border-border/60 bg-card hover:border-primary/20",
+      isAnimating && "tru-item-just-added"
     )}>
       {/* Item Icon */}
       <div className={cn(
@@ -610,15 +689,17 @@ interface ItemListRowProps {
   onAdd: () => void;
   onRemove: () => void;
   icon: LucideIcon;
+  isAnimating?: boolean;
 }
 
-function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon }: ItemListRowProps) {
+function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon, isAnimating }: ItemListRowProps) {
   return (
     <div className={cn(
       "flex items-center gap-3 p-3 rounded-xl border transition-all",
       quantity > 0 
         ? "border-primary/40 bg-primary/5 shadow-sm" 
-        : "border-border/60 bg-card hover:border-primary/20"
+        : "border-border/60 bg-card hover:border-primary/20",
+      isAnimating && "tru-item-just-added"
     )}>
       {/* Item Icon */}
       <div className={cn(
