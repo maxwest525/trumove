@@ -6281,7 +6281,7 @@
   height: 160px;
   background: hsl(var(--tm-ink) / 0.03);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
 
