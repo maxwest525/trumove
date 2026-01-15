@@ -12,10 +12,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
-  Shield, Video, Boxes, Calculator, Search, CheckCircle, 
+  Shield, Video, Boxes, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
   CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
-  Database, ChevronRight, Radar, Scale, CreditCard, ShieldCheck, BarChart3
+  Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3
 } from "lucide-react";
 
 // ZIP lookup
@@ -288,53 +288,45 @@ export default function Index() {
                     <span>COMPARE & BOOK</span>
                   </div>
                   <h1 className="tru-hero-title">
-                    Compare movers. Get guaranteed prices. Book online.
+                    Find the right mover at the best rate.
                   </h1>
                   <p className="tru-hero-sub">
-                    Enter your move details once and instantly compare prices from pre-screened, licensed movers — like Kayak for moving. No phone calls, no spam, and the price you see is the price you pay.
+                    We use federal SAFER Web data to match you with licensed, vetted carriers — our goal is to get you the cheapest rate possible. No phone calls, no spam.
                   </p>
                 </div>
 
-                {/* Section 2: Plan-Compare-Book Workflow */}
+                {/* Section 2: Plan-Match-Move Workflow */}
                 <div className="tru-hero-workflow">
                   <div className="tru-hero-workflow-step">
                     <div className="tru-hero-workflow-num">1</div>
                     <div className="tru-hero-workflow-info">
                       <span className="tru-hero-workflow-title">Plan</span>
-                      <span className="tru-hero-workflow-desc">Build your inventory with AI tools</span>
+                      <span className="tru-hero-workflow-desc">Build your inventory with AI tools or talk to a specialist</span>
                     </div>
                   </div>
                   <div className="tru-hero-workflow-arrow">→</div>
                   <div className="tru-hero-workflow-step">
                     <div className="tru-hero-workflow-num">2</div>
                     <div className="tru-hero-workflow-info">
-                      <span className="tru-hero-workflow-title">Compare</span>
-                      <span className="tru-hero-workflow-desc">See prices from vetted movers</span>
+                      <span className="tru-hero-workflow-title">Match</span>
+                      <span className="tru-hero-workflow-desc">We analyze federal SAFER data to find best rates</span>
                     </div>
                   </div>
                   <div className="tru-hero-workflow-arrow">→</div>
                   <div className="tru-hero-workflow-step">
                     <div className="tru-hero-workflow-num">3</div>
                     <div className="tru-hero-workflow-info">
-                      <span className="tru-hero-workflow-title">Book</span>
-                      <span className="tru-hero-workflow-desc">Lock in your guaranteed price</span>
+                      <span className="tru-hero-workflow-title">Move</span>
+                      <span className="tru-hero-workflow-desc">Get matched with the right mover at the best rate</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Section 3: Key Guarantees */}
-                <div className="tru-hero-guarantees">
-                  <div className="tru-hero-guarantee-item">
-                    <Scale className="w-4 h-4" />
-                    <span>Price Guarantee — no surprises</span>
-                  </div>
-                  <div className="tru-hero-guarantee-item">
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Only vetted, licensed movers</span>
-                  </div>
-                  <div className="tru-hero-guarantee-item">
-                    <CreditCard className="w-4 h-4" />
-                    <span>Secure payment protection</span>
+                {/* Section 3: Don't Want a Stranger Callout */}
+                <div className="tru-hero-no-visit">
+                  <div className="tru-hero-no-visit-content">
+                    <span className="tru-hero-no-visit-title">Don't want a stranger in your home?</span>
+                    <span className="tru-hero-no-visit-desc">Build your inventory online with our AI tools — no in-home visit required.</span>
                   </div>
                 </div>
 
@@ -390,11 +382,16 @@ export default function Index() {
               {/* RIGHT: Quote Builder */}
               <div className="tru-hero-visual" ref={quoteBuilderRef}>
                 <div className="tru-quote-builder">
-                  {/* Form Header */}
-                  <div className="tru-qb-form-header">
+                  {/* Form Header - Enhanced */}
+                  <div className="tru-qb-form-header tru-qb-form-header-enhanced">
+                    <div className="tru-qb-header-accent"></div>
                     <div className="tru-qb-form-header-content">
+                      <div className="tru-qb-header-badge">
+                        <BarChart3 className="w-4 h-4" />
+                        <span>AI-POWERED</span>
+                      </div>
                       <h3 className="tru-qb-form-title">Build Your Estimate</h3>
-                      <p className="tru-qb-form-subtitle">Answer 6 quick questions to get your personalized quote</p>
+                      <p className="tru-qb-form-subtitle">6 questions • Pricing from federal data</p>
                     </div>
                     <div className="tru-qb-progress-dots">
                       {[1, 2, 3, 4, 5, 6].map((s) => (
@@ -734,8 +731,8 @@ export default function Index() {
                           </>
                         ) : (
                           <>
-                            <Shield className="w-4 h-4" />
-                            <span>FMCSA-verified carriers only</span>
+                            <Database className="w-4 h-4" />
+                            <span>Powered by federal SAFER Web data</span>
                           </>
                         )}
                       </div>
@@ -850,29 +847,29 @@ export default function Index() {
           <section className="tru-diff-wrap">
             <div className="tru-diff-inner">
               <div className="tru-diff-kicker">HOW IT WORKS</div>
-              <h2 className="tru-diff-title">Compare movers like you compare flights.</h2>
-              <p className="tru-diff-sub">Enter your details once. See guaranteed prices from multiple vetted movers. Book with confidence.</p>
+              <h2 className="tru-diff-title">Get matched with the right mover at the best rate.</h2>
+              <p className="tru-diff-sub">We use federal SAFER Web data to analyze carriers, rates, and availability — so you don't have to.</p>
               
               <div className="tru-diff-grid">
                 <article className="tru-diff-card" onClick={() => navigate("/online-estimate")}>
                   <div className="tru-diff-icon"><Boxes className="w-6 h-6" /></div>
                   <h3 className="tru-diff-card-title">Build Your Inventory</h3>
-                  <p className="tru-diff-card-text">Use our AI-powered tools to create your item list. We calculate weight and volume so quotes are based on real data — not guesses.</p>
+                  <p className="tru-diff-card-text">Use our AI-powered tools to create your item list. We calculate weight and volume so estimates are based on real data — not guesses.</p>
                   <span className="tru-diff-cta">Try the Inventory Builder <ArrowRight className="w-3.5 h-3.5" /></span>
                 </article>
 
                 <article className="tru-diff-card" onClick={() => navigate("/online-estimate")}>
-                  <div className="tru-diff-icon"><BarChart3 className="w-6 h-6" /></div>
-                  <h3 className="tru-diff-card-title">Compare Guaranteed Prices</h3>
-                  <p className="tru-diff-card-text">See side-by-side pricing from licensed, insured movers. No bait-and-switch — the price you book is the price you pay.</p>
-                  <span className="tru-diff-cta">Get Your Quotes <ArrowRight className="w-3.5 h-3.5" /></span>
+                  <div className="tru-diff-icon"><Radar className="w-6 h-6" /></div>
+                  <h3 className="tru-diff-card-title">Get Matched with Carriers</h3>
+                  <p className="tru-diff-card-text">We analyze federal SAFER Web data, carrier availability, and rates to match you with the right mover at the best price.</p>
+                  <span className="tru-diff-cta">Get Your Estimate <ArrowRight className="w-3.5 h-3.5" /></span>
                 </article>
 
                 <article className="tru-diff-card" onClick={() => navigate("/online-estimate")}>
                   <div className="tru-diff-icon"><ShieldCheck className="w-6 h-6" /></div>
-                  <h3 className="tru-diff-card-title">Book with Protection</h3>
-                  <p className="tru-diff-card-text">Pay through TruMove for secure transactions. We hold payment until your move is complete — protecting you from scams and surprises.</p>
-                  <span className="tru-diff-cta">Start Your Quote <ArrowRight className="w-3.5 h-3.5" /></span>
+                  <h3 className="tru-diff-card-title">Book with Confidence</h3>
+                  <p className="tru-diff-card-text">Pay through TruMove for secure transactions. We only work with licensed, vetted movers — protecting you from scams and surprises.</p>
+                  <span className="tru-diff-cta">Start Your Estimate <ArrowRight className="w-3.5 h-3.5" /></span>
                 </article>
               </div>
             </div>
@@ -964,17 +961,17 @@ export default function Index() {
           </section>
 
 
-          {/* PRICE GUARANTEE & PROTECTION */}
+          {/* SMART ESTIMATES & PROTECTION */}
           <section className="tru-mission-wrap">
             <div className="tru-mission-inner">
               <div className="tru-guarantee-wrap">
                 <div className="tru-guarantee-card">
                   <div>
-                    <div className="tru-guarantee-tag"><span className="tru-guarantee-tag-dot"></span><span>Price Guarantee</span></div>
-                    <div className="tru-guarantee-title">The price you book is the price you pay.</div>
-                    <div className="tru-guarantee-text">Once you lock in a quote, it won't change — unless you update your inventory. No surprise fees on moving day.</div>
+                    <div className="tru-guarantee-tag"><span className="tru-guarantee-tag-dot"></span><span>Smart Estimates</span></div>
+                    <div className="tru-guarantee-title">Realistic pricing based on federal data.</div>
+                    <div className="tru-guarantee-text">Our estimates are calculated using federally regulated data, carrier rates, and real availability — not guesswork.</div>
                     <ul className="tru-guarantee-list">
-                      <li><strong>Guaranteed pricing</strong> — locked in when you book</li>
+                      <li><strong>Data-driven estimates</strong> — based on federal SAFER Web data</li>
                       <li><strong>Payment protection</strong> — pay through TruMove, not the mover</li>
                       <li><strong>Vetted movers only</strong> — licensed, insured, and monitored</li>
                       <li><strong>24/7 tracking</strong> — know where your stuff is, always</li>
@@ -984,10 +981,10 @@ export default function Index() {
                   <div className="tru-guarantee-side">
                     <div className="tru-guarantee-side-stats">
                       <div className="tru-guarantee-side-stat">
-                        <Scale className="w-5 h-5 text-primary" />
+                        <Database className="w-5 h-5 text-primary" />
                         <div>
-                          <span className="tru-guarantee-side-num">100%</span>
-                          <span className="tru-guarantee-side-label">Price Guarantee</span>
+                          <span className="tru-guarantee-side-num">Federal</span>
+                          <span className="tru-guarantee-side-label">SAFER Web Data</span>
                         </div>
                       </div>
                       <div className="tru-guarantee-side-stat">
