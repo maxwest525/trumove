@@ -749,6 +749,76 @@ export default function Index() {
             </div>
           </section>
 
+          {/* TRUST STRIP */}
+          <section className="tru-trust-strip">
+            <div className="tru-trust-strip-inner">
+              <div className="tru-trust-strip-item">
+                <Shield className="w-4 h-4" />
+                <span>USDOT Compliant</span>
+              </div>
+              <div className="tru-trust-strip-item">
+                <CheckCircle className="w-4 h-4" />
+                <span>Bonded & Insured</span>
+              </div>
+              <div className="tru-trust-strip-item">
+                <Truck className="w-4 h-4" />
+                <span>FMCSA Authorized</span>
+              </div>
+              <div className="tru-trust-strip-item">
+                <Star className="w-4 h-4" />
+                <span>Licensed Broker</span>
+              </div>
+              <div className="tru-trust-strip-item">
+                <Users className="w-4 h-4" />
+                <span>2,400+ Moves Completed</span>
+              </div>
+            </div>
+          </section>
+
+          {/* CONSULT SECTION - Video & Phone */}
+          <section className="tru-consult-wrap">
+            <div className="tru-consult-inner">
+              <div className="tru-consult-content">
+                <div className="tru-consult-icon-wrap">
+                  <Headphones className="w-8 h-8" />
+                </div>
+                <h2 className="tru-consult-title">Need a real conversation?</h2>
+                <p className="tru-consult-text">
+                  Talk to a TruMove specialist. We'll review your quote line-by-line, 
+                  vet your movers together, and answer every question — no pressure, no upsells.
+                </p>
+                <div className="tru-consult-actions">
+                  <button className="tru-consult-btn tru-consult-btn-video" onClick={() => navigate("/book")}>
+                    <Video className="w-5 h-5" />
+                    <span>Book a Video Consult</span>
+                  </button>
+                  <a href="tel:+16097277647" className="tru-consult-btn tru-consult-btn-phone">
+                    <Phone className="w-5 h-5" />
+                    <span>Call (609) 727-7647</span>
+                  </a>
+                </div>
+              </div>
+              <div className="tru-consult-features">
+                <div className="tru-consult-feature">
+                  <CheckCircle className="w-5 h-5" />
+                  <span>Walk through your home virtually</span>
+                </div>
+                <div className="tru-consult-feature">
+                  <CheckCircle className="w-5 h-5" />
+                  <span>Get accurate quotes based on real items</span>
+                </div>
+                <div className="tru-consult-feature">
+                  <CheckCircle className="w-5 h-5" />
+                  <span>Ask questions about carriers and routes</span>
+                </div>
+                <div className="tru-consult-feature">
+                  <CheckCircle className="w-5 h-5" />
+                  <span>No obligation — just honest answers</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* WHAT MAKES TRUMOVE DIFFERENT */}
           <section className="tru-diff-wrap">
             <div className="tru-diff-inner">
@@ -866,42 +936,6 @@ export default function Index() {
             </div>
           </section>
 
-          {/* VIDEO CONSULTS */}
-          <section className="tru-video-wrap">
-            <div className="tru-video-inner">
-              <div className="tru-video-content">
-                <div className="tru-video-icon-wrap">
-                  <Video className="w-8 h-8" />
-                </div>
-                <h2 className="tru-video-title">Need a real conversation?</h2>
-                <p className="tru-video-text">
-                  Book a video call with a TruMove specialist. We'll review your quote line-by-line, 
-                  vet your movers together, and answer every question — no pressure, no upsells.
-                </p>
-                <button className="tru-btn-primary-lg" onClick={() => navigate("/book")}>
-                  <span>Book a Video Consult</span><Video className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="tru-video-features">
-                <div className="tru-video-feature">
-                  <CheckCircle className="w-5 h-5 text-primary" />
-                  <span>Walk through your home virtually</span>
-                </div>
-                <div className="tru-video-feature">
-                  <CheckCircle className="w-5 h-5 text-primary" />
-                  <span>Get accurate quotes based on real items</span>
-                </div>
-                <div className="tru-video-feature">
-                  <CheckCircle className="w-5 h-5 text-primary" />
-                  <span>Ask questions about carriers and routes</span>
-                </div>
-                <div className="tru-video-feature">
-                  <CheckCircle className="w-5 h-5 text-primary" />
-                  <span>No obligation — just honest answers</span>
-                </div>
-              </div>
-            </div>
-          </section>
 
           {/* GUARANTEE */}
           <section className="tru-mission-wrap">
