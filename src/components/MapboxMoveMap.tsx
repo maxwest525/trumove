@@ -13,14 +13,28 @@ interface MapboxMoveMapProps {
 
 // Geocode a ZIP code using Mapbox API for precise coordinates
 async function geocodeZip(zip: string): Promise<[number, number] | null> {
+  // Only geocode valid 5-digit ZIP codes
+  if (!zip || zip.length !== 5) return null;
+  
   try {
     const response = await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${zip}.json?country=US&types=postcode&access_token=${MAPBOX_TOKEN}`
     );
-    const data = await response.json();
-    if (data.features && data.features.length > 0) {
-      return data.features[0].center as [number, number];
+    
+    if (!response.ok) {
+      console.warn('Geocoding request failed:', response.status);
+      return null;
     }
+    
+    const data = await response.json();
+    
+    if (data.features && data.features.length > 0) {
+      const coords = data.features[0].center as [number, number];
+      console.log(`Geocoded ${zip} to:`, coords);
+      return coords;
+    }
+    
+    console.warn('No geocoding results for ZIP:', zip);
     return null;
   } catch (e) {
     console.warn('Geocoding failed:', e);
@@ -45,8 +59,16 @@ const ZIP_COORDS: Record<string, [number, number]> = {
   "270": [-78.6, 35.8], "280": [-80.8, 35.2], "290": [-79.9, 34.0],
   // Georgia
   "300": [-84.4, 33.8], "310": [-81.1, 32.1],
-  // Florida
-  "320": [-81.7, 30.3], "330": [-80.2, 25.8], "334": [-82.5, 27.9],
+  // Florida - CORRECTED coordinates
+  "320": [-81.7, 30.3], "321": [-81.0, 28.5], "322": [-81.7, 30.3],
+  "323": [-80.4, 27.6], "324": [-82.5, 30.3], "325": [-82.3, 29.2],
+  "326": [-82.0, 29.2], "327": [-81.4, 28.5], "328": [-81.4, 28.4],
+  "329": [-81.0, 28.0], "330": [-80.2, 25.8], "331": [-80.3, 25.9],
+  "332": [-80.1, 25.8], "333": [-80.2, 25.8], "334": [-80.1, 26.4],
+  "335": [-80.1, 26.2], "336": [-82.5, 27.9], "337": [-82.6, 27.8],
+  "338": [-80.2, 26.6], "339": [-80.3, 26.5], "340": [-80.1, 26.0],
+  "341": [-82.7, 28.0], "342": [-82.5, 28.1], "344": [-80.1, 26.1],
+  "346": [-82.5, 27.5], "347": [-80.2, 26.0],
   // Alabama
   "350": [-86.8, 33.5], "360": [-86.3, 32.4],
   // Tennessee
