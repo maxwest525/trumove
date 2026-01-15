@@ -314,18 +314,17 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* Status Bar - Under header line */}
-                <div className="tru-qb-status-bar">
-                  <span className="tru-qb-status-text">Step {step} of 6</span>
-                  <div className="tru-qb-status-progress">
-                    <div className="tru-qb-status-fill" style={{ width: `${(step / 6) * 100}%` }} />
-                  </div>
-                </div>
-
                   {/* Main Body: Form + Dashboard Side by Side */}
                   <div className="tru-qb-body">
                 {/* LEFT: Conversation Area */}
                 <div className="tru-qb-main">
+                  {/* Status Bar - Inside left content area */}
+                  <div className="tru-qb-status-bar">
+                    <span className="tru-qb-status-text">Step {step} of 6</span>
+                    <div className="tru-qb-status-progress">
+                      <div className="tru-qb-status-fill" style={{ width: `${(step / 6) * 100}%` }} />
+                    </div>
+                  </div>
 
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
