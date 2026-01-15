@@ -7046,7 +7046,8 @@
   text-transform: uppercase;
   color: hsl(var(--tm-ink) / 0.5);
   text-align: center;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
+  margin-top: -4px;
   margin-bottom: 4px;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
 }
