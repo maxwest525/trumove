@@ -344,22 +344,31 @@ export default function Index() {
               {/* RIGHT: Quote Builder */}
               <div className="tru-hero-visual" ref={quoteBuilderRef}>
                 <div className="tru-quote-builder">
-                  {/* Form Header - Compact Plan Match Move */}
+                  {/* Form Header - Plan Match Move Workflow */}
                   <div className="tru-qb-form-header">
                     <div className="tru-qb-workflow">
-                      <div className="tru-qb-workflow-step is-active">
+                      <div className="tru-qb-workflow-step">
                         <span className="tru-qb-workflow-num">1</span>
-                        <span className="tru-qb-workflow-label">Plan</span>
+                        <div className="tru-qb-workflow-info">
+                          <span className="tru-qb-workflow-title">Plan</span>
+                          <span className="tru-qb-workflow-desc">Build your inventory with AI tools or talk to a specialist</span>
+                        </div>
                       </div>
                       <span className="tru-qb-workflow-arrow">→</span>
                       <div className="tru-qb-workflow-step">
                         <span className="tru-qb-workflow-num">2</span>
-                        <span className="tru-qb-workflow-label">Match</span>
+                        <div className="tru-qb-workflow-info">
+                          <span className="tru-qb-workflow-title">Match</span>
+                          <span className="tru-qb-workflow-desc">We analyze federal SAFER data to find best rates</span>
+                        </div>
                       </div>
                       <span className="tru-qb-workflow-arrow">→</span>
                       <div className="tru-qb-workflow-step">
                         <span className="tru-qb-workflow-num">3</span>
-                        <span className="tru-qb-workflow-label">Move</span>
+                        <div className="tru-qb-workflow-info">
+                          <span className="tru-qb-workflow-title">Move</span>
+                          <span className="tru-qb-workflow-desc">Get matched with the right mover at the best rate</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -681,10 +690,15 @@ export default function Index() {
                           </div>
                         )}
                       </div>
-                    ) : (
+                    ) : foundCarriers > 0 ? (
                       <div className="tru-carrier-ready">
                         <CheckCircle className="w-4 h-4" />
-                        <span>{foundCarriers || 12} vetted carriers ready</span>
+                        <span>{foundCarriers} vetted carriers ready</span>
+                      </div>
+                    ) : (
+                      <div className="tru-carrier-ready">
+                        <Database className="w-4 h-4" />
+                        <span>Powered by federal SAFER Web data</span>
                       </div>
                     )}
                   </div>
