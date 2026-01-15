@@ -6474,14 +6474,93 @@
 }
 
 /* Form Header - Plan Match Move Workflow */
-.tru-qb-form-header {
+/* Progress Bar - Inside form at top */
+.tru-qb-progress-bar {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 14px 24px;
-  background: #ffffff;
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
+  justify-content: center;
+  gap: 24px;
+  padding: 20px 24px;
+  background: hsl(var(--tm-ink) / 0.02);
   border-radius: 20px 20px 0 0;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-qb-progress-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+.tru-qb-progress-step.is-active {
+  background: hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.tru-qb-progress-step.is-active .tru-qb-step-num {
+  animation: pill-pulse 2s ease-in-out infinite;
+}
+
+.tru-qb-progress-step.is-done {
+  opacity: 0.5;
+}
+
+.tru-qb-step-num {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(140 80% 45%));
+  color: hsl(0 0% 100%);
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.tru-qb-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tru-qb-step-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-qb-step-desc {
+  font-size: 11px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+.tru-qb-progress-arrow {
+  color: hsl(var(--tm-ink) / 0.3);
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  .tru-qb-progress-bar {
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  
+  .tru-qb-progress-step {
+    padding: 8px 12px;
+  }
+  
+  .tru-qb-step-desc,
+  .tru-qb-progress-arrow {
+    display: none;
+  }
 }
 
 .tru-qb-header-logo {
@@ -6769,24 +6848,6 @@
   }
 }
 
-/* Hero CTA - Single bold prompt */
-.tru-qb-hero-cta {
-  font-size: 36px;
-  font-weight: 800;
-  color: hsl(var(--tm-ink));
-  text-align: center;
-  margin-top: -24px;
-  margin-bottom: 56px;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-}
-
-.tru-qb-hero-brand {
-  background: linear-gradient(135deg, hsl(var(--tm-green)) 0%, hsl(var(--tm-green-dark)) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
 /* Form Footer */
 .tru-qb-footer {

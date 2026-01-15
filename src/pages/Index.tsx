@@ -289,34 +289,29 @@ export default function Index() {
             {/* Centered Quote Builder */}
             <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
               <div className="tru-quote-builder">
-                {/* Form Header - Logo + Workflow Pills */}
-                <div className="tru-qb-form-header">
-                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  
-                  {/* Workflow Steps with Pills */}
-                  <div className="tru-qb-workflow-full">
-                    <div className={`tru-qb-workflow-pill ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
-                      <span className="tru-qb-pill-num">1</span>
-                      <div className="tru-qb-pill-content">
-                        <span className="tru-qb-pill-title">Plan</span>
-                        <span className="tru-qb-pill-desc">Share your move details</span>
-                      </div>
+                {/* Workflow Steps - Progress Bar at Top */}
+                <div className="tru-qb-progress-bar">
+                  <div className={`tru-qb-progress-step ${step <= 4 ? 'is-active' : step > 4 ? 'is-done' : ''}`}>
+                    <span className="tru-qb-step-num">1</span>
+                    <div className="tru-qb-step-content">
+                      <span className="tru-qb-step-title">Plan</span>
+                      <span className="tru-qb-step-desc">Share your move details</span>
                     </div>
-                    <span className="tru-qb-workflow-arrow">→</span>
-                    <div className={`tru-qb-workflow-pill ${step === 5 ? 'is-active' : step > 5 ? 'is-done' : ''}`}>
-                      <span className="tru-qb-pill-num">2</span>
-                      <div className="tru-qb-pill-content">
-                        <span className="tru-qb-pill-title">Match</span>
-                        <span className="tru-qb-pill-desc">We find top carriers</span>
-                      </div>
+                  </div>
+                  <span className="tru-qb-progress-arrow">→</span>
+                  <div className={`tru-qb-progress-step ${step === 5 ? 'is-active' : step > 5 ? 'is-done' : ''}`}>
+                    <span className="tru-qb-step-num">2</span>
+                    <div className="tru-qb-step-content">
+                      <span className="tru-qb-step-title">Match</span>
+                      <span className="tru-qb-step-desc">We find top carriers</span>
                     </div>
-                    <span className="tru-qb-workflow-arrow">→</span>
-                    <div className={`tru-qb-workflow-pill ${step === 6 ? 'is-active' : ''}`}>
-                      <span className="tru-qb-pill-num">3</span>
-                      <div className="tru-qb-pill-content">
-                        <span className="tru-qb-pill-title">Move</span>
-                        <span className="tru-qb-pill-desc">Book & relax</span>
-                      </div>
+                  </div>
+                  <span className="tru-qb-progress-arrow">→</span>
+                  <div className={`tru-qb-progress-step ${step === 6 ? 'is-active' : ''}`}>
+                    <span className="tru-qb-step-num">3</span>
+                    <div className="tru-qb-step-content">
+                      <span className="tru-qb-step-title">Move</span>
+                      <span className="tru-qb-step-desc">Book & relax</span>
                     </div>
                   </div>
                 </div>
@@ -327,7 +322,7 @@ export default function Index() {
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
-                      <h2 className="tru-qb-hero-cta">Start your <span className="tru-qb-hero-brand">TruMove</span> below</h2>
+                      
                       <h1 className="tru-qb-question">Where are you moving from?</h1>
                       <p className="tru-qb-subtitle">Enter your current ZIP code to start</p>
                       
