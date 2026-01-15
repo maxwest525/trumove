@@ -152,7 +152,7 @@
 
 .tru-hero-form-wrapper {
   width: 100%;
-  max-width: 1020px;
+  max-width: 1280px;
 }
 
 /* Tools Section Below Form */
@@ -6458,7 +6458,7 @@
    =========================== */
 
 .tru-quote-builder {
-  max-width: 1100px;
+  max-width: 1280px;
   width: 100%;
   margin: 0 auto;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
@@ -6831,13 +6831,13 @@
 /* Main Body: Side by Side */
 .tru-qb-body {
   display: flex;
-  min-height: 320px;
+  min-height: 280px;
 }
 
 /* Left: Conversation Area */
 .tru-qb-main {
   flex: 1 1 55%;
-  padding: 28px 40px;
+  padding: 24px 36px;
   display: flex;
   flex-direction: column;
   justify-content: center;
