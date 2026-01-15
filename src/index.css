@@ -659,13 +659,14 @@
 
 .mapbox-expanded-container {
   position: relative;
-  width: 95vw;
-  height: 90vh;
+  width: 95vw !important;
+  height: 90vh !important;
   max-width: 1600px;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 40px 120px hsl(var(--tm-ink) / 0.4);
   animation: scale-in 0.25s ease-out;
+  background: #e5e7eb;
 }
 
 /* Route info panel on expanded map */
