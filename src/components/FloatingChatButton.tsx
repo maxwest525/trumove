@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Sparkles, X, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Sparkles } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 
 interface FloatingChatButtonProps {
@@ -9,6 +9,18 @@ interface FloatingChatButtonProps {
 export default function FloatingChatButton({ className = '' }: FloatingChatButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+
+  // Only show after scrolling past quote builder
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowButton(window.scrollY > 600);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial position
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>
@@ -26,6 +38,7 @@ export default function FloatingChatButton({ className = '' }: FloatingChatButto
           transition-all duration-300 ease-out
           hover:scale-110 hover:shadow-xl hover:shadow-primary/40
           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+          ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
         `}
         aria-label="Open AI Chat"
@@ -43,7 +56,7 @@ export default function FloatingChatButton({ className = '' }: FloatingChatButto
             bg-foreground text-background text-sm font-medium
             rounded-lg whitespace-nowrap
             transition-all duration-200
-            ${isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2 pointer-events-none'}
+            ${isHovered && showButton ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2 pointer-events-none'}
           `}
         >
           Chat with AI

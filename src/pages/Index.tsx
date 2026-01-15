@@ -1,9 +1,12 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
 import MoveMap from "@/components/MoveMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
+import FloatingQuoteButton from "@/components/FloatingQuoteButton";
+import Confetti from "@/components/Confetti";
+import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { calculateDistance } from "@/lib/distanceCalculator";
@@ -11,7 +14,7 @@ import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
   Shield, Video, Boxes, Calculator, Search, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight,
-  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck
+  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles
 } from "lucide-react";
 
 // ZIP lookup
@@ -75,9 +78,14 @@ function getAiHint(step: number, fromCity: string, toCity: string, distance: num
 
 export default function Index() {
   const navigate = useNavigate();
+  const quoteBuilderRef = useRef<HTMLDivElement>(null);
   
   // Step tracking (1-6)
   const [step, setStep] = useState(1);
+  
+  // Celebration & Chat state
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   
   // Form state
   const [fromZip, setFromZip] = useState("");
@@ -101,6 +109,21 @@ export default function Index() {
     getAiHint(step, fromCity, toCity, distance, moveDate),
     [step, fromCity, toCity, distance, moveDate]
   );
+
+  // Dynamic ticker content based on progress
+  const tickerContent = useMemo(() => {
+    if (!fromCity && !toCity) {
+      return "256-bit encryption • Real-time pricing • FMCSA verified";
+    }
+    if (fromCity && !toCity) {
+      const state = fromCity.split(',')[1]?.trim() || '';
+      return `Scanning carriers in ${state} • Real-time pricing • FMCSA verified`;
+    }
+    if (fromCity && toCity && distance > 0) {
+      return `${distance.toLocaleString()} mile route analyzed • Matching best carriers • FMCSA verified`;
+    }
+    return "256-bit encryption • Real-time pricing • FMCSA verified";
+  }, [fromCity, toCity, distance]);
 
   // Calculate estimate
   const estimate = useMemo(() => {
@@ -155,12 +178,18 @@ export default function Index() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowCelebration(true);
+    
     // Store lead data
     localStorage.setItem("tm_lead", JSON.stringify({
       fromZip, toZip, fromCity, toCity, moveDate: moveDate?.toISOString(),
       size, hasCar, needsPacking, email, phone, ts: Date.now()
     }));
-    navigate("/online-estimate");
+    
+    // Delay navigation to show celebration
+    setTimeout(() => {
+      navigate("/online-estimate");
+    }, 2000);
   };
 
   // Step validation
@@ -204,7 +233,7 @@ export default function Index() {
         <div className="tru-page-inner">
           {/* HERO - Unified Smart Quote Builder */}
           <section className="tru-hero">
-            <div className="tru-quote-builder">
+            <div className="tru-quote-builder" ref={quoteBuilderRef}>
               {/* Progress Header */}
               <div className="tru-qb-header">
                 <span className="tru-qb-step">Step {step} of 6</span>
@@ -214,6 +243,18 @@ export default function Index() {
                     style={{ width: `${(step / 6) * 100}%` }} 
                   />
                 </div>
+                
+                {/* AI Chat Toggle */}
+                <button 
+                  className="tru-qb-chat-toggle"
+                  onClick={() => setChatOpen(true)}
+                  title="Switch to AI Chat"
+                  type="button"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>AI Chat</span>
+                </button>
+                
                 <div className="tru-qb-status">
                   <span className="tru-status-dot is-online" />
                   <span className="tru-qb-status-text">ONLINE</span>
@@ -226,7 +267,7 @@ export default function Index() {
                 <div className="tru-qb-main">
                   {/* Step 1: From ZIP */}
                   {step === 1 && (
-                    <div className="tru-qb-step-content">
+                    <div className="tru-qb-step-content" key="step-1">
                       <h1 className="tru-qb-question">Where are you moving from?</h1>
                       <p className="tru-qb-subtitle">Enter your current ZIP code</p>
                       
@@ -263,7 +304,7 @@ export default function Index() {
 
                   {/* Step 2: To ZIP */}
                   {step === 2 && (
-                    <div className="tru-qb-step-content">
+                    <div className="tru-qb-step-content" key="step-2">
                       <h1 className="tru-qb-question">Where are you moving to?</h1>
                       <p className="tru-qb-subtitle">Enter your destination ZIP code</p>
                       
@@ -301,7 +342,7 @@ export default function Index() {
 
                   {/* Step 3: Move Date */}
                   {step === 3 && (
-                    <div className="tru-qb-step-content">
+                    <div className="tru-qb-step-content" key="step-3">
                       <h1 className="tru-qb-question">When would you like to move?</h1>
                       <p className="tru-qb-subtitle">This helps us match you with available carriers</p>
                       
@@ -349,7 +390,7 @@ export default function Index() {
 
                   {/* Step 4: Move Size */}
                   {step === 4 && (
-                    <div className="tru-qb-step-content">
+                    <div className="tru-qb-step-content" key="step-4">
                       <h1 className="tru-qb-question">What size is your move?</h1>
                       <p className="tru-qb-subtitle">This helps us estimate weight and find the right carriers</p>
                       
@@ -378,7 +419,7 @@ export default function Index() {
 
                   {/* Step 5: Additional Options */}
                   {step === 5 && (
-                    <div className="tru-qb-step-content">
+                    <div className="tru-qb-step-content" key="step-5">
                       <h1 className="tru-qb-question">Any additional services?</h1>
                       <p className="tru-qb-subtitle">Select any that apply (optional)</p>
                       
@@ -428,7 +469,7 @@ export default function Index() {
 
                   {/* Step 6: Contact */}
                   {step === 6 && (
-                    <form className="tru-qb-step-content" onSubmit={handleSubmit}>
+                    <form className="tru-qb-step-content" key="step-6" onSubmit={handleSubmit}>
                       <h1 className="tru-qb-question">Where should we send your quote?</h1>
                       <p className="tru-qb-subtitle">We'll email your detailed estimate (no spam, ever)</p>
                       
@@ -564,7 +605,7 @@ export default function Index() {
               {/* Compact Tech Ticker */}
               <div className="tru-qb-ticker">
                 <Lock className="w-3.5 h-3.5" />
-                <span>256-bit encryption • 47 AI-vetted carriers • FMCSA verified</span>
+                <span>{tickerContent}</span>
               </div>
             </div>
           </section>
@@ -797,6 +838,15 @@ export default function Index() {
           </section>
         </div>
       </div>
+
+      {/* Confetti Celebration */}
+      <Confetti show={showCelebration} />
+      
+      {/* Chat Modal */}
+      <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+      
+      {/* Floating AI Move Builder Button */}
+      <FloatingQuoteButton quoteBuilderRef={quoteBuilderRef} onChatOpen={() => setChatOpen(true)} />
 
       {/* Floating Chat Button */}
       <FloatingChatButton />
