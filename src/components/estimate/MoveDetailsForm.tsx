@@ -1,4 +1,7 @@
-import { type MoveDetails } from "@/lib/priceCalculator";
+import { useEffect, useState } from "react";
+import { type MoveDetails, determineMoveType } from "@/lib/priceCalculator";
+import { calculateDistance } from "@/lib/distanceCalculator";
+import { MapPin, Calendar, ArrowUpDown, Package } from "lucide-react";
 
 interface MoveDetailsFormProps {
   moveDetails: MoveDetails;
@@ -19,106 +22,159 @@ export default function MoveDetailsForm({
   onContactUpdate,
   onSubmit 
 }: MoveDetailsFormProps) {
+  const [hasStairs, setHasStairs] = useState(false);
+  const [needsPacking, setNeedsPacking] = useState(false);
+
+  // Auto-calculate distance when locations change
+  useEffect(() => {
+    // Extract ZIP codes from location strings
+    const extractZip = (location: string): string => {
+      const match = location.match(/\b\d{5}\b/);
+      return match ? match[0] : '';
+    };
+    
+    const fromZip = extractZip(moveDetails.fromLocation);
+    const toZip = extractZip(moveDetails.toLocation);
+    
+    if (fromZip && toZip) {
+      const calculatedDistance = calculateDistance(fromZip, toZip);
+      if (calculatedDistance > 0) {
+        const moveType = determineMoveType(calculatedDistance);
+        onUpdate({ distance: calculatedDistance, moveType });
+      }
+    }
+  }, [moveDetails.fromLocation, moveDetails.toLocation, onUpdate]);
+
   return (
     <div className="space-y-6">
-      {/* Route Section */}
-      <div>
-        <div className="text-[10px] font-black tracking-[0.24em] uppercase text-muted-foreground mb-4">
-          Route, Distance, Move Type
+      {/* Route Summary Strip */}
+      {moveDetails.distance > 0 && (
+        <div className="flex items-center gap-4 p-4 rounded-xl bg-primary/5 border border-primary/20">
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-primary" />
+            <span className="text-sm font-bold text-foreground">
+              {moveDetails.distance.toLocaleString()} miles
+            </span>
+          </div>
+          <div className="w-px h-4 bg-border" />
+          <span className={`text-xs font-bold tracking-wide uppercase px-2 py-1 rounded-full ${
+            moveDetails.moveType === 'long-distance' 
+              ? 'bg-amber-500/20 text-amber-600' 
+              : 'bg-emerald-500/20 text-emerald-600'
+          }`}>
+            {moveDetails.moveType === 'long-distance' ? 'Long Distance' : 'Local Move'}
+          </span>
         </div>
-        <p className="text-sm text-muted-foreground mb-4">
-          Your inventory is ready. Add where you are moving from and to, when you are moving, and your distance and move type so TruMove can refine your price and route you to a call or video consult.
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-xs font-semibold text-foreground block mb-2">
-              Moving from (city or ZIP)
-            </label>
+      )}
+
+      {/* Location Inputs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="text-xs font-semibold text-foreground block mb-2">
+            Moving from (city or ZIP)
+          </label>
+          <div className="relative">
+            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               value={moveDetails.fromLocation}
               onChange={(e) => onUpdate({ fromLocation: e.target.value })}
-              placeholder="Example: Oakland Park, FL"
-              className="w-full h-12 px-4 rounded-xl border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+              placeholder="Oakland Park, FL or 33334"
+              className="w-full h-12 pl-11 pr-4 rounded-xl border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
             />
           </div>
-          <div>
-            <label className="text-xs font-semibold text-foreground block mb-2">
-              Moving to (city or ZIP)
-            </label>
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-foreground block mb-2">
+            Moving to (city or ZIP)
+          </label>
+          <div className="relative">
+            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               value={moveDetails.toLocation}
               onChange={(e) => onUpdate({ toLocation: e.target.value })}
-              placeholder="Example: Atlanta, GA"
-              className="w-full h-12 px-4 rounded-xl border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+              placeholder="Atlanta, GA or 30301"
+              className="w-full h-12 pl-11 pr-4 rounded-xl border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
             />
           </div>
         </div>
       </div>
 
-      {/* Move Type */}
+      {/* Move Date */}
       <div>
         <label className="text-xs font-semibold text-foreground block mb-2">
-          Move type
+          Target move date
         </label>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={() => onUpdate({ moveType: 'local' })}
-            className={`flex-1 h-11 rounded-xl text-xs font-bold tracking-wide uppercase transition-all duration-150
-              ${moveDetails.moveType === 'local'
-                ? 'bg-foreground text-background shadow-lg'
-                : 'border border-border/60 bg-card text-foreground/70 hover:bg-muted/50'
-              }`}
-          >
-            Local (usually under 150 miles)
-          </button>
-          <button
-            type="button"
-            onClick={() => onUpdate({ moveType: 'long-distance' })}
-            className={`flex-1 h-11 rounded-xl text-xs font-bold tracking-wide uppercase transition-all duration-150
-              ${moveDetails.moveType === 'long-distance'
-                ? 'bg-foreground text-background shadow-lg'
-                : 'border border-border/60 bg-card text-foreground/70 hover:bg-muted/50'
-              }`}
-          >
-            Long distance
-          </button>
-        </div>
-      </div>
-
-      {/* Distance & Date */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="text-xs font-semibold text-foreground block mb-2">
-            Approx distance in miles
-          </label>
-          <input
-            type="number"
-            min={0}
-            value={moveDetails.distance || ''}
-            onChange={(e) => onUpdate({ distance: parseInt(e.target.value) || 0 })}
-            placeholder="Example: 600"
-            className="w-full h-12 px-4 rounded-xl border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
-          />
-        </div>
-        <div>
-          <label className="text-xs font-semibold text-foreground block mb-2">
-            Target move date
-          </label>
+        <div className="relative">
+          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="date"
             value={moveDetails.moveDate}
             onChange={(e) => onUpdate({ moveDate: e.target.value })}
-            className="w-full h-12 px-4 rounded-xl border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+            className="w-full h-12 pl-11 pr-4 rounded-xl border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
           />
         </div>
       </div>
 
+      {/* Quick Options */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <button
+          type="button"
+          onClick={() => setHasStairs(!hasStairs)}
+          className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-150 ${
+            hasStairs
+              ? 'bg-primary/10 border-primary/40 shadow-[0_0_0_4px_hsl(var(--primary)/0.1)]'
+              : 'bg-card border-border/60 hover:bg-muted/50'
+          }`}
+        >
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+            hasStairs ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+          }`}>
+            <ArrowUpDown className="w-5 h-5" />
+          </div>
+          <div className="text-left">
+            <div className="text-sm font-bold text-foreground">Stairs involved?</div>
+            <div className="text-xs text-muted-foreground">Flights at pickup or delivery</div>
+          </div>
+          <div className={`ml-auto w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+            hasStairs ? 'border-primary bg-primary' : 'border-muted-foreground/40'
+          }`}>
+            {hasStairs && <div className="w-2 h-2 rounded-full bg-primary-foreground" />}
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setNeedsPacking(!needsPacking)}
+          className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-150 ${
+            needsPacking
+              ? 'bg-primary/10 border-primary/40 shadow-[0_0_0_4px_hsl(var(--primary)/0.1)]'
+              : 'bg-card border-border/60 hover:bg-muted/50'
+          }`}
+        >
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+            needsPacking ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+          }`}>
+            <Package className="w-5 h-5" />
+          </div>
+          <div className="text-left">
+            <div className="text-sm font-bold text-foreground">Need help packing?</div>
+            <div className="text-xs text-muted-foreground">Full or partial packing service</div>
+          </div>
+          <div className={`ml-auto w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+            needsPacking ? 'border-primary bg-primary' : 'border-muted-foreground/40'
+          }`}>
+            {needsPacking && <div className="w-2 h-2 rounded-full bg-primary-foreground" />}
+          </div>
+        </button>
+      </div>
+
       {/* Contact Info */}
       <div className="pt-4 border-t border-border/40">
+        <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-3">
+          Your contact info
+        </div>
         <div className="grid grid-cols-1 gap-4">
           <div>
             <label className="text-xs font-semibold text-foreground block mb-2">
@@ -172,7 +228,7 @@ export default function MoveDetailsForm({
           <span className="text-lg">→</span>
         </button>
         <p className="mt-3 text-xs text-muted-foreground text-center">
-          Clicking "Finalize My Estimate" will create an email to TruMove with your rough estimate and a representative will reach out. By finalizing your estimate you authorize TruMove LLC to contact you.
+          By finalizing your estimate you authorize TruMove LLC to contact you.
         </p>
       </div>
     </div>
