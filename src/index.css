@@ -659,9 +659,9 @@
 
 .mapbox-expanded-container {
   position: relative;
-  width: 85vw;
-  height: 75vh;
-  max-width: 1200px;
+  width: 95vw;
+  height: 90vh;
+  max-width: 1600px;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 40px 120px hsl(var(--tm-ink) / 0.4);
@@ -674,22 +674,23 @@
   bottom: 24px;
   left: 24px;
   display: flex;
-  gap: 20px;
-  padding: 14px 24px;
-  background: white/95;
-  backdrop-filter: blur(8px);
+  gap: 24px;
+  padding: 20px 32px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
   border-radius: 14px;
-  box-shadow: 0 4px 20px hsl(var(--tm-ink) / 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.2);
   z-index: 10;
 }
 
 .expanded-map-stat {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: hsl(var(--foreground));
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
 }
 
 .expanded-map-stat svg {
