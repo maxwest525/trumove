@@ -2,10 +2,11 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldHJ3b2YwYXF4M2tvajNsbTFpNTdjIn0.DXcMYHvBRP8vJQM8KKdRLg';
+
 interface MapboxMoveMapProps {
-  fromZip: string;
-  toZip: string;
-  accessToken?: string;
+  fromZip?: string;
+  toZip?: string;
 }
 
 // Approximate lat/lng positions for ZIP prefixes
@@ -117,21 +118,20 @@ function createArcLine(start: [number, number], end: [number, number], steps: nu
   return coords;
 }
 
-export default function MapboxMoveMap({ fromZip, toZip, accessToken }: MapboxMoveMapProps) {
+export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
-  const [token, setToken] = useState(accessToken || import.meta.env.VITE_MAPBOX_TOKEN || '');
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
-  const fromCoords = useMemo(() => getZipCoords(fromZip), [fromZip]);
-  const toCoords = useMemo(() => getZipCoords(toZip), [toZip]);
+  const fromCoords = useMemo(() => fromZip ? getZipCoords(fromZip) : null, [fromZip]);
+  const toCoords = useMemo(() => toZip ? getZipCoords(toZip) : null, [toZip]);
 
   // Initialize map
   useEffect(() => {
-    if (!mapContainer.current || !token) return;
+    if (!mapContainer.current) return;
 
-    mapboxgl.accessToken = token;
+    mapboxgl.accessToken = MAPBOX_TOKEN;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -150,7 +150,7 @@ export default function MapboxMoveMap({ fromZip, toZip, accessToken }: MapboxMov
       markersRef.current = [];
       map.current?.remove();
     };
-  }, [token]);
+  }, []);
 
   // Update route when ZIPs change
   useEffect(() => {
@@ -239,25 +239,6 @@ export default function MapboxMoveMap({ fromZip, toZip, accessToken }: MapboxMov
     });
 
   }, [fromCoords, toCoords, isMapLoaded]);
-
-  // Token input fallback
-  if (!token) {
-    return (
-      <div className="mapbox-token-input">
-        <p className="text-xs font-medium text-muted-foreground mb-2">Mapbox Token Required</p>
-        <input 
-          type="text" 
-          value={token}
-          onChange={(e) => setToken(e.target.value)}
-          placeholder="pk.xxxxx..."
-          className="w-full px-3 py-2 text-sm border rounded-lg"
-        />
-        <p className="text-xs text-muted-foreground mt-1">
-          Get one at <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">mapbox.com</a>
-        </p>
-      </div>
-    );
-  }
 
   return <div ref={mapContainer} className="mapbox-move-map" />;
 }

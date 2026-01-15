@@ -599,14 +599,7 @@ export default function Index() {
                 <div className="tru-qb-panel">
                   {/* Map Area */}
                   <div className="tru-qb-map">
-                    {hasRoute ? (
-                      <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
-                    ) : (
-                      <div className="tru-qb-map-empty">
-                        <Truck className="w-6 h-6 text-muted-foreground/30" />
-                        <span>Enter ZIPs to see your route</span>
-                      </div>
-                    )}
+                    <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
                   </div>
 
                   {/* Route Info */}
