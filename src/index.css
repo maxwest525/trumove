@@ -6456,95 +6456,70 @@
 .tru-qb-form-header {
   display: flex;
   align-items: center;
-  padding: 20px 24px;
+  gap: 20px;
+  padding: 12px 20px;
   background: #ffffff;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
   border-radius: 20px 20px 0 0;
 }
 
-.tru-qb-workflow {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  width: 100%;
+.tru-qb-header-logo {
+  height: 28px;
+  width: auto;
+  flex-shrink: 0;
 }
 
-.tru-qb-workflow-step {
+.tru-qb-workflow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   flex: 1;
 }
 
+.tru-qb-workflow-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .tru-qb-workflow-num {
-  width: 36px;
-  height: 36px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 6px;
   background: linear-gradient(135deg, hsl(var(--primary)), hsl(140 80% 45%));
   color: hsl(var(--tm-ink));
-  font-size: 15px;
-  font-weight: 900;
+  font-size: 12px;
+  font-weight: 800;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
-}
-
-.tru-qb-workflow-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 
 .tru-qb-workflow-title {
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 700;
   color: hsl(var(--tm-ink));
 }
 
-.tru-qb-workflow-desc {
-  font-size: 12px;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.55);
-  line-height: 1.4;
-}
-
 .tru-qb-workflow-arrow {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 300;
   color: hsl(var(--tm-ink) / 0.25);
-  margin-top: 8px;
   flex-shrink: 0;
 }
 
 @media (max-width: 640px) {
   .tru-qb-form-header {
-    padding: 16px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
   }
   
   .tru-qb-workflow {
-    flex-direction: column;
-    gap: 14px;
-  }
-  
-  .tru-qb-workflow-arrow {
-    display: none;
-  }
-  
-  .tru-qb-workflow-num {
-    width: 28px;
-    height: 28px;
-    font-size: 13px;
-    border-radius: 8px;
-  }
-  
-  .tru-qb-workflow-title {
-    font-size: 14px;
-  }
-  
-  .tru-qb-workflow-desc {
-    font-size: 11px;
+    width: 100%;
+    justify-content: space-between;
   }
 }
 
