@@ -362,7 +362,7 @@
 }
 
 /* =============================================
-   HERO MAP - Enticing Animated Map
+   HERO MAP - Mapbox Interactive Map
    ============================================= */
 .tru-hero-map {
   position: relative;
@@ -377,92 +377,81 @@
     inset 0 0 60px hsl(var(--primary) / 0.03);
 }
 
-.tru-hero-map-glow {
+.tru-hero-map-container {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+}
+
+.tru-hero-map-token {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.tru-hero-map-token-content {
+  max-width: 320px;
+  text-align: center;
+}
+
+/* Mapbox custom markers */
+.mapbox-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mapbox-marker-dot {
+  width: 14px;
+  height: 14px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.5);
+  z-index: 2;
+}
+
+.mapbox-marker-pulse {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 200%;
-  height: 200%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, hsl(var(--primary) / 0.08) 0%, transparent 60%);
-  pointer-events: none;
+  width: 30px;
+  height: 30px;
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 50%;
+  animation: marker-pulse 2s ease-out infinite;
+  z-index: 1;
 }
 
-.tru-hero-map-svg {
-  width: 100%;
-  height: 100%;
-}
-
-.tru-hero-map-image {
-  opacity: 0.25;
-  filter: saturate(0) contrast(1.1);
-}
-
-/* Route animations */
-.tru-hero-route {
-  opacity: 0.4;
-  transition: opacity 0.6s ease;
-}
-
-.tru-hero-route.is-active {
-  opacity: 1;
-}
-
-.tru-hero-route-line {
-  stroke-dashoffset: 0;
-  animation: route-dash 3s linear infinite;
-}
-
-@keyframes route-dash {
-  to {
-    stroke-dashoffset: -24;
-  }
-}
-
-.tru-hero-route-dot {
-  filter: url(#glow);
-}
-
-.tru-hero-route-pulse {
-  animation: route-pulse 2s ease-out infinite;
-}
-
-@keyframes route-pulse {
+@keyframes marker-pulse {
   0% {
-    r: 8;
-    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
   }
   100% {
-    r: 24;
+    transform: translate(-50%, -50%) scale(1.5);
     opacity: 0;
   }
 }
 
-.tru-hero-route-label {
+.mapbox-marker-label {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 11px;
   font-weight: 700;
-  fill: hsl(var(--tm-ink));
+  color: hsl(var(--tm-ink));
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-
-.tru-hero-truck-group {
-  animation: truck-travel 8s ease-in-out infinite;
-}
-
-@keyframes truck-travel {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(100px, -50px);
-  }
-  50% {
-    transform: translate(200px, 20px);
-  }
-  75% {
-    transform: translate(50px, 30px);
-  }
+  background: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px hsl(var(--tm-ink) / 0.15);
+  white-space: nowrap;
 }
 
 /* Map stats overlay */
@@ -477,6 +466,7 @@
   background: hsl(var(--tm-ink) / 0.9);
   backdrop-filter: blur(8px);
   border-radius: 10px;
+  z-index: 10;
 }
 
 .tru-hero-map-stat {
