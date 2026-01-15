@@ -1,13 +1,26 @@
 import { useEffect, useState } from "react";
+import { format } from "date-fns";
 import { type MoveDetails, determineMoveType } from "@/lib/priceCalculator";
 import { calculateDistance } from "@/lib/distanceCalculator";
-import { MapPin, Calendar, ArrowUpDown, Package, ArrowRight } from "lucide-react";
+import { MapPin, Calendar, ArrowUpDown, Package, Truck, Home } from "lucide-react";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 interface MoveDetailsFormProps {
   moveDetails: MoveDetails;
   onUpdate: (updates: Partial<MoveDetails>) => void;
   onProceed: () => void;
 }
+
+const HOME_SIZES = [
+  { value: 'studio', label: 'Studio' },
+  { value: '1br', label: '1 BR' },
+  { value: '2br', label: '2 BR' },
+  { value: '3br', label: '3 BR' },
+  { value: '4br+', label: '4+ BR' },
+] as const;
 
 export default function MoveDetailsForm({ 
   moveDetails, 
@@ -16,6 +29,9 @@ export default function MoveDetailsForm({
 }: MoveDetailsFormProps) {
   const [hasStairs, setHasStairs] = useState(false);
   const [needsPacking, setNeedsPacking] = useState(false);
+  const [fromCity, setFromCity] = useState('');
+  const [toCity, setToCity] = useState('');
+  const [dateOpen, setDateOpen] = useState(false);
 
   // Auto-calculate distance when locations change
   useEffect(() => {
@@ -36,10 +52,37 @@ export default function MoveDetailsForm({
     }
   }, [moveDetails.fromLocation, moveDetails.toLocation, onUpdate]);
 
-  const canProceed = moveDetails.fromLocation && moveDetails.toLocation && moveDetails.moveDate;
+  const canProceed = moveDetails.fromLocation && moveDetails.toLocation && moveDetails.moveDate && moveDetails.homeSize;
+
+  const selectedDate = moveDetails.moveDate ? new Date(moveDetails.moveDate + 'T00:00:00') : undefined;
 
   return (
     <div className="space-y-4">
+      {/* Home Size Selector */}
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <Home className="w-3.5 h-3.5 text-muted-foreground" />
+          <span className="text-xs font-semibold text-muted-foreground">Home Size</span>
+        </div>
+        <div className="flex gap-2">
+          {HOME_SIZES.map((size) => (
+            <button
+              key={size.value}
+              type="button"
+              onClick={() => onUpdate({ homeSize: size.value })}
+              className={cn(
+                "flex-1 h-10 rounded-lg text-xs font-bold transition-all",
+                moveDetails.homeSize === size.value
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted/60 text-foreground/70 hover:bg-muted hover:text-foreground border border-border/40"
+              )}
+            >
+              {size.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Route Summary Strip */}
       {moveDetails.distance > 0 && (
         <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20">
@@ -57,37 +100,75 @@ export default function MoveDetailsForm({
         </div>
       )}
 
-      {/* Location + Date Row */}
-      <div className="grid grid-cols-2 md:grid-cols-[1fr_1fr_140px] gap-3">
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-          <input
-            type="text"
+      {/* Location Inputs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <MapPin className="w-3.5 h-3.5 text-emerald-500" />
+            <span className="text-xs font-semibold text-muted-foreground">From</span>
+          </div>
+          <LocationAutocomplete
             value={moveDetails.fromLocation}
-            onChange={(e) => onUpdate({ fromLocation: e.target.value })}
-            placeholder="From ZIP"
-            className="w-full h-10 pl-9 pr-3 rounded-lg border border-border/60 bg-background text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
+            onValueChange={(val) => onUpdate({ fromLocation: val })}
+            onLocationSelect={(city, zip) => {
+              setFromCity(city);
+              onUpdate({ fromLocation: zip });
+            }}
+            placeholder="City or ZIP code"
           />
         </div>
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-          <input
-            type="text"
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <MapPin className="w-3.5 h-3.5 text-primary" />
+            <span className="text-xs font-semibold text-muted-foreground">To</span>
+          </div>
+          <LocationAutocomplete
             value={moveDetails.toLocation}
-            onChange={(e) => onUpdate({ toLocation: e.target.value })}
-            placeholder="To ZIP"
-            className="w-full h-10 pl-9 pr-3 rounded-lg border border-border/60 bg-background text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
+            onValueChange={(val) => onUpdate({ toLocation: val })}
+            onLocationSelect={(city, zip) => {
+              setToCity(city);
+              onUpdate({ toLocation: zip });
+            }}
+            placeholder="City or ZIP code"
           />
         </div>
-        <div className="relative col-span-2 md:col-span-1">
-          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-          <input
-            type="date"
-            value={moveDetails.moveDate}
-            onChange={(e) => onUpdate({ moveDate: e.target.value })}
-            className="w-full h-10 pl-9 pr-3 rounded-lg border border-border/60 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
-          />
+      </div>
+
+      {/* Move Date Picker */}
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+          <span className="text-xs font-semibold text-muted-foreground">Target Move Date</span>
         </div>
+        <Popover open={dateOpen} onOpenChange={setDateOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                "w-full h-11 px-4 rounded-lg border border-border/60 bg-background text-sm font-medium text-left flex items-center gap-3 transition-all hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20",
+                !selectedDate && "text-muted-foreground/60"
+              )}
+            >
+              <Calendar className="w-4 h-4 text-muted-foreground" />
+              {selectedDate ? format(selectedDate, "MMMM d, yyyy") : "Select your move date"}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <CalendarComponent
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => {
+                if (date) {
+                  onUpdate({ moveDate: format(date, "yyyy-MM-dd") });
+                  setDateOpen(false);
+                }
+              }}
+              disabled={(date) => date < new Date()}
+              initialFocus
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Quick Options - Inline */}
@@ -123,10 +204,15 @@ export default function MoveDetailsForm({
         type="button"
         onClick={onProceed}
         disabled={!canProceed}
-        className="w-full h-11 rounded-lg bg-primary text-primary-foreground text-sm font-bold tracking-wide uppercase transition-all hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+        className={cn(
+          "w-full h-12 rounded-xl text-sm font-bold tracking-wide uppercase transition-all flex items-center justify-center gap-3",
+          "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground",
+          "hover:-translate-y-0.5 hover:shadow-[0_8px_30px_-4px_hsl(var(--primary)/0.4)]",
+          "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:from-muted disabled:to-muted disabled:text-muted-foreground"
+        )}
       >
+        <Truck className="w-5 h-5" />
         Proceed to Inventory
-        <ArrowRight className="w-4 h-4" />
       </button>
     </div>
   );

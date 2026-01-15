@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { MapPin, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface LocationSuggestion {
   city: string;
@@ -15,6 +16,7 @@ interface LocationAutocompleteProps {
   placeholder?: string;
   autoFocus?: boolean;
   onKeyDown?: (e: React.KeyboardEvent) => void;
+  className?: string;
 }
 
 // Sample city data for autocomplete - can be expanded
@@ -69,6 +71,7 @@ export default function LocationAutocomplete({
   placeholder = "City or ZIP code",
   autoFocus = false,
   onKeyDown,
+  className,
 }: LocationAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -184,11 +187,16 @@ export default function LocationAutocomplete({
   const displayValue = selectedCity || value;
 
   return (
-    <div className="tru-qb-location-wrap">
+    <div className="relative">
       <input
         ref={inputRef}
         type="text"
-        className="tru-qb-input"
+        className={cn(
+          "w-full h-11 px-4 rounded-lg border border-border/60 bg-background text-sm font-medium",
+          "placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40",
+          "transition-all",
+          className
+        )}
         placeholder={placeholder}
         value={displayValue}
         onChange={handleInputChange}
@@ -200,26 +208,30 @@ export default function LocationAutocomplete({
       />
       
       {showDropdown && (suggestions.length > 0 || isLoading) && (
-        <div className="tru-qb-autocomplete-dropdown" ref={dropdownRef}>
+        <div 
+          ref={dropdownRef}
+          className="absolute top-full left-0 right-0 mt-1 z-50 rounded-lg border border-border/60 bg-card shadow-lg overflow-hidden"
+        >
           {isLoading ? (
-            <div className="tru-qb-autocomplete-loading">
-              <Loader2 className="w-4 h-4" />
+            <div className="flex items-center gap-2 px-4 py-3 text-sm text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" />
               <span>Searching...</span>
             </div>
           ) : (
             suggestions.map((suggestion, idx) => (
               <div
                 key={`${suggestion.zip}-${idx}`}
-                className={`tru-qb-autocomplete-item ${idx === selectedIndex ? 'is-selected' : ''}`}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors",
+                  idx === selectedIndex ? "bg-primary/10" : "hover:bg-muted/50"
+                )}
                 onClick={() => handleSelect(suggestion)}
                 onMouseEnter={() => setSelectedIndex(idx)}
               >
-                <div className="tru-qb-autocomplete-icon">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <div className="tru-qb-autocomplete-content">
-                  <span className="tru-qb-autocomplete-city">{suggestion.display}</span>
-                  <span className="tru-qb-autocomplete-zip">ZIP: {suggestion.zip}</span>
+                <MapPin className="w-4 h-4 text-primary" />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-foreground">{suggestion.display}</span>
+                  <span className="text-xs text-muted-foreground">ZIP: {suggestion.zip}</span>
                 </div>
               </div>
             ))
