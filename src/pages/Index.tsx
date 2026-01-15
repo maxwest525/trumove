@@ -283,43 +283,12 @@ export default function Index() {
               <div className="tru-hero-content">
                 {/* Section 1: Marketplace Value Prop */}
                 <div className="tru-hero-intro">
-                  <div className="tru-hero-kicker">
-                    <BarChart3 className="w-4 h-4" />
-                    <span>COMPARE & BOOK</span>
-                  </div>
                   <h1 className="tru-hero-title">
                     Find the right mover at the best rate.
                   </h1>
                   <p className="tru-hero-sub">
                     We use federal SAFER Web data to match you with licensed, vetted carriers — our goal is to get you the cheapest rate possible. No phone calls, no spam.
                   </p>
-                </div>
-
-                {/* Section 2: Plan-Match-Move Workflow */}
-                <div className="tru-hero-workflow">
-                  <div className="tru-hero-workflow-step">
-                    <div className="tru-hero-workflow-num">1</div>
-                    <div className="tru-hero-workflow-info">
-                      <span className="tru-hero-workflow-title">Plan</span>
-                      <span className="tru-hero-workflow-desc">Build your inventory with AI tools or talk to a specialist</span>
-                    </div>
-                  </div>
-                  <div className="tru-hero-workflow-arrow">→</div>
-                  <div className="tru-hero-workflow-step">
-                    <div className="tru-hero-workflow-num">2</div>
-                    <div className="tru-hero-workflow-info">
-                      <span className="tru-hero-workflow-title">Match</span>
-                      <span className="tru-hero-workflow-desc">We analyze federal SAFER data to find best rates</span>
-                    </div>
-                  </div>
-                  <div className="tru-hero-workflow-arrow">→</div>
-                  <div className="tru-hero-workflow-step">
-                    <div className="tru-hero-workflow-num">3</div>
-                    <div className="tru-hero-workflow-info">
-                      <span className="tru-hero-workflow-title">Move</span>
-                      <span className="tru-hero-workflow-desc">Get matched with the right mover at the best rate</span>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Section 3: Don't Want a Stranger Callout */}
@@ -386,22 +355,28 @@ export default function Index() {
                   <div className="tru-qb-form-header">
                     <div className="tru-qb-workflow">
                       <div className="tru-qb-workflow-step">
-                        <span className="tru-qb-workflow-num">1</span>
-                        <span className="tru-qb-workflow-label">Plan</span>
+                        <div className="tru-qb-workflow-num">1</div>
+                        <div className="tru-qb-workflow-info">
+                          <span className="tru-qb-workflow-title">Plan</span>
+                          <span className="tru-qb-workflow-desc">Build your inventory with AI tools or talk to a specialist</span>
+                        </div>
                       </div>
                       <div className="tru-qb-workflow-arrow">→</div>
                       <div className="tru-qb-workflow-step">
-                        <span className="tru-qb-workflow-num">2</span>
-                        <span className="tru-qb-workflow-label">Match</span>
+                        <div className="tru-qb-workflow-num">2</div>
+                        <div className="tru-qb-workflow-info">
+                          <span className="tru-qb-workflow-title">Match</span>
+                          <span className="tru-qb-workflow-desc">We analyze federal SAFER data to find best rates</span>
+                        </div>
                       </div>
                       <div className="tru-qb-workflow-arrow">→</div>
                       <div className="tru-qb-workflow-step">
-                        <span className="tru-qb-workflow-num">3</span>
-                        <span className="tru-qb-workflow-label">Move</span>
+                        <div className="tru-qb-workflow-num">3</div>
+                        <div className="tru-qb-workflow-info">
+                          <span className="tru-qb-workflow-title">Move</span>
+                          <span className="tru-qb-workflow-desc">Get matched with the right mover at the best rate</span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="tru-qb-step-indicator">
-                      Step {step} of 6
                     </div>
                   </div>
                   {/* Main Body: Form + Dashboard Side by Side */}
