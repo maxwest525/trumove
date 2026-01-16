@@ -7,6 +7,7 @@ import ChatModal from "@/components/chat/ChatModal";
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/online-estimate", label: "AI Move Estimator" },
+  { href: "/book", label: "Book Video Consult" },
   { href: "/property-lookup", label: "Property Lookup" },
   { href: "/vetting", label: "Carrier Vetting" },
   { href: "/faq", label: "FAQ" },
@@ -55,10 +56,6 @@ export default function Header() {
               <Phone className="w-4 h-4" />
               <span>Call</span>
             </a>
-            <Link to="/book" className="header-btn header-btn-primary">
-              <Video className="w-4 h-4" />
-              <span>Video Consult</span>
-            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
