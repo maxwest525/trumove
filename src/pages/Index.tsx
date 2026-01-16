@@ -584,12 +584,6 @@ export default function Index() {
                         <p className="tru-qb-error">{formError}</p>
                       )}
 
-                      {/* Back button above options */}
-                      <button type="button" className="tru-qb-back-top" onClick={goBack}>
-                        <ChevronLeft className="w-4 h-4" />
-                        <span>Back</span>
-                      </button>
-
                       <div className="tru-qb-options-stack">
                         <button
                           type="submit"
@@ -644,6 +638,12 @@ export default function Index() {
                           </a>
                         </div>
                       </div>
+
+                      {/* Back button below options */}
+                      <button type="button" className="tru-qb-back" onClick={goBack}>
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back</span>
+                      </button>
 
                       <p className="tru-qb-disclaimer-bottom">
                         By submitting, you agree we may contact you. <Lock className="w-3 h-3 inline" /> Secure & never sold.
