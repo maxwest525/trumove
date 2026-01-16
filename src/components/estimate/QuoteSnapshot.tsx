@@ -17,7 +17,7 @@ export default function QuoteSnapshot({ items, moveDetails }: QuoteSnapshotProps
   const estimate = calculateEstimate(totalWeight, moveDetails.distance, effectiveMoveType);
 
   return (
-    <div className="h-full flex flex-col rounded-2xl border-2 border-border/60 bg-gradient-to-b from-card via-card to-muted/30 shadow-xl shadow-primary/5">
+    <div className="lg:sticky lg:top-6 flex flex-col rounded-2xl border-2 border-border/60 bg-gradient-to-b from-card via-card to-muted/30 shadow-xl shadow-primary/5">
       {/* Header - Matching homepage style */}
       <div className="tru-qb-form-header">
         <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
