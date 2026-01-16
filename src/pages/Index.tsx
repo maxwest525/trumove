@@ -18,7 +18,7 @@ import {
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown, MessageCircle
+  Home, Building2, MoveVertical, ArrowUpDown
 } from "lucide-react";
 
 // ZIP lookup
@@ -729,21 +729,13 @@ export default function Index() {
             
             {/* Quick Tools Sidebar - 3rd column */}
             <div className="tru-quick-tools-sidebar">
-              <Link to="/online-estimate" className="tru-quick-tool" title="AI Estimator">
+              <Link to="/online-estimate" className="tru-quick-tool" title="AI Inventory Builder">
                 <Sparkles className="w-5 h-5" />
-                <span className="tru-quick-tool-label">AI Estimator</span>
+                <span className="tru-quick-tool-label">AI Inventory</span>
               </Link>
-              <button type="button" className="tru-quick-tool" title="AI Chat" onClick={() => setChatOpen(true)}>
-                <MessageCircle className="w-5 h-5" />
-                <span className="tru-quick-tool-label">AI Chat</span>
-              </button>
-              <Link to="/vetting" className="tru-quick-tool" title="Carrier Vetting">
+              <Link to="/vetting" className="tru-quick-tool" title="FMCSA Carrier Lookup">
                 <Database className="w-5 h-5" />
-                <span className="tru-quick-tool-label">Carrier Vetting</span>
-              </Link>
-              <Link to="/property-lookup" className="tru-quick-tool" title="Property Lookup">
-                <Home className="w-5 h-5" />
-                <span className="tru-quick-tool-label">Property Lookup</span>
+                <span className="tru-quick-tool-label">FMCSA Lookup</span>
               </Link>
               <Link to="/book" className="tru-quick-tool" title="Video Walkthrough">
                 <Video className="w-5 h-5" />
