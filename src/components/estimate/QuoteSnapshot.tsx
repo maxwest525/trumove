@@ -17,7 +17,7 @@ export default function QuoteSnapshot({ items, moveDetails }: QuoteSnapshotProps
   const estimate = calculateEstimate(totalWeight, moveDetails.distance, effectiveMoveType);
 
   return (
-    <div className="tru-floating-form-card">
+    <div className="tru-floating-form-card h-full flex flex-col">
       {/* Header - Matching homepage style */}
       <div className="tru-qb-form-header">
         <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
@@ -25,7 +25,7 @@ export default function QuoteSnapshot({ items, moveDetails }: QuoteSnapshotProps
       </div>
 
       {/* Details Grid */}
-      <div className="p-5 space-y-3">
+      <div className="p-5 space-y-3 flex-1">
         <div className="flex justify-between items-center py-2 border-b border-border/20">
           <span className="text-sm font-medium text-muted-foreground">From</span>
           <span className="text-sm font-semibold text-foreground">
