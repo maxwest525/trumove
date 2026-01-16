@@ -67,34 +67,51 @@ async function searchNominatimAddresses(query: string): Promise<LocationSuggesti
 // Nominatim API for city-only search (mode="city")
 async function searchNominatimCities(query: string): Promise<LocationSuggestion[]> {
   try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?` +
-      `q=${encodeURIComponent(query)}&countrycodes=us&format=json&addressdetails=1&limit=5&featuretype=city`,
-      { 
-        headers: { 
-          'Accept': 'application/json',
-          'User-Agent': 'TruMove/1.0'
-        } 
-      }
-    );
+    // For partial numeric input, search as place name
+    // For text input, use the city parameter for better results
+    const isNumeric = /^\d+$/.test(query.trim());
+    
+    const searchUrl = isNumeric
+      ? `https://nominatim.openstreetmap.org/search?` +
+        `q=${encodeURIComponent(query)}&countrycodes=us&format=json&addressdetails=1&limit=10`
+      : `https://nominatim.openstreetmap.org/search?` +
+        `city=${encodeURIComponent(query)}&countrycodes=us&format=json&addressdetails=1&limit=10`;
+    
+    const res = await fetch(searchUrl, { 
+      headers: { 
+        'Accept': 'application/json',
+        'User-Agent': 'TruMove/1.0'
+      } 
+    });
     if (!res.ok) return [];
     
     const data = await res.json();
-    return data.map((item: any) => {
-      const addr = item.address || {};
-      const city = addr.city || addr.town || addr.village || addr.hamlet || addr.municipality || item.name || '';
-      const state = addr.state || '';
-      const zip = addr.postcode || '';
-      
-      return {
-        streetAddress: '',
-        city,
-        state,
-        zip,
-        display: `${city}, ${state}`,
-        fullAddress: `${city}, ${state}${zip ? ` ${zip}` : ''}`,
-      };
-    });
+    
+    // Filter to only include results that have city/town/village data
+    return data
+      .filter((item: any) => {
+        const addr = item.address || {};
+        const type = item.type;
+        // Only accept place types that are cities/towns
+        const validTypes = ['city', 'town', 'village', 'municipality', 'administrative'];
+        return validTypes.includes(type) || addr.city || addr.town || addr.village;
+      })
+      .map((item: any) => {
+        const addr = item.address || {};
+        const city = addr.city || addr.town || addr.village || addr.hamlet || addr.municipality || item.name || '';
+        const state = addr.state || '';
+        const zip = addr.postcode || '';
+        
+        return {
+          streetAddress: '',
+          city,
+          state,
+          zip,
+          display: `${city}, ${state}`,
+          fullAddress: `${city}, ${state}${zip ? ` ${zip}` : ''}`,
+        };
+      })
+      .slice(0, 5); // Limit to 5 results after filtering
   } catch {
     return [];
   }
