@@ -22,85 +22,59 @@ interface LocationAutocompleteProps {
   mode?: 'city' | 'address'; // 'city' for homepage, 'address' for full street addresses
 }
 
-// Nominatim API for full street address autocomplete (mode="address")
-async function searchNominatimAddresses(query: string): Promise<LocationSuggestion[]> {
+// Photon API for full street address autocomplete (mode="address") - CORS-friendly
+async function searchPhotonAddresses(query: string): Promise<LocationSuggestion[]> {
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?` +
-      `q=${encodeURIComponent(query)}&countrycodes=us&format=json&addressdetails=1&limit=5`,
-      { 
-        headers: { 
-          'Accept': 'application/json',
-          'User-Agent': 'TruMove/1.0'
-        } 
-      }
+      `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5&lang=en&layer=house,street`,
+      { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return [];
     
     const data = await res.json();
-    return data.map((item: any) => {
-      const addr = item.address || {};
-      const houseNumber = addr.house_number || '';
-      const road = addr.road || addr.street || '';
-      const streetAddress = [houseNumber, road].filter(Boolean).join(' ');
-      const city = addr.city || addr.town || addr.village || addr.hamlet || addr.municipality || addr.county || '';
-      const state = addr.state || '';
-      const zip = addr.postcode || '';
-      
-      const displayParts = [streetAddress, city, state].filter(Boolean);
-      const display = displayParts.join(', ');
-      
-      return {
-        streetAddress,
-        city,
-        state,
-        zip,
-        display: display || item.display_name,
-        fullAddress: item.display_name,
-      };
-    });
+    return data.features
+      .filter((f: any) => f.properties.country === 'United States')
+      .map((f: any) => {
+        const props = f.properties;
+        const houseNumber = props.housenumber || '';
+        const street = props.street || props.name || '';
+        const streetAddress = [houseNumber, street].filter(Boolean).join(' ');
+        const city = props.city || props.town || props.village || props.locality || '';
+        const state = props.state || '';
+        const zip = props.postcode || '';
+        
+        return {
+          streetAddress,
+          city,
+          state,
+          zip,
+          display: [streetAddress, city, state].filter(Boolean).join(', '),
+          fullAddress: [streetAddress, city, state, zip].filter(Boolean).join(', '),
+        };
+      })
+      .slice(0, 5);
   } catch {
     return [];
   }
 }
 
-// Nominatim API for city-only search (mode="city")
-async function searchNominatimCities(query: string): Promise<LocationSuggestion[]> {
+// Photon API for city-only search (mode="city") - CORS-friendly
+async function searchPhotonCities(query: string): Promise<LocationSuggestion[]> {
   try {
-    // For partial numeric input, search as place name
-    // For text input, use the city parameter for better results
-    const isNumeric = /^\d+$/.test(query.trim());
-    
-    const searchUrl = isNumeric
-      ? `https://nominatim.openstreetmap.org/search?` +
-        `q=${encodeURIComponent(query)}&countrycodes=us&format=json&addressdetails=1&limit=10`
-      : `https://nominatim.openstreetmap.org/search?` +
-        `city=${encodeURIComponent(query)}&countrycodes=us&format=json&addressdetails=1&limit=10`;
-    
-    const res = await fetch(searchUrl, { 
-      headers: { 
-        'Accept': 'application/json',
-        'User-Agent': 'TruMove/1.0'
-      } 
-    });
+    const res = await fetch(
+      `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10&lang=en&layer=city,town,village`,
+      { headers: { 'Accept': 'application/json' } }
+    );
     if (!res.ok) return [];
     
     const data = await res.json();
-    
-    // Filter to only include results that have city/town/village data
-    return data
-      .filter((item: any) => {
-        const addr = item.address || {};
-        const type = item.type;
-        // Only accept place types that are cities/towns
-        const validTypes = ['city', 'town', 'village', 'municipality', 'administrative'];
-        return validTypes.includes(type) || addr.city || addr.town || addr.village;
-      })
-      .map((item: any) => {
-        const addr = item.address || {};
-        const city = addr.city || addr.town || addr.village || addr.hamlet || addr.municipality || item.name || '';
-        const state = addr.state || '';
-        const zip = addr.postcode || '';
+    return data.features
+      .filter((f: any) => f.properties.country === 'United States')
+      .map((f: any) => {
+        const props = f.properties;
+        const city = props.city || props.town || props.village || props.name || '';
+        const state = props.state || '';
+        const zip = props.postcode || '';
         
         return {
           streetAddress: '',
@@ -111,7 +85,7 @@ async function searchNominatimCities(query: string): Promise<LocationSuggestion[
           fullAddress: `${city}, ${state}${zip ? ` ${zip}` : ''}`,
         };
       })
-      .slice(0, 5); // Limit to 5 results after filtering
+      .slice(0, 5);
   } catch {
     return [];
   }
@@ -197,10 +171,10 @@ export default function LocationAutocomplete({
         setSuggestions([]);
       }
     } else {
-      // Use appropriate Nominatim search based on mode
+      // Use Photon API (CORS-friendly) based on mode
       const results = mode === 'address' 
-        ? await searchNominatimAddresses(query)
-        : await searchNominatimCities(query);
+        ? await searchPhotonAddresses(query)
+        : await searchPhotonCities(query);
       setSuggestions(results);
     }
 
@@ -296,7 +270,7 @@ export default function LocationAutocomplete({
       {showDropdown && (suggestions.length > 0 || isLoading) && (
         <div 
           ref={dropdownRef}
-          className="absolute top-full left-0 right-0 mt-1 z-50 rounded-lg border border-border/60 bg-card shadow-lg overflow-hidden"
+          className="absolute top-full left-0 mt-1 z-50 rounded-lg border border-border/60 bg-card shadow-lg overflow-hidden min-w-full w-max max-w-md"
         >
           {isLoading ? (
             <div className="flex items-center gap-2 px-4 py-3 text-sm text-muted-foreground">
@@ -315,7 +289,7 @@ export default function LocationAutocomplete({
                 onMouseEnter={() => setSelectedIndex(idx)}
               >
                 <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                <span className="text-sm font-medium text-foreground truncate">
+                <span className="text-sm font-medium text-foreground">
                   {suggestion.streetAddress
                     ? `${suggestion.streetAddress}, ${suggestion.city}, ${suggestion.state} ${suggestion.zip}`.trim()
                     : `${suggestion.display}${suggestion.zip ? ` ${suggestion.zip}` : ''}`

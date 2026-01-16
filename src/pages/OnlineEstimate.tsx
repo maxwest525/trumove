@@ -59,8 +59,6 @@ export default function OnlineEstimate() {
           toFloor: 1,
           fromHasElevator: lead.hasElevator || false,
           toHasElevator: false,
-          fromParkingDistance: 'unknown',
-          toParkingDistance: 'unknown',
           hasVehicleTransport: false,
           needsPackingService: false,
         });
@@ -156,11 +154,9 @@ Phone: ${extendedDetails.phone}
 MOVE DETAILS
 From: ${extendedDetails.fromLocation}
   Type: ${extendedDetails.fromPropertyType}${extendedDetails.fromPropertyType === 'apartment' ? ` (Floor ${extendedDetails.fromFloor}, ${extendedDetails.fromHasElevator ? 'Elevator' : 'Stairs'})` : ''}
-  Parking Distance: ${extendedDetails.fromParkingDistance === 'unknown' ? 'Unknown' : extendedDetails.fromParkingDistance === 'less75' ? 'Less than 75 feet' : 'More than 75 feet'}
 
 To: ${extendedDetails.toLocation}
   Type: ${extendedDetails.toPropertyType}${extendedDetails.toPropertyType === 'apartment' ? ` (Floor ${extendedDetails.toFloor}, ${extendedDetails.toHasElevator ? 'Elevator' : 'Stairs'})` : ''}
-  Parking Distance: ${extendedDetails.toParkingDistance === 'unknown' ? 'Unknown' : extendedDetails.toParkingDistance === 'less75' ? 'Less than 75 feet' : 'More than 75 feet'}
 
 Distance: ${moveDetails.distance} miles
 Move Type: ${effectiveMoveType}
