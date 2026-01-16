@@ -7470,12 +7470,20 @@
   margin-bottom: 8px;
 }
 
+.tru-qb-question-secondary {
+  font-size: 18px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  margin-top: 24px;
+  margin-bottom: 4px;
+}
+
 .tru-qb-subtitle {
   font-size: 14px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.55);
-  margin-top: 20px;
-  margin-bottom: 28px;
+  margin-top: 8px;
+  margin-bottom: 20px;
 }
 
 /* Input Styles - Enhanced ZIP */

@@ -90,6 +90,7 @@ export default function Index() {
   const [chatOpen, setChatOpen] = useState(false);
   
   // Form state
+  const [name, setName] = useState("");
   const [fromZip, setFromZip] = useState("");
   const [toZip, setToZip] = useState("");
   const [fromCity, setFromCity] = useState("");
@@ -270,7 +271,7 @@ export default function Index() {
     
     // Store lead data
     localStorage.setItem("tm_lead", JSON.stringify({
-      fromZip, toZip, fromCity, toCity, moveDate: moveDate?.toISOString(),
+      name, fromZip, toZip, fromCity, toCity, moveDate: moveDate?.toISOString(),
       size, hasCar, needsPacking, email, phone, ts: Date.now()
     }));
     
@@ -281,7 +282,7 @@ export default function Index() {
   // Step validation
   const canContinue = () => {
     switch (step) {
-      case 1: return fromZip.length === 5 && fromCity;
+      case 1: return name.trim().length > 0 && fromZip.length === 5 && fromCity;
       case 2: return toZip.length === 5 && toCity;
       case 3: return moveDate !== null;
       case 4: return size !== "";
@@ -346,17 +347,30 @@ export default function Index() {
                 {/* Form Content */}
                 <div className="tru-floating-form-content">
 
-                  {/* Step 1: From Location */}
+                  {/* Step 1: Name + From Location */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
-                      <h1 className="tru-qb-question tru-qb-question-decorated">Where are you moving from?</h1>
+                      <h1 className="tru-qb-question tru-qb-question-decorated">Let's start with your name</h1>
+                      <p className="tru-qb-subtitle">So we know who we're helping move</p>
+                      
+                      <div className="tru-qb-input-wrap">
+                        <input
+                          type="text"
+                          className="tru-qb-input"
+                          placeholder="Your full name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          autoFocus
+                        />
+                      </div>
+
+                      <h2 className="tru-qb-question-secondary">Where are you moving from?</h2>
                       <p className="tru-qb-subtitle">Enter your city or ZIP code</p>
                       
                       <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                         <LocationAutocomplete
                           value={fromZip}
                           onValueChange={(val) => {
-                            // Only update if it's a ZIP or partial
                             if (/^\d*$/.test(val)) {
                               handleFromZipChange(val);
                             }
@@ -368,7 +382,6 @@ export default function Index() {
                             triggerCarrierSearch(state);
                           }}
                           placeholder="City or ZIP code"
-                          autoFocus
                           onKeyDown={handleKeyDown}
                         />
                       </div>
