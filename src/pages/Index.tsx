@@ -363,18 +363,14 @@ export default function Index() {
                           <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                             <LocationAutocomplete
                               value={fromZip}
-                              onValueChange={(val) => {
-                                if (/^\d*$/.test(val)) {
-                                  handleFromZipChange(val);
-                                }
-                              }}
+                              onValueChange={(val) => setFromZip(val)}
                               onLocationSelect={(city, zip) => {
                                 setFromZip(zip);
                                 setFromCity(city);
                                 const state = city.split(',')[1]?.trim() || '';
                                 triggerCarrierSearch(state);
                               }}
-                              placeholder="City or ZIP"
+                              placeholder="Address, City, or ZIP"
                               autoFocus
                             />
                           </div>
@@ -385,11 +381,7 @@ export default function Index() {
                           <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                             <LocationAutocomplete
                               value={toZip}
-                              onValueChange={(val) => {
-                                if (/^\d*$/.test(val)) {
-                                  handleToZipChange(val);
-                                }
-                              }}
+                              onValueChange={(val) => setToZip(val)}
                               onLocationSelect={(city, zip) => {
                                 setToZip(zip);
                                 setToCity(city);
@@ -398,7 +390,7 @@ export default function Index() {
                                   triggerCarrierSearch(state);
                                 }
                               }}
-                              placeholder="City or ZIP"
+                              placeholder="Address, City, or ZIP"
                             />
                           </div>
                         </div>

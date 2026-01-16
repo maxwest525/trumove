@@ -4,6 +4,7 @@ import { type MoveDetails, determineMoveType } from "@/lib/priceCalculator";
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { MapPin, Calendar, ArrowUpDown, Package, Truck, Home } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
+import MapboxMoveMap from "@/components/MapboxMoveMap";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
@@ -106,6 +107,16 @@ export default function MoveDetailsForm({
           }`}>
             {moveDetails.moveType === 'long-distance' ? 'Long Distance' : 'Local'}
           </span>
+        </div>
+      )}
+
+      {/* Mini Route Map Preview */}
+      {moveDetails.fromLocation && moveDetails.toLocation && moveDetails.distance > 0 && (
+        <div className="rounded-xl overflow-hidden border border-border/40 h-28">
+          <MapboxMoveMap 
+            fromZip={moveDetails.fromLocation}
+            toZip={moveDetails.toLocation}
+          />
         </div>
       )}
 
