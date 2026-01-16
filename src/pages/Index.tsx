@@ -294,10 +294,13 @@ export default function Index() {
                 {/* Form Header - Logo + Skip Button */}
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  <Link to="/online-estimate" className="tru-qb-skip-btn">
-                    <Zap className="w-4 h-4" />
-                    <span>Skip to AI Move Estimator</span>
-                  </Link>
+                  <button 
+                    onClick={() => setChatOpen(true)} 
+                    className="tru-ai-chat-btn"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>AI Assistant</span>
+                  </button>
                 </div>
 
                 {/* Status Bar */}
@@ -592,7 +595,8 @@ export default function Index() {
                 
                 {/* Footer inside form card */}
                 <div className="tru-floating-form-footer">
-                  <span>Powered by TruMove Tools</span>
+                  <span>Powered by</span>
+                  <img src={logoImg} alt="TruMove" className="tru-footer-mini-logo" />
                 </div>
               </div>
 
@@ -637,21 +641,11 @@ export default function Index() {
                   </div>
 
                   {/* Estimate Box */}
-                  <div className="tru-summary-estimate">
-                    <div className="tru-summary-estimate-header">
-                      <DollarSign className="w-4 h-4" />
-                      <span>YOUR ESTIMATE</span>
-                    </div>
-                    {estimate ? (
-                      <div className="tru-summary-estimate-value">
-                        {formatCurrency(estimate.min)} – {formatCurrency(estimate.max)}
-                      </div>
-                    ) : (
-                      <div className="tru-summary-estimate-empty">
-                        Complete form to proceed to AI Move Estimator
-                      </div>
-                    )}
-                  </div>
+                  <Link to="/online-estimate" className="tru-summary-skip-cta">
+                    <Zap className="w-5 h-5" />
+                    <span>Skip to AI Move Estimator</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
 
                   {/* Map Area */}
                   <div className="tru-summary-map">
