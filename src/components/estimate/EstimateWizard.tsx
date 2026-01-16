@@ -32,6 +32,7 @@ export interface ExtendedMoveDetails {
   
   // Other
   homeSize: string;
+  toHomeSize: string;
   moveDate: Date | null;
 }
 
@@ -45,6 +46,7 @@ const HOME_SIZES = [
   { label: "2 BR", value: "2br" },
   { label: "3 BR", value: "3br" },
   { label: "4+ BR", value: "4br+" },
+  { label: "Other", value: "other" },
 ];
 
 const FLOOR_OPTIONS = [
@@ -85,6 +87,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
     toHasElevator: false,
     toParkingDistance: '',
     homeSize: '',
+    toHomeSize: '',
     moveDate: null,
   });
 
@@ -135,7 +138,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
       case 1:
         return details.fromLocation && details.fromPropertyType && details.homeSize && details.fromParkingDistance;
       case 2:
-        return details.toLocation && details.toPropertyType && details.toParkingDistance;
+        return details.toLocation && details.toPropertyType && details.toParkingDistance && details.toHomeSize;
       case 3:
         return details.moveDate !== null;
       case 4:
@@ -197,7 +200,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                   value={details.fromLocation}
                   onValueChange={(val) => updateDetails({ fromLocation: val })}
                   onLocationSelect={(city) => updateDetails({ fromLocation: city })}
-                  placeholder="City or ZIP code"
+                  placeholder="Enter your full address"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
                 />
@@ -320,7 +323,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                   value={details.toLocation}
                   onValueChange={(val) => updateDetails({ toLocation: val })}
                   onLocationSelect={(city) => updateDetails({ toLocation: city })}
-                  placeholder="City or ZIP code"
+                  placeholder="Enter your full address"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
                 />
@@ -391,6 +394,20 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                   </div>
                 </>
               )}
+
+              <p className="tru-qb-section-label">Home Size</p>
+              <div className="tru-qb-size-grid">
+                {HOME_SIZES.map((size) => (
+                  <button
+                    key={size.value}
+                    type="button"
+                    className={`tru-qb-size-btn ${details.toHomeSize === size.value ? 'is-active' : ''}`}
+                    onClick={() => updateDetails({ toHomeSize: size.value })}
+                  >
+                    {size.label}
+                  </button>
+                ))}
+              </div>
 
               <p className="tru-qb-section-label">Parking Access</p>
               <div className="tru-qb-size-grid">

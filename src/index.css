@@ -7905,12 +7905,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
-  padding: 8px 6px;
+  height: 36px;
+  padding: 6px 8px;
   border-radius: 8px;
   background: #ffffff;
   border: 1.5px solid hsl(var(--tm-ink) / 0.12);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: hsl(var(--tm-ink) / 0.7);
   cursor: pointer;
@@ -7942,11 +7942,11 @@
 .tru-qb-toggle-card {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
   background: #ffffff;
-  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
   cursor: pointer;
   transition: all 150ms ease;
   text-align: left;
@@ -7963,8 +7963,8 @@
 }
 
 .tru-qb-toggle-icon {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   color: hsl(var(--tm-ink) / 0.4);
   flex-shrink: 0;
 }
@@ -7981,8 +7981,8 @@
 }
 
 .tru-qb-toggle-title {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: hsl(var(--tm-ink));
 }
 
