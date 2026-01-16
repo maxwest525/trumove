@@ -370,7 +370,7 @@ export default function Index() {
                                 const state = city.split(',')[1]?.trim() || '';
                                 triggerCarrierSearch(state);
                               }}
-                              placeholder="Address, City, or ZIP"
+                              placeholder="City or ZIP"
                               autoFocus
                             />
                           </div>
@@ -390,7 +390,7 @@ export default function Index() {
                                   triggerCarrierSearch(state);
                                 }
                               }}
-                              placeholder="Address, City, or ZIP"
+                              placeholder="City or ZIP"
                             />
                           </div>
                         </div>

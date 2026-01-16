@@ -205,7 +205,7 @@ export default function LocationAutocomplete({
     }
 
     setIsLoading(false);
-  }, []);
+  }, [mode]);
 
   const debouncedSearch = useCallback((query: string) => {
     if (debounceRef.current) {
@@ -315,19 +315,12 @@ export default function LocationAutocomplete({
                 onMouseEnter={() => setSelectedIndex(idx)}
               >
                 <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-medium text-foreground truncate">
-                    {suggestion.streetAddress 
-                      ? `${suggestion.streetAddress}, ${suggestion.city}, ${suggestion.state}`
-                      : suggestion.display
-                    }
-                  </span>
-                  {suggestion.zip && (
-                    <span className="text-xs text-muted-foreground">
-                      {suggestion.zip}
-                    </span>
-                  )}
-                </div>
+                <span className="text-sm font-medium text-foreground truncate">
+                  {suggestion.streetAddress
+                    ? `${suggestion.streetAddress}, ${suggestion.city}, ${suggestion.state} ${suggestion.zip}`.trim()
+                    : `${suggestion.display}${suggestion.zip ? ` ${suggestion.zip}` : ''}`
+                  }
+                </span>
               </div>
             ))
           )}
