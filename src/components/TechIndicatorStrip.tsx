@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { Shield, Brain, Zap, Users, Lock, TrendingUp } from "lucide-react";
 
 const TECH_FEATURES = [
-  { icon: Brain, text: "AI-powered rate comparison" },
-  { icon: Zap, text: "Best carrier, best price" },
-  { icon: Shield, text: "47+ vetted movers" },
+  { icon: Lock, text: "256-bit encryption protecting your data" },
+  { icon: Brain, text: "AI analyzing 47+ vetted carriers" },
+  { icon: Zap, text: "Real-time pricing from live market data" },
+  { icon: Users, text: "Every mover background-verified" },
+  { icon: Shield, text: "FMCSA license verification active" },
+  { icon: TrendingUp, text: "Smart matching based on performance data" },
 ];
 
 export default function TechIndicatorStrip() {
