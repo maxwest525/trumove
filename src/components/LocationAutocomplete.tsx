@@ -229,10 +229,9 @@ export default function LocationAutocomplete({
                 onMouseEnter={() => setSelectedIndex(idx)}
               >
                 <MapPin className="w-4 h-4 text-primary" />
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground">{suggestion.display}</span>
-                  <span className="text-xs text-muted-foreground">ZIP: {suggestion.zip}</span>
-                </div>
+                <span className="text-sm font-medium text-foreground">
+                  {suggestion.display} {suggestion.zip}
+                </span>
               </div>
             ))
           )}
