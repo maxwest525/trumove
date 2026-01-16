@@ -182,17 +182,6 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
         </div>
 
         <div className="tru-floating-form-content">
-          {/* Progress Bar - Keep but style to fit */}
-          <div className="tru-qb-progress">
-            <span className="tru-qb-progress-label">Step {step} of 5</span>
-            <div className="tru-qb-progress-bar">
-              <div 
-                className="tru-qb-progress-fill" 
-                style={{ width: `${(step / 5) * 100}%` }} 
-              />
-            </div>
-          </div>
-
           {/* Step 1: Contact Information */}
           {step === 1 && (
             <div className="tru-qb-step-content" key="step-1">
