@@ -262,7 +262,11 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
       {step === 2 && (
         <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-2">
           <div className="tru-wizard-header">
-            <h2 className="tru-wizard-question">Where are you moving from?</h2>
+            <h2 className="tru-wizard-question">
+              {details.name.trim() 
+                ? `Hey ${details.name.split(' ')[0]}, where are you moving from?`
+                : "Where are you moving from?"}
+            </h2>
             <p className="tru-wizard-subtitle">Enter your current address details</p>
           </div>
 
