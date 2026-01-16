@@ -1,6 +1,7 @@
 import { Video, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { calculateTotalWeight, calculateEstimate, determineMoveType, formatCurrency, type InventoryItem, type MoveDetails } from "@/lib/priceCalculator";
+import logoImg from "@/assets/logo.png";
 
 interface QuoteSnapshotProps {
   items: InventoryItem[];
@@ -16,15 +17,11 @@ export default function QuoteSnapshot({ items, moveDetails }: QuoteSnapshotProps
   const estimate = calculateEstimate(totalWeight, moveDetails.distance, effectiveMoveType);
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-lg">
-      {/* Header */}
-      <div className="px-5 py-4 bg-gradient-to-b from-muted/30 to-transparent border-b border-border/40">
-        <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground">
-          Your move snapshot
-        </div>
-        <p className="text-xs text-muted-foreground mt-1">
-          Live view of what TruMove will use for your quote.
-        </p>
+    <div className="tru-floating-form-card">
+      {/* Header - Matching homepage style */}
+      <div className="tru-qb-form-header">
+        <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
+        <span className="tru-qb-form-title">Move Summary</span>
       </div>
 
       {/* Details Grid */}

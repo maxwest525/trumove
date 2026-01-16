@@ -2,12 +2,14 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import { 
   ArrowRight, ChevronLeft, User, Phone, Mail, MapPin, Home, Building2, 
-  ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Unlock
+  ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Sparkles
 } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import logoImg from "@/assets/logo.png";
+import ChatModal from "@/components/chat/ChatModal";
 
 export interface ExtendedMoveDetails {
   // Contact
@@ -57,6 +59,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const prevStep = useRef(1);
 
   useEffect(() => {
@@ -167,17 +170,22 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
   return (
     <>
-      {/* Floating Unlock Badge - positioned OUTSIDE the form */}
-      <div className="tru-unlock-badge-wrapper">
-        <div className="tru-unlock-badge-inner">
-          <div className="tru-unlock-icon-pulse">
-            <Unlock className="w-4 h-4" />
-          </div>
-          <span>Fill out to unlock your <strong>FREE</strong> Move Builder</span>
+      <div className="tru-floating-form-card">
+        {/* Header - Matching homepage style */}
+        <div className="tru-qb-form-header">
+          <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
+          <span className="tru-qb-form-title">Build Your Move</span>
+          <button 
+            type="button"
+            onClick={() => setChatOpen(true)} 
+            className="tru-ai-chat-btn"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>AI Assistant</span>
+          </button>
         </div>
-      </div>
-      
-      <div className="tru-estimate-wizard">
+
+        <div className="tru-estimate-wizard">
 
       {/* Progress Bar */}
       <div className="tru-wizard-progress">
@@ -643,7 +651,11 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
           </button>
         </div>
       )}
+        </div>
       </div>
+
+      {/* Chat Modal */}
+      <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </>
   );
 }
