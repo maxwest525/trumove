@@ -54,6 +54,12 @@ const FLOOR_OPTIONS = [
   { label: "4th+", value: 4 },
 ];
 
+const PARKING_OPTIONS = [
+  { label: "Unsure", value: "unknown" },
+  { label: "Close (<75ft)", value: "less75" },
+  { label: "Far (75ft+)", value: "more75" },
+];
+
 export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   const [step, setStep] = useState(1);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
@@ -127,15 +133,13 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   const canContinue = () => {
     switch (step) {
       case 1:
-        return details.name.trim() && details.phone.trim() && details.email.includes('@');
+        return details.fromLocation && details.fromPropertyType && details.homeSize && details.fromParkingDistance;
       case 2:
-        return details.fromLocation && details.fromPropertyType && details.homeSize;
+        return details.toLocation && details.toPropertyType && details.toParkingDistance;
       case 3:
-        return details.toLocation && details.toPropertyType;
-      case 4:
         return details.moveDate !== null;
-      case 5:
-        return details.fromParkingDistance && details.toParkingDistance;
+      case 4:
+        return details.name.trim() && details.phone.trim() && details.email.includes('@');
       default:
         return false;
     }
@@ -143,7 +147,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
   const goNext = () => {
     if (canContinue()) {
-      if (step < 5) {
+      if (step < 4) {
         setStep(step + 1);
       } else {
         onComplete(details);
@@ -182,68 +186,10 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
         </div>
 
         <div className="tru-floating-form-content">
-          {/* Step 1: Contact Information */}
+          {/* Step 1: Moving FROM Details + Parking */}
           {step === 1 && (
             <div className="tru-qb-step-content" key="step-1">
-              <h1 className="tru-qb-question">Let's start with your contact info</h1>
-              <p className="tru-qb-subtitle">We'll use this to send your personalized quote</p>
-
-              <div className="tru-qb-contact-fields">
-                <div className="tru-qb-input-wrap">
-                  <input
-                    type="text"
-                    value={details.name}
-                    onChange={(e) => updateDetails({ name: e.target.value })}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Full Name"
-                    className="tru-qb-input"
-                    autoFocus
-                  />
-                </div>
-
-                <div className="tru-qb-input-wrap">
-                  <input
-                    type="tel"
-                    value={details.phone}
-                    onChange={(e) => updateDetails({ phone: e.target.value })}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Phone Number"
-                    className="tru-qb-input"
-                  />
-                </div>
-
-                <div className="tru-qb-input-wrap">
-                  <input
-                    type="email"
-                    value={details.email}
-                    onChange={(e) => updateDetails({ email: e.target.value })}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Email Address"
-                    className="tru-qb-input"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="tru-qb-continue"
-                disabled={!canContinue()}
-                onClick={goNext}
-              >
-                <span>Next Step</span>
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-          )}
-
-          {/* Step 2: Moving FROM Details */}
-          {step === 2 && (
-            <div className="tru-qb-step-content" key="step-2">
-              <h1 className="tru-qb-question">
-                {details.name.trim() 
-                  ? `Hey ${details.name.split(' ')[0]}, where are you moving from?`
-                  : "Where are you moving from?"}
-              </h1>
+              <h1 className="tru-qb-question">Where are you moving from?</h1>
               <p className="tru-qb-subtitle">Enter your current address details</p>
 
               <div className="tru-qb-input-wrap tru-qb-zip-wrap">
@@ -337,6 +283,20 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 ))}
               </div>
 
+              <p className="tru-qb-section-label">Parking Access</p>
+              <div className="tru-qb-size-grid">
+                {PARKING_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`tru-qb-size-btn ${details.fromParkingDistance === option.value ? 'is-active' : ''}`}
+                    onClick={() => updateDetails({ fromParkingDistance: option.value as 'unknown' | 'less75' | 'more75' })}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+
               <button
                 type="button"
                 className="tru-qb-continue"
@@ -346,17 +306,12 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 <span>Next Step</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
-
-              <button type="button" className="tru-qb-back" onClick={goBack}>
-                <ChevronLeft className="w-4 h-4" />
-                <span>Back</span>
-              </button>
             </div>
           )}
 
-          {/* Step 3: Moving TO Details */}
-          {step === 3 && (
-            <div className="tru-qb-step-content" key="step-3">
+          {/* Step 2: Moving TO Details + Parking */}
+          {step === 2 && (
+            <div className="tru-qb-step-content" key="step-2">
               <h1 className="tru-qb-question">Where are you moving to?</h1>
               <p className="tru-qb-subtitle">Enter your destination address details</p>
 
@@ -437,6 +392,20 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 </>
               )}
 
+              <p className="tru-qb-section-label">Parking Access</p>
+              <div className="tru-qb-size-grid">
+                {PARKING_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`tru-qb-size-btn ${details.toParkingDistance === option.value ? 'is-active' : ''}`}
+                    onClick={() => updateDetails({ toParkingDistance: option.value as 'unknown' | 'less75' | 'more75' })}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+
               <button
                 type="button"
                 className="tru-qb-continue"
@@ -454,9 +423,9 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
             </div>
           )}
 
-          {/* Step 4: Move Date */}
-          {step === 4 && (
-            <div className="tru-qb-step-content" key="step-4">
+          {/* Step 3: Move Date */}
+          {step === 3 && (
+            <div className="tru-qb-step-content" key="step-3">
               <h1 className="tru-qb-question">When would you like to move?</h1>
               <p className="tru-qb-subtitle">This helps us match you with available carriers</p>
 
@@ -464,7 +433,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                   <PopoverTrigger asChild>
                     <button type="button" className="tru-qb-date-btn">
-                      <CalendarIcon className="w-5 h-5" />
+                      <CalendarIcon className="w-4 h-4" />
                       <span>
                         {details.moveDate 
                           ? format(details.moveDate, "MMMM d, yyyy") 
@@ -504,90 +473,46 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
             </div>
           )}
 
-          {/* Step 5: Parking Distance */}
-          {step === 5 && (
-            <div className="tru-qb-step-content" key="step-5">
-              <h1 className="tru-qb-question">How far is parking from the entrance?</h1>
-              <p className="tru-qb-subtitle">This helps us estimate carry distance for your move</p>
+          {/* Step 4: Contact Information (Final Step) */}
+          {step === 4 && (
+            <div className="tru-qb-step-content" key="step-4">
+              <h1 className="tru-qb-question">Almost done! How can we reach you?</h1>
+              <p className="tru-qb-subtitle">We'll send your personalized quote</p>
 
-              <p className="tru-qb-section-label">
-                <Footprints className="w-4 h-4" />
-                At your current location (FROM)
-              </p>
-              <div className="tru-qb-parking-options">
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card ${details.fromParkingDistance === 'unknown' ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ fromParkingDistance: 'unknown' })}
-                >
-                  <HelpCircle className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">I don't know</span>
-                  </div>
-                  {details.fromParkingDistance === 'unknown' && <Check className="w-4 h-4 tru-qb-check-icon" />}
-                </button>
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card ${details.fromParkingDistance === 'less75' ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ fromParkingDistance: 'less75' })}
-                >
-                  <Footprints className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">Less than 75 feet</span>
-                  </div>
-                  {details.fromParkingDistance === 'less75' && <Check className="w-4 h-4 tru-qb-check-icon" />}
-                </button>
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card ${details.fromParkingDistance === 'more75' ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ fromParkingDistance: 'more75' })}
-                >
-                  <Footprints className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">More than 75 feet</span>
-                  </div>
-                  {details.fromParkingDistance === 'more75' && <Check className="w-4 h-4 tru-qb-check-icon" />}
-                </button>
-              </div>
+              <div className="tru-qb-contact-fields">
+                <div className="tru-qb-input-wrap">
+                  <input
+                    type="text"
+                    value={details.name}
+                    onChange={(e) => updateDetails({ name: e.target.value })}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Full Name"
+                    className="tru-qb-input"
+                    autoFocus
+                  />
+                </div>
 
-              <p className="tru-qb-section-label">
-                <Footprints className="w-4 h-4" />
-                At your new location (TO)
-              </p>
-              <div className="tru-qb-parking-options">
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card ${details.toParkingDistance === 'unknown' ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ toParkingDistance: 'unknown' })}
-                >
-                  <HelpCircle className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">I don't know</span>
-                  </div>
-                  {details.toParkingDistance === 'unknown' && <Check className="w-4 h-4 tru-qb-check-icon" />}
-                </button>
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card ${details.toParkingDistance === 'less75' ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ toParkingDistance: 'less75' })}
-                >
-                  <Footprints className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">Less than 75 feet</span>
-                  </div>
-                  {details.toParkingDistance === 'less75' && <Check className="w-4 h-4 tru-qb-check-icon" />}
-                </button>
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card ${details.toParkingDistance === 'more75' ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ toParkingDistance: 'more75' })}
-                >
-                  <Footprints className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">More than 75 feet</span>
-                  </div>
-                  {details.toParkingDistance === 'more75' && <Check className="w-4 h-4 tru-qb-check-icon" />}
-                </button>
+                <div className="tru-qb-input-wrap">
+                  <input
+                    type="tel"
+                    value={details.phone}
+                    onChange={(e) => updateDetails({ phone: e.target.value })}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Phone Number"
+                    className="tru-qb-input"
+                  />
+                </div>
+
+                <div className="tru-qb-input-wrap">
+                  <input
+                    type="email"
+                    value={details.email}
+                    onChange={(e) => updateDetails({ email: e.target.value })}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Email Address"
+                    className="tru-qb-input"
+                  />
+                </div>
               </div>
 
               <button
@@ -596,7 +521,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 disabled={!canContinue()}
                 onClick={goNext}
               >
-                <span>Start Building Inventory</span>
+                <span>Get My Quote</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
 
