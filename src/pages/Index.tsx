@@ -579,10 +579,10 @@ export default function Index() {
                         </div>
                       </div>
 
-                      <div className="tru-qb-options-grid-3">
+                      <div className="tru-qb-options-stack">
                         <button
                           type="submit"
-                          className="tru-qb-option-card tru-qb-option-primary"
+                          className="tru-qb-option-primary-btn"
                           disabled={!canContinue()}
                         >
                           <Sparkles className="w-5 h-5" />
@@ -590,25 +590,28 @@ export default function Index() {
                             <span className="tru-qb-option-title">AI Move Estimator</span>
                             <span className="tru-qb-option-desc">Get instant pricing breakdown</span>
                           </div>
+                          <ArrowRight className="w-4 h-4 ml-auto" />
                         </button>
-                        <button 
-                          type="button" 
-                          className="tru-qb-option-card"
-                          onClick={() => navigate("/book")}
-                        >
-                          <Video className="w-5 h-5" />
-                          <div className="tru-qb-option-text">
-                            <span className="tru-qb-option-title">Video Consult</span>
-                            <span className="tru-qb-option-desc">Live walkthrough with expert</span>
-                          </div>
-                        </button>
-                        <a href="tel:+16097277647" className="tru-qb-option-card">
-                          <Phone className="w-5 h-5" />
-                          <div className="tru-qb-option-text">
-                            <span className="tru-qb-option-title">Call Now</span>
-                            <span className="tru-qb-option-desc">Speak to someone now</span>
-                          </div>
-                        </a>
+                        <div className="tru-qb-options-row">
+                          <button 
+                            type="button" 
+                            className="tru-qb-option-card"
+                            onClick={() => navigate("/book")}
+                          >
+                            <Video className="w-5 h-5" />
+                            <div className="tru-qb-option-text">
+                              <span className="tru-qb-option-title">Video Consult</span>
+                              <span className="tru-qb-option-desc">Live walkthrough with expert</span>
+                            </div>
+                          </button>
+                          <a href="tel:+16097277647" className="tru-qb-option-card">
+                            <Phone className="w-5 h-5" />
+                            <div className="tru-qb-option-text">
+                              <span className="tru-qb-option-title">Call Now</span>
+                              <span className="tru-qb-option-desc">Speak to someone now</span>
+                            </div>
+                          </a>
+                        </div>
                       </div>
 
                       <button type="button" className="tru-qb-back" onClick={goBack}>
