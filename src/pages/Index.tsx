@@ -347,7 +347,7 @@ export default function Index() {
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
-                        <span>Continue</span>
+                        <span>Next Step</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
                     </div>
@@ -387,7 +387,7 @@ export default function Index() {
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
-                        <span>Continue</span>
+                        <span>Next Step</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
 
@@ -433,7 +433,7 @@ export default function Index() {
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
-                        <span>Continue</span>
+                        <span>Next Step</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
 
@@ -512,7 +512,7 @@ export default function Index() {
                         className="tru-qb-continue"
                         onClick={goNext}
                       >
-                        <span>Continue</span>
+                        <span>Almost There</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
 
@@ -559,7 +559,7 @@ export default function Index() {
                         disabled={!canContinue()}
                       >
                         <Sparkles className="w-5 h-5" />
-                        <span>Continue to AI Inventory Builder</span>
+                        <span>Get My Instant Quote</span>
                       </button>
                       
                       <div className="tru-qb-alt-options">
