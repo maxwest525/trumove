@@ -244,32 +244,32 @@
 }
 
 /* AI Chat Button - Animated Gradient */
+/* AI Chat Button - Subtle with accent */
 .tru-ai-chat-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  background-size: 200% 200%;
-  animation: gradient-shift 3s ease infinite;
-  color: white;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 12px;
   font-weight: 600;
-  font-size: 13px;
-  border-radius: 24px;
-  border: none;
+  color: hsl(270, 60%, 50%);
+  background: hsl(270, 60%, 50% / 0.08);
+  border: 1px solid hsl(270, 60%, 50% / 0.2);
+  border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .tru-ai-chat-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+  color: hsl(270, 70%, 45%);
+  background: hsl(270, 60%, 50% / 0.12);
+  border-color: hsl(270, 60%, 50% / 0.3);
 }
 
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+.tru-ai-chat-btn svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* Skip to AI CTA in Summary Card */
@@ -277,21 +277,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, hsl(var(--tm-green)) 0%, hsl(152, 85%, 35%) 100%);
-  color: white;
-  font-weight: 700;
-  font-size: 14px;
-  border-radius: 12px;
+  gap: 8px;
+  padding: 14px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--tm-green));
+  background: hsl(var(--tm-green) / 0.08);
+  border: 1px solid hsl(var(--tm-green) / 0.2);
+  border-radius: 10px;
   text-decoration: none;
-  box-shadow: 0 4px 15px hsl(var(--tm-green) / 0.3);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .tru-summary-skip-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px hsl(var(--tm-green) / 0.4);
+  color: hsl(152, 85%, 30%);
+  background: hsl(var(--tm-green) / 0.12);
+  border-color: hsl(var(--tm-green) / 0.3);
+}
+
+.tru-summary-skip-cta svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* Right: Summary Card */
