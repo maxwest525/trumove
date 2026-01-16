@@ -57,7 +57,7 @@ export default function Header() {
             </a>
             <Link to="/book" className="header-btn header-btn-primary">
               <Video className="w-4 h-4" />
-              <span>Book Consult</span>
+              <span>Video Consult</span>
             </Link>
           </div>
 
