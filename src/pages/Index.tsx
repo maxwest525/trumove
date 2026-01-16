@@ -550,7 +550,7 @@ export default function Index() {
                       <p className="tru-qb-subtitle">Continue to our AI estimator, book a live video consult, or call us now</p>
                       
                       <div className="tru-qb-contact-fields">
-                        <div className="tru-qb-input-wrap">
+                        <div className="tru-qb-input-wrap tru-qb-glow-always">
                           <input
                             type="text"
                             className={`tru-qb-input ${formError && !name.trim() ? 'has-error' : ''}`}
