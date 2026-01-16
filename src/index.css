@@ -202,13 +202,14 @@
 }
 
 .tru-floating-form-content {
-  padding: 32px 36px;
+  padding: 20px 28px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 280px;
+  justify-content: flex-start;
+  min-height: 220px;
   flex: 1;
+  gap: 8px;
 }
 
 .tru-floating-form-footer {
@@ -8171,20 +8172,11 @@
   gap: 10px !important;
 }
 
-.tru-qb-step3-footer {
+/* Back button at top of step 6 */
+.tru-qb-back-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
-}
-
-.tru-qb-back-inline {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+  gap: 4px;
   background: transparent;
   border: none;
   font-size: 12px;
@@ -8192,23 +8184,26 @@
   color: hsl(var(--tm-ink) / 0.5);
   cursor: pointer;
   padding: 0;
-  flex-shrink: 0;
+  margin-bottom: 4px;
+  align-self: flex-start;
 }
 
-.tru-qb-back-inline:hover {
+.tru-qb-back-top:hover {
   color: hsl(var(--tm-ink) / 0.8);
 }
 
-.tru-qb-disclaimer-inline {
+/* Disclaimer at very bottom - minimal space */
+.tru-qb-disclaimer-bottom {
   font-size: 9px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.4);
   line-height: 1.3;
-  text-align: right;
-  margin: 0;
+  text-align: center;
+  margin: 4px 0 0 0;
+  padding: 0;
 }
 
-.tru-qb-disclaimer-inline svg {
+.tru-qb-disclaimer-bottom svg {
   vertical-align: middle;
   margin: 0 1px;
 }
