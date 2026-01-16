@@ -83,7 +83,7 @@ export default function Index() {
   const navigate = useNavigate();
   const quoteBuilderRef = useRef<HTMLDivElement>(null);
   
-  // Step tracking (1-6)
+  // Step tracking (1-4)
   const [step, setStep] = useState(1);
   
   // Chat state
@@ -281,18 +281,16 @@ export default function Index() {
   // Step validation
   const canContinue = () => {
     switch (step) {
-      case 1: return fromZip.length === 5 && fromCity;
-      case 2: return toZip.length === 5 && toCity;
-      case 3: return moveDate !== null;
-      case 4: return size !== "";
-      case 5: return true; // Options are optional
-      case 6: return email.includes("@");
+      case 1: return fromZip.length === 5 && fromCity && toZip.length === 5 && toCity && moveDate !== null;
+      case 2: return size !== "";
+      case 3: return true; // Options are optional
+      case 4: return email.includes("@");
       default: return false;
     }
   };
 
   const goNext = () => {
-    if (canContinue() && step < 6) {
+    if (canContinue() && step < 4) {
       setStep(step + 1);
     }
   };
@@ -346,17 +344,18 @@ export default function Index() {
                 {/* Form Content */}
                 <div className="tru-floating-form-content">
 
-                  {/* Step 1: From Location */}
+                  {/* Step 1: Route & Date */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
-                      <h1 className="tru-qb-question tru-qb-question-decorated">Where are you moving from?</h1>
-                      <p className="tru-qb-subtitle">Enter your city or ZIP code</p>
+                      <h1 className="tru-qb-question tru-qb-question-decorated">Let's plan your move</h1>
+                      <p className="tru-qb-subtitle">Tell us where you're going and when</p>
                       
+                      {/* FROM Location */}
+                      <p className="tru-qb-section-label">Moving From</p>
                       <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                         <LocationAutocomplete
                           value={fromZip}
                           onValueChange={(val) => {
-                            // Only update if it's a ZIP or partial
                             if (/^\d*$/.test(val)) {
                               handleFromZipChange(val);
                             }
@@ -369,28 +368,11 @@ export default function Index() {
                           }}
                           placeholder="City or ZIP code"
                           autoFocus
-                          onKeyDown={handleKeyDown}
                         />
                       </div>
 
-                      <button
-                        type="button"
-                        className="tru-qb-continue"
-                        disabled={!canContinue()}
-                        onClick={goNext}
-                      >
-                        <span>Next Step</span>
-                        <ArrowRight className="w-5 h-5" />
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Step 2: To Location */}
-                  {step === 2 && (
-                    <div className="tru-qb-step-content" key="step-2">
-                      <h1 className="tru-qb-question">Where are you moving to?</h1>
-                      <p className="tru-qb-subtitle">Enter your destination city or ZIP code</p>
-                      
+                      {/* TO Location */}
+                      <p className="tru-qb-section-label">Moving To</p>
                       <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                         <LocationAutocomplete
                           value={toZip}
@@ -408,34 +390,11 @@ export default function Index() {
                             }
                           }}
                           placeholder="City or ZIP code"
-                          autoFocus
-                          onKeyDown={handleKeyDown}
                         />
                       </div>
-                      
-                      <button
-                        type="button"
-                        className="tru-qb-continue"
-                        disabled={!canContinue()}
-                        onClick={goNext}
-                      >
-                        <span>Next Step</span>
-                        <ArrowRight className="w-5 h-5" />
-                      </button>
 
-                      <button type="button" className="tru-qb-back" onClick={goBack}>
-                        <ChevronLeft className="w-4 h-4" />
-                        <span>Back</span>
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Step 3: Move Date */}
-                  {step === 3 && (
-                    <div className="tru-qb-step-content" key="step-3">
-                      <h1 className="tru-qb-question">When would you like to move?</h1>
-                      <p className="tru-qb-subtitle">This helps us match you with available carriers</p>
-                      
+                      {/* Move Date */}
+                      <p className="tru-qb-section-label">Move Date</p>
                       <div className="tru-qb-input-wrap">
                         <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                           <PopoverTrigger asChild>
@@ -468,17 +427,12 @@ export default function Index() {
                         <span>Next Step</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
-
-                      <button type="button" className="tru-qb-back" onClick={goBack}>
-                        <ChevronLeft className="w-4 h-4" />
-                        <span>Back</span>
-                      </button>
                     </div>
                   )}
 
-                  {/* Step 4: Move Size */}
-                  {step === 4 && (
-                    <div className="tru-qb-step-content" key="step-4">
+                  {/* Step 2: Move Size */}
+                  {step === 2 && (
+                    <div className="tru-qb-step-content" key="step-2">
                       <h1 className="tru-qb-question">What size is your move?</h1>
                       <p className="tru-qb-subtitle">This helps us estimate weight and find the right carriers</p>
                       
@@ -490,7 +444,7 @@ export default function Index() {
                             className={`tru-qb-size-btn ${size === s.value ? 'is-active' : ''}`}
                             onClick={() => {
                               setSize(s.value);
-                              setTimeout(() => setStep(5), 200);
+                              setTimeout(() => setStep(3), 200);
                             }}
                           >
                             {s.label}
@@ -505,9 +459,9 @@ export default function Index() {
                     </div>
                   )}
 
-                  {/* Step 5: Additional Options */}
-                  {step === 5 && (
-                    <div className="tru-qb-step-content" key="step-5">
+                  {/* Step 3: Additional Options */}
+                  {step === 3 && (
+                    <div className="tru-qb-step-content" key="step-3">
                       <h1 className="tru-qb-question">Any additional services?</h1>
                       <p className="tru-qb-subtitle">Select any that apply (optional)</p>
                       
@@ -555,9 +509,9 @@ export default function Index() {
                     </div>
                   )}
 
-                  {/* Step 6: Contact */}
-                  {step === 6 && (
-                    <form className="tru-qb-step-content" key="step-6" onSubmit={handleSubmit}>
+                  {/* Step 4: Contact */}
+                  {step === 4 && (
+                    <form className="tru-qb-step-content" key="step-4" onSubmit={handleSubmit}>
                       <h1 className="tru-qb-question">Build your move how you want</h1>
                       <p className="tru-qb-subtitle">Continue to our AI estimator, book a live video consult, or call us now</p>
                       
