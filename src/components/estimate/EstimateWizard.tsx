@@ -293,7 +293,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 ))}
               </div>
 
-              <p className="tru-qb-section-label">Parking Access</p>
+              <p className="tru-qb-section-label">Truck Parking to Entrance?</p>
               <div className="tru-qb-size-grid">
                 {PARKING_OPTIONS.map((option) => (
                   <button
@@ -416,7 +416,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 ))}
               </div>
 
-              <p className="tru-qb-section-label">Parking Access</p>
+              <p className="tru-qb-section-label">Truck Parking to Entrance?</p>
               <div className="tru-qb-size-grid">
                 {PARKING_OPTIONS.map((option) => (
                   <button
