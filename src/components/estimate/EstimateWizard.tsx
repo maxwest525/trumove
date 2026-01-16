@@ -201,6 +201,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                   placeholder="Enter your full address"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
+                  mode="address"
                 />
               </div>
 
@@ -311,6 +312,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                   placeholder="Enter your full address"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
+                  mode="address"
                 />
               </div>
 
