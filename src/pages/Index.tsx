@@ -350,47 +350,52 @@ export default function Index() {
                       <h1 className="tru-qb-question tru-qb-question-decorated">Let's plan your move</h1>
                       <p className="tru-qb-subtitle">Tell us where you're going and when</p>
                       
-                      {/* FROM Location */}
-                      <p className="tru-qb-section-label">Moving From</p>
-                      <div className="tru-qb-input-wrap tru-qb-zip-wrap">
-                        <LocationAutocomplete
-                          value={fromZip}
-                          onValueChange={(val) => {
-                            if (/^\d*$/.test(val)) {
-                              handleFromZipChange(val);
-                            }
-                          }}
-                          onLocationSelect={(city, zip) => {
-                            setFromZip(zip);
-                            setFromCity(city);
-                            const state = city.split(',')[1]?.trim() || '';
-                            triggerCarrierSearch(state);
-                          }}
-                          placeholder="City or ZIP code"
-                          autoFocus
-                        />
-                      </div>
+                      {/* FROM + TO Row - Side by Side */}
+                      <div className="tru-qb-location-row">
+                        <div className="tru-qb-location-col">
+                          <p className="tru-qb-section-label">From</p>
+                          <div className="tru-qb-input-wrap tru-qb-zip-wrap">
+                            <LocationAutocomplete
+                              value={fromZip}
+                              onValueChange={(val) => {
+                                if (/^\d*$/.test(val)) {
+                                  handleFromZipChange(val);
+                                }
+                              }}
+                              onLocationSelect={(city, zip) => {
+                                setFromZip(zip);
+                                setFromCity(city);
+                                const state = city.split(',')[1]?.trim() || '';
+                                triggerCarrierSearch(state);
+                              }}
+                              placeholder="City or ZIP"
+                              autoFocus
+                            />
+                          </div>
+                        </div>
 
-                      {/* TO Location */}
-                      <p className="tru-qb-section-label">Moving To</p>
-                      <div className="tru-qb-input-wrap tru-qb-zip-wrap">
-                        <LocationAutocomplete
-                          value={toZip}
-                          onValueChange={(val) => {
-                            if (/^\d*$/.test(val)) {
-                              handleToZipChange(val);
-                            }
-                          }}
-                          onLocationSelect={(city, zip) => {
-                            setToZip(zip);
-                            setToCity(city);
-                            if (fromCity) {
-                              const state = city.split(',')[1]?.trim() || '';
-                              triggerCarrierSearch(state);
-                            }
-                          }}
-                          placeholder="City or ZIP code"
-                        />
+                        <div className="tru-qb-location-col">
+                          <p className="tru-qb-section-label">To</p>
+                          <div className="tru-qb-input-wrap tru-qb-zip-wrap">
+                            <LocationAutocomplete
+                              value={toZip}
+                              onValueChange={(val) => {
+                                if (/^\d*$/.test(val)) {
+                                  handleToZipChange(val);
+                                }
+                              }}
+                              onLocationSelect={(city, zip) => {
+                                setToZip(zip);
+                                setToCity(city);
+                                if (fromCity) {
+                                  const state = city.split(',')[1]?.trim() || '';
+                                  triggerCarrierSearch(state);
+                                }
+                              }}
+                              placeholder="City or ZIP"
+                            />
+                          </div>
+                        </div>
                       </div>
 
                       {/* Move Date */}

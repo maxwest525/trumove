@@ -7496,6 +7496,28 @@
   margin-top: 0;
 }
 
+/* Location Row - Side by Side */
+.tru-qb-location-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.tru-qb-location-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.tru-qb-location-col .tru-qb-input-wrap {
+  max-width: none;
+}
+
+.tru-qb-location-col .tru-qb-section-label {
+  max-width: none;
+  margin-top: 0;
+}
+
 /* Input Styles - Enhanced ZIP */
 .tru-qb-input-wrap {
   width: 100%;
