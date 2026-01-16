@@ -332,7 +332,7 @@ export default function Index() {
               <div className="tru-floating-form-card">
                 {/* Form Header - Logo + Skip Button */}
                 <div className="tru-qb-form-header">
-                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
+                  <span className="tru-qb-header-title">Build Your Move</span>
                   <button 
                     onClick={() => setChatOpen(true)} 
                     className="tru-ai-chat-btn"
