@@ -50,6 +50,7 @@ export default function OnlineEstimate() {
           fromLocation: lead.fromCity ? `${lead.fromCity} ${lead.fromZip}` : lead.fromZip || '',
           toLocation: lead.toCity ? `${lead.toCity} ${lead.toZip}` : lead.toZip || '',
           homeSize: mapHomeSize(lead.size) || '',
+          toHomeSize: '',
           moveDate: lead.moveDate ? new Date(lead.moveDate) : null,
           // Set defaults for other required fields
           fromPropertyType: 'house',
