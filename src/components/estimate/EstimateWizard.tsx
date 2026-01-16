@@ -81,6 +81,44 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
     moveDate: null,
   });
 
+  // Auto-populate from homepage form data stored in localStorage
+  useEffect(() => {
+    const storedLead = localStorage.getItem("tm_lead");
+    if (storedLead) {
+      try {
+        const lead = JSON.parse(storedLead);
+        
+        // Helper to map homepage size values to wizard values
+        const mapHomeSize = (size: string): string => {
+          const sizeMap: Record<string, string> = {
+            'Studio': 'studio',
+            '1 Bedroom': '1br',
+            '2 Bedroom': '2br',
+            '3 Bedroom': '3br',
+            '4+ Bedroom': '4br+',
+            'Office': '2br',
+          };
+          return sizeMap[size] || '';
+        };
+        
+        setDetails(prev => ({
+          ...prev,
+          email: lead.email || '',
+          phone: lead.phone || '',
+          fromLocation: lead.fromCity ? `${lead.fromCity} ${lead.fromZip}` : lead.fromZip || '',
+          toLocation: lead.toCity ? `${lead.toCity} ${lead.toZip}` : lead.toZip || '',
+          homeSize: mapHomeSize(lead.size) || '',
+          moveDate: lead.moveDate ? new Date(lead.moveDate) : null,
+        }));
+        
+        // Clear the stored data after use
+        localStorage.removeItem("tm_lead");
+      } catch (e) {
+        console.error("Failed to parse stored lead data:", e);
+      }
+    }
+  }, []);
+
   const updateDetails = useCallback((updates: Partial<ExtendedMoveDetails>) => {
     setDetails(prev => ({ ...prev, ...updates }));
   }, []);
