@@ -18,6 +18,9 @@ export default function Footer() {
           <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/book">
             Book a consult
           </Link>
+          <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/faq">
+            FAQ
+          </Link>
           <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/privacy">
             Privacy
           </Link>

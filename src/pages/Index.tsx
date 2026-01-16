@@ -729,13 +729,21 @@ export default function Index() {
             
             {/* Quick Tools Sidebar - 3rd column */}
             <div className="tru-quick-tools-sidebar">
-              <Link to="/online-estimate" className="tru-quick-tool" title="AI Inventory Builder">
+              <Link to="/online-estimate" className="tru-quick-tool" title="AI Move Estimator">
                 <Sparkles className="w-5 h-5" />
-                <span className="tru-quick-tool-label">AI Inventory</span>
+                <span className="tru-quick-tool-label">AI Estimator</span>
               </Link>
-              <Link to="/vetting" className="tru-quick-tool" title="FMCSA Carrier Lookup">
-                <Database className="w-5 h-5" />
-                <span className="tru-quick-tool-label">FMCSA Lookup</span>
+              <Link to="/vetting" className="tru-quick-tool" title="Carrier Vetting">
+                <ShieldCheck className="w-5 h-5" />
+                <span className="tru-quick-tool-label">Carrier Vetting</span>
+              </Link>
+              <button onClick={() => setChatOpen(true)} className="tru-quick-tool" title="AI Chat Assistant">
+                <Sparkles className="w-5 h-5" />
+                <span className="tru-quick-tool-label">AI Chat</span>
+              </button>
+              <Link to="/property-lookup" className="tru-quick-tool" title="Property Lookup">
+                <MapPin className="w-5 h-5" />
+                <span className="tru-quick-tool-label">Property Lookup</span>
               </Link>
               <Link to="/book" className="tru-quick-tool" title="Video Walkthrough">
                 <Video className="w-5 h-5" />
@@ -767,10 +775,6 @@ export default function Index() {
               <div className="tru-trust-strip-item">
                 <Star className="w-4 h-4" />
                 <span>Licensed Broker</span>
-              </div>
-              <div className="tru-trust-strip-item">
-                <Users className="w-4 h-4" />
-                <span>2,400+ Moves Completed</span>
               </div>
             </div>
           </section>
