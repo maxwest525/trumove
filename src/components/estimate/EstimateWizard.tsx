@@ -22,14 +22,12 @@ export interface ExtendedMoveDetails {
   fromPropertyType: 'house' | 'apartment' | '';
   fromFloor: number;
   fromHasElevator: boolean;
-  fromParkingDistance: 'unknown' | 'less75' | 'more75' | '';
   
   // To Location
   toLocation: string;
   toPropertyType: 'house' | 'apartment' | '';
   toFloor: number;
   toHasElevator: boolean;
-  toParkingDistance: 'unknown' | 'less75' | 'more75' | '';
   
   // Other
   homeSize: string;
@@ -61,11 +59,6 @@ const FLOOR_OPTIONS = [
   { label: "4th+", value: 4 },
 ];
 
-const PARKING_OPTIONS = [
-  { label: "Unsure", value: "unknown" },
-  { label: "Close (<75ft)", value: "less75" },
-  { label: "Far (75ft+)", value: "more75" },
-];
 
 export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   const [step, setStep] = useState(1);
@@ -85,12 +78,10 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
     fromPropertyType: '',
     fromFloor: 1,
     fromHasElevator: false,
-    fromParkingDistance: '',
     toLocation: '',
     toPropertyType: '',
     toFloor: 1,
     toHasElevator: false,
-    toParkingDistance: '',
     homeSize: '',
     toHomeSize: '',
     moveDate: null,
@@ -143,9 +134,9 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   const canContinue = () => {
     switch (step) {
       case 1:
-        return details.fromLocation && details.fromPropertyType && details.homeSize && details.fromParkingDistance;
+        return details.fromLocation && details.fromPropertyType && details.homeSize;
       case 2:
-        return details.toLocation && details.toPropertyType && details.toParkingDistance && details.toHomeSize;
+        return details.toLocation && details.toPropertyType && details.toHomeSize;
       case 3:
         return details.moveDate !== null;
       case 4:
@@ -293,19 +284,6 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 ))}
               </div>
 
-              <p className="tru-qb-section-label">Truck Parking to Entrance?</p>
-              <div className="tru-qb-size-grid">
-                {PARKING_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`tru-qb-size-btn ${details.fromParkingDistance === option.value ? 'is-active' : ''}`}
-                    onClick={() => updateDetails({ fromParkingDistance: option.value as 'unknown' | 'less75' | 'more75' })}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
 
               <button
                 type="button"
@@ -416,19 +394,6 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 ))}
               </div>
 
-              <p className="tru-qb-section-label">Truck Parking to Entrance?</p>
-              <div className="tru-qb-size-grid">
-                {PARKING_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`tru-qb-size-btn ${details.toParkingDistance === option.value ? 'is-active' : ''}`}
-                    onClick={() => updateDetails({ toParkingDistance: option.value as 'unknown' | 'less75' | 'more75' })}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
 
               <button
                 type="button"
