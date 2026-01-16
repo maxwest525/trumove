@@ -202,14 +202,14 @@
 }
 
 .tru-floating-form-content {
-  padding: 20px 28px 12px;
+  padding: 16px 24px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 220px;
+  min-height: 180px;
   flex: 1;
-  gap: 8px;
+  gap: 6px;
 }
 
 .tru-floating-form-footer {
@@ -217,7 +217,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 12px 24px;
+  padding: 8px 20px;
   background: hsl(var(--tm-ink) / 0.02);
   border-top: 1px solid hsl(var(--tm-ink) / 0.06);
   text-align: center;
