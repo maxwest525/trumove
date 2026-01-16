@@ -8257,6 +8257,54 @@
   transition: all 0.08s ease;
 }
 
+/* Progress Bar for Wizard */
+.tru-qb-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.tru-qb-progress-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.5);
+  text-align: center;
+}
+
+/* Section Labels in Wizard */
+.tru-qb-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink) / 0.65);
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+
+/* Parking Options Grid */
+.tru-qb-parking-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+}
+
+/* Check Icon for Active Options */
+.tru-qb-check-icon {
+  color: hsl(var(--primary));
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 /* Step Slide Transitions */
 @keyframes step-slide-in {
   0% { opacity: 0; transform: translateX(40px); }
