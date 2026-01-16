@@ -665,12 +665,10 @@ export default function Index() {
                       </div>
                     </div>
                   )}
-                </div>
               </div>
-
             </div>
             
-            {/* Floating Quick Tools Sidebar */}
+            {/* Quick Tools Sidebar - 3rd column */}
             <div className="tru-quick-tools-sidebar">
               <Link to="/online-estimate" className="tru-quick-tool" title="AI Inventory Builder">
                 <Sparkles className="w-5 h-5" />
@@ -689,6 +687,7 @@ export default function Index() {
                 <span className="tru-quick-tool-label">Call Us</span>
               </a>
             </div>
+          </div>
           </section>
 
           {/* TRUST STRIP */}
