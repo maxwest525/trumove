@@ -287,9 +287,10 @@ export default function Index() {
               </h1>
             </div>
 
-            {/* Centered Quote Builder */}
-            <div className="tru-hero-form-wrapper animate-fade-in" ref={quoteBuilderRef}>
-              <div className="tru-quote-builder">
+            {/* Two Floating Cards Layout */}
+            <div className="tru-hero-dual-cards animate-fade-in" ref={quoteBuilderRef}>
+              {/* LEFT: Form Card */}
+              <div className="tru-floating-form-card">
                 {/* Form Header - Logo + Skip Button */}
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
@@ -299,17 +300,16 @@ export default function Index() {
                   </Link>
                 </div>
 
-                  {/* Main Body: Form + Dashboard Side by Side */}
-                  <div className="tru-qb-body">
-                {/* LEFT: Conversation Area */}
-                <div className="tru-qb-main">
-                  {/* Status Bar - Inside left content area */}
-                  <div className="tru-qb-status-bar">
-                    <span className="tru-qb-status-text">Step {step} of 6</span>
-                    <div className="tru-qb-status-progress">
-                      <div className="tru-qb-status-fill" style={{ width: `${(step / 6) * 100}%` }} />
-                    </div>
+                {/* Status Bar */}
+                <div className="tru-floating-form-status">
+                  <span className="tru-floating-form-step">Step {step} of 6</span>
+                  <div className="tru-floating-form-progress">
+                    <div className="tru-floating-form-progress-fill" style={{ width: `${(step / 6) * 100}%` }} />
                   </div>
+                </div>
+
+                {/* Form Content */}
+                <div className="tru-floating-form-content">
 
                   {/* Step 1: From Location */}
                   {step === 1 && (
@@ -589,38 +589,46 @@ export default function Index() {
                     </form>
                   )}
                 </div>
+                
+                {/* Footer inside form card */}
+                <div className="tru-floating-form-footer">
+                  <span>Powered by TruMove Tools</span>
+                </div>
+              </div>
 
-                {/* RIGHT: Live Dashboard Panel */}
-                <div className="tru-qb-panel">
-                  {/* Simple Summary */}
-                  <div className="tru-qb-summary">
-                    <div className="tru-qb-summary-title">
-                      <img src={logoImg} alt="TruMove" className="tru-qb-summary-logo" />
-                      <span>Move Summary</span>
+              {/* RIGHT: Summary Card */}
+              <div className="tru-floating-summary-card">
+                <div className="tru-summary-card-header">
+                  <img src={logoImg} alt="TruMove" className="tru-summary-card-logo" />
+                  <span>Move Summary</span>
+                </div>
+                
+                <div className="tru-summary-card-body">
+                  {/* Summary Rows */}
+                  <div className="tru-summary-info-grid">
+                    <div className="tru-summary-row">
+                      <span className="tru-summary-label">From</span>
+                      <span className="tru-summary-value">{fromCity || "—"}</span>
                     </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">From</span>
-                      <span className="tru-qb-info-value">{fromCity || "—"}</span>
+                    <div className="tru-summary-row">
+                      <span className="tru-summary-label">To</span>
+                      <span className="tru-summary-value">{toCity || "—"}</span>
                     </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">To</span>
-                      <span className="tru-qb-info-value">{toCity || "—"}</span>
+                    <div className="tru-summary-row">
+                      <span className="tru-summary-label">Distance</span>
+                      <span className="tru-summary-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
                     </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">Distance</span>
-                      <span className="tru-qb-info-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                    <div className="tru-summary-row">
+                      <span className="tru-summary-label">Date</span>
+                      <span className="tru-summary-value">{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
                     </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">Date</span>
-                      <span className="tru-qb-info-value">{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
+                    <div className="tru-summary-row">
+                      <span className="tru-summary-label">Size</span>
+                      <span className="tru-summary-value">{size || "—"}</span>
                     </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">Size</span>
-                      <span className="tru-qb-info-value">{size || "—"}</span>
-                    </div>
-                    <div className="tru-qb-info-row">
-                      <span className="tru-qb-info-label">Add-ons</span>
-                      <span className="tru-qb-info-value">
+                    <div className="tru-summary-row">
+                      <span className="tru-summary-label">Add-ons</span>
+                      <span className="tru-summary-value">
                         {(hasCar || needsPacking) 
                           ? [hasCar && "Vehicle", needsPacking && "Packing"].filter(Boolean).join(", ")
                           : "—"}
@@ -628,36 +636,36 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Estimate - Above Map */}
-                  <div className="tru-qb-estimate">
-                    <div className="tru-qb-estimate-header">
+                  {/* Estimate Box */}
+                  <div className="tru-summary-estimate">
+                    <div className="tru-summary-estimate-header">
                       <DollarSign className="w-4 h-4" />
                       <span>YOUR ESTIMATE</span>
                     </div>
                     {estimate ? (
-                      <div className="tru-qb-estimate-value">
+                      <div className="tru-summary-estimate-value">
                         {formatCurrency(estimate.min)} – {formatCurrency(estimate.max)}
                       </div>
                     ) : (
-                      <div className="tru-qb-estimate-empty">
+                      <div className="tru-summary-estimate-empty">
                         Complete steps to see estimate
                       </div>
                     )}
                   </div>
 
                   {/* Map Area */}
-                  <div className="tru-qb-map">
+                  <div className="tru-summary-map">
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
                   </div>
 
-                  {/* Stats Row - Below Map */}
+                  {/* Stats Row */}
                   {distance > 0 && (
-                    <div className="tru-qb-map-stats">
-                      <div className="tru-qb-map-stat">
+                    <div className="tru-summary-map-stats">
+                      <div className="tru-summary-stat">
                         <Route className="w-4 h-4" />
                         <span>{distance.toLocaleString()} miles</span>
                       </div>
-                      <div className="tru-qb-map-stat">
+                      <div className="tru-summary-stat">
                         <Clock className="w-4 h-4" />
                         <span>~{Math.ceil(distance / 500)} day{Math.ceil(distance / 500) > 1 ? 's' : ''} transit</span>
                       </div>
@@ -666,53 +674,48 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* TruMove Tools Section - Inside Form */}
-              <div className="tru-qb-tools">
-                <div className="tru-qb-tools-grid">
-                  <Link to="/online-estimate" className="tru-qb-tool-card">
-                    <div className="tru-qb-tool-icon">
-                      <Sparkles className="w-5 h-5" />
-                    </div>
-                    <div className="tru-qb-tool-info">
-                      <span className="tru-qb-tool-title">AI Inventory Builder</span>
-                      <span className="tru-qb-tool-desc">Create your item list in minutes</span>
-                    </div>
-                  </Link>
-                  <Link to="/vetting" className="tru-qb-tool-card">
-                    <div className="tru-qb-tool-icon">
-                      <Database className="w-5 h-5" />
-                    </div>
-                    <div className="tru-qb-tool-info">
-                      <span className="tru-qb-tool-title">FMCSA Carrier Lookup</span>
-                      <span className="tru-qb-tool-desc">Check any mover's safety record</span>
-                    </div>
-                  </Link>
-                  <Link to="/book" className="tru-qb-tool-card">
-                    <div className="tru-qb-tool-icon">
-                      <Video className="w-5 h-5" />
-                    </div>
-                    <div className="tru-qb-tool-info">
-                      <span className="tru-qb-tool-title">Video Walkthrough</span>
-                      <span className="tru-qb-tool-desc">Show your home for accurate pricing</span>
-                    </div>
-                  </Link>
-                  <a href="tel:+16097277647" className="tru-qb-tool-card">
-                    <div className="tru-qb-tool-icon">
-                      <Headphones className="w-5 h-5" />
-                    </div>
-                    <div className="tru-qb-tool-info">
-                      <span className="tru-qb-tool-title">Move Specialists</span>
-                      <span className="tru-qb-tool-desc">Real humans to answer questions</span>
-                    </div>
-                  </a>
-                </div>
-              </div>
-
-              {/* Footer - Powered by TruMove Tools */}
-              <div className="tru-qb-footer">
-                <span>Powered by TruMove Tools</span>
-              </div>
             </div>
+            
+            {/* Tools Section - Below Both Cards */}
+            <div className="tru-hero-tools-section">
+              <div className="tru-hero-tools-grid-new">
+                <Link to="/online-estimate" className="tru-hero-tool-card-new">
+                  <div className="tru-hero-tool-icon-new">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div className="tru-hero-tool-info-new">
+                    <span className="tru-hero-tool-title-new">AI Inventory Builder</span>
+                    <span className="tru-hero-tool-desc-new">Create your item list in minutes</span>
+                  </div>
+                </Link>
+                <Link to="/vetting" className="tru-hero-tool-card-new">
+                  <div className="tru-hero-tool-icon-new">
+                    <Database className="w-5 h-5" />
+                  </div>
+                  <div className="tru-hero-tool-info-new">
+                    <span className="tru-hero-tool-title-new">FMCSA Carrier Lookup</span>
+                    <span className="tru-hero-tool-desc-new">Check any mover's safety record</span>
+                  </div>
+                </Link>
+                <Link to="/book" className="tru-hero-tool-card-new">
+                  <div className="tru-hero-tool-icon-new">
+                    <Video className="w-5 h-5" />
+                  </div>
+                  <div className="tru-hero-tool-info-new">
+                    <span className="tru-hero-tool-title-new">Video Walkthrough</span>
+                    <span className="tru-hero-tool-desc-new">Show your home for accurate pricing</span>
+                  </div>
+                </Link>
+                <a href="tel:+16097277647" className="tru-hero-tool-card-new">
+                  <div className="tru-hero-tool-icon-new">
+                    <Headphones className="w-5 h-5" />
+                  </div>
+                  <div className="tru-hero-tool-info-new">
+                    <span className="tru-hero-tool-title-new">Move Specialists</span>
+                    <span className="tru-hero-tool-desc-new">Real humans to answer questions</span>
+                  </div>
+                </a>
+              </div>
             </div>
           </section>
 
