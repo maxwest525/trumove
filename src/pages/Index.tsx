@@ -111,6 +111,7 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [phone, setPhoneNum] = useState("");
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [formError, setFormError] = useState("");
   
   // Carrier search animation states
   const [isSearchingCarriers, setIsSearchingCarriers] = useState(false);
@@ -544,7 +545,7 @@ export default function Index() {
 
                   {/* Step 3: Contact */}
                   {step === 3 && (
-                    <form className="tru-qb-step-content" key="step-3" onSubmit={handleSubmit}>
+                    <form className="tru-qb-step-content tru-qb-step-compact" key="step-3" onSubmit={handleSubmit}>
                       <h1 className="tru-qb-question">Build your move how you want</h1>
                       <p className="tru-qb-subtitle">Continue to our AI estimator, book a live video consult, or call us now</p>
                       
@@ -552,10 +553,10 @@ export default function Index() {
                         <div className="tru-qb-input-wrap">
                           <input
                             type="text"
-                            className="tru-qb-input"
+                            className={`tru-qb-input ${formError && !name.trim() ? 'has-error' : ''}`}
                             placeholder="Your name"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => { setName(e.target.value); setFormError(""); }}
                             autoFocus
                           />
                         </div>
@@ -563,10 +564,10 @@ export default function Index() {
                         <div className="tru-qb-input-row">
                           <input
                             type="email"
-                            className="tru-qb-input"
+                            className={`tru-qb-input ${formError && !email.trim() ? 'has-error' : ''}`}
                             placeholder="Email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => { setEmail(e.target.value); setFormError(""); }}
                             onKeyDown={handleKeyDown}
                           />
                           <input
@@ -579,12 +580,20 @@ export default function Index() {
                         </div>
                       </div>
 
+                      {formError && (
+                        <p className="tru-qb-error">{formError}</p>
+                      )}
+
                       <div className="tru-qb-options-stack">
                         <button
                           type="submit"
                           className="tru-qb-option-primary-btn"
-                          disabled={!canContinue()}
-                          onClick={(e) => { if (!canContinue()) e.preventDefault(); }}
+                          onClick={(e) => { 
+                            if (!canContinue()) {
+                              e.preventDefault();
+                              setFormError("Please complete name and email to continue.");
+                            }
+                          }}
                         >
                           <Sparkles className="w-5 h-5" />
                           <div className="tru-qb-option-text">
@@ -597,8 +606,13 @@ export default function Index() {
                           <button 
                             type="button" 
                             className="tru-qb-option-card"
-                            disabled={!canContinue()}
-                            onClick={() => { if (canContinue()) navigate("/book"); }}
+                            onClick={() => { 
+                              if (canContinue()) {
+                                navigate("/book");
+                              } else {
+                                setFormError("Please complete name and email to continue.");
+                              }
+                            }}
                           >
                             <Video className="w-5 h-5" />
                             <div className="tru-qb-option-text">
@@ -607,9 +621,14 @@ export default function Index() {
                             </div>
                           </button>
                           <a 
-                            href={canContinue() ? "tel:+16097277647" : undefined} 
-                            className={`tru-qb-option-card ${!canContinue() ? 'is-disabled' : ''}`}
-                            onClick={(e) => { if (!canContinue()) e.preventDefault(); }}
+                            href="tel:+16097277647"
+                            className="tru-qb-option-card"
+                            onClick={(e) => { 
+                              if (!canContinue()) {
+                                e.preventDefault();
+                                setFormError("Please complete name and email to continue.");
+                              }
+                            }}
                           >
                             <Phone className="w-5 h-5" />
                             <div className="tru-qb-option-text">
@@ -620,17 +639,15 @@ export default function Index() {
                         </div>
                       </div>
 
-                      <button type="button" className="tru-qb-back" onClick={goBack}>
-                        <ChevronLeft className="w-4 h-4" />
-                        <span>Back</span>
-                      </button>
-                      
-                      <p className="tru-qb-disclaimer">
-                        By submitting, you agree we may contact you by phone, text, or email.
-                        <span className="tru-qb-disclaimer-secure">
-                          <Lock className="w-3 h-3" /> Your info is secure & never sold.
-                        </span>
-                      </p>
+                      <div className="tru-qb-step3-footer">
+                        <button type="button" className="tru-qb-back-inline" onClick={goBack}>
+                          <ChevronLeft className="w-4 h-4" />
+                          <span>Back</span>
+                        </button>
+                        <p className="tru-qb-disclaimer-inline">
+                          By submitting, you agree we may contact you. <Lock className="w-3 h-3 inline" /> Info is secure & never sold.
+                        </p>
+                      </div>
                     </form>
                   )}
                 </div>

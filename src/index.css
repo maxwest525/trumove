@@ -8166,26 +8166,68 @@
   min-width: 0;
 }
 
-/* Disclaimer */
-.tru-qb-disclaimer {
-  margin-top: 4px;
-  margin-bottom: -4px;
-  font-size: 10px;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.45);
-  line-height: 1.35;
-  text-align: center;
-  max-width: 400px;
+/* Compact step 3 footer */
+.tru-qb-step-compact {
+  gap: 10px !important;
 }
 
-.tru-qb-disclaimer-secure {
+.tru-qb-step3-footer {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 3px;
-  margin-top: 0;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-qb-back-inline {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: transparent;
+  border: none;
+  font-size: 12px;
   font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.6);
+  color: hsl(var(--tm-ink) / 0.5);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.tru-qb-back-inline:hover {
+  color: hsl(var(--tm-ink) / 0.8);
+}
+
+.tru-qb-disclaimer-inline {
+  font-size: 9px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.4);
+  line-height: 1.3;
+  text-align: right;
+  margin: 0;
+}
+
+.tru-qb-disclaimer-inline svg {
+  vertical-align: middle;
+  margin: 0 1px;
+}
+
+/* Error state */
+.tru-qb-error {
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(0 70% 50%);
+  text-align: center;
+  margin: 0;
+  padding: 6px 10px;
+  background: hsl(0 70% 50% / 0.08);
+  border-radius: 6px;
+}
+
+.tru-qb-input.has-error {
+  border-color: hsl(0 70% 50%);
+  background: hsl(0 70% 50% / 0.04);
 }
 
 /* Disabled state for option cards */
