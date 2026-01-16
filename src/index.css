@@ -8883,10 +8883,11 @@
 .tru-estimate-bg-layer {
   position: relative;
   width: 100%;
-  opacity: 0.9;
-  filter: blur(0.5px);
+  opacity: 0.7;
+  filter: blur(2.5px);
   pointer-events: none;
   user-select: none;
+  margin-top: 80px;
 }
 
 /* Wizard floats in front */
@@ -8898,6 +8899,7 @@
   width: 100%;
   max-width: 700px;
   z-index: 10;
+  padding-top: 20px;
 }
 
 /* Lock overlay - very subtle */
@@ -8905,11 +8907,11 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, 
-    hsl(var(--background) / 0.1) 0%, 
-    hsl(var(--background) / 0.2) 50%,
-    hsl(var(--background) / 0.4) 100%
+    hsl(var(--background) / 0.2) 0%, 
+    hsl(var(--background) / 0.35) 50%,
+    hsl(var(--background) / 0.55) 100%
   );
-  backdrop-filter: blur(0.5px);
+  backdrop-filter: blur(1.5px);
   display: flex;
   flex-direction: column;
   align-items: center;
