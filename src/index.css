@@ -244,7 +244,7 @@
 }
 
 /* AI Chat Button - Animated Gradient */
-/* AI Chat Button - Subtle with accent */
+/* AI Chat Button - Clean minimal style */
 .tru-ai-chat-btn {
   display: flex;
   align-items: center;
@@ -252,9 +252,9 @@
   padding: 8px 14px;
   font-size: 12px;
   font-weight: 600;
-  color: hsl(270, 60%, 50%);
-  background: hsl(270, 60%, 50% / 0.08);
-  border: 1px solid hsl(270, 60%, 50% / 0.2);
+  color: hsl(var(--tm-ink) / 0.6);
+  background: hsl(var(--tm-ink) / 0.04);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -262,9 +262,9 @@
 }
 
 .tru-ai-chat-btn:hover {
-  color: hsl(270, 70%, 45%);
-  background: hsl(270, 60%, 50% / 0.12);
-  border-color: hsl(270, 60%, 50% / 0.3);
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--primary) / 0.2);
 }
 
 .tru-ai-chat-btn svg {
@@ -278,21 +278,21 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 20px;
+  padding: 12px 18px;
   font-size: 13px;
   font-weight: 600;
-  color: hsl(var(--tm-green));
-  background: hsl(var(--tm-green) / 0.08);
-  border: 1px solid hsl(var(--tm-green) / 0.2);
-  border-radius: 10px;
+  color: hsl(var(--tm-ink) / 0.6);
+  background: hsl(var(--tm-ink) / 0.04);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 8px;
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .tru-summary-skip-cta:hover {
-  color: hsl(152, 85%, 30%);
-  background: hsl(var(--tm-green) / 0.12);
-  border-color: hsl(var(--tm-green) / 0.3);
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--primary) / 0.2);
 }
 
 .tru-summary-skip-cta svg {
