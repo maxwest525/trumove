@@ -579,27 +579,35 @@ export default function Index() {
                         </div>
                       </div>
 
-                      <button
-                        type="submit"
-                        className="tru-qb-submit"
-                        disabled={!canContinue()}
-                      >
-                        <Sparkles className="w-5 h-5" />
-                        <span>Proceed to AI Move Estimator</span>
-                      </button>
-                      
-                      <div className="tru-qb-options-grid">
+                      <div className="tru-qb-options-grid-3">
+                        <button
+                          type="submit"
+                          className="tru-qb-option-card tru-qb-option-primary"
+                          disabled={!canContinue()}
+                        >
+                          <Sparkles className="w-5 h-5" />
+                          <div className="tru-qb-option-text">
+                            <span className="tru-qb-option-title">AI Move Estimator</span>
+                            <span className="tru-qb-option-desc">Get instant pricing breakdown</span>
+                          </div>
+                        </button>
                         <button 
                           type="button" 
                           className="tru-qb-option-card"
                           onClick={() => navigate("/book")}
                         >
                           <Video className="w-5 h-5" />
-                          <span className="tru-qb-option-title">Video Consult</span>
+                          <div className="tru-qb-option-text">
+                            <span className="tru-qb-option-title">Video Consult</span>
+                            <span className="tru-qb-option-desc">Live walkthrough with expert</span>
+                          </div>
                         </button>
                         <a href="tel:+16097277647" className="tru-qb-option-card">
                           <Phone className="w-5 h-5" />
-                          <span className="tru-qb-option-title">Call Now</span>
+                          <div className="tru-qb-option-text">
+                            <span className="tru-qb-option-title">Call Now</span>
+                            <span className="tru-qb-option-desc">Speak to someone now</span>
+                          </div>
                         </a>
                       </div>
 
