@@ -296,7 +296,7 @@ export default function Index() {
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
                   <Link to="/online-estimate" className="tru-qb-skip-btn">
                     <Zap className="w-4 h-4" />
-                    <span>Skip to Estimate Builder</span>
+                    <span>Skip to AI Move Estimator</span>
                   </Link>
                 </div>
 
@@ -648,7 +648,7 @@ export default function Index() {
                       </div>
                     ) : (
                       <div className="tru-summary-estimate-empty">
-                        Complete steps to see estimate
+                        Complete form to proceed to AI Move Estimator
                       </div>
                     )}
                   </div>
