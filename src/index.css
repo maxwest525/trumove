@@ -7475,8 +7475,8 @@
   font-size: 14px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.55);
-  margin-top: 20px;
-  margin-bottom: 28px;
+  margin-top: 4px;
+  margin-bottom: 16px;
 }
 
 /* Section Labels for Combined Step */
@@ -7487,7 +7487,7 @@
   font-weight: 700;
   color: hsl(var(--tm-ink) / 0.5);
   margin-bottom: 8px;
-  margin-top: 16px;
+  margin-top: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   text-align: left;
@@ -7777,7 +7777,7 @@
   width: 100%;
   max-width: 300px;
   height: 54px;
-  margin-top: 24px;
+  margin-top: 16px;
   padding: 0 28px;
   font-size: 15px;
   font-weight: 600;
