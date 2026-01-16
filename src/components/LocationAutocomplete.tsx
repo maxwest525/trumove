@@ -19,10 +19,11 @@ interface LocationAutocompleteProps {
   autoFocus?: boolean;
   onKeyDown?: (e: React.KeyboardEvent) => void;
   className?: string;
+  mode?: 'city' | 'address'; // 'city' for homepage, 'address' for full street addresses
 }
 
-// Nominatim API for full street address autocomplete
-async function searchNominatim(query: string): Promise<LocationSuggestion[]> {
+// Nominatim API for full street address autocomplete (mode="address")
+async function searchNominatimAddresses(query: string): Promise<LocationSuggestion[]> {
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?` +
@@ -46,7 +47,6 @@ async function searchNominatim(query: string): Promise<LocationSuggestion[]> {
       const state = addr.state || '';
       const zip = addr.postcode || '';
       
-      // Create a clean display name
       const displayParts = [streetAddress, city, state].filter(Boolean);
       const display = displayParts.join(', ');
       
@@ -57,6 +57,42 @@ async function searchNominatim(query: string): Promise<LocationSuggestion[]> {
         zip,
         display: display || item.display_name,
         fullAddress: item.display_name,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+// Nominatim API for city-only search (mode="city")
+async function searchNominatimCities(query: string): Promise<LocationSuggestion[]> {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?` +
+      `q=${encodeURIComponent(query)}&countrycodes=us&format=json&addressdetails=1&limit=5&featuretype=city`,
+      { 
+        headers: { 
+          'Accept': 'application/json',
+          'User-Agent': 'TruMove/1.0'
+        } 
+      }
+    );
+    if (!res.ok) return [];
+    
+    const data = await res.json();
+    return data.map((item: any) => {
+      const addr = item.address || {};
+      const city = addr.city || addr.town || addr.village || addr.hamlet || addr.municipality || item.name || '';
+      const state = addr.state || '';
+      const zip = addr.postcode || '';
+      
+      return {
+        streetAddress: '',
+        city,
+        state,
+        zip,
+        display: `${city}, ${state}`,
+        fullAddress: `${city}, ${state}${zip ? ` ${zip}` : ''}`,
       };
     });
   } catch {
@@ -89,10 +125,11 @@ export default function LocationAutocomplete({
   value,
   onValueChange,
   onLocationSelect,
-  placeholder = "Address, City, or ZIP",
+  placeholder = "City or ZIP",
   autoFocus = false,
   onKeyDown,
   className,
+  mode = 'city', // Default to city-only mode
 }: LocationAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -118,7 +155,7 @@ export default function LocationAutocomplete({
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [mode]);
 
   const searchLocations = useCallback(async (query: string) => {
     if (!query || query.length < 2) {
@@ -143,8 +180,10 @@ export default function LocationAutocomplete({
         setSuggestions([]);
       }
     } else {
-      // Use Nominatim for address/city/partial search
-      const results = await searchNominatim(query);
+      // Use appropriate Nominatim search based on mode
+      const results = mode === 'address' 
+        ? await searchNominatimAddresses(query)
+        : await searchNominatimCities(query);
       setSuggestions(results);
     }
 

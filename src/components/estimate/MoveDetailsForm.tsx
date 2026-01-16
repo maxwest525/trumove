@@ -73,7 +73,8 @@ export default function MoveDetailsForm({
               setFromCity(city);
               onUpdate({ fromLocation: zip });
             }}
-            placeholder="City or ZIP code"
+            placeholder="Full address"
+            mode="address"
           />
         </div>
         <div>
@@ -88,7 +89,8 @@ export default function MoveDetailsForm({
               setToCity(city);
               onUpdate({ toLocation: zip });
             }}
-            placeholder="City or ZIP code"
+            placeholder="Full address"
+            mode="address"
           />
         </div>
       </div>
