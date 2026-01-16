@@ -10,7 +10,6 @@ const NAV = [
   { href: "/book", label: "Book Video Consult" },
   { href: "/property-lookup", label: "Property Lookup" },
   { href: "/vetting", label: "Carrier Vetting" },
-  { href: "/faq", label: "FAQ" },
   { href: "/about", label: "About" },
 ];
 
