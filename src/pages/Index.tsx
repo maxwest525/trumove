@@ -352,7 +352,7 @@ export default function Index() {
                   {/* Step 1: Route & Date */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
-                      <h1 className="tru-qb-question tru-qb-question-decorated">Let's plan your move</h1>
+                      <h1 className="tru-qb-question tru-qb-question-decorated">Start building your move</h1>
                       <p className="tru-qb-subtitle">Tell us where you're going and when</p>
                       
                       {/* FROM + TO Row - Side by Side */}

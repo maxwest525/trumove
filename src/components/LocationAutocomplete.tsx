@@ -210,7 +210,7 @@ export default function LocationAutocomplete({
       {showDropdown && (suggestions.length > 0 || isLoading) && (
         <div 
           ref={dropdownRef}
-          className="absolute top-full left-0 right-0 mt-1 z-50 rounded-lg border border-border/60 bg-card shadow-lg overflow-hidden"
+          className="absolute top-full left-0 mt-1 z-50 rounded-lg border border-border/60 bg-card shadow-lg overflow-hidden min-w-[280px]"
         >
           {isLoading ? (
             <div className="flex items-center gap-2 px-4 py-3 text-sm text-muted-foreground">
