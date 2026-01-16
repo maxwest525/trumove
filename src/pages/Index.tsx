@@ -591,15 +591,15 @@ export default function Index() {
                       <div className="tru-qb-options-grid">
                         <button 
                           type="button" 
-                          className="tru-qb-option-card-compact"
+                          className="tru-qb-option-card"
                           onClick={() => navigate("/book")}
                         >
-                          <Video className="w-4 h-4" />
-                          <span>Video Consult</span>
+                          <Video className="w-5 h-5" />
+                          <span className="tru-qb-option-title">Video Consult</span>
                         </button>
-                        <a href="tel:+16097277647" className="tru-qb-option-card-compact">
-                          <Phone className="w-4 h-4" />
-                          <span>Call Now</span>
+                        <a href="tel:+16097277647" className="tru-qb-option-card">
+                          <Phone className="w-5 h-5" />
+                          <span className="tru-qb-option-title">Call Now</span>
                         </a>
                       </div>
 
