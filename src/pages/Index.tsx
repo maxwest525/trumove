@@ -321,17 +321,59 @@ export default function Index() {
     <SiteShell>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-        {/* HERO - Centered Form Layout */}
-          <section className="tru-hero tru-hero-centered">
-            {/* Hero Headline */}
-            <div className="tru-hero-headline">
-              <h1 className="tru-hero-title-centered">
-                Let TruMove find the right mover at the best rate.
-              </h1>
+        {/* HERO - Split Layout */}
+          <section className="tru-hero tru-hero-split">
+            {/* LEFT: Value Proposition */}
+            <div className="tru-hero-content-panel">
+              <div className="tru-hero-content-inner">
+                <span className="tru-hero-eyebrow">
+                  <Sparkles className="w-4 h-4" />
+                  AI-Powered Moving Platform
+                </span>
+                <h1 className="tru-hero-headline-main">
+                  Find Your Perfect<br />
+                  <span className="tru-hero-headline-accent">Carrier Match.</span>
+                </h1>
+                <p className="tru-hero-subheadline">
+                  TruMove uses AI to connect you with small, family-owned carriers who actually care — 
+                  all heavily vetted, all verified, all matched to your exact move.
+                </p>
+                
+                {/* Value Props */}
+                <div className="tru-hero-value-props">
+                  <div className="tru-hero-value-prop">
+                    <div className="tru-hero-value-icon">
+                      <Shield className="w-5 h-5" />
+                    </div>
+                    <div className="tru-hero-value-text">
+                      <span className="tru-hero-value-title">Heavily Vetted</span>
+                      <span className="tru-hero-value-desc">FMCSA verified, insurance checked, reputation monitored</span>
+                    </div>
+                  </div>
+                  <div className="tru-hero-value-prop">
+                    <div className="tru-hero-value-icon">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div className="tru-hero-value-text">
+                      <span className="tru-hero-value-title">AI-Matched</span>
+                      <span className="tru-hero-value-desc">Technology finds the right carrier for your route</span>
+                    </div>
+                  </div>
+                  <div className="tru-hero-value-prop">
+                    <div className="tru-hero-value-icon">
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <div className="tru-hero-value-text">
+                      <span className="tru-hero-value-title">Family-Owned Carriers</span>
+                      <span className="tru-hero-value-desc">Small, trusted movers who treat your move like their own</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Two Floating Cards Layout */}
-            <div className="tru-hero-dual-cards animate-fade-in" ref={quoteBuilderRef}>
+            {/* RIGHT: Form and Summary Cards */}
+            <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
               {/* LEFT: Form Card */}
               <div className="tru-floating-form-card">
                 {/* Form Header - Logo + Skip Button */}
@@ -719,34 +761,7 @@ export default function Index() {
               </div>
             </div>
             
-            {/* Quick Tools Sidebar - 3rd column */}
-            <div className="tru-quick-tools-sidebar">
-              <Link to="/online-estimate" className="tru-quick-tool" title="AI Move Estimator">
-                <Sparkles className="w-5 h-5" />
-                <span className="tru-quick-tool-label">AI Estimator</span>
-              </Link>
-              <Link to="/vetting" className="tru-quick-tool" title="Carrier Vetting">
-                <ShieldCheck className="w-5 h-5" />
-                <span className="tru-quick-tool-label">Carrier Vetting</span>
-              </Link>
-              <button onClick={() => setChatOpen(true)} className="tru-quick-tool" title="AI Chat Assistant">
-                <Sparkles className="w-5 h-5" />
-                <span className="tru-quick-tool-label">AI Chat</span>
-              </button>
-              <Link to="/property-lookup" className="tru-quick-tool" title="Property Lookup">
-                <MapPin className="w-5 h-5" />
-                <span className="tru-quick-tool-label">Property Lookup</span>
-              </Link>
-              <Link to="/book" className="tru-quick-tool" title="Video Walkthrough">
-                <Video className="w-5 h-5" />
-                <span className="tru-quick-tool-label">Video Consult</span>
-              </Link>
-              <a href="tel:+16097277647" className="tru-quick-tool" title="Move Specialists">
-                <Headphones className="w-5 h-5" />
-                <span className="tru-quick-tool-label">Call Us</span>
-              </a>
             </div>
-          </div>
           </section>
 
           {/* TRUST STRIP */}
