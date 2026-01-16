@@ -9325,6 +9325,193 @@
 }
 
 /* =============================================
+   QB FORM STYLES (Used by EstimateWizard to match homepage)
+   ============================================= */
+
+/* Progress bar for wizard */
+.tru-qb-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.tru-qb-step-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+/* Toggle Group - Container with label */
+.tru-qb-toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tru-qb-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink) / 0.65);
+}
+
+/* Toggle Row - Horizontal buttons */
+.tru-qb-toggle-row {
+  display: flex;
+  gap: 12px;
+}
+
+.tru-qb-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px hsl(var(--tm-ink) / 0.04);
+}
+
+.tru-qb-toggle-btn:hover {
+  border-color: hsl(var(--tm-ink) / 0.2);
+  background: hsl(var(--tm-ink) / 0.02);
+  transform: translateY(-1px);
+}
+
+.tru-qb-toggle-btn.is-active {
+  border-color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px hsl(var(--tm-ink) / 0.25);
+}
+
+.tru-qb-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+  color: hsl(var(--tm-ink) / 0.4);
+  transition: all 0.2s ease;
+}
+
+.tru-qb-toggle-btn.is-active svg {
+  color: hsl(var(--primary));
+}
+
+.tru-qb-toggle-btn span {
+  font-size: 15px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  transition: color 0.2s ease;
+}
+
+.tru-qb-toggle-btn.is-active span {
+  color: #ffffff;
+}
+
+/* Pills - Compact inline selection */
+.tru-qb-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tru-qb-pill {
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  background: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px hsl(var(--tm-ink) / 0.04);
+}
+
+.tru-qb-pill:hover {
+  border-color: hsl(var(--tm-ink) / 0.2);
+  transform: translateY(-1px);
+}
+
+.tru-qb-pill.is-active {
+  border-color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink));
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px hsl(var(--tm-ink) / 0.25);
+}
+
+/* Option Cards - For parking distance etc */
+.tru-qb-option-cards {
+  display: flex;
+  gap: 10px;
+}
+
+.tru-qb-option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  padding: 16px 14px;
+  border-radius: 14px;
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  box-shadow: 0 2px 4px hsl(var(--tm-ink) / 0.04);
+}
+
+.tru-qb-option-cards .tru-qb-option-card:hover {
+  border-color: hsl(var(--tm-ink) / 0.2);
+  transform: translateY(-1px);
+}
+
+.tru-qb-option-cards .tru-qb-option-card.is-active {
+  border-color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px hsl(var(--tm-ink) / 0.25);
+}
+
+.tru-qb-option-cards .tru-qb-option-card svg {
+  width: 22px;
+  height: 22px;
+  color: hsl(var(--tm-ink) / 0.4);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.tru-qb-option-cards .tru-qb-option-card.is-active svg {
+  color: hsl(var(--primary));
+}
+
+.tru-qb-option-cards .tru-qb-option-card span {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  transition: color 0.2s ease;
+}
+
+.tru-qb-option-cards .tru-qb-option-card.is-active span {
+  color: #ffffff;
+}
+
+.tru-qb-option-cards .tru-qb-option-card .check-icon {
+  display: none;
+}
+
+/* =============================================
    ESTIMATE WIZARD CONTAINER (No overlay)
    ============================================= */
 .tru-estimate-wizard-container {
