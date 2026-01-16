@@ -161,6 +161,7 @@ export default function LocationAutocomplete({
 
     // Check if it's a complete ZIP code (5 digits)
     const isCompleteZip = /^\d{5}$/.test(query.trim());
+    const isPartialZip = /^\d{2,4}$/.test(query.trim());
 
     if (isCompleteZip) {
       // Look up complete ZIP code using zippopotam for accuracy
@@ -170,6 +171,12 @@ export default function LocationAutocomplete({
       } else {
         setSuggestions([]);
       }
+    } else if (isPartialZip) {
+      // For partial numeric input, search cities/addresses that might match
+      const results = mode === 'address' 
+        ? await searchPhotonAddresses(query)
+        : await searchPhotonCities(query);
+      setSuggestions(results);
     } else {
       // Use Photon API (CORS-friendly) based on mode
       const results = mode === 'address' 
@@ -230,8 +237,12 @@ export default function LocationAutocomplete({
       }
     }
     
-    // Pass through to parent handler
+    // Pass through to parent handler - also set isValid to true if there's meaningful input
     if (onKeyDown && e.key === "Enter" && selectedIndex < 0) {
+      // If user typed something meaningful, consider it valid for proceeding
+      if (value.trim().length >= 3) {
+        setIsValid(true);
+      }
       onKeyDown(e);
     }
   };
