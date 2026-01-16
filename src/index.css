@@ -8950,18 +8950,12 @@
   100% { opacity: 1; transform: translateX(0); }
 }
 
-.tru-estimate-wizard {
+.tru-estimate-wizard-content {
   position: relative;
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
-  padding: 40px 28px 28px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 24px;
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  box-shadow:
-    0 1px 3px hsl(var(--tm-ink) / 0.04),
-    0 20px 60px hsl(var(--tm-ink) / 0.12);
+  padding: 28px;
   overflow: visible;
 }
 

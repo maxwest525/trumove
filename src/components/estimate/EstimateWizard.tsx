@@ -185,7 +185,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
           </button>
         </div>
 
-        <div className="tru-estimate-wizard">
+        <div className="tru-estimate-wizard-content">
 
       {/* Progress Bar */}
       <div className="tru-wizard-progress">
