@@ -7854,7 +7854,7 @@
   gap: 10px;
 }
 
-/* Primary CTA Button - Solid green, stands out */
+/* Primary CTA Button - Dark background, green accent */
 .tru-qb-option-primary-btn {
   display: flex;
   flex-direction: row;
@@ -7862,18 +7862,18 @@
   gap: 12px;
   padding: 16px 18px;
   border-radius: 12px;
-  border: none;
-  background: hsl(var(--primary));
-  color: hsl(var(--tm-ink));
+  border: 2px solid hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink));
+  color: white;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.35);
+  box-shadow: 0 4px 16px hsl(var(--tm-ink) / 0.25);
 }
 
 .tru-qb-option-primary-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px hsl(var(--primary) / 0.45);
+  box-shadow: 0 6px 24px hsl(var(--tm-ink) / 0.35);
 }
 
 .tru-qb-option-primary-btn:disabled {
@@ -7885,17 +7885,18 @@
 
 .tru-qb-option-primary-btn svg {
   flex-shrink: 0;
+  color: hsl(var(--primary));
 }
 
 .tru-qb-option-primary-btn .tru-qb-option-title {
   font-size: 14px;
   font-weight: 700;
-  color: hsl(var(--tm-ink));
+  color: white;
 }
 
 .tru-qb-option-primary-btn .tru-qb-option-desc {
   font-size: 11px;
-  color: hsl(var(--tm-ink) / 0.7);
+  color: hsl(0 0% 100% / 0.7);
 }
 
 .tru-qb-option-card {
