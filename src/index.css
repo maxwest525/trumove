@@ -7973,10 +7973,14 @@
 /* Toggle Cards */
 .tru-qb-toggles {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 12px;
   width: 100%;
   max-width: 360px;
+}
+
+.tru-qb-toggles .tru-qb-toggle-card {
+  flex: 1;
 }
 
 .tru-qb-toggle-card {
