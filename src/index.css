@@ -8887,19 +8887,18 @@
   filter: blur(2.5px);
   pointer-events: none;
   user-select: none;
-  margin-top: 80px;
+  margin-top: 0;
 }
 
 /* Wizard floats in front */
 .tru-estimate-wizard-float {
   position: absolute;
-  top: 0;
+  top: 120px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 700px;
   z-index: 10;
-  padding-top: 20px;
 }
 
 /* Lock overlay - very subtle */
