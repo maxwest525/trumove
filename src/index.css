@@ -168,6 +168,8 @@
 
 .tru-floating-form-card {
   flex: 1 1 60%;
+  display: flex;
+  flex-direction: column;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 2px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 24px;
@@ -217,6 +219,7 @@
   align-items: center;
   justify-content: center;
   min-height: 280px;
+  flex: 1;
 }
 
 .tru-floating-form-footer {
@@ -227,6 +230,7 @@
   font-size: 11px;
   font-weight: 600;
   color: hsl(var(--tm-ink) / 0.4);
+  margin-top: auto;
 }
 
 /* Right: Summary Card */
