@@ -19,39 +19,34 @@ interface LocationAutocompleteProps {
   className?: string;
 }
 
-// Sample city data for autocomplete - can be expanded
-const CITY_DATABASE: LocationSuggestion[] = [
-  { city: "Los Angeles", state: "CA", zip: "90001", display: "Los Angeles, CA" },
-  { city: "Beverly Hills", state: "CA", zip: "90210", display: "Beverly Hills, CA" },
-  { city: "San Francisco", state: "CA", zip: "94102", display: "San Francisco, CA" },
-  { city: "San Diego", state: "CA", zip: "92101", display: "San Diego, CA" },
-  { city: "New York", state: "NY", zip: "10001", display: "New York, NY" },
-  { city: "Brooklyn", state: "NY", zip: "11201", display: "Brooklyn, NY" },
-  { city: "Manhattan", state: "NY", zip: "10016", display: "Manhattan, NY" },
-  { city: "Houston", state: "TX", zip: "77001", display: "Houston, TX" },
-  { city: "Dallas", state: "TX", zip: "75201", display: "Dallas, TX" },
-  { city: "Austin", state: "TX", zip: "78701", display: "Austin, TX" },
-  { city: "Chicago", state: "IL", zip: "60601", display: "Chicago, IL" },
-  { city: "Miami", state: "FL", zip: "33101", display: "Miami, FL" },
-  { city: "Boca Raton", state: "FL", zip: "33431", display: "Boca Raton, FL" },
-  { city: "Tampa", state: "FL", zip: "33602", display: "Tampa, FL" },
-  { city: "Orlando", state: "FL", zip: "32801", display: "Orlando, FL" },
-  { city: "Phoenix", state: "AZ", zip: "85001", display: "Phoenix, AZ" },
-  { city: "Seattle", state: "WA", zip: "98101", display: "Seattle, WA" },
-  { city: "Denver", state: "CO", zip: "80201", display: "Denver, CO" },
-  { city: "Boston", state: "MA", zip: "02101", display: "Boston, MA" },
-  { city: "Washington", state: "DC", zip: "20001", display: "Washington, DC" },
-  { city: "Atlanta", state: "GA", zip: "30301", display: "Atlanta, GA" },
-  { city: "Las Vegas", state: "NV", zip: "89101", display: "Las Vegas, NV" },
-  { city: "Portland", state: "OR", zip: "97201", display: "Portland, OR" },
-  { city: "Philadelphia", state: "PA", zip: "19101", display: "Philadelphia, PA" },
-  { city: "Nashville", state: "TN", zip: "37201", display: "Nashville, TN" },
-  { city: "Charlotte", state: "NC", zip: "28201", display: "Charlotte, NC" },
-  { city: "San Antonio", state: "TX", zip: "78201", display: "San Antonio, TX" },
-  { city: "Indianapolis", state: "IN", zip: "46201", display: "Indianapolis, IN" },
-  { city: "Columbus", state: "OH", zip: "43201", display: "Columbus, OH" },
-  { city: "Fort Worth", state: "TX", zip: "76101", display: "Fort Worth, TX" },
-];
+const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam51OGJrcGFiIn0.tN-ZMle93ctK7PIt9kU7JA';
+
+async function searchMapbox(query: string): Promise<LocationSuggestion[]> {
+  try {
+    const res = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
+      `access_token=${MAPBOX_TOKEN}&country=us&types=place,postcode,address&limit=5`
+    );
+    if (!res.ok) return [];
+    
+    const data = await res.json();
+    return data.features.map((f: any) => {
+      const region = f.context?.find((c: any) => c.id.startsWith('region'));
+      const postcode = f.context?.find((c: any) => c.id.startsWith('postcode'));
+      const state = region?.short_code?.replace('US-', '') || '';
+      const zip = postcode?.text || (f.id.startsWith('postcode') ? f.text : '');
+      
+      return {
+        city: f.text,
+        state,
+        zip,
+        display: f.place_name,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
 
 async function lookupZip(zip: string): Promise<string | null> {
   try {
@@ -107,11 +102,11 @@ export default function LocationAutocomplete({
     setIsLoading(true);
     setShowDropdown(true);
 
-    // Check if it's a ZIP code (all digits)
-    const isZip = /^\d+$/.test(query);
+    // Check if it's a complete ZIP code (5 digits)
+    const isCompleteZip = /^\d{5}$/.test(query);
 
-    if (isZip && query.length === 5) {
-      // Look up ZIP code
+    if (isCompleteZip) {
+      // Look up ZIP code using zippopotam for accuracy
       const city = await lookupZip(query);
       if (city) {
         const [cityName, state] = city.split(", ");
@@ -124,21 +119,10 @@ export default function LocationAutocomplete({
       } else {
         setSuggestions([]);
       }
-    } else if (isZip) {
-      // Partial ZIP - filter known ZIPs
-      const filtered = CITY_DATABASE.filter(loc => 
-        loc.zip.startsWith(query)
-      ).slice(0, 5);
-      setSuggestions(filtered);
     } else {
-      // City search - filter by city name
-      const lowerQuery = query.toLowerCase();
-      const filtered = CITY_DATABASE.filter(loc => 
-        loc.city.toLowerCase().includes(lowerQuery) ||
-        loc.state.toLowerCase().includes(lowerQuery) ||
-        loc.display.toLowerCase().includes(lowerQuery)
-      ).slice(0, 5);
-      setSuggestions(filtered);
+      // Use Mapbox for city/address search
+      const results = await searchMapbox(query);
+      setSuggestions(results);
     }
 
     setIsLoading(false);
