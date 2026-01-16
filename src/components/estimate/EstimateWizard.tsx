@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import { 
   ArrowRight, ChevronLeft, User, Phone, Mail, MapPin, Home, Building2, 
-  ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical
+  ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Unlock
 } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -129,6 +129,12 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
   return (
     <div className="tru-estimate-wizard">
+      {/* Unlock Badge */}
+      <div className="flex items-center justify-center gap-2 px-4 py-2 mb-4 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold">
+        <Unlock className="w-4 h-4" />
+        <span>Fill out to unlock your FREE Move Builder</span>
+      </div>
+
       {/* Progress Bar */}
       <div className="tru-wizard-progress">
         <span className="tru-wizard-step-label">Step {step} of 5</span>
