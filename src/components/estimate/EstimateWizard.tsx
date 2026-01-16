@@ -5,7 +5,7 @@ import {
   ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Sparkles,
   Car, Package
 } from "lucide-react";
-import LocationAutocomplete from "@/components/LocationAutocomplete";
+import AddressAutocomplete from "@/components/AddressAutocomplete";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import logoImg from "@/assets/logo.png";
@@ -203,10 +203,10 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
               <p className="tru-qb-subtitle">Enter your current address details</p>
 
               <div className="tru-qb-input-wrap tru-qb-zip-wrap">
-                <LocationAutocomplete
+                <AddressAutocomplete
                   value={details.fromLocation}
                   onValueChange={(val) => updateDetails({ fromLocation: val })}
-                  onLocationSelect={(city) => updateDetails({ fromLocation: city })}
+                  onAddressSelect={(address) => updateDetails({ fromLocation: address })}
                   placeholder="Enter your full address"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
@@ -326,10 +326,10 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
               <p className="tru-qb-subtitle">Enter your destination address details</p>
 
               <div className="tru-qb-input-wrap tru-qb-zip-wrap">
-                <LocationAutocomplete
+                <AddressAutocomplete
                   value={details.toLocation}
                   onValueChange={(val) => updateDetails({ toLocation: val })}
-                  onLocationSelect={(city) => updateDetails({ toLocation: city })}
+                  onAddressSelect={(address) => updateDetails({ toLocation: address })}
                   placeholder="Enter your full address"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
