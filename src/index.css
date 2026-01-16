@@ -8059,21 +8059,61 @@
   max-width: 360px;
 }
 
+.tru-qb-input-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+}
+
+.tru-qb-input-row .tru-qb-input {
+  flex: 1;
+  min-width: 0;
+}
+
 /* Disclaimer */
 .tru-qb-disclaimer {
-  margin-top: 12px;
+  margin-top: 10px;
   font-size: 11px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.45);
-  line-height: 1.4;
-  max-width: 400px;
+  line-height: 1.5;
   text-align: center;
+  max-width: 400px;
 }
 
 .tru-qb-disclaimer-secure {
-  display: inline;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 2px;
   font-weight: 600;
   color: hsl(var(--tm-ink) / 0.6);
+}
+
+/* Compact Option Cards */
+.tru-qb-option-card-compact {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
+  background: hsl(var(--background));
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-qb-option-card-compact:hover {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.06);
 }
 
 /* Panel Styles */
