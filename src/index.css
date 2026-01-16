@@ -9966,3 +9966,17 @@
     justify-content: center;
   }
 }
+
+/* Estimate Wizard Container - responsive max-width */
+.tru-estimate-wizard-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .tru-estimate-wizard-container.lg\:max-w-none {
+    max-width: none;
+    margin: 0;
+  }
+}
