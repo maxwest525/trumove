@@ -670,46 +670,24 @@ export default function Index() {
 
             </div>
             
-            {/* Tools Section - Below Both Cards */}
-            <div className="tru-hero-tools-section">
-              <div className="tru-hero-tools-grid-new">
-                <Link to="/online-estimate" className="tru-hero-tool-card-new">
-                  <div className="tru-hero-tool-icon-new">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
-                  <div className="tru-hero-tool-info-new">
-                    <span className="tru-hero-tool-title-new">AI Inventory Builder</span>
-                    <span className="tru-hero-tool-desc-new">Create your item list in minutes</span>
-                  </div>
-                </Link>
-                <Link to="/vetting" className="tru-hero-tool-card-new">
-                  <div className="tru-hero-tool-icon-new">
-                    <Database className="w-5 h-5" />
-                  </div>
-                  <div className="tru-hero-tool-info-new">
-                    <span className="tru-hero-tool-title-new">FMCSA Carrier Lookup</span>
-                    <span className="tru-hero-tool-desc-new">Check any mover's safety record</span>
-                  </div>
-                </Link>
-                <Link to="/book" className="tru-hero-tool-card-new">
-                  <div className="tru-hero-tool-icon-new">
-                    <Video className="w-5 h-5" />
-                  </div>
-                  <div className="tru-hero-tool-info-new">
-                    <span className="tru-hero-tool-title-new">Video Walkthrough</span>
-                    <span className="tru-hero-tool-desc-new">Show your home for accurate pricing</span>
-                  </div>
-                </Link>
-                <a href="tel:+16097277647" className="tru-hero-tool-card-new">
-                  <div className="tru-hero-tool-icon-new">
-                    <Headphones className="w-5 h-5" />
-                  </div>
-                  <div className="tru-hero-tool-info-new">
-                    <span className="tru-hero-tool-title-new">Move Specialists</span>
-                    <span className="tru-hero-tool-desc-new">Real humans to answer questions</span>
-                  </div>
-                </a>
-              </div>
+            {/* Floating Quick Tools Sidebar */}
+            <div className="tru-quick-tools-sidebar">
+              <Link to="/online-estimate" className="tru-quick-tool" title="AI Inventory Builder">
+                <Sparkles className="w-5 h-5" />
+                <span className="tru-quick-tool-label">AI Inventory</span>
+              </Link>
+              <Link to="/vetting" className="tru-quick-tool" title="FMCSA Carrier Lookup">
+                <Database className="w-5 h-5" />
+                <span className="tru-quick-tool-label">FMCSA Lookup</span>
+              </Link>
+              <Link to="/book" className="tru-quick-tool" title="Video Walkthrough">
+                <Video className="w-5 h-5" />
+                <span className="tru-quick-tool-label">Video Consult</span>
+              </Link>
+              <a href="tel:+16097277647" className="tru-quick-tool" title="Move Specialists">
+                <Headphones className="w-5 h-5" />
+                <span className="tru-quick-tool-label">Call Us</span>
+              </a>
             </div>
           </section>
 
