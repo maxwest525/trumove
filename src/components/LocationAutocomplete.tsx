@@ -222,14 +222,14 @@ export default function LocationAutocomplete({
               <div
                 key={`${suggestion.zip}-${idx}`}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors",
+                  "flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors",
                   idx === selectedIndex ? "bg-primary/10" : "hover:bg-muted/50"
                 )}
                 onClick={() => handleSelect(suggestion)}
                 onMouseEnter={() => setSelectedIndex(idx)}
               >
-                <MapPin className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">
+                <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
+                <span className="text-sm font-medium text-foreground whitespace-nowrap">
                   {suggestion.display} {suggestion.zip}
                 </span>
               </div>
