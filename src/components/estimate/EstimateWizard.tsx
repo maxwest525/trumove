@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import { 
-  ArrowRight, ChevronLeft, Home, Building2, 
+  ArrowRight, ChevronLeft, User, Phone, Mail, MapPin, Home, Building2, 
   ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Sparkles
 } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
@@ -106,7 +106,6 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
         
         setDetails(prev => ({
           ...prev,
-          name: lead.name || '',
           email: lead.email || '',
           phone: lead.phone || '',
           fromLocation: lead.fromCity ? `${lead.fromCity} ${lead.fromZip}` : lead.fromZip || '',
@@ -186,14 +185,14 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
           </button>
         </div>
 
-        <div className="tru-floating-form-content">
+        <div className="tru-estimate-wizard-content">
 
       {/* Progress Bar */}
-      <div className="tru-qb-progress">
-        <span className="tru-qb-step-label">Step {step} of 5</span>
-        <div className="tru-qb-progress-bar">
+      <div className="tru-wizard-progress">
+        <span className="tru-wizard-step-label">Step {step} of 5</span>
+        <div className="tru-wizard-progress-bar">
           <div 
-            className="tru-qb-progress-fill" 
+            className="tru-wizard-progress-fill" 
             style={{ width: `${(step / 5) * 100}%` }} 
           />
         </div>
@@ -201,50 +200,63 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 1: Contact Information */}
       {step === 1 && (
-        <div className={cn("tru-qb-step-content", direction === 'backward' && "backwards")} key="step-1">
-          <h1 className="tru-qb-question tru-qb-question-decorated">Let's start with your contact info</h1>
-          <p className="tru-qb-subtitle">We'll use this to send your personalized quote</p>
-
-          {/* Name */}
-          <div className="tru-qb-input-wrap" style={{ marginBottom: '12px' }}>
-            <input
-              type="text"
-              value={details.name}
-              onChange={(e) => updateDetails({ name: e.target.value })}
-              onKeyDown={handleKeyDown}
-              placeholder="Your name"
-              className="tru-qb-input"
-              autoFocus
-            />
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-1">
+          <div className="tru-wizard-header">
+            <h2 className="tru-wizard-question">Let's start with your contact info</h2>
+            <p className="tru-wizard-subtitle">We'll use this to send your personalized quote</p>
           </div>
 
-          {/* Phone */}
-          <div className="tru-qb-input-wrap" style={{ marginBottom: '12px' }}>
-            <input
-              type="tel"
-              value={details.phone}
-              onChange={(e) => updateDetails({ phone: e.target.value })}
-              onKeyDown={handleKeyDown}
-              placeholder="Phone number"
-              className="tru-qb-input"
-            />
-          </div>
+          <div className="tru-wizard-form">
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">Full Name</label>
+              <div className="tru-wizard-input-wrapper">
+                <User className="tru-wizard-input-icon" />
+                <input
+                  type="text"
+                  value={details.name}
+                  onChange={(e) => updateDetails({ name: e.target.value })}
+                  onKeyDown={handleKeyDown}
+                  placeholder="John Smith"
+                  className="tru-wizard-input has-icon"
+                  autoFocus
+                />
+              </div>
+            </div>
 
-          {/* Email */}
-          <div className="tru-qb-input-wrap">
-            <input
-              type="email"
-              value={details.email}
-              onChange={(e) => updateDetails({ email: e.target.value })}
-              onKeyDown={handleKeyDown}
-              placeholder="Email address"
-              className="tru-qb-input"
-            />
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">Phone Number</label>
+              <div className="tru-wizard-input-wrapper">
+                <Phone className="tru-wizard-input-icon" />
+                <input
+                  type="tel"
+                  value={details.phone}
+                  onChange={(e) => updateDetails({ phone: e.target.value })}
+                  onKeyDown={handleKeyDown}
+                  placeholder="(555) 123-4567"
+                  className="tru-wizard-input has-icon"
+                />
+              </div>
+            </div>
+
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">Email Address</label>
+              <div className="tru-wizard-input-wrapper">
+                <Mail className="tru-wizard-input-icon" />
+                <input
+                  type="email"
+                  value={details.email}
+                  onChange={(e) => updateDetails({ email: e.target.value })}
+                  onKeyDown={handleKeyDown}
+                  placeholder="john@example.com"
+                  className="tru-wizard-input has-icon"
+                />
+              </div>
+            </div>
           </div>
 
           <button
             type="button"
-            className="tru-qb-continue"
+            className="tru-wizard-continue"
             disabled={!canContinue()}
             onClick={goNext}
           >
@@ -256,110 +268,116 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 2: Moving FROM Details */}
       {step === 2 && (
-        <div className={cn("tru-qb-step-content", direction === 'backward' && "backwards")} key="step-2">
-          <h1 className="tru-qb-question">
-            {details.name.trim() 
-              ? `Hey ${details.name.split(' ')[0]}, where are you moving from?`
-              : "Where are you moving from?"}
-          </h1>
-          <p className="tru-qb-subtitle">Enter your current address details</p>
-
-          {/* Location */}
-          <div className="tru-qb-input-wrap tru-qb-zip-wrap" style={{ marginBottom: '16px' }}>
-            <LocationAutocomplete
-              value={details.fromLocation}
-              onValueChange={(val) => updateDetails({ fromLocation: val })}
-              onLocationSelect={(city) => updateDetails({ fromLocation: city })}
-              placeholder="City or ZIP code"
-              onKeyDown={handleKeyDown}
-            />
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-2">
+          <div className="tru-wizard-header">
+            <h2 className="tru-wizard-question">
+              {details.name.trim() 
+                ? `Hey ${details.name.split(' ')[0]}, where are you moving from?`
+                : "Where are you moving from?"}
+            </h2>
+            <p className="tru-wizard-subtitle">Enter your current address details</p>
           </div>
 
-          {/* Property Type */}
-          <div className="tru-qb-toggle-group" style={{ marginBottom: '16px' }}>
-            <span className="tru-qb-toggle-label">Property Type</span>
-            <div className="tru-qb-toggle-row">
-              <button
-                type="button"
-                className={`tru-qb-toggle-btn ${details.fromPropertyType === 'house' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ fromPropertyType: 'house' })}
-              >
-                <Home className="w-5 h-5" />
-                <span>House</span>
-              </button>
-              <button
-                type="button"
-                className={`tru-qb-toggle-btn ${details.fromPropertyType === 'apartment' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ fromPropertyType: 'apartment' })}
-              >
-                <Building2 className="w-5 h-5" />
-                <span>Apartment</span>
-              </button>
+          <div className="tru-wizard-form">
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">Location</label>
+              <div className="tru-wizard-input-wrapper">
+                <MapPin className="tru-wizard-input-icon" />
+                <LocationAutocomplete
+                  value={details.fromLocation}
+                  onValueChange={(val) => updateDetails({ fromLocation: val })}
+                  onLocationSelect={(city) => updateDetails({ fromLocation: city })}
+                  placeholder="City or ZIP code"
+                  onKeyDown={handleKeyDown}
+                  className="tru-wizard-input has-icon"
+                />
+              </div>
             </div>
-          </div>
 
-          {details.fromPropertyType === 'apartment' && (
-            <>
-              <div className="tru-qb-toggle-group animate-fade-in" style={{ marginBottom: '16px' }}>
-                <span className="tru-qb-toggle-label">What floor?</span>
-                <div className="tru-qb-pills">
-                  {FLOOR_OPTIONS.map((floor) => (
-                    <button
-                      key={floor.value}
-                      type="button"
-                      className={`tru-qb-pill ${details.fromFloor === floor.value ? 'is-active' : ''}`}
-                      onClick={() => updateDetails({ fromFloor: floor.value })}
-                    >
-                      {floor.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="tru-qb-toggle-group animate-fade-in" style={{ marginBottom: '16px' }}>
-                <span className="tru-qb-toggle-label">Access type</span>
-                <div className="tru-qb-toggle-row">
-                  <button
-                    type="button"
-                    className={`tru-qb-toggle-btn ${!details.fromHasElevator ? 'is-active' : ''}`}
-                    onClick={() => updateDetails({ fromHasElevator: false })}
-                  >
-                    <MoveVertical className="w-5 h-5" />
-                    <span>Stairs</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`tru-qb-toggle-btn ${details.fromHasElevator ? 'is-active' : ''}`}
-                    onClick={() => updateDetails({ fromHasElevator: true })}
-                  >
-                    <ArrowUpDown className="w-5 h-5" />
-                    <span>Elevator</span>
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Home Size */}
-          <div className="tru-qb-toggle-group">
-            <span className="tru-qb-toggle-label">Home Size</span>
-            <div className="tru-qb-pills">
-              {HOME_SIZES.map((size) => (
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">Property Type</label>
+              <div className="tru-wizard-toggle-row">
                 <button
-                  key={size.value}
                   type="button"
-                  className={`tru-qb-pill ${details.homeSize === size.value ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ homeSize: size.value })}
+                  className={`tru-wizard-toggle-btn ${details.fromPropertyType === 'house' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ fromPropertyType: 'house' })}
                 >
-                  {size.label}
+                  <Home className="w-5 h-5" />
+                  <span>House</span>
                 </button>
-              ))}
+                <button
+                  type="button"
+                  className={`tru-wizard-toggle-btn ${details.fromPropertyType === 'apartment' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ fromPropertyType: 'apartment' })}
+                >
+                  <Building2 className="w-5 h-5" />
+                  <span>Apartment</span>
+                </button>
+              </div>
+            </div>
+
+            {details.fromPropertyType === 'apartment' && (
+              <>
+                <div className="tru-wizard-input-group animate-fade-in">
+                  <label className="tru-wizard-label">What floor?</label>
+                  <div className="tru-wizard-pills">
+                    {FLOOR_OPTIONS.map((floor) => (
+                      <button
+                        key={floor.value}
+                        type="button"
+                        className={`tru-wizard-pill ${details.fromFloor === floor.value ? 'is-active' : ''}`}
+                        onClick={() => updateDetails({ fromFloor: floor.value })}
+                      >
+                        {floor.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="tru-wizard-input-group animate-fade-in">
+                  <label className="tru-wizard-label">Access type</label>
+                  <div className="tru-wizard-toggle-row">
+                    <button
+                      type="button"
+                      className={`tru-wizard-toggle-btn ${!details.fromHasElevator ? 'is-active' : ''}`}
+                      onClick={() => updateDetails({ fromHasElevator: false })}
+                    >
+                      <MoveVertical className="w-5 h-5" />
+                      <span>Stairs</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`tru-wizard-toggle-btn ${details.fromHasElevator ? 'is-active' : ''}`}
+                      onClick={() => updateDetails({ fromHasElevator: true })}
+                    >
+                      <ArrowUpDown className="w-5 h-5" />
+                      <span>Elevator</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">Home Size</label>
+              <div className="tru-wizard-pills">
+                {HOME_SIZES.map((size) => (
+                  <button
+                    key={size.value}
+                    type="button"
+                    className={`tru-wizard-pill ${details.homeSize === size.value ? 'is-active' : ''}`}
+                    onClick={() => updateDetails({ homeSize: size.value })}
+                  >
+                    {size.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
           <button
             type="button"
-            className="tru-qb-continue"
+            className="tru-wizard-continue"
             disabled={!canContinue()}
             onClick={goNext}
           >
@@ -367,7 +385,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
             <ArrowRight className="w-5 h-5" />
           </button>
 
-          <button type="button" className="tru-qb-back" onClick={goBack}>
+          <button type="button" className="tru-wizard-back" onClick={goBack}>
             <ChevronLeft className="w-4 h-4" />
             <span>Back</span>
           </button>
@@ -376,89 +394,96 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 3: Moving TO Details */}
       {step === 3 && (
-        <div className={cn("tru-qb-step-content", direction === 'backward' && "backwards")} key="step-3">
-          <h1 className="tru-qb-question">Where are you moving to?</h1>
-          <p className="tru-qb-subtitle">Enter your destination address details</p>
-
-          {/* Location */}
-          <div className="tru-qb-input-wrap tru-qb-zip-wrap" style={{ marginBottom: '16px' }}>
-            <LocationAutocomplete
-              value={details.toLocation}
-              onValueChange={(val) => updateDetails({ toLocation: val })}
-              onLocationSelect={(city) => updateDetails({ toLocation: city })}
-              placeholder="City or ZIP code"
-              onKeyDown={handleKeyDown}
-            />
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-3">
+          <div className="tru-wizard-header">
+            <h2 className="tru-wizard-question">Where are you moving to?</h2>
+            <p className="tru-wizard-subtitle">Enter your destination address details</p>
           </div>
 
-          {/* Property Type */}
-          <div className="tru-qb-toggle-group" style={{ marginBottom: '16px' }}>
-            <span className="tru-qb-toggle-label">Property Type</span>
-            <div className="tru-qb-toggle-row">
-              <button
-                type="button"
-                className={`tru-qb-toggle-btn ${details.toPropertyType === 'house' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ toPropertyType: 'house' })}
-              >
-                <Home className="w-5 h-5" />
-                <span>House</span>
-              </button>
-              <button
-                type="button"
-                className={`tru-qb-toggle-btn ${details.toPropertyType === 'apartment' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ toPropertyType: 'apartment' })}
-              >
-                <Building2 className="w-5 h-5" />
-                <span>Apartment</span>
-              </button>
+          <div className="tru-wizard-form">
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">Location</label>
+              <div className="tru-wizard-input-wrapper">
+                <MapPin className="tru-wizard-input-icon" />
+                <LocationAutocomplete
+                  value={details.toLocation}
+                  onValueChange={(val) => updateDetails({ toLocation: val })}
+                  onLocationSelect={(city) => updateDetails({ toLocation: city })}
+                  placeholder="City or ZIP code"
+                  onKeyDown={handleKeyDown}
+                  className="tru-wizard-input has-icon"
+                />
+              </div>
             </div>
-          </div>
 
-          {details.toPropertyType === 'apartment' && (
-            <>
-              <div className="tru-qb-toggle-group animate-fade-in" style={{ marginBottom: '16px' }}>
-                <span className="tru-qb-toggle-label">What floor?</span>
-                <div className="tru-qb-pills">
-                  {FLOOR_OPTIONS.map((floor) => (
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">Property Type</label>
+              <div className="tru-wizard-toggle-row">
+                <button
+                  type="button"
+                  className={`tru-wizard-toggle-btn ${details.toPropertyType === 'house' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ toPropertyType: 'house' })}
+                >
+                  <Home className="w-5 h-5" />
+                  <span>House</span>
+                </button>
+                <button
+                  type="button"
+                  className={`tru-wizard-toggle-btn ${details.toPropertyType === 'apartment' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ toPropertyType: 'apartment' })}
+                >
+                  <Building2 className="w-5 h-5" />
+                  <span>Apartment</span>
+                </button>
+              </div>
+            </div>
+
+            {details.toPropertyType === 'apartment' && (
+              <>
+                <div className="tru-wizard-input-group animate-fade-in">
+                  <label className="tru-wizard-label">What floor?</label>
+                  <div className="tru-wizard-pills">
+                    {FLOOR_OPTIONS.map((floor) => (
+                      <button
+                        key={floor.value}
+                        type="button"
+                        className={`tru-wizard-pill ${details.toFloor === floor.value ? 'is-active' : ''}`}
+                        onClick={() => updateDetails({ toFloor: floor.value })}
+                      >
+                        {floor.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="tru-wizard-input-group animate-fade-in">
+                  <label className="tru-wizard-label">Access type</label>
+                  <div className="tru-wizard-toggle-row">
                     <button
-                      key={floor.value}
                       type="button"
-                      className={`tru-qb-pill ${details.toFloor === floor.value ? 'is-active' : ''}`}
-                      onClick={() => updateDetails({ toFloor: floor.value })}
+                      className={`tru-wizard-toggle-btn ${!details.toHasElevator ? 'is-active' : ''}`}
+                      onClick={() => updateDetails({ toHasElevator: false })}
                     >
-                      {floor.label}
+                      <MoveVertical className="w-5 h-5" />
+                      <span>Stairs</span>
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      className={`tru-wizard-toggle-btn ${details.toHasElevator ? 'is-active' : ''}`}
+                      onClick={() => updateDetails({ toHasElevator: true })}
+                    >
+                      <ArrowUpDown className="w-5 h-5" />
+                      <span>Elevator</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-
-              <div className="tru-qb-toggle-group animate-fade-in" style={{ marginBottom: '16px' }}>
-                <span className="tru-qb-toggle-label">Access type</span>
-                <div className="tru-qb-toggle-row">
-                  <button
-                    type="button"
-                    className={`tru-qb-toggle-btn ${!details.toHasElevator ? 'is-active' : ''}`}
-                    onClick={() => updateDetails({ toHasElevator: false })}
-                  >
-                    <MoveVertical className="w-5 h-5" />
-                    <span>Stairs</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`tru-qb-toggle-btn ${details.toHasElevator ? 'is-active' : ''}`}
-                    onClick={() => updateDetails({ toHasElevator: true })}
-                  >
-                    <ArrowUpDown className="w-5 h-5" />
-                    <span>Elevator</span>
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
+          </div>
 
           <button
             type="button"
-            className="tru-qb-continue"
+            className="tru-wizard-continue"
             disabled={!canContinue()}
             onClick={goNext}
           >
@@ -466,7 +491,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
             <ArrowRight className="w-5 h-5" />
           </button>
 
-          <button type="button" className="tru-qb-back" onClick={goBack}>
+          <button type="button" className="tru-wizard-back" onClick={goBack}>
             <ChevronLeft className="w-4 h-4" />
             <span>Back</span>
           </button>
@@ -475,40 +500,45 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 4: Move Date */}
       {step === 4 && (
-        <div className={cn("tru-qb-step-content", direction === 'backward' && "backwards")} key="step-4">
-          <h1 className="tru-qb-question">When would you like to move?</h1>
-          <p className="tru-qb-subtitle">Select your target move date</p>
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-4">
+          <div className="tru-wizard-header">
+            <h2 className="tru-wizard-question">When would you like to move?</h2>
+            <p className="tru-wizard-subtitle">Select your target move date</p>
+          </div>
 
-          <div className="tru-qb-input-wrap">
-            <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-              <PopoverTrigger asChild>
-                <button type="button" className="tru-qb-date-btn">
-                  <CalendarIcon className="w-5 h-5" />
-                  <span>
-                    {details.moveDate 
-                      ? format(details.moveDate, "MMMM d, yyyy") 
-                      : "Select a date"}
-                  </span>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="form-date-popover" align="center">
-                <CalendarComponent
-                  mode="single"
-                  selected={details.moveDate || undefined}
-                  onSelect={(date) => {
-                    updateDetails({ moveDate: date || null });
-                    setDatePopoverOpen(false);
-                  }}
-                  disabled={(date) => date < new Date()}
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
+          <div className="tru-wizard-form">
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">Move Date</label>
+              <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                <PopoverTrigger asChild>
+                  <button type="button" className="tru-wizard-date-btn">
+                    <CalendarIcon className="w-5 h-5" />
+                    <span>
+                      {details.moveDate 
+                        ? format(details.moveDate, "MMMM d, yyyy") 
+                        : "Select a date"}
+                    </span>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="form-date-popover" align="center">
+                  <CalendarComponent
+                    mode="single"
+                    selected={details.moveDate || undefined}
+                    onSelect={(date) => {
+                      updateDetails({ moveDate: date || null });
+                      setDatePopoverOpen(false);
+                    }}
+                    disabled={(date) => date < new Date()}
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
 
           <button
             type="button"
-            className="tru-qb-continue"
+            className="tru-wizard-continue"
             disabled={!canContinue()}
             onClick={goNext}
           >
@@ -516,7 +546,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
             <ArrowRight className="w-5 h-5" />
           </button>
 
-          <button type="button" className="tru-qb-back" onClick={goBack}>
+          <button type="button" className="tru-wizard-back" onClick={goBack}>
             <ChevronLeft className="w-4 h-4" />
             <span>Back</span>
           </button>
@@ -525,87 +555,89 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
       {/* Step 5: Parking Distance */}
       {step === 5 && (
-        <div className={cn("tru-qb-step-content", direction === 'backward' && "backwards")} key="step-5">
-          <h1 className="tru-qb-question">How far is parking from the entrance?</h1>
-          <p className="tru-qb-subtitle">This helps us estimate carry distance for your move</p>
-
-          {/* FROM Parking */}
-          <div className="tru-qb-toggle-group" style={{ marginBottom: '20px' }}>
-            <span className="tru-qb-toggle-label">
-              <Footprints className="w-4 h-4" />
-              At your current location (FROM)
-            </span>
-            <div className="tru-qb-option-cards">
-              <button
-                type="button"
-                className={`tru-qb-option-card ${details.fromParkingDistance === 'unknown' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ fromParkingDistance: 'unknown' })}
-              >
-                <HelpCircle className="w-5 h-5" />
-                <span>I don't know</span>
-                {details.fromParkingDistance === 'unknown' && <Check className="w-4 h-4 check-icon" />}
-              </button>
-              <button
-                type="button"
-                className={`tru-qb-option-card ${details.fromParkingDistance === 'less75' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ fromParkingDistance: 'less75' })}
-              >
-                <Footprints className="w-5 h-5" />
-                <span>Less than 75 feet</span>
-                {details.fromParkingDistance === 'less75' && <Check className="w-4 h-4 check-icon" />}
-              </button>
-              <button
-                type="button"
-                className={`tru-qb-option-card ${details.fromParkingDistance === 'more75' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ fromParkingDistance: 'more75' })}
-              >
-                <Footprints className="w-5 h-5" />
-                <span>More than 75 feet</span>
-                {details.fromParkingDistance === 'more75' && <Check className="w-4 h-4 check-icon" />}
-              </button>
-            </div>
+        <div className={cn("tru-wizard-step", direction === 'backward' && "backwards")} key="step-5">
+          <div className="tru-wizard-header">
+            <h2 className="tru-wizard-question">How far is parking from the entrance?</h2>
+            <p className="tru-wizard-subtitle">This helps us estimate carry distance for your move</p>
           </div>
 
-          {/* TO Parking */}
-          <div className="tru-qb-toggle-group">
-            <span className="tru-qb-toggle-label">
-              <Footprints className="w-4 h-4" />
-              At your new location (TO)
-            </span>
-            <div className="tru-qb-option-cards">
-              <button
-                type="button"
-                className={`tru-qb-option-card ${details.toParkingDistance === 'unknown' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ toParkingDistance: 'unknown' })}
-              >
-                <HelpCircle className="w-5 h-5" />
-                <span>I don't know</span>
-                {details.toParkingDistance === 'unknown' && <Check className="w-4 h-4 check-icon" />}
-              </button>
-              <button
-                type="button"
-                className={`tru-qb-option-card ${details.toParkingDistance === 'less75' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ toParkingDistance: 'less75' })}
-              >
-                <Footprints className="w-5 h-5" />
-                <span>Less than 75 feet</span>
-                {details.toParkingDistance === 'less75' && <Check className="w-4 h-4 check-icon" />}
-              </button>
-              <button
-                type="button"
-                className={`tru-qb-option-card ${details.toParkingDistance === 'more75' ? 'is-active' : ''}`}
-                onClick={() => updateDetails({ toParkingDistance: 'more75' })}
-              >
-                <Footprints className="w-5 h-5" />
-                <span>More than 75 feet</span>
-                {details.toParkingDistance === 'more75' && <Check className="w-4 h-4 check-icon" />}
-              </button>
+          <div className="tru-wizard-form">
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">
+                <Footprints className="w-4 h-4" />
+                At your current location (FROM)
+              </label>
+              <div className="tru-wizard-option-cards">
+                <button
+                  type="button"
+                  className={`tru-wizard-option-card ${details.fromParkingDistance === 'unknown' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ fromParkingDistance: 'unknown' })}
+                >
+                  <HelpCircle className="w-5 h-5" />
+                  <span>I don't know</span>
+                  {details.fromParkingDistance === 'unknown' && <Check className="w-4 h-4 check-icon" />}
+                </button>
+                <button
+                  type="button"
+                  className={`tru-wizard-option-card ${details.fromParkingDistance === 'less75' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ fromParkingDistance: 'less75' })}
+                >
+                  <Footprints className="w-5 h-5" />
+                  <span>Less than 75 feet</span>
+                  {details.fromParkingDistance === 'less75' && <Check className="w-4 h-4 check-icon" />}
+                </button>
+                <button
+                  type="button"
+                  className={`tru-wizard-option-card ${details.fromParkingDistance === 'more75' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ fromParkingDistance: 'more75' })}
+                >
+                  <Footprints className="w-5 h-5" />
+                  <span>More than 75 feet</span>
+                  {details.fromParkingDistance === 'more75' && <Check className="w-4 h-4 check-icon" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="tru-wizard-input-group">
+              <label className="tru-wizard-label">
+                <Footprints className="w-4 h-4" />
+                At your new location (TO)
+              </label>
+              <div className="tru-wizard-option-cards">
+                <button
+                  type="button"
+                  className={`tru-wizard-option-card ${details.toParkingDistance === 'unknown' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ toParkingDistance: 'unknown' })}
+                >
+                  <HelpCircle className="w-5 h-5" />
+                  <span>I don't know</span>
+                  {details.toParkingDistance === 'unknown' && <Check className="w-4 h-4 check-icon" />}
+                </button>
+                <button
+                  type="button"
+                  className={`tru-wizard-option-card ${details.toParkingDistance === 'less75' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ toParkingDistance: 'less75' })}
+                >
+                  <Footprints className="w-5 h-5" />
+                  <span>Less than 75 feet</span>
+                  {details.toParkingDistance === 'less75' && <Check className="w-4 h-4 check-icon" />}
+                </button>
+                <button
+                  type="button"
+                  className={`tru-wizard-option-card ${details.toParkingDistance === 'more75' ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ toParkingDistance: 'more75' })}
+                >
+                  <Footprints className="w-5 h-5" />
+                  <span>More than 75 feet</span>
+                  {details.toParkingDistance === 'more75' && <Check className="w-4 h-4 check-icon" />}
+                </button>
+              </div>
             </div>
           </div>
 
           <button
             type="button"
-            className="tru-qb-continue"
+            className="tru-wizard-continue"
             disabled={!canContinue()}
             onClick={goNext}
           >
@@ -613,7 +645,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
             <ArrowRight className="w-5 h-5" />
           </button>
 
-          <button type="button" className="tru-qb-back" onClick={goBack}>
+          <button type="button" className="tru-wizard-back" onClick={goBack}>
             <ChevronLeft className="w-4 h-4" />
             <span>Back</span>
           </button>
