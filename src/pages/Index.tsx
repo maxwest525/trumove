@@ -107,6 +107,7 @@ export default function Index() {
   const [propertyType, setPropertyType] = useState<'house' | 'apartment' | ''>('');
   const [floor, setFloor] = useState(1);
   const [hasElevator, setHasElevator] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhoneNum] = useState("");
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
@@ -275,7 +276,7 @@ export default function Index() {
     
     // Store lead data
     localStorage.setItem("tm_lead", JSON.stringify({
-      fromZip, toZip, fromCity, toCity, moveDate: moveDate?.toISOString(),
+      name, fromZip, toZip, fromCity, toCity, moveDate: moveDate?.toISOString(),
       size, propertyType, floor, hasElevator, email, phone, ts: Date.now()
     }));
     
@@ -550,21 +551,28 @@ export default function Index() {
                       <div className="tru-qb-contact-fields">
                         <div className="tru-qb-input-wrap">
                           <input
-                            type="email"
+                            type="text"
                             className="tru-qb-input"
-                            placeholder="you@email.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            onKeyDown={handleKeyDown}
+                            placeholder="Your name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             autoFocus
                           />
                         </div>
                         
-                        <div className="tru-qb-input-wrap">
+                        <div className="tru-qb-input-row">
+                          <input
+                            type="email"
+                            className="tru-qb-input"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                          />
                           <input
                             type="tel"
                             className="tru-qb-input"
-                            placeholder="Phone (optional)"
+                            placeholder="Phone (opt)"
                             value={phone}
                             onChange={(e) => setPhoneNum(e.target.value)}
                           />
@@ -583,21 +591,15 @@ export default function Index() {
                       <div className="tru-qb-options-grid">
                         <button 
                           type="button" 
-                          className="tru-qb-option-card"
+                          className="tru-qb-option-card-compact"
                           onClick={() => navigate("/book")}
                         >
-                          <Video className="w-5 h-5" />
-                          <div className="tru-qb-option-text">
-                            <span className="tru-qb-option-title">Book Video Consult</span>
-                            <span className="tru-qb-option-desc">Live walkthrough with an expert</span>
-                          </div>
+                          <Video className="w-4 h-4" />
+                          <span>Video Consult</span>
                         </button>
-                        <a href="tel:+16097277647" className="tru-qb-option-card">
-                          <Phone className="w-5 h-5" />
-                          <div className="tru-qb-option-text">
-                            <span className="tru-qb-option-title">Call Now</span>
-                            <span className="tru-qb-option-desc">Speak to someone immediately</span>
-                          </div>
+                        <a href="tel:+16097277647" className="tru-qb-option-card-compact">
+                          <Phone className="w-4 h-4" />
+                          <span>Call Now</span>
                         </a>
                       </div>
 
@@ -608,7 +610,9 @@ export default function Index() {
                       
                       <p className="tru-qb-disclaimer">
                         By submitting, you agree we may contact you by phone, text, or email.
-                        <span className="tru-qb-disclaimer-secure"> ⭐ Your info is secure & never sold.</span>
+                        <span className="tru-qb-disclaimer-secure">
+                          <Lock className="w-3 h-3" /> Your info is secure & never sold.
+                        </span>
                       </p>
                     </form>
                   )}
