@@ -184,35 +184,21 @@
   overflow: hidden;
 }
 
-.tru-floating-form-status {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 20px;
-  background: hsl(220 15% 96%);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+/* Summary Value Update Animation */
+@keyframes summary-value-update {
+  0% { 
+    background-color: hsl(var(--primary) / 0.15);
+    transform: scale(1.02);
+  }
+  100% { 
+    background-color: transparent;
+    transform: scale(1);
+  }
 }
 
-.tru-floating-form-step {
-  font-size: 12px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.5);
-  white-space: nowrap;
-}
-
-.tru-floating-form-progress {
-  flex: 1;
-  height: 4px;
-  background: hsl(var(--tm-ink) / 0.08);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.tru-floating-form-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(140 80% 45%));
-  border-radius: 2px;
-  transition: width 0.4s ease;
+.tru-summary-value.is-updated {
+  animation: summary-value-update 0.5s ease-out;
+  border-radius: 4px;
 }
 
 .tru-floating-form-content {

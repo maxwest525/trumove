@@ -108,9 +108,48 @@ export default function Index() {
   const [carrierCount, setCarrierCount] = useState(0);
   const [foundCarriers, setFoundCarriers] = useState(0);
   
+  // Track which summary fields just updated (for animation)
+  const [updatedFields, setUpdatedFields] = useState<Set<string>>(new Set());
+  
   // Calculate real distance
   const distance = useMemo(() => calculateDistance(fromZip, toZip), [fromZip, toZip]);
   const moveType = distance > 150 ? "long-distance" : "local";
+  
+  // Previous values to detect changes (for animation)
+  const prevFromCity = useRef(fromCity);
+  const prevToCity = useRef(toCity);
+  const prevDistance = useRef(distance);
+  const prevMoveDate = useRef(moveDate);
+  const prevSize = useRef(size);
+  const prevAddons = useRef({ hasCar, needsPacking });
+  
+  // Animate summary value updates
+  useEffect(() => {
+    const fieldsToUpdate: string[] = [];
+    
+    if (fromCity && fromCity !== prevFromCity.current) fieldsToUpdate.push('from');
+    if (toCity && toCity !== prevToCity.current) fieldsToUpdate.push('to');
+    if (distance > 0 && distance !== prevDistance.current) fieldsToUpdate.push('distance');
+    if (moveDate && moveDate !== prevMoveDate.current) fieldsToUpdate.push('date');
+    if (size && size !== prevSize.current) fieldsToUpdate.push('size');
+    if ((hasCar !== prevAddons.current.hasCar) || (needsPacking !== prevAddons.current.needsPacking)) {
+      if (hasCar || needsPacking) fieldsToUpdate.push('addons');
+    }
+    
+    // Update refs
+    prevFromCity.current = fromCity;
+    prevToCity.current = toCity;
+    prevDistance.current = distance;
+    prevMoveDate.current = moveDate;
+    prevSize.current = size;
+    prevAddons.current = { hasCar, needsPacking };
+    
+    if (fieldsToUpdate.length > 0) {
+      setUpdatedFields(new Set(fieldsToUpdate));
+      const timer = setTimeout(() => setUpdatedFields(new Set()), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [fromCity, toCity, distance, moveDate, size, hasCar, needsPacking]);
 
   // AI hint for current step
   const aiHint = useMemo(() => 
@@ -301,14 +340,6 @@ export default function Index() {
                     <Sparkles className="w-4 h-4" />
                     <span>AI Assistant</span>
                   </button>
-                </div>
-
-                {/* Status Bar */}
-                <div className="tru-floating-form-status">
-                  <span className="tru-floating-form-step">Step {step} of 6</span>
-                  <div className="tru-floating-form-progress">
-                    <div className="tru-floating-form-progress-fill" style={{ width: `${(step / 6) * 100}%` }} />
-                  </div>
                 </div>
 
                 {/* Form Content */}
@@ -612,27 +643,27 @@ export default function Index() {
                   <div className="tru-summary-info-grid">
                     <div className="tru-summary-row">
                       <span className="tru-summary-label">From</span>
-                      <span className="tru-summary-value">{fromCity || "—"}</span>
+                      <span className={`tru-summary-value ${updatedFields.has('from') ? 'is-updated' : ''}`}>{fromCity || "—"}</span>
                     </div>
                     <div className="tru-summary-row">
                       <span className="tru-summary-label">To</span>
-                      <span className="tru-summary-value">{toCity || "—"}</span>
+                      <span className={`tru-summary-value ${updatedFields.has('to') ? 'is-updated' : ''}`}>{toCity || "—"}</span>
                     </div>
                     <div className="tru-summary-row">
                       <span className="tru-summary-label">Distance</span>
-                      <span className="tru-summary-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                      <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
                     </div>
                     <div className="tru-summary-row">
                       <span className="tru-summary-label">Date</span>
-                      <span className="tru-summary-value">{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
+                      <span className={`tru-summary-value ${updatedFields.has('date') ? 'is-updated' : ''}`}>{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
                     </div>
                     <div className="tru-summary-row">
                       <span className="tru-summary-label">Size</span>
-                      <span className="tru-summary-value">{size || "—"}</span>
+                      <span className={`tru-summary-value ${updatedFields.has('size') ? 'is-updated' : ''}`}>{size || "—"}</span>
                     </div>
                     <div className="tru-summary-row">
                       <span className="tru-summary-label">Add-ons</span>
-                      <span className="tru-summary-value">
+                      <span className={`tru-summary-value ${updatedFields.has('addons') ? 'is-updated' : ''}`}>
                         {(hasCar || needsPacking) 
                           ? [hasCar && "Vehicle", needsPacking && "Packing"].filter(Boolean).join(", ")
                           : "—"}
