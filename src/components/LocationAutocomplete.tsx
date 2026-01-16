@@ -194,7 +194,7 @@ export default function LocationAutocomplete({
         className={cn(
           "w-full h-11 px-4 rounded-lg border border-border/60 bg-background text-sm font-medium",
           "placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40",
-          "transition-all",
+          "transition-colors transition-shadow duration-200",
           className
         )}
         placeholder={placeholder}
