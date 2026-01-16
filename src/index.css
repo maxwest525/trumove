@@ -7838,12 +7838,72 @@
   max-width: 360px;
 }
 
-.tru-qb-option-card {
+/* New stacked layout: Primary on top, 2 buttons below side by side */
+.tru-qb-options-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.tru-qb-options-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Primary CTA Button - Solid green, stands out */
+.tru-qb-option-primary-btn {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: none;
+  background: hsl(var(--primary));
+  color: hsl(var(--tm-ink));
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.35);
+}
+
+.tru-qb-option-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px hsl(var(--primary) / 0.45);
+}
+
+.tru-qb-option-primary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.tru-qb-option-primary-btn svg {
+  flex-shrink: 0;
+}
+
+.tru-qb-option-primary-btn .tru-qb-option-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-qb-option-primary-btn .tru-qb-option-desc {
+  font-size: 11px;
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+.tru-qb-option-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
   border-radius: 12px;
   border: 1.5px solid hsl(var(--tm-ink) / 0.12);
   background: hsl(var(--background));
@@ -7864,20 +7924,20 @@
   flex-shrink: 0;
 }
 
-/* Primary Option Card - Stands Out */
+/* Legacy Primary Option Card - kept for backwards compat */
 .tru-qb-option-primary {
   border-color: hsl(var(--primary));
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.08));
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.2);
+  background: hsl(var(--primary));
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
 }
 
 .tru-qb-option-primary:hover {
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.25), hsl(var(--primary) / 0.12));
-  box-shadow: 0 6px 20px hsl(var(--primary) / 0.3);
+  background: hsl(var(--primary));
+  box-shadow: 0 6px 20px hsl(var(--primary) / 0.4);
 }
 
 .tru-qb-option-primary .tru-qb-option-title {
-  color: hsl(140 60% 25%);
+  color: hsl(var(--tm-ink));
 }
 
 .tru-qb-option-primary:disabled {
