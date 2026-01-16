@@ -16,8 +16,9 @@ import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
   Shield, Video, Boxes, CheckCircle, 
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
-  CalendarIcon, Car, Package, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
-  Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap
+  CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
+  Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
+  Home, Building2, MoveVertical, ArrowUpDown
 } from "lucide-react";
 
 // ZIP lookup
@@ -48,6 +49,13 @@ const MOVE_SIZES = [
   { label: "3 Bed", value: "3 Bedroom" },
   { label: "4+ Bed", value: "4+ Bedroom" },
   { label: "Office", value: "Office" },
+];
+
+const FLOOR_OPTIONS = [
+  { label: "Ground/1st", value: 1 },
+  { label: "2nd", value: 2 },
+  { label: "3rd", value: 3 },
+  { label: "4th+", value: 4 },
 ];
 
 // AI Messages based on context
@@ -96,8 +104,9 @@ export default function Index() {
   const [toCity, setToCity] = useState("");
   const [moveDate, setMoveDate] = useState<Date | null>(null);
   const [size, setSize] = useState("");
-  const [hasCar, setHasCar] = useState(false);
-  const [needsPacking, setNeedsPacking] = useState(false);
+  const [propertyType, setPropertyType] = useState<'house' | 'apartment' | ''>('');
+  const [floor, setFloor] = useState(1);
+  const [hasElevator, setHasElevator] = useState(false);
   const [email, setEmail] = useState("");
   const [phone, setPhoneNum] = useState("");
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
@@ -121,7 +130,7 @@ export default function Index() {
   const prevDistance = useRef(distance);
   const prevMoveDate = useRef(moveDate);
   const prevSize = useRef(size);
-  const prevAddons = useRef({ hasCar, needsPacking });
+  const prevPropertyType = useRef(propertyType);
   
   // Animate summary value updates
   useEffect(() => {
@@ -132,9 +141,7 @@ export default function Index() {
     if (distance > 0 && distance !== prevDistance.current) fieldsToUpdate.push('distance');
     if (moveDate && moveDate !== prevMoveDate.current) fieldsToUpdate.push('date');
     if (size && size !== prevSize.current) fieldsToUpdate.push('size');
-    if ((hasCar !== prevAddons.current.hasCar) || (needsPacking !== prevAddons.current.needsPacking)) {
-      if (hasCar || needsPacking) fieldsToUpdate.push('addons');
-    }
+    if (propertyType && propertyType !== prevPropertyType.current) fieldsToUpdate.push('propertyType');
     
     // Update refs
     prevFromCity.current = fromCity;
@@ -142,14 +149,14 @@ export default function Index() {
     prevDistance.current = distance;
     prevMoveDate.current = moveDate;
     prevSize.current = size;
-    prevAddons.current = { hasCar, needsPacking };
+    prevPropertyType.current = propertyType;
     
     if (fieldsToUpdate.length > 0) {
       setUpdatedFields(new Set(fieldsToUpdate));
       const timer = setTimeout(() => setUpdatedFields(new Set()), 500);
       return () => clearTimeout(timer);
     }
-  }, [fromCity, toCity, distance, moveDate, size, hasCar, needsPacking]);
+  }, [fromCity, toCity, distance, moveDate, size, propertyType]);
 
   // AI hint for current step
   const aiHint = useMemo(() => 
@@ -190,17 +197,15 @@ export default function Index() {
     let min = base.min;
     let max = base.max;
     
-    if (hasCar) {
-      min += 800;
-      max += 1200;
-    }
-    if (needsPacking) {
-      min += Math.round(weight * 0.15);
-      max += Math.round(weight * 0.25);
+    // Add floor surcharge for apartments with stairs
+    if (propertyType === 'apartment' && !hasElevator && floor > 1) {
+      const floorSurcharge = (floor - 1) * 75;
+      min += floorSurcharge;
+      max += floorSurcharge;
     }
     
     return { min, max };
-  }, [size, distance, moveType, hasCar, needsPacking]);
+  }, [size, distance, moveType, propertyType, floor, hasElevator]);
 
   // Carrier search animation
   const triggerCarrierSearch = useCallback((state: string) => {
@@ -271,7 +276,7 @@ export default function Index() {
     // Store lead data
     localStorage.setItem("tm_lead", JSON.stringify({
       fromZip, toZip, fromCity, toCity, moveDate: moveDate?.toISOString(),
-      size, hasCar, needsPacking, email, phone, ts: Date.now()
+      size, propertyType, floor, hasElevator, email, phone, ts: Date.now()
     }));
     
     // Navigate directly
@@ -282,15 +287,14 @@ export default function Index() {
   const canContinue = () => {
     switch (step) {
       case 1: return fromZip.length === 5 && fromCity && toZip.length === 5 && toCity && moveDate !== null;
-      case 2: return size !== "";
-      case 3: return true; // Options are optional
-      case 4: return email.includes("@");
+      case 2: return size !== "" && propertyType !== "";
+      case 3: return email.includes("@");
       default: return false;
     }
   };
 
   const goNext = () => {
-    if (canContinue() && step < 4) {
+    if (canContinue() && step < 3) {
       setStep(step + 1);
     }
   };
@@ -435,11 +439,11 @@ export default function Index() {
                     </div>
                   )}
 
-                  {/* Step 2: Move Size */}
+                  {/* Step 2: Move Size + Property Type */}
                   {step === 2 && (
                     <div className="tru-qb-step-content" key="step-2">
-                      <h1 className="tru-qb-question">What size is your move?</h1>
-                      <p className="tru-qb-subtitle">This helps us estimate weight and find the right carriers</p>
+                      <h1 className="tru-qb-question">What size is your current home?</h1>
+                      <p className="tru-qb-subtitle">This helps us estimate weight and crew size</p>
                       
                       <div className="tru-qb-size-grid">
                         {MOVE_SIZES.map((s) => (
@@ -447,63 +451,86 @@ export default function Index() {
                             key={s.value}
                             type="button"
                             className={`tru-qb-size-btn ${size === s.value ? 'is-active' : ''}`}
-                            onClick={() => {
-                              setSize(s.value);
-                              setTimeout(() => setStep(3), 200);
-                            }}
+                            onClick={() => setSize(s.value)}
                           >
                             {s.label}
                           </button>
                         ))}
                       </div>
 
-                      <button type="button" className="tru-qb-back" onClick={goBack}>
-                        <ChevronLeft className="w-4 h-4" />
-                        <span>Back</span>
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Step 3: Additional Options */}
-                  {step === 3 && (
-                    <div className="tru-qb-step-content" key="step-3">
-                      <h1 className="tru-qb-question">Any additional services?</h1>
-                      <p className="tru-qb-subtitle">Select any that apply (optional)</p>
-                      
+                      <p className="tru-qb-section-label">Property Type</p>
                       <div className="tru-qb-toggles">
                         <button
                           type="button"
-                          className={`tru-qb-toggle-card ${hasCar ? 'is-active' : ''}`}
-                          onClick={() => setHasCar(!hasCar)}
+                          className={`tru-qb-toggle-card ${propertyType === 'house' ? 'is-active' : ''}`}
+                          onClick={() => setPropertyType('house')}
                         >
-                          <Car className="tru-qb-toggle-icon" />
+                          <Home className="tru-qb-toggle-icon" />
                           <div className="tru-qb-toggle-content">
-                            <span className="tru-qb-toggle-title">Vehicle Transport</span>
-                            <span className="tru-qb-toggle-desc">Ship a car with your move</span>
+                            <span className="tru-qb-toggle-title">House</span>
                           </div>
-                          <span className="tru-qb-toggle-indicator">{hasCar ? 'Yes' : 'No'}</span>
                         </button>
-                        
                         <button
                           type="button"
-                          className={`tru-qb-toggle-card ${needsPacking ? 'is-active' : ''}`}
-                          onClick={() => setNeedsPacking(!needsPacking)}
+                          className={`tru-qb-toggle-card ${propertyType === 'apartment' ? 'is-active' : ''}`}
+                          onClick={() => setPropertyType('apartment')}
                         >
-                          <Package className="tru-qb-toggle-icon" />
+                          <Building2 className="tru-qb-toggle-icon" />
                           <div className="tru-qb-toggle-content">
-                            <span className="tru-qb-toggle-title">Packing Service</span>
-                            <span className="tru-qb-toggle-desc">We pack everything for you</span>
+                            <span className="tru-qb-toggle-title">Apartment</span>
                           </div>
-                          <span className="tru-qb-toggle-indicator">{needsPacking ? 'Yes' : 'No'}</span>
                         </button>
                       </div>
+
+                      {propertyType === 'apartment' && (
+                        <>
+                          <p className="tru-qb-section-label animate-fade-in">What floor?</p>
+                          <div className="tru-qb-size-grid animate-fade-in">
+                            {FLOOR_OPTIONS.map((f) => (
+                              <button
+                                key={f.value}
+                                type="button"
+                                className={`tru-qb-size-btn ${floor === f.value ? 'is-active' : ''}`}
+                                onClick={() => setFloor(f.value)}
+                              >
+                                {f.label}
+                              </button>
+                            ))}
+                          </div>
+
+                          <p className="tru-qb-section-label animate-fade-in">Access type</p>
+                          <div className="tru-qb-toggles animate-fade-in">
+                            <button
+                              type="button"
+                              className={`tru-qb-toggle-card ${!hasElevator ? 'is-active' : ''}`}
+                              onClick={() => setHasElevator(false)}
+                            >
+                              <MoveVertical className="tru-qb-toggle-icon" />
+                              <div className="tru-qb-toggle-content">
+                                <span className="tru-qb-toggle-title">Stairs</span>
+                              </div>
+                            </button>
+                            <button
+                              type="button"
+                              className={`tru-qb-toggle-card ${hasElevator ? 'is-active' : ''}`}
+                              onClick={() => setHasElevator(true)}
+                            >
+                              <ArrowUpDown className="tru-qb-toggle-icon" />
+                              <div className="tru-qb-toggle-content">
+                                <span className="tru-qb-toggle-title">Elevator</span>
+                              </div>
+                            </button>
+                          </div>
+                        </>
+                      )}
 
                       <button
                         type="button"
                         className="tru-qb-continue"
+                        disabled={!canContinue()}
                         onClick={goNext}
                       >
-                        <span>Almost There</span>
+                        <span>Next Step</span>
                         <ArrowRight className="w-5 h-5" />
                       </button>
 
@@ -514,9 +541,9 @@ export default function Index() {
                     </div>
                   )}
 
-                  {/* Step 4: Contact */}
-                  {step === 4 && (
-                    <form className="tru-qb-step-content" key="step-4" onSubmit={handleSubmit}>
+                  {/* Step 3: Contact */}
+                  {step === 3 && (
+                    <form className="tru-qb-step-content" key="step-3" onSubmit={handleSubmit}>
                       <h1 className="tru-qb-question">Build your move how you want</h1>
                       <p className="tru-qb-subtitle">Continue to our AI estimator, book a live video consult, or call us now</p>
                       
@@ -625,10 +652,10 @@ export default function Index() {
                       <span className={`tru-summary-value ${updatedFields.has('size') ? 'is-updated' : ''}`}>{size || "—"}</span>
                     </div>
                     <div className="tru-summary-row">
-                      <span className="tru-summary-label">Add-ons</span>
-                      <span className={`tru-summary-value ${updatedFields.has('addons') ? 'is-updated' : ''}`}>
-                        {(hasCar || needsPacking) 
-                          ? [hasCar && "Vehicle", needsPacking && "Packing"].filter(Boolean).join(", ")
+                      <span className="tru-summary-label">Property</span>
+                      <span className={`tru-summary-value ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
+                        {propertyType 
+                          ? `${propertyType === 'house' ? 'House' : 'Apartment'}${propertyType === 'apartment' ? ` (Floor ${floor}, ${hasElevator ? 'Elevator' : 'Stairs'})` : ''}`
                           : "—"}
                       </span>
                     </div>

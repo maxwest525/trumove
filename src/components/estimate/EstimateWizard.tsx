@@ -2,7 +2,8 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import { 
   ArrowRight, ChevronLeft, MapPin, Home, Building2, 
-  ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Sparkles
+  ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Sparkles,
+  Car, Package
 } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -34,6 +35,10 @@ export interface ExtendedMoveDetails {
   homeSize: string;
   toHomeSize: string;
   moveDate: Date | null;
+  
+  // Additional Services
+  hasVehicleTransport: boolean;
+  needsPackingService: boolean;
 }
 
 interface EstimateWizardProps {
@@ -89,6 +94,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
     homeSize: '',
     toHomeSize: '',
     moveDate: null,
+    hasVehicleTransport: false,
+    needsPackingService: false,
   });
 
   // Auto-populate from homepage form data stored in localStorage
@@ -471,6 +478,34 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                     />
                   </PopoverContent>
                 </Popover>
+              </div>
+
+              {/* Additional Services */}
+              <p className="tru-qb-section-label">Additional Services (Optional)</p>
+              <div className="tru-qb-toggles">
+                <button
+                  type="button"
+                  className={`tru-qb-toggle-card ${details.hasVehicleTransport ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ hasVehicleTransport: !details.hasVehicleTransport })}
+                >
+                  <Car className="tru-qb-toggle-icon" />
+                  <div className="tru-qb-toggle-content">
+                    <span className="tru-qb-toggle-title">Vehicle Transport</span>
+                    <span className="tru-qb-toggle-desc">Ship a car with your move</span>
+                  </div>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`tru-qb-toggle-card ${details.needsPackingService ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ needsPackingService: !details.needsPackingService })}
+                >
+                  <Package className="tru-qb-toggle-icon" />
+                  <div className="tru-qb-toggle-content">
+                    <span className="tru-qb-toggle-title">Packing Service</span>
+                    <span className="tru-qb-toggle-desc">We pack everything for you</span>
+                  </div>
+                </button>
               </div>
 
               <button

@@ -52,15 +52,17 @@ export default function OnlineEstimate() {
           homeSize: mapHomeSize(lead.size) || '',
           toHomeSize: '',
           moveDate: lead.moveDate ? new Date(lead.moveDate) : null,
-          // Set defaults for other required fields
-          fromPropertyType: 'house',
+          // Set property type from homepage data or defaults
+          fromPropertyType: lead.propertyType || 'house',
           toPropertyType: 'house',
-          fromFloor: 1,
+          fromFloor: lead.floor || 1,
           toFloor: 1,
-          fromHasElevator: false,
+          fromHasElevator: lead.hasElevator || false,
           toHasElevator: false,
           fromParkingDistance: 'unknown',
           toParkingDistance: 'unknown',
+          hasVehicleTransport: false,
+          needsPackingService: false,
         });
       } catch (e) {
         console.error("Failed to parse stored lead data:", e);
