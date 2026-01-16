@@ -584,6 +584,7 @@ export default function Index() {
                           type="submit"
                           className="tru-qb-option-primary-btn"
                           disabled={!canContinue()}
+                          onClick={(e) => { if (!canContinue()) e.preventDefault(); }}
                         >
                           <Sparkles className="w-5 h-5" />
                           <div className="tru-qb-option-text">
@@ -596,7 +597,8 @@ export default function Index() {
                           <button 
                             type="button" 
                             className="tru-qb-option-card"
-                            onClick={() => navigate("/book")}
+                            disabled={!canContinue()}
+                            onClick={() => { if (canContinue()) navigate("/book"); }}
                           >
                             <Video className="w-5 h-5" />
                             <div className="tru-qb-option-text">
@@ -604,7 +606,11 @@ export default function Index() {
                               <span className="tru-qb-option-desc">Live walkthrough with expert</span>
                             </div>
                           </button>
-                          <a href="tel:+16097277647" className="tru-qb-option-card">
+                          <a 
+                            href={canContinue() ? "tel:+16097277647" : undefined} 
+                            className={`tru-qb-option-card ${!canContinue() ? 'is-disabled' : ''}`}
+                            onClick={(e) => { if (!canContinue()) e.preventDefault(); }}
+                          >
                             <Phone className="w-5 h-5" />
                             <div className="tru-qb-option-text">
                               <span className="tru-qb-option-title">Call Now</span>
