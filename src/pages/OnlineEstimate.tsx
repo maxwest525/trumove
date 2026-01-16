@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { format } from "date-fns";
 import { Lock, Sparkles, Package, Route, Calculator } from "lucide-react";
 import SiteShell from "@/components/layout/SiteShell";
@@ -10,12 +10,58 @@ import EstimateWizard, { type ExtendedMoveDetails } from "@/components/estimate/
 import { type InventoryItem, type MoveDetails, calculateTotalWeight, formatCurrency, calculateEstimate, determineMoveType } from "@/lib/priceCalculator";
 import { calculateDistance } from "@/lib/distanceCalculator";
 
+// Helper function to map homepage size values to wizard values
+function mapHomeSize(size: string): string {
+  const sizeMap: Record<string, string> = {
+    'Studio': 'studio',
+    '1 Bedroom': '1br',
+    '2 Bedroom': '2br',
+    '3 Bedroom': '3br',
+    '4+ Bedroom': '4br+',
+    'Office': '2br',
+  };
+  return sizeMap[size] || '';
+}
+
 export default function OnlineEstimate() {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [wizardComplete, setWizardComplete] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [specialHandling, setSpecialHandling] = useState(false);
   const [extendedDetails, setExtendedDetails] = useState<ExtendedMoveDetails | null>(null);
+
+  // Auto-populate from homepage data stored in localStorage
+  useEffect(() => {
+    const storedLead = localStorage.getItem("tm_lead");
+    if (storedLead && !extendedDetails) {
+      try {
+        const lead = JSON.parse(storedLead);
+        
+        // Pre-populate extendedDetails with homepage data
+        // This will flow through to moveDetails and QuoteSnapshot
+        setExtendedDetails({
+          name: '',
+          email: lead.email || '',
+          phone: lead.phone || '',
+          fromLocation: lead.fromCity ? `${lead.fromCity} ${lead.fromZip}` : lead.fromZip || '',
+          toLocation: lead.toCity ? `${lead.toCity} ${lead.toZip}` : lead.toZip || '',
+          homeSize: mapHomeSize(lead.size) || '',
+          moveDate: lead.moveDate ? new Date(lead.moveDate) : null,
+          // Set defaults for other required fields
+          fromPropertyType: 'house',
+          toPropertyType: 'house',
+          fromFloor: 1,
+          toFloor: 1,
+          fromHasElevator: false,
+          toHasElevator: false,
+          fromParkingDistance: 'unknown',
+          toParkingDistance: 'unknown',
+        });
+      } catch (e) {
+        console.error("Failed to parse stored lead data:", e);
+      }
+    }
+  }, [extendedDetails]);
   
   // Derived move details for pricing
   const moveDetails = useMemo<MoveDetails>(() => {

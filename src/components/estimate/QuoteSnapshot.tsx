@@ -87,20 +87,32 @@ export default function QuoteSnapshot({ items, moveDetails }: QuoteSnapshotProps
       <div className="p-5 space-y-3 border-t border-border/40">
         <Link
           to="/book"
-          className="flex items-center justify-center gap-2 w-full h-12 rounded-xl bg-foreground text-background text-sm font-bold tracking-wide uppercase transition-all hover:-translate-y-0.5 hover:shadow-lg"
+          className="flex items-center gap-4 w-full px-4 py-3 rounded-xl border-2 border-primary/20 bg-primary/5 text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-lg group"
         >
-          <Video className="w-4 h-4" />
-          Schedule video consult
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+            <Video className="w-5 h-5 text-primary" />
+          </div>
+          <div className="flex flex-col text-left">
+            <span className="text-sm font-bold text-foreground">Book Video Consult</span>
+            <span className="text-xs text-muted-foreground">Live walkthrough with an expert</span>
+          </div>
         </Link>
+        
         <a
           href="tel:+16097277647"
-          className="flex items-center justify-center gap-2 w-full h-12 rounded-xl border border-border/60 bg-card text-foreground text-sm font-bold tracking-wide uppercase transition-all hover:bg-muted/50"
+          className="flex items-center gap-4 w-full px-4 py-3 rounded-xl border border-border/60 bg-card text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-lg group"
         >
-          <Phone className="w-4 h-4" />
-          Schedule a call
+          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-primary/10 transition-colors">
+            <Phone className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" />
+          </div>
+          <div className="flex flex-col text-left">
+            <span className="text-sm font-bold text-foreground">Call Now</span>
+            <span className="text-xs text-muted-foreground">Speak to someone immediately</span>
+          </div>
         </a>
+        
         <p className="text-xs text-center text-muted-foreground">
-          If you are not ready to call, schedule a video consult or call using the buttons above.
+          Not ready to decide? Use these options to get personalized help.
         </p>
       </div>
     </div>
