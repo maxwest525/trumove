@@ -128,9 +128,9 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   };
 
   return (
-    <div className="tru-estimate-wizard">
-      {/* Floating Unlock Badge - positioned above form */}
-      <div className="tru-unlock-badge">
+    <>
+      {/* Floating Unlock Badge - positioned OUTSIDE the form */}
+      <div className="tru-unlock-badge-wrapper">
         <div className="tru-unlock-badge-inner">
           <div className="tru-unlock-icon-pulse">
             <Unlock className="w-4 h-4" />
@@ -138,6 +138,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
           <span>Fill out to unlock your <strong>FREE</strong> Move Builder</span>
         </div>
       </div>
+      
+      <div className="tru-estimate-wizard">
 
       {/* Progress Bar */}
       <div className="tru-wizard-progress">
@@ -599,6 +601,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
           </button>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
