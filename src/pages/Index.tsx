@@ -327,10 +327,6 @@ export default function Index() {
             {/* LEFT: Value Proposition */}
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
-                <span className="tru-hero-eyebrow">
-                  <Sparkles className="w-4 h-4" />
-                  AI-Powered Moving Platform
-                </span>
                 <h1 className="tru-hero-headline-main">
                   Find Your Perfect<br />
                   <span className="tru-hero-headline-accent">Carrier Match.</span>
