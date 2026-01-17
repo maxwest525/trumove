@@ -259,14 +259,19 @@
   align-items: stretch;
 }
 
+.tru-hero-form-panel > * {
+  height: 100%;
+}
+
 .tru-hero-form-panel .tru-floating-form-card {
   flex: 1 1 auto;
-  min-width: 400px;
+  min-width: 480px;
 }
 
 .tru-hero-form-panel .tru-floating-summary-card {
   flex: 0 0 280px;
   max-width: 300px;
+  align-self: stretch;
 }
 
 @media (max-width: 1200px) {
