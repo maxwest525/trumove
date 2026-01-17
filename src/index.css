@@ -133,10 +133,10 @@
    ============================================= */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 48px;
+  grid-template-columns: 0.9fr 1.4fr;
+  gap: 36px;
   align-items: stretch;
-  padding: 60px 48px 80px;
+  padding: 48px 40px 60px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -173,12 +173,12 @@
 }
 
 .tru-hero-headline-main {
-  font-size: clamp(36px, 5vw, 56px);
+  font-size: clamp(28px, 4vw, 42px);
   font-weight: 800;
   line-height: 1.1;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.03em;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .tru-hero-headline-accent {
@@ -189,27 +189,27 @@
 }
 
 .tru-hero-subheadline {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.6;
   color: hsl(var(--tm-ink) / 0.7);
-  margin-bottom: 36px;
+  margin-bottom: 24px;
 }
 
 /* Value Props */
 .tru-hero-value-props {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
 .tru-hero-value-prop {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 16px 20px;
+  gap: 12px;
+  padding: 12px 16px;
   background: hsl(0 0% 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 16px;
+  border-radius: 12px;
   transition: all 0.2s ease;
 }
 
@@ -223,17 +223,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   background: hsl(var(--primary) / 0.1);
-  border-radius: 12px;
+  border-radius: 10px;
   flex-shrink: 0;
 }
 
 .tru-hero-value-icon svg {
   color: hsl(var(--primary));
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .tru-hero-value-text {
@@ -243,13 +243,13 @@
 }
 
 .tru-hero-value-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
 }
 
 .tru-hero-value-desc {
-  font-size: 13px;
+  font-size: 12px;
   color: hsl(var(--tm-ink) / 0.6);
   line-height: 1.4;
 }
@@ -264,20 +264,24 @@
 }
 
 .tru-hero-form-panel .tru-floating-form-card {
-  flex: 1 1 420px;
-  min-width: 400px;
-  min-height: 420px;
-  max-width: 440px;
-  aspect-ratio: 1 / 1.05;
+  flex: 0 0 380px;
+  width: 380px;
+  height: 380px;
+  min-width: unset;
+  min-height: unset;
+  max-width: 400px;
+  max-height: 400px;
 }
 
 .tru-hero-form-panel .tru-floating-summary-card {
-  flex: 0 0 300px;
-  max-width: 320px;
+  flex: 1 1 auto;
+  min-width: 260px;
+  max-width: none;
+  height: 380px;
+  max-height: 400px;
   align-self: stretch;
   display: flex;
   flex-direction: column;
-  min-height: 100%;
 }
 
 @media (max-width: 1200px) {
@@ -382,14 +386,14 @@
 }
 
 .tru-floating-form-content {
-  padding: 32px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 220px;
+  min-height: 160px;
   flex: 1;
-  gap: 20px;
+  gap: 16px;
 }
 
 .tru-floating-form-footer {
@@ -397,11 +401,11 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px 24px;
+  padding: 8px 20px;
   background: hsl(var(--tm-ink) / 0.02);
   border-top: 1px solid hsl(var(--tm-ink) / 0.06);
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: hsl(var(--tm-ink) / 0.4);
   margin-top: auto;
@@ -6947,14 +6951,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 14px 24px;
+  padding: 10px 18px;
   background: hsl(220 15% 96%);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
   border-radius: 20px 20px 0 0;
 }
 
 .tru-qb-form-title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 800;
   color: hsl(var(--tm-ink) / 0.5);
   letter-spacing: 0.1em;
@@ -7558,9 +7562,9 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-bottom: 24px;
+  padding-bottom: 16px;
   flex: 1;
-  gap: 16px;
+  gap: 12px;
   justify-content: center;
   width: 100%;
   /* Animation moved to micro-interactions section */
@@ -7576,19 +7580,19 @@
 }
 
 .tru-qb-question {
-  font-size: clamp(26px, 4vw, 32px);
+  font-size: clamp(22px, 3vw, 26px);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: hsl(var(--tm-ink));
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .tru-qb-subtitle {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.55);
   margin-top: 4px;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 /* Section Labels for Combined Step */
