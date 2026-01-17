@@ -260,8 +260,8 @@
 }
 
 .tru-hero-form-panel .tru-floating-form-card {
-  flex: 1 1 60%;
-  min-width: 320px;
+  flex: 1 1 auto;
+  min-width: 400px;
 }
 
 .tru-hero-form-panel .tru-floating-summary-card {
