@@ -5,6 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import FloatingQuoteButton from "@/components/FloatingQuoteButton";
+import FloatingNav from "@/components/FloatingNav";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import logoImg from "@/assets/logo.png";
 
@@ -733,13 +734,6 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Estimate Box */}
-                  <Link to="/online-estimate" className="tru-summary-skip-cta">
-                    <Zap className="w-5 h-5" />
-                    <span>Skip to AI Move Estimator</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
-
                   {/* Map Area */}
                   <div className="tru-summary-map">
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
@@ -1026,6 +1020,9 @@ export default function Index() {
 
       {/* Chat Modal */}
       <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+      
+      {/* Floating Navigation */}
+      <FloatingNav onChatOpen={() => setChatOpen(true)} />
       
       {/* Floating AI Move Builder Button */}
       <FloatingQuoteButton quoteBuilderRef={quoteBuilderRef} onChatOpen={() => setChatOpen(true)} />
