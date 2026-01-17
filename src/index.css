@@ -134,10 +134,10 @@
 .tru-hero.tru-hero-split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 48px;
+  gap: 32px;
   align-items: stretch;
-  padding: 60px 48px 80px;
-  max-width: 1480px;
+  padding: 40px 40px 50px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -173,12 +173,12 @@
 }
 
 .tru-hero-headline-main {
-  font-size: clamp(36px, 5vw, 56px);
+  font-size: clamp(32px, 4.5vw, 48px);
   font-weight: 800;
   line-height: 1.1;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.03em;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .tru-hero-headline-accent {
@@ -189,27 +189,27 @@
 }
 
 .tru-hero-subheadline {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.6;
   color: hsl(var(--tm-ink) / 0.7);
-  margin-bottom: 36px;
+  margin-bottom: 28px;
 }
 
 /* Value Props */
 .tru-hero-value-props {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
 .tru-hero-value-prop {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 16px 20px;
+  gap: 12px;
+  padding: 12px 16px;
   background: hsl(0 0% 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 16px;
+  border-radius: 12px;
   transition: all 0.2s ease;
 }
 
@@ -223,10 +223,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   background: hsl(var(--primary) / 0.1);
-  border-radius: 12px;
+  border-radius: 10px;
   flex-shrink: 0;
 }
 
@@ -241,13 +241,13 @@
 }
 
 .tru-hero-value-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
 }
 
 .tru-hero-value-desc {
-  font-size: 13px;
+  font-size: 12px;
   color: hsl(var(--tm-ink) / 0.6);
   line-height: 1.4;
 }
@@ -256,20 +256,20 @@
 .tru-hero-form-panel {
   display: flex;
   flex-direction: row;
-  gap: 16px;
+  gap: 12px;
   align-items: stretch;
   height: 100%;
 }
 
 .tru-hero-form-panel .tru-floating-form-card {
-  flex: 2.5 1 auto;
-  min-width: 520px;
-  min-height: 500px;
+  flex: 2 1 auto;
+  min-width: 420px;
+  min-height: 380px;
 }
 
 .tru-hero-form-panel .tru-floating-summary-card {
-  flex: 0 0 260px;
-  max-width: 280px;
+  flex: 0 0 220px;
+  max-width: 240px;
   align-self: stretch;
   display: flex;
   flex-direction: column;
@@ -378,14 +378,14 @@
 }
 
 .tru-floating-form-content {
-  padding: 32px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  min-height: 180px;
+  min-height: 140px;
   flex: 1;
-  gap: 24px;
+  gap: 16px;
 }
 
 .tru-floating-form-footer {
@@ -7554,9 +7554,9 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-bottom: 32px;
+  padding-bottom: 20px;
   flex: 1;
-  gap: 16px;
+  gap: 12px;
   justify-content: center;
   /* Animation moved to micro-interactions section */
 }
@@ -7571,19 +7571,19 @@
 }
 
 .tru-qb-question {
-  font-size: clamp(26px, 4vw, 32px);
+  font-size: clamp(22px, 3.5vw, 26px);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: hsl(var(--tm-ink));
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .tru-qb-subtitle {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.55);
-  margin-top: 12px;
-  margin-bottom: 32px;
+  margin-top: 8px;
+  margin-bottom: 20px;
 }
 
 /* Section Labels for Combined Step */
