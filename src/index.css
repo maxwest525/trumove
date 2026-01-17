@@ -251,11 +251,29 @@
   line-height: 1.4;
 }
 
-/* RIGHT PANEL: Form Cards */
+/* RIGHT PANEL: Form Cards - Side by Side */
 .tru-hero-form-panel {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  flex-direction: row;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.tru-hero-form-panel .tru-floating-form-card {
+  flex: 1 1 60%;
+  min-width: 320px;
+}
+
+.tru-hero-form-panel .tru-floating-summary-card {
+  flex: 0 0 280px;
+  max-width: 300px;
+}
+
+@media (max-width: 1200px) {
+  .tru-hero-form-panel .tru-floating-summary-card {
+    flex: 0 0 240px;
+    max-width: 260px;
+  }
 }
 
 /* Responsive: Stack on tablet and mobile */
@@ -264,6 +282,18 @@
     grid-template-columns: 1fr;
     gap: 40px;
     padding: 40px 24px 60px;
+  }
+  
+  .tru-hero-form-panel {
+    flex-direction: column;
+  }
+  
+  .tru-hero-form-panel .tru-floating-form-card,
+  .tru-hero-form-panel .tru-floating-summary-card {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
   }
   
   .tru-hero-content-inner {
