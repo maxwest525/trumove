@@ -135,7 +135,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
-  align-items: center;
+  align-items: stretch;
   padding: 60px 48px 80px;
   max-width: 1480px;
   margin: 0 auto;
@@ -146,6 +146,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 100%;
 }
 
 .tru-hero-content-inner {
@@ -257,16 +258,13 @@
   flex-direction: row;
   gap: 16px;
   align-items: stretch;
-}
-
-.tru-hero-form-panel > * {
-  height: auto;
-  min-height: 0;
+  height: 100%;
 }
 
 .tru-hero-form-panel .tru-floating-form-card {
   flex: 2.5 1 auto;
   min-width: 520px;
+  min-height: 500px;
 }
 
 .tru-hero-form-panel .tru-floating-summary-card {
@@ -380,14 +378,14 @@
 }
 
 .tru-floating-form-content {
-  padding: 16px 24px 8px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   min-height: 180px;
   flex: 1;
-  gap: 6px;
+  gap: 24px;
 }
 
 .tru-floating-form-footer {
@@ -7556,7 +7554,10 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-bottom: 24px;
+  padding-bottom: 32px;
+  flex: 1;
+  gap: 16px;
+  justify-content: center;
   /* Animation moved to micro-interactions section */
 }
 
@@ -7570,7 +7571,7 @@
 }
 
 .tru-qb-question {
-  font-size: clamp(22px, 3.5vw, 28px);
+  font-size: clamp(26px, 4vw, 32px);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: hsl(var(--tm-ink));
@@ -7578,11 +7579,11 @@
 }
 
 .tru-qb-subtitle {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.55);
-  margin-top: 20px;
-  margin-bottom: 28px;
+  margin-top: 12px;
+  margin-bottom: 32px;
 }
 
 /* Section Labels for Combined Step */
