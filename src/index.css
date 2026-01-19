@@ -593,11 +593,11 @@
   color: hsl(var(--primary));
 }
 
-/* Stats row spans full width */
+/* Stats row spans full combined width (under data + nav) */
 .tru-summary-stats-row {
   display: flex;
   justify-content: space-around;
-  padding: 12px 20px;
+  padding: 12px 0;
   border-top: 1px solid hsl(var(--tm-ink) / 0.06);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
   background: hsl(var(--tm-ink) / 0.02);
@@ -623,12 +623,12 @@
   letter-spacing: 0.05em;
 }
 
-/* Map spans full width and fills remaining height */
+/* Map spans full combined width and fills remaining height */
 .tru-summary-map {
   flex: 1;
   min-height: 160px;
-  margin: 16px;
-  border-radius: 12px;
+  margin: 0;
+  border-radius: 0 0 22px 22px;
   overflow: hidden;
   background: hsl(var(--muted));
 }
