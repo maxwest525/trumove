@@ -690,16 +690,17 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* RIGHT: Summary Card */}
-              <div className="tru-floating-summary-card">
+              {/* RIGHT: Summary Card with External Nav */}
+              <div className="tru-summary-wrapper">
+                {/* Header spans full width of wrapper */}
                 <div className="tru-summary-card-header">
                   <img src={logoImg} alt="TruMove" className="tru-summary-card-logo" />
                   <span>Move Summary</span>
                 </div>
                 
-                {/* Two-column body: Summary Data + Nav Icons */}
-                <div className="tru-summary-card-content">
-                  {/* Left: Summary rows */}
+                {/* Middle section: Summary data + External Nav side by side */}
+                <div className="tru-summary-middle">
+                  {/* Summary data area */}
                   <div className="tru-summary-info-grid">
                     <div className="tru-summary-row">
                       <span className="tru-summary-label">From</span>
@@ -731,8 +732,8 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Right: Inline Nav Icons (vertical) */}
-                  <div className="tru-summary-inline-nav">
+                  {/* Nav attached OUTSIDE - expands the wrapper */}
+                  <div className="tru-summary-external-nav">
                     <Link to="/online-estimate" className="tru-summary-nav-btn" title="AI Estimator">
                       <Sparkles className="w-4 h-4" />
                     </Link>
@@ -754,7 +755,7 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* Stats row - always visible, shows placeholders when empty */}
+                {/* Stats row spans full width */}
                 <div className="tru-summary-stats-row">
                   <div className="tru-summary-stat-item">
                     <span className="tru-summary-stat-value">{distance ? `${distance.toLocaleString()} mi` : "-- mi"}</span>
@@ -766,7 +767,7 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* Map fills remaining space at bottom */}
+                {/* Map spans full width and fills remaining height */}
                 <div className="tru-summary-map">
                   <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
                 </div>
