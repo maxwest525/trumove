@@ -752,7 +752,9 @@ export default function Index() {
               </div>
               
               {/* Floating Navigation - 16px from summary via gap */}
-              <FloatingNav onChatOpen={() => setChatOpen(true)} />
+              <div className="tru-floating-nav-wrapper">
+                <FloatingNav onChatOpen={() => setChatOpen(true)} />
+              </div>
             
             </div>
           </section>
