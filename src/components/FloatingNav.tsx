@@ -36,74 +36,66 @@ export default function FloatingNav({ onChatOpen }: FloatingNavProps) {
           const isActive = item.href && location.pathname === item.href;
           const Icon = item.icon;
           
-          if (item.action === "chat") {
-            return (
-              <Tooltip key={item.label}>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={onChatOpen}
-                    className={`tru-floating-nav-item ${isExpanded ? 'is-expanded' : ''}`}
-                  >
-                    <span className="tru-floating-nav-icon">
-                      <Icon className="w-5 h-5" />
-                    </span>
-                    <span className="tru-floating-nav-label">{item.label}</span>
-                  </button>
-                </TooltipTrigger>
-                {!isExpanded && (
-                  <TooltipContent side="left">
-                    {item.label}
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            );
-          }
+          const itemContent = (
+            <>
+              <span className="tru-floating-nav-icon">
+                <Icon className="w-5 h-5" strokeWidth={2} />
+              </span>
+              <span className="tru-floating-nav-label">{item.label}</span>
+            </>
+          );
 
-          const isExternal = item.href?.startsWith("tel:");
+          const itemClasses = `tru-floating-nav-item ${isActive ? 'is-active' : ''} ${isExpanded ? 'is-expanded' : ''}`;
           
-          if (isExternal) {
-            return (
-              <Tooltip key={item.label}>
-                <TooltipTrigger asChild>
-                  <a
-                    href={item.href!}
-                    className={`tru-floating-nav-item ${isExpanded ? 'is-expanded' : ''}`}
-                  >
-                    <span className="tru-floating-nav-icon">
-                      <Icon className="w-5 h-5" />
-                    </span>
-                    <span className="tru-floating-nav-label">{item.label}</span>
-                  </a>
-                </TooltipTrigger>
-                {!isExpanded && (
-                  <TooltipContent side="left">
-                    {item.label}
-                  </TooltipContent>
-                )}
-              </Tooltip>
+          let element: React.ReactNode;
+
+          if (item.action === "chat") {
+            element = (
+              <button
+                key={item.label}
+                onClick={onChatOpen}
+                className={itemClasses}
+              >
+                {itemContent}
+              </button>
+            );
+          } else if (item.href?.startsWith("tel:")) {
+            element = (
+              <a
+                key={item.label}
+                href={item.href}
+                className={itemClasses}
+              >
+                {itemContent}
+              </a>
+            );
+          } else {
+            element = (
+              <Link
+                key={item.label}
+                to={item.href!}
+                className={itemClasses}
+              >
+                {itemContent}
+              </Link>
             );
           }
 
-          return (
-            <Tooltip key={item.label}>
-              <TooltipTrigger asChild>
-                <Link
-                  to={item.href!}
-                  className={`tru-floating-nav-item ${isActive ? 'is-active' : ''} ${isExpanded ? 'is-expanded' : ''}`}
-                >
-                  <span className="tru-floating-nav-icon">
-                    <Icon className="w-5 h-5" />
-                  </span>
-                  <span className="tru-floating-nav-label">{item.label}</span>
-                </Link>
-              </TooltipTrigger>
-              {!isExpanded && (
-                <TooltipContent side="left">
+          // Only show tooltip when collapsed
+          if (!isExpanded) {
+            return (
+              <Tooltip key={item.label}>
+                <TooltipTrigger asChild>
+                  {element}
+                </TooltipTrigger>
+                <TooltipContent side="left" sideOffset={8}>
                   {item.label}
                 </TooltipContent>
-              )}
-            </Tooltip>
-          );
+              </Tooltip>
+            );
+          }
+
+          return element;
         })}
       </nav>
     </TooltipProvider>
