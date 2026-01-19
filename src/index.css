@@ -10106,9 +10106,13 @@
     0 4px 12px hsl(var(--tm-ink) / 0.08),
     0 8px 24px hsl(var(--tm-ink) / 0.06);
   align-self: flex-start;
+  flex: 0 0 auto;
+  width: 56px;
+  overflow: visible;
 }
 
 .tru-floating-nav-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -10120,7 +10124,6 @@
   text-decoration: none;
   color: hsl(var(--tm-ink) / 0.6);
   transition: all 0.2s ease;
-  overflow: hidden;
   white-space: nowrap;
 }
 
@@ -10148,16 +10151,24 @@
 }
 
 .tru-floating-nav-label {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px 12px 8px 8px;
   font-size: 13px;
   font-weight: 600;
-  max-width: 0;
   opacity: 0;
-  transition: all 0.25s ease;
+  pointer-events: none;
+  background: hsl(0 0% 100% / 0.95);
+  border-radius: 0 8px 8px 0;
+  box-shadow: 4px 0 12px hsl(var(--tm-ink) / 0.08);
+  transition: opacity 0.25s ease;
 }
 
 .tru-floating-nav-item.is-expanded .tru-floating-nav-label {
-  max-width: 120px;
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* Hide on mobile */
