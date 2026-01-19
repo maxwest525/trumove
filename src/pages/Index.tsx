@@ -5,7 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import FloatingQuoteButton from "@/components/FloatingQuoteButton";
-import FloatingNav from "@/components/FloatingNav";
+// FloatingNav removed - integrated into summary card
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import logoImg from "@/assets/logo.png";
 
@@ -19,7 +19,7 @@ import {
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown
+  Home, Building2, MoveVertical, ArrowUpDown, MessageSquare
 } from "lucide-react";
 
 // ZIP lookup
@@ -697,8 +697,9 @@ export default function Index() {
                   <span>Move Summary</span>
                 </div>
                 
-                <div className="tru-summary-card-body">
-                  {/* Summary Rows */}
+                {/* Two-column body: Summary Data + Nav Icons */}
+                <div className="tru-summary-card-content">
+                  {/* Left: Summary rows */}
                   <div className="tru-summary-info-grid">
                     <div className="tru-summary-row">
                       <span className="tru-summary-label">From</span>
@@ -730,26 +731,46 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Map Area */}
-                  <div className="tru-summary-map">
-                    <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
+                  {/* Right: Inline Nav Icons (vertical) */}
+                  <div className="tru-summary-inline-nav">
+                    <Link to="/online-estimate" className="tru-summary-nav-btn" title="AI Estimator">
+                      <Sparkles className="w-4 h-4" />
+                    </Link>
+                    <Link to="/vetting" className="tru-summary-nav-btn" title="Carrier Vetting">
+                      <Shield className="w-4 h-4" />
+                    </Link>
+                    <button onClick={() => setChatOpen(true)} className="tru-summary-nav-btn" title="AI Chat">
+                      <MessageSquare className="w-4 h-4" />
+                    </button>
+                    <Link to="/property-lookup" className="tru-summary-nav-btn" title="Property Lookup">
+                      <MapPin className="w-4 h-4" />
+                    </Link>
+                    <Link to="/book" className="tru-summary-nav-btn" title="Video Consult">
+                      <Video className="w-4 h-4" />
+                    </Link>
+                    <a href="tel:+16097277647" className="tru-summary-nav-btn" title="Call Us">
+                      <Headphones className="w-4 h-4" />
+                    </a>
                   </div>
+                </div>
 
-                  {/* Stats Row */}
-                  {distance > 0 && (
-                    <div className="tru-summary-map-stats">
-                      <div className="tru-summary-stat">
-                        <Route className="w-4 h-4" />
-                        <span>{distance.toLocaleString()} miles</span>
-                      </div>
-                      <div className="tru-summary-stat">
-                        <Clock className="w-4 h-4" />
-                        <span>~{Math.ceil(distance / 500)} day{Math.ceil(distance / 500) > 1 ? 's' : ''} transit</span>
-                      </div>
-                    </div>
-                  )}
+                {/* Stats row - always visible, shows placeholders when empty */}
+                <div className="tru-summary-stats-row">
+                  <div className="tru-summary-stat-item">
+                    <span className="tru-summary-stat-value">{distance ? `${distance.toLocaleString()} mi` : "-- mi"}</span>
+                    <span className="tru-summary-stat-label">Distance</span>
+                  </div>
+                  <div className="tru-summary-stat-item">
+                    <span className="tru-summary-stat-value">{distance ? `${Math.ceil(distance / 500)} days` : "-- days"}</span>
+                    <span className="tru-summary-stat-label">Est. Transit</span>
+                  </div>
+                </div>
+
+                {/* Map fills remaining space at bottom */}
+                <div className="tru-summary-map">
+                  <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
+                </div>
               </div>
-            </div>
             
             </div>
           </section>
@@ -1017,8 +1038,7 @@ export default function Index() {
       {/* Chat Modal */}
       <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       
-      {/* Floating Navigation */}
-      <FloatingNav onChatOpen={() => setChatOpen(true)} />
+      {/* FloatingNav removed - now integrated into summary card */}
       
       {/* Floating AI Move Builder Button */}
       <FloatingQuoteButton quoteBuilderRef={quoteBuilderRef} onChatOpen={() => setChatOpen(true)} />
