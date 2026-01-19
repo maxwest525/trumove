@@ -10092,9 +10092,7 @@
    FLOATING NAVIGATION BAR
    ======================================== */
 .tru-floating-nav {
-  position: fixed;
-  right: 20px;
-  top: 120px;
+  position: relative;
   z-index: 80;
   display: flex;
   flex-direction: column;
@@ -10107,6 +10105,7 @@
   box-shadow: 
     0 4px 12px hsl(var(--tm-ink) / 0.08),
     0 8px 24px hsl(var(--tm-ink) / 0.06);
+  align-self: flex-start;
 }
 
 .tru-floating-nav-item {
