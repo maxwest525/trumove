@@ -482,10 +482,7 @@
 }
 
 /* Right: Summary Card */
-/* =============================================
-   SUMMARY WRAPPER - Nav attached OUTSIDE
-   ============================================= */
-.tru-summary-wrapper {
+.tru-floating-summary-card {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -500,10 +497,10 @@
   overflow: hidden;
 }
 
-/* Header spans full width of wrapper */
-.tru-summary-wrapper .tru-summary-card-header {
+.tru-summary-card-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 14px 20px;
   background: hsl(220 15% 96%);
@@ -516,26 +513,22 @@
 }
 
 .tru-summary-card-logo {
-  height: 18px;
+  height: 22px;
   width: auto;
 }
 
-/* Middle section: Summary data + External Nav side-by-side */
-.tru-summary-middle {
-  display: flex;
-  flex-direction: row;
-  flex: 0 0 auto;
-}
-
-.tru-summary-middle .tru-summary-info-grid {
-  flex: 1;
+.tru-summary-card-body {
   padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
 }
 
 .tru-summary-info-grid {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .tru-summary-row {
@@ -547,112 +540,15 @@
 }
 
 .tru-summary-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: hsl(var(--tm-ink) / 0.5);
 }
 
 .tru-summary-value {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
-  max-width: 120px;
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* External nav attached OUTSIDE - expands the wrapper */
-.tru-summary-external-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px 10px;
-  background: hsl(var(--tm-ink) / 0.03);
-  border-left: 1px solid hsl(var(--tm-ink) / 0.06);
-}
-
-.tru-summary-nav-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: transparent;
-  color: hsl(var(--tm-ink) / 0.4);
-  transition: all 0.2s ease;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.tru-summary-nav-btn:hover {
-  background: hsl(var(--primary) / 0.12);
-  color: hsl(var(--primary));
-}
-
-/* Stats row spans full combined width (under data + nav) */
-.tru-summary-stats-row {
-  display: flex;
-  justify-content: space-around;
-  padding: 12px 0;
-  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
-  background: hsl(var(--tm-ink) / 0.02);
-}
-
-.tru-summary-stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.tru-summary-stat-value {
-  font-size: 15px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-}
-
-.tru-summary-stat-label {
-  font-size: 10px;
-  color: hsl(var(--tm-ink) / 0.5);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* Map spans full combined width and fills remaining height */
-.tru-summary-map {
-  flex: 1;
-  min-height: 160px;
-  margin: 0;
-  border-radius: 0 0 22px 22px;
-  overflow: hidden;
-  background: hsl(var(--muted));
-}
-
-/* Legacy stats (keeping for compatibility) */
-.tru-summary-map-stats {
-  display: flex;
-  justify-content: space-around;
-  padding: 10px;
-  background: hsl(var(--tm-ink) / 0.03);
-  border-radius: 8px;
-}
-
-.tru-summary-stat {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.7);
-}
-
-.tru-summary-stat svg {
-  color: hsl(var(--primary));
 }
 
 .tru-summary-estimate {
@@ -685,6 +581,36 @@
   font-size: 13px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.4);
+}
+
+.tru-summary-map {
+  height: auto;
+  min-height: 120px;
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: hsl(var(--muted));
+}
+
+.tru-summary-map-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: hsl(var(--tm-ink) / 0.03);
+  border-radius: 8px;
+}
+
+.tru-summary-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+.tru-summary-stat svg {
+  color: hsl(var(--primary));
 }
 
 
