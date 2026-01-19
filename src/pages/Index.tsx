@@ -369,9 +369,9 @@ export default function Index() {
               </div>
             </div>
 
-            {/* RIGHT: Form and Summary Cards */}
+            {/* RIGHT: Form, Summary, Nav, and Map */}
             <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
-              {/* LEFT: Form Card */}
+              {/* TOP ROW: Form Card */}
               <div className="tru-floating-form-card">
                 {/* Form Header - Logo + Skip Button */}
                 <div className="tru-qb-form-header">
@@ -690,70 +690,75 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* RIGHT: Summary Card */}
-              <div className="tru-floating-summary-card">
-                <div className="tru-summary-card-header">
-                  <img src={logoImg} alt="TruMove" className="tru-summary-card-logo" />
-                  <span>Move Summary</span>
+              {/* SIDEBAR: Summary Card + Floating Nav */}
+              <div className="tru-hero-sidebar">
+                {/* TOP ROW: Summary + Nav side by side */}
+                <div className="tru-hero-sidebar-top">
+                  {/* Summary Card - Compact */}
+                  <div className="tru-floating-summary-card tru-floating-summary-card-compact">
+                    <div className="tru-summary-card-header">
+                      <img src={logoImg} alt="TruMove" className="tru-summary-card-logo" />
+                      <span>Move Summary</span>
+                    </div>
+                    
+                    <div className="tru-summary-card-body">
+                      <div className="tru-summary-info-grid">
+                        <div className="tru-summary-row">
+                          <span className="tru-summary-label">From</span>
+                          <span className={`tru-summary-value ${updatedFields.has('from') ? 'is-updated' : ''}`}>{fromCity || "—"}</span>
+                        </div>
+                        <div className="tru-summary-row">
+                          <span className="tru-summary-label">To</span>
+                          <span className={`tru-summary-value ${updatedFields.has('to') ? 'is-updated' : ''}`}>{toCity || "—"}</span>
+                        </div>
+                        <div className="tru-summary-row">
+                          <span className="tru-summary-label">Distance</span>
+                          <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                        </div>
+                        <div className="tru-summary-row">
+                          <span className="tru-summary-label">Date</span>
+                          <span className={`tru-summary-value ${updatedFields.has('date') ? 'is-updated' : ''}`}>{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
+                        </div>
+                        <div className="tru-summary-row">
+                          <span className="tru-summary-label">Size</span>
+                          <span className={`tru-summary-value ${updatedFields.has('size') ? 'is-updated' : ''}`}>{size || "—"}</span>
+                        </div>
+                        <div className="tru-summary-row">
+                          <span className="tru-summary-label">Property</span>
+                          <span className={`tru-summary-value ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
+                            {propertyType 
+                              ? `${propertyType === 'house' ? 'House' : 'Apartment'}${propertyType === 'apartment' ? ` (Floor ${floor}, ${hasElevator ? 'Elevator' : 'Stairs'})` : ''}`
+                              : "—"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating Navigation */}
+                  <div className="tru-floating-nav-wrapper">
+                    <FloatingNav onChatOpen={() => setChatOpen(true)} />
+                  </div>
                 </div>
-                
-                <div className="tru-summary-card-body">
-                  {/* Summary Rows */}
-                  <div className="tru-summary-info-grid">
-                    <div className="tru-summary-row">
-                      <span className="tru-summary-label">From</span>
-                      <span className={`tru-summary-value ${updatedFields.has('from') ? 'is-updated' : ''}`}>{fromCity || "—"}</span>
-                    </div>
-                    <div className="tru-summary-row">
-                      <span className="tru-summary-label">To</span>
-                      <span className={`tru-summary-value ${updatedFields.has('to') ? 'is-updated' : ''}`}>{toCity || "—"}</span>
-                    </div>
-                    <div className="tru-summary-row">
-                      <span className="tru-summary-label">Distance</span>
-                      <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
-                    </div>
-                    <div className="tru-summary-row">
-                      <span className="tru-summary-label">Date</span>
-                      <span className={`tru-summary-value ${updatedFields.has('date') ? 'is-updated' : ''}`}>{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
-                    </div>
-                    <div className="tru-summary-row">
-                      <span className="tru-summary-label">Size</span>
-                      <span className={`tru-summary-value ${updatedFields.has('size') ? 'is-updated' : ''}`}>{size || "—"}</span>
-                    </div>
-                    <div className="tru-summary-row">
-                      <span className="tru-summary-label">Property</span>
-                      <span className={`tru-summary-value ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
-                        {propertyType 
-                          ? `${propertyType === 'house' ? 'House' : 'Apartment'}${propertyType === 'apartment' ? ` (Floor ${floor}, ${hasElevator ? 'Elevator' : 'Stairs'})` : ''}`
-                          : "—"}
-                      </span>
-                    </div>
-                  </div>
 
-                  {/* Map Area */}
-                  <div className="tru-summary-map">
+                {/* BOTTOM ROW: Map spanning full sidebar width */}
+                <div className="tru-hero-map-row">
+                  <div className="tru-hero-map-card">
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
+                    {distance > 0 && (
+                      <div className="tru-summary-map-stats">
+                        <div className="tru-summary-stat">
+                          <Route className="w-4 h-4" />
+                          <span>{distance.toLocaleString()} miles</span>
+                        </div>
+                        <div className="tru-summary-stat">
+                          <Clock className="w-4 h-4" />
+                          <span>~{Math.ceil(distance / 500)} day{Math.ceil(distance / 500) > 1 ? 's' : ''} transit</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-
-                  {/* Stats Row */}
-                  {distance > 0 && (
-                    <div className="tru-summary-map-stats">
-                      <div className="tru-summary-stat">
-                        <Route className="w-4 h-4" />
-                        <span>{distance.toLocaleString()} miles</span>
-                      </div>
-                      <div className="tru-summary-stat">
-                        <Clock className="w-4 h-4" />
-                        <span>~{Math.ceil(distance / 500)} day{Math.ceil(distance / 500) > 1 ? 's' : ''} transit</span>
-                      </div>
-                    </div>
-                  )}
-              </div>
-              </div>
-              
-              {/* Floating Navigation - 16px from summary via gap */}
-              <div className="tru-floating-nav-wrapper">
-                <FloatingNav onChatOpen={() => setChatOpen(true)} />
+                </div>
               </div>
             
             </div>
