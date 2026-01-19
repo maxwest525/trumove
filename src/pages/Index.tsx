@@ -749,7 +749,10 @@ export default function Index() {
                     </div>
                   )}
               </div>
-            </div>
+              </div>
+              
+              {/* Floating Navigation - 16px from summary via gap */}
+              <FloatingNav onChatOpen={() => setChatOpen(true)} />
             
             </div>
           </section>
@@ -1017,8 +1020,6 @@ export default function Index() {
       {/* Chat Modal */}
       <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       
-      {/* Floating Navigation */}
-      <FloatingNav onChatOpen={() => setChatOpen(true)} />
       
       {/* Floating AI Move Builder Button */}
       <FloatingQuoteButton quoteBuilderRef={quoteBuilderRef} onChatOpen={() => setChatOpen(true)} />
