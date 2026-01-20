@@ -747,6 +747,12 @@ export default function Index() {
                         </div>
                       </div>
                     </div>
+                    
+                    {/* Footer */}
+                    <div className="tru-summary-card-footer">
+                      <span>Powered by</span>
+                      <img src={logoImg} alt="TruMove" className="tru-footer-mini-logo" />
+                    </div>
                   </div>
                   
                   {/* Floating Navigation */}

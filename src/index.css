@@ -348,15 +348,42 @@
 }
 
 .tru-floating-summary-card-compact .tru-summary-label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.6);
 }
 
 .tru-floating-summary-card-compact .tru-summary-value {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: hsl(var(--tm-ink));
+}
+
+.tru-floating-summary-card-compact .tru-summary-card-title {
+  font-size: 12px;
+}
+
+/* Summary Card Footer */
+.tru-summary-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: hsl(var(--tm-ink) / 0.02);
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.4);
+  margin-top: auto;
+  border-radius: 0 0 12px 12px;
+}
+
+.tru-summary-card-footer .tru-footer-mini-logo {
+  height: 12px;
+  width: auto;
+  opacity: 0.6;
 }
 
 /* Map Row - spans full sidebar width */
