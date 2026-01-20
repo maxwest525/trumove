@@ -399,12 +399,10 @@ export default function Index() {
                   />
                 </div>
                 
-                <div className="tru-qb-form-header">
+                <div className="tru-qb-form-header tru-qb-form-header-centered">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  <div className="tru-qb-form-title-wrap">
-                    <span className="tru-qb-form-title">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
-                    <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
-                  </div>
+                  <span className="tru-qb-form-title">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
+                  <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
                 </div>
 
                 {/* Form Content */}
@@ -801,18 +799,6 @@ export default function Index() {
                 <div className={`tru-hero-map-row ${summaryVisible || distance > 0 ? 'is-visible' : ''}`}>
                   <div className="tru-hero-map-card">
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
-                    {distance > 0 && (
-                      <div className="tru-summary-map-stats">
-                        <div className="tru-summary-stat">
-                          <Route className="w-4 h-4" />
-                          <span>{distance.toLocaleString()} miles</span>
-                        </div>
-                        <div className="tru-summary-stat">
-                          <Clock className="w-4 h-4" />
-                          <span>~{Math.ceil(distance / 500)} day{Math.ceil(distance / 500) > 1 ? 's' : ''} transit</span>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
