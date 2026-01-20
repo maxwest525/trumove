@@ -232,6 +232,11 @@ export default function LocationAutocomplete({
         e.preventDefault();
         handleSelect(suggestions[selectedIndex]);
         return;
+      } else if (e.key === "Tab" && suggestions.length > 0) {
+        // Tab selects highlighted or first suggestion (Google Places behavior)
+        const indexToSelect = selectedIndex >= 0 ? selectedIndex : 0;
+        handleSelect(suggestions[indexToSelect]);
+        // Don't preventDefault - let tab continue to next field
       } else if (e.key === "Escape") {
         setShowDropdown(false);
       }
@@ -245,6 +250,18 @@ export default function LocationAutocomplete({
       }
       onKeyDown(e);
     }
+  };
+
+  // Handle blur - autofill first/highlighted suggestion (Google Places behavior)
+  const handleBlur = () => {
+    // Small delay to allow click events on dropdown to fire first
+    setTimeout(() => {
+      if (showDropdown && suggestions.length > 0) {
+        const indexToSelect = selectedIndex >= 0 ? selectedIndex : 0;
+        handleSelect(suggestions[indexToSelect]);
+      }
+      setShowDropdown(false);
+    }, 150);
   };
 
   const displayValue = selectedDisplay || value;
@@ -270,6 +287,7 @@ export default function LocationAutocomplete({
         onFocus={() => {
           if (suggestions.length > 0) setShowDropdown(true);
         }}
+        onBlur={handleBlur}
         autoFocus={autoFocus}
       />
       
