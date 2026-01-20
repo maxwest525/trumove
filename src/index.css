@@ -303,29 +303,43 @@
 }
 
 .tru-floating-summary-card-compact .tru-summary-card-header {
-  padding: 8px 12px;
-  font-size: 8px;
-  gap: 6px;
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  justify-content: center;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
+  flex-shrink: 0;
 }
 
-.tru-floating-summary-card-compact .tru-summary-card-logo {
-  height: 12px;
+.tru-floating-summary-card-compact .tru-summary-card-title {
+  color: hsl(var(--tm-ink));
 }
 
 .tru-floating-summary-card-compact .tru-summary-card-body {
-  padding: 8px 12px;
+  padding: 0 12px;
   gap: 0;
   flex: 1;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
 }
 
 .tru-floating-summary-card-compact .tru-summary-info-grid {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
   gap: 0;
 }
 
 .tru-floating-summary-card-compact .tru-summary-row {
-  padding: 3px 0;
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.04);
 }
 
