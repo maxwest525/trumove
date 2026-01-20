@@ -182,6 +182,17 @@ export default function Index() {
     return "256-bit encryption • Real-time pricing • FMCSA verified";
   }, [fromCity, toCity, distance]);
 
+  // Calculate estimated move duration based on distance
+  const estimatedDuration = useMemo(() => {
+    if (distance <= 0) return null;
+    if (distance < 50) return "1 day";
+    if (distance < 200) return "1-2 days";
+    if (distance < 500) return "2-3 days";
+    if (distance < 1000) return "3-5 days";
+    if (distance < 2000) return "5-7 days";
+    return "7-10 days";
+  }, [distance]);
+
   // Calculate estimate
   const estimate = useMemo(() => {
     if (!size) return null;
@@ -697,8 +708,7 @@ export default function Index() {
                   {/* Summary Card - Compact */}
                   <div className="tru-floating-summary-card tru-floating-summary-card-compact">
                     <div className="tru-summary-card-header">
-                      <img src={logoImg} alt="TruMove" className="tru-summary-card-logo" />
-                      <span>Move Summary</span>
+                      <span className="tru-summary-card-title">Move Summary</span>
                     </div>
                     
                     <div className="tru-summary-card-body">
@@ -718,6 +728,10 @@ export default function Index() {
                         <div className="tru-summary-row">
                           <span className="tru-summary-label">Date</span>
                           <span className={`tru-summary-value ${updatedFields.has('date') ? 'is-updated' : ''}`}>{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
+                        </div>
+                        <div className="tru-summary-row">
+                          <span className="tru-summary-label">ETA</span>
+                          <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{estimatedDuration || "—"}</span>
                         </div>
                         <div className="tru-summary-row">
                           <span className="tru-summary-label">Size</span>
