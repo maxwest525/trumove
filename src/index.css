@@ -992,7 +992,88 @@
   color: hsl(var(--primary));
 }
 
-/* AI Chat Button - Animated Gradient */
+/* =============================================
+   ENGINE BUTTON SCANNING STATE
+   ============================================= */
+
+/* Scanning state for button while search is running */
+.tru-engine-btn.is-scanning {
+  pointer-events: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer/scan line effect across button */
+.tru-engine-btn.is-scanning::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(0 0% 100% / 0.2) 50%,
+    transparent 100%
+  );
+  animation: scan-sweep 1.2s ease-in-out infinite;
+}
+
+@keyframes scan-sweep {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Spin the scan icon continuously */
+.tru-engine-btn.is-scanning .tru-btn-scan {
+  animation: scan-spin 1s linear infinite;
+}
+
+@keyframes scan-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* =============================================
+   FORM FOCUS ANIMATION
+   ============================================= */
+
+/* Form content focus animation on load */
+@keyframes form-focus-glow {
+  0% { 
+    box-shadow: inset 0 0 0 2px hsl(var(--primary) / 0);
+  }
+  30% { 
+    box-shadow: inset 0 0 0 2px hsl(var(--primary) / 0.25);
+  }
+  100% { 
+    box-shadow: inset 0 0 0 2px hsl(var(--primary) / 0);
+  }
+}
+
+.tru-floating-form-content {
+  animation: form-focus-glow 2.5s ease-out 0.8s;
+}
+
+/* Subtle pulsing border on first input until focused */
+@keyframes input-attention {
+  0%, 100% { 
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.08);
+  }
+  50% { 
+    box-shadow: 0 0 0 5px hsl(var(--primary) / 0.15);
+  }
+}
+
+.tru-qb-zip-wrap {
+  position: relative;
+}
+
+.tru-qb-location-col:first-child .tru-qb-zip-wrap:not(:focus-within) {
+  animation: input-attention 2s ease-in-out 1.2s 3;
+}
+
 /* AI Chat Button - Clean minimal style */
 .tru-ai-chat-btn {
   display: flex;

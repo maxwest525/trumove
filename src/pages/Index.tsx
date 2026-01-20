@@ -403,15 +403,8 @@ export default function Index() {
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
                   <div className="tru-qb-form-title-wrap">
                     <span className="tru-qb-form-title">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
-                    <span className="tru-qb-form-subtitle-compact">Real pricing from federal SAFER data</span>
+                    <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
                   </div>
-                  <button 
-                    onClick={() => setChatOpen(true)} 
-                    className="tru-ai-chat-btn"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>AI Assistant</span>
-                  </button>
                 </div>
 
                 {/* Form Content */}
@@ -490,13 +483,13 @@ export default function Index() {
 
                       <button
                         type="button"
-                        className="tru-qb-continue tru-engine-btn"
-                        disabled={!canContinue()}
+                        className={`tru-qb-continue tru-engine-btn ${isSearchingCarriers ? 'is-scanning' : ''}`}
+                        disabled={!canContinue() || isSearchingCarriers}
                         onClick={goNext}
                       >
                         <Scan className="w-4 h-4 tru-btn-scan" />
-                        <span>Analyze Route</span>
-                        <ArrowRight className="w-5 h-5 tru-btn-arrow" />
+                        <span>{isSearchingCarriers ? 'Analyzing...' : 'Analyze Route'}</span>
+                        {!isSearchingCarriers && <ArrowRight className="w-5 h-5 tru-btn-arrow" />}
                       </button>
                     </div>
                   )}
