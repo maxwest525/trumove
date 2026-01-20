@@ -290,6 +290,29 @@
   flex-shrink: 0;
 }
 
+/* Map row: grows to fill remaining space and align with form bottom */
+.tru-hero-map-row {
+  flex: 1 1 auto;
+  min-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, flex 0.4s ease;
+}
+
+.tru-hero-map-row.is-visible {
+  opacity: 1;
+  min-height: 120px;
+  pointer-events: auto;
+}
+
+.tru-hero-map-row .tru-hero-map-card {
+  height: 100%;
+  min-height: 120px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
 /* Compact Summary Card - matches nav height */
 .tru-floating-summary-card.tru-floating-summary-card-compact {
   flex: 1 1 auto;
@@ -891,26 +914,7 @@
   height: 100%;
 }
 
-/* Map visibility coordination */
-.tru-hero-map-row {
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  pointer-events: none;
-  transition: opacity 0.3s ease, max-height 0.4s ease;
-}
-
-.tru-hero-map-row.is-visible {
-  opacity: 1;
-  max-height: 200px;
-  pointer-events: auto;
-}
-
-.tru-hero-map-row .tru-hero-map-card {
-  height: 180px;
-  border-radius: 16px;
-  overflow: hidden;
-}
+/* Map visibility coordination - now handled by flex layout above */
 
 /* Legacy states (for backwards compat) */
 .tru-floating-summary-card.is-hidden {
@@ -2219,6 +2223,21 @@
     transform: translate(-50%, -50%) scale(1.5);
     opacity: 0;
   }
+}
+
+/* Label-only marker container (no dots/ripples) */
+.mapbox-marker-label-only {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mapbox-marker-label-only .mapbox-marker-label {
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
 }
 
 .mapbox-marker-label {

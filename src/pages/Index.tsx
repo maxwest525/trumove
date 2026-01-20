@@ -802,7 +802,7 @@ export default function Index() {
                 {/* BOTTOM ROW: Map - visible only when route is calculated */}
                 <div className={`tru-hero-map-row ${distance > 0 ? 'is-visible' : ''}`}>
                   <div className="tru-hero-map-card">
-                    <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
+                    <MapboxMoveMap fromZip={fromZip} toZip={toZip} visible={distance > 0} />
                   </div>
                 </div>
               </div>
