@@ -610,16 +610,42 @@
 }
 
 /* Form Header - Centered Pill Style (matches Move Summary) */
-.tru-qb-form-header.tru-qb-form-header-centered {
+/* Form Header Pill Style - Logo inline left, title/subtitle centered */
+.tru-qb-form-header.tru-qb-form-header-pill {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 16px 24px;
+  gap: 12px;
+  padding: 12px 20px;
   background: hsl(220 15% 96%);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-qb-form-header-pill .tru-qb-header-logo {
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.tru-qb-form-header-pill .tru-qb-form-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
   text-align: center;
+}
+
+.tru-qb-form-header-pill .tru-qb-form-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-qb-form-header-pill .tru-qb-form-subtitle-compact {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.45);
 }
 
 .tru-qb-form-header-centered .tru-qb-header-logo {
@@ -864,12 +890,18 @@
 .tru-hero-map-row {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease 0.1s;
+  transition: opacity 0.3s ease 0.1s;
+  min-height: 150px;
 }
 
 .tru-hero-map-row.is-visible {
   opacity: 1;
   pointer-events: auto;
+}
+
+.tru-hero-map-row .tru-hero-map-card {
+  min-height: 150px;
+  height: 100%;
 }
 
 /* Legacy states (for backwards compat) */
@@ -1212,6 +1244,7 @@
   overflow: hidden;
 }
 
+/* Move Summary Header - Perfect centering */
 .tru-summary-card-header {
   display: flex;
   align-items: center;
@@ -1221,6 +1254,13 @@
   background: hsl(220 15% 96%);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
   font-size: 11px;
+  width: 100%;
+  text-align: center;
+}
+
+.tru-summary-card-title {
+  text-align: center;
+  width: 100%;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -11319,6 +11359,7 @@
   align-self: flex-start;
 }
 
+/* Floating Nav - Matches Move Summary pill style */
 .tru-floating-nav {
   position: absolute;
   top: 0;
@@ -11328,13 +11369,14 @@
   flex-direction: column;
   gap: 4px;
   padding: 8px;
-  background: hsl(0 0% 100% / 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 16px;
+  /* Match Move Summary gradient background and border */
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 20px; /* Match Move Summary card radius */
   box-shadow: 
-    0 4px 12px hsl(var(--tm-ink) / 0.08),
-    0 8px 24px hsl(var(--tm-ink) / 0.06);
+    0 1px 2px hsl(var(--tm-ink) / 0.03),
+    0 4px 8px hsl(var(--tm-ink) / 0.04),
+    0 12px 24px hsl(var(--tm-ink) / 0.06);
   overflow: hidden;
   transition: all 0.25s ease;
   height: 320px;
