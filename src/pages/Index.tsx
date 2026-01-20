@@ -113,6 +113,8 @@ export default function Index() {
   const [phone, setPhoneNum] = useState("");
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [formError, setFormError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [summaryVisible, setSummaryVisible] = useState(false);
   
   // Carrier search animation states
   const [isSearchingCarriers, setIsSearchingCarriers] = useState(false);
@@ -135,7 +137,7 @@ export default function Index() {
   const prevSize = useRef(size);
   const prevPropertyType = useRef(propertyType);
   
-  // Animate summary value updates
+  // Animate summary value updates and reveal summary on first input
   useEffect(() => {
     const fieldsToUpdate: string[] = [];
     
@@ -156,10 +158,14 @@ export default function Index() {
     
     if (fieldsToUpdate.length > 0) {
       setUpdatedFields(new Set(fieldsToUpdate));
+      // Auto-reveal summary on first location entry
+      if ((fieldsToUpdate.includes('from') || fieldsToUpdate.includes('to')) && !summaryVisible) {
+        setSummaryVisible(true);
+      }
       const timer = setTimeout(() => setUpdatedFields(new Set()), 500);
       return () => clearTimeout(timer);
     }
-  }, [fromCity, toCity, distance, moveDate, size, propertyType]);
+  }, [fromCity, toCity, distance, moveDate, size, propertyType, summaryVisible]);
 
   // AI hint for current step
   const aiHint = useMemo(() => 
@@ -293,8 +299,8 @@ export default function Index() {
       size, propertyType, floor, hasElevator, email, phone, ts: Date.now()
     }));
     
-    // Navigate directly
-    navigate("/online-estimate");
+    // Show confirmation
+    setSubmitted(true);
   };
 
   // Step validation
@@ -339,32 +345,23 @@ export default function Index() {
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
                 <h1 className="tru-hero-headline-main">
-                  Find Your Perfect<br />
-                  <span className="tru-hero-headline-accent">Carrier Match.</span>
+                  Get matched with vetted carriers<br />
+                  <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
-                  TruMove uses AI to connect you with small, family-owned carriers who actually care — 
-                  all heavily vetted, all verified, all matched to your exact move.
+                  Skip the mega van lines. We connect you with small, family-owned movers — 
+                  all FMCSA verified, all reputation-monitored, all matched to your exact route.
                 </p>
                 
-                {/* Value Props */}
+                {/* Value Props - Real Differentiators */}
                 <div className="tru-hero-value-props">
                   <div className="tru-hero-value-prop">
                     <div className="tru-hero-value-icon">
                       <Shield className="w-5 h-5" />
                     </div>
                     <div className="tru-hero-value-text">
-                      <span className="tru-hero-value-title">Heavily Vetted</span>
-                      <span className="tru-hero-value-desc">FMCSA verified, insurance checked, reputation monitored</span>
-                    </div>
-                  </div>
-                  <div className="tru-hero-value-prop">
-                    <div className="tru-hero-value-icon">
-                      <Sparkles className="w-5 h-5" />
-                    </div>
-                    <div className="tru-hero-value-text">
-                      <span className="tru-hero-value-title">AI-Matched</span>
-                      <span className="tru-hero-value-desc">Technology finds the right carrier for your route</span>
+                      <span className="tru-hero-value-title">4-Stage Carrier Vetting</span>
+                      <span className="tru-hero-value-desc">FMCSA licensed, insurance verified, live scoring on every job</span>
                     </div>
                   </div>
                   <div className="tru-hero-value-prop">
@@ -372,8 +369,17 @@ export default function Index() {
                       <Users className="w-5 h-5" />
                     </div>
                     <div className="tru-hero-value-text">
-                      <span className="tru-hero-value-title">Family-Owned Carriers</span>
-                      <span className="tru-hero-value-desc">Small, trusted movers who treat your move like their own</span>
+                      <span className="tru-hero-value-title">Small, Family-Owned Movers</span>
+                      <span className="tru-hero-value-desc">No mega van lines — real carriers who treat your move like their own</span>
+                    </div>
+                  </div>
+                  <div className="tru-hero-value-prop">
+                    <div className="tru-hero-value-icon">
+                      <Headphones className="w-5 h-5" />
+                    </div>
+                    <div className="tru-hero-value-text">
+                      <span className="tru-hero-value-title">Personal Agent Guidance</span>
+                      <span className="tru-hero-value-desc">A real person walks you through every step — no call centers</span>
                     </div>
                   </div>
                 </div>
@@ -385,9 +391,17 @@ export default function Index() {
               {/* TOP ROW: Form Card */}
               <div className="tru-floating-form-card">
                 {/* Form Header - Logo + Skip Button */}
+                {/* Progress Bar */}
+                <div className="tru-form-progress-bar">
+                  <div 
+                    className="tru-form-progress-fill" 
+                    style={{ width: `${(step / 3) * 100}%` }}
+                  />
+                </div>
+                
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  <span className="tru-qb-form-title">Build Your Move</span>
+                  <span className="tru-qb-form-title">Get Your Free Quote</span>
                   <button 
                     onClick={() => setChatOpen(true)} 
                     className="tru-ai-chat-btn"
@@ -403,8 +417,8 @@ export default function Index() {
                   {/* Step 1: Route & Date */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
-                      <h1 className="tru-qb-question tru-qb-question-decorated">Start building your move</h1>
-                      <p className="tru-qb-subtitle">Tell us where you're going and when</p>
+                      <h1 className="tru-qb-question tru-qb-question-decorated">Where's your move?</h1>
+                      <p className="tru-qb-subtitle">Enter your route and we'll find your best carrier matches</p>
                       
                       {/* FROM + TO Row - Side by Side */}
                       <div className="tru-qb-location-row">
@@ -473,12 +487,12 @@ export default function Index() {
 
                       <button
                         type="button"
-                        className="tru-qb-continue"
+                        className="tru-qb-continue tru-qb-continue-premium"
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
-                        <span>Next Step</span>
-                        <ArrowRight className="w-5 h-5" />
+                        <span>Calculate My Route</span>
+                        <ArrowRight className="w-5 h-5 tru-btn-arrow" />
                       </button>
                     </div>
                   )}
@@ -570,12 +584,12 @@ export default function Index() {
 
                       <button
                         type="button"
-                        className="tru-qb-continue"
+                        className="tru-qb-continue tru-qb-continue-premium"
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
-                        <span>Next Step</span>
-                        <ArrowRight className="w-5 h-5" />
+                        <span>See Carrier Matches</span>
+                        <ArrowRight className="w-5 h-5 tru-btn-arrow" />
                       </button>
 
                       <button type="button" className="tru-qb-back" onClick={goBack}>
@@ -585,11 +599,11 @@ export default function Index() {
                     </div>
                   )}
 
-                  {/* Step 3: Contact */}
-                  {step === 3 && (
+                  {/* Step 3: Contact - Simplified Lead Capture */}
+                  {step === 3 && !submitted && (
                     <form className="tru-qb-step-content tru-qb-step-compact" key="step-3" onSubmit={handleSubmit}>
-                      <h1 className="tru-qb-question">Build your move how you want</h1>
-                      <p className="tru-qb-subtitle">Continue to our AI estimator, book a live video consult, or call us now</p>
+                      <h1 className="tru-qb-question">Almost done! How can we reach you?</h1>
+                      <p className="tru-qb-subtitle">We'll call you within 1 business day to finalize your quote</p>
                       
                       <div className="tru-qb-contact-fields">
                         <div className="tru-qb-input-wrap tru-qb-glow-always">
@@ -615,7 +629,7 @@ export default function Index() {
                           <input
                             type="tel"
                             className="tru-qb-input"
-                            placeholder="Phone (opt)"
+                            placeholder="Phone (optional)"
                             value={phone}
                             onChange={(e) => setPhoneNum(e.target.value)}
                           />
@@ -626,62 +640,20 @@ export default function Index() {
                         <p className="tru-qb-error">{formError}</p>
                       )}
 
-                      <div className="tru-qb-options-stack">
-                        <button
-                          type="submit"
-                          className="tru-qb-option-primary-btn"
-                          onClick={(e) => { 
-                            if (!canContinue()) {
-                              e.preventDefault();
-                              setFormError("Please complete name and email to continue.");
-                            }
-                          }}
-                        >
-                          <Sparkles className="w-5 h-5" />
-                          <div className="tru-qb-option-text">
-                            <span className="tru-qb-option-title">AI Move Estimator</span>
-                            <span className="tru-qb-option-desc">Get instant pricing breakdown</span>
-                          </div>
-                          <ArrowRight className="w-4 h-4 ml-auto" />
-                        </button>
-                        <div className="tru-qb-options-row">
-                          <button 
-                            type="button" 
-                            className="tru-qb-option-card"
-                            onClick={() => { 
-                              if (canContinue()) {
-                                navigate("/book");
-                              } else {
-                                setFormError("Please complete name and email to continue.");
-                              }
-                            }}
-                          >
-                            <Video className="w-5 h-5" />
-                            <div className="tru-qb-option-text">
-                              <span className="tru-qb-option-title">Video Consult</span>
-                              <span className="tru-qb-option-desc">Live walkthrough with expert</span>
-                            </div>
-                          </button>
-                          <a 
-                            href="tel:+16097277647"
-                            className="tru-qb-option-card"
-                            onClick={(e) => { 
-                              if (!canContinue()) {
-                                e.preventDefault();
-                                setFormError("Please complete name and email to continue.");
-                              }
-                            }}
-                          >
-                            <Phone className="w-5 h-5" />
-                            <div className="tru-qb-option-text">
-                              <span className="tru-qb-option-title">Call Now</span>
-                              <span className="tru-qb-option-desc">Speak to someone now</span>
-                            </div>
-                          </a>
-                        </div>
-                      </div>
+                      <button
+                        type="submit"
+                        className="tru-qb-continue tru-qb-continue-premium"
+                        onClick={(e) => { 
+                          if (!canContinue()) {
+                            e.preventDefault();
+                            setFormError("Please enter a valid email to continue.");
+                          }
+                        }}
+                      >
+                        <span>Get My Free Quote</span>
+                        <ArrowRight className="w-5 h-5 tru-btn-arrow" />
+                      </button>
 
-                      {/* Back button below options */}
                       <button type="button" className="tru-qb-back" onClick={goBack}>
                         <ChevronLeft className="w-4 h-4" />
                         <span>Back</span>
@@ -692,12 +664,64 @@ export default function Index() {
                       </p>
                     </form>
                   )}
+
+                  {/* Post-Submission Confirmation */}
+                  {step === 3 && submitted && (
+                    <div className="tru-qb-step-content tru-qb-confirmation" key="step-confirmed">
+                      <div className="tru-qb-confirmation-icon">
+                        <CheckCircle className="w-12 h-12" />
+                      </div>
+                      <h1 className="tru-qb-question">Request received!</h1>
+                      <p className="tru-qb-subtitle">
+                        A TruMove specialist will call you within 1 business day to review your move and answer any questions.
+                      </p>
+                      
+                      <div className="tru-qb-confirmation-divider">
+                        <span>While you wait, you can:</span>
+                      </div>
+                      
+                      <div className="tru-qb-options-row">
+                        <button 
+                          type="button" 
+                          className="tru-qb-option-card"
+                          onClick={() => navigate("/online-estimate")}
+                        >
+                          <Sparkles className="w-5 h-5" />
+                          <div className="tru-qb-option-text">
+                            <span className="tru-qb-option-title">AI Estimator</span>
+                            <span className="tru-qb-option-desc">Build your inventory</span>
+                          </div>
+                        </button>
+                        <button 
+                          type="button" 
+                          className="tru-qb-option-card"
+                          onClick={() => navigate("/book")}
+                        >
+                          <Video className="w-5 h-5" />
+                          <div className="tru-qb-option-text">
+                            <span className="tru-qb-option-title">Video Consult</span>
+                            <span className="tru-qb-option-desc">Schedule a walkthrough</span>
+                          </div>
+                        </button>
+                      </div>
+                      
+                      <a href="tel:+16097277647" className="tru-qb-call-link">
+                        <Phone className="w-4 h-4" />
+                        <span>Or call us now: (609) 727-7647</span>
+                      </a>
+                    </div>
+                  )}
                 </div>
                 
-                {/* Footer inside form card */}
-                <div className="tru-floating-form-footer">
-                  <span>Powered by</span>
-                  <img src={logoImg} alt="TruMove" className="tru-footer-mini-logo" />
+                {/* Footer inside form card - with trust indicators */}
+                <div className="tru-floating-form-footer tru-form-footer-trust">
+                  <div className="tru-form-trust-items">
+                    <span className="tru-form-trust-item"><Lock className="w-3 h-3" /> 256-bit encrypted</span>
+                    <span className="tru-form-trust-divider">•</span>
+                    <span className="tru-form-trust-item">FMCSA verified</span>
+                    <span className="tru-form-trust-divider">•</span>
+                    <span className="tru-form-trust-item">Never sold</span>
+                  </div>
                 </div>
               </div>
 
@@ -705,11 +729,29 @@ export default function Index() {
               <div className="tru-hero-sidebar">
                 {/* TOP ROW: Summary + Nav side by side */}
                 <div className="tru-hero-sidebar-top">
-                  {/* Summary Card - Compact */}
-                  <div className="tru-floating-summary-card tru-floating-summary-card-compact">
-                    <div className="tru-summary-card-header">
-                      <span className="tru-summary-card-title">Move Summary</span>
-                    </div>
+                  {/* Summary Card - Collapsible with reveal animation */}
+                  <div className={`tru-floating-summary-card tru-floating-summary-card-compact ${summaryVisible ? 'is-visible' : 'is-hidden'}`}>
+                    {!summaryVisible && (
+                      <button 
+                        className="tru-summary-reveal-tab"
+                        onClick={() => setSummaryVisible(true)}
+                        title="Show Move Summary"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    )}
+                    {summaryVisible && (
+                      <>
+                        <div className="tru-summary-card-header">
+                          <span className="tru-summary-card-title">Move Summary</span>
+                          <button 
+                            className="tru-summary-collapse-btn"
+                            onClick={() => setSummaryVisible(false)}
+                            title="Hide Summary"
+                          >
+                            <ChevronLeft className="w-3 h-3" />
+                          </button>
+                        </div>
                     
                     <div className="tru-summary-card-body">
                       <div className="tru-summary-info-grid">
@@ -753,6 +795,8 @@ export default function Index() {
                       <span>Powered by</span>
                       <img src={logoImg} alt="TruMove" className="tru-footer-mini-logo" />
                     </div>
+                      </>
+                    )}
                   </div>
                   
                   {/* Floating Navigation */}
