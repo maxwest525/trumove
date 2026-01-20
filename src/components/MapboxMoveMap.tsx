@@ -8,6 +8,7 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam5
 interface MapboxMoveMapProps {
   fromZip?: string;
   toZip?: string;
+  visible?: boolean;
 }
 
 // Comprehensive ZIP coordinate lookup table with state-level accuracy
@@ -421,7 +422,7 @@ function getLocationName(zip: string): string {
   return ZIP_NAMES[prefix] || '';
 }
 
-export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMapProps) {
+export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true }: MapboxMoveMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -433,6 +434,17 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
   const fromCoordsRef = useRef<[number, number] | null>(null);
   const toCoordsRef = useRef<[number, number] | null>(null);
   const [coordsVersion, setCoordsVersion] = useState(0);
+
+  // Trigger resize when map becomes visible (container size changes)
+  useEffect(() => {
+    if (map.current && isMapLoaded && visible) {
+      // Wait for CSS transition to complete before resizing
+      const timer = setTimeout(() => {
+        map.current?.resize();
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [visible, isMapLoaded]);
 
   // Update coordinates when ZIPs change
   useEffect(() => {
@@ -583,37 +595,31 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '' }: MapboxMoveMa
       }
     });
 
-    // Get city names
+    // Get city names for labels only (no dots)
     const fromName = getLocationName(fromZip);
     const toName = getLocationName(toZip);
 
-    // Add origin marker with label
-    const originEl = document.createElement('div');
-    originEl.className = 'mapbox-marker-container';
-    originEl.innerHTML = `
-      <div class="mapbox-marker-ripple"></div>
-      <div class="mapbox-marker-ripple"></div>
-      <div class="mapbox-marker-dot origin"></div>
-      ${fromName ? `<div class="mapbox-marker-label">${fromName}</div>` : ''}
-    `;
-    const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
-      .setLngLat(fromCoords)
-      .addTo(map.current);
-    markersRef.current.push(originMarker);
+    // Add origin label only (no dot/ripple)
+    if (fromName) {
+      const originEl = document.createElement('div');
+      originEl.className = 'mapbox-marker-label-only';
+      originEl.innerHTML = `<div class="mapbox-marker-label">${fromName}</div>`;
+      const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
+        .setLngLat(fromCoords)
+        .addTo(map.current);
+      markersRef.current.push(originMarker);
+    }
 
-    // Add destination marker with label
-    const destEl = document.createElement('div');
-    destEl.className = 'mapbox-marker-container';
-    destEl.innerHTML = `
-      <div class="mapbox-marker-ripple"></div>
-      <div class="mapbox-marker-ripple"></div>
-      <div class="mapbox-marker-dot destination"></div>
-      ${toName ? `<div class="mapbox-marker-label">${toName}</div>` : ''}
-    `;
-    const destMarker = new mapboxgl.Marker({ element: destEl, anchor: 'center' })
-      .setLngLat(toCoords)
-      .addTo(map.current);
-    markersRef.current.push(destMarker);
+    // Add destination label only (no dot/ripple)
+    if (toName) {
+      const destEl = document.createElement('div');
+      destEl.className = 'mapbox-marker-label-only';
+      destEl.innerHTML = `<div class="mapbox-marker-label">${toName}</div>`;
+      const destMarker = new mapboxgl.Marker({ element: destEl, anchor: 'center' })
+        .setLngLat(toCoords)
+        .addTo(map.current);
+      markersRef.current.push(destMarker);
+    }
 
     // Fit to bounds with appropriate padding
     const padding = isExpanded ? 80 : 40;
