@@ -348,13 +348,13 @@
 }
 
 .tru-floating-summary-card-compact .tru-summary-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.6);
 }
 
 .tru-floating-summary-card-compact .tru-summary-value {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: hsl(var(--tm-ink));
 }
