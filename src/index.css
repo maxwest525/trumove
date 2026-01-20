@@ -257,7 +257,7 @@
   display: flex;
   flex-direction: row;
   gap: 16px;
-  align-items: flex-start;
+  align-items: stretch;
   height: 100%;
 }
 
@@ -277,6 +277,7 @@
   flex-direction: column;
   gap: 16px;
   flex: 0 0 auto;
+  align-self: stretch;
 }
 
 /* Top row: Summary Card + Nav side by side */
@@ -285,6 +286,8 @@
   flex-direction: row;
   gap: 16px;
   align-items: stretch;
+  height: 276px;
+  flex-shrink: 0;
 }
 
 /* Compact Summary Card - matches nav height */
@@ -293,9 +296,10 @@
   width: auto;
   min-width: 180px;
   max-width: 200px;
-  align-self: stretch;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .tru-floating-summary-card-compact .tru-summary-card-header {
@@ -312,6 +316,8 @@
   padding: 8px 12px;
   gap: 0;
   flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .tru-floating-summary-card-compact .tru-summary-info-grid {
@@ -338,6 +344,10 @@
 /* Map Row - spans full sidebar width */
 .tru-hero-map-row {
   width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .tru-hero-map-card {
@@ -349,12 +359,15 @@
     0 4px 8px hsl(var(--tm-ink) / 0.04),
     0 12px 24px hsl(var(--tm-ink) / 0.06);
   overflow: hidden;
-  min-height: 140px;
+  flex: 1 1 auto;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
 }
 
 .tru-hero-map-card > div:first-child {
-  height: 140px;
-  min-height: 140px;
+  flex: 1 1 auto;
+  min-height: 100px;
 }
 
 .tru-hero-map-card .tru-summary-map-stats {
