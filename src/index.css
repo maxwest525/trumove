@@ -566,7 +566,7 @@
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Trust Footer Styling */
+/* Trust Footer Styling - Regulatory Style */
 .tru-form-footer-trust {
   flex-direction: column;
   gap: 2px;
@@ -585,13 +585,15 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.5);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.4);
 }
 
 .tru-form-trust-item svg {
-  color: hsl(var(--primary) / 0.7);
+  color: hsl(var(--tm-ink) / 0.35);
 }
 
 .tru-form-trust-divider {
@@ -599,7 +601,85 @@
   color: hsl(var(--tm-ink) / 0.2);
 }
 
-/* Premium Button Styling */
+/* Form Title Styling */
+.tru-qb-form-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.tru-qb-form-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: hsl(var(--tm-ink));
+  letter-spacing: -0.02em;
+}
+
+.tru-qb-title-accent {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(160 80% 45%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tru-qb-form-subtitle-compact {
+  font-size: 11px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+/* Engine Button - High-Tech CTA */
+.tru-qb-continue.tru-engine-btn {
+  background: linear-gradient(135deg, hsl(170 80% 35%), hsl(160 75% 42%));
+  color: hsl(0 0% 100%);
+  font-weight: 700;
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  box-shadow: 
+    0 0 0 1px hsl(var(--primary) / 0.3),
+    0 4px 20px hsl(var(--primary) / 0.25),
+    inset 0 1px 0 hsl(0 0% 100% / 0.15);
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.tru-qb-continue.tru-engine-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 0 0 2px hsl(var(--primary) / 0.4),
+    0 8px 32px hsl(var(--primary) / 0.35),
+    inset 0 1px 0 hsl(0 0% 100% / 0.2);
+}
+
+.tru-qb-continue.tru-engine-btn:disabled {
+  background: hsl(var(--tm-ink) / 0.1);
+  color: hsl(var(--tm-ink) / 0.4);
+  box-shadow: none;
+}
+
+.tru-qb-continue .tru-btn-arrow {
+  transition: transform 200ms ease;
+}
+
+.tru-qb-continue:hover:not(:disabled) .tru-btn-arrow {
+  transform: translateX(6px);
+}
+
+.tru-qb-continue .tru-btn-scan {
+  transition: all 200ms ease;
+}
+
+.tru-qb-continue:hover:not(:disabled) .tru-btn-scan {
+  animation: scan-pulse 0.6s ease-in-out;
+}
+
+@keyframes scan-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+/* Premium Button Styling (legacy) */
 .tru-qb-continue.tru-qb-continue-premium {
   background: linear-gradient(135deg, hsl(142 70% 45%), hsl(160 80% 40%));
   color: hsl(0 0% 100%);
@@ -624,15 +704,126 @@
   box-shadow: none;
 }
 
-.tru-qb-continue .tru-btn-arrow {
-  transition: transform 200ms ease;
+/* =============================================
+   SUMMARY CARD: HOVER-TO-EXPAND BEHAVIOR
+   ============================================= */
+
+/* Entrance animation on page load */
+@keyframes summary-announce {
+  0% { 
+    opacity: 0; 
+    transform: translateY(8px); 
+    border-color: hsl(var(--primary) / 0);
+  }
+  40% { 
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.15);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0);
+    border-color: hsl(var(--tm-ink) / 0.1);
+    box-shadow: 
+      0 1px 2px hsl(var(--tm-ink) / 0.03),
+      0 4px 8px hsl(var(--tm-ink) / 0.04),
+      0 12px 24px hsl(var(--tm-ink) / 0.06);
+  }
 }
 
-.tru-qb-continue:hover:not(:disabled) .tru-btn-arrow {
-  transform: translateX(4px);
+.tru-summary-hover-expand {
+  animation: summary-announce 0.8s ease-out;
+  position: relative;
+  transition: all 0.25s ease-out;
 }
 
-/* Summary Card Collapsible States */
+/* Collapsed state */
+.tru-summary-hover-expand.is-collapsed {
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
+}
+
+.tru-summary-hover-expand.is-collapsed .tru-summary-collapsed-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  padding: 16px 0;
+}
+
+.tru-summary-hover-expand.is-collapsed .tru-summary-expanded-content {
+  display: none;
+}
+
+/* Collapsed bar styling */
+.tru-summary-collapsed-bar {
+  display: none;
+}
+
+.tru-summary-collapsed-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: hsl(var(--primary) / 0.1);
+  border-radius: 8px;
+  color: hsl(var(--primary));
+  animation: pulse-indicator 2s ease-in-out infinite;
+}
+
+@keyframes pulse-indicator {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 0 6px hsl(var(--primary) / 0);
+  }
+}
+
+.tru-summary-collapsed-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.4);
+  transform: rotate(180deg);
+}
+
+/* Expanded state */
+.tru-summary-hover-expand.is-expanded {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+}
+
+.tru-summary-hover-expand.is-expanded .tru-summary-collapsed-bar {
+  display: none;
+}
+
+.tru-summary-hover-expand.is-expanded .tru-summary-expanded-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Map visibility coordination */
+.tru-hero-map-row {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease 0.1s;
+}
+
+.tru-hero-map-row.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Legacy states (for backwards compat) */
 .tru-floating-summary-card.is-hidden {
   width: 44px;
   min-width: 44px;

@@ -19,7 +19,7 @@ import {
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown
+  Home, Building2, MoveVertical, ArrowUpDown, Scan
 } from "lucide-react";
 
 // ZIP lookup
@@ -401,7 +401,10 @@ export default function Index() {
                 
                 <div className="tru-qb-form-header">
                   <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  <span className="tru-qb-form-title">Get Your Free Quote</span>
+                  <div className="tru-qb-form-title-wrap">
+                    <span className="tru-qb-form-title">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
+                    <span className="tru-qb-form-subtitle-compact">Real pricing from federal SAFER data</span>
+                  </div>
                   <button 
                     onClick={() => setChatOpen(true)} 
                     className="tru-ai-chat-btn"
@@ -487,11 +490,12 @@ export default function Index() {
 
                       <button
                         type="button"
-                        className="tru-qb-continue tru-qb-continue-premium"
+                        className="tru-qb-continue tru-engine-btn"
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
-                        <span>Calculate My Route</span>
+                        <Scan className="w-4 h-4 tru-btn-scan" />
+                        <span>Analyze Route</span>
                         <ArrowRight className="w-5 h-5 tru-btn-arrow" />
                       </button>
                     </div>
@@ -584,11 +588,11 @@ export default function Index() {
 
                       <button
                         type="button"
-                        className="tru-qb-continue tru-qb-continue-premium"
+                        className="tru-qb-continue tru-engine-btn"
                         disabled={!canContinue()}
                         onClick={goNext}
                       >
-                        <span>See Carrier Matches</span>
+                        <span>Match Carriers</span>
                         <ArrowRight className="w-5 h-5 tru-btn-arrow" />
                       </button>
 
@@ -642,7 +646,7 @@ export default function Index() {
 
                       <button
                         type="submit"
-                        className="tru-qb-continue tru-qb-continue-premium"
+                        className="tru-qb-continue tru-engine-btn"
                         onClick={(e) => { 
                           if (!canContinue()) {
                             e.preventDefault();
@@ -716,11 +720,11 @@ export default function Index() {
                 {/* Footer inside form card - with trust indicators */}
                 <div className="tru-floating-form-footer tru-form-footer-trust">
                   <div className="tru-form-trust-items">
-                    <span className="tru-form-trust-item"><Lock className="w-3 h-3" /> 256-bit encrypted</span>
+                    <span className="tru-form-trust-item"><Lock className="w-3 h-3" /> TLS 1.3 ENCRYPTED</span>
                     <span className="tru-form-trust-divider">•</span>
-                    <span className="tru-form-trust-item">FMCSA verified</span>
+                    <span className="tru-form-trust-item"><Shield className="w-3 h-3" /> FMCSA LICENSE VERIFIED</span>
                     <span className="tru-form-trust-divider">•</span>
-                    <span className="tru-form-trust-item">Never sold</span>
+                    <span className="tru-form-trust-item"><Database className="w-3 h-3" /> FIRST-PARTY DATA ONLY</span>
                   </div>
                 </div>
               </div>
@@ -729,74 +733,69 @@ export default function Index() {
               <div className="tru-hero-sidebar">
                 {/* TOP ROW: Summary + Nav side by side */}
                 <div className="tru-hero-sidebar-top">
-                  {/* Summary Card - Collapsible with reveal animation */}
-                  <div className={`tru-floating-summary-card tru-floating-summary-card-compact ${summaryVisible ? 'is-visible' : 'is-hidden'}`}>
-                    {!summaryVisible && (
-                      <button 
-                        className="tru-summary-reveal-tab"
-                        onClick={() => setSummaryVisible(true)}
-                        title="Show Move Summary"
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    )}
-                    {summaryVisible && (
-                      <>
-                        <div className="tru-summary-card-header">
-                          <span className="tru-summary-card-title">Move Summary</span>
-                          <button 
-                            className="tru-summary-collapse-btn"
-                            onClick={() => setSummaryVisible(false)}
-                            title="Hide Summary"
-                          >
-                            <ChevronLeft className="w-3 h-3" />
-                          </button>
-                        </div>
+                  {/* Summary Card - Hover to expand */}
+                  <div 
+                    className={`tru-floating-summary-card tru-floating-summary-card-compact tru-summary-hover-expand ${summaryVisible ? 'is-expanded' : 'is-collapsed'}`}
+                    onMouseEnter={() => setSummaryVisible(true)}
+                    onMouseLeave={() => setSummaryVisible(false)}
+                  >
+                    {/* Collapsed state - slim bar */}
+                    <div className="tru-summary-collapsed-bar">
+                      <div className="tru-summary-collapsed-indicator">
+                        <Route className="w-4 h-4" />
+                      </div>
+                      <span className="tru-summary-collapsed-label">Summary</span>
+                    </div>
                     
-                    <div className="tru-summary-card-body">
-                      <div className="tru-summary-info-grid">
-                        <div className="tru-summary-row">
-                          <span className="tru-summary-label">From</span>
-                          <span className={`tru-summary-value ${updatedFields.has('from') ? 'is-updated' : ''}`}>{fromCity || "—"}</span>
-                        </div>
-                        <div className="tru-summary-row">
-                          <span className="tru-summary-label">To</span>
-                          <span className={`tru-summary-value ${updatedFields.has('to') ? 'is-updated' : ''}`}>{toCity || "—"}</span>
-                        </div>
-                        <div className="tru-summary-row">
-                          <span className="tru-summary-label">Distance</span>
-                          <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
-                        </div>
-                        <div className="tru-summary-row">
-                          <span className="tru-summary-label">Date</span>
-                          <span className={`tru-summary-value ${updatedFields.has('date') ? 'is-updated' : ''}`}>{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
-                        </div>
-                        <div className="tru-summary-row">
-                          <span className="tru-summary-label">ETA</span>
-                          <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{estimatedDuration || "—"}</span>
-                        </div>
-                        <div className="tru-summary-row">
-                          <span className="tru-summary-label">Size</span>
-                          <span className={`tru-summary-value ${updatedFields.has('size') ? 'is-updated' : ''}`}>{size || "—"}</span>
-                        </div>
-                        <div className="tru-summary-row">
-                          <span className="tru-summary-label">Property</span>
-                          <span className={`tru-summary-value ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
-                            {propertyType 
-                              ? `${propertyType === 'house' ? 'House' : 'Apartment'}${propertyType === 'apartment' ? ` (Floor ${floor}, ${hasElevator ? 'Elevator' : 'Stairs'})` : ''}`
-                              : "—"}
-                          </span>
+                    {/* Expanded content */}
+                    <div className="tru-summary-expanded-content">
+                      <div className="tru-summary-card-header">
+                        <span className="tru-summary-card-title">Move Summary</span>
+                      </div>
+                    
+                      <div className="tru-summary-card-body">
+                        <div className="tru-summary-info-grid">
+                          <div className="tru-summary-row">
+                            <span className="tru-summary-label">From</span>
+                            <span className={`tru-summary-value ${updatedFields.has('from') ? 'is-updated' : ''}`}>{fromCity || "—"}</span>
+                          </div>
+                          <div className="tru-summary-row">
+                            <span className="tru-summary-label">To</span>
+                            <span className={`tru-summary-value ${updatedFields.has('to') ? 'is-updated' : ''}`}>{toCity || "—"}</span>
+                          </div>
+                          <div className="tru-summary-row">
+                            <span className="tru-summary-label">Distance</span>
+                            <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                          </div>
+                          <div className="tru-summary-row">
+                            <span className="tru-summary-label">Date</span>
+                            <span className={`tru-summary-value ${updatedFields.has('date') ? 'is-updated' : ''}`}>{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
+                          </div>
+                          <div className="tru-summary-row">
+                            <span className="tru-summary-label">ETA</span>
+                            <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{estimatedDuration || "—"}</span>
+                          </div>
+                          <div className="tru-summary-row">
+                            <span className="tru-summary-label">Size</span>
+                            <span className={`tru-summary-value ${updatedFields.has('size') ? 'is-updated' : ''}`}>{size || "—"}</span>
+                          </div>
+                          <div className="tru-summary-row">
+                            <span className="tru-summary-label">Property</span>
+                            <span className={`tru-summary-value ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
+                              {propertyType 
+                                ? `${propertyType === 'house' ? 'House' : 'Apartment'}${propertyType === 'apartment' ? ` (Floor ${floor}, ${hasElevator ? 'Elevator' : 'Stairs'})` : ''}`
+                                : "—"}
+                            </span>
+                          </div>
                         </div>
                       </div>
+                      
+                      {/* Footer */}
+                      <div className="tru-summary-card-footer">
+                        <span>Powered by</span>
+                        <img src={logoImg} alt="TruMove" className="tru-footer-mini-logo" />
+                      </div>
                     </div>
-                    
-                    {/* Footer */}
-                    <div className="tru-summary-card-footer">
-                      <span>Powered by</span>
-                      <img src={logoImg} alt="TruMove" className="tru-footer-mini-logo" />
-                    </div>
-                      </>
-                    )}
                   </div>
                   
                   {/* Floating Navigation */}
@@ -805,8 +804,8 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* BOTTOM ROW: Map spanning full sidebar width */}
-                <div className="tru-hero-map-row">
+                {/* BOTTOM ROW: Map - visible when summary expanded or has data */}
+                <div className={`tru-hero-map-row ${summaryVisible || distance > 0 ? 'is-visible' : ''}`}>
                   <div className="tru-hero-map-card">
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
                     {distance > 0 && (
