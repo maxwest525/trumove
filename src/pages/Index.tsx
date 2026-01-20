@@ -114,7 +114,9 @@ export default function Index() {
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [formError, setFormError] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [summaryVisible, setSummaryVisible] = useState(false);
+  const [summaryLocked, setSummaryLocked] = useState(false);
+  const [summaryHovered, setSummaryHovered] = useState(false);
+  const summaryVisible = summaryLocked || summaryHovered;
   
   // Carrier search animation states
   const [isSearchingCarriers, setIsSearchingCarriers] = useState(false);
@@ -158,9 +160,9 @@ export default function Index() {
     
     if (fieldsToUpdate.length > 0) {
       setUpdatedFields(new Set(fieldsToUpdate));
-      // Auto-reveal summary on first location entry
-      if ((fieldsToUpdate.includes('from') || fieldsToUpdate.includes('to')) && !summaryVisible) {
-        setSummaryVisible(true);
+      // Auto-lock summary open on first location entry (won't collapse on hover away)
+      if ((fieldsToUpdate.includes('from') || fieldsToUpdate.includes('to')) && !summaryLocked) {
+        setSummaryLocked(true);
       }
       const timer = setTimeout(() => setUpdatedFields(new Set()), 500);
       return () => clearTimeout(timer);
@@ -729,8 +731,8 @@ export default function Index() {
                   {/* Summary Card - Hover to expand */}
                   <div 
                     className={`tru-floating-summary-card tru-floating-summary-card-compact tru-summary-hover-expand ${summaryVisible ? 'is-expanded' : 'is-collapsed'}`}
-                    onMouseEnter={() => setSummaryVisible(true)}
-                    onMouseLeave={() => setSummaryVisible(false)}
+                    onMouseEnter={() => setSummaryHovered(true)}
+                    onMouseLeave={() => setSummaryHovered(false)}
                   >
                     {/* Collapsed state - slim bar */}
                     <div className="tru-summary-collapsed-bar">
@@ -797,8 +799,8 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* BOTTOM ROW: Map - visible when summary expanded or has data */}
-                <div className={`tru-hero-map-row ${summaryVisible || distance > 0 ? 'is-visible' : ''}`}>
+                {/* BOTTOM ROW: Map - visible only when route is calculated */}
+                <div className={`tru-hero-map-row ${distance > 0 ? 'is-visible' : ''}`}>
                   <div className="tru-hero-map-card">
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} />
                   </div>
