@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Maximize2, Minimize2, MapPin, Route, Clock, Loader2 } from 'lucide-react';
+import { Maximize2, Minimize2, MapPin, Loader2 } from 'lucide-react';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam51OGJrcGFiIn0.tN-ZMle93ctK7PIt9kU7JA';
 
@@ -630,13 +630,8 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
 
   }, [coordsVersion, isMapLoaded, fromZip, toZip, isExpanded]);
 
-  // Calculate stats
   const fromCoords = fromCoordsRef.current;
   const toCoords = toCoordsRef.current;
-  const distance = fromCoords && toCoords 
-    ? calculateDistanceBetweenCoords(fromCoords, toCoords) 
-    : 0;
-  const transitDays = Math.max(1, Math.ceil(distance / 500));
 
   return (
     <div className={`mapbox-move-map-wrapper ${isExpanded ? 'expanded' : ''}`}>
@@ -678,20 +673,6 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
             </>
           )}
         </button>
-      )}
-      
-      {/* Stats bar - only show when expanded */}
-      {isExpanded && fromCoords && toCoords && distance > 0 && (
-        <div className="map-stats-bar">
-          <div className="map-stat">
-            <Route className="w-4 h-4" />
-            <span>{distance.toLocaleString()} miles</span>
-          </div>
-          <div className="map-stat">
-            <Clock className="w-4 h-4" />
-            <span>~{transitDays} day{transitDays > 1 ? 's' : ''} transit</span>
-          </div>
-        </div>
       )}
     </div>
   );
