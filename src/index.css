@@ -195,11 +195,46 @@
   margin-bottom: 36px;
 }
 
+/* Value Props Container - enables map overlay */
+.tru-hero-value-props-container {
+  position: relative;
+  min-height: 280px;
+}
+
 /* Value Props */
 .tru-hero-value-props {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  transition: opacity 0.4s ease;
+}
+
+/* Value props fade out when map activates */
+.tru-hero-value-props.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Map overlay - covers only the value props area */
+.tru-hero-map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.98);
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  z-index: 5;
+}
+
+.tru-hero-map-overlay.is-active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
 }
 
 .tru-hero-value-prop {

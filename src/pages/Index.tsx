@@ -355,34 +355,42 @@ export default function Index() {
                   all FMCSA verified, all reputation-monitored, all matched to your exact route.
                 </p>
                 
-                {/* Value Props - Real Differentiators */}
-                <div className="tru-hero-value-props">
-                  <div className="tru-hero-value-prop">
-                    <div className="tru-hero-value-icon">
-                      <Shield className="w-5 h-5" />
+                {/* Value Props Container - Map overlays this section */}
+                <div className="tru-hero-value-props-container">
+                  {/* Value Props - Real Differentiators */}
+                  <div className={`tru-hero-value-props ${fromCity ? 'is-hidden' : ''}`}>
+                    <div className="tru-hero-value-prop">
+                      <div className="tru-hero-value-icon">
+                        <Shield className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-value-text">
+                        <span className="tru-hero-value-title">4-Stage Carrier Vetting</span>
+                        <span className="tru-hero-value-desc">FMCSA licensed, insurance verified, live scoring on every job</span>
+                      </div>
                     </div>
-                    <div className="tru-hero-value-text">
-                      <span className="tru-hero-value-title">4-Stage Carrier Vetting</span>
-                      <span className="tru-hero-value-desc">FMCSA licensed, insurance verified, live scoring on every job</span>
+                    <div className="tru-hero-value-prop">
+                      <div className="tru-hero-value-icon">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-value-text">
+                        <span className="tru-hero-value-title">Small, Family-Owned Movers</span>
+                        <span className="tru-hero-value-desc">No mega van lines — real carriers who treat your move like their own</span>
+                      </div>
+                    </div>
+                    <div className="tru-hero-value-prop">
+                      <div className="tru-hero-value-icon">
+                        <Headphones className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-value-text">
+                        <span className="tru-hero-value-title">Personal Agent Guidance</span>
+                        <span className="tru-hero-value-desc">A real person walks you through every step — no call centers</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="tru-hero-value-prop">
-                    <div className="tru-hero-value-icon">
-                      <Users className="w-5 h-5" />
-                    </div>
-                    <div className="tru-hero-value-text">
-                      <span className="tru-hero-value-title">Small, Family-Owned Movers</span>
-                      <span className="tru-hero-value-desc">No mega van lines — real carriers who treat your move like their own</span>
-                    </div>
-                  </div>
-                  <div className="tru-hero-value-prop">
-                    <div className="tru-hero-value-icon">
-                      <Headphones className="w-5 h-5" />
-                    </div>
-                    <div className="tru-hero-value-text">
-                      <span className="tru-hero-value-title">Personal Agent Guidance</span>
-                      <span className="tru-hero-value-desc">A real person walks you through every step — no call centers</span>
-                    </div>
+                  
+                  {/* Map Overlay - appears when first ZIP validated */}
+                  <div className={`tru-hero-map-overlay ${fromCity ? 'is-active' : ''}`}>
+                    <MapboxMoveMap fromZip={fromZip} toZip={toZip} visible={!!fromCity} />
                   </div>
                 </div>
               </div>
@@ -799,12 +807,6 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* BOTTOM ROW: Map - visible only when route is calculated */}
-                <div className={`tru-hero-map-row ${distance > 0 ? 'is-visible' : ''}`}>
-                  <div className="tru-hero-map-card">
-                    <MapboxMoveMap fromZip={fromZip} toZip={toZip} visible={distance > 0} />
-                  </div>
-                </div>
               </div>
             
             </div>
