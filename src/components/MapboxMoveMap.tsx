@@ -667,15 +667,19 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
         markersRef.current.push(destMarker);
       }
 
-      // Fit to bounds with appropriate padding
-      const padding = isExpanded ? 80 : 40;
+      // Fit to bounds with appropriate padding - zoom in more to see route clearly
+      const padding = isExpanded ? 100 : 60;
       map.current?.fitBounds(bounds, {
         padding,
-        maxZoom: isExpanded ? 8 : 6,
+        maxZoom: isExpanded ? 10 : 8,
+        minZoom: 4,
       });
       
       setIsLoading(false);
     };
+    
+    // Call addRoute to actually fetch and render the driving route
+    addRoute();
     
   }, [coordsVersion, isMapLoaded, fromZip, toZip, isExpanded]);
 
