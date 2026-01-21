@@ -131,6 +131,7 @@ export default function LocationAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const isClickingDropdownRef = useRef(false);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -254,14 +255,21 @@ export default function LocationAutocomplete({
 
   // Handle blur - autofill first/highlighted suggestion (Google Places behavior)
   const handleBlur = () => {
-    // Small delay to allow click events on dropdown to fire first
+    // Slightly longer delay to allow click events on dropdown to fire first
     setTimeout(() => {
+      // If user is clicking a dropdown item, don't interfere - let onClick handle it
+      if (isClickingDropdownRef.current) {
+        isClickingDropdownRef.current = false;
+        return;
+      }
+      
+      // Otherwise, auto-select first/highlighted suggestion (Google Places behavior)
       if (showDropdown && suggestions.length > 0) {
         const indexToSelect = selectedIndex >= 0 ? selectedIndex : 0;
         handleSelect(suggestions[indexToSelect]);
       }
       setShowDropdown(false);
-    }, 150);
+    }, 200);
   };
 
   const displayValue = selectedDisplay || value;
@@ -314,7 +322,13 @@ export default function LocationAutocomplete({
                   "flex items-start gap-3 px-4 py-2.5 cursor-pointer transition-colors",
                   idx === selectedIndex ? "bg-primary/10" : "hover:bg-muted/50"
                 )}
-                onClick={() => handleSelect(suggestion)}
+                onMouseDown={() => {
+                  isClickingDropdownRef.current = true;
+                }}
+                onClick={() => {
+                  isClickingDropdownRef.current = false;
+                  handleSelect(suggestion);
+                }}
                 onMouseEnter={() => setSelectedIndex(idx)}
               >
                 <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
