@@ -460,6 +460,9 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
   const fromCoordsRef = useRef<[number, number] | null>(null);
   const toCoordsRef = useRef<[number, number] | null>(null);
   const [coordsVersion, setCoordsVersion] = useState(0);
+  
+  // Request version ref to prevent race conditions with async operations
+  const requestVersionRef = useRef(0);
 
   // Trigger resize when map becomes visible (container size changes)
   useEffect(() => {
@@ -561,11 +564,15 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
   useEffect(() => {
     if (!map.current || !isMapLoaded) return;
 
+    // Increment request version to track this specific call
+    requestVersionRef.current += 1;
+    const currentRequestVersion = requestVersionRef.current;
+
     const fromCoords = fromCoordsRef.current;
     const toCoords = toCoordsRef.current;
     const currentMap = map.current;
 
-    // Clear old markers
+    // Clear old markers synchronously
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
 
@@ -591,15 +598,25 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
       // Try to get actual driving directions
       let lineCoords = await fetchDrivingRoute(fromCoords, toCoords);
       
+      // CRITICAL: Check if this request is still current (prevents race condition)
+      if (currentRequestVersion !== requestVersionRef.current) {
+        // A newer request has superseded this one - abort
+        return;
+      }
+      
       // Fallback to arc if directions fail
       if (!lineCoords) {
         lineCoords = createArcLine(fromCoords, toCoords, 100);
       }
       
-      // Check if map still exists and no newer request has been made
+      // Check if map still exists
       if (!map.current) return;
       
-      // Remove existing route if any (in case of race condition)
+      // Clean up again before adding (handles edge cases with racing requests)
+      markersRef.current.forEach(m => m.remove());
+      markersRef.current = [];
+      
+      // Remove existing route if any
       if (map.current.getSource('route')) {
         if (map.current.getLayer('route-line')) map.current.removeLayer('route-line');
         if (map.current.getLayer('route-glow')) map.current.removeLayer('route-glow');
