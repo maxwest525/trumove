@@ -11399,22 +11399,27 @@
   /* Match Move Summary gradient background and border */
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 2px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 20px; /* Match Move Summary card radius */
+  border-radius: 20px;
   box-shadow: 
     0 1px 2px hsl(var(--tm-ink) / 0.03),
     0 4px 8px hsl(var(--tm-ink) / 0.04),
     0 12px 24px hsl(var(--tm-ink) / 0.06);
   overflow: hidden;
-  transition: all 0.25s ease;
+  transition: width 0.25s ease;
   height: 100%;
   width: 52px;
   justify-content: space-between;
 }
 
+/* Expand on hover to show labels */
+.tru-floating-nav:hover {
+  width: 170px;
+}
+
 .tru-floating-nav-item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 10px;
   padding: 8px;
   background: transparent;
@@ -11454,9 +11459,13 @@
 .tru-floating-nav-label {
   font-size: 13px;
   font-weight: 600;
-  max-width: 0;
   opacity: 0;
-  transition: all 0.25s ease;
+  transition: opacity 0.2s ease;
+}
+
+/* Show labels when nav is hovered */
+.tru-floating-nav:hover .tru-floating-nav-label {
+  opacity: 1;
 }
 
 .tru-floating-nav-item.is-expanded .tru-floating-nav-label {
