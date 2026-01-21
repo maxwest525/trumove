@@ -3,12 +3,38 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Maximize2, Minimize2, MapPin, Loader2 } from 'lucide-react';
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam51OGJrcGFiIn0.tN-ZMle93ctK7PIt9kU7JA';
+// Use environment variable or fallback to public token
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam51OGJrcGFiIn0.tN-ZMle93ctK7PIt9kU7JA';
 
 interface MapboxMoveMapProps {
   fromZip?: string;
   toZip?: string;
   visible?: boolean;
+}
+
+// Fetch driving route from Mapbox Directions API
+async function fetchDrivingRoute(
+  from: [number, number], 
+  to: [number, number]
+): Promise<[number, number][] | null> {
+  try {
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${from[0]},${from[1]};${to[0]},${to[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.warn('Directions API failed, falling back to arc line');
+      return null;
+    }
+    
+    const data = await response.json();
+    if (data.routes && data.routes.length > 0) {
+      return data.routes[0].geometry.coordinates as [number, number][];
+    }
+    return null;
+  } catch (error) {
+    console.warn('Error fetching directions:', error);
+    return null;
+  }
 }
 
 // Comprehensive ZIP coordinate lookup table with state-level accuracy
@@ -537,18 +563,19 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
 
     const fromCoords = fromCoordsRef.current;
     const toCoords = toCoordsRef.current;
+    const currentMap = map.current;
 
     // Clear old markers
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
 
     // Remove old layers/sources
-    if (map.current.getLayer('route-line')) map.current.removeLayer('route-line');
-    if (map.current.getLayer('route-glow')) map.current.removeLayer('route-glow');
-    if (map.current.getSource('route')) map.current.removeSource('route');
+    if (currentMap.getLayer('route-line')) currentMap.removeLayer('route-line');
+    if (currentMap.getLayer('route-glow')) currentMap.removeLayer('route-glow');
+    if (currentMap.getSource('route')) currentMap.removeSource('route');
 
     if (!fromCoords || !toCoords) {
-      map.current.flyTo({ center: [-98.5795, 39.8283], zoom: 3, pitch: 20 });
+      currentMap.flyTo({ center: [-98.5795, 39.8283], zoom: 3, pitch: 20 });
       return;
     }
 
@@ -557,77 +584,99 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
     bounds.extend(fromCoords);
     bounds.extend(toCoords);
 
-    // Create arc coordinates
-    const lineCoords = createArcLine(fromCoords, toCoords, 100);
+    // Fetch actual driving route
+    const addRoute = async () => {
+      setIsLoading(true);
+      
+      // Try to get actual driving directions
+      let lineCoords = await fetchDrivingRoute(fromCoords, toCoords);
+      
+      // Fallback to arc if directions fail
+      if (!lineCoords) {
+        lineCoords = createArcLine(fromCoords, toCoords, 100);
+      }
+      
+      // Check if map still exists and no newer request has been made
+      if (!map.current) return;
+      
+      // Remove existing route if any (in case of race condition)
+      if (map.current.getSource('route')) {
+        if (map.current.getLayer('route-line')) map.current.removeLayer('route-line');
+        if (map.current.getLayer('route-glow')) map.current.removeLayer('route-glow');
+        map.current.removeSource('route');
+      }
+      
+      // Add route source
+      map.current.addSource('route', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'LineString', coordinates: lineCoords }
+        }
+      });
+      
+      // Add glow layer
+      map.current.addLayer({
+        id: 'route-glow',
+        type: 'line',
+        source: 'route',
+        paint: {
+          'line-color': '#00ff6a',
+          'line-width': 12,
+          'line-opacity': 0.2,
+          'line-blur': 8
+        }
+      });
+
+      // Add route line
+      map.current.addLayer({
+        id: 'route-line',
+        type: 'line',
+        source: 'route',
+        paint: {
+          'line-color': '#00ff6a',
+          'line-width': 4,
+          'line-opacity': 0.9,
+        }
+      });
+
+      // Get city names for labels only (no dots)
+      const fromName = getLocationName(fromZip);
+      const toName = getLocationName(toZip);
+
+      // Add origin label only (no dot/ripple)
+      if (fromName && map.current) {
+        const originEl = document.createElement('div');
+        originEl.className = 'mapbox-marker-label-only';
+        originEl.innerHTML = `<div class="mapbox-marker-label">${fromName}</div>`;
+        const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
+          .setLngLat(fromCoords)
+          .addTo(map.current);
+        markersRef.current.push(originMarker);
+      }
+
+      // Add destination label only (no dot/ripple)
+      if (toName && map.current) {
+        const destEl = document.createElement('div');
+        destEl.className = 'mapbox-marker-label-only';
+        destEl.innerHTML = `<div class="mapbox-marker-label">${toName}</div>`;
+        const destMarker = new mapboxgl.Marker({ element: destEl, anchor: 'center' })
+          .setLngLat(toCoords)
+          .addTo(map.current);
+        markersRef.current.push(destMarker);
+      }
+
+      // Fit to bounds with appropriate padding
+      const padding = isExpanded ? 80 : 40;
+      map.current?.fitBounds(bounds, {
+        padding,
+        maxZoom: isExpanded ? 8 : 6,
+      });
+      
+      setIsLoading(false);
+    };
     
-    // Add route source
-    map.current.addSource('route', {
-      type: 'geojson',
-      data: {
-        type: 'Feature',
-        properties: {},
-        geometry: { type: 'LineString', coordinates: lineCoords }
-      }
-    });
-
-    // Add glow layer
-    map.current.addLayer({
-      id: 'route-glow',
-      type: 'line',
-      source: 'route',
-      paint: {
-        'line-color': '#00ff6a',
-        'line-width': 12,
-        'line-opacity': 0.2,
-        'line-blur': 8
-      }
-    });
-
-    // Add route line
-    map.current.addLayer({
-      id: 'route-line',
-      type: 'line',
-      source: 'route',
-      paint: {
-        'line-color': '#00ff6a',
-        'line-width': 4,
-        'line-opacity': 0.9,
-      }
-    });
-
-    // Get city names for labels only (no dots)
-    const fromName = getLocationName(fromZip);
-    const toName = getLocationName(toZip);
-
-    // Add origin label only (no dot/ripple)
-    if (fromName) {
-      const originEl = document.createElement('div');
-      originEl.className = 'mapbox-marker-label-only';
-      originEl.innerHTML = `<div class="mapbox-marker-label">${fromName}</div>`;
-      const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
-        .setLngLat(fromCoords)
-        .addTo(map.current);
-      markersRef.current.push(originMarker);
-    }
-
-    // Add destination label only (no dot/ripple)
-    if (toName) {
-      const destEl = document.createElement('div');
-      destEl.className = 'mapbox-marker-label-only';
-      destEl.innerHTML = `<div class="mapbox-marker-label">${toName}</div>`;
-      const destMarker = new mapboxgl.Marker({ element: destEl, anchor: 'center' })
-        .setLngLat(toCoords)
-        .addTo(map.current);
-      markersRef.current.push(destMarker);
-    }
-
-    // Fit to bounds with appropriate padding
-    const padding = isExpanded ? 80 : 40;
-    map.current.fitBounds(bounds, {
-      padding,
-      maxZoom: isExpanded ? 8 : 6,
-    });
-
   }, [coordsVersion, isMapLoaded, fromZip, toZip, isExpanded]);
 
   const fromCoords = fromCoordsRef.current;
