@@ -667,12 +667,12 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
         markersRef.current.push(destMarker);
       }
 
-      // Fit to bounds with appropriate padding - zoom in more to see route clearly
-      const padding = isExpanded ? 100 : 60;
+      // Fit to bounds with appropriate padding - zoom in more to see roadways clearly
+      const padding = isExpanded ? 120 : 80;
       map.current?.fitBounds(bounds, {
         padding,
-        maxZoom: isExpanded ? 10 : 8,
-        minZoom: 4,
+        maxZoom: isExpanded ? 12 : 10,
+        minZoom: 5,
       });
       
       setIsLoading(false);

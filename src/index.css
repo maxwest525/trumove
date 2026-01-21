@@ -2277,19 +2277,20 @@
 
 .mapbox-marker-label {
   position: absolute;
-  top: -24px;
+  top: -28px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   background: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  box-shadow: 0 1px 4px hsl(var(--tm-ink) / 0.15);
+  padding: 4px 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.2);
   white-space: nowrap;
+  pointer-events: none;
 }
 
 /* Map stats overlay */
