@@ -41,45 +41,48 @@ interface LocationAutocompleteProps {
   showGeolocation?: boolean; // Show "Use my location" button
 }
 
-// Mapbox Geocoding v6 API for verified street addresses
+// Mapbox Address Autofill API for verified street addresses
 async function searchMapboxAddresses(query: string): Promise<LocationSuggestion[]> {
   try {
     const res = await fetch(
-      `https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(query)}&types=address&country=us&limit=5&access_token=${MAPBOX_TOKEN}`,
+      `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&types=address&country=us&language=en&limit=5&access_token=${MAPBOX_TOKEN}`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return [];
     
     const data = await res.json();
-    return (data.features || []).map((feature: any) => {
-      const props = feature.properties;
-      const context = props.context || {};
+    return (data.suggestions || []).map((s: any) => {
+      // Mapbox suggest returns: name (street), full_address (complete), place_formatted (city, state, country)
+      const streetName = s.name || ''; // e.g., "123 Main Street"
+      const fullAddr = s.full_address || ''; // e.g., "123 Main Street, New York, NY 10001, United States"
       
-      // Extract components from Geocoding v6 response
-      const streetAddress = props.name || '';
-      const city = context.place?.name || '';
-      const state = context.region?.region_code || '';
-      const zip = context.postcode?.name || '';
-      const fullAddr = props.full_address || `${streetAddress}, ${city}, ${state} ${zip}`;
+      // Parse from full_address: "123 Main St, New York, NY 10001, United States"
+      const parts = fullAddr.split(', ');
+      const streetAddress = parts[0] || streetName;
+      const city = parts.length >= 3 ? parts[1] : '';
+      
+      // Extract state and zip from "NY 10001" pattern
+      const stateZipPart = parts.length >= 3 ? parts[parts.length - 2] : '';
+      const stateZipMatch = stateZipPart.match(/^([A-Z]{2})\s*(\d{5})?$/);
+      const state = stateZipMatch?.[1] || '';
+      const zip = stateZipMatch?.[2] || '';
+      
+      // Display the full address without "United States"
       const displayAddr = fullAddr.replace(', United States', '');
       
-      // Street-level verification: must have actual street address, not just city/ZIP
-      const hasStreet = streetAddress && 
-        streetAddress.length > 0 && 
-        !streetAddress.match(/^\d{5}$/) && 
-        streetAddress !== city &&
-        /\d/.test(streetAddress); // Must contain a number (house number)
+      // Check if this has a street address component (not just city/state)
+      const hasStreet = streetName && !streetName.match(/^\d{5}$/) && streetName !== city;
       
       return {
         streetAddress,
         city,
         state,
         zip,
-        display: displayAddr,
+        display: displayAddr, // Show full street address in dropdown
         fullAddress: fullAddr,
-        isVerified: hasStreet,
-        validationLevel: hasStreet ? 'verified' : 'partial' as ValidationLevel,
-        mapboxId: feature.id,
+        isVerified: false, // Will be verified after retrieve
+        validationLevel: hasStreet ? null : 'partial' as ValidationLevel,
+        mapboxId: s.mapbox_id,
       };
     });
   } catch {
@@ -399,8 +402,24 @@ export default function LocationAutocomplete({
   };
 
   const handleSelect = async (suggestion: LocationSuggestion) => {
-    // Geocoding v6 already provides complete verified data - no need for retrieve call
-    const finalSuggestion = suggestion;
+    let finalSuggestion = suggestion;
+    const originalInput = value.trim();
+    
+    // If this is a Mapbox suggestion with an ID, retrieve the full verified address
+    if (suggestion.mapboxId && mode === 'address') {
+      const verified = await retrieveMapboxAddress(suggestion.mapboxId);
+      if (verified) {
+        finalSuggestion = verified;
+        
+        // Check if Mapbox standardized the address differently
+        const originalStreet = originalInput.split(',')[0]?.toLowerCase().trim();
+        const verifiedStreet = verified.streetAddress?.toLowerCase().trim();
+        if (originalStreet && verifiedStreet && originalStreet !== verifiedStreet) {
+          // Show correction suggestion if addresses differ
+          setCorrectionSuggestion(verified.fullAddress.replace(', United States', ''));
+        }
+      }
+    }
     
     const displayText = finalSuggestion.fullAddress?.replace(', United States', '') || 
       (finalSuggestion.streetAddress 

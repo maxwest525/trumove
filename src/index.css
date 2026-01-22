@@ -323,32 +323,14 @@
   align-self: stretch;
 }
 
-/* Sidebar top: Summary Card + Nav stacked vertically */
+/* Top row: Summary Card + Nav side by side */
 .tru-hero-sidebar-top {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-end;
+  flex-direction: row;
+  gap: 16px;
+  align-items: stretch;
   height: 320px;
   flex-shrink: 0;
-}
-
-/* Summary card - top portion, keep original vertical bar style */
-.tru-hero-sidebar-top .tru-floating-summary-card {
-  height: 180px;
-  min-height: 180px;
-  max-height: 180px;
-  width: auto;
-  min-width: 180px;
-  max-width: 200px;
-}
-
-/* FloatingNav wrapper - bottom portion */
-.tru-hero-sidebar-top .tru-floating-nav-wrapper {
-  flex: 1;
-  width: 52px;
-  position: relative;
-  align-self: flex-end;
 }
 
 /* Map row: grows to fill remaining space and align with form bottom */
@@ -11775,12 +11757,12 @@
 /* ========================================
    FLOATING NAVIGATION BAR
    ======================================== */
-/* Wrapper for vertical nav in stacked sidebar */
+/* Wrapper to maintain fixed flex space while nav expands */
 .tru-hero-sidebar-top .tru-floating-nav-wrapper {
-  flex: 1;
+  flex: 0 0 52px;
   width: 52px;
   position: relative;
-  align-self: flex-end;
+  align-self: stretch;
 }
 
 .tru-floating-nav-wrapper {
@@ -11790,7 +11772,7 @@
   align-self: flex-start;
 }
 
-/* Floating Nav - Default vertical pill style */
+/* Floating Nav - Matches Move Summary pill style */
 .tru-floating-nav {
   position: absolute;
   top: 0;
@@ -11815,7 +11797,7 @@
   justify-content: space-between;
 }
 
-/* Expand on hover to show labels (vertical mode only) */
+/* Expand on hover to show labels */
 .tru-floating-nav:hover {
   width: 170px;
 }
@@ -11867,7 +11849,7 @@
   transition: opacity 0.2s ease;
 }
 
-/* Show labels when nav is hovered (vertical mode) */
+/* Show labels when nav is hovered */
 .tru-floating-nav:hover .tru-floating-nav-label {
   opacity: 1;
 }
