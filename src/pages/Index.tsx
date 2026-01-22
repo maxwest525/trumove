@@ -400,7 +400,8 @@ export default function Index() {
             <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
               {/* TOP ROW: Form Card */}
               <div className="tru-floating-form-card">
-                {/* Progress Bar with Step Indicator */}
+                {/* Form Header - Logo + Skip Button */}
+                {/* Progress Bar */}
                 <div className="tru-form-progress-bar">
                   <div 
                     className="tru-form-progress-fill" 
@@ -414,10 +415,6 @@ export default function Index() {
                     <span className="tru-qb-form-title">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
                     <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
                   </div>
-                  {/* Step Indicator Badge */}
-                  <div className="tru-step-indicator">
-                    <span className="tru-step-indicator-text">Step {step} of 3</span>
-                  </div>
                 </div>
 
                 {/* Form Content */}
@@ -428,7 +425,6 @@ export default function Index() {
                     <div className="tru-qb-step-content" key="step-1">
                       <h1 className="tru-qb-question tru-qb-question-decorated">Where's your move?</h1>
                       <p className="tru-qb-subtitle">Enter your route and we'll find your best carrier matches</p>
-                      <p className="tru-qb-agent-hint">A TruMove specialist will finalize pricing</p>
                       
                       {/* FROM + TO Row - Side by Side */}
                       <div className="tru-qb-location-row">
@@ -511,9 +507,8 @@ export default function Index() {
                   {/* Step 2: Move Size + Property Type */}
                   {step === 2 && (
                     <div className="tru-qb-step-content" key="step-2">
-                      <h1 className="tru-qb-question">Tell us about your home</h1>
-                      <p className="tru-qb-subtitle">This helps us estimate weight, crew size, and timing</p>
-                      <p className="tru-qb-agent-hint">Talk to a licensed moving advisor</p>
+                      <h1 className="tru-qb-question">What size is your current home?</h1>
+                      <p className="tru-qb-subtitle">This helps us estimate weight and crew size</p>
                       
                       <div className="tru-qb-size-grid">
                         {MOVE_SIZES.map((s) => (
@@ -614,8 +609,8 @@ export default function Index() {
                   {/* Step 3: Contact - Simplified Lead Capture */}
                   {step === 3 && !submitted && (
                     <form className="tru-qb-step-content tru-qb-step-compact" key="step-3" onSubmit={handleSubmit}>
-                      <h1 className="tru-qb-question">Get Your Personalized Move Summary</h1>
-                      <p className="tru-qb-subtitle">A TruMove specialist will review your details and reach out within 1 business day</p>
+                      <h1 className="tru-qb-question">Almost done! How can we reach you?</h1>
+                      <p className="tru-qb-subtitle">We'll call you within 1 business day to finalize your quote</p>
                       
                       <div className="tru-qb-contact-fields">
                         <div className="tru-qb-input-wrap tru-qb-glow-always">
@@ -652,16 +647,9 @@ export default function Index() {
                         <p className="tru-qb-error">{formError}</p>
                       )}
 
-                      {/* Trust Signals */}
-                      <div className="tru-qb-trust-signals">
-                        <span className="tru-qb-trust-signal"><ShieldCheck className="w-3.5 h-3.5" /> Federally regulated carriers</span>
-                        <span className="tru-qb-trust-signal"><Lock className="w-3.5 h-3.5" /> No spam, no reselling</span>
-                        <span className="tru-qb-trust-signal"><Shield className="w-3.5 h-3.5" /> Licensed & bonded broker</span>
-                      </div>
-
                       <button
                         type="submit"
-                        className="tru-qb-continue tru-engine-btn tru-engine-btn-elevated"
+                        className="tru-qb-continue tru-engine-btn"
                         onClick={(e) => { 
                           if (!canContinue()) {
                             e.preventDefault();
@@ -679,88 +667,55 @@ export default function Index() {
                       </button>
 
                       <p className="tru-qb-disclaimer-bottom">
-                        Estimates are informational only. <Lock className="w-3 h-3 inline" /> Secure & never sold.
+                        By submitting, you agree we may contact you. <Lock className="w-3 h-3 inline" /> Secure & never sold.
                       </p>
                     </form>
                   )}
 
-                  {/* Post-Submission Confirmation - Premium Engagement Layer */}
+                  {/* Post-Submission Confirmation */}
                   {step === 3 && submitted && (
                     <div className="tru-qb-step-content tru-qb-confirmation" key="step-confirmed">
                       <div className="tru-qb-confirmation-icon">
                         <CheckCircle className="w-12 h-12" />
                       </div>
-                      <h1 className="tru-qb-question">Your move is being prepared</h1>
+                      <h1 className="tru-qb-question">Request received!</h1>
                       <p className="tru-qb-subtitle">
-                        A dedicated TruMove specialist will review every detail and reach out within 1 business day.
+                        A TruMove specialist will call you within 1 business day to review your move and answer any questions.
                       </p>
                       
                       <div className="tru-qb-confirmation-divider">
-                        <span>Continue with next steps</span>
+                        <span>While you wait, you can:</span>
                       </div>
                       
-                      {/* 4 Feature Cards - 2x2 Grid */}
-                      <div className="tru-qb-engagement-grid">
+                      <div className="tru-qb-options-row">
                         <button 
                           type="button" 
-                          className="tru-qb-engagement-card"
-                          onClick={() => window.location.href = 'tel:+16097277647'}
-                        >
-                          <div className="tru-qb-engagement-icon">
-                            <Phone className="w-5 h-5" />
-                          </div>
-                          <div className="tru-qb-engagement-text">
-                            <span className="tru-qb-engagement-title">Call Now</span>
-                            <span className="tru-qb-engagement-desc">Speak with a specialist</span>
-                          </div>
-                        </button>
-                        
-                        <button 
-                          type="button" 
-                          className="tru-qb-engagement-card"
-                          onClick={() => navigate("/book")}
-                        >
-                          <div className="tru-qb-engagement-icon">
-                            <Video className="w-5 h-5" />
-                          </div>
-                          <div className="tru-qb-engagement-text">
-                            <span className="tru-qb-engagement-title">Video Consult</span>
-                            <span className="tru-qb-engagement-desc">Schedule a walkthrough</span>
-                          </div>
-                        </button>
-                        
-                        <button 
-                          type="button" 
-                          className="tru-qb-engagement-card"
-                          onClick={() => setChatOpen(true)}
-                        >
-                          <div className="tru-qb-engagement-icon">
-                            <Sparkles className="w-5 h-5" />
-                          </div>
-                          <div className="tru-qb-engagement-text">
-                            <span className="tru-qb-engagement-title">AI Chat</span>
-                            <span className="tru-qb-engagement-desc">Ask questions instantly</span>
-                          </div>
-                        </button>
-                        
-                        <button 
-                          type="button" 
-                          className="tru-qb-engagement-card tru-qb-engagement-card-featured"
+                          className="tru-qb-option-card"
                           onClick={() => navigate("/online-estimate")}
                         >
-                          <div className="tru-qb-engagement-icon">
-                            <Boxes className="w-5 h-5" />
+                          <Sparkles className="w-5 h-5" />
+                          <div className="tru-qb-option-text">
+                            <span className="tru-qb-option-title">AI Estimator</span>
+                            <span className="tru-qb-option-desc">Build your inventory</span>
                           </div>
-                          <div className="tru-qb-engagement-text">
-                            <span className="tru-qb-engagement-title">Build Inventory</span>
-                            <span className="tru-qb-engagement-desc">Improve accuracy</span>
+                        </button>
+                        <button 
+                          type="button" 
+                          className="tru-qb-option-card"
+                          onClick={() => navigate("/book")}
+                        >
+                          <Video className="w-5 h-5" />
+                          <div className="tru-qb-option-text">
+                            <span className="tru-qb-option-title">Video Consult</span>
+                            <span className="tru-qb-option-desc">Schedule a walkthrough</span>
                           </div>
                         </button>
                       </div>
                       
-                      <p className="tru-qb-confirmation-footer">
-                        Your dedicated specialist will review every detail
-                      </p>
+                      <a href="tel:+16097277647" className="tru-qb-call-link">
+                        <Phone className="w-4 h-4" />
+                        <span>Or call us now: (609) 727-7647</span>
+                      </a>
                     </div>
                   )}
                 </div>

@@ -129,7 +129,7 @@
 }
 
 /* =============================================
-   SPLIT HERO LAYOUT - Premium Dark Background
+   SPLIT HERO LAYOUT - Homepage
    ============================================= */
 .tru-hero.tru-hero-split {
   display: grid;
@@ -139,32 +139,6 @@
   padding: 60px 48px 80px;
   max-width: 1480px;
   margin: 0 auto;
-  position: relative;
-}
-
-/* Dark premium background for hero */
-.tru-hero.tru-hero-split::before {
-  content: '';
-  position: absolute;
-  inset: -60px -100vw -80px -100vw;
-  background: linear-gradient(180deg, 
-    hsl(222 47% 8%) 0%, 
-    hsl(222 40% 11%) 50%,
-    hsl(222 35% 14%) 100%
-  );
-  z-index: -2;
-}
-
-/* Subtle grid pattern overlay */
-.tru-hero.tru-hero-split::after {
-  content: '';
-  position: absolute;
-  inset: -60px -100vw -80px -100vw;
-  background-image: 
-    radial-gradient(hsl(var(--primary) / 0.03) 1px, transparent 1px);
-  background-size: 32px 32px;
-  z-index: -1;
-  pointer-events: none;
 }
 
 /* LEFT PANEL: Value Proposition */
@@ -202,13 +176,13 @@
   font-size: clamp(36px, 5vw, 56px);
   font-weight: 800;
   line-height: 1.1;
-  color: hsl(0 0% 100%);
+  color: hsl(var(--tm-ink));
   letter-spacing: -0.03em;
   margin-bottom: 20px;
 }
 
 .tru-hero-headline-accent {
-  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(150 80% 50%) 100%);
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(150 80% 40%) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -217,7 +191,7 @@
 .tru-hero-subheadline {
   font-size: 18px;
   line-height: 1.6;
-  color: hsl(0 0% 100% / 0.7);
+  color: hsl(var(--tm-ink) / 0.7);
   margin-bottom: 36px;
 }
 
@@ -268,18 +242,16 @@
   align-items: flex-start;
   gap: 16px;
   padding: 16px 20px;
-  background: hsl(0 0% 100% / 0.05);
-  border: 1px solid hsl(0 0% 100% / 0.1);
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
   border-radius: 16px;
   transition: all 0.2s ease;
-  backdrop-filter: blur(8px);
 }
 
 .tru-hero-value-prop:hover {
-  border-color: hsl(var(--primary) / 0.4);
-  box-shadow: 0 4px 20px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.3);
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.1);
   transform: translateX(4px);
-  background: hsl(0 0% 100% / 0.08);
 }
 
 .tru-hero-value-icon {
@@ -288,7 +260,7 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: hsl(var(--primary) / 0.15);
+  background: hsl(var(--primary) / 0.1);
   border-radius: 12px;
   flex-shrink: 0;
 }
@@ -306,12 +278,12 @@
 .tru-hero-value-title {
   font-size: 15px;
   font-weight: 700;
-  color: hsl(0 0% 100%);
+  color: hsl(var(--tm-ink));
 }
 
 .tru-hero-value-desc {
   font-size: 13px;
-  color: hsl(0 0% 100% / 0.6);
+  color: hsl(var(--tm-ink) / 0.6);
   line-height: 1.4;
 }
 
@@ -585,33 +557,15 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 20% 98%) 100%);
-  border: 2px solid hsl(0 0% 100% / 0.2);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 24px;
   box-shadow: 
-    0 0 0 1px hsl(var(--primary) / 0.1),
-    0 4px 20px hsl(var(--primary) / 0.08),
-    0 12px 40px hsl(222 47% 11% / 0.25),
-    0 24px 80px hsl(222 47% 11% / 0.35);
+    0 1px 2px hsl(var(--tm-ink) / 0.03),
+    0 4px 8px hsl(var(--tm-ink) / 0.04),
+    0 12px 24px hsl(var(--tm-ink) / 0.06),
+    0 24px 48px hsl(var(--tm-ink) / 0.08);
   overflow: hidden;
-  animation: form-card-glow 3s ease-out;
-}
-
-@keyframes form-card-glow {
-  0% {
-    box-shadow: 
-      0 0 0 2px hsl(var(--primary) / 0.4),
-      0 0 40px hsl(var(--primary) / 0.3),
-      0 4px 20px hsl(var(--primary) / 0.15),
-      0 12px 40px hsl(222 47% 11% / 0.25);
-  }
-  100% {
-    box-shadow: 
-      0 0 0 1px hsl(var(--primary) / 0.1),
-      0 4px 20px hsl(var(--primary) / 0.08),
-      0 12px 40px hsl(222 47% 11% / 0.25),
-      0 24px 80px hsl(222 47% 11% / 0.35);
-  }
 }
 
 /* Summary Value Update Animation */
@@ -640,35 +594,6 @@
   min-height: 180px;
   flex: 1;
   gap: 6px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Step Transition Animations */
-@keyframes step-slide-in-right {
-  0% {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes step-slide-out-left {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-}
-
-.tru-qb-step-content {
-  animation: step-slide-in-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tru-floating-form-footer {
@@ -692,13 +617,12 @@
   opacity: 0.6;
 }
 
-/* Form Progress Bar - Enhanced with shimmer */
+/* Form Progress Bar */
 .tru-form-progress-bar {
   height: 4px;
   background: hsl(var(--tm-ink) / 0.08);
   border-radius: 4px 4px 0 0;
   overflow: hidden;
-  position: relative;
 }
 
 .tru-form-progress-fill {
@@ -706,28 +630,6 @@
   background: linear-gradient(90deg, hsl(var(--primary)), hsl(160 80% 45%));
   border-radius: 0;
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-.tru-form-progress-fill::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    hsl(0 0% 100% / 0.4) 50%,
-    transparent 100%
-  );
-  animation: progress-shimmer 2s ease-in-out infinite;
-}
-
-@keyframes progress-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
 }
 
 /* Trust Footer Styling - Regulatory Style */
@@ -1222,174 +1124,6 @@
 
 .tru-qb-call-link svg {
   color: hsl(var(--primary));
-}
-
-/* =============================================
-   STEP INDICATOR BADGE
-   ============================================= */
-.tru-step-indicator {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  background: hsl(var(--primary) / 0.1);
-  border: 1px solid hsl(var(--primary) / 0.2);
-  border-radius: 100px;
-}
-
-.tru-step-indicator-text {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  color: hsl(var(--primary) / 0.9);
-}
-
-/* =============================================
-   AGENT CONDITIONING HINTS
-   ============================================= */
-.tru-qb-agent-hint {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: hsl(var(--tm-ink) / 0.03);
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.5);
-  margin-bottom: 8px;
-}
-
-/* =============================================
-   TRUST SIGNALS (Step 3)
-   ============================================= */
-.tru-qb-trust-signals {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin: 12px 0;
-}
-
-.tru-qb-trust-signal {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.55);
-}
-
-.tru-qb-trust-signal svg {
-  color: hsl(var(--primary) / 0.7);
-}
-
-/* =============================================
-   ELEVATED CTA BUTTON (Step 3)
-   ============================================= */
-.tru-engine-btn.tru-engine-btn-elevated {
-  transform: scale(1.02);
-  box-shadow: 
-    0 0 0 2px hsl(var(--primary) / 0.2),
-    0 8px 32px hsl(var(--primary) / 0.3),
-    inset 0 1px 0 hsl(0 0% 100% / 0.2);
-}
-
-.tru-engine-btn.tru-engine-btn-elevated:hover:not(:disabled) {
-  transform: scale(1.02) translateY(-3px);
-  box-shadow: 
-    0 0 0 2px hsl(var(--primary) / 0.3),
-    0 12px 40px hsl(var(--primary) / 0.4),
-    inset 0 1px 0 hsl(0 0% 100% / 0.25);
-}
-
-/* =============================================
-   ENGAGEMENT GRID (Post-Submit 2x2)
-   ============================================= */
-.tru-qb-engagement-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  width: 100%;
-  max-width: 380px;
-  margin: 0 auto;
-}
-
-.tru-qb-engagement-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: hsl(0 0% 100%);
-  border: 1px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-}
-
-.tru-qb-engagement-card:hover {
-  border-color: hsl(var(--primary) / 0.4);
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.15);
-  transform: translateY(-2px);
-}
-
-.tru-qb-engagement-card.tru-qb-engagement-card-featured {
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--primary) / 0.03));
-  border-color: hsl(var(--primary) / 0.25);
-}
-
-.tru-qb-engagement-card.tru-qb-engagement-card-featured:hover {
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.12), hsl(var(--primary) / 0.06));
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 6px 20px hsl(var(--primary) / 0.2);
-}
-
-.tru-qb-engagement-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: hsl(var(--primary) / 0.1);
-  border-radius: 10px;
-  flex-shrink: 0;
-}
-
-.tru-qb-engagement-icon svg {
-  color: hsl(var(--primary));
-}
-
-.tru-qb-engagement-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.tru-qb-engagement-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-}
-
-.tru-qb-engagement-desc {
-  font-size: 11px;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.55);
-}
-
-/* Confirmation Footer Text */
-.tru-qb-confirmation-footer {
-  margin-top: 16px;
-  font-size: 12px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.45);
-  text-align: center;
 }
 
 /* =============================================
