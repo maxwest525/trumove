@@ -31,13 +31,19 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
   };
 
   return (
-    <div className="space-y-4">
-      <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground">
-        Your move inventory
+    <div className="rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
+      {/* Header - Enlarged and Centered */}
+      <div className="tru-summary-header-large border-b border-border/40">
+        <div className="text-center flex-1">
+          <h3 className="text-lg font-black text-foreground">
+            Your Move <span className="tru-qb-title-accent">Inventory</span>
+          </h3>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{items.length} items added</p>
+        </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-border/60 bg-card">
+      <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border/40 bg-muted/30">
@@ -59,7 +65,25 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
             ) : (
               items.map((item) => (
                 <tr key={item.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
-                  <td className="px-4 py-3 font-medium text-foreground">{item.name}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      {/* 20x20 thumbnail */}
+                      <div className="w-5 h-5 flex-shrink-0 rounded overflow-hidden bg-muted/50">
+                        {item.imageUrl ? (
+                          <img 
+                            src={item.imageUrl} 
+                            alt={item.name} 
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-[8px] text-muted-foreground">📦</span>
+                          </div>
+                        )}
+                      </div>
+                      <span className="font-medium text-foreground">{item.name}</span>
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground">{item.room}</td>
                   <td className="px-4 py-3 text-center">
                     <input
@@ -100,51 +124,53 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="p-4 rounded-xl border border-border/60 bg-card">
-          <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-1">Total items</div>
-          <div className="text-2xl font-black text-foreground">{items.length}</div>
+      <div className="p-4 border-t border-border/40">
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
+            <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-1">Total items</div>
+            <div className="text-xl font-black text-foreground">{items.length}</div>
+          </div>
+          <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
+            <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-1">Total weight</div>
+            <div className="text-xl font-black text-foreground">{totalWeight.toLocaleString()} lbs</div>
+          </div>
+          <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
+            <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-1">Move size</div>
+            <div className="text-base font-bold text-foreground">{moveSize}</div>
+          </div>
         </div>
-        <div className="p-4 rounded-xl border border-border/60 bg-card">
-          <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-1">Estimated total weight</div>
-          <div className="text-2xl font-black text-foreground">{totalWeight.toLocaleString()} lbs</div>
-        </div>
-        <div className="p-4 rounded-xl border border-border/60 bg-card">
-          <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-1">Estimated move size</div>
-          <div className="text-lg font-bold text-foreground">{moveSize}</div>
-        </div>
-      </div>
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={handlePrint}
-          disabled={items.length === 0}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card text-sm font-semibold text-foreground hover:bg-muted/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Printer className="w-4 h-4" />
-          Print inventory
-        </button>
-        <button
-          type="button"
-          onClick={handleDownload}
-          disabled={items.length === 0}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card text-sm font-semibold text-foreground hover:bg-muted/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Download className="w-4 h-4" />
-          Download as PDF
-        </button>
-        {items.length > 0 && (
+        {/* Actions */}
+        <div className="flex flex-wrap gap-3">
           <button
             type="button"
-            onClick={onClear}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-destructive hover:bg-destructive/10 transition-all"
+            onClick={handlePrint}
+            disabled={items.length === 0}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card text-sm font-semibold text-foreground hover:bg-muted/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Trash2 className="w-4 h-4" />
-            Clear all
+            <Printer className="w-4 h-4" />
+            Print inventory
           </button>
-        )}
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={items.length === 0}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card text-sm font-semibold text-foreground hover:bg-muted/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Download className="w-4 h-4" />
+            Download as PDF
+          </button>
+          {items.length > 0 && (
+            <button
+              type="button"
+              onClick={onClear}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-destructive hover:bg-destructive/10 transition-all"
+            >
+              <Trash2 className="w-4 h-4" />
+              Clear all
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
