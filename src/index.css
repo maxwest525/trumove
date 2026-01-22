@@ -12204,6 +12204,30 @@
 }
 
 /* =============================================
+   INVENTORY UNLOCK ANIMATION
+   ============================================= */
+
+@keyframes unlock-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px hsl(var(--primary) / 0.2),
+      0 0 40px hsl(var(--primary) / 0.1);
+    border-color: hsl(var(--primary) / 0.5);
+  }
+  50% {
+    box-shadow: 
+      0 0 40px hsl(var(--primary) / 0.4),
+      0 0 80px hsl(var(--primary) / 0.2);
+    border-color: hsl(var(--primary));
+  }
+}
+
+.tru-inventory-unlocked {
+  animation: unlock-glow 0.8s ease-in-out 3;
+  border-color: hsl(var(--primary) / 0.5) !important;
+}
+
+/* =============================================
    INLINE MOVE SUMMARY
    ============================================= */
 
