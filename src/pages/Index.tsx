@@ -19,7 +19,7 @@ import {
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown, Scan
+  Home, Building2, MoveVertical, ArrowUpDown, Scan, Brain
 } from "lucide-react";
 
 // ZIP lookup
@@ -347,47 +347,36 @@ export default function Index() {
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
                 <h1 className="tru-hero-headline-main">
-                  Get matched with vetted carriers<br />
-                  <span className="tru-hero-headline-accent">who actually care.</span>
+                  Smarter moving<br />
+                  <span className="tru-hero-headline-accent">starts here.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
-                  Skip the mega van lines. We connect you with small, family-owned movers — 
-                  all FMCSA verified, all reputation-monitored, all matched to your exact route.
+                  Access trusted carriers you wouldn't normally find, and plan your move with 
+                  intelligent routing, virtual inventory, and full transparency from start to finish.
                 </p>
+                
+                {/* Compact Value Pills */}
+                <div className="tru-hero-value-pills">
+                  <span className="tru-value-pill">
+                    <Shield className="tru-value-pill-icon" />
+                    FMCSA Verified
+                  </span>
+                  <span className="tru-value-pill">
+                    <Brain className="tru-value-pill-icon" />
+                    AI Inventory
+                  </span>
+                  <span className="tru-value-pill">
+                    <Route className="tru-value-pill-icon" />
+                    Smart Routing
+                  </span>
+                  <span className="tru-value-pill">
+                    <Video className="tru-value-pill-icon" />
+                    Video Consults
+                  </span>
+                </div>
                 
                 {/* Value Props Container - Map overlays this section */}
                 <div className="tru-hero-value-props-container">
-                  {/* Value Props - Real Differentiators */}
-                  <div className={`tru-hero-value-props ${fromCity ? 'is-hidden' : ''}`}>
-                    <div className="tru-hero-value-prop">
-                      <div className="tru-hero-value-icon">
-                        <Shield className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-value-text">
-                        <span className="tru-hero-value-title">4-Stage Carrier Vetting</span>
-                        <span className="tru-hero-value-desc">FMCSA licensed, insurance verified, live scoring on every job</span>
-                      </div>
-                    </div>
-                    <div className="tru-hero-value-prop">
-                      <div className="tru-hero-value-icon">
-                        <Users className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-value-text">
-                        <span className="tru-hero-value-title">Small, Family-Owned Movers</span>
-                        <span className="tru-hero-value-desc">No mega van lines — real carriers who treat your move like their own</span>
-                      </div>
-                    </div>
-                    <div className="tru-hero-value-prop">
-                      <div className="tru-hero-value-icon">
-                        <Headphones className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-value-text">
-                        <span className="tru-hero-value-title">Personal Agent Guidance</span>
-                        <span className="tru-hero-value-desc">A real person walks you through every step — no call centers</span>
-                      </div>
-                    </div>
-                  </div>
-                  
                   {/* Map Overlay - appears when first ZIP validated */}
                   <div className={`tru-hero-map-overlay ${fromCity ? 'is-active' : ''}`}>
                     <MapboxMoveMap fromZip={fromZip} toZip={toZip} visible={!!fromCity} />
