@@ -27,6 +27,9 @@ export default function Footer() {
           <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/terms">
             Terms
           </Link>
+          <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/auth">
+            Sign In
+          </Link>
         </div>
       </div>
     </footer>
