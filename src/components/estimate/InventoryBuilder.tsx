@@ -300,8 +300,8 @@ export default function InventoryBuilder({
               className={cn(
                 "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all",
                 isActive 
-                  ? "bg-primary text-primary-foreground shadow-md" 
-                  : "hover:bg-muted/60 text-foreground/70 hover:text-foreground"
+                  ? "border-2 border-primary bg-primary/10 text-primary shadow-sm" 
+                  : "border-2 border-transparent hover:bg-muted/60 text-foreground/70 hover:text-foreground"
               )}
             >
               <Icon className="w-4 h-4 flex-shrink-0" />
@@ -309,7 +309,7 @@ export default function InventoryBuilder({
               {count > 0 && (
                 <span className={cn(
                   "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
-                  isActive ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground"
+                  isActive ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
                 )}>
                   {count}
                 </span>
@@ -417,7 +417,7 @@ export default function InventoryBuilder({
                     className={cn(
                       "p-1.5 rounded-md transition-all",
                       viewMode === 'grid' 
-                        ? "bg-primary text-primary-foreground shadow-sm" 
+                        ? "border border-primary bg-primary/10 text-primary shadow-sm" 
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
@@ -429,7 +429,7 @@ export default function InventoryBuilder({
                     className={cn(
                       "p-1.5 rounded-md transition-all",
                       viewMode === 'list' 
-                        ? "bg-primary text-primary-foreground shadow-sm" 
+                        ? "border border-primary bg-primary/10 text-primary shadow-sm" 
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
@@ -544,7 +544,7 @@ export default function InventoryBuilder({
                           className={cn(
                             "w-7 h-7 rounded-lg text-xs font-semibold transition-all",
                             page === currentPage 
-                              ? "bg-primary text-primary-foreground" 
+                              ? "border-2 border-primary bg-primary/10 text-primary" 
                               : "text-muted-foreground hover:bg-muted hover:text-foreground"
                           )}
                         >
@@ -617,27 +617,29 @@ interface ItemCardProps {
 function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon, isAnimating }: ItemCardProps) {
   return (
     <div className={cn(
-      "flex flex-col p-3 rounded-xl border transition-all",
+      "group flex flex-col p-3 rounded-xl border transition-all",
       quantity > 0 
         ? "border-primary/40 bg-primary/5 shadow-sm" 
         : "border-border/60 bg-card hover:border-primary/20",
       isAnimating && "tru-item-just-added"
     )}>
-      {/* Item Image or Icon */}
+      {/* Item Image or Icon - with hover zoom */}
       <div className={cn(
         "w-full h-48 rounded-lg flex items-center justify-center mb-2 overflow-hidden",
         quantity > 0 ? "bg-primary/10" : "bg-muted/30"
       )}>
-        <InventoryItemImage
-          src={item.imageUrl}
-          alt={item.name}
-          fallbackIcon={Icon}
-          className="w-[180px] h-[180px]"
-          iconClassName={cn(
-            "!w-16 !h-16",
-            quantity > 0 ? "text-primary" : "text-muted-foreground/60"
-          )}
-        />
+        <div className="transition-transform duration-300 ease-out group-hover:scale-110">
+          <InventoryItemImage
+            src={item.imageUrl}
+            alt={item.name}
+            fallbackIcon={Icon}
+            className="w-[180px] h-[180px]"
+            iconClassName={cn(
+              "!w-16 !h-16",
+              quantity > 0 ? "text-primary" : "text-muted-foreground/60"
+            )}
+          />
+        </div>
       </div>
       
       {/* Item Name */}
@@ -679,7 +681,7 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
         <button
           type="button"
           onClick={onAdd}
-          className="w-7 h-7 rounded-full border-2 border-foreground/20 bg-card text-foreground flex items-center justify-center hover:border-foreground/40 hover:bg-muted transition-all"
+          className="w-7 h-7 rounded-full border-2 border-primary/40 bg-card text-primary flex items-center justify-center hover:border-primary hover:bg-primary/10 transition-all"
         >
           <Plus className="w-3.5 h-3.5" />
         </button>
@@ -702,27 +704,29 @@ interface ItemListRowProps {
 function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon, isAnimating }: ItemListRowProps) {
   return (
     <div className={cn(
-      "flex items-center gap-3 p-3 rounded-xl border transition-all",
+      "group flex items-center gap-3 p-3 rounded-xl border transition-all",
       quantity > 0 
         ? "border-primary/40 bg-primary/5 shadow-sm" 
         : "border-border/60 bg-card hover:border-primary/20",
       isAnimating && "tru-item-just-added"
     )}>
-      {/* Item Image or Icon */}
+      {/* Item Image or Icon - with hover zoom */}
       <div className={cn(
-        "w-20 h-20 rounded-lg flex items-center justify-center flex-shrink-0",
+        "w-20 h-20 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden",
         quantity > 0 ? "bg-primary/10" : "bg-muted/40"
       )}>
-        <InventoryItemImage
-          src={item.imageUrl}
-          alt={item.name}
-          fallbackIcon={Icon}
-          className="w-[72px] h-[72px]"
-          iconClassName={cn(
-            "!w-10 !h-10",
-            quantity > 0 ? "text-primary" : "text-muted-foreground/60"
-          )}
-        />
+        <div className="transition-transform duration-300 ease-out group-hover:scale-110">
+          <InventoryItemImage
+            src={item.imageUrl}
+            alt={item.name}
+            fallbackIcon={Icon}
+            className="w-[72px] h-[72px]"
+            iconClassName={cn(
+              "!w-10 !h-10",
+              quantity > 0 ? "text-primary" : "text-muted-foreground/60"
+            )}
+          />
+        </div>
       </div>
       
       {/* Item Info */}
@@ -761,7 +765,7 @@ function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon, isAnimating 
         <button
           type="button"
           onClick={onAdd}
-          className="w-7 h-7 rounded-full border-2 border-foreground/20 bg-card text-foreground flex items-center justify-center hover:border-foreground/40 hover:bg-muted transition-all"
+          className="w-7 h-7 rounded-full border-2 border-primary/40 bg-card text-primary flex items-center justify-center hover:border-primary hover:bg-primary/10 transition-all"
         >
           <Plus className="w-3.5 h-3.5" />
         </button>
