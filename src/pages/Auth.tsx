@@ -91,14 +91,14 @@ export default function Auth() {
         ref={fieldRefs[field]}
         onClick={() => canApply && handleSign(field)}
         className={`
-          inline-flex items-center justify-center min-w-[3rem] px-2 h-6 border rounded
-          transition-all cursor-pointer mx-1 align-middle
+          inline-flex items-center justify-center min-w-[3.5rem] px-2 h-7 border-2 rounded
+          transition-all cursor-pointer mx-1.5 align-middle font-medium
           ${isSigned 
-            ? "border-foreground/30 bg-muted/20" 
+            ? "border-foreground/40 bg-muted/30" 
             : isActive && canApply
-              ? "border-foreground bg-muted/10 ring-1 ring-foreground/30" 
+              ? "border-foreground bg-muted/20 shadow-sm" 
               : canApply
-                ? "border-foreground/40 hover:border-foreground/60 border-dashed" 
+                ? "border-foreground/50 hover:border-foreground/70 hover:bg-muted/10" 
                 : "border-border bg-muted/10 cursor-not-allowed"
           }
         `}
@@ -106,13 +106,13 @@ export default function Auth() {
       >
         {isSigned ? (
           <span 
-            className="text-xs font-medium text-foreground"
+            className="text-sm font-medium text-foreground"
             style={{ fontFamily: "'Dancing Script', cursive" }}
           >
             {typedInitials}
           </span>
         ) : (
-          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+          <span className="text-[11px] text-foreground/60 uppercase tracking-wide">
             {isActive && canApply ? "click" : "initial"}
           </span>
         )}
@@ -268,11 +268,11 @@ export default function Auth() {
                 </div>
 
                 {/* Document Body */}
-                <div className="px-10 py-6 space-y-5 text-[13px] leading-relaxed text-foreground">
+                <div className="px-10 py-5 space-y-4 text-sm leading-relaxed text-foreground">
                   
                   {/* Section 1 */}
                   <section>
-                    <h2 className="font-bold text-[11px] text-foreground mb-2 uppercase tracking-wide">
+                    <h2 className="font-bold text-xs text-foreground mb-2 uppercase tracking-wide">
                       Section 1. Broker Disclosure
                     </h2>
                     
@@ -298,11 +298,9 @@ export default function Auth() {
                     </div>
                   </section>
 
-                  <Separator className="border-foreground/5" />
-
                   {/* Section 2 */}
                   <section>
-                    <h2 className="font-bold text-[11px] text-foreground mb-2 uppercase tracking-wide">
+                    <h2 className="font-bold text-xs text-foreground mb-2 uppercase tracking-wide">
                       Section 2. Estimate Terms
                     </h2>
                     
@@ -334,11 +332,9 @@ export default function Auth() {
                     </div>
                   </section>
 
-                  <Separator className="border-foreground/5" />
-
                   {/* Section 3 */}
                   <section>
-                    <h2 className="font-bold text-[11px] text-foreground mb-2 uppercase tracking-wide">
+                    <h2 className="font-bold text-xs text-foreground mb-2 uppercase tracking-wide">
                       Section 3. Additional Services & Charges
                     </h2>
                     
@@ -364,8 +360,6 @@ export default function Auth() {
                     </div>
                   </section>
 
-                  <Separator className="border-foreground/5" />
-
                   {/* Estimate Display - Compact */}
                   <section className="border border-foreground/15 rounded px-5 py-4 bg-muted/5">
                     <div className="flex items-center justify-between">
@@ -384,11 +378,9 @@ export default function Auth() {
                     </div>
                   </section>
 
-                  <Separator className="border-foreground/5" />
-
                   {/* Signature Block */}
-                  <section className="space-y-4 pt-2">
-                    <h2 className="font-bold text-[11px] text-foreground uppercase tracking-wide">
+                  <section className="space-y-3 pt-2">
+                    <h2 className="font-bold text-xs text-foreground uppercase tracking-wide">
                       Section 4. Authorization & Execution
                     </h2>
 
@@ -493,8 +485,9 @@ export default function Auth() {
                     <Button
                       onClick={handleSubmit}
                       disabled={!allSigned}
+                      variant="outline"
                       size="sm"
-                      className="gap-1.5 px-6 h-8"
+                      className="gap-1.5 px-6 h-8 border-foreground/30 hover:bg-foreground hover:text-background"
                     >
                       <Check className="h-3.5 w-3.5" />
                       Submit Authorization
