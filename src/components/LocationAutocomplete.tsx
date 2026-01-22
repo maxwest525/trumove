@@ -1,6 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { MapPin, Loader2, CheckCircle } from "lucide-react";
+import { MapPin, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Mapbox token (same as MoveMap)
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbTkycWc4dWYwZHdwMnFwdnZyanlM6XCog7Y0nrPt-5v-E2g';
 
 interface LocationSuggestion {
   streetAddress: string;
@@ -9,12 +12,14 @@ interface LocationSuggestion {
   zip: string;
   display: string;
   fullAddress: string;
+  isVerified?: boolean;
+  mapboxId?: string;
 }
 
 interface LocationAutocompleteProps {
   value: string;
   onValueChange: (value: string) => void;
-  onLocationSelect: (city: string, zip: string) => void;
+  onLocationSelect: (city: string, zip: string, fullAddress?: string, isVerified?: boolean) => void;
   placeholder?: string;
   autoFocus?: boolean;
   onKeyDown?: (e: React.KeyboardEvent) => void;
@@ -22,43 +27,71 @@ interface LocationAutocompleteProps {
   mode?: 'city' | 'address'; // 'city' for homepage, 'address' for full street addresses
 }
 
-// Photon API for full street address autocomplete (mode="address") - CORS-friendly
-async function searchPhotonAddresses(query: string): Promise<LocationSuggestion[]> {
+// Mapbox Address Autofill API for verified street addresses
+async function searchMapboxAddresses(query: string): Promise<LocationSuggestion[]> {
   try {
     const res = await fetch(
-      `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5&lang=en&layer=house,street`,
+      `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&types=address&country=us&language=en&limit=5&access_token=${MAPBOX_TOKEN}`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return [];
     
     const data = await res.json();
-    return data.features
-      .filter((f: any) => f.properties.country === 'United States')
-      .map((f: any) => {
-        const props = f.properties;
-        const houseNumber = props.housenumber || '';
-        const street = props.street || props.name || '';
-        const streetAddress = [houseNumber, street].filter(Boolean).join(' ');
-        const city = props.city || props.town || props.village || props.locality || '';
-        const state = props.state || '';
-        const zip = props.postcode || '';
-        
-        return {
-          streetAddress,
-          city,
-          state,
-          zip,
-          display: [streetAddress, city, state].filter(Boolean).join(', '),
-          fullAddress: [streetAddress, city, state, zip].filter(Boolean).join(', '),
-        };
-      })
-      .slice(0, 5);
+    return (data.suggestions || []).map((s: any) => {
+      const parts = s.full_address?.split(', ') || [];
+      const streetAddress = s.address || parts[0] || '';
+      const city = s.place || parts[1] || '';
+      const stateZip = parts[2] || '';
+      const [state, zip] = stateZip.split(' ');
+      
+      return {
+        streetAddress,
+        city,
+        state: state || '',
+        zip: zip || '',
+        display: `${city}, ${state || ''}`.trim(),
+        fullAddress: s.full_address || `${streetAddress}, ${city}, ${state} ${zip}`.trim(),
+        isVerified: true,
+        mapboxId: s.mapbox_id,
+      };
+    });
   } catch {
     return [];
   }
 }
 
-// Photon API for city-only search (mode="city") - CORS-friendly
+// Retrieve full verified address from Mapbox
+async function retrieveMapboxAddress(mapboxId: string): Promise<LocationSuggestion | null> {
+  try {
+    const res = await fetch(
+      `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?access_token=${MAPBOX_TOKEN}`,
+      { headers: { 'Accept': 'application/json' } }
+    );
+    if (!res.ok) return null;
+    
+    const data = await res.json();
+    const feature = data.features?.[0];
+    if (!feature) return null;
+    
+    const props = feature.properties;
+    const context = props.context || {};
+    
+    return {
+      streetAddress: props.address || props.name || '',
+      city: context.place?.name || '',
+      state: context.region?.region_code || '',
+      zip: context.postcode?.name || '',
+      display: `${context.place?.name || ''}, ${context.region?.region_code || ''}`.trim(),
+      fullAddress: props.full_address || '',
+      isVerified: true,
+      mapboxId,
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Photon API for city-only search (mode="city") - CORS-friendly, fallback
 async function searchPhotonCities(query: string): Promise<LocationSuggestion[]> {
   try {
     const res = await fetch(
@@ -83,6 +116,7 @@ async function searchPhotonCities(query: string): Promise<LocationSuggestion[]> 
           zip,
           display: `${city}, ${state}`,
           fullAddress: `${city}, ${state}${zip ? ` ${zip}` : ''}`,
+          isVerified: false,
         };
       })
       .slice(0, 5);
@@ -106,6 +140,7 @@ async function lookupZip(zip: string): Promise<LocationSuggestion | null> {
         zip,
         display: `${city}, ${state}`,
         fullAddress: `${city}, ${state} ${zip}`,
+        isVerified: true,
       };
     }
   } catch {}
@@ -128,6 +163,7 @@ export default function LocationAutocomplete({
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [selectedDisplay, setSelectedDisplay] = useState("");
   const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [isVerified, setIsVerified] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -173,17 +209,18 @@ export default function LocationAutocomplete({
         setSuggestions([]);
       }
     } else if (isPartialZip) {
-      // For partial numeric input, search cities/addresses that might match
-      const results = mode === 'address' 
-        ? await searchPhotonAddresses(query)
-        : await searchPhotonCities(query);
+      // For partial numeric input, use Photon as fallback
+      const results = await searchPhotonCities(query);
       setSuggestions(results);
     } else {
-      // Use Photon API (CORS-friendly) based on mode
-      const results = mode === 'address' 
-        ? await searchPhotonAddresses(query)
-        : await searchPhotonCities(query);
-      setSuggestions(results);
+      // Use Mapbox for addresses, Photon for cities
+      if (mode === 'address') {
+        const results = await searchMapboxAddresses(query);
+        setSuggestions(results);
+      } else {
+        const results = await searchPhotonCities(query);
+        setSuggestions(results);
+      }
     }
 
     setIsLoading(false);
@@ -203,20 +240,33 @@ export default function LocationAutocomplete({
     onValueChange(newValue);
     setSelectedDisplay("");
     setIsValid(null);
+    setIsVerified(false);
     debouncedSearch(newValue);
   };
 
-  const handleSelect = (suggestion: LocationSuggestion) => {
-    const displayText = suggestion.zip 
-      ? `${suggestion.display} ${suggestion.zip}`.trim()
-      : suggestion.display;
+  const handleSelect = async (suggestion: LocationSuggestion) => {
+    let finalSuggestion = suggestion;
+    
+    // If this is a Mapbox suggestion with an ID, retrieve the full verified address
+    if (suggestion.mapboxId && mode === 'address') {
+      const verified = await retrieveMapboxAddress(suggestion.mapboxId);
+      if (verified) {
+        finalSuggestion = verified;
+      }
+    }
+    
+    const displayText = finalSuggestion.fullAddress || 
+      (finalSuggestion.streetAddress 
+        ? `${finalSuggestion.streetAddress}, ${finalSuggestion.city}, ${finalSuggestion.state} ${finalSuggestion.zip}`.trim()
+        : `${finalSuggestion.display}${finalSuggestion.zip ? ` ${finalSuggestion.zip}` : ''}`);
     
     setSelectedDisplay(displayText);
-    onValueChange(suggestion.zip || suggestion.fullAddress);
-    onLocationSelect(suggestion.display, suggestion.zip);
+    onValueChange(displayText);
+    onLocationSelect(finalSuggestion.display, finalSuggestion.zip, finalSuggestion.fullAddress, finalSuggestion.isVerified);
     setShowDropdown(false);
     setSuggestions([]);
     setIsValid(true);
+    setIsVerified(finalSuggestion.isVerified || false);
   };
 
   const handleKeyDownInternal = (e: React.KeyboardEvent) => {
@@ -285,7 +335,9 @@ export default function LocationAutocomplete({
           "transition-all duration-300",
           "tru-input-glow",
           isValid === true 
-            ? "border-emerald-500/60 focus:border-emerald-500" 
+            ? isVerified 
+              ? "border-emerald-500/60 focus:border-emerald-500" 
+              : "border-amber-500/60 focus:border-amber-500"
             : "border-border/60 focus:border-primary",
           className
         )}
@@ -300,8 +352,14 @@ export default function LocationAutocomplete({
         autoFocus={autoFocus}
       />
       
-      {/* Validation checkmark */}
-      {isValid && (
+      {/* Validation indicators */}
+      {isValid && isVerified && (
+        <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
+      )}
+      {isValid && !isVerified && mode === 'address' && (
+        <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500" />
+      )}
+      {isValid && !isVerified && mode === 'city' && (
         <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
       )}
       
@@ -318,7 +376,7 @@ export default function LocationAutocomplete({
           ) : (
             suggestions.map((suggestion, idx) => (
               <div
-                key={`${suggestion.zip}-${idx}`}
+                key={`${suggestion.mapboxId || suggestion.zip}-${idx}`}
                 className={cn(
                   "flex items-start gap-3 px-4 py-2.5 cursor-pointer transition-colors",
                   idx === selectedIndex ? "bg-primary/10" : "hover:bg-muted/50"
@@ -332,13 +390,23 @@ export default function LocationAutocomplete({
                 }}
                 onMouseEnter={() => setSelectedIndex(idx)}
               >
-                <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                <span className="text-sm font-medium text-foreground">
-                  {suggestion.streetAddress
-                    ? `${suggestion.streetAddress}, ${suggestion.city}, ${suggestion.state} ${suggestion.zip}`.trim()
-                    : `${suggestion.display}${suggestion.zip ? ` ${suggestion.zip}` : ''}`
-                  }
-                </span>
+                <MapPin className={cn(
+                  "w-4 h-4 flex-shrink-0 mt-0.5",
+                  suggestion.isVerified ? "text-emerald-500" : "text-primary"
+                )} />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-foreground">
+                    {suggestion.streetAddress
+                      ? `${suggestion.streetAddress}, ${suggestion.city}, ${suggestion.state} ${suggestion.zip}`.trim()
+                      : `${suggestion.display}${suggestion.zip ? ` ${suggestion.zip}` : ''}`
+                    }
+                  </span>
+                  {suggestion.isVerified && mode === 'address' && (
+                    <span className="text-xs text-emerald-600 flex items-center gap-1 mt-0.5">
+                      <CheckCircle className="w-3 h-3" /> Verified address
+                    </span>
+                  )}
+                </div>
               </div>
             ))
           )}

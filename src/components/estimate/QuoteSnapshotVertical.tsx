@@ -12,6 +12,7 @@ interface QuoteSnapshotVerticalProps {
 
 export default function QuoteSnapshotVertical({ items, moveDetails }: QuoteSnapshotVerticalProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
   const totalWeight = calculateTotalWeight(items);
   const effectiveMoveType = moveDetails.moveType === 'auto' 
     ? (moveDetails.distance >= 150 ? 'long-distance' : 'local')
@@ -19,9 +20,15 @@ export default function QuoteSnapshotVertical({ items, moveDetails }: QuoteSnaps
   
   const estimate = calculateEstimate(totalWeight, moveDetails.distance, effectiveMoveType);
   
-  // Expand when data is entered or on hover
+  // Expand when data is entered or on hover - and lock open once data exists
   const hasData = moveDetails.fromLocation || moveDetails.toLocation || items.length > 0;
-  const isExpanded = hasData || isHovered;
+  
+  // Lock the summary open once data is entered (won't collapse on mouse leave)
+  if (hasData && !isLocked) {
+    setIsLocked(true);
+  }
+  
+  const isExpanded = isLocked || hasData || isHovered;
 
   return (
     <div 

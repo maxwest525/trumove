@@ -659,6 +659,43 @@
   padding: 6px 16px;
 }
 
+/* =============================================
+   EXPANDABLE SECTION: Smooth Form Animations
+   ============================================= */
+
+.tru-expandable-section {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.35s ease-out, opacity 0.25s ease-out;
+  width: 100%;
+}
+
+.tru-expandable-section.is-expanded {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.tru-expandable-section .tru-expandable-content {
+  overflow: hidden;
+  width: 100%;
+}
+
+.tru-expandable-section.is-expanded .tru-expandable-content {
+  animation: content-reveal 0.35s ease-out;
+}
+
+@keyframes content-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Summary Value Update Animation */
 @keyframes summary-value-update {
   0% { 
