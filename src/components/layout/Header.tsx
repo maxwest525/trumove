@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
-  Menu, X, Sparkles, Phone, Video, ChevronDown, Sun, Moon,
+  Menu, X, Sparkles, Phone, Video, ChevronDown, User,
   Calculator, Calendar, Home, Shield, Bed, Bath, Square, CheckCircle2, Clock
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import logo from "@/assets/logo.png";
 import ChatModal from "@/components/chat/ChatModal";
 
@@ -172,13 +171,6 @@ export default function Header() {
   const [chatOpen, setChatOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Handle hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Scroll listener for enhanced shadow
   useEffect(() => {
@@ -188,10 +180,6 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
 
   return (
     <>
@@ -268,21 +256,15 @@ export default function Header() {
               <span>Call</span>
             </a>
             
-            {/* Dark Mode Toggle */}
-            {mounted && (
-              <button 
-                type="button" 
-                className="header-btn header-btn-theme"
-                onClick={toggleTheme}
-                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                {theme === "dark" ? (
-                  <Sun className="w-4 h-4 theme-icon" />
-                ) : (
-                  <Moon className="w-4 h-4 theme-icon" />
-                )}
-              </button>
-            )}
+            {/* Agent Login Button */}
+            <Link 
+              to="/agent-login" 
+              className="header-btn header-btn-agent"
+              aria-label="Agent Login"
+            >
+              <User className="w-4 h-4" />
+              <span>Agent Login</span>
+            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -335,26 +317,15 @@ export default function Header() {
                 <Video className="w-4 h-4" />
                 <span>Book Video Consult</span>
               </Link>
-              {/* Mobile Theme Toggle */}
-              {mounted && (
-                <button 
-                  type="button" 
-                  className="header-mobile-btn"
-                  onClick={toggleTheme}
-                >
-                  {theme === "dark" ? (
-                    <>
-                      <Sun className="w-4 h-4" />
-                      <span>Light Mode</span>
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="w-4 h-4" />
-                      <span>Dark Mode</span>
-                    </>
-                  )}
-                </button>
-              )}
+              {/* Agent Login Button (Mobile) */}
+              <Link 
+                to="/agent-login" 
+                className="header-mobile-btn"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <User className="w-4 h-4" />
+                <span>Agent Login</span>
+              </Link>
             </div>
           </div>
         )}
