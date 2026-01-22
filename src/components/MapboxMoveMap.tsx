@@ -723,11 +723,12 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
       // Animate route drawing
       const totalPoints = lineCoords.length;
       const animationDuration = 1500; // 1.5 seconds
-      const startTime = performance.now();
+      let startTime: number | null = null;
       
       const animateRoute = (currentTime: number) => {
         if (!map.current) return;
         
+        if (startTime === null) startTime = currentTime;
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / animationDuration, 1);
         
@@ -764,7 +765,22 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
         }
       };
       
-      requestAnimationFrame(animateRoute);
+      // First, ensure the camera is focused on origin (where user expects to see drawing start)
+      if (originZoomRef.current) {
+        map.current.flyTo({
+          center: originZoomRef.current.center,
+          zoom: originZoomRef.current.zoom,
+          pitch: originZoomRef.current.pitch,
+          duration: 400,
+        });
+        // Wait for flyTo to complete, then start the drawing animation
+        setTimeout(() => {
+          requestAnimationFrame(animateRoute);
+        }, 500);
+      } else {
+        // No stored origin state, start animation immediately
+        requestAnimationFrame(animateRoute);
+      }
       
       setIsLoading(false);
     };
