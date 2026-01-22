@@ -190,11 +190,11 @@ export interface ItemDefinition {
 export const ROOM_SUGGESTIONS: Record<string, ItemDefinition[]> = {
   'Living Room': [
     // Seating
-    { name: 'Sofa, 3 Cushion', cubicFeet: 50, defaultWeight: 350 },
+    { name: 'Sofa, 3 Cushion', cubicFeet: 50, defaultWeight: 350, imageUrl: '/inventory/living-room/sofa-3-cushion.png' },
     { name: 'Sofa, 4 Cushion/Hide-a-bed', cubicFeet: 60, defaultWeight: 420 },
     { name: 'Sofa, Loveseat', cubicFeet: 35, defaultWeight: 245 },
     { name: 'Sofa, Sectional (per section)', cubicFeet: 30, defaultWeight: 210 },
-    { name: 'Armchair', cubicFeet: 10, defaultWeight: 70 },
+    { name: 'Armchair', cubicFeet: 10, defaultWeight: 70, imageUrl: '/inventory/living-room/armchair.png' },
     { name: 'Chair, Overstuffed', cubicFeet: 25, defaultWeight: 175 },
     { name: 'Chair, Occasional', cubicFeet: 15, defaultWeight: 105 },
     { name: 'Chair, Rocker', cubicFeet: 12, defaultWeight: 84 },
@@ -202,19 +202,19 @@ export const ROOM_SUGGESTIONS: Record<string, ItemDefinition[]> = {
     { name: 'Ottoman', cubicFeet: 3, defaultWeight: 21 },
     { name: 'Footstool', cubicFeet: 2, defaultWeight: 14 },
     // Tables
-    { name: 'Coffee Table', cubicFeet: 5, defaultWeight: 35 },
+    { name: 'Coffee Table', cubicFeet: 5, defaultWeight: 35, imageUrl: '/inventory/living-room/coffee-table.png' },
     { name: 'End Table', cubicFeet: 5, defaultWeight: 35 },
     { name: 'Table, Drop Leaf/Occasional', cubicFeet: 12, defaultWeight: 84 },
     // Entertainment
     { name: 'Entertainment Center', cubicFeet: 35, defaultWeight: 245 },
     { name: 'TV Stand', cubicFeet: 3, defaultWeight: 21 },
-    { name: 'TV, Big Screen (50"+)', cubicFeet: 40, defaultWeight: 280 },
+    { name: 'TV, Big Screen (50"+)', cubicFeet: 40, defaultWeight: 280, imageUrl: '/inventory/living-room/tv-big-screen.png' },
     { name: 'TV, Plasma/LCD', cubicFeet: 15, defaultWeight: 105 },
     { name: 'TV, Table Model', cubicFeet: 10, defaultWeight: 70 },
     { name: 'Stereo, Console', cubicFeet: 15, defaultWeight: 105 },
     { name: 'Stereo, Component System', cubicFeet: 8, defaultWeight: 56 },
     // Storage & Decor
-    { name: 'Bookcase, Large', cubicFeet: 30, defaultWeight: 210 },
+    { name: 'Bookcase, Large', cubicFeet: 30, defaultWeight: 210, imageUrl: '/inventory/living-room/bookcase-large.png' },
     { name: 'Bookcase, Medium', cubicFeet: 20, defaultWeight: 140 },
     { name: 'Bookcase, Small', cubicFeet: 10, defaultWeight: 70 },
     { name: 'Bookshelf, Sectional', cubicFeet: 5, defaultWeight: 35 },
