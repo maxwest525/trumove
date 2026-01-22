@@ -172,10 +172,19 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   return (
     <>
       <div className="tru-floating-form-card">
-        {/* Header - Matching homepage "YOUR MOVE, CALCULATED." style */}
+        {/* Progress Bar */}
+        <div className="tru-form-progress-bar">
+          <div 
+            className="tru-form-progress-fill" 
+            style={{ width: `${(step / 4) * 100}%` }}
+          />
+        </div>
+        
+        {/* Header - Matching homepage style */}
         <div className="tru-qb-form-header tru-qb-form-header-pill">
           <div className="tru-qb-form-title-group">
-            <span className="tru-qb-form-title tru-qb-form-title-large">Build your move</span>
+            <span className="tru-qb-form-title tru-qb-form-title-large">Build your <span className="tru-qb-title-accent">move</span></span>
+            <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
           </div>
         </div>
 
