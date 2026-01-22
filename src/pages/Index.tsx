@@ -292,12 +292,19 @@ export default function Index() {
     }
   }, [triggerCarrierSearch, fromCity]);
 
+  // Track full location display text for better data transfer
+  const [fromLocationDisplay, setFromLocationDisplay] = useState("");
+  const [toLocationDisplay, setToLocationDisplay] = useState("");
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Store lead data
+    // Store lead data with full address display
     localStorage.setItem("tm_lead", JSON.stringify({
-      name, fromZip, toZip, fromCity, toCity, moveDate: moveDate?.toISOString(),
+      name, fromZip, toZip, fromCity, toCity, 
+      fromLocationDisplay: fromLocationDisplay || `${fromCity} ${fromZip}`,
+      toLocationDisplay: toLocationDisplay || `${toCity} ${toZip}`,
+      moveDate: moveDate?.toISOString(),
       size, propertyType, floor, hasElevator, email, phone, ts: Date.now()
     }));
     
@@ -433,9 +440,10 @@ export default function Index() {
                             <LocationAutocomplete
                               value={fromZip}
                               onValueChange={(val) => setFromZip(val)}
-                              onLocationSelect={(city, zip) => {
+                              onLocationSelect={(city, zip, fullAddress) => {
                                 setFromZip(zip);
                                 setFromCity(city);
+                                setFromLocationDisplay(fullAddress || `${city} ${zip}`);
                                 const state = city.split(',')[1]?.trim() || '';
                                 triggerCarrierSearch(state);
                               }}
@@ -451,9 +459,10 @@ export default function Index() {
                             <LocationAutocomplete
                               value={toZip}
                               onValueChange={(val) => setToZip(val)}
-                              onLocationSelect={(city, zip) => {
+                              onLocationSelect={(city, zip, fullAddress) => {
                                 setToZip(zip);
                                 setToCity(city);
+                                setToLocationDisplay(fullAddress || `${city} ${zip}`);
                                 if (fromCity) {
                                   const state = city.split(',')[1]?.trim() || '';
                                   triggerCarrierSearch(state);

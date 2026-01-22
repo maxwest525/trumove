@@ -111,12 +111,18 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
         
         setDetails(prev => ({
           ...prev,
+          name: lead.name || '',
           email: lead.email || '',
           phone: lead.phone || '',
-          fromLocation: lead.fromCity ? `${lead.fromCity} ${lead.fromZip}` : lead.fromZip || '',
-          toLocation: lead.toCity ? `${lead.toCity} ${lead.toZip}` : lead.toZip || '',
+          // Use full address display if available, otherwise construct from city+zip
+          fromLocation: lead.fromLocationDisplay || (lead.fromCity ? `${lead.fromCity} ${lead.fromZip}` : lead.fromZip || ''),
+          toLocation: lead.toLocationDisplay || (lead.toCity ? `${lead.toCity} ${lead.toZip}` : lead.toZip || ''),
           homeSize: mapHomeSize(lead.size) || '',
           moveDate: lead.moveDate ? new Date(lead.moveDate) : null,
+          // Restore property type and floor info
+          fromPropertyType: lead.propertyType || '',
+          fromFloor: lead.floor || 1,
+          fromHasElevator: lead.hasElevator || false,
         }));
         
         // Clear the stored data after use
@@ -231,10 +237,11 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 </button>
               </div>
 
-              {details.fromPropertyType === 'apartment' && (
-                <>
-                  <p className="tru-qb-section-label animate-fade-in">What floor?</p>
-                  <div className="tru-qb-size-grid animate-fade-in">
+              {/* Expandable apartment options with smooth animation */}
+              <div className={`tru-expandable-section ${details.fromPropertyType === 'apartment' ? 'is-expanded' : ''}`}>
+                <div className="tru-expandable-content">
+                  <p className="tru-qb-section-label">What floor?</p>
+                  <div className="tru-qb-size-grid">
                     {FLOOR_OPTIONS.map((floor) => (
                       <button
                         key={floor.value}
@@ -247,8 +254,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                     ))}
                   </div>
 
-                  <p className="tru-qb-section-label animate-fade-in">Access type</p>
-                  <div className="tru-qb-toggles animate-fade-in">
+                  <p className="tru-qb-section-label">Access type</p>
+                  <div className="tru-qb-toggles">
                     <button
                       type="button"
                       className={`tru-qb-toggle-card ${!details.fromHasElevator ? 'is-active' : ''}`}
@@ -270,8 +277,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                       </div>
                     </button>
                   </div>
-                </>
-              )}
+                </div>
+              </div>
 
               <p className="tru-qb-section-label">Home Size</p>
               <div className="tru-qb-size-grid">
@@ -342,10 +349,11 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 </button>
               </div>
 
-              {details.toPropertyType === 'apartment' && (
-                <>
-                  <p className="tru-qb-section-label animate-fade-in">What floor?</p>
-                  <div className="tru-qb-size-grid animate-fade-in">
+              {/* Expandable apartment options with smooth animation */}
+              <div className={`tru-expandable-section ${details.toPropertyType === 'apartment' ? 'is-expanded' : ''}`}>
+                <div className="tru-expandable-content">
+                  <p className="tru-qb-section-label">What floor?</p>
+                  <div className="tru-qb-size-grid">
                     {FLOOR_OPTIONS.map((floor) => (
                       <button
                         key={floor.value}
@@ -358,8 +366,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                     ))}
                   </div>
 
-                  <p className="tru-qb-section-label animate-fade-in">Access type</p>
-                  <div className="tru-qb-toggles animate-fade-in">
+                  <p className="tru-qb-section-label">Access type</p>
+                  <div className="tru-qb-toggles">
                     <button
                       type="button"
                       className={`tru-qb-toggle-card ${!details.toHasElevator ? 'is-active' : ''}`}
@@ -381,8 +389,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                       </div>
                     </button>
                   </div>
-                </>
-              )}
+                </div>
+              </div>
 
               <p className="tru-qb-section-label">Home Size</p>
               <div className="tru-qb-size-grid">
