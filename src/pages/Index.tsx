@@ -410,9 +410,8 @@ export default function Index() {
                 </div>
                 
                 <div className="tru-qb-form-header tru-qb-form-header-pill">
-                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
                   <div className="tru-qb-form-title-group">
-                    <span className="tru-qb-form-title">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
+                    <span className="tru-qb-form-title tru-qb-form-title-large">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
                     <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
                   </div>
                 </div>
@@ -1077,7 +1076,7 @@ export default function Index() {
       
       
       {/* Floating AI Move Builder Button */}
-      <FloatingQuoteButton quoteBuilderRef={quoteBuilderRef} onChatOpen={() => setChatOpen(true)} />
+      <FloatingQuoteButton onChatOpen={() => setChatOpen(true)} />
 
       {/* Floating Chat Button */}
       <FloatingChatButton />
