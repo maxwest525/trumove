@@ -1,24 +1,23 @@
 import { useState } from "react";
-import { Route, Video, Phone, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { calculateTotalWeight, calculateEstimate, formatCurrency, type InventoryItem, type MoveDetails } from "@/lib/priceCalculator";
+import { Route, Pencil, ChevronRight, MapPin, Calendar, Ruler, Home, Building2, Car, Package, Scale } from "lucide-react";
+import { calculateTotalWeight, calculateTotalCubicFeet, type InventoryItem, type MoveDetails } from "@/lib/priceCalculator";
 import logoImg from "@/assets/logo.png";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import type { ExtendedMoveDetails } from "./EstimateWizard";
 
 interface QuoteSnapshotVerticalProps {
   items: InventoryItem[];
   moveDetails: MoveDetails;
+  extendedDetails?: ExtendedMoveDetails | null;
+  onEdit?: () => void;
 }
 
-export default function QuoteSnapshotVertical({ items, moveDetails }: QuoteSnapshotVerticalProps) {
+export default function QuoteSnapshotVertical({ items, moveDetails, extendedDetails, onEdit }: QuoteSnapshotVerticalProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isManuallyCollapsed, setIsManuallyCollapsed] = useState(false);
   const totalWeight = calculateTotalWeight(items);
-  const effectiveMoveType = moveDetails.moveType === 'auto' 
-    ? (moveDetails.distance >= 150 ? 'long-distance' : 'local')
-    : moveDetails.moveType;
-  
-  const estimate = calculateEstimate(totalWeight, moveDetails.distance, effectiveMoveType);
+  const totalCubicFeet = calculateTotalCubicFeet(items);
   
   // Expand when data is entered or on hover
   const hasData = moveDetails.fromLocation || moveDetails.toLocation || items.length > 0;
@@ -30,6 +29,27 @@ export default function QuoteSnapshotVertical({ items, moveDetails }: QuoteSnaps
     if (hasData) {
       setIsManuallyCollapsed(!isManuallyCollapsed);
     }
+  };
+
+  // Format property type for display
+  const formatPropertyType = (type: string, floor?: number, hasElevator?: boolean) => {
+    if (type === 'apartment' && floor) {
+      return `Apt ${floor}F ${hasElevator ? '(Elev)' : '(Stairs)'}`;
+    }
+    return type === 'house' ? 'House' : type || '—';
+  };
+
+  // Format home size for display
+  const formatHomeSize = (size: string) => {
+    const sizeMap: Record<string, string> = {
+      'studio': 'Studio',
+      '1br': '1 BR',
+      '2br': '2 BR',
+      '3br': '3 BR',
+      '4br+': '4+ BR',
+      'other': 'Other',
+    };
+    return sizeMap[size] || size || '—';
   };
 
   return (
@@ -61,61 +81,112 @@ export default function QuoteSnapshotVertical({ items, moveDetails }: QuoteSnaps
       
       {/* Expanded content with smooth animation */}
       <div className="tru-summary-expanded-content">
-        <div className="tru-summary-card-header">
-          <span className="tru-summary-card-title">Move Summary</span>
+        <div className="tru-summary-card-header flex items-center justify-between">
+          <span className="tru-summary-card-title">Your Move Calculated</span>
+          {onEdit && (
+            <button 
+              onClick={onEdit}
+              className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+              title="Edit move details"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       
-        <div className="tru-summary-card-body">
-          <div className="tru-summary-info-grid">
-            <div className="tru-summary-row">
-              <span className="tru-summary-label">From</span>
-              <span className="tru-summary-value">{moveDetails.fromLocation || "—"}</span>
+        <div className="tru-summary-card-body tru-summary-card-body-compact">
+          {/* Origin Section */}
+          <div className="tru-summary-section">
+            <div className="tru-summary-section-header">
+              <MapPin className="w-3 h-3 text-primary" />
+              <span>Origin</span>
             </div>
-            <div className="tru-summary-row">
-              <span className="tru-summary-label">To</span>
-              <span className="tru-summary-value">{moveDetails.toLocation || "—"}</span>
+            <div className="tru-summary-detail-row">
+              <span className="tru-summary-detail-value truncate">{moveDetails.fromLocation || '—'}</span>
             </div>
-            <div className="tru-summary-row">
-              <span className="tru-summary-label">Distance</span>
-              <span className="tru-summary-value">{moveDetails.distance > 0 ? `${moveDetails.distance.toLocaleString()} mi` : "—"}</span>
-            </div>
-            <div className="tru-summary-row">
-              <span className="tru-summary-label">Date</span>
-              <span className="tru-summary-value">{moveDetails.moveDate || "—"}</span>
-            </div>
-            <div className="tru-summary-row">
-              <span className="tru-summary-label">Items</span>
-              <span className="tru-summary-value">{items.length > 0 ? `${items.length} items` : "—"}</span>
-            </div>
-            <div className="tru-summary-row">
-              <span className="tru-summary-label">Weight</span>
-              <span className="tru-summary-value">{totalWeight > 0 ? `${totalWeight.toLocaleString()} lbs` : "—"}</span>
-            </div>
-            <div className="tru-summary-row tru-summary-row-estimate">
-              <span className="tru-summary-label">Estimate</span>
-              <span className="tru-summary-value tru-summary-value-primary">
-                TBD
+            <div className="tru-summary-detail-chips">
+              <span className="tru-summary-chip">
+                {extendedDetails?.fromPropertyType === 'house' ? <Home className="w-3 h-3" /> : <Building2 className="w-3 h-3" />}
+                {formatPropertyType(extendedDetails?.fromPropertyType || '', extendedDetails?.fromFloor, extendedDetails?.fromHasElevator)}
+              </span>
+              <span className="tru-summary-chip">
+                {formatHomeSize(extendedDetails?.homeSize || moveDetails.homeSize || '')}
               </span>
             </div>
           </div>
-        </div>
-        
-        {/* Quick Actions */}
-        <div className="tru-summary-actions">
-          <Link
-            to="/book"
-            className="tru-summary-action-btn tru-summary-action-primary"
-          >
-            <Video className="w-4 h-4" />
-            <span>Video Consult</span>
-          </Link>
-          <a
-            href="tel:+16097277647"
-            className="tru-summary-action-btn"
-          >
-            <Phone className="w-4 h-4" />
-            <span>Call Now</span>
-          </a>
+
+          {/* Destination Section */}
+          <div className="tru-summary-section">
+            <div className="tru-summary-section-header">
+              <MapPin className="w-3 h-3 text-primary" />
+              <span>Destination</span>
+            </div>
+            <div className="tru-summary-detail-row">
+              <span className="tru-summary-detail-value truncate">{moveDetails.toLocation || '—'}</span>
+            </div>
+            <div className="tru-summary-detail-chips">
+              <span className="tru-summary-chip">
+                {extendedDetails?.toPropertyType === 'house' ? <Home className="w-3 h-3" /> : <Building2 className="w-3 h-3" />}
+                {formatPropertyType(extendedDetails?.toPropertyType || '', extendedDetails?.toFloor, extendedDetails?.toHasElevator)}
+              </span>
+              <span className="tru-summary-chip">
+                {formatHomeSize(extendedDetails?.toHomeSize || '')}
+              </span>
+            </div>
+          </div>
+
+          {/* Move Info Row */}
+          <div className="tru-summary-info-bar">
+            <div className="tru-summary-info-item">
+              <Ruler className="w-3 h-3" />
+              <span>{moveDetails.distance > 0 ? `${moveDetails.distance.toLocaleString()} mi` : '—'}</span>
+            </div>
+            <div className="tru-summary-info-divider" />
+            <div className="tru-summary-info-item">
+              <Calendar className="w-3 h-3" />
+              <span>{extendedDetails?.moveDate ? format(extendedDetails.moveDate, 'MMM d') : moveDetails.moveDate || '—'}</span>
+            </div>
+          </div>
+
+          {/* Additional Services */}
+          {(extendedDetails?.hasVehicleTransport || extendedDetails?.needsPackingService) && (
+            <div className="tru-summary-services">
+              {extendedDetails.hasVehicleTransport && (
+                <span className="tru-summary-service-chip">
+                  <Car className="w-3 h-3" />
+                  Vehicle
+                </span>
+              )}
+              {extendedDetails.needsPackingService && (
+                <span className="tru-summary-service-chip">
+                  <Package className="w-3 h-3" />
+                  Packing
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Inventory Stats */}
+          <div className="tru-summary-stats-bar">
+            <div className="tru-summary-stat">
+              <span className="tru-summary-stat-value">{items.length}</span>
+              <span className="tru-summary-stat-label">Items</span>
+            </div>
+            <div className="tru-summary-stat">
+              <span className="tru-summary-stat-value">{totalCubicFeet.toLocaleString()}</span>
+              <span className="tru-summary-stat-label">Cu Ft</span>
+            </div>
+            <div className="tru-summary-stat">
+              <span className="tru-summary-stat-value">{totalWeight > 0 ? `${(totalWeight / 1000).toFixed(1)}k` : '0'}</span>
+              <span className="tru-summary-stat-label">Lbs</span>
+            </div>
+          </div>
+
+          {/* Estimate */}
+          <div className="tru-summary-estimate-bar">
+            <span className="tru-summary-estimate-label">Estimate</span>
+            <span className="tru-summary-estimate-value">TBD</span>
+          </div>
         </div>
         
         {/* Footer */}

@@ -41,6 +41,7 @@ export interface ExtendedMoveDetails {
 
 interface EstimateWizardProps {
   onComplete: (details: ExtendedMoveDetails) => void;
+  initialDetails?: ExtendedMoveDetails | null;
 }
 
 const HOME_SIZES = [
@@ -60,7 +61,7 @@ const FLOOR_OPTIONS = [
 ];
 
 
-export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
+export default function EstimateWizard({ onComplete, initialDetails }: EstimateWizardProps) {
   const [step, setStep] = useState(1);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
@@ -294,31 +295,25 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 ))}
               </div>
 
-              {/* Additional Services */}
+              {/* Additional Services - Compact toggles without descriptions */}
               <p className="tru-qb-section-label">Additional Services (Optional)</p>
               <div className="tru-qb-toggles">
                 <button
                   type="button"
-                  className={`tru-qb-toggle-card ${details.hasVehicleTransport ? 'is-active' : ''}`}
+                  className={`tru-qb-toggle-card tru-qb-toggle-compact ${details.hasVehicleTransport ? 'is-active' : ''}`}
                   onClick={() => updateDetails({ hasVehicleTransport: !details.hasVehicleTransport })}
                 >
                   <Car className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">Vehicle Transport</span>
-                    <span className="tru-qb-toggle-desc">Ship a car with your move</span>
-                  </div>
+                  <span className="tru-qb-toggle-title">Vehicle Transport</span>
                 </button>
                 
                 <button
                   type="button"
-                  className={`tru-qb-toggle-card ${details.needsPackingService ? 'is-active' : ''}`}
+                  className={`tru-qb-toggle-card tru-qb-toggle-compact ${details.needsPackingService ? 'is-active' : ''}`}
                   onClick={() => updateDetails({ needsPackingService: !details.needsPackingService })}
                 >
                   <Package className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">Packing Service</span>
-                    <span className="tru-qb-toggle-desc">We pack everything for you</span>
-                  </div>
+                  <span className="tru-qb-toggle-title">Packing Service</span>
                 </button>
               </div>
 

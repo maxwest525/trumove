@@ -1197,9 +1197,9 @@
 
 /* Expanded state */
 .tru-summary-hover-expand.is-expanded {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
 }
 
 .tru-summary-hover-expand.is-expanded .tru-summary-collapsed-bar {
@@ -1648,6 +1648,160 @@
   color: hsl(var(--tm-ink) / 0.4);
 }
 
+/* Compact summary body */
+.tru-summary-card-body-compact {
+  padding: 12px 16px;
+  gap: 8px;
+}
+
+/* Summary Section (Origin / Destination) */
+.tru-summary-section {
+  padding-bottom: 8px;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-summary-section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--tm-ink) / 0.5);
+  margin-bottom: 4px;
+}
+
+.tru-summary-detail-row {
+  padding-left: 16px;
+}
+
+.tru-summary-detail-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-summary-detail-chips {
+  display: flex;
+  gap: 6px;
+  padding-left: 16px;
+  margin-top: 4px;
+}
+
+.tru-summary-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: hsl(var(--tm-ink) / 0.05);
+  font-size: 10px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.6);
+}
+
+/* Summary Info Bar (Distance / Date) */
+.tru-summary-info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: hsl(var(--tm-ink) / 0.03);
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-summary-info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-summary-info-item svg {
+  color: hsl(var(--tm-ink) / 0.4);
+}
+
+.tru-summary-info-divider {
+  width: 1px;
+  height: 16px;
+  background: hsl(var(--tm-ink) / 0.1);
+}
+
+/* Additional Services chips */
+.tru-summary-services {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tru-summary-service-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: hsl(var(--primary) / 0.1);
+  font-size: 10px;
+  font-weight: 700;
+  color: hsl(var(--primary));
+}
+
+/* Stats bar (Items, Cu Ft, Lbs) */
+.tru-summary-stats-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-summary-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.tru-summary-stat-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-summary-stat-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--tm-ink) / 0.4);
+}
+
+/* Estimate bar */
+.tru-summary-estimate-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: hsl(var(--primary) / 0.08);
+}
+
+.tru-summary-estimate-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.6);
+}
+
+.tru-summary-estimate-value {
+  font-size: 18px;
+  font-weight: 900;
+  color: hsl(var(--tm-ink));
+}
+
 .tru-summary-map {
   height: auto;
   min-height: 120px;
@@ -1663,19 +1817,6 @@
   padding: 10px;
   background: hsl(var(--tm-ink) / 0.03);
   border-radius: 8px;
-}
-
-.tru-summary-stat {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.7);
-}
-
-.tru-summary-stat svg {
-  color: hsl(var(--primary));
 }
 
 
@@ -9869,6 +10010,16 @@
   font-size: 12px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.5);
+}
+
+/* Compact toggle card (no description) */
+.tru-qb-toggle-card.tru-qb-toggle-compact {
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.tru-qb-toggle-card.tru-qb-toggle-compact .tru-qb-toggle-title {
+  font-size: 12px;
 }
 
 .tru-qb-toggle-indicator {
