@@ -12,15 +12,27 @@ const EstimatorPreview = () => (
   <div className="mega-menu-demo">
     <div className="mega-demo-rooms">
       <div className="mega-demo-room">
-        <span className="mega-demo-room-icon">🛋️</span>
+        <img 
+          src="/inventory/living-room/sofa-3-cushion.png" 
+          alt="Sofa" 
+          className="mega-demo-room-img"
+        />
         <span>Living Room</span>
       </div>
       <div className="mega-demo-room">
-        <span className="mega-demo-room-icon">🛏️</span>
+        <img 
+          src="/inventory/bedroom/bed-queen.png" 
+          alt="Bed" 
+          className="mega-demo-room-img"
+        />
         <span>Master Bedroom</span>
       </div>
       <div className="mega-demo-room">
-        <span className="mega-demo-room-icon">🍳</span>
+        <img 
+          src="/inventory/kitchen/kitchen-table.png" 
+          alt="Kitchen Table" 
+          className="mega-demo-room-img"
+        />
         <span>Kitchen</span>
       </div>
     </div>

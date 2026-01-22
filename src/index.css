@@ -7144,6 +7144,13 @@
   font-size: 20px;
 }
 
+.mega-demo-room-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
 .mega-demo-stats {
   display: flex;
   gap: 12px;
