@@ -679,7 +679,7 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
         <button
           type="button"
           onClick={onAdd}
-          className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-all"
+          className="w-7 h-7 rounded-full border-2 border-foreground/20 bg-card text-foreground flex items-center justify-center hover:border-foreground/40 hover:bg-muted transition-all"
         >
           <Plus className="w-3.5 h-3.5" />
         </button>
@@ -761,7 +761,7 @@ function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon, isAnimating 
         <button
           type="button"
           onClick={onAdd}
-          className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-all"
+          className="w-7 h-7 rounded-full border-2 border-foreground/20 bg-card text-foreground flex items-center justify-center hover:border-foreground/40 hover:bg-muted transition-all"
         >
           <Plus className="w-3.5 h-3.5" />
         </button>
