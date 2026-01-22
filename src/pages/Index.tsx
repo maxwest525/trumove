@@ -346,37 +346,45 @@ export default function Index() {
             {/* LEFT: Value Proposition */}
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
-                {/* Kicker - establishes category */}
-                <div className="tru-hero-kicker">
-                  <Zap className="w-4 h-4" />
-                  <span>AI-Powered Moving Platform</span>
-                </div>
-                
                 <h1 className="tru-hero-headline-main">
-                  Stop gambling on movers.<br />
-                  <span className="tru-hero-headline-accent">Start using data.</span>
+                  Get matched with vetted carriers<br />
+                  <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
-                  TruMove is like a flight search engine for moving. Our AI analyzes 
-                  real-time carrier data, safety records, and millions of past moves 
-                  to find you the right mover at the right price — in 60 seconds.
+                  Skip the mega van lines. We connect you with small, family-owned movers — 
+                  all FMCSA verified, all reputation-monitored, all matched to your exact route.
                 </p>
                 
                 {/* Value Props Container - Map overlays this section */}
                 <div className="tru-hero-value-props-container">
-                  {/* 3 sharp differentiators - not generic "benefits" */}
-                  <div className={`tru-hero-differentiators ${fromCity ? 'is-hidden' : ''}`}>
-                    <div className="tru-hero-diff">
-                      <Radar className="w-4 h-4" />
-                      <span>AI scans truck locations, fuel costs, and seasonal demand live</span>
+                  {/* Value Props - Real Differentiators */}
+                  <div className={`tru-hero-value-props ${fromCity ? 'is-hidden' : ''}`}>
+                    <div className="tru-hero-value-prop">
+                      <div className="tru-hero-value-icon">
+                        <Shield className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-value-text">
+                        <span className="tru-hero-value-title">4-Stage Carrier Vetting</span>
+                        <span className="tru-hero-value-desc">FMCSA licensed, insurance verified, live scoring on every job</span>
+                      </div>
                     </div>
-                    <div className="tru-hero-diff">
-                      <Shield className="w-4 h-4" />
-                      <span>Fraud detection blocks bait-and-switch and hostage loads</span>
+                    <div className="tru-hero-value-prop">
+                      <div className="tru-hero-value-icon">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-value-text">
+                        <span className="tru-hero-value-title">Small, Family-Owned Movers</span>
+                        <span className="tru-hero-value-desc">No mega van lines — real carriers who treat your move like their own</span>
+                      </div>
                     </div>
-                    <div className="tru-hero-diff">
-                      <BarChart3 className="w-4 h-4" />
-                      <span>Quotes accurate to ±5-8% — trained on real move data</span>
+                    <div className="tru-hero-value-prop">
+                      <div className="tru-hero-value-icon">
+                        <Headphones className="w-5 h-5" />
+                      </div>
+                      <div className="tru-hero-value-text">
+                        <span className="tru-hero-value-title">Personal Agent Guidance</span>
+                        <span className="tru-hero-value-desc">A real person walks you through every step — no call centers</span>
+                      </div>
                     </div>
                   </div>
                   
@@ -403,7 +411,8 @@ export default function Index() {
                 
                 <div className="tru-qb-form-header tru-qb-form-header-pill">
                   <div className="tru-qb-form-title-group">
-                    <span className="tru-qb-form-title tru-qb-form-title-xl">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
+                    <span className="tru-qb-form-title tru-qb-form-title-large">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
+                    <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
                   </div>
                 </div>
 
@@ -900,6 +909,90 @@ export default function Index() {
             </div>
           </section>
 
+          {/* LONG DISTANCE EXPERTISE */}
+          <section className="tru-expertise-wrap">
+            <div className="tru-expertise-inner">
+              <div className="tru-expertise-content">
+                <div className="tru-expertise-kicker">LONG-DISTANCE EXPERTS</div>
+                <h2 className="tru-expertise-title">Built for moves over 150 miles.</h2>
+                <p className="tru-expertise-text">
+                  Cross-country moves require interstate compliance, route optimization, and precise timing. 
+                  We specialize in long-haul relocations — and our AI is trained on thousands of routes.
+                </p>
+                <div className="tru-expertise-stats">
+                  <div className="tru-expertise-stat">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    <div>
+                      <div className="tru-expertise-stat-num">50</div>
+                      <div className="tru-expertise-stat-label">States Covered</div>
+                    </div>
+                  </div>
+                  <div className="tru-expertise-stat">
+                    <Route className="w-5 h-5 text-primary" />
+                    <div>
+                      <div className="tru-expertise-stat-num">1,200+</div>
+                      <div className="tru-expertise-stat-label">Avg. Miles per Move</div>
+                    </div>
+                  </div>
+                  <div className="tru-expertise-stat">
+                    <Phone className="w-5 h-5 text-primary" />
+                    <div>
+                      <div className="tru-expertise-stat-num">0</div>
+                      <div className="tru-expertise-stat-label">Spam Calls, Ever</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="tru-expertise-map">
+                {/* Use form ZIPs if available, otherwise show sample route */}
+                <div className="tru-map-placeholder">
+                  <MapPin className="w-8 h-8 text-primary/40" />
+                  <span>Enter your route above to see it on the map</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* HOW WE VET CARRIERS */}
+          <section className="tru-vetting-wrap">
+            <div className="tru-vetting-inner">
+              <div className="tru-vetting-kicker">CARRIER VETTING</div>
+              <h2 className="tru-vetting-title">Every mover goes through 4 stages before you see them.</h2>
+              <p className="tru-vetting-sub">If their performance drops, they're automatically removed.</p>
+              
+              <div className="tru-vetting-steps">
+                <div className="tru-vetting-step">
+                  <div className="tru-vetting-step-num">1</div>
+                  <div className="tru-vetting-step-title">Pre-Screen</div>
+                  <div className="tru-vetting-step-text">USDOT & MC verification, active authority check</div>
+                </div>
+                <div className="tru-vetting-connector"></div>
+                <div className="tru-vetting-step">
+                  <div className="tru-vetting-step-num">2</div>
+                  <div className="tru-vetting-step-title">Compliance</div>
+                  <div className="tru-vetting-step-text">Insurance minimums, safety ratings, fleet inspection</div>
+                </div>
+                <div className="tru-vetting-connector"></div>
+                <div className="tru-vetting-step">
+                  <div className="tru-vetting-step-num">3</div>
+                  <div className="tru-vetting-step-title">Reputation</div>
+                  <div className="tru-vetting-step-text">Review analysis, complaint history, claim resolution</div>
+                </div>
+                <div className="tru-vetting-connector"></div>
+                <div className="tru-vetting-step">
+                  <div className="tru-vetting-step-num">4</div>
+                  <div className="tru-vetting-step-title">Live Scoring</div>
+                  <div className="tru-vetting-step-text">Ongoing performance monitoring, customer feedback loops</div>
+                </div>
+              </div>
+
+              <div className="tru-vetting-cta">
+                <button className="tru-btn-secondary-lg" onClick={() => navigate("/vetting")}>
+                  <span>Learn More About Our Vetting</span><ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </section>
 
 
           {/* SMART ESTIMATES & PROTECTION */}
