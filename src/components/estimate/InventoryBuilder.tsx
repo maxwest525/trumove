@@ -625,14 +625,14 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
     )}>
       {/* Item Image or Icon */}
       <div className={cn(
-        "w-full h-14 rounded-lg flex items-center justify-center mb-2",
+        "w-full h-20 rounded-lg flex items-center justify-center mb-2",
         quantity > 0 ? "bg-primary/10" : "bg-muted/40"
       )}>
         <InventoryItemImage
           src={item.imageUrl}
           alt={item.name}
           fallbackIcon={Icon}
-          className="w-10 h-10"
+          className="w-16 h-16"
           iconClassName={cn(
             quantity > 0 ? "text-primary" : "text-muted-foreground/60"
           )}
@@ -709,16 +709,16 @@ function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon, isAnimating 
     )}>
       {/* Item Image or Icon */}
       <div className={cn(
-        "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+        "w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0",
         quantity > 0 ? "bg-primary/10" : "bg-muted/40"
       )}>
         <InventoryItemImage
           src={item.imageUrl}
           alt={item.name}
           fallbackIcon={Icon}
-          className="w-8 h-8"
+          className="w-12 h-12"
           iconClassName={cn(
-            "w-5 h-5",
+            "w-7 h-7",
             quantity > 0 ? "text-primary" : "text-muted-foreground/60"
           )}
         />
