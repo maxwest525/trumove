@@ -176,7 +176,7 @@ export default function MoveDetailsForm({
                 className={cn(
                   "flex-1 h-10 rounded-lg text-xs font-bold transition-all border-2",
                   moveDetails.homeSize === size.value
-                    ? "border-primary bg-primary/10 text-primary shadow-sm"
+                    ? "border-primary bg-card text-foreground shadow-sm"
                     : "border-transparent bg-muted/60 text-foreground/70 hover:bg-muted hover:text-foreground"
                 )}
               >
@@ -194,7 +194,7 @@ export default function MoveDetailsForm({
           onClick={() => setHasStairs(!hasStairs)}
           className={`flex-1 flex items-center justify-center gap-2 h-10 px-3 rounded-lg border text-xs font-semibold transition-all ${
             hasStairs
-              ? 'bg-primary/10 border-primary/40 text-primary'
+              ? 'bg-card border-primary text-foreground'
               : 'bg-background border-border/60 text-foreground/70 hover:bg-muted/50'
           }`}
         >
@@ -206,7 +206,7 @@ export default function MoveDetailsForm({
           onClick={() => setNeedsPacking(!needsPacking)}
           className={`flex-1 flex items-center justify-center gap-2 h-10 px-3 rounded-lg border text-xs font-semibold transition-all ${
             needsPacking
-              ? 'bg-primary/10 border-primary/40 text-primary'
+              ? 'bg-card border-primary text-foreground'
               : 'bg-background border-border/60 text-foreground/70 hover:bg-muted/50'
           }`}
         >
@@ -222,8 +222,8 @@ export default function MoveDetailsForm({
         disabled={!canProceed}
         className={cn(
           "w-full h-12 rounded-xl text-sm font-bold tracking-wide uppercase transition-all flex items-center justify-center gap-3",
-          "border-2 border-primary bg-primary/10 text-primary",
-          "hover:-translate-y-0.5 hover:bg-primary/20 hover:shadow-lg",
+          "border-2 border-primary bg-card text-foreground",
+          "hover:-translate-y-0.5 hover:bg-primary hover:text-primary-foreground hover:shadow-lg",
           "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:border-muted disabled:bg-muted/50 disabled:text-muted-foreground"
         )}
       >
