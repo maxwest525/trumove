@@ -1,28 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SiteShell from "@/components/layout/SiteShell";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import logo from "@/assets/logo.png";
-import { Check, FileText, Download, MessageSquare } from "lucide-react";
+import { Check, Download, Printer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Auth() {
   const { toast } = useToast();
-  const [customerInfo, setCustomerInfo] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    originAddress: "",
-    destinationAddress: "",
-    moveDate: "",
-  });
   const [typedName, setTypedName] = useState("");
   const [isSigned, setIsSigned] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  // Prevent auto-scroll
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const today = new Date().toLocaleDateString("en-US", {
     year: "numeric",
@@ -47,293 +43,257 @@ export default function Auth() {
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setCustomerInfo((prev) => ({ ...prev, [field]: value }));
-  };
-
   const canSign = typedName.length >= 2 && agreedToTerms;
   const canSubmit = isSigned && agreedToTerms;
 
   return (
     <SiteShell>
       <div className="min-h-screen bg-muted/30 py-8 px-4">
-        <div className="max-w-[850px] mx-auto">
+        <div className="max-w-[800px] mx-auto">
           {/* Document Container */}
-          <Card className="shadow-xl border-0 bg-white">
-            {/* Document Header */}
-            <CardHeader className="border-b border-border/50 pb-6">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <img src={logo} alt="TruMove" className="h-10 w-auto" />
-                  <div>
-                    <div className="text-xs text-muted-foreground tracking-wider uppercase">
-                      Moving Services
-                    </div>
+          <Card className="shadow-xl border border-border bg-white">
+            <CardContent className="p-0">
+              {/* Document Header */}
+              <div className="border-b border-border px-8 py-6">
+                <div className="flex items-center justify-between mb-6">
+                  <img src={logo} alt="TruMove" className="h-8 w-auto" />
+                  <div className="text-right text-xs text-muted-foreground">
+                    <div>Document Ref: <span className="font-mono font-medium text-foreground">{refNumber}</span></div>
+                    <div>Date: {today}</div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-xs text-muted-foreground">Reference</div>
-                  <div className="font-mono text-sm font-semibold text-foreground">
-                    {refNumber}
-                  </div>
-                </div>
-              </div>
 
-              <div className="mt-6 text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <h1 className="text-xl font-bold tracking-wide text-foreground uppercase">
-                    Estimate Authorization Agreement
+                <div className="text-center">
+                  <h1 className="text-lg font-bold tracking-wide text-foreground uppercase mb-1">
+                    Estimate Consent & Authorization
                   </h1>
+                  <p className="text-xs text-muted-foreground uppercase tracking-widest">
+                    Short Form Agreement
+                  </p>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Date: {today}
-                </p>
               </div>
-            </CardHeader>
 
-            <CardContent className="p-8 space-y-8">
-              {/* Customer Information Section */}
-              <section>
-                <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">1</span>
-                  Customer Information
-                </h2>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
-                      Full Name
-                    </label>
-                    <Input
-                      placeholder="Enter your full name"
-                      value={customerInfo.fullName}
-                      onChange={(e) => handleInputChange("fullName", e.target.value)}
-                      className="bg-muted/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
-                      Email Address
-                    </label>
-                    <Input
-                      type="email"
-                      placeholder="email@example.com"
-                      value={customerInfo.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
-                      className="bg-muted/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
-                      Phone Number
-                    </label>
-                    <Input
-                      type="tel"
-                      placeholder="(555) 123-4567"
-                      value={customerInfo.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
-                      className="bg-muted/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
-                      Estimated Move Date
-                    </label>
-                    <Input
-                      type="date"
-                      value={customerInfo.moveDate}
-                      onChange={(e) => handleInputChange("moveDate", e.target.value)}
-                      className="bg-muted/50"
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
-                      Origin Address
-                    </label>
-                    <Input
-                      placeholder="123 Main St, City, State ZIP"
-                      value={customerInfo.originAddress}
-                      onChange={(e) => handleInputChange("originAddress", e.target.value)}
-                      className="bg-muted/50"
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
-                      Destination Address
-                    </label>
-                    <Input
-                      placeholder="456 Oak Ave, City, State ZIP"
-                      value={customerInfo.destinationAddress}
-                      onChange={(e) => handleInputChange("destinationAddress", e.target.value)}
-                      className="bg-muted/50"
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <Separator />
-
-              {/* Estimate Details Section */}
-              <section>
-                <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">2</span>
-                  Estimate Summary
-                </h2>
-                <div className="bg-muted/30 rounded-lg p-5 border border-border/50">
-                  <div className="grid md:grid-cols-4 gap-4">
-                    <div className="text-center p-3 bg-white rounded-md shadow-sm">
-                      <div className="text-xs text-muted-foreground uppercase">Estimated Total</div>
-                      <div className="text-2xl font-bold text-primary mt-1">$2,450</div>
-                      <div className="text-xs text-muted-foreground">– $3,100</div>
-                    </div>
-                    <div className="text-center p-3 bg-white rounded-md shadow-sm">
-                      <div className="text-xs text-muted-foreground uppercase">Service Type</div>
-                      <div className="text-sm font-semibold text-foreground mt-1">Full Service</div>
-                      <div className="text-xs text-muted-foreground">Pack & Move</div>
-                    </div>
-                    <div className="text-center p-3 bg-white rounded-md shadow-sm">
-                      <div className="text-xs text-muted-foreground uppercase">Est. Weight</div>
-                      <div className="text-sm font-semibold text-foreground mt-1">4,200 lbs</div>
-                      <div className="text-xs text-muted-foreground">Approx.</div>
-                    </div>
-                    <div className="text-center p-3 bg-white rounded-md shadow-sm">
-                      <div className="text-xs text-muted-foreground uppercase">Distance</div>
-                      <div className="text-sm font-semibold text-foreground mt-1">847 mi</div>
-                      <div className="text-xs text-muted-foreground">Interstate</div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <Separator />
-
-              {/* Terms & Conditions Section */}
-              <section>
-                <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">3</span>
-                  Terms & Conditions
-                </h2>
-                <ScrollArea className="h-[200px] rounded-md border border-border/50 p-4 bg-muted/20">
-                  <div className="text-sm text-muted-foreground space-y-4 pr-4">
-                    <p className="font-semibold text-foreground">AUTHORIZATION TO PROCEED</p>
-                    <p>
-                      By signing this document, I authorize TruMove and its affiliated carriers to proceed with the 
-                      transportation of my household goods as detailed in the estimate provided. I understand that 
-                      this authorization constitutes a binding agreement to utilize the services described herein.
-                    </p>
-                    
-                    <p className="font-semibold text-foreground">BINDING ESTIMATE ACKNOWLEDGMENT</p>
-                    <p>
-                      I acknowledge that the estimate provided is based on the inventory and services I have requested. 
-                      The final cost may vary if additional items or services are requested at the time of the move, 
-                      or if the actual weight/volume exceeds the estimate by more than 10%.
-                    </p>
-                    
-                    <p className="font-semibold text-foreground">CANCELLATION POLICY</p>
-                    <p>
-                      Cancellations made more than 7 business days prior to the scheduled move date will receive a 
-                      full refund of any deposit. Cancellations made within 7 business days may be subject to a 
-                      cancellation fee of up to 25% of the estimated total.
-                    </p>
-                    
-                    <p className="font-semibold text-foreground">LIABILITY & VALUATION</p>
-                    <p>
-                      Basic liability coverage is included at $0.60 per pound per article. Full replacement value 
-                      protection is available for an additional fee. I understand that I should review and select 
-                      appropriate coverage before the move date.
-                    </p>
-                    
-                    <p className="font-semibold text-foreground">INSURANCE OPTIONS</p>
-                    <p>
-                      I acknowledge that I have been informed of available insurance options and understand that 
-                      it is my responsibility to ensure adequate coverage for my belongings during transit.
-                    </p>
-
-                    <p className="font-semibold text-foreground">CARRIER VETTING</p>
-                    <p>
-                      All carriers affiliated with TruMove are verified against FMCSA safety records and must 
-                      maintain active operating authority, proper insurance, and satisfactory safety ratings.
-                    </p>
-                  </div>
-                </ScrollArea>
-
-                <div className="mt-4 flex items-start gap-3">
-                  <Checkbox
-                    id="terms"
-                    checked={agreedToTerms}
-                    onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
-                  />
-                  <label htmlFor="terms" className="text-sm text-foreground cursor-pointer leading-tight">
-                    I have read, understand, and agree to the terms and conditions outlined above. I acknowledge 
-                    that this constitutes a legally binding agreement.
+              {/* Quick Signature Notice */}
+              <div className="bg-muted/40 border-b border-border px-8 py-4">
+                <p className="text-sm text-foreground">
+                  <span className="font-semibold">To complete this authorization:</span> Type your full legal name below, 
+                  review the terms, then click the signature field to apply your electronic signature.
+                </p>
+                <div className="mt-3 max-w-sm">
+                  <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
+                    Your Full Legal Name
                   </label>
+                  <Input
+                    placeholder="Enter your full legal name"
+                    value={typedName}
+                    onChange={(e) => {
+                      setTypedName(e.target.value);
+                      if (isSigned) setIsSigned(false);
+                    }}
+                    className="bg-white border-foreground/20"
+                  />
                 </div>
-              </section>
+              </div>
 
-              <Separator />
+              {/* Document Body */}
+              <div className="px-8 py-6 space-y-6 text-sm leading-relaxed text-foreground">
+                
+                {/* Important Notice */}
+                <section>
+                  <h2 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">
+                    Important Notice Regarding Your Moving Estimate
+                  </h2>
+                  <p className="mb-4">
+                    TruMove LLC is a federally licensed household goods transportation broker and is not a motor carrier. 
+                    TruMove arranges transportation services through independent, federally licensed and insured motor carriers. 
+                    The performing motor carrier will issue the bill of lading and be responsible for transportation services.
+                  </p>
+                </section>
 
-              {/* Signature Section */}
-              <section>
-                <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">4</span>
-                  Electronic Signature
-                </h2>
+                <Separator className="my-4" />
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
-                      Type Your Full Legal Name
-                    </label>
-                    <Input
-                      placeholder="Enter your full legal name to sign"
-                      value={typedName}
-                      onChange={(e) => {
-                        setTypedName(e.target.value);
-                        if (isSigned) setIsSigned(false);
-                      }}
-                      className="bg-muted/50 text-lg"
-                      disabled={isSigned}
+                {/* Estimate Basis */}
+                <section>
+                  <h2 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">
+                    Estimate Basis & Acknowledgment
+                  </h2>
+                  <p className="mb-4">
+                    The customer acknowledges that the pricing provided is an estimate only and is not a guaranteed or fixed 
+                    price unless expressly stated in writing as a binding estimate.
+                  </p>
+                  <p className="mb-4">
+                    The estimate is based on information provided by the customer regarding shipment inventory, dwelling type, 
+                    access conditions, mileage, and move date. Final charges may increase or decrease based on actual certified 
+                    shipment weight, services performed, access conditions encountered, and items transported in accordance 
+                    with carrier tariffs and federal regulations.
+                  </p>
+                  <p>
+                    The customer acknowledges that the estimate is generated using TruMove's pricing engine, which incorporates 
+                    customer-provided data, route variables, and historical pricing and weight data from federally regulated 
+                    household goods shipments reported through the U.S. Department of Transportation and FMCSA.
+                  </p>
+                </section>
+
+                <Separator className="my-4" />
+
+                {/* Variable Charges */}
+                <section>
+                  <h2 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">
+                    Variable Charges Notice
+                  </h2>
+                  <p className="mb-3">Final charges may increase or decrease based on:</p>
+                  <ul className="list-disc list-inside space-y-1 ml-2 text-muted-foreground">
+                    <li>Actual certified shipment weight</li>
+                    <li>Services performed</li>
+                    <li>Access conditions encountered</li>
+                    <li>Items transported</li>
+                    <li>Carrier tariffs and federal regulations</li>
+                  </ul>
+                  <p className="mt-4 text-muted-foreground">
+                    Additional services such as stairs, elevators, long carries, shuttle service, packing, specialty handling, 
+                    waiting time, or parking restrictions may result in additional charges.
+                  </p>
+                </section>
+
+                <Separator className="my-4" />
+
+                {/* Customer Acknowledgments */}
+                <section>
+                  <h2 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">
+                    Customer Acknowledgments
+                  </h2>
+                  <p className="mb-3">Unless expressly designated as binding, this estimate is a <strong>non-binding estimate</strong>.</p>
+                  <p className="mb-3">By accepting, the customer acknowledges and agrees that:</p>
+                  <ul className="space-y-2 ml-2">
+                    <li className="flex items-start gap-2">
+                      <span className="text-muted-foreground">•</span>
+                      <span>TruMove is a broker, not a carrier</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-muted-foreground">•</span>
+                      <span>Final charges may differ from the estimate</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-muted-foreground">•</span>
+                      <span>Pricing depends on actual weight, services, and conditions</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-muted-foreground">•</span>
+                      <span>TruMove is authorized to arrange transportation services on the customer's behalf</span>
+                    </li>
+                  </ul>
+                </section>
+
+                <Separator className="my-4" />
+
+                {/* Estimated Price Range */}
+                <section className="bg-muted/30 border border-border rounded-md p-5">
+                  <h2 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-4 text-center">
+                    Estimated Price Range
+                  </h2>
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-foreground">$2,450</div>
+                      <div className="text-xs text-muted-foreground uppercase">Low Estimate</div>
+                    </div>
+                    <div className="text-muted-foreground text-lg">—</div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-foreground">$3,100</div>
+                      <div className="text-xs text-muted-foreground uppercase">High Estimate</div>
+                    </div>
+                  </div>
+                </section>
+
+                <Separator className="my-4" />
+
+                {/* Agreement Checkbox */}
+                <section>
+                  <div className="flex items-start gap-3 p-4 border border-border rounded-md bg-background">
+                    <Checkbox
+                      id="terms"
+                      checked={agreedToTerms}
+                      onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                      className="mt-0.5"
                     />
+                    <label htmlFor="terms" className="text-sm text-foreground cursor-pointer leading-relaxed">
+                      I understand and agree to the Estimate Consent & Authorization. I acknowledge that I have read, 
+                      understand, and agree to the terms outlined above.
+                    </label>
+                  </div>
+                </section>
+
+                <Separator className="my-4" />
+
+                {/* Signature Block */}
+                <section className="space-y-4">
+                  <h2 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">
+                    Customer Signature
+                  </h2>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Customer Name Display */}
+                    <div>
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
+                        Customer Name
+                      </label>
+                      <div className="h-12 border-b-2 border-foreground/30 flex items-end pb-1 px-1">
+                        <span className="text-base font-medium">
+                          {typedName || <span className="text-muted-foreground italic">Enter name above</span>}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Date */}
+                    <div>
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
+                        Date
+                      </label>
+                      <div className="h-12 border-b-2 border-foreground/30 flex items-end pb-1 px-1">
+                        <span className="text-base">{today}</span>
+                      </div>
+                    </div>
                   </div>
 
+                  {/* Signature Field */}
                   <div>
                     <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1.5">
-                      Signature
+                      Signature / Acceptance
                     </label>
                     <div
                       onClick={handleSign}
                       className={`
-                        relative h-24 rounded-lg border-2 border-dashed flex items-center justify-center
+                        relative h-20 border-2 border-dashed rounded flex items-center justify-center
                         transition-all cursor-pointer
                         ${isSigned 
-                          ? "border-primary/50 bg-primary/5" 
+                          ? "border-foreground/40 bg-muted/20" 
                           : canSign 
-                            ? "border-primary/30 bg-muted/30 hover:border-primary/50 hover:bg-primary/5" 
-                            : "border-border bg-muted/20 cursor-not-allowed"
+                            ? "border-foreground/30 bg-muted/10 hover:border-foreground/50 hover:bg-muted/20" 
+                            : "border-border bg-muted/5 cursor-not-allowed"
                         }
                       `}
                     >
                       {isSigned ? (
                         <div className="flex items-center gap-3">
                           <span 
-                            className="text-3xl text-primary"
+                            className="text-3xl text-foreground"
                             style={{ fontFamily: "'Dancing Script', cursive" }}
                           >
                             {typedName}
                           </span>
-                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground">
-                            <Check className="h-4 w-4" />
+                          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-foreground text-background">
+                            <Check className="h-3 w-3" />
                           </span>
                         </div>
                       ) : (
-                        <span className={`text-sm ${canSign ? "text-primary" : "text-muted-foreground"}`}>
-                          {canSign ? "Click here to apply your signature" : "Complete the fields above to sign"}
+                        <span className={`text-sm ${canSign ? "text-foreground" : "text-muted-foreground"}`}>
+                          {canSign ? "Click here to apply your electronic signature" : "Complete name and agreement above to sign"}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs text-muted-foreground bg-muted/30 rounded-md px-4 py-2">
+                  {/* Document Metadata */}
+                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-2">
                     <div>
                       <span className="uppercase tracking-wide">Date Signed: </span>
                       <span className="font-medium text-foreground">{isSigned ? today : "—"}</span>
@@ -343,26 +303,23 @@ export default function Auth() {
                       <span className="font-mono text-foreground">192.168.xxx.xxx</span>
                     </div>
                   </div>
-                </div>
-              </section>
+                </section>
+              </div>
 
-              <Separator />
+              {/* Action Footer */}
+              <div className="border-t border-border px-8 py-5 bg-muted/20">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <Button variant="ghost" size="sm" className="text-muted-foreground gap-2">
+                      <Printer className="h-4 w-4" />
+                      Print
+                    </Button>
+                    <Button variant="ghost" size="sm" className="text-muted-foreground gap-2">
+                      <Download className="h-4 w-4" />
+                      Download PDF
+                    </Button>
+                  </div>
 
-              {/* Action Buttons */}
-              <section className="flex flex-wrap items-center justify-between gap-4 pt-2">
-                <Button
-                  variant="ghost"
-                  className="text-muted-foreground hover:text-foreground gap-2"
-                >
-                  <MessageSquare className="h-4 w-4" />
-                  Request Changes
-                </Button>
-
-                <div className="flex items-center gap-3">
-                  <Button variant="outline" className="gap-2">
-                    <Download className="h-4 w-4" />
-                    Download PDF
-                  </Button>
                   <Button
                     onClick={handleSubmit}
                     disabled={!canSubmit}
@@ -372,7 +329,7 @@ export default function Auth() {
                     Submit Authorization
                   </Button>
                 </div>
-              </section>
+              </div>
             </CardContent>
           </Card>
 
