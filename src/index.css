@@ -12438,3 +12438,66 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* =============================================
+   MOVE SUMMARY CARD - Pill Header Style
+   ============================================= */
+
+.tru-move-summary-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border) / 0.6);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px hsl(var(--tm-ink) / 0.08);
+  transition: all 0.3s ease;
+}
+
+.tru-move-summary-card.is-expanded {
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.12);
+}
+
+/* Summary-specific header adjustments */
+.tru-qb-form-header-summary {
+  padding: 12px 16px;
+  background: hsl(220 15% 96%);
+}
+
+.tru-qb-form-header-summary .tru-qb-header-logo {
+  left: 12px;
+  height: 18px;
+}
+
+.tru-qb-form-header-summary .tru-qb-form-title {
+  font-size: 14px;
+}
+
+.tru-qb-form-header-summary .tru-qb-form-subtitle-compact {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase;
+}
+
+/* Summary Row Layout */
+.tru-summary-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tru-summary-row-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Dark mode adjustments */
+.dark .tru-move-summary-card {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border) / 0.4);
+}
+
+.dark .tru-qb-form-header-summary {
+  background: hsl(220 20% 14%);
+}

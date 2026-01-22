@@ -1,31 +1,43 @@
-import { Package, ArrowDown } from "lucide-react";
+import { Package, ArrowDown, Hammer } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FloatingInventoryButtonProps {
   totalCubicFeet: number;
   onScrollToInventory: () => void;
+  isAtInventory: boolean;
 }
 
 export default function FloatingInventoryButton({ 
   totalCubicFeet, 
-  onScrollToInventory 
+  onScrollToInventory,
+  isAtInventory 
 }: FloatingInventoryButtonProps) {
   return (
     <button
       onClick={onScrollToInventory}
       className={cn(
-        "fixed bottom-6 right-6 z-40",
+        "fixed bottom-6 right-6 z-50",
         "flex items-center gap-2 px-4 py-3",
-        "rounded-full bg-primary text-primary-foreground",
-        "shadow-lg shadow-primary/25",
-        "transition-all duration-200",
-        "hover:scale-105 hover:shadow-xl hover:shadow-primary/30",
-        "active:scale-95"
+        "bg-tm-ink text-white rounded-full",
+        "shadow-lg hover:shadow-xl",
+        "transition-all duration-300",
+        "hover:scale-105",
+        "tru-qb-glow"
       )}
     >
-      <Package className="w-5 h-5" />
+      {isAtInventory ? (
+        <Hammer className="w-5 h-5" />
+      ) : (
+        <Package className="w-5 h-5" />
+      )}
       <span className="font-bold tabular-nums">{totalCubicFeet} cu ft</span>
-      <ArrowDown className="w-4 h-4 animate-bounce" />
+      <span className="text-sm opacity-90">
+        {isAtInventory ? "Keep Building" : "View Inventory"}
+      </span>
+      <ArrowDown className={cn(
+        "w-4 h-4 transition-transform",
+        isAtInventory && "rotate-180"
+      )} />
     </button>
   );
 }
