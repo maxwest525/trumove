@@ -1,6 +1,5 @@
-import { Pencil, MapPin, Calendar, Ruler, Car, Package, Box, Scale } from "lucide-react";
-import { calculateTotalWeight, calculateTotalCubicFeet, type InventoryItem, type MoveDetails } from "@/lib/priceCalculator";
-import { cn } from "@/lib/utils";
+import { Pencil, MapPin, Calendar, Ruler, Car, Package } from "lucide-react";
+import { type InventoryItem, type MoveDetails } from "@/lib/priceCalculator";
 import { format } from "date-fns";
 import type { ExtendedMoveDetails } from "./EstimateWizard";
 
@@ -12,9 +11,6 @@ interface QuoteSnapshotVerticalProps {
 }
 
 export default function QuoteSnapshotVertical({ items, moveDetails, extendedDetails, onEdit }: QuoteSnapshotVerticalProps) {
-  const totalWeight = calculateTotalWeight(items);
-  const totalCubicFeet = calculateTotalCubicFeet(items);
-
   // Format property type for display - plain text
   const formatPropertyType = (type: string, floor?: number, hasElevator?: boolean) => {
     if (!type) return '';
@@ -50,19 +46,19 @@ export default function QuoteSnapshotVertical({ items, moveDetails, extendedDeta
   ].filter(Boolean).join(' • ');
 
   return (
-    <div className="tru-move-summary-card is-expanded w-full max-w-[280px]">
-      {/* Header - No logo, always visible */}
-      <div className="tru-summary-header-compact">
-        <div className="flex-1">
-          <span className="text-sm font-bold text-foreground">
+    <div className="tru-move-summary-card is-expanded w-full max-w-[300px]">
+      {/* Header - Enlarged and Centered */}
+      <div className="tru-summary-header-large relative">
+        <div className="text-center flex-1">
+          <h3 className="text-lg font-black text-foreground">
             Your Move <span className="tru-qb-title-accent">Calculated</span>
-          </span>
+          </h3>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wide">All details from your form</p>
         </div>
         {onEdit && (
           <button 
             onClick={onEdit}
-            className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
             title="Edit move details"
           >
             <Pencil className="w-3.5 h-3.5" />
@@ -70,109 +66,69 @@ export default function QuoteSnapshotVertical({ items, moveDetails, extendedDeta
         )}
       </div>
       
-      {/* Content - Always expanded */}
-      <div className="p-3 space-y-2.5">
-        {/* Origin Section */}
-        <div className="tru-summary-row">
-          <div className="tru-summary-row-header">
+      {/* Content - Left aligned rows */}
+      <div className="p-4 space-y-3 text-left">
+        {/* Origin */}
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
             <MapPin className="w-3 h-3 text-primary" />
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Origin</span>
+            Origin
           </div>
-          <p className="text-xs font-medium text-foreground truncate pl-4">
+          <p className="text-sm text-foreground">
             {moveDetails.fromLocation || '—'}
           </p>
           {originPropertyLine && (
-            <p className="text-[10px] text-muted-foreground pl-4">{originPropertyLine}</p>
+            <p className="text-xs text-muted-foreground">{originPropertyLine}</p>
           )}
         </div>
 
-        {/* Destination Section */}
-        <div className="tru-summary-row">
-          <div className="tru-summary-row-header">
+        {/* Destination */}
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
             <MapPin className="w-3 h-3 text-primary" />
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Destination</span>
+            Destination
           </div>
-          <p className="text-xs font-medium text-foreground truncate pl-4">
+          <p className="text-sm text-foreground">
             {moveDetails.toLocation || '—'}
           </p>
           {destPropertyLine && (
-            <p className="text-[10px] text-muted-foreground pl-4">{destPropertyLine}</p>
+            <p className="text-xs text-muted-foreground">{destPropertyLine}</p>
           )}
         </div>
 
-        {/* Distance & Date Row */}
-        <div className="flex items-center gap-3 py-1.5 border-t border-b border-border/40">
-          <div className="flex items-center gap-1">
-            <Ruler className="w-3 h-3 text-muted-foreground" />
-            <span className="text-xs font-medium">
+        {/* Distance & Date - Row */}
+        <div className="flex items-center gap-4 py-2 border-t border-b border-border/40 text-sm">
+          <div className="flex items-center gap-1.5">
+            <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-foreground">
               {moveDetails.distance > 0 ? `${moveDetails.distance.toLocaleString()} mi` : '—'}
             </span>
           </div>
-          <div className="h-3 w-px bg-border" />
-          <div className="flex items-center gap-1">
-            <Calendar className="w-3 h-3 text-muted-foreground" />
-            <span className="text-xs font-medium">
-              {extendedDetails?.moveDate ? format(extendedDetails.moveDate, 'MMM d, yyyy') : moveDetails.moveDate || '—'}
+          <div className="flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-foreground">
+              {extendedDetails?.moveDate ? format(extendedDetails.moveDate, 'MMM d, yyyy') : '—'}
             </span>
           </div>
         </div>
 
-        {/* Additional Services - Compact */}
-        <div className="space-y-1 text-[11px]">
-          <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1 text-muted-foreground">
-              <Car className="w-3 h-3" />
-              Vehicle Transport
-            </span>
-            <span className={cn(
-              "font-medium",
-              extendedDetails?.hasVehicleTransport ? "text-primary" : "text-muted-foreground"
-            )}>
+        {/* Additional Services - Row with black text for Yes/No */}
+        <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-1.5">
+            <Car className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-muted-foreground">Vehicle:</span>
+            <span className="font-medium text-foreground">
               {extendedDetails?.hasVehicleTransport ? 'Yes' : 'No'}
             </span>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1 text-muted-foreground">
-              <Package className="w-3 h-3" />
-              Packing Service
-            </span>
-            <span className={cn(
-              "font-medium",
-              extendedDetails?.needsPackingService ? "text-primary" : "text-muted-foreground"
-            )}>
+          <div className="flex items-center gap-1.5">
+            <Package className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-muted-foreground">Packing:</span>
+            <span className="font-medium text-foreground">
               {extendedDetails?.needsPackingService ? 'Yes' : 'No'}
             </span>
           </div>
         </div>
-
-        {/* Inventory Stats - Single row */}
-        <div className="flex items-center justify-between py-1.5 px-2 bg-muted/30 rounded-md border border-border/40 text-xs">
-          <div className="flex items-center gap-1">
-            <Box className="w-3 h-3 text-muted-foreground" />
-            <span className="font-bold text-foreground">{items.length}</span>
-            <span className="text-muted-foreground">items</span>
-          </div>
-          <div className="h-3 w-px bg-border" />
-          <div className="flex items-center gap-1">
-            <span className="font-bold text-foreground">{totalCubicFeet.toLocaleString()}</span>
-            <span className="text-muted-foreground">cu ft</span>
-          </div>
-          <div className="h-3 w-px bg-border" />
-          <div className="flex items-center gap-1">
-            <Scale className="w-3 h-3 text-muted-foreground" />
-            <span className="font-bold text-foreground">{totalWeight > 0 ? `${(totalWeight / 1000).toFixed(1)}k` : '0'}</span>
-            <span className="text-muted-foreground">lbs</span>
-          </div>
-        </div>
-
-        {/* Estimate */}
-        <div className="flex items-center justify-between pt-1">
-          <span className="text-xs text-muted-foreground">Estimated</span>
-          <span className="text-lg font-bold text-primary">TBD</span>
-        </div>
-        <p className="text-[10px] text-center text-muted-foreground">
-          Final quote after inventory review
-        </p>
       </div>
     </div>
   );

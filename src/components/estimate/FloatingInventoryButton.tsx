@@ -1,4 +1,4 @@
-import { Package, ChevronDown } from "lucide-react";
+import { Package, ArrowDown, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FloatingInventoryButtonProps {
@@ -16,23 +16,24 @@ export default function FloatingInventoryButton({
     <button
       onClick={onScrollToInventory}
       className={cn(
-        "fixed top-24 right-6 z-40",
-        "flex items-center gap-2 px-3 py-2",
-        "bg-card border border-border/60 rounded-full",
-        "shadow-md hover:shadow-lg",
+        "fixed right-6 top-32 z-50",
+        "flex items-center gap-3 px-5 py-2.5",
+        "bg-card border-2 border-primary/30 rounded-full",
+        "shadow-lg hover:shadow-xl",
         "transition-all duration-300",
-        "hover:border-primary/40"
+        "hover:border-primary/60 hover:scale-105"
       )}
     >
-      <Package className="w-4 h-4 text-primary" />
-      <span className="text-sm font-semibold text-foreground tabular-nums">{totalCubicFeet} cu ft</span>
-      <span className="text-xs text-muted-foreground">
+      <Package className="w-5 h-5 text-primary" />
+      <span className="text-base font-bold text-foreground tabular-nums">{totalCubicFeet} cu ft</span>
+      <span className="text-sm font-medium text-muted-foreground">
         {isAtInventory ? "Keep Building" : "View Inventory"}
       </span>
-      <ChevronDown className={cn(
-        "w-3 h-3 text-muted-foreground transition-transform",
-        isAtInventory && "rotate-180"
-      )} />
+      {isAtInventory ? (
+        <ArrowUp className="w-4 h-4 text-primary" />
+      ) : (
+        <ArrowDown className="w-4 h-4 text-primary" />
+      )}
     </button>
   );
 }

@@ -1,6 +1,5 @@
 import { Pencil, MapPin, Calendar, Ruler, Car, Package, Box, Scale } from "lucide-react";
 import { calculateTotalWeight, calculateTotalCubicFeet, type InventoryItem, type MoveDetails } from "@/lib/priceCalculator";
-import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import type { ExtendedMoveDetails } from "./EstimateWizard";
 
@@ -14,6 +13,13 @@ interface QuoteSnapshotProps {
 export default function QuoteSnapshot({ items, moveDetails, extendedDetails, onEdit }: QuoteSnapshotProps) {
   const totalWeight = calculateTotalWeight(items);
   const totalCubicFeet = calculateTotalCubicFeet(items);
+
+  // Group items by room for summary
+  const itemsByRoom = items.reduce((acc, item) => {
+    const room = item.room || 'Other';
+    acc[room] = (acc[room] || 0) + item.quantity;
+    return acc;
+  }, {} as Record<string, number>);
 
   // Format property type for display - plain text
   const formatPropertyType = (type: string, floor?: number, hasElevator?: boolean) => {
@@ -50,19 +56,19 @@ export default function QuoteSnapshot({ items, moveDetails, extendedDetails, onE
   ].filter(Boolean).join(' • ');
 
   return (
-    <div className="tru-move-summary-card is-expanded w-full max-w-[320px]">
-      {/* Header - No logo, compact */}
-      <div className="tru-summary-header-compact">
-        <div className="flex-1">
-          <span className="text-sm font-bold text-foreground">
-            Your Move <span className="tru-qb-title-accent">Calculated</span>
-          </span>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">All details from your form</p>
+    <div className="tru-move-summary-card is-expanded w-full">
+      {/* Header - Enlarged and Centered */}
+      <div className="tru-summary-header-large">
+        <div className="text-center flex-1">
+          <h3 className="text-lg font-black text-foreground">
+            Your Move <span className="tru-qb-title-accent">Summary</span>
+          </h3>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Items by room</p>
         </div>
         {onEdit && (
           <button 
             onClick={onEdit}
-            className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+            className="absolute right-3 p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
             title="Edit move details"
           >
             <Pencil className="w-3.5 h-3.5" />
@@ -70,106 +76,52 @@ export default function QuoteSnapshot({ items, moveDetails, extendedDetails, onE
         )}
       </div>
       
-      {/* Content */}
-      <div className="p-3 space-y-2.5">
-        {/* Origin Section */}
-        <div className="tru-summary-row">
-          <div className="tru-summary-row-header">
-            <MapPin className="w-3 h-3 text-primary" />
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Origin</span>
+      {/* Content - Left aligned */}
+      <div className="p-4 space-y-3">
+        {/* Room breakdown */}
+        {Object.keys(itemsByRoom).length > 0 ? (
+          <div className="space-y-1.5">
+            {Object.entries(itemsByRoom).map(([room, count]) => (
+              <div key={room} className="flex items-center justify-between text-sm">
+                <span className="text-foreground">{room}</span>
+                <span className="text-muted-foreground tabular-nums">{count} items</span>
+              </div>
+            ))}
           </div>
-          <p className="text-xs font-medium text-foreground truncate pl-4">
-            {moveDetails.fromLocation || '—'}
-          </p>
-          {originPropertyLine && (
-            <p className="text-[10px] text-muted-foreground pl-4">{originPropertyLine}</p>
-          )}
-        </div>
+        ) : (
+          <p className="text-sm text-muted-foreground text-center py-4">No items added yet</p>
+        )}
 
-        {/* Destination Section */}
-        <div className="tru-summary-row">
-          <div className="tru-summary-row-header">
-            <MapPin className="w-3 h-3 text-primary" />
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Destination</span>
+        {/* Totals row */}
+        {items.length > 0 && (
+          <div className="flex items-center justify-between pt-2 border-t border-border/40 text-sm font-medium">
+            <span className="text-foreground">Total</span>
+            <span className="text-foreground tabular-nums">{items.reduce((sum, item) => sum + item.quantity, 0)} items</span>
           </div>
-          <p className="text-xs font-medium text-foreground truncate pl-4">
-            {moveDetails.toLocation || '—'}
-          </p>
-          {destPropertyLine && (
-            <p className="text-[10px] text-muted-foreground pl-4">{destPropertyLine}</p>
-          )}
-        </div>
+        )}
 
-        {/* Distance & Date Row */}
-        <div className="flex items-center gap-3 py-1.5 border-t border-b border-border/40">
-          <div className="flex items-center gap-1">
-            <Ruler className="w-3 h-3 text-muted-foreground" />
-            <span className="text-xs font-medium">
-              {moveDetails.distance > 0 ? `${moveDetails.distance.toLocaleString()} mi` : '—'}
-            </span>
+        {/* Stats row */}
+        {items.length > 0 && (
+          <div className="flex items-center justify-between py-2 px-3 bg-muted/30 rounded-md border border-border/40 text-xs">
+            <div className="flex items-center gap-1">
+              <Box className="w-3 h-3 text-muted-foreground" />
+              <span className="font-semibold text-foreground">{totalCubicFeet.toLocaleString()}</span>
+              <span className="text-muted-foreground">cu ft</span>
+            </div>
+            <div className="h-3 w-px bg-border" />
+            <div className="flex items-center gap-1">
+              <Scale className="w-3 h-3 text-muted-foreground" />
+              <span className="font-semibold text-foreground">{totalWeight > 0 ? `${totalWeight.toLocaleString()}` : '0'}</span>
+              <span className="text-muted-foreground">lbs</span>
+            </div>
           </div>
-          <div className="h-3 w-px bg-border" />
-          <div className="flex items-center gap-1">
-            <Calendar className="w-3 h-3 text-muted-foreground" />
-            <span className="text-xs font-medium">
-              {extendedDetails?.moveDate ? format(extendedDetails.moveDate, 'MMM d, yyyy') : moveDetails.moveDate || '—'}
-            </span>
-          </div>
-        </div>
-
-        {/* Additional Services - Compact row */}
-        <div className="flex items-center gap-3 text-[11px]">
-          <div className="flex items-center gap-1">
-            <Car className="w-3 h-3 text-muted-foreground" />
-            <span className="text-muted-foreground">Vehicle:</span>
-            <span className={cn(
-              "font-medium",
-              extendedDetails?.hasVehicleTransport ? "text-primary" : "text-muted-foreground"
-            )}>
-              {extendedDetails?.hasVehicleTransport ? 'Yes' : 'No'}
-            </span>
-          </div>
-          <div className="h-3 w-px bg-border" />
-          <div className="flex items-center gap-1">
-            <Package className="w-3 h-3 text-muted-foreground" />
-            <span className="text-muted-foreground">Packing:</span>
-            <span className={cn(
-              "font-medium",
-              extendedDetails?.needsPackingService ? "text-primary" : "text-muted-foreground"
-            )}>
-              {extendedDetails?.needsPackingService ? 'Yes' : 'No'}
-            </span>
-          </div>
-        </div>
-
-        {/* Inventory Stats - Single row with icons */}
-        <div className="flex items-center justify-between py-1.5 px-2 bg-muted/30 rounded-md border border-border/40 text-xs">
-          <div className="flex items-center gap-1">
-            <Box className="w-3 h-3 text-muted-foreground" />
-            <span className="font-bold text-foreground">{items.length}</span>
-            <span className="text-muted-foreground">items</span>
-          </div>
-          <div className="h-3 w-px bg-border" />
-          <div className="flex items-center gap-1">
-            <span className="font-bold text-foreground">{totalCubicFeet.toLocaleString()}</span>
-            <span className="text-muted-foreground">cu ft</span>
-          </div>
-          <div className="h-3 w-px bg-border" />
-          <div className="flex items-center gap-1">
-            <Scale className="w-3 h-3 text-muted-foreground" />
-            <span className="font-bold text-foreground">{totalWeight > 0 ? `${(totalWeight / 1000).toFixed(1)}k` : '0'}</span>
-            <span className="text-muted-foreground">lbs</span>
-          </div>
-        </div>
+        )}
 
         {/* Estimate */}
-        <div className="flex items-center justify-between pt-1">
-          <span className="text-xs text-muted-foreground">Estimated</span>
-          <span className="text-lg font-bold text-primary">TBD</span>
+        <div className="flex items-center justify-between pt-2">
+          <span className="text-sm text-muted-foreground">Estimated</span>
+          <span className="text-xl font-bold text-primary">TBD</span>
         </div>
-        <p className="text-[10px] text-center text-muted-foreground">
-          Final quote after inventory review
-        </p>
       </div>
     </div>
   );
