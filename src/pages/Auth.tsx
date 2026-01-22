@@ -91,29 +91,29 @@ export default function Auth() {
         ref={fieldRefs[field]}
         onClick={() => canApply && handleSign(field)}
         className={`
-          inline-flex items-center justify-center min-w-[3.5rem] px-2 h-7 border-2 rounded
-          transition-all cursor-pointer mx-1.5 align-middle font-medium
+          inline-flex items-center justify-center min-w-[4rem] px-2.5 h-8 border-2 rounded
+          transition-all cursor-pointer mx-2 align-middle font-semibold
           ${isSigned 
-            ? "border-foreground/40 bg-muted/30" 
+            ? "border-foreground/50 bg-muted/40" 
             : isActive && canApply
-              ? "border-foreground bg-muted/20 shadow-sm" 
+              ? "border-foreground bg-foreground/5 shadow-md animate-pulse" 
               : canApply
-                ? "border-foreground/50 hover:border-foreground/70 hover:bg-muted/10" 
-                : "border-border bg-muted/10 cursor-not-allowed"
+                ? "border-foreground/60 hover:border-foreground hover:bg-muted/20 hover:shadow-sm" 
+                : "border-muted-foreground/30 bg-muted/10 cursor-not-allowed"
           }
         `}
         title={isSigned ? "Signed" : canApply ? "Click to initial" : "Enter name first"}
       >
         {isSigned ? (
           <span 
-            className="text-sm font-medium text-foreground"
+            className="text-base font-semibold text-foreground"
             style={{ fontFamily: "'Dancing Script', cursive" }}
           >
             {typedInitials}
           </span>
         ) : (
-          <span className="text-[11px] text-foreground/60 uppercase tracking-wide">
-            {isActive && canApply ? "click" : "initial"}
+          <span className={`text-xs uppercase tracking-wide ${isActive && canApply ? "text-foreground font-bold" : "text-foreground/50"}`}>
+            {isActive && canApply ? "← Click" : "initial"}
           </span>
         )}
       </span>
@@ -126,56 +126,57 @@ export default function Auth() {
         <div className="max-w-[1200px] mx-auto flex gap-6">
           
           {/* Left Sidebar */}
-          <div className="w-64 flex-shrink-0 space-y-4">
+          <div className="w-72 flex-shrink-0 space-y-4">
             {/* Instructions Card */}
             <Card className="border border-border bg-background shadow-sm">
-              <CardContent className="p-4 space-y-4">
-                <div className="space-y-3">
+              <CardContent className="p-5 space-y-5">
+                <div className="space-y-4">
                   <div>
-                    <label className="text-[10px] text-muted-foreground uppercase tracking-wider block mb-1.5">
+                    <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-2 font-medium">
                       Your Full Legal Name
                     </label>
                     <Input
                       placeholder="e.g. John Smith"
                       value={typedName}
                       onChange={(e) => setTypedName(e.target.value)}
-                      className="bg-background border-foreground/20 h-9"
+                      className="bg-background border-foreground/20 h-10 text-base"
                     />
                   </div>
                   
-                  {typedInitials && (
-                    <div className="flex items-center gap-3 pt-1">
-                      <div className="flex-1">
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Your Initials</span>
-                        <div className="flex items-center gap-2 mt-1">
+                  {typedName.length >= 2 && (
+                    <div className="space-y-4 pt-2">
+                      <div className="border border-foreground/20 rounded-lg p-4 bg-muted/10">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide block mb-2">Your Signature</span>
+                        <div 
+                          className="text-2xl text-foreground"
+                          style={{ fontFamily: "'Dancing Script', cursive" }}
+                        >
+                          {typedName}
+                        </div>
+                      </div>
+                      
+                      <div className="border border-foreground/20 rounded-lg p-4 bg-muted/10">
+                        <span className="text-xs text-muted-foreground uppercase tracking-wide block mb-2">Your Initials</span>
+                        <div className="flex items-center gap-3">
                           <span 
-                            className="text-lg font-medium text-foreground"
+                            className="text-2xl text-foreground"
                             style={{ fontFamily: "'Dancing Script', cursive" }}
                           >
                             {typedInitials}
                           </span>
-                          <span className="text-[10px] text-muted-foreground">(auto)</span>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Signature Preview</span>
-                        <div 
-                          className="text-sm font-medium text-foreground truncate mt-1"
-                          style={{ fontFamily: "'Dancing Script', cursive" }}
-                        >
-                          {typedName}
+                          <span className="text-xs text-muted-foreground">(auto-generated)</span>
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <Separator className="my-2" />
+                <Separator />
 
-                <div className="space-y-2 text-xs text-muted-foreground">
-                  <p className="font-medium text-foreground text-[10px] uppercase tracking-wider">How to Sign</p>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p className="font-semibold text-foreground text-xs uppercase tracking-wide">How to Sign</p>
                   <p>1. Enter your full legal name above</p>
-                  <p>2. Click each [<span className="font-mono text-[10px]">initial</span>] box in the document</p>
+                  <p>2. Click each highlighted <span className="font-mono text-xs border px-1 rounded">initial</span> box</p>
                   <p>3. Sign and submit at the bottom</p>
                 </div>
               </CardContent>
@@ -268,7 +269,7 @@ export default function Auth() {
                 </div>
 
                 {/* Document Body */}
-                <div className="px-10 py-5 space-y-4 text-sm leading-relaxed text-foreground">
+                <div className="px-10 py-6 space-y-6 text-sm leading-relaxed text-foreground">
                   
                   {/* Section 1 */}
                   <section>
