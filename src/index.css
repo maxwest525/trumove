@@ -12514,3 +12514,17 @@
 .dark .tru-summary-header-compact {
   background: hsl(220 20% 14%);
 }
+
+/* Large Header for Summary Cards - Enlarged and Centered */
+.tru-summary-header-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 14px 20px;
+  background: hsl(220 15% 96%);
+}
+
+.dark .tru-summary-header-large {
+  background: hsl(220 20% 14%);
+}
