@@ -346,13 +346,13 @@ export default function Index() {
             {/* LEFT: Value Proposition */}
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
-                <h1 className="tru-hero-headline-main">
-                  Get matched with vetted carriers<br />
-                  <span className="tru-hero-headline-accent">who actually care.</span>
+                <h1 className="tru-hero-headline-main tru-hero-headline-xl">
+                  Carrier intelligence<br />
+                  <span className="tru-hero-headline-accent">engineered for your route.</span>
                 </h1>
-                <p className="tru-hero-subheadline">
-                  Skip the mega van lines. We connect you with small, family-owned movers — 
-                  all FMCSA verified, all reputation-monitored, all matched to your exact route.
+                <p className="tru-hero-subheadline tru-hero-subheadline-authority">
+                  Matching you with the highest-rated, federally licensed carriers. 
+                  Every mover is FMCSA verified, insurance validated, and performance monitored in real time.
                 </p>
                 
                 {/* Value Props Container - Map overlays this section */}
@@ -399,8 +399,7 @@ export default function Index() {
             {/* RIGHT: Form, Summary, Nav, and Map */}
             <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
               {/* TOP ROW: Form Card */}
-              <div className="tru-floating-form-card">
-                {/* Form Header - Logo + Skip Button */}
+              <div className="tru-floating-form-card tru-intelligence-card">
                 {/* Progress Bar */}
                 <div className="tru-form-progress-bar">
                   <div 
@@ -409,11 +408,16 @@ export default function Index() {
                   />
                 </div>
                 
-                <div className="tru-qb-form-header tru-qb-form-header-pill">
-                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
-                  <div className="tru-qb-form-title-group">
-                    <span className="tru-qb-form-title">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
-                    <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
+                {/* Elevated Form Header */}
+                <div className="tru-qb-form-header tru-qb-form-header-elevated">
+                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo-elevated" />
+                  <div className="tru-qb-form-title-group-elevated">
+                    <span className="tru-qb-form-title-elevated">Route Intelligence</span>
+                    <span className="tru-qb-form-subtitle-elevated">Matching you with the highest-rated, federally licensed carriers</span>
+                  </div>
+                  <div className="tru-qb-header-status">
+                    <span className="tru-status-dot-live"></span>
+                    <span className="tru-status-label">System Active</span>
                   </div>
                 </div>
 
@@ -422,15 +426,21 @@ export default function Index() {
 
                   {/* Step 1: Route & Date */}
                   {step === 1 && (
-                    <div className="tru-qb-step-content" key="step-1">
-                      <h1 className="tru-qb-question tru-qb-question-decorated">Where's your move?</h1>
-                      <p className="tru-qb-subtitle">Enter your route and we'll find your best carrier matches</p>
+                    <div className="tru-qb-step-content tru-qb-step-intelligence" key="step-1">
+                      <h1 className="tru-qb-question tru-qb-question-intelligence">
+                        <Radar className="tru-qb-question-icon" />
+                        Initialize Route Analysis
+                      </h1>
+                      <p className="tru-qb-subtitle tru-qb-subtitle-intelligence">Provide your origin and destination so our system can evaluate pricing, routing, and carrier availability</p>
                       
-                      {/* FROM + TO Row - Side by Side */}
-                      <div className="tru-qb-location-row">
-                        <div className="tru-qb-location-col">
-                          <p className="tru-qb-section-label">From</p>
-                          <div className="tru-qb-input-wrap tru-qb-zip-wrap">
+                      {/* FROM + TO Row - Centered Intelligence Layout */}
+                      <div className="tru-qb-location-row tru-qb-location-intelligence">
+                        <div className="tru-qb-location-col tru-qb-location-col-primary">
+                          <p className="tru-qb-section-label tru-qb-label-intelligence">
+                            <MapPin className="w-3 h-3" />
+                            Origin
+                          </p>
+                          <div className="tru-qb-input-wrap tru-qb-input-intelligence">
                             <LocationAutocomplete
                               value={fromZip}
                               onValueChange={(val) => setFromZip(val)}
@@ -440,15 +450,22 @@ export default function Index() {
                                 const state = city.split(',')[1]?.trim() || '';
                                 triggerCarrierSearch(state);
                               }}
-                              placeholder="City or ZIP"
+                              placeholder="City, State or ZIP"
                               autoFocus
                             />
                           </div>
                         </div>
 
-                        <div className="tru-qb-location-col">
-                          <p className="tru-qb-section-label">To</p>
-                          <div className="tru-qb-input-wrap tru-qb-zip-wrap">
+                        <div className="tru-qb-route-indicator">
+                          <Route className="w-4 h-4" />
+                        </div>
+
+                        <div className="tru-qb-location-col tru-qb-location-col-primary">
+                          <p className="tru-qb-section-label tru-qb-label-intelligence">
+                            <MapPin className="w-3 h-3" />
+                            Destination
+                          </p>
+                          <div className="tru-qb-input-wrap tru-qb-input-intelligence">
                             <LocationAutocomplete
                               value={toZip}
                               onValueChange={(val) => setToZip(val)}
@@ -460,46 +477,56 @@ export default function Index() {
                                   triggerCarrierSearch(state);
                                 }
                               }}
-                              placeholder="City or ZIP"
+                              placeholder="City, State or ZIP"
                             />
                           </div>
                         </div>
                       </div>
 
-                      {/* Move Date */}
-                      <p className="tru-qb-section-label">Move Date</p>
-                      <div className="tru-qb-input-wrap">
-                        <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                          <PopoverTrigger asChild>
-                            <button type="button" className="tru-qb-date-btn">
-                              <CalendarIcon className="w-5 h-5" />
-                              <span>{moveDate ? format(moveDate, "MMMM d, yyyy") : "Select a date"}</span>
-                            </button>
-                          </PopoverTrigger>
-                          <PopoverContent className="form-date-popover" align="center">
-                            <CalendarComponent
-                              mode="single"
-                              selected={moveDate || undefined}
-                              onSelect={(date) => {
-                                setMoveDate(date || null);
-                                setDatePopoverOpen(false);
-                              }}
-                              disabled={(date) => date < new Date()}
-                              className="pointer-events-auto"
-                            />
-                          </PopoverContent>
-                        </Popover>
+                      {/* Move Date - Compact Secondary */}
+                      <div className="tru-qb-date-row-compact">
+                        <p className="tru-qb-section-label tru-qb-label-secondary">
+                          <CalendarIcon className="w-3 h-3" />
+                          Move Date
+                        </p>
+                        <div className="tru-qb-input-wrap tru-qb-date-wrap-compact">
+                          <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                            <PopoverTrigger asChild>
+                              <button type="button" className="tru-qb-date-btn-compact">
+                                <span>{moveDate ? format(moveDate, "MMM d, yyyy") : "Select date"}</span>
+                                <CalendarIcon className="w-4 h-4" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="form-date-popover" align="center">
+                              <CalendarComponent
+                                mode="single"
+                                selected={moveDate || undefined}
+                                onSelect={(date) => {
+                                  setMoveDate(date || null);
+                                  setDatePopoverOpen(false);
+                                }}
+                                disabled={(date) => date < new Date()}
+                                className="pointer-events-auto"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
                       </div>
 
+                      {/* Premium Intelligence CTA */}
                       <button
                         type="button"
-                        className={`tru-qb-continue tru-engine-btn ${isSearchingCarriers ? 'is-scanning' : ''}`}
+                        className={`tru-intelligence-cta ${isSearchingCarriers ? 'is-processing' : ''} ${canContinue() ? 'is-ready' : ''}`}
                         disabled={!canContinue() || isSearchingCarriers}
                         onClick={goNext}
                       >
-                        <Scan className="w-4 h-4 tru-btn-scan" />
-                        <span>{isSearchingCarriers ? 'Analyzing...' : 'Analyze Route'}</span>
-                        {!isSearchingCarriers && <ArrowRight className="w-5 h-5 tru-btn-arrow" />}
+                        <div className="tru-cta-glow"></div>
+                        <div className="tru-cta-content">
+                          <Database className="w-5 h-5 tru-cta-icon-left" />
+                          <span className="tru-cta-text">{isSearchingCarriers ? 'Processing Route Data...' : 'Analyze Route & Match Carriers'}</span>
+                          {!isSearchingCarriers && <ArrowRight className="w-5 h-5 tru-cta-arrow" />}
+                        </div>
+                        <div className="tru-cta-shimmer"></div>
                       </button>
                     </div>
                   )}
