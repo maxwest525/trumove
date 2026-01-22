@@ -205,7 +205,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 <LocationAutocomplete
                   value={details.fromLocation}
                   onValueChange={(val) => updateDetails({ fromLocation: val })}
-                  onLocationSelect={(city) => updateDetails({ fromLocation: city })}
+                  onLocationSelect={(displayAddr, zip, fullAddress) => updateDetails({ fromLocation: fullAddress || displayAddr })}
                   placeholder="Enter your full address"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
@@ -317,7 +317,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 <LocationAutocomplete
                   value={details.toLocation}
                   onValueChange={(val) => updateDetails({ toLocation: val })}
-                  onLocationSelect={(city) => updateDetails({ toLocation: city })}
+                  onLocationSelect={(displayAddr, zip, fullAddress) => updateDetails({ toLocation: fullAddress || displayAddr })}
                   placeholder="Enter your full address"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
