@@ -38,20 +38,32 @@ async function searchMapboxAddresses(query: string): Promise<LocationSuggestion[
     
     const data = await res.json();
     return (data.suggestions || []).map((s: any) => {
-      const parts = s.full_address?.split(', ') || [];
-      const streetAddress = s.address || parts[0] || '';
-      const city = s.place || parts[1] || '';
-      const stateZip = parts[2] || '';
-      const [state, zip] = stateZip.split(' ');
+      // Mapbox suggest returns: name (street), full_address (complete), place_formatted (city, state, country)
+      const streetName = s.name || ''; // e.g., "123 Main Street"
+      const fullAddr = s.full_address || ''; // e.g., "123 Main Street, New York, NY 10001, United States"
+      
+      // Parse from full_address: "123 Main St, New York, NY 10001, United States"
+      const parts = fullAddr.split(', ');
+      const streetAddress = parts[0] || streetName;
+      const city = parts.length >= 3 ? parts[1] : '';
+      
+      // Extract state and zip from "NY 10001" pattern
+      const stateZipPart = parts.length >= 3 ? parts[parts.length - 2] : '';
+      const stateZipMatch = stateZipPart.match(/^([A-Z]{2})\s*(\d{5})?$/);
+      const state = stateZipMatch?.[1] || '';
+      const zip = stateZipMatch?.[2] || '';
+      
+      // Display the full address without "United States"
+      const displayAddr = fullAddr.replace(', United States', '');
       
       return {
         streetAddress,
         city,
-        state: state || '',
-        zip: zip || '',
-        display: `${city}, ${state || ''}`.trim(),
-        fullAddress: s.full_address || `${streetAddress}, ${city}, ${state} ${zip}`.trim(),
-        isVerified: true,
+        state,
+        zip,
+        display: displayAddr, // Show full street address in dropdown
+        fullAddress: fullAddr,
+        isVerified: false, // Will be verified after retrieve
         mapboxId: s.mapbox_id,
       };
     });
@@ -76,13 +88,21 @@ async function retrieveMapboxAddress(mapboxId: string): Promise<LocationSuggesti
     const props = feature.properties;
     const context = props.context || {};
     
+    // Build the verified full address
+    const streetAddress = props.name || '';
+    const city = context.place?.name || '';
+    const state = context.region?.region_code || '';
+    const zip = context.postcode?.name || '';
+    const fullAddr = props.full_address || `${streetAddress}, ${city}, ${state} ${zip}`;
+    const displayAddr = fullAddr.replace(', United States', '');
+    
     return {
-      streetAddress: props.address || props.name || '',
-      city: context.place?.name || '',
-      state: context.region?.region_code || '',
-      zip: context.postcode?.name || '',
-      display: `${context.place?.name || ''}, ${context.region?.region_code || ''}`.trim(),
-      fullAddress: props.full_address || '',
+      streetAddress,
+      city,
+      state,
+      zip,
+      display: displayAddr, // Full verified address
+      fullAddress: fullAddr,
       isVerified: true,
       mapboxId,
     };
@@ -262,7 +282,8 @@ export default function LocationAutocomplete({
     
     setSelectedDisplay(displayText);
     onValueChange(displayText);
-    onLocationSelect(finalSuggestion.display, finalSuggestion.zip, finalSuggestion.fullAddress, finalSuggestion.isVerified);
+    // Pass the full verified address as the first parameter for easier consumption
+    onLocationSelect(displayText, finalSuggestion.zip, finalSuggestion.fullAddress, finalSuggestion.isVerified);
     setShowDropdown(false);
     setSuggestions([]);
     setIsValid(true);
