@@ -687,6 +687,32 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
         }
       });
       
+      // Get city names for labels only (no dots)
+      const fromName = getLocationName(fromZip);
+      const toName = getLocationName(toZip);
+
+      // Add origin label only (no dot/ripple)
+      if (fromName && map.current) {
+        const originEl = document.createElement('div');
+        originEl.className = 'mapbox-marker-label-only';
+        originEl.innerHTML = `<div class="mapbox-marker-label">${fromName}</div>`;
+        const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
+          .setLngLat(fromCoords)
+          .addTo(map.current);
+        markersRef.current.push(originMarker);
+      }
+
+      // Add destination label only (no dot/ripple)
+      if (toName && map.current) {
+        const destEl = document.createElement('div');
+        destEl.className = 'mapbox-marker-label-only';
+        destEl.innerHTML = `<div class="mapbox-marker-label">${toName}</div>`;
+        const destMarker = new mapboxgl.Marker({ element: destEl, anchor: 'center' })
+          .setLngLat(toCoords)
+          .addTo(map.current);
+        markersRef.current.push(destMarker);
+      }
+      
       // Animate route drawing
       const totalPoints = lineCoords.length;
       const animationDuration = 1500; // 1.5 seconds
@@ -716,44 +742,22 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
         
         if (progress < 1) {
           requestAnimationFrame(animateRoute);
+        } else {
+          // Animation complete - NOW zoom out to show full route
+          setTimeout(() => {
+            if (!map.current) return;
+            const padding = isExpanded ? 120 : 80;
+            map.current.fitBounds(bounds, {
+              padding,
+              maxZoom: isExpanded ? 12 : 10,
+              minZoom: 5,
+              duration: 1000, // Smooth 1s transition
+            });
+          }, 200); // Small delay after route completes
         }
       };
       
       requestAnimationFrame(animateRoute);
-
-      // Get city names for labels only (no dots)
-      const fromName = getLocationName(fromZip);
-      const toName = getLocationName(toZip);
-
-      // Add origin label only (no dot/ripple)
-      if (fromName && map.current) {
-        const originEl = document.createElement('div');
-        originEl.className = 'mapbox-marker-label-only';
-        originEl.innerHTML = `<div class="mapbox-marker-label">${fromName}</div>`;
-        const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
-          .setLngLat(fromCoords)
-          .addTo(map.current);
-        markersRef.current.push(originMarker);
-      }
-
-      // Add destination label only (no dot/ripple)
-      if (toName && map.current) {
-        const destEl = document.createElement('div');
-        destEl.className = 'mapbox-marker-label-only';
-        destEl.innerHTML = `<div class="mapbox-marker-label">${toName}</div>`;
-        const destMarker = new mapboxgl.Marker({ element: destEl, anchor: 'center' })
-          .setLngLat(toCoords)
-          .addTo(map.current);
-        markersRef.current.push(destMarker);
-      }
-
-      // Fit to bounds with appropriate padding - zoom in more to see roadways clearly
-      const padding = isExpanded ? 120 : 80;
-      map.current?.fitBounds(bounds, {
-        padding,
-        maxZoom: isExpanded ? 12 : 10,
-        minZoom: 5,
-      });
       
       setIsLoading(false);
     };

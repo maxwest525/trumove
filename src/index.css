@@ -115,6 +115,11 @@
 /* HERO SECTION */
 .tru-page-frame {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-height: calc(100vh - 140px); /* Account for header + footer */
 }
 
 .tru-page-inner {
@@ -136,7 +141,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 48px;
   align-items: stretch;
-  padding: 60px 48px 80px;
+  padding: 40px 48px 60px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -6884,37 +6889,29 @@
   color: hsl(var(--foreground));
 }
 
-/* Theme Toggle Button */
-.header-btn-theme {
-  width: 36px;
-  padding: 0;
-  justify-content: center;
+/* Agent Login Button */
+.header-btn-agent {
   background: transparent;
-  color: hsl(var(--tm-ink) / 0.6);
-  border: 1px solid hsl(var(--tm-ink) / 0.1);
-}
-
-.dark .header-btn-theme {
-  color: hsl(var(--foreground) / 0.6);
-  border-color: hsl(0 0% 100% / 0.1);
-}
-
-.header-btn-theme:hover {
-  background: hsl(var(--tm-ink) / 0.04);
   color: hsl(var(--tm-ink));
+  border: 1px solid hsl(var(--tm-ink) / 0.2);
 }
 
-.dark .header-btn-theme:hover {
-  background: hsl(0 0% 100% / 0.06);
+.dark .header-btn-agent {
   color: hsl(var(--foreground));
+  border-color: hsl(0 0% 100% / 0.2);
 }
 
-.header-btn-theme .theme-icon {
-  transition: transform 300ms ease;
+.header-btn-agent:hover {
+  background: hsl(var(--tm-ink));
+  color: white;
+  border-color: hsl(var(--tm-ink));
+  transform: translateY(-1px);
 }
 
-.header-btn-theme:hover .theme-icon {
-  transform: rotate(180deg);
+.dark .header-btn-agent:hover {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  border-color: hsl(var(--foreground));
 }
 
 .header-btn-primary {
