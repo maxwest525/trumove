@@ -41,7 +41,7 @@ export default function FloatingChatButton({ className = '' }: FloatingChatButto
           ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
         `}
-        aria-label="Open AI Chat"
+        aria-label="AI Moving Helper"
       >
         {/* Pulse ring animation */}
         <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-20" />
@@ -59,7 +59,7 @@ export default function FloatingChatButton({ className = '' }: FloatingChatButto
             ${isHovered && showButton ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2 pointer-events-none'}
           `}
         >
-          Chat with AI
+          AI Moving Helper
         </span>
       </button>
 

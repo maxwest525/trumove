@@ -1,28 +1,16 @@
-import { RefObject } from 'react';
-import { Calculator, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface FloatingQuoteButtonProps {
-  quoteBuilderRef: RefObject<HTMLDivElement>;
   onChatOpen: () => void;
 }
 
-export default function FloatingQuoteButton({ quoteBuilderRef, onChatOpen }: FloatingQuoteButtonProps) {
-  const scrollToQuoteBuilder = () => {
-    quoteBuilderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
+export default function FloatingQuoteButton({ onChatOpen }: FloatingQuoteButtonProps) {
   return (
     <div className="tru-floating-quote is-visible">
-      {/* Main Button - Jump to Quote Builder */}
-      <button className="tru-floating-quote-btn" onClick={scrollToQuoteBuilder}>
-        <Calculator className="w-5 h-5" />
-        <span>Build Your Quote</span>
-      </button>
-
-      {/* Toggle to AI Chat */}
+      {/* AI Moving Helper Button */}
       <button className="tru-floating-toggle" onClick={onChatOpen}>
         <Sparkles className="w-4 h-4" />
-        <span>AI Chat</span>
+        <span>AI Moving Helper</span>
       </button>
     </div>
   );

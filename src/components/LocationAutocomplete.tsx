@@ -281,11 +281,12 @@ export default function LocationAutocomplete({
         type="text"
         className={cn(
           "w-full h-11 px-4 pr-10 rounded-lg border bg-background text-sm font-medium",
-          "placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2",
-          "transition-colors transition-shadow duration-200",
+          "placeholder:text-muted-foreground/50 focus:outline-none",
+          "transition-all duration-300",
+          "tru-input-glow",
           isValid === true 
-            ? "border-emerald-500/60 focus:border-emerald-500 focus:ring-emerald-500/20" 
-            : "border-border/60 focus:border-primary/40 focus:ring-primary/20",
+            ? "border-emerald-500/60 focus:border-emerald-500" 
+            : "border-border/60 focus:border-primary",
           className
         )}
         placeholder={placeholder}

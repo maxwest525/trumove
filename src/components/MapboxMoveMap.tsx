@@ -581,6 +581,35 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
     if (currentMap.getLayer('route-glow')) currentMap.removeLayer('route-glow');
     if (currentMap.getSource('route')) currentMap.removeSource('route');
 
+    // Handle origin-only state (single location)
+    if (fromCoords && !toCoords) {
+      const fromName = getLocationName(fromZip);
+      
+      // Fly to origin with focused zoom
+      currentMap.flyTo({ 
+        center: fromCoords, 
+        zoom: 10, 
+        pitch: 25,
+        duration: 1500,
+        essential: true
+      });
+      
+      // Add pulsing origin marker
+      const originEl = document.createElement('div');
+      originEl.className = 'mapbox-origin-marker-container';
+      originEl.innerHTML = `
+        <div class="mapbox-origin-marker"></div>
+        ${fromName ? `<div class="mapbox-origin-label">${fromName}</div>` : ''}
+        <div class="mapbox-waiting-label">Enter destination...</div>
+      `;
+      const originMarker = new mapboxgl.Marker({ element: originEl, anchor: 'center' })
+        .setLngLat(fromCoords)
+        .addTo(currentMap);
+      markersRef.current.push(originMarker);
+      
+      return;
+    }
+    
     if (!fromCoords || !toCoords) {
       currentMap.flyTo({ center: [-98.5795, 39.8283], zoom: 3, pitch: 20 });
       return;
@@ -623,13 +652,13 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
         map.current.removeSource('route');
       }
       
-      // Add route source
+      // Add route source with empty initial coordinates for animation
       map.current.addSource('route', {
         type: 'geojson',
         data: {
           type: 'Feature',
           properties: {},
-          geometry: { type: 'LineString', coordinates: lineCoords }
+          geometry: { type: 'LineString', coordinates: [] }
         }
       });
       
@@ -657,6 +686,40 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
           'line-opacity': 0.9,
         }
       });
+      
+      // Animate route drawing
+      const totalPoints = lineCoords.length;
+      const animationDuration = 1500; // 1.5 seconds
+      const startTime = performance.now();
+      
+      const animateRoute = (currentTime: number) => {
+        if (!map.current) return;
+        
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / animationDuration, 1);
+        
+        // Ease out cubic for smooth deceleration
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        const pointsToShow = Math.floor(easedProgress * totalPoints);
+        
+        const routeSource = map.current.getSource('route') as mapboxgl.GeoJSONSource;
+        if (routeSource) {
+          routeSource.setData({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: lineCoords.slice(0, Math.max(pointsToShow, 2))
+            }
+          });
+        }
+        
+        if (progress < 1) {
+          requestAnimationFrame(animateRoute);
+        }
+      };
+      
+      requestAnimationFrame(animateRoute);
 
       // Get city names for labels only (no dots)
       const fromName = getLocationName(fromZip);
