@@ -625,16 +625,16 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
     )}>
       {/* Item Image or Icon */}
       <div className={cn(
-        "w-full h-32 rounded-lg flex items-center justify-center mb-2 overflow-hidden",
+        "w-full h-44 rounded-lg flex items-center justify-center mb-2 overflow-hidden",
         quantity > 0 ? "bg-primary/10" : "bg-muted/40"
       )}>
         <InventoryItemImage
           src={item.imageUrl}
           alt={item.name}
           fallbackIcon={Icon}
-          className="w-[120px] h-[120px]"
+          className="w-[160px] h-[160px]"
           iconClassName={cn(
-            "!w-12 !h-12",
+            "!w-16 !h-16",
             quantity > 0 ? "text-primary" : "text-muted-foreground/60"
           )}
         />
