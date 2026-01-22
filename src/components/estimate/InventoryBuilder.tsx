@@ -51,6 +51,7 @@ interface InventoryBuilderProps {
   onClearAll?: () => void;
   specialHandling?: boolean;
   onSpecialHandlingChange?: (value: boolean) => void;
+  isLocked?: boolean;
 }
 
 const ROOM_CONFIG = [
@@ -136,7 +137,8 @@ export default function InventoryBuilder({
   onUpdateQuantity,
   onClearAll,
   specialHandling = false,
-  onSpecialHandlingChange 
+  onSpecialHandlingChange,
+  isLocked = false
 }: InventoryBuilderProps) {
   const [activeRoom, setActiveRoom] = useState('Living Room');
   const [searchQuery, setSearchQuery] = useState('');
