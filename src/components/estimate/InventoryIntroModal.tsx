@@ -1,4 +1,4 @@
-import { Package, DollarSign } from "lucide-react";
+import { Package, DollarSign, AlertTriangle, Phone, ArrowRight } from "lucide-react";
 
 interface InventoryIntroModalProps {
   isOpen: boolean;
@@ -19,55 +19,88 @@ export default function InventoryIntroModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="relative bg-card rounded-2xl shadow-2xl max-w-md w-full p-8 text-center animate-in fade-in zoom-in-95 duration-200">
-        {/* Prominent Price Callout */}
-        <div className="mb-6 p-4 rounded-xl bg-amber-500/15 border-2 border-amber-500/40">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <DollarSign className="w-6 h-6 text-amber-600" />
-            <span className="text-lg font-black text-amber-700 uppercase tracking-wide">
-              Your Inventory Affects Your Price!
-            </span>
-            <DollarSign className="w-6 h-6 text-amber-600" />
+      <div className="relative bg-card rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        {/* Warning Header - Executive Style */}
+        <div className="tru-inventory-warning-header">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-white uppercase tracking-wide">
+                Important Notice
+              </h3>
+              <p className="text-sm text-white/90 font-medium">
+                Your inventory directly affects your price
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-amber-700/80 font-medium">
-            The more accurate your list, the more accurate your quote will be.
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {/* Price Impact Warning */}
+          <div className="tru-inventory-warning-box">
+            <div className="flex gap-3">
+              <DollarSign className="w-6 h-6 tru-warning-icon flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold tru-warning-title mb-1">
+                  Accurate Inventory = Accurate Quote
+                </p>
+                <p className="text-sm tru-warning-text">
+                  The cubic footage of your items determines your final moving cost. 
+                  Missing or inaccurate items may result in unexpected charges on move day.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Move Details Badge */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted border border-border">
+              <Package className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-semibold text-foreground">
+                {distance.toLocaleString()} miles
+              </span>
+              <span className="text-muted-foreground">•</span>
+              <span className="text-sm font-semibold text-foreground">
+                {moveType === 'long-distance' ? 'Long Distance' : 'Local Move'}
+              </span>
+            </div>
+          </div>
+
+          <p className="text-center text-sm text-muted-foreground mb-6">
+            Select rooms and add your furniture, boxes, and appliances to get an accurate estimate.
           </p>
+
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            {/* Primary CTA - Start Building */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="tru-inventory-start-btn"
+            >
+              <Package className="w-5 h-5" />
+              Start Building My Inventory
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            
+            {/* Secondary CTA - Call Specialist */}
+            <a
+              href="tel:1-800-555-0123"
+              className="tru-inventory-call-btn"
+            >
+              <Phone className="w-4 h-4" />
+              Prefer to talk? Call a Moving Specialist
+            </a>
+          </div>
         </div>
-
-        {/* Icon */}
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
-          <Package className="w-8 h-8 text-primary" />
-        </div>
-
-        <h2 className="text-xl font-black text-foreground mb-2">
-          Build Your Inventory
-        </h2>
-        
-        <p className="text-sm text-foreground mb-4">
-          {"You're moving "}
-          <span className="font-bold">{distance.toLocaleString()} miles</span>
-          {" • "}
-          <span className="font-bold">
-            {moveType === 'long-distance' ? 'Long Distance' : 'Local Move'}
-          </span>
-        </p>
-        
-        <p className="text-xs text-muted-foreground mb-6">
-          Select a room and add your furniture and boxes below.
-        </p>
-
-        <button
-          type="button"
-          onClick={onClose}
-          className="h-12 px-8 rounded-xl bg-primary text-primary-foreground text-sm font-bold tracking-wide uppercase transition-all hover:-translate-y-0.5 hover:shadow-lg"
-        >
-          Start Building
-        </button>
       </div>
     </div>
   );
