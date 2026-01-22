@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import logo from "@/assets/logo.png";
-import { Check, Download, Printer, FileText, CreditCard, Receipt } from "lucide-react";
+import { Check, Download, Printer, FileText, CreditCard, Receipt, Send, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type SignatureField = "initial1" | "initial2" | "initial3" | "signature";
@@ -135,6 +135,28 @@ export default function Auth() {
           
           {/* Left Sidebar */}
           <div className="w-72 flex-shrink-0 space-y-4">
+            {/* E-Sign Send Buttons */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 h-10 gap-2 border-foreground/20 hover:bg-foreground hover:text-background transition-all group"
+                onClick={() => toast({ title: "SMS Sent", description: "E-sign link sent via SMS to customer's phone." })}
+              >
+                <Send className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                <span className="text-xs font-medium">Send SMS</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 h-10 gap-2 border-foreground/20 hover:bg-foreground hover:text-background transition-all group"
+                onClick={() => toast({ title: "Email Sent", description: "E-sign link sent via email to customer." })}
+              >
+                <Mail className="h-4 w-4 group-hover:translate-y-[-1px] transition-transform" />
+                <span className="text-xs font-medium">Send Email</span>
+              </Button>
+            </div>
+
             {/* Instructions Card */}
             <Card className="border border-border bg-background shadow-sm">
               <CardContent className="p-5 space-y-4">
