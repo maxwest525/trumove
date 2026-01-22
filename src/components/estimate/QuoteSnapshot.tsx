@@ -1,7 +1,9 @@
-import { Video, Phone } from "lucide-react";
+import { useState } from "react";
+import { Video, Phone, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { calculateTotalWeight, calculateEstimate, determineMoveType, formatCurrency, type InventoryItem, type MoveDetails } from "@/lib/priceCalculator";
 import logoImg from "@/assets/logo.png";
+import { cn } from "@/lib/utils";
 
 interface QuoteSnapshotProps {
   items: InventoryItem[];
@@ -9,19 +11,35 @@ interface QuoteSnapshotProps {
 }
 
 export default function QuoteSnapshot({ items, moveDetails }: QuoteSnapshotProps) {
+  const [isHovered, setIsHovered] = useState(false);
   const totalWeight = calculateTotalWeight(items);
   const effectiveMoveType = moveDetails.moveType === 'auto' 
     ? (moveDetails.distance >= 150 ? 'long-distance' : 'local')
     : moveDetails.moveType;
   
   const estimate = calculateEstimate(totalWeight, moveDetails.distance, effectiveMoveType);
+  
+  // Expand when data is entered or on hover
+  const hasData = moveDetails.fromLocation || moveDetails.toLocation || items.length > 0;
+  const isExpanded = hasData || isHovered;
 
   return (
-    <div className="lg:sticky lg:top-6 flex flex-col rounded-2xl border-2 border-border/60 bg-gradient-to-b from-card via-card to-muted/30 shadow-xl shadow-primary/5">
+    <div 
+      className={cn(
+        "lg:sticky lg:top-6 flex flex-col rounded-2xl border-2 border-border/60 bg-gradient-to-b from-card via-card to-muted/30 shadow-xl shadow-primary/5 transition-all duration-300 overflow-hidden",
+        isExpanded ? "max-h-[800px]" : "max-h-[72px]"
+      )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Header - Matching homepage style */}
-      <div className="tru-qb-form-header">
+      <div className="tru-qb-form-header relative">
         <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
         <span className="tru-qb-form-title">Move Summary</span>
+        <ChevronDown className={cn(
+          "w-4 h-4 text-muted-foreground absolute right-4 top-1/2 -translate-y-1/2 transition-transform duration-300",
+          isExpanded ? "rotate-180" : "rotate-0"
+        )} />
       </div>
 
       {/* Details Grid */}

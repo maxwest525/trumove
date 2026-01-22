@@ -34,7 +34,7 @@ export function InventoryItemImage({
         src={src}
         alt={alt}
         className={cn(
-          "w-full h-full object-contain transition-opacity duration-200 mix-blend-multiply",
+          "w-full h-full object-contain transition-opacity duration-200 mix-blend-multiply scale-150",
           loaded ? "opacity-100" : "opacity-0"
         )}
         onLoad={() => setLoaded(true)}
