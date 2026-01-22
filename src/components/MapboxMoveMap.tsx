@@ -463,6 +463,9 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
   
   // Request version ref to prevent race conditions with async operations
   const requestVersionRef = useRef(0);
+  
+  // Store origin zoom state for smooth transitions when destination is added
+  const originZoomRef = useRef<{ center: [number, number]; zoom: number; pitch: number } | null>(null);
 
   // Trigger resize when map becomes visible (container size changes)
   useEffect(() => {
@@ -594,6 +597,9 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
         essential: true
       });
       
+      // Store the origin zoom state for later
+      originZoomRef.current = { center: fromCoords, zoom: 10, pitch: 25 };
+      
       // Add pulsing origin marker
       const originEl = document.createElement('div');
       originEl.className = 'mapbox-origin-marker-container';
@@ -612,6 +618,7 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
     
     if (!fromCoords || !toCoords) {
       currentMap.flyTo({ center: [-98.5795, 39.8283], zoom: 3, pitch: 20 });
+      originZoomRef.current = null;
       return;
     }
 
