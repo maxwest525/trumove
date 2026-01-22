@@ -142,10 +142,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
       case 1:
         return details.fromLocation && details.fromPropertyType && details.homeSize;
       case 2:
-        return details.toLocation && details.toPropertyType && details.toHomeSize;
+        return details.toLocation && details.toPropertyType && details.toHomeSize && details.moveDate !== null;
       case 3:
-        return details.moveDate !== null;
-      case 4:
         return details.name.trim() && details.phone.trim() && details.email.includes('@');
       default:
         return false;
@@ -154,7 +152,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
 
   const goNext = () => {
     if (canContinue()) {
-      if (step < 4) {
+      if (step < 3) {
         setStep(step + 1);
       } else {
         onComplete(details);
@@ -182,7 +180,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
         <div className="tru-form-progress-bar">
           <div 
             className="tru-form-progress-fill" 
-            style={{ width: `${(step / 4) * 100}%` }}
+            style={{ width: `${(step / 3) * 100}%` }}
           />
         </div>
         
@@ -296,6 +294,33 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 ))}
               </div>
 
+              {/* Additional Services */}
+              <p className="tru-qb-section-label">Additional Services (Optional)</p>
+              <div className="tru-qb-toggles">
+                <button
+                  type="button"
+                  className={`tru-qb-toggle-card ${details.hasVehicleTransport ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ hasVehicleTransport: !details.hasVehicleTransport })}
+                >
+                  <Car className="tru-qb-toggle-icon" />
+                  <div className="tru-qb-toggle-content">
+                    <span className="tru-qb-toggle-title">Vehicle Transport</span>
+                    <span className="tru-qb-toggle-desc">Ship a car with your move</span>
+                  </div>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`tru-qb-toggle-card ${details.needsPackingService ? 'is-active' : ''}`}
+                  onClick={() => updateDetails({ needsPackingService: !details.needsPackingService })}
+                >
+                  <Package className="tru-qb-toggle-icon" />
+                  <div className="tru-qb-toggle-content">
+                    <span className="tru-qb-toggle-title">Packing Service</span>
+                    <span className="tru-qb-toggle-desc">We pack everything for you</span>
+                  </div>
+                </button>
+              </div>
 
               <button
                 type="button"
@@ -410,30 +435,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 ))}
               </div>
 
-
-              <button
-                type="button"
-                className="tru-qb-continue"
-                disabled={!canContinue()}
-                onClick={goNext}
-              >
-                <span>Next Step</span>
-                <ArrowRight className="w-5 h-5" />
-              </button>
-
-              <button type="button" className="tru-qb-back" onClick={goBack}>
-                <ChevronLeft className="w-4 h-4" />
-                <span>Back</span>
-              </button>
-            </div>
-          )}
-
-          {/* Step 3: Move Date */}
-          {step === 3 && (
-            <div className="tru-qb-step-content" key="step-3">
-              <h1 className="tru-qb-question">When would you like to move?</h1>
-              <p className="tru-qb-subtitle">This helps us match you with available carriers</p>
-
+              {/* Move Date */}
+              <p className="tru-qb-section-label">Move Date</p>
               <div className="tru-qb-input-wrap">
                 <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                   <PopoverTrigger asChild>
@@ -461,34 +464,6 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                 </Popover>
               </div>
 
-              {/* Additional Services */}
-              <p className="tru-qb-section-label">Additional Services (Optional)</p>
-              <div className="tru-qb-toggles">
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card ${details.hasVehicleTransport ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ hasVehicleTransport: !details.hasVehicleTransport })}
-                >
-                  <Car className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">Vehicle Transport</span>
-                    <span className="tru-qb-toggle-desc">Ship a car with your move</span>
-                  </div>
-                </button>
-                
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card ${details.needsPackingService ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ needsPackingService: !details.needsPackingService })}
-                >
-                  <Package className="tru-qb-toggle-icon" />
-                  <div className="tru-qb-toggle-content">
-                    <span className="tru-qb-toggle-title">Packing Service</span>
-                    <span className="tru-qb-toggle-desc">We pack everything for you</span>
-                  </div>
-                </button>
-              </div>
-
               <button
                 type="button"
                 className="tru-qb-continue"
@@ -506,9 +481,9 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
             </div>
           )}
 
-          {/* Step 4: Contact Information (Final Step) */}
-          {step === 4 && (
-            <div className="tru-qb-step-content" key="step-4">
+          {/* Step 3: Contact Information (Final Step) */}
+          {step === 3 && (
+            <div className="tru-qb-step-content" key="step-3">
               <h1 className="tru-qb-question">Almost done! How can we reach you?</h1>
               <p className="tru-qb-subtitle">We'll send your personalized quote</p>
 
