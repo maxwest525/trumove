@@ -9335,9 +9335,9 @@
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: #ffffff;
-  background: hsl(var(--tm-ink));
-  border: none;
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.08);
+  border: 2px solid hsl(var(--primary) / 0.4);
   border-radius: 10px;
   cursor: pointer;
   transition: all 180ms ease;
@@ -9629,10 +9629,10 @@
 }
 
 .tru-qb-size-btn.is-active {
-  background: hsl(var(--tm-ink));
-  border-color: hsl(var(--tm-ink));
-  color: #ffffff;
-  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.3);
+  background: hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary));
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.2);
 }
 
 /* Toggle Cards */

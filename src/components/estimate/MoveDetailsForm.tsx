@@ -174,10 +174,10 @@ export default function MoveDetailsForm({
                 type="button"
                 onClick={() => onUpdate({ homeSize: size.value })}
                 className={cn(
-                  "flex-1 h-10 rounded-lg text-xs font-bold transition-all",
+                  "flex-1 h-10 rounded-lg text-xs font-bold transition-all border-2",
                   moveDetails.homeSize === size.value
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-muted/60 text-foreground/70 hover:bg-muted hover:text-foreground border border-border/40"
+                    ? "border-primary bg-primary/10 text-primary shadow-sm"
+                    : "border-transparent bg-muted/60 text-foreground/70 hover:bg-muted hover:text-foreground"
                 )}
               >
                 {size.label}
@@ -222,9 +222,9 @@ export default function MoveDetailsForm({
         disabled={!canProceed}
         className={cn(
           "w-full h-12 rounded-xl text-sm font-bold tracking-wide uppercase transition-all flex items-center justify-center gap-3",
-          "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground",
-          "hover:-translate-y-0.5 hover:shadow-[0_8px_30px_-4px_hsl(var(--primary)/0.4)]",
-          "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:from-muted disabled:to-muted disabled:text-muted-foreground"
+          "border-2 border-primary bg-primary/10 text-primary",
+          "hover:-translate-y-0.5 hover:bg-primary/20 hover:shadow-lg",
+          "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:border-muted disabled:bg-muted/50 disabled:text-muted-foreground"
         )}
       >
         <Truck className="w-5 h-5" />
