@@ -460,6 +460,61 @@
   opacity: 0.6;
 }
 
+/* Summary Actions (CTA buttons in vertical summary) */
+.tru-summary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-summary-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  background: hsl(var(--tm-ink) / 0.02);
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+.tru-summary-action-btn:hover {
+  border-color: hsl(var(--primary) / 0.4);
+  background: hsl(var(--primary) / 0.05);
+  color: hsl(var(--tm-ink));
+}
+
+.tru-summary-action-btn.tru-summary-action-primary {
+  border-color: hsl(var(--primary) / 0.3);
+  background: hsl(var(--primary) / 0.08);
+  color: hsl(var(--tm-ink));
+}
+
+.tru-summary-action-btn.tru-summary-action-primary:hover {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.15);
+}
+
+/* Summary estimate highlight */
+.tru-summary-row-estimate {
+  background: hsl(var(--primary) / 0.05);
+  border-radius: 6px;
+  padding: 6px 8px !important;
+  margin-top: 4px;
+}
+
+.tru-summary-value-primary {
+  color: hsl(var(--primary)) !important;
+  font-weight: 700 !important;
+}
+
 /* Map Row - spans full sidebar width */
 .tru-hero-map-row {
   width: 100%;
