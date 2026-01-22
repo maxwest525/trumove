@@ -338,7 +338,7 @@ export default function Index() {
   const hasRoute = fromZip.length === 5 && toZip.length === 5;
 
   return (
-    <SiteShell>
+    <SiteShell centered>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
         {/* HERO - Split Layout */}
