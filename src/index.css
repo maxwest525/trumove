@@ -10004,7 +10004,7 @@
    ============================================= */
 .tru-floating-quote {
   position: fixed;
-  bottom: 24px;
+  bottom: 90px;
   right: 24px;
   z-index: 100;
   display: flex;
