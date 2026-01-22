@@ -200,48 +200,7 @@
   font-size: 18px;
   line-height: 1.6;
   color: hsl(var(--tm-ink) / 0.7);
-  margin-bottom: 20px;
-}
-
-/* ===== Hero Value Pills ===== */
-.tru-hero-value-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 32px;
-}
-
-.tru-value-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.7);
-  background: hsl(var(--tm-ink) / 0.04);
-  border: 1px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 20px;
-  transition: all 180ms ease;
-}
-
-.tru-value-pill:hover {
-  background: hsl(var(--tm-ink) / 0.08);
-  border-color: hsl(var(--tm-ink) / 0.15);
-}
-
-.tru-value-pill-icon {
-  width: 12px;
-  height: 12px;
-  color: hsl(var(--primary));
-}
-
-@media (max-width: 640px) {
-  .tru-hero-value-pills {
-    justify-content: center;
-  }
+  margin-bottom: 36px;
 }
 
 /* Value Props Container - enables map overlay */
@@ -9386,7 +9345,7 @@
   /* Styles moved to micro-interactions section */
 }
 
-/* Continue Button - Black with Green Glow */
+/* Continue Button */
 .tru-qb-continue,
 .tru-qb-submit {
   display: flex;
@@ -9401,42 +9360,40 @@
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: hsl(0 0% 100%);
-  background: hsl(var(--tm-ink));
+  color: hsl(var(--tm-ink));
+  background: hsl(0 0% 100%);
   border: 2px solid hsl(var(--tm-ink));
   border-radius: 10px;
   cursor: pointer;
   transition: all 180ms ease;
   box-shadow: 
-    0 0 16px hsl(var(--primary) / 0.3),
-    0 0 32px hsl(var(--primary) / 0.15),
-    0 4px 12px hsl(var(--tm-ink) / 0.2);
+    0 1px 2px hsl(var(--tm-ink) / 0.1),
+    0 4px 12px hsl(var(--tm-ink) / 0.15);
 }
 
 .tru-qb-continue:hover:not(:disabled),
 .tru-qb-submit:hover:not(:disabled) {
-  background: hsl(0 0% 100%);
-  color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink));
+  color: hsl(0 0% 100%);
   border-color: hsl(var(--tm-ink));
   box-shadow: 
-    0 2px 8px hsl(var(--tm-ink) / 0.15),
-    0 8px 24px hsl(var(--tm-ink) / 0.12);
+    0 2px 4px hsl(var(--tm-ink) / 0.12),
+    0 8px 20px hsl(var(--tm-ink) / 0.3);
   transform: translateY(-1px);
 }
 
 .tru-qb-continue:active:not(:disabled),
 .tru-qb-submit:active:not(:disabled) {
-  transform: scale(0.98) translateY(0);
+  transform: translateY(0);
   box-shadow: 
-    0 0 8px hsl(var(--primary) / 0.2),
-    0 2px 8px hsl(var(--tm-ink) / 0.15);
+    0 1px 2px hsl(var(--tm-ink) / 0.1),
+    0 2px 8px hsl(var(--tm-ink) / 0.12);
 }
 
 .tru-qb-continue:disabled,
 .tru-qb-submit:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  box-shadow: none;
 }
 
 /* Back Button */
