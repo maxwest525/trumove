@@ -211,6 +211,7 @@ export default function InventoryBuilder({
     }
     
     if (delta > 0) {
+      // Adding item
       onAddItem({
         name: item.name,
         room: room,
@@ -219,6 +220,20 @@ export default function InventoryBuilder({
         cubicFeet: item.cubicFeet,
         specialHandling: specialHandling,
       });
+    } else if (delta < 0 && onUpdateQuantity) {
+      // Removing item - find matching item in inventoryItems and update/remove
+      const matchingItem = inventoryItems.find(
+        inv => inv.name === item.name && inv.room === room
+      );
+      if (matchingItem) {
+        if (matchingItem.quantity <= 1) {
+          // Remove the item entirely if quantity would go to 0
+          onUpdateQuantity(matchingItem.id, 0);
+        } else {
+          // Decrease quantity by 1
+          onUpdateQuantity(matchingItem.id, matchingItem.quantity - 1);
+        }
+      }
     }
   };
 
