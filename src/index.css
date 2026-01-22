@@ -6831,13 +6831,13 @@
   background: hsl(var(--primary) / 0.3);
 }
 
-/* Pill-shaped active state with green border and dark text */
+/* Pill-shaped active state - matches inventory sidebar buttons */
 .header-nav-link.is-active {
   color: hsl(var(--tm-ink));
-  background: hsl(0 0% 100%);
+  background: hsl(var(--primary) / 0.05);
   border: 2px solid hsl(var(--primary));
-  font-weight: 600;
-  box-shadow: none;
+  font-weight: 700;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 .dark .header-nav-link.is-active {
