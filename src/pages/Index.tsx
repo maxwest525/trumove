@@ -411,8 +411,7 @@ export default function Index() {
                 
                 <div className="tru-qb-form-header tru-qb-form-header-pill">
                   <div className="tru-qb-form-title-group">
-                    <span className="tru-qb-form-title tru-qb-form-title-large">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
-                    <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
+                    <span className="tru-qb-form-title tru-qb-form-title-xlarge">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
                   </div>
                 </div>
 
