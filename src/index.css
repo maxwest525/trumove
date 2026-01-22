@@ -718,6 +718,13 @@
   color: hsl(var(--tm-ink));
 }
 
+.tru-qb-form-header-pill .tru-qb-form-title.tru-qb-form-title-xlarge {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: hsl(var(--tm-ink));
+}
+
 /* Input Focus Glow Animation */
 @keyframes glow-pulse {
   0%, 100% { 
