@@ -511,7 +511,7 @@
 }
 
 .tru-summary-value-primary {
-  color: hsl(var(--primary)) !important;
+  color: hsl(var(--tm-ink)) !important;
   font-weight: 700 !important;
 }
 
@@ -6813,7 +6813,7 @@
   letter-spacing: 0.02em;
   color: hsl(var(--tm-ink) / 0.7);
   text-decoration: none;
-  border-radius: 100px;
+  border-radius: 20px;
   transition: all 200ms ease;
 }
 
@@ -6831,11 +6831,11 @@
   background: hsl(0 0% 100% / 0.06);
 }
 
-/* Pill-shaped active state with green gradient */
+/* Pill-shaped active state with green background and black text */
 .header-nav-link.is-active {
   color: hsl(var(--tm-ink));
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.08));
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.2);
+  background: hsl(var(--primary));
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
 }
 
 .dark .header-nav-link.is-active {

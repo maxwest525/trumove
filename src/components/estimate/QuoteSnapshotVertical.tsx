@@ -75,9 +75,7 @@ export default function QuoteSnapshotVertical({ items, moveDetails }: QuoteSnaps
             <div className="tru-summary-row tru-summary-row-estimate">
               <span className="tru-summary-label">Estimate</span>
               <span className="tru-summary-value tru-summary-value-primary">
-                {estimate.min > 0 
-                  ? `${formatCurrency(estimate.min)} – ${formatCurrency(estimate.max)}`
-                  : "—"}
+                TBD
               </span>
             </div>
           </div>
