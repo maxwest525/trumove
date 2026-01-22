@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X, Package } from "lucide-react";
 import { type InventoryItem, calculateTotalWeight } from "@/lib/priceCalculator";
 
 interface CompactInventoryListProps {
@@ -21,7 +21,7 @@ export default function CompactInventoryList({
   return (
     <div className="rounded-xl border border-border/60 bg-card p-4 shadow-sm">
       <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-3">
-        Your Inventory
+        Your Move Inventory
       </div>
       
       {/* Scrollable list */}
@@ -31,10 +31,24 @@ export default function CompactInventoryList({
             key={item.id} 
             className="flex items-center justify-between py-1.5 border-b border-border/20 last:border-0"
           >
-            <span className="text-sm font-medium text-foreground truncate max-w-[180px]">
-              {item.name}
-            </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              {/* Item thumbnail */}
+              <div className="w-5 h-5 flex-shrink-0 rounded overflow-hidden bg-muted/50 flex items-center justify-center">
+                {item.imageUrl ? (
+                  <img 
+                    src={item.imageUrl} 
+                    alt={item.name} 
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <Package className="w-3 h-3 text-muted-foreground" />
+                )}
+              </div>
+              <span className="text-sm font-medium text-foreground truncate">
+                {item.name}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-xs text-muted-foreground tabular-nums">
                 ×{item.quantity}
               </span>

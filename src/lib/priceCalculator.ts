@@ -9,6 +9,7 @@ export interface InventoryItem {
   weightEach: number;
   cubicFeet?: number;
   specialHandling?: boolean;
+  imageUrl?: string;
 }
 
 export interface MoveDetails {

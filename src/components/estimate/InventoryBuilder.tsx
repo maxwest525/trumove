@@ -199,7 +199,7 @@ export default function InventoryBuilder({
     return itemQuantities[key] || 0;
   };
 
-  const handleQuantityChange = (item: { name: string; defaultWeight: number; cubicFeet?: number }, room: string, delta: number) => {
+  const handleQuantityChange = (item: { name: string; defaultWeight: number; cubicFeet?: number; imageUrl?: string }, room: string, delta: number) => {
     const key = `${room}-${item.name}`;
     const currentQty = itemQuantities[key] || 0;
     const newQty = Math.max(0, currentQty + delta);
@@ -221,6 +221,7 @@ export default function InventoryBuilder({
         weightEach: item.defaultWeight,
         cubicFeet: item.cubicFeet,
         specialHandling: specialHandling,
+        imageUrl: item.imageUrl,
       });
     } else if (delta < 0 && onUpdateQuantity) {
       // Removing item - find matching item in inventoryItems and update/remove
