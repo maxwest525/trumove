@@ -3,6 +3,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import logo from "@/assets/logo.png";
 import { Check, Download, Printer, FileText, CreditCard, Receipt, Send, Mail } from "lucide-react";
@@ -208,40 +209,37 @@ export default function Auth() {
               </CardContent>
             </Card>
 
-            {/* Document Navigation */}
+            {/* Document Selection */}
             <Card className="border border-border bg-background shadow-sm">
-              <CardContent className="p-4 space-y-2">
-                <h3 className="font-medium text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
-                  Documents
+              <CardContent className="p-4 space-y-3">
+                <h3 className="font-medium text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Documents to Sign
                 </h3>
-                <div className="space-y-1.5">
-                  <Button 
-                    variant="secondary" 
-                    size="sm" 
-                    className="w-full justify-start gap-2 h-8 text-xs font-medium"
-                  >
-                    <FileText className="h-3.5 w-3.5" />
-                    Estimate Authorization
-                    {allSigned && <Check className="h-3 w-3 ml-auto" />}
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="w-full justify-start gap-2 h-8 text-xs text-muted-foreground hover:text-foreground"
-                    onClick={() => toast({ title: "Coming Soon", description: "CC/ACH Authorization document will be available shortly." })}
-                  >
-                    <CreditCard className="h-3.5 w-3.5" />
-                    CC/ACH Authorization
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="w-full justify-start gap-2 h-8 text-xs text-muted-foreground hover:text-foreground"
-                    onClick={() => toast({ title: "Coming Soon", description: "Bill of Lading document will be available shortly." })}
-                  >
-                    <Receipt className="h-3.5 w-3.5" />
-                    Bill of Lading
-                  </Button>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-3 p-2 rounded border border-foreground/20 bg-foreground/5 cursor-pointer hover:bg-foreground/10 transition-colors">
+                    <Checkbox checked disabled className="data-[state=checked]:bg-foreground data-[state=checked]:border-foreground" />
+                    <div className="flex-1 flex items-center gap-2">
+                      <FileText className="h-3.5 w-3.5 text-foreground" />
+                      <span className="text-xs font-medium text-foreground">Estimate Authorization</span>
+                    </div>
+                    {allSigned && <Check className="h-3.5 w-3.5 text-foreground" />}
+                  </label>
+                  
+                  <label className="flex items-center gap-3 p-2 rounded border border-border cursor-pointer hover:bg-muted/50 transition-colors">
+                    <Checkbox className="data-[state=checked]:bg-foreground data-[state=checked]:border-foreground" />
+                    <div className="flex-1 flex items-center gap-2">
+                      <CreditCard className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">CC/ACH Authorization</span>
+                    </div>
+                  </label>
+                  
+                  <label className="flex items-center gap-3 p-2 rounded border border-border cursor-pointer hover:bg-muted/50 transition-colors">
+                    <Checkbox className="data-[state=checked]:bg-foreground data-[state=checked]:border-foreground" />
+                    <div className="flex-1 flex items-center gap-2">
+                      <Receipt className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">Bill of Lading</span>
+                    </div>
+                  </label>
                 </div>
               </CardContent>
             </Card>
