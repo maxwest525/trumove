@@ -85,17 +85,14 @@ export default function QuoteSnapshot({ items, moveDetails }: QuoteSnapshotProps
       {/* Estimate */}
       <div className="px-5 py-4 bg-gradient-to-b from-primary/5 to-primary/10 border-t border-border/40">
         <div className="text-xs text-muted-foreground mb-2">
-          Rough estimate based on your inventory, move type, and distance:
+          Estimated cost:
         </div>
         <div className="text-3xl font-black text-foreground">
-          {estimate.min === 0 ? (
-            <span className="text-lg font-semibold text-muted-foreground">
-              Add items in Step 1 to see a starting range.
-            </span>
-          ) : (
-            <>{formatCurrency(estimate.min)} – {formatCurrency(estimate.max)}</>
-          )}
+          TBD
         </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          Final quote after inventory review
+        </p>
       </div>
 
       {/* CTAs */}
