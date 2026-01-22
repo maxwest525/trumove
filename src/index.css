@@ -6823,12 +6823,12 @@
 
 .header-nav-link:hover {
   color: hsl(var(--tm-ink));
-  background: hsl(var(--tm-ink) / 0.04);
+  background: hsl(var(--primary) / 0.3);
 }
 
 .dark .header-nav-link:hover {
   color: hsl(var(--foreground));
-  background: hsl(0 0% 100% / 0.06);
+  background: hsl(var(--primary) / 0.3);
 }
 
 /* Pill-shaped active state with green background and black text */
@@ -6836,10 +6836,11 @@
   color: hsl(var(--tm-ink));
   background: hsl(var(--primary));
   box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+  font-weight: 700;
 }
 
 .dark .header-nav-link.is-active {
-  color: hsl(var(--foreground));
+  color: hsl(var(--tm-ink));
 }
 
 .header-nav-chevron {
@@ -11775,28 +11776,33 @@
    ============================================= */
 
 .tru-inventory-warning-header {
-  background: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(32 95% 45%) 100%);
-  padding: 16px 24px;
+  background: linear-gradient(135deg, hsl(var(--tm-ink)) 0%, hsl(160 55% 20%) 100%);
+  padding: 24px;
 }
 
-.tru-inventory-warning-box {
+.tru-inventory-warning-box,
+.tru-inventory-info-box {
   margin-bottom: 24px;
   padding: 16px;
   border-radius: 12px;
-  background: hsl(45 100% 96%);
-  border: 1px solid hsl(45 80% 75%);
+  background: hsl(var(--muted) / 0.5);
+  border: 1px solid hsl(var(--border));
 }
 
-.tru-warning-icon {
-  color: hsl(38 92% 40%);
+.tru-warning-icon,
+.tru-info-icon {
+  color: hsl(var(--tm-ink));
 }
 
-.tru-warning-title {
-  color: hsl(30 80% 25%);
+.tru-warning-title,
+.tru-info-title {
+  color: hsl(var(--tm-ink));
 }
 
-.tru-warning-text {
-  color: hsl(30 50% 35%);
+.tru-warning-text,
+.tru-info-text {
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
 }
 
 .tru-inventory-start-btn {

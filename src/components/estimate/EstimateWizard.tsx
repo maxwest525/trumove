@@ -174,16 +174,7 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
       <div className="tru-floating-form-card">
         {/* Header - Matching homepage style */}
         <div className="tru-qb-form-header">
-          <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
           <span className="tru-qb-form-title">Build Your Move</span>
-          <button 
-            type="button"
-            onClick={() => setChatOpen(true)} 
-            className="tru-ai-chat-btn"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>AI Assistant</span>
-          </button>
         </div>
 
         <div className="tru-floating-form-content">

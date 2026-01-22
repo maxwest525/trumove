@@ -1,4 +1,4 @@
-import { Package, DollarSign, AlertTriangle, Phone, ArrowRight } from "lucide-react";
+import { Package, AlertTriangle, Phone, ArrowRight } from "lucide-react";
 
 interface InventoryIntroModalProps {
   isOpen: boolean;
@@ -10,8 +10,6 @@ interface InventoryIntroModalProps {
 export default function InventoryIntroModal({ 
   isOpen, 
   onClose, 
-  distance,
-  moveType 
 }: InventoryIntroModalProps) {
   if (!isOpen) return null;
 
@@ -27,12 +25,12 @@ export default function InventoryIntroModal({
       <div className="relative bg-card rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Warning Header - Executive Style */}
         <div className="tru-inventory-warning-header">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <AlertTriangle className="w-5 h-5 text-white" />
+          <div className="flex flex-col items-center justify-center text-center gap-2">
+            <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-wide">
+              <h3 className="text-xl font-black text-white uppercase tracking-wide">
                 Important Notice
               </h3>
               <p className="text-sm text-white/90 font-medium">
@@ -45,38 +43,20 @@ export default function InventoryIntroModal({
         {/* Content */}
         <div className="p-6">
           {/* Price Impact Warning */}
-          <div className="tru-inventory-warning-box">
+          <div className="tru-inventory-info-box">
             <div className="flex gap-3">
-              <DollarSign className="w-6 h-6 tru-warning-icon flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold tru-warning-title mb-1">
+                <p className="font-bold tru-info-title mb-1">
                   Accurate Inventory = Accurate Quote
                 </p>
-                <p className="text-sm tru-warning-text">
-                  The cubic footage of your items determines your final moving cost. 
-                  Missing or inaccurate items may result in unexpected charges on move day.
+                <p className="text-sm tru-info-text">
+                  The cubic footage of your items is the primary factor in calculating your moving cost. 
+                  Please take your time to add all furniture, boxes, and appliances to ensure your quote is as accurate as possible. 
+                  Missing or underestimated items may result in additional charges on move day.
                 </p>
               </div>
             </div>
           </div>
-
-          {/* Move Details Badge */}
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted border border-border">
-              <Package className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-semibold text-foreground">
-                {distance.toLocaleString()} miles
-              </span>
-              <span className="text-muted-foreground">•</span>
-              <span className="text-sm font-semibold text-foreground">
-                {moveType === 'long-distance' ? 'Long Distance' : 'Local Move'}
-              </span>
-            </div>
-          </div>
-
-          <p className="text-center text-sm text-muted-foreground mb-6">
-            Select rooms and add your furniture, boxes, and appliances to get an accurate estimate.
-          </p>
 
           {/* Action Buttons */}
           <div className="space-y-3">
