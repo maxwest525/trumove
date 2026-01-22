@@ -81,7 +81,7 @@ export default function Auth() {
   const canInitial = typedInitials.length >= 1;
   const canSign = typedName.length >= 2;
 
-  const InitialBox = ({ field }: { field: SignatureField }) => {
+  const InitialBox = ({ field, style }: { field: SignatureField; style?: React.CSSProperties }) => {
     const isSigned = signatures[field];
     const isActive = currentField === field;
     const canApply = field === "signature" ? canSign : canInitial;
@@ -90,30 +90,38 @@ export default function Auth() {
       <span 
         ref={fieldRefs[field]}
         onClick={() => canApply && handleSign(field)}
+        style={{
+          ...style,
+          ...(isActive && canApply && !isSigned ? { borderColor: '#d97706', backgroundColor: '#fef3c7' } : {})
+        }}
         className={`
-          inline-flex items-center justify-center min-w-[4rem] px-2.5 h-8 border-2 rounded
-          transition-all cursor-pointer mx-2 align-middle font-semibold
+          inline-flex items-center justify-center px-3 py-1 border-2 rounded
+          transition-all cursor-pointer align-middle relative
           ${isSigned 
-            ? "border-foreground/50 bg-muted/40" 
+            ? "border-foreground bg-foreground/5" 
             : isActive && canApply
-              ? "border-foreground bg-foreground/5 shadow-md animate-pulse" 
+              ? "shadow-lg" 
               : canApply
-                ? "border-foreground/60 hover:border-foreground hover:bg-muted/20 hover:shadow-sm" 
+                ? "border-foreground/70 hover:border-foreground hover:bg-muted/20" 
                 : "border-muted-foreground/30 bg-muted/10 cursor-not-allowed"
           }
         `}
-        title={isSigned ? "Signed" : canApply ? "Click to initial" : "Enter name first"}
+        title={isSigned ? "Signed" : canApply ? "Click to sign" : "Enter name first"}
       >
         {isSigned ? (
           <span 
-            className="text-base font-semibold text-foreground"
+            className="text-base font-semibold text-foreground whitespace-nowrap"
             style={{ fontFamily: "'Dancing Script', cursive" }}
           >
             {typedInitials}
           </span>
+        ) : isActive && canApply ? (
+          <span className="text-xs font-bold uppercase tracking-wide whitespace-nowrap" style={{ color: '#b45309' }}>
+            SIGN
+          </span>
         ) : (
-          <span className={`text-xs uppercase tracking-wide ${isActive && canApply ? "text-foreground font-bold" : "text-foreground/50"}`}>
-            {isActive && canApply ? "← Click" : "initial"}
+          <span className="text-[10px] text-muted-foreground uppercase tracking-wide whitespace-nowrap">
+            initial
           </span>
         )}
       </span>
@@ -129,8 +137,8 @@ export default function Auth() {
           <div className="w-72 flex-shrink-0 space-y-4">
             {/* Instructions Card */}
             <Card className="border border-border bg-background shadow-sm">
-              <CardContent className="p-5 space-y-5">
-                <div className="space-y-4">
+              <CardContent className="p-5 space-y-4">
+                <div className="space-y-3">
                   <div>
                     <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-2 font-medium">
                       Your Full Legal Name
@@ -143,32 +151,28 @@ export default function Auth() {
                     />
                   </div>
                   
-                  {typedName.length >= 2 && (
-                    <div className="space-y-4 pt-2">
-                      <div className="border border-foreground/20 rounded-lg p-4 bg-muted/10">
-                        <span className="text-xs text-muted-foreground uppercase tracking-wide block mb-2">Your Signature</span>
-                        <div 
-                          className="text-2xl text-foreground"
-                          style={{ fontFamily: "'Dancing Script', cursive" }}
-                        >
-                          {typedName}
-                        </div>
-                      </div>
-                      
-                      <div className="border border-foreground/20 rounded-lg p-4 bg-muted/10">
-                        <span className="text-xs text-muted-foreground uppercase tracking-wide block mb-2">Your Initials</span>
-                        <div className="flex items-center gap-3">
-                          <span 
-                            className="text-2xl text-foreground"
-                            style={{ fontFamily: "'Dancing Script', cursive" }}
-                          >
-                            {typedInitials}
-                          </span>
-                          <span className="text-xs text-muted-foreground">(auto-generated)</span>
-                        </div>
+                  {/* Always show signature/initials preview */}
+                  <div className="flex gap-3 pt-1">
+                    <div className="flex-1 border border-foreground/20 rounded px-3 py-2 bg-muted/10">
+                      <span className="text-[10px] text-muted-foreground uppercase tracking-wide block mb-1">Signature</span>
+                      <div 
+                        className="text-lg text-foreground truncate min-h-[1.5rem]"
+                        style={{ fontFamily: "'Dancing Script', cursive" }}
+                      >
+                        {typedName || <span className="text-muted-foreground/50 text-sm">—</span>}
                       </div>
                     </div>
-                  )}
+                    
+                    <div className="w-16 border border-foreground/20 rounded px-3 py-2 bg-muted/10">
+                      <span className="text-[10px] text-muted-foreground uppercase tracking-wide block mb-1">Initials</span>
+                      <div 
+                        className="text-lg text-foreground min-h-[1.5rem]"
+                        style={{ fontFamily: "'Dancing Script', cursive" }}
+                      >
+                        {typedInitials || <span className="text-muted-foreground/50 text-sm">—</span>}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <Separator />
@@ -290,10 +294,9 @@ export default function Auth() {
                         for transportation services rendered.
                       </p>
 
-                      <p className="text-justify items-center inline">
-                        I
-                        <InitialBox field="initial1" />
-                        acknowledge that TruMove LLC operates as a broker, not a motor carrier, and that an independent 
+                      <p className="text-justify">
+                        I <InitialBox field="initial1" style={{ marginLeft: '2px', marginRight: '4px' }} /> acknowledge 
+                        that TruMove LLC operates as a broker, not a motor carrier, and that an independent 
                         carrier will perform the actual transportation services.
                       </p>
                     </div>
@@ -324,11 +327,9 @@ export default function Auth() {
                         tariffs and applicable federal regulations.
                       </p>
 
-                      <p className="text-justify inline">
-                        I
-                        <InitialBox field="initial2" />
-                        understand that this is a non-binding estimate and that final charges may differ based on actual 
-                        shipment weight, services rendered, and conditions encountered.
+                      <p className="text-justify">
+                        I understand that this is a non-binding estimate <InitialBox field="initial2" style={{ marginLeft: '4px', marginRight: '2px' }} /> and 
+                        that final charges may differ based on actual shipment weight, services rendered, and conditions encountered.
                       </p>
                     </div>
                   </section>
@@ -353,10 +354,9 @@ export default function Auth() {
                         household goods.
                       </p>
 
-                      <p className="text-justify inline">
-                        I
-                        <InitialBox field="initial3" />
-                        acknowledge that additional services may incur charges beyond the estimated amount.
+                      <p className="text-justify">
+                        I acknowledge that additional services may incur <InitialBox field="initial3" style={{ marginLeft: '4px', marginRight: '4px' }} /> charges 
+                        beyond the estimated amount.
                       </p>
                     </div>
                   </section>
