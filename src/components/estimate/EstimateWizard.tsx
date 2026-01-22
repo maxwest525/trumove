@@ -210,6 +210,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
                   mode="address"
+                  showHelperText
+                  showGeolocation
                 />
               </div>
 
@@ -322,6 +324,8 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
                   mode="address"
+                  showHelperText
+                  showGeolocation
                 />
               </div>
 
