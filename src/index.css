@@ -552,72 +552,20 @@
   }
 }
 
-/* =============================================
-   COMMAND PRESENCE FORM CARD
-   Single source of truth - all card styling consolidated here
-   ============================================= */
 .tru-floating-form-card {
   min-width: 0;
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 20% 98%) 100%);
-  border: 4px solid hsl(var(--tm-ink) / 0.15);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 24px;
   box-shadow: 
-    0 2px 4px hsl(var(--tm-ink) / 0.06),
-    0 8px 16px hsl(var(--tm-ink) / 0.08),
-    0 24px 48px hsl(var(--tm-ink) / 0.12),
-    0 48px 80px hsl(var(--tm-ink) / 0.15),
-    inset 0 1px 0 hsl(0 0% 100% / 0.9);
-  overflow: visible;
-  position: relative;
-  animation: form-command-entrance 0.8s ease-out;
-}
-
-/* Card elevation is achieved via shadows - no corner brackets needed */
-
-/* Command Entrance Animation - Single attention pulse */
-@keyframes form-command-entrance {
-  0% { 
-    opacity: 0;
-    transform: translateY(12px);
-    box-shadow: 
-      0 0 0 0 hsl(var(--primary) / 0),
-      0 1px 2px hsl(var(--tm-ink) / 0.04),
-      0 4px 8px hsl(var(--tm-ink) / 0.05),
-      0 16px 32px hsl(var(--tm-ink) / 0.08),
-      0 32px 64px hsl(var(--tm-ink) / 0.1);
-  }
-  40% { 
-    opacity: 1;
-    transform: translateY(0);
-    box-shadow: 
-      0 0 0 6px hsl(var(--primary) / 0.15),
-      0 1px 2px hsl(var(--tm-ink) / 0.04),
-      0 4px 8px hsl(var(--tm-ink) / 0.05),
-      0 16px 32px hsl(var(--tm-ink) / 0.08),
-      0 32px 64px hsl(var(--tm-ink) / 0.1);
-  }
-  70% {
-    box-shadow: 
-      0 0 0 12px hsl(var(--primary) / 0.08),
-      0 1px 2px hsl(var(--tm-ink) / 0.04),
-      0 4px 8px hsl(var(--tm-ink) / 0.05),
-      0 16px 32px hsl(var(--tm-ink) / 0.08),
-      0 32px 64px hsl(var(--tm-ink) / 0.1);
-  }
-  100% { 
-    opacity: 1;
-    transform: translateY(0);
-    box-shadow: 
-      0 0 0 0 hsl(var(--primary) / 0),
-      0 1px 2px hsl(var(--tm-ink) / 0.04),
-      0 4px 8px hsl(var(--tm-ink) / 0.05),
-      0 16px 32px hsl(var(--tm-ink) / 0.08),
-      0 32px 64px hsl(var(--tm-ink) / 0.1),
-      inset 0 1px 0 hsl(0 0% 100% / 0.8);
-  }
+    0 1px 2px hsl(var(--tm-ink) / 0.03),
+    0 4px 8px hsl(var(--tm-ink) / 0.04),
+    0 12px 24px hsl(var(--tm-ink) / 0.06),
+    0 24px 48px hsl(var(--tm-ink) / 0.08);
+  overflow: hidden;
 }
 
 /* Summary Value Update Animation */
@@ -637,16 +585,15 @@
   border-radius: 4px;
 }
 
-/* Form Content - Command Presence Spacing */
 .tru-floating-form-content {
-  padding: 32px 40px 24px;
+  padding: 16px 24px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 220px;
+  min-height: 180px;
   flex: 1;
-  gap: 12px;
+  gap: 6px;
 }
 
 .tru-floating-form-footer {
@@ -670,46 +617,33 @@
   opacity: 0.6;
 }
 
-/* Form Progress Bar - Command Style */
+/* Form Progress Bar */
 .tru-form-progress-bar {
-  height: 5px;
-  background: hsl(var(--tm-ink) / 0.06);
-  border-radius: 28px 28px 0 0;
+  height: 4px;
+  background: hsl(var(--tm-ink) / 0.08);
+  border-radius: 4px 4px 0 0;
   overflow: hidden;
-  position: relative;
 }
 
 .tru-form-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(160 80% 42%), hsl(var(--primary)));
-  background-size: 200% 100%;
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(160 80% 45%));
   border-radius: 0;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: progress-shimmer 3s ease-in-out infinite;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes progress-shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* =============================================
-   COMMAND PRESENCE TRUST FOOTER
-   ============================================= */
+/* Trust Footer Styling - Regulatory Style */
 .tru-form-footer-trust {
-  flex-direction: row;
-  gap: 16px;
-  padding: 12px 24px;
-  background: transparent;
-  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
-  justify-content: center;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 20px;
 }
 
 .tru-form-trust-items {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -717,84 +651,64 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.5);
-  background: transparent;
-  border: none;
-  padding: 0;
+  color: hsl(var(--tm-ink) / 0.4);
 }
 
 .tru-form-trust-item svg {
-  color: hsl(var(--primary) / 0.7);
-  width: 11px;
-  height: 11px;
+  color: hsl(var(--tm-ink) / 0.35);
 }
 
 .tru-form-trust-divider {
-  display: none;
+  font-size: 8px;
+  color: hsl(var(--tm-ink) / 0.2);
 }
 
-/* =============================================
-   COMMAND PRESENCE FORM HEADER - Prominent Styling
-   ============================================= */
+/* Form Header - Centered Pill Style (matches Move Summary) */
+/* Form Header Pill Style - Logo absolute left, title/subtitle truly centered */
 .tru-qb-form-header.tru-qb-form-header-pill {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 28px 32px 24px;
-  background: linear-gradient(180deg, hsl(220 18% 98%) 0%, hsl(220 15% 95%) 100%);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.1);
+  padding: 14px 20px;
+  background: hsl(220 15% 96%);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
   position: relative;
-}
-
-/* Scanline accent under header - wider and more prominent */
-.tru-qb-form-header.tru-qb-form-header-pill::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
-  border-radius: 3px;
 }
 
 .tru-qb-form-header-pill .tru-qb-header-logo {
   position: absolute;
-  left: 20px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  height: 24px;
-  opacity: 0.7;
+  height: 22px;
+  opacity: 0.8;
 }
 
 .tru-qb-form-header-pill .tru-qb-form-title-group {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   text-align: center;
 }
 
 .tru-qb-form-header-pill .tru-qb-form-title {
-  font-size: 28px;
-  font-weight: 900;
+  font-size: 16px;
+  font-weight: 800;
   color: hsl(var(--tm-ink));
-  letter-spacing: -0.03em;
-  text-shadow: 0 1px 2px hsl(var(--tm-ink) / 0.08);
 }
 
 .tru-qb-form-header-pill .tru-qb-form-subtitle-compact {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.55);
+  color: hsl(var(--tm-ink) / 0.45);
 }
 
 .tru-qb-form-header-centered .tru-qb-header-logo {
@@ -853,48 +767,33 @@
   color: hsl(var(--tm-ink) / 0.5);
 }
 
-/* =============================================
-   COMMAND PRESENCE CTA BUTTON - Launch Control Style
-   ============================================= */
+/* Engine Button - High-Tech CTA */
 .tru-qb-continue.tru-engine-btn {
-  background: hsl(160 50% 32%);
+  background: linear-gradient(135deg, hsl(170 80% 35%), hsl(160 75% 42%));
   color: hsl(0 0% 100%);
-  font-weight: 800;
-  font-size: 17px;
+  font-weight: 700;
   font-family: 'Inter', system-ui, sans-serif;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  max-width: 380px;
-  width: 100%;
-  height: 62px;
-  border-radius: 16px;
+  letter-spacing: 0.02em;
   box-shadow: 
-    0 2px 4px hsl(160 50% 32% / 0.3),
-    0 8px 24px hsl(160 50% 32% / 0.35),
-    0 16px 48px hsl(160 50% 32% / 0.2),
-    inset 0 1px 0 hsl(0 0% 100% / 0.1);
+    0 0 0 1px hsl(var(--primary) / 0.3),
+    0 4px 20px hsl(var(--primary) / 0.25),
+    inset 0 1px 0 hsl(0 0% 100% / 0.15);
   border: none;
   transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
 }
 
 .tru-qb-continue.tru-engine-btn:hover:not(:disabled) {
-  background: hsl(160 50% 28%);
   transform: translateY(-3px);
   box-shadow: 
-    0 4px 8px hsl(160 50% 32% / 0.35),
-    0 16px 40px hsl(160 50% 32% / 0.4),
-    0 24px 64px hsl(160 50% 32% / 0.25),
-    inset 0 1px 0 hsl(0 0% 100% / 0.15);
+    0 0 0 2px hsl(var(--primary) / 0.4),
+    0 8px 32px hsl(var(--primary) / 0.35),
+    inset 0 1px 0 hsl(0 0% 100% / 0.2);
 }
 
 .tru-qb-continue.tru-engine-btn:disabled {
-  background: hsl(var(--tm-ink) / 0.12);
+  background: hsl(var(--tm-ink) / 0.1);
   color: hsl(var(--tm-ink) / 0.4);
   box-shadow: none;
-  text-transform: none;
-  letter-spacing: 0;
 }
 
 .tru-qb-continue .tru-btn-arrow {
@@ -915,23 +814,7 @@
 
 @keyframes scan-pulse {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.15); opacity: 0.9; }
-}
-
-/* Internal progress bar for scanning state */
-.tru-engine-btn.is-scanning::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 4px;
-  background: hsl(0 0% 100% / 0.4);
-  animation: btn-progress 2s ease-in-out forwards;
-}
-
-@keyframes btn-progress {
-  0% { width: 0%; }
-  100% { width: 100%; }
+  50% { transform: scale(1.2); opacity: 0.8; }
 }
 
 /* Premium Button Styling (legacy) */
@@ -1539,17 +1422,12 @@
     flex-direction: column;
   }
   
-  /* Keep card styling but allow full width */
-  .tru-floating-form-card {
-    flex: 0 0 auto;
-    width: 100%;
-    min-width: 0;
-  }
-  
+  .tru-floating-form-card,
   .tru-floating-summary-card {
     flex: 0 0 auto;
     width: 100%;
   }
+  
 }
 
 /* Tools Section Below Form */
@@ -8856,10 +8734,21 @@
 }
 
 /* Decorated Question with underline accent */
-/* Question decoration removed - header scanline is sufficient accent */
 .tru-qb-question-decorated {
   position: relative;
   display: inline-block;
+}
+
+.tru-qb-question-decorated::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -12px;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(140 80% 45%) 100%);
+  border-radius: 2px;
 }
 
 /* Form Footer */
@@ -8998,25 +8887,20 @@
   display: none; /* Hidden - replaced by step indicator */
 }
 
-/* =============================================
-   COMMAND PRESENCE TYPOGRAPHY
-   ============================================= */
 .tru-qb-question {
-  font-size: clamp(24px, 4vw, 30px);
-  font-weight: 900;
-  letter-spacing: -0.03em;
+  font-size: clamp(22px, 3.5vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: hsl(var(--tm-ink));
-  margin-bottom: 6px;
-  line-height: 1.2;
+  margin-bottom: 8px;
 }
 
 .tru-qb-subtitle {
   font-size: 14px;
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.55);
-  margin-top: 0;
-  margin-bottom: 24px;
-  line-height: 1.5;
+  margin-top: 20px;
+  margin-bottom: 28px;
 }
 
 /* Section Labels for Combined Step */
@@ -9069,77 +8953,79 @@
   position: relative;
 }
 
-/* Subtle focus indicator - no constant animation */
 .tru-qb-zip-wrap::before {
   content: '';
   position: absolute;
-  inset: -3px;
-  background: hsl(var(--primary) / 0.08);
-  border-radius: 17px;
+  inset: -4px;
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(140 80% 45% / 0.2));
+  border-radius: 18px;
   z-index: -1;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.3s ease;
 }
 
 .tru-qb-zip-wrap:focus-within::before {
   opacity: 1;
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* Remove always-on glow - keep it subtle */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Always-on glow for name input */
 .tru-qb-glow-always {
   position: relative;
 }
 
 .tru-qb-glow-always::before {
-  display: none;
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.25), hsl(140 80% 45% / 0.25));
+  border-radius: 18px;
+  z-index: -1;
+  opacity: 1;
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* =============================================
-   COMMAND PRESENCE INPUT STYLING
-   ============================================= */
 .tru-qb-input {
   width: 100%;
-  height: 56px;
-  padding: 0 20px;
-  font-size: 16px;
+  height: 44px;
+  padding: 0 16px;
+  font-size: 14px;
   font-weight: 500;
   text-align: left;
   letter-spacing: normal;
   color: hsl(var(--tm-ink));
-  background: hsl(0 0% 100%);
-  border: 2px solid hsl(var(--tm-ink) / 0.12);
-  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid hsl(var(--tm-ink) / 0.12);
+  border-radius: 16px;
   outline: none;
-  transition: all 200ms ease;
+  transition: all 250ms ease;
   box-shadow: 
-    0 4px 12px hsl(var(--tm-ink) / 0.04),
-    inset 0 1px 0 hsl(0 0% 100% / 0.9);
+    0 8px 32px hsl(var(--tm-ink) / 0.1),
+    0 2px 8px hsl(var(--tm-ink) / 0.05),
+    inset 0 2px 0 rgba(255, 255, 255, 0.95);
 }
 
 .tru-qb-input:hover {
-  border-color: hsl(var(--tm-ink) / 0.2);
-  background: hsl(0 0% 99%);
+  border-color: hsl(var(--primary) / 0.5);
+  transform: translateY(-2px);
   box-shadow: 
-    0 6px 16px hsl(var(--tm-ink) / 0.06),
-    inset 0 1px 0 hsl(0 0% 100% / 0.9);
+    0 12px 40px hsl(var(--tm-ink) / 0.12),
+    0 4px 12px hsl(var(--primary) / 0.1),
+    inset 0 2px 0 rgba(255, 255, 255, 0.95);
 }
 
 .tru-qb-input:focus {
   border-color: hsl(var(--primary));
-  border-width: 3px;
-  padding: 0 19px; /* Compensate for border width increase */
-  background: hsl(var(--primary) / 0.03);
   box-shadow: 
-    0 0 0 5px hsl(var(--primary) / 0.12),
-    0 8px 24px hsl(var(--tm-ink) / 0.08),
-    inset 0 1px 0 hsl(0 0% 100% / 0.9);
-}
-
-/* Monospace for ZIP code inputs - precision instrument feel */
-.tru-qb-zip-wrap .tru-qb-input {
-  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
-  letter-spacing: 0.08em;
-  font-weight: 600;
+    0 0 0 3px hsl(var(--primary) / 0.12),
+    0 12px 48px hsl(var(--tm-ink) / 0.15),
+    inset 0 2px 0 rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
 }
 
 /* Location Autocomplete Styles */
