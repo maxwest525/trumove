@@ -184,6 +184,7 @@ export interface ItemDefinition {
   name: string;
   cubicFeet: number;
   defaultWeight: number; // cubicFeet × 7
+  imageUrl?: string; // Optional path to 3D render image
 }
 
 export const ROOM_SUGGESTIONS: Record<string, ItemDefinition[]> = {

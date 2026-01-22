@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import { 
   Plus, 
   Minus, 
@@ -37,11 +37,12 @@ import {
   Scale,
   type LucideIcon
 } from "lucide-react";
-import { ROOM_SUGGESTIONS, type InventoryItem } from "@/lib/priceCalculator";
+import { ROOM_SUGGESTIONS, type InventoryItem, type ItemDefinition } from "@/lib/priceCalculator";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { CustomItemModal } from "./CustomItemModal";
+import { InventoryItemImage } from "./InventoryItemImage";
 
 interface InventoryBuilderProps {
   onAddItem: (item: Omit<InventoryItem, 'id'>) => void;
@@ -603,7 +604,7 @@ export default function InventoryBuilder({
 
 // Item Card Component
 interface ItemCardProps {
-  item: { name: string; defaultWeight: number; cubicFeet?: number };
+  item: ItemDefinition;
   room: string;
   quantity: number;
   onAdd: () => void;
@@ -622,15 +623,20 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
         : "border-border/60 bg-card hover:border-primary/20",
       isAnimating && "tru-item-just-added"
     )}>
-      {/* Item Icon */}
+      {/* Item Image or Icon */}
       <div className={cn(
         "w-full h-14 rounded-lg flex items-center justify-center mb-2",
         quantity > 0 ? "bg-primary/10" : "bg-muted/40"
       )}>
-        <Icon className={cn(
-          "w-7 h-7",
-          quantity > 0 ? "text-primary" : "text-muted-foreground/60"
-        )} />
+        <InventoryItemImage
+          src={item.imageUrl}
+          alt={item.name}
+          fallbackIcon={Icon}
+          className="w-10 h-10"
+          iconClassName={cn(
+            quantity > 0 ? "text-primary" : "text-muted-foreground/60"
+          )}
+        />
       </div>
       
       {/* Item Name */}
@@ -683,7 +689,7 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
 
 // List Row Component for List View
 interface ItemListRowProps {
-  item: { name: string; defaultWeight: number; cubicFeet?: number };
+  item: ItemDefinition;
   room: string;
   quantity: number;
   onAdd: () => void;
@@ -701,15 +707,21 @@ function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon, isAnimating 
         : "border-border/60 bg-card hover:border-primary/20",
       isAnimating && "tru-item-just-added"
     )}>
-      {/* Item Icon */}
+      {/* Item Image or Icon */}
       <div className={cn(
         "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
         quantity > 0 ? "bg-primary/10" : "bg-muted/40"
       )}>
-        <Icon className={cn(
-          "w-5 h-5",
-          quantity > 0 ? "text-primary" : "text-muted-foreground/60"
-        )} />
+        <InventoryItemImage
+          src={item.imageUrl}
+          alt={item.name}
+          fallbackIcon={Icon}
+          className="w-8 h-8"
+          iconClassName={cn(
+            "w-5 h-5",
+            quantity > 0 ? "text-primary" : "text-muted-foreground/60"
+          )}
+        />
       </div>
       
       {/* Item Info */}
