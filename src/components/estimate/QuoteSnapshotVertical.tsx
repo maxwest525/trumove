@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Route, Video, Phone } from "lucide-react";
+import { Route, Video, Phone, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { calculateTotalWeight, calculateEstimate, formatCurrency, type InventoryItem, type MoveDetails } from "@/lib/priceCalculator";
 import logoImg from "@/assets/logo.png";
@@ -12,7 +12,7 @@ interface QuoteSnapshotVerticalProps {
 
 export default function QuoteSnapshotVertical({ items, moveDetails }: QuoteSnapshotVerticalProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isLocked, setIsLocked] = useState(false);
+  const [isManuallyCollapsed, setIsManuallyCollapsed] = useState(false);
   const totalWeight = calculateTotalWeight(items);
   const effectiveMoveType = moveDetails.moveType === 'auto' 
     ? (moveDetails.distance >= 150 ? 'long-distance' : 'local')
@@ -20,34 +20,46 @@ export default function QuoteSnapshotVertical({ items, moveDetails }: QuoteSnaps
   
   const estimate = calculateEstimate(totalWeight, moveDetails.distance, effectiveMoveType);
   
-  // Expand when data is entered or on hover - and lock open once data exists
+  // Expand when data is entered or on hover
   const hasData = moveDetails.fromLocation || moveDetails.toLocation || items.length > 0;
   
-  // Lock the summary open once data is entered (won't collapse on mouse leave)
-  if (hasData && !isLocked) {
-    setIsLocked(true);
-  }
-  
-  const isExpanded = isLocked || hasData || isHovered;
+  // User can manually collapse even when data exists
+  const isExpanded = !isManuallyCollapsed && (hasData || isHovered);
+
+  const handleToggle = () => {
+    if (hasData) {
+      setIsManuallyCollapsed(!isManuallyCollapsed);
+    }
+  };
 
   return (
     <div 
       className={cn(
-        "tru-floating-summary-card tru-floating-summary-card-compact tru-summary-hover-expand",
+        "tru-floating-summary-card tru-floating-summary-card-compact tru-summary-hover-expand tru-summary-animated",
         isExpanded ? "is-expanded" : "is-collapsed"
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Collapsed state - slim bar */}
-      <div className="tru-summary-collapsed-bar">
+      {/* Collapsed state - slim bar with toggle */}
+      <div 
+        className="tru-summary-collapsed-bar"
+        onClick={handleToggle}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && handleToggle()}
+      >
         <div className="tru-summary-collapsed-indicator">
           <Route className="w-4 h-4" />
         </div>
         <span className="tru-summary-collapsed-label">Summary</span>
+        <ChevronRight className={cn(
+          "w-3 h-3 transition-transform duration-300",
+          isExpanded ? "rotate-180" : "rotate-0"
+        )} />
       </div>
       
-      {/* Expanded content */}
+      {/* Expanded content with smooth animation */}
       <div className="tru-summary-expanded-content">
         <div className="tru-summary-card-header">
           <span className="tru-summary-card-title">Move Summary</span>
