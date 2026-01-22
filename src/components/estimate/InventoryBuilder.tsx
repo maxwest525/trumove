@@ -642,7 +642,7 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
     )}>
       {/* Item Image or Icon - with hover zoom */}
       <div className={cn(
-        "w-full h-48 rounded-lg flex items-center justify-center mb-2 overflow-hidden",
+        "w-full aspect-square rounded-lg flex items-center justify-center mb-2 overflow-hidden",
         quantity > 0 ? "bg-muted/40" : "bg-muted/30"
       )}>
         <div className="transition-transform duration-300 ease-out group-hover:scale-110">
@@ -650,9 +650,9 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
             src={item.imageUrl}
             alt={item.name}
             fallbackIcon={Icon}
-            className="w-[180px] h-[180px]"
+            className="w-full h-full object-contain"
             iconClassName={cn(
-              "!w-16 !h-16",
+              "!w-12 !h-12",
               quantity > 0 ? "text-primary" : "text-muted-foreground/60"
             )}
           />
