@@ -172,9 +172,12 @@ export default function EstimateWizard({ onComplete }: EstimateWizardProps) {
   return (
     <>
       <div className="tru-floating-form-card">
-        {/* Header - Matching homepage style */}
-        <div className="tru-qb-form-header">
-          <span className="tru-qb-form-title">Build Your Move</span>
+        {/* Header - Matching homepage "YOUR MOVE, CALCULATED." style */}
+        <div className="tru-qb-form-header tru-qb-form-header--hero">
+          <div className="tru-qb-hero-title-wrap">
+            <span className="tru-qb-hero-title">Your move, <span className="tru-qb-hero-title-accent">calculated.</span></span>
+            <span className="tru-qb-hero-subtitle">Carriers vetted against FMCSA safety records</span>
+          </div>
         </div>
 
         <div className="tru-floating-form-content">
