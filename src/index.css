@@ -2521,6 +2521,19 @@
   z-index: 1;
 }
 
+/* Geocoding loading overlay */
+.mapbox-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: hsl(var(--background) / 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 12px;
+}
+
 /* Expand button */
 .map-expand-button {
   position: absolute;
