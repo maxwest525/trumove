@@ -688,14 +688,14 @@ export default function Index() {
                       </div>
                       <h1 className="tru-qb-question">Request received!</h1>
                       <p className="tru-qb-subtitle">
-                        A TruMove specialist will call you within 1 business day to review your move and answer any questions.
+                        A TruMove specialist will be contacting you shortly to discuss your move details and provide a personalized quote.
                       </p>
                       
                       <div className="tru-qb-confirmation-divider">
-                        <span>While you wait, you can:</span>
+                        <span>Take control of your move:</span>
                       </div>
                       
-                      <div className="tru-qb-options-row">
+                      <div className="tru-qb-options-stack-full">
                         <button 
                           type="button" 
                           className="tru-qb-option-card"

@@ -506,7 +506,7 @@ export default function LocationAutocomplete({
       case 'verified':
         return "border-emerald-500/60 focus:border-emerald-500";
       case 'partial':
-        return "border-amber-500/60 focus:border-amber-500";
+        return "border-emerald-600/50 border-2 focus:border-emerald-500";
       case 'unverifiable':
         return "border-red-500/60 focus:border-red-500";
       default:
@@ -570,7 +570,7 @@ export default function LocationAutocomplete({
             {isValid && validationLevel === 'partial' && mode === 'address' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500 cursor-help" />
+                  <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600 cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[200px]">
                   <p className="text-xs">{getTooltipContent()}</p>
