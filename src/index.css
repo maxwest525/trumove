@@ -12017,3 +12017,53 @@
 .tru-item-just-added {
   animation: inventory-item-added 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+/* =============================================
+   MOVE SUMMARY SIDEBAR COLLAPSE ANIMATION
+   ============================================= */
+
+.tru-summary-animated {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tru-summary-animated.is-collapsed {
+  min-width: 48px !important;
+  max-width: 48px !important;
+}
+
+.tru-summary-animated.is-expanded {
+  min-width: 180px;
+  max-width: 200px;
+}
+
+/* Collapsed bar click area */
+.tru-summary-animated .tru-summary-collapsed-bar {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.tru-summary-animated .tru-summary-collapsed-bar:hover {
+  background-color: hsl(var(--muted) / 0.5);
+}
+
+/* Expanded content smooth transition */
+.tru-summary-animated .tru-summary-expanded-content {
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+}
+
+.tru-summary-animated.is-collapsed .tru-summary-expanded-content {
+  opacity: 0;
+  transform: translateX(10px);
+  pointer-events: none;
+}
+
+.tru-summary-animated.is-expanded .tru-summary-expanded-content {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
