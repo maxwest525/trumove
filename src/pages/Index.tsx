@@ -410,10 +410,9 @@ export default function Index() {
                 </div>
                 
                 <div className="tru-qb-form-header tru-qb-form-header-pill">
-                  <img src={logoImg} alt="TruMove" className="tru-qb-header-logo" />
                   <div className="tru-qb-form-title-group">
                     <span className="tru-qb-form-title">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
-                    <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
+                    <span className="tru-qb-form-subtitle-compact">Precision carrier matching in seconds</span>
                   </div>
                 </div>
 
@@ -423,8 +422,8 @@ export default function Index() {
                   {/* Step 1: Route & Date */}
                   {step === 1 && (
                     <div className="tru-qb-step-content" key="step-1">
-                      <h1 className="tru-qb-question tru-qb-question-decorated">Where's your move?</h1>
-                      <p className="tru-qb-subtitle">Enter your route and we'll find your best carrier matches</p>
+                      <h1 className="tru-qb-question">Plan your route</h1>
+                      <p className="tru-qb-subtitle">We'll match you with vetted carriers for this exact move</p>
                       
                       {/* FROM + TO Row - Side by Side */}
                       <div className="tru-qb-location-row">

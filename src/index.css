@@ -575,74 +575,7 @@
   animation: form-command-entrance 0.8s ease-out;
 }
 
-/* Corner Accent Brackets - Positioned at corners of the card exterior */
-/* These sit on top of the card border to create a technical "targeting" frame */
-.tru-floating-form-card::before,
-.tru-floating-form-card::after {
-  content: '';
-  position: absolute;
-  width: 36px;
-  height: 36px;
-  border: 3px solid hsl(var(--primary));
-  pointer-events: none;
-  z-index: 100;
-  background: transparent;
-}
-
-/* Top-left bracket - positioned at the outer corner */
-.tru-floating-form-card::before {
-  top: -4px;
-  left: -4px;
-  border-right: none;
-  border-bottom: none;
-  border-radius: 8px 0 0 0;
-}
-
-/* Top-right bracket - positioned at the outer corner */
-.tru-floating-form-card::after {
-  top: -4px;
-  right: -4px;
-  border-left: none;
-  border-bottom: none;
-  border-radius: 0 8px 0 0;
-}
-
-/* Bottom corner brackets via footer pseudo-elements - positioned at outer corners */
-.tru-floating-form-footer {
-  position: relative;
-}
-
-.tru-floating-form-footer::before {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: -4px;
-  width: 36px;
-  height: 36px;
-  border: 3px solid hsl(var(--primary));
-  border-right: none;
-  border-top: none;
-  border-radius: 0 0 0 8px;
-  pointer-events: none;
-  z-index: 100;
-  background: transparent;
-}
-
-.tru-floating-form-footer::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  right: -4px;
-  width: 36px;
-  height: 36px;
-  border: 3px solid hsl(var(--primary));
-  border-left: none;
-  border-top: none;
-  border-radius: 0 0 8px 0;
-  pointer-events: none;
-  z-index: 100;
-  background: transparent;
-}
+/* Card elevation is achieved via shadows - no corner brackets needed */
 
 /* Command Entrance Animation - Single attention pulse */
 @keyframes form-command-entrance {
@@ -764,35 +697,34 @@
    COMMAND PRESENCE TRUST FOOTER
    ============================================= */
 .tru-form-footer-trust {
-  flex-direction: column;
-  gap: 0;
-  padding: 14px 24px;
-  background: linear-gradient(180deg, hsl(var(--tm-ink) / 0.02) 0%, hsl(var(--tm-ink) / 0.04) 100%);
-  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
+  flex-direction: row;
+  gap: 16px;
+  padding: 12px 24px;
+  background: transparent;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+  justify-content: center;
 }
 
 .tru-form-trust-items {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
 .tru-form-trust-item {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  font-size: 9px;
-  font-weight: 700;
-  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
-  letter-spacing: 0.06em;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.55);
-  background: hsl(var(--tm-ink) / 0.03);
-  border: 1px solid hsl(var(--tm-ink) / 0.06);
-  border-radius: 6px;
+  color: hsl(var(--tm-ink) / 0.5);
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .tru-form-trust-item svg {
@@ -8924,21 +8856,10 @@
 }
 
 /* Decorated Question with underline accent */
+/* Question decoration removed - header scanline is sufficient accent */
 .tru-qb-question-decorated {
   position: relative;
   display: inline-block;
-}
-
-.tru-qb-question-decorated::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -12px;
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(140 80% 45%) 100%);
-  border-radius: 2px;
 }
 
 /* Form Footer */
