@@ -22,7 +22,7 @@ export function InventoryItemImage({
 
   // No image URL or error loading - show icon fallback
   if (!src || error) {
-    return <FallbackIcon className={cn("w-10 h-10", iconClassName)} />;
+    return <FallbackIcon className={cn("w-12 h-12", iconClassName)} />;
   }
 
   return (
