@@ -146,7 +146,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'name' 
-                    ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
+                    ? 'bg-primary/5 text-primary border-primary font-semibold' 
                     : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'name' 
                     ? 'text-white border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
@@ -166,7 +166,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'dot' 
-                    ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
+                    ? 'bg-primary/5 text-primary border-primary font-semibold' 
                     : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'dot' 
                     ? 'text-white border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
@@ -186,7 +186,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'mc' 
-                    ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
+                    ? 'bg-primary/5 text-primary border-primary font-semibold' 
                     : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'mc' 
                     ? 'text-white border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
