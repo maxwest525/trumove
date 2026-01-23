@@ -1,0 +1,4 @@
+project_id = "nhoagucgcqjfbtifykha"
+
+[functions.estimate-inventory]
+verify_jwt = false

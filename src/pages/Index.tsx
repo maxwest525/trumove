@@ -644,9 +644,10 @@ export default function Index() {
                           <input
                             type="tel"
                             className="tru-qb-input"
-                            placeholder="Phone (optional)"
+                            placeholder="Phone"
                             value={phone}
-                            onChange={(e) => setPhoneNum(e.target.value)}
+                            onChange={(e) => { setPhoneNum(e.target.value); setFormError(""); }}
+                            onKeyDown={handleKeyDown}
                           />
                         </div>
                       </div>
@@ -661,7 +662,7 @@ export default function Index() {
                         onClick={(e) => { 
                           if (!canContinue()) {
                             e.preventDefault();
-                            setFormError("Please enter a valid email to continue.");
+                            setFormError("Please enter a valid email and phone number (10+ digits).");
                           }
                         }}
                       >
