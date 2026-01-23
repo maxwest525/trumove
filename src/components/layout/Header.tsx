@@ -187,16 +187,15 @@ const NAV: NavItem[] = [
     }
   },
   { 
-    href: "/vetting", 
+    href: "/carrier-vetting", 
     label: "Carrier Vetting",
     hasDropdown: true,
     dropdownContent: {
       icon: Shield,
-      title: "Carrier Vetting",
-      description: "Verify any mover's credentials instantly",
-      features: ["FMCSA verification", "Insurance check", "Safety records"],
-      cta: "Vet a Mover",
-      ctaHref: "/carrier-vetting",
+      title: "FMCSA Carrier Vetting",
+      description: "Real-time safety & compliance data from the Federal Motor Carrier Safety Administration",
+      features: ["Live FMCSA data", "Insurance verification", "Side-by-side compare"],
+      cta: "Vet a Carrier",
       PreviewComponent: VettingPreview
     }
   },
