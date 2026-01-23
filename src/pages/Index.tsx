@@ -781,128 +781,82 @@ export default function Index() {
                     <span className="tru-form-trust-item"><Database className="w-3 h-3" /> FIRST-PARTY DATA ONLY</span>
                   </div>
                 </div>
-              </div>
+            </div>
 
-              {/* SIDEBAR: Stacked Move Summary + Floating Nav */}
-              <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-                {/* Move Summary Card - matching reference design */}
-                <TooltipProvider delayDuration={200}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div 
-                        className={`tru-floating-summary-card tru-stacked-pill ${summaryLocked || summaryHovered ? 'is-expanded is-locked' : ''}`}
-                        onMouseEnter={() => setSummaryHovered(true)}
-                        onMouseLeave={() => setSummaryHovered(false)}
+            {/* SIDEBAR: Stacked Move Summary + Floating Nav - NOW A GRID COLUMN */}
+            <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
+              {/* Move Summary Card - EXPANDED BY DEFAULT */}
+              <div 
+                className={`tru-floating-summary-card tru-stacked-pill ${summaryLocked ? 'is-locked' : ''}`}
+              >
+                {/* Expanded view - always visible now */}
+                <div className="tru-stacked-pill-expanded">
+                  <div className="tru-summary-card-header">
+                    <span className="tru-summary-card-title">MOVE SUMMARY</span>
+                    {summaryLocked && (
+                      <button 
+                        className="tru-stacked-pill-toggle"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSummaryLocked(false);
+                        }}
+                        aria-label="Collapse summary"
                       >
-                        {/* Collapsed view - vertical pill with icon */}
-                        <div className="tru-stacked-pill-collapsed">
-                          <div className="tru-stacked-pill-icon-circle">
-                            <MapPin className="w-5 h-5 text-primary" />
-                          </div>
-                          <span className="tru-stacked-pill-vertical-text">SUMMARY</span>
-                        </div>
-                        
-                        {/* Expanded view - clean table layout */}
-                        <div className="tru-stacked-pill-expanded">
-                          <div className="tru-summary-card-header">
-                            <span className="tru-summary-card-title">MOVE SUMMARY</span>
-                            {summaryLocked && (
-                              <button 
-                                className="tru-stacked-pill-toggle"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSummaryLocked(false);
-                                }}
-                                aria-label="Collapse summary"
-                              >
-                                <ChevronUp className="w-4 h-4" />
-                              </button>
-                            )}
-                          </div>
-                          <div className="tru-summary-card-body">
-                            <div className="tru-summary-info-grid">
-                              <div className={`tru-summary-row ${updatedFields.has('from') ? 'is-updated' : ''}`}>
-                                <span className="tru-summary-label">From</span>
-                                <span className="tru-summary-value">{fromCity || "—"}</span>
-                              </div>
-                              <div className={`tru-summary-row ${updatedFields.has('to') ? 'is-updated' : ''}`}>
-                                <span className="tru-summary-label">To</span>
-                                <span className="tru-summary-value">{toCity || "—"}</span>
-                              </div>
-                              <div className={`tru-summary-row ${updatedFields.has('distance') ? 'is-updated' : ''}`}>
-                                <span className="tru-summary-label">Distance</span>
-                                <span className="tru-summary-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
-                              </div>
-                              <div className={`tru-summary-row ${updatedFields.has('date') ? 'is-updated' : ''}`}>
-                                <span className="tru-summary-label">Date</span>
-                                <span className="tru-summary-value">{moveDate ? format(moveDate, "MMM d") : "—"}</span>
-                              </div>
-                              <div className="tru-summary-row">
-                                <span className="tru-summary-label">ETA</span>
-                                <span className="tru-summary-value">{estimatedDuration || "—"}</span>
-                              </div>
-                              <div className={`tru-summary-row ${updatedFields.has('size') ? 'is-updated' : ''}`}>
-                                <span className="tru-summary-label">Size</span>
-                                <span className="tru-summary-value">{size || "—"}</span>
-                              </div>
-                              <div className={`tru-summary-row ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
-                                <span className="tru-summary-label">Property</span>
-                                <span className="tru-summary-value">
-                                  {propertyType 
-                                    ? `${propertyType === 'house' ? 'House' : 'Apt'}${propertyType === 'apartment' ? ` F${floor}` : ''}`
-                                    : "—"}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="tru-summary-footer">
-                              <span className="tru-summary-powered">Powered by</span>
-                              <img src={logoImg} alt="TruMove" className="tru-summary-logo" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </TooltipTrigger>
-                    {/* Only show tooltip when collapsed */}
-                    {!(summaryLocked || summaryHovered) && (
-                      <TooltipContent 
-                        side="left" 
-                        sideOffset={12}
-                        className="tru-summary-tooltip-preview"
-                      >
-                        <div className="tru-summary-preview">
-                          <div className="tru-summary-preview-header">MOVE SUMMARY</div>
-                          <div className="tru-summary-preview-rows">
-                            <div className="tru-summary-preview-row">
-                              <span className="tru-summary-preview-label">From</span>
-                              <span className="tru-summary-preview-value">{fromCity || "—"}</span>
-                            </div>
-                            <div className="tru-summary-preview-row">
-                              <span className="tru-summary-preview-label">To</span>
-                              <span className="tru-summary-preview-value">{toCity || "—"}</span>
-                            </div>
-                            <div className="tru-summary-preview-row">
-                              <span className="tru-summary-preview-label">Distance</span>
-                              <span className="tru-summary-preview-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
-                            </div>
-                            <div className="tru-summary-preview-row">
-                              <span className="tru-summary-preview-label">Date</span>
-                              <span className="tru-summary-preview-value">{moveDate ? format(moveDate, "MMM d") : "—"}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </TooltipContent>
+                        <ChevronUp className="w-4 h-4" />
+                      </button>
                     )}
-                  </Tooltip>
-                </TooltipProvider>
-
-                {/* Floating Nav - collapsible pill */}
-                <div className="tru-floating-nav-wrapper">
-                  <FloatingNav onChatOpen={() => setChatOpen(true)} />
+                  </div>
+                  <div className="tru-summary-card-body">
+                    <div className="tru-summary-info-grid">
+                      <div className={`tru-summary-row ${updatedFields.has('from') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">From</span>
+                        <span className="tru-summary-value">{fromCity || "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('to') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">To</span>
+                        <span className="tru-summary-value">{toCity || "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('distance') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">Distance</span>
+                        <span className="tru-summary-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('date') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">Date</span>
+                        <span className="tru-summary-value">{moveDate ? format(moveDate, "MMM d") : "—"}</span>
+                      </div>
+                      <div className="tru-summary-row">
+                        <span className="tru-summary-label">ETA</span>
+                        <span className="tru-summary-value">{estimatedDuration || "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('size') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">Size</span>
+                        <span className="tru-summary-value">{size || "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">Property</span>
+                        <span className="tru-summary-value">
+                          {propertyType 
+                            ? `${propertyType === 'house' ? 'House' : 'Apt'}${propertyType === 'apartment' ? ` F${floor}` : ''}`
+                            : "—"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="tru-summary-footer">
+                      <span className="tru-summary-powered">Powered by</span>
+                      <img src={logoImg} alt="TruMove" className="tru-summary-logo" />
+                    </div>
+                  </div>
                 </div>
               </div>
-            
+
+              {/* Floating Nav - EXPANDED BY DEFAULT */}
+              <div className="tru-floating-nav-wrapper">
+                <FloatingNav onChatOpen={() => setChatOpen(true)} />
+              </div>
             </div>
-          </section>
+          
+          </div>
+        </section>
 
           {/* TRUST STRIP */}
           <section className="tru-trust-strip">
