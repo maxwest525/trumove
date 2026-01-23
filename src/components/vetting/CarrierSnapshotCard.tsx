@@ -482,7 +482,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
 
             {/* Insurance Details */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-foreground">
                 <Shield className="w-4 h-4" />
                 <span>Insurance Coverage Analysis</span>
               </div>
@@ -502,13 +502,10 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
 
             {/* BASIC Scores */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-foreground">
                 <AlertTriangle className="w-4 h-4" />
                 <span>CSA BASIC Safety Scores</span>
               </div>
-              <p className="text-xs text-muted-foreground -mt-1">
-                Higher percentiles indicate worse performance relative to peers. Scores ≥65% may trigger FMCSA intervention.
-              </p>
               <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-3 rounded-lg bg-muted/20">
                 <BasicScoreBar 
                   name="Unsafe Driving" 
