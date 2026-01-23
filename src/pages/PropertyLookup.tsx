@@ -1,16 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import SiteShell from "@/components/layout/SiteShell";
-import { MapPin, Navigation, ArrowRight, Loader2, Eye, Map } from "lucide-react";
+import { MapPin, Navigation, ArrowRight, Loader2, Eye, Map, Clock, Route, CheckCircle } from "lucide-react";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
-const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam51OGJrcGFiIn0.tN-ZMle93ctK7PIt9kU7JA';
-
-interface Suggestion {
-  id: string;
-  place_name: string;
-  center: [number, number];
-}
+import LocationAutocomplete from "@/components/LocationAutocomplete";
+import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
 
 function calculateDistance(from: [number, number], to: [number, number]): number {
   const R = 3959;
@@ -36,6 +30,26 @@ function createArcLine(start: [number, number], end: [number, number], steps = 1
     coords.push([lng, lat + arc]);
   }
   return coords;
+}
+
+// Geocode address string to coordinates
+async function geocodeAddress(address: string): Promise<[number, number] | null> {
+  if (!address || address.length < 3) return null;
+  
+  try {
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_TOKEN}&country=US&types=address,place&limit=1`
+    );
+    const data = await response.json();
+    
+    if (data.features && data.features.length > 0) {
+      return data.features[0].center as [number, number];
+    }
+    return null;
+  } catch (error) {
+    console.error('Geocoding error:', error);
+    return null;
+  }
 }
 
 // Street View Map Component
@@ -202,7 +216,7 @@ function RouteMap({
         type: 'line',
         source: 'route',
         paint: {
-          'line-color': '#00ff6a',
+          'line-color': 'hsl(var(--primary))',
           'line-width': 12,
           'line-opacity': 0.2,
           'line-blur': 8
@@ -214,7 +228,7 @@ function RouteMap({
         type: 'line',
         source: 'route',
         paint: {
-          'line-color': '#00ff6a',
+          'line-color': 'hsl(var(--primary))',
           'line-width': 4,
           'line-opacity': 0.9
         }
@@ -286,112 +300,35 @@ function RouteMap({
 export default function PropertyLookup() {
   const [originAddress, setOriginAddress] = useState("");
   const [destAddress, setDestAddress] = useState("");
-  const [originSuggestions, setOriginSuggestions] = useState<Suggestion[]>([]);
-  const [destSuggestions, setDestSuggestions] = useState<Suggestion[]>([]);
   const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
   const [destCoords, setDestCoords] = useState<[number, number] | null>(null);
-  const [showOriginDropdown, setShowOriginDropdown] = useState(false);
-  const [showDestDropdown, setShowDestDropdown] = useState(false);
-  const [isLoadingOrigin, setIsLoadingOrigin] = useState(false);
-  const [isLoadingDest, setIsLoadingDest] = useState(false);
-  const [selectedOriginName, setSelectedOriginName] = useState("");
-  const [selectedDestName, setSelectedDestName] = useState("");
-  
-  const originInputRef = useRef<HTMLInputElement>(null);
-  const destInputRef = useRef<HTMLInputElement>(null);
-  const originDropdownRef = useRef<HTMLDivElement>(null);
-  const destDropdownRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const [originVerified, setOriginVerified] = useState(false);
+  const [destVerified, setDestVerified] = useState(false);
+  const [isGeocodingOrigin, setIsGeocodingOrigin] = useState(false);
+  const [isGeocodingDest, setIsGeocodingDest] = useState(false);
 
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (originDropdownRef.current && !originDropdownRef.current.contains(e.target as Node) &&
-          originInputRef.current && !originInputRef.current.contains(e.target as Node)) {
-        setShowOriginDropdown(false);
-      }
-      if (destDropdownRef.current && !destDropdownRef.current.contains(e.target as Node) &&
-          destInputRef.current && !destInputRef.current.contains(e.target as Node)) {
-        setShowDestDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const fetchSuggestions = useCallback(async (query: string, type: 'origin' | 'dest') => {
-    if (query.length < 3) {
-      if (type === 'origin') setOriginSuggestions([]);
-      else setDestSuggestions([]);
-      return;
-    }
-
-    if (type === 'origin') setIsLoadingOrigin(true);
-    else setIsLoadingDest(true);
-
-    try {
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&country=US&types=address,place&limit=5`
-      );
-      const data = await response.json();
-      
-      const suggestions: Suggestion[] = data.features?.map((f: any) => ({
-        id: f.id,
-        place_name: f.place_name,
-        center: f.center as [number, number]
-      })) || [];
-
-      if (type === 'origin') {
-        setOriginSuggestions(suggestions);
-        setShowOriginDropdown(suggestions.length > 0);
-      } else {
-        setDestSuggestions(suggestions);
-        setShowDestDropdown(suggestions.length > 0);
-      }
-    } catch (error) {
-      console.error('Geocoding error:', error);
-    } finally {
-      if (type === 'origin') setIsLoadingOrigin(false);
-      else setIsLoadingDest(false);
-    }
-  }, []);
-
-  const handleOriginChange = useCallback((value: string) => {
-    setOriginAddress(value);
-    setOriginCoords(null);
-    setSelectedOriginName("");
+  // Handle origin location selection
+  const handleOriginSelect = useCallback(async (city: string, zip: string, fullAddress?: string, isVerified?: boolean) => {
+    const addressToGeocode = fullAddress || `${city}, ${zip}`;
+    setOriginAddress(addressToGeocode);
+    setOriginVerified(!!isVerified);
+    setIsGeocodingOrigin(true);
     
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      fetchSuggestions(value, 'origin');
-    }, 300);
-  }, [fetchSuggestions]);
-
-  const handleDestChange = useCallback((value: string) => {
-    setDestAddress(value);
-    setDestCoords(null);
-    setSelectedDestName("");
-    
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      fetchSuggestions(value, 'dest');
-    }, 300);
-  }, [fetchSuggestions]);
-
-  const selectOriginSuggestion = useCallback((suggestion: Suggestion) => {
-    setOriginAddress(suggestion.place_name);
-    setSelectedOriginName(suggestion.place_name);
-    setOriginCoords(suggestion.center);
-    setShowOriginDropdown(false);
-    setOriginSuggestions([]);
+    const coords = await geocodeAddress(addressToGeocode);
+    setOriginCoords(coords);
+    setIsGeocodingOrigin(false);
   }, []);
 
-  const selectDestSuggestion = useCallback((suggestion: Suggestion) => {
-    setDestAddress(suggestion.place_name);
-    setSelectedDestName(suggestion.place_name);
-    setDestCoords(suggestion.center);
-    setShowDestDropdown(false);
-    setDestSuggestions([]);
+  // Handle destination location selection
+  const handleDestSelect = useCallback(async (city: string, zip: string, fullAddress?: string, isVerified?: boolean) => {
+    const addressToGeocode = fullAddress || `${city}, ${zip}`;
+    setDestAddress(addressToGeocode);
+    setDestVerified(!!isVerified);
+    setIsGeocodingDest(true);
+    
+    const coords = await geocodeAddress(addressToGeocode);
+    setDestCoords(coords);
+    setIsGeocodingDest(false);
   }, []);
 
   const distance = originCoords && destCoords ? calculateDistance(originCoords, destCoords) : null;
@@ -420,41 +357,23 @@ export default function PropertyLookup() {
             <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-3 flex items-center gap-2">
               <Navigation className="w-3.5 h-3.5" />
               Moving From
+              {isGeocodingOrigin && <Loader2 className="w-3 h-3 animate-spin ml-auto" />}
             </div>
             
-            <div className="relative">
-              <input
-                ref={originInputRef}
-                type="text"
-                value={originAddress}
-                onChange={(e) => handleOriginChange(e.target.value)}
-                onFocus={() => originSuggestions.length > 0 && setShowOriginDropdown(true)}
-                placeholder="Enter current address..."
-                className="w-full h-12 px-4 rounded-xl border border-border/60 bg-background text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-              {isLoadingOrigin && (
-                <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin" />
-              )}
-              
-              {showOriginDropdown && originSuggestions.length > 0 && (
-                <div ref={originDropdownRef} className="property-autocomplete-dropdown">
-                  {originSuggestions.map((suggestion) => (
-                    <div
-                      key={suggestion.id}
-                      onClick={() => selectOriginSuggestion(suggestion)}
-                      className="property-autocomplete-item"
-                    >
-                      <MapPin className="w-4 h-4 text-muted-foreground inline mr-2" />
-                      <span className="text-sm">{suggestion.place_name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <LocationAutocomplete
+              value={originAddress}
+              onValueChange={setOriginAddress}
+              onLocationSelect={handleOriginSelect}
+              placeholder="Enter current address..."
+              mode="address"
+              showGeolocation={true}
+              className="w-full"
+            />
 
-            {selectedOriginName && (
-              <div className="mt-3 p-2.5 rounded-lg bg-secondary/50 border border-secondary text-xs text-foreground font-medium truncate">
-                {selectedOriginName}
+            {originVerified && originAddress && !isGeocodingOrigin && (
+              <div className="mt-3 p-2.5 rounded-lg bg-primary/10 border border-primary/30 text-xs text-primary font-medium flex items-center gap-2">
+                <CheckCircle className="w-3.5 h-3.5" />
+                Address verified
               </div>
             )}
           </div>
@@ -464,87 +383,72 @@ export default function PropertyLookup() {
             <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-3 flex items-center gap-2">
               <MapPin className="w-3.5 h-3.5" />
               Moving To
+              {isGeocodingDest && <Loader2 className="w-3 h-3 animate-spin ml-auto" />}
             </div>
             
-            <div className="relative">
-              <input
-                ref={destInputRef}
-                type="text"
-                value={destAddress}
-                onChange={(e) => handleDestChange(e.target.value)}
-                onFocus={() => destSuggestions.length > 0 && setShowDestDropdown(true)}
-                placeholder="Enter destination address..."
-                className="w-full h-12 px-4 rounded-xl border border-border/60 bg-background text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-              {isLoadingDest && (
-                <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin" />
-              )}
-              
-              {showDestDropdown && destSuggestions.length > 0 && (
-                <div ref={destDropdownRef} className="property-autocomplete-dropdown">
-                  {destSuggestions.map((suggestion) => (
-                    <div
-                      key={suggestion.id}
-                      onClick={() => selectDestSuggestion(suggestion)}
-                      className="property-autocomplete-item"
-                    >
-                      <MapPin className="w-4 h-4 text-muted-foreground inline mr-2" />
-                      <span className="text-sm">{suggestion.place_name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <LocationAutocomplete
+              value={destAddress}
+              onValueChange={setDestAddress}
+              onLocationSelect={handleDestSelect}
+              placeholder="Enter destination address..."
+              mode="address"
+              showGeolocation={true}
+              className="w-full"
+            />
 
-            {selectedDestName && (
-              <div className="mt-3 p-2.5 rounded-lg bg-primary/10 border border-primary/20 text-xs text-foreground font-medium truncate">
-                {selectedDestName}
+            {destVerified && destAddress && !isGeocodingDest && (
+              <div className="mt-3 p-2.5 rounded-lg bg-primary/10 border border-primary/30 text-xs text-primary font-medium flex items-center gap-2">
+                <CheckCircle className="w-3.5 h-3.5" />
+                Address verified
               </div>
             )}
           </div>
         </div>
 
-        {/* Route Stats */}
-        {distance !== null && (
-          <div className="flex items-center justify-center gap-8 mb-8 p-4 rounded-2xl bg-primary/5 border border-primary/20">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                <ArrowRight className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <div className="text-2xl font-black text-foreground">{distance.toLocaleString()} mi</div>
-                <div className="text-xs text-muted-foreground">distance</div>
-              </div>
+        {/* Stats Bar */}
+        {distance && (
+          <div className="flex items-center justify-center gap-8 mb-8 py-4 px-6 rounded-xl bg-primary/5 border border-primary/20">
+            <div className="flex items-center gap-2 text-foreground">
+              <Route className="w-4 h-4 text-primary" />
+              <span className="font-semibold">{distance.toLocaleString()} miles</span>
             </div>
-            <div className="w-px h-10 bg-border" />
-            <div>
-              <div className="text-2xl font-black text-foreground">~{transitDays} day{transitDays && transitDays > 1 ? 's' : ''}</div>
-              <div className="text-xs text-muted-foreground">transit time</div>
+            <div className="w-px h-6 bg-border" />
+            <div className="flex items-center gap-2 text-foreground">
+              <Clock className="w-4 h-4 text-primary" />
+              <span className="font-semibold">{transitDays} {transitDays === 1 ? 'day' : 'days'} transit</span>
             </div>
           </div>
         )}
 
-        {/* Street View Maps */}
+        {/* Street Views */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div className="aspect-[4/3] rounded-2xl border border-border/60 overflow-hidden bg-card">
+          <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-border/60">
             <StreetViewMap coordinates={originCoords} title="Origin" />
           </div>
-          <div className="aspect-[4/3] rounded-2xl border border-border/60 overflow-hidden bg-card">
+          <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-border/60">
             <StreetViewMap coordinates={destCoords} title="Destination" />
           </div>
         </div>
 
-        {/* Route Map */}
-        <div className="rounded-2xl border border-border/60 overflow-hidden bg-card">
+        {/* Route Overview */}
+        <div className="rounded-2xl overflow-hidden border border-border/60">
           <div className="h-[400px]">
             <RouteMap originCoords={originCoords} destCoords={destCoords} />
           </div>
         </div>
 
-        {/* Helper text */}
-        <p className="text-sm text-muted-foreground text-center mt-6">
-          Type at least 3 characters to see address suggestions. Select addresses to view satellite street views.
-        </p>
+        {/* CTA */}
+        {distance && (
+          <div className="mt-10 text-center">
+            <a
+              href="/online-estimate"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-lg hover:bg-primary/90 transition-colors"
+            >
+              Get Your Instant Quote
+              <ArrowRight className="w-5 h-5" />
+            </a>
+          </div>
+        )}
       </div>
     </SiteShell>
   );

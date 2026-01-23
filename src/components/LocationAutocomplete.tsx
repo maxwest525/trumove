@@ -7,14 +7,13 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-
-// Mapbox token (same as MoveMap)
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbTkycWc4dWYwZHdwMnFwdnZyanlM6XCog7Y0nrPt-5v-E2g';
+import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
 
 // Debounce delay for API calls (ms)
 const DEBOUNCE_DELAY = 350;
 
-type ValidationLevel = 'verified' | 'partial' | 'unverifiable' | null;
+// Validation levels for address verification
+export type ValidationLevel = 'verified' | 'partial' | 'unverifiable' | null;
 
 interface LocationSuggestion {
   streetAddress: string;
