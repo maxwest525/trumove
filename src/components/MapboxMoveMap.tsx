@@ -2,9 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Maximize2, Minimize2, MapPin, Loader2 } from 'lucide-react';
-
-// Use environment variable or fallback to public token
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
+import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
 
 interface MapboxMoveMapProps {
   fromZip?: string;
