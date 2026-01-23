@@ -418,7 +418,7 @@ export default function CarrierVetting() {
                   {/* Add Carrier */}
                   {carriers.length < 4 && (
                     <div className="p-3 rounded-xl border border-border bg-card">
-                      <h3 className="text-xs font-semibold text-foreground mb-2">Add Carrier</h3>
+                      <h3 className="text-xs font-semibold text-foreground mb-2">Add Carrier for Comparison</h3>
                       <CarrierSearch 
                         onSelect={handleAddCarrier} 
                         isLoading={isLoading}
