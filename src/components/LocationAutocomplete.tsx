@@ -14,8 +14,8 @@ import { toast } from "@/hooks/use-toast";
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 500; // ms
 
-// Debounce delay for API calls (ms)
-const DEBOUNCE_DELAY = 350;
+// Debounce delay for API calls (ms) - shorter for faster suggestions
+const DEBOUNCE_DELAY = 200;
 
 // Validation levels for address verification
 export type ValidationLevel = 'verified' | 'partial' | 'unverifiable' | null;
@@ -362,6 +362,7 @@ export default function LocationAutocomplete({
   }, [mode]);
 
   const searchLocations = useCallback(async (query: string) => {
+    // Start suggesting after just 2 characters for faster feedback
     if (!query || query.length < 2) {
       setSuggestions([]);
       setShowDropdown(false);
