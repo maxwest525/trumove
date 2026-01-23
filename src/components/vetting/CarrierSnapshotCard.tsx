@@ -438,9 +438,9 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
 
         {/* Red Flags Summary */}
         {redFlags.length > 0 && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-100 dark:bg-red-500/10 border border-red-500/20">
+          <div className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-red-50 dark:bg-red-500/10">
             <FileWarning className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
-            <span className="text-sm font-medium text-slate-900 dark:text-red-200">
+            <span className="text-sm font-bold text-red-600 dark:text-red-400">
               {redFlags.length} Red Flag{redFlags.length > 1 ? 's' : ''} Detected
             </span>
           </div>
