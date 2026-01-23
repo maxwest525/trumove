@@ -12,12 +12,21 @@ import previewImage from "@/assets/preview-ai-scanner.jpg";
 
 // Simulated detected items for the live demo
 const DEMO_ITEMS = [
+  // Living Room
   { id: 1, name: "3-Seat Sofa", room: "Living Room", weight: 350, cuft: 45, image: "/inventory/living-room/sofa-3-cushion.png" },
   { id: 2, name: "Coffee Table", room: "Living Room", weight: 45, cuft: 8, image: "/inventory/living-room/coffee-table.png" },
   { id: 3, name: "TV Stand", room: "Living Room", weight: 80, cuft: 12, image: "/inventory/living-room/tv-stand.png" },
-  { id: 4, name: "Floor Lamp", room: "Living Room", weight: 15, cuft: 3, image: "/inventory/living-room/lamp-floor.png" },
-  { id: 5, name: "Bookcase, Large", room: "Living Room", weight: 120, cuft: 28, image: "/inventory/living-room/bookcase-large.png" },
-  { id: 6, name: "Armchair", room: "Living Room", weight: 85, cuft: 18, image: "/inventory/living-room/armchair.png" },
+  { id: 4, name: "Armchair", room: "Living Room", weight: 85, cuft: 18, image: "/inventory/living-room/armchair.png" },
+  // Bedroom
+  { id: 5, name: "Queen Bed", room: "Bedroom", weight: 180, cuft: 55, image: "/inventory/bedroom/bed-queen.png" },
+  { id: 6, name: "Dresser", room: "Bedroom", weight: 150, cuft: 32, image: "/inventory/bedroom/dresser.png" },
+  { id: 7, name: "Nightstand", room: "Bedroom", weight: 35, cuft: 6, image: "/inventory/bedroom/nightstand.png" },
+  { id: 8, name: "Chest of Drawers", room: "Bedroom", weight: 120, cuft: 24, image: "/inventory/bedroom/chest-of-drawers.png" },
+  // Kitchen
+  { id: 9, name: "Kitchen Table", room: "Kitchen", weight: 85, cuft: 18, image: "/inventory/kitchen/kitchen-table.png" },
+  { id: 10, name: "Kitchen Chair", room: "Kitchen", weight: 20, cuft: 4, image: "/inventory/kitchen/kitchen-chair.png" },
+  { id: 11, name: "Microwave", room: "Kitchen", weight: 35, cuft: 3, image: "/inventory/appliances/microwave.png" },
+  { id: 12, name: "Bar Stool", room: "Kitchen", weight: 25, cuft: 5, image: "/inventory/kitchen/bar-stool.png" },
 ];
 
 export default function ScanRoom() {
@@ -166,9 +175,6 @@ export default function ScanRoom() {
                   <CheckCircle className="w-4 h-4 text-primary" />
                 </div>
 
-                <button className="tru-scan-play-btn">
-                  <Play className="w-6 h-6" />
-                </button>
                 
                 <div className="tru-scan-stats-bar">
                   <div className="tru-scan-stat">
@@ -189,118 +195,112 @@ export default function ScanRoom() {
         {/* Live Inventory Demo Section */}
         <section className="tru-scan-demo-section">
           <div className="container max-w-6xl mx-auto px-4">
-            <div className="tru-scan-demo-grid">
-              {/* Left: Simulated Scanner */}
-              <div className="tru-scan-demo-scanner">
-                <div className="tru-scan-demo-header">
-                  <div className="tru-scan-demo-badge">
-                    <Camera className="w-3.5 h-3.5" />
-                    <span>Live Demo</span>
+            <div className="tru-scan-demo-header-centered">
+              <h2 className="tru-scan-demo-headline">Watch AI Build Your Inventory</h2>
+              <p className="tru-scan-demo-subline">Click scan to see real-time furniture detection across multiple rooms</p>
+            </div>
+            
+            <div className="tru-scan-demo-unified">
+              {/* Scanner Preview */}
+              <div className="tru-scan-demo-scanner-mini">
+                <img 
+                  src={previewImage} 
+                  alt="Room scan" 
+                  className="tru-scan-demo-image"
+                />
+                {isScanning && (
+                  <div className="tru-scan-demo-scanning">
+                    <div className="tru-scan-demo-line" />
                   </div>
-                  <h3 className="tru-scan-demo-title">Watch AI Build Your Inventory</h3>
-                </div>
+                )}
                 
-                <div className="tru-scan-demo-preview">
-                  <img 
-                    src={previewImage} 
-                    alt="Room scan" 
-                    className="tru-scan-demo-image"
-                  />
-                  {isScanning && (
-                    <div className="tru-scan-demo-scanning">
-                      <div className="tru-scan-demo-line" />
-                    </div>
+                <div className="tru-scan-demo-status">
+                  {isScanning ? (
+                    <>
+                      <div className="tru-scan-demo-pulse" />
+                      <span>Scanning... {detectedItems.length}/{DEMO_ITEMS.length} items</span>
+                    </>
+                  ) : detectedItems.length > 0 ? (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      <span>Scan complete</span>
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="w-4 h-4" />
+                      <span>Ready to scan</span>
+                    </>
                   )}
-                  
-                  {/* Status indicator */}
-                  <div className="tru-scan-demo-status">
-                    {isScanning ? (
-                      <>
-                        <div className="tru-scan-demo-pulse" />
-                        <span>Scanning... {detectedItems.length}/{DEMO_ITEMS.length} items</span>
-                      </>
-                    ) : detectedItems.length > 0 ? (
-                      <>
-                        <CheckCircle className="w-4 h-4" />
-                        <span>Scan complete</span>
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="w-4 h-4" />
-                        <span>Ready to scan</span>
-                      </>
-                    )}
-                  </div>
                 </div>
                 
                 <button 
                   onClick={startDemo}
                   disabled={isScanning}
-                  className="tru-scan-demo-btn"
+                  className="tru-scan-demo-btn-overlay"
                 >
                   {isScanning ? (
                     <>
                       <div className="tru-scan-spinner" />
-                      Detecting Items...
+                      Detecting...
                     </>
                   ) : (
                     <>
                       <Scan className="w-4 h-4" />
-                      {detectedItems.length > 0 ? 'Scan Again' : 'Start Demo Scan'}
+                      {detectedItems.length > 0 ? 'Scan Again' : 'Start Scan'}
                     </>
                   )}
                 </button>
               </div>
 
-              {/* Right: Live Inventory List */}
-              <div className="tru-scan-demo-inventory">
+              {/* Live Inventory Grid */}
+              <div className="tru-scan-demo-inv-grid">
                 <div className="tru-scan-demo-inv-header">
-                  <h3>Detected Inventory</h3>
-                  <span className="tru-scan-demo-inv-count">{detectedItems.length} items</span>
+                  <h3>Detected Items</h3>
+                  <span className="tru-scan-demo-inv-count">{detectedItems.length} of {DEMO_ITEMS.length}</span>
                 </div>
                 
-                <div className="tru-scan-demo-inv-list">
+                <div className="tru-scan-demo-inv-items">
                   {detectedItems.length === 0 ? (
                     <div className="tru-scan-demo-inv-empty">
-                      <Package className="w-8 h-8" />
-                      <p>Click "Start Demo Scan" to see AI detection in action</p>
+                      <Package className="w-6 h-6" />
+                      <p>Click "Start Scan" to begin</p>
                     </div>
                   ) : (
                     detectedItems.map((item, idx) => (
                       <div 
                         key={item.id} 
-                        className="tru-scan-demo-inv-item"
-                        style={{ animationDelay: `${idx * 0.1}s` }}
+                        className="tru-scan-demo-inv-card"
+                        style={{ animationDelay: `${idx * 0.08}s` }}
                       >
                         <img 
                           src={item.image} 
                           alt={item.name}
                           className="tru-scan-demo-inv-img"
                         />
-                        <div className="tru-scan-demo-inv-info">
+                        <div className="tru-scan-demo-inv-details">
                           <span className="tru-scan-demo-inv-name">{item.name}</span>
                           <span className="tru-scan-demo-inv-room">{item.room}</span>
                         </div>
-                        <div className="tru-scan-demo-inv-stats">
-                          <span>{item.weight} lbs</span>
-                          <span>{item.cuft} cu ft</span>
-                        </div>
-                        <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+                        <CheckCircle className="w-3.5 h-3.5 text-primary" />
                       </div>
                     ))
                   )}
                 </div>
                 
                 {detectedItems.length > 0 && (
-                  <div className="tru-scan-demo-inv-footer">
-                    <div className="tru-scan-demo-inv-total">
-                      <span>Total Weight</span>
+                  <div className="tru-scan-demo-inv-summary">
+                    <div className="tru-scan-demo-inv-stat">
+                      <span>Weight</span>
                       <strong>{totalWeight.toLocaleString()} lbs</strong>
                     </div>
-                    <div className="tru-scan-demo-inv-total">
-                      <span>Total Volume</span>
+                    <div className="tru-scan-demo-inv-stat">
+                      <span>Volume</span>
                       <strong>{totalCuFt} cu ft</strong>
                     </div>
+                    <Link to="/online-estimate" className="tru-scan-demo-continue-btn">
+                      Continue to Quote
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
                   </div>
                 )}
               </div>
