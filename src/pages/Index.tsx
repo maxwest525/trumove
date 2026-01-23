@@ -3,9 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
-import FloatingChatButton from "@/components/FloatingChatButton";
-import FloatingQuoteButton from "@/components/FloatingQuoteButton";
-import UnifiedDock from "@/components/UnifiedDock";
+import FloatingNav from "@/components/FloatingNav";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import logoImg from "@/assets/logo.png";
 
@@ -741,22 +739,51 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* SIDEBAR: Unified Dock */}
-              <div className="tru-hero-sidebar">
-                <UnifiedDock
-                  fromCity={fromCity}
-                  toCity={toCity}
-                  distance={distance}
-                  moveDate={moveDate}
-                  size={size}
-                  propertyType={propertyType}
-                  estimatedDuration={estimatedDuration}
-                  floor={floor}
-                  hasElevator={hasElevator}
-                  progress={Math.round((step / 3) * 100)}
-                  onChatOpen={() => setChatOpen(true)}
-                  updatedFields={updatedFields}
-                />
+              {/* SIDEBAR: Stacked Move Summary + Floating Nav */}
+              <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
+                {/* Move Summary Card */}
+                <div className={`tru-floating-summary-card ${summaryVisible ? 'is-expanded' : ''}`}>
+                  <div className="tru-summary-card-header">
+                    <span className="tru-summary-card-title">Move Summary</span>
+                  </div>
+                  <div className="tru-summary-card-body">
+                    <div className="tru-summary-info-grid">
+                      <div className={`tru-summary-row ${updatedFields.has('from') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">From</span>
+                        <span className="tru-summary-value">{fromCity || "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('to') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">To</span>
+                        <span className="tru-summary-value">{toCity || "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('distance') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">Distance</span>
+                        <span className="tru-summary-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('date') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">Date</span>
+                        <span className="tru-summary-value">{moveDate ? format(moveDate, "MMM d") : "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('size') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">Size</span>
+                        <span className="tru-summary-value">{size || "—"}</span>
+                      </div>
+                      <div className={`tru-summary-row ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
+                        <span className="tru-summary-label">Property</span>
+                        <span className="tru-summary-value">
+                          {propertyType 
+                            ? `${propertyType === 'house' ? 'House' : 'Apt'}${propertyType === 'apartment' ? ` F${floor}` : ''}`
+                            : "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Nav */}
+                <div className="tru-floating-nav-wrapper">
+                  <FloatingNav onChatOpen={() => setChatOpen(true)} />
+                </div>
               </div>
             
             </div>
@@ -941,12 +968,8 @@ export default function Index() {
       {/* Chat Modal */}
       <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       
-      
-      {/* Floating AI Move Builder Button */}
-      <FloatingQuoteButton onChatOpen={() => setChatOpen(true)} />
 
-      {/* Floating Chat Button */}
-      <FloatingChatButton />
+
     </SiteShell>
   );
 }

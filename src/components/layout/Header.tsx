@@ -268,10 +268,13 @@ export default function Header() {
               <span>Call</span>
             </a>
             
-            {/* Agent Login Button */}
+            {/* Spacer for right alignment */}
+            <div className="flex-1" />
+            
+            {/* Agent Login Button - Right aligned */}
             <Link 
               to="/agent-login" 
-              className="header-btn header-btn-agent"
+              className="header-btn header-btn-agent ml-auto"
               aria-label="Agent Login"
             >
               <User className="w-4 h-4" />

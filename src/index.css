@@ -314,14 +314,120 @@
   min-width: 520px;
 }
 
-/* Sidebar container for Unified Dock */
+/* Sidebar container for stacked pills (Move Summary + Nav) */
 .tru-hero-sidebar {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  flex: 0 0 320px;
-  width: 320px;
+  flex: 0 0 220px;
+  width: 220px;
   align-self: stretch;
+}
+
+/* Stacked variant - vertically stacked pills */
+.tru-hero-sidebar.tru-hero-sidebar-stacked {
+  flex: 0 0 200px;
+  width: 200px;
+  gap: 12px;
+}
+
+.tru-hero-sidebar-stacked .tru-floating-summary-card {
+  flex: 1 1 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 20px;
+  box-shadow: 
+    0 1px 2px hsl(var(--tm-ink) / 0.03),
+    0 4px 8px hsl(var(--tm-ink) / 0.04),
+    0 12px 24px hsl(var(--tm-ink) / 0.06);
+  overflow: hidden;
+}
+
+.tru-hero-sidebar-stacked .tru-summary-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  background: hsl(220 15% 96%);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-hero-sidebar-stacked .tru-summary-card-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-hero-sidebar-stacked .tru-summary-card-body {
+  flex: 1;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tru-hero-sidebar-stacked .tru-summary-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+.tru-hero-sidebar-stacked .tru-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.04);
+  flex: 1;
+}
+
+.tru-hero-sidebar-stacked .tru-summary-row:last-child {
+  border-bottom: none;
+}
+
+.tru-hero-sidebar-stacked .tru-summary-row.is-updated {
+  animation: field-flash 0.5s ease;
+}
+
+@keyframes field-flash {
+  0% { background: hsl(var(--primary) / 0.15); }
+  100% { background: transparent; }
+}
+
+.tru-hero-sidebar-stacked .tru-summary-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.6);
+}
+
+.tru-hero-sidebar-stacked .tru-summary-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+  text-align: right;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Nav wrapper for stacked layout */
+.tru-hero-sidebar-stacked .tru-floating-nav-wrapper {
+  flex: 0 0 auto;
+  width: 100%;
+  position: relative;
+  min-height: 280px;
+}
+
+.tru-hero-sidebar-stacked .tru-floating-nav {
+  position: relative;
+  width: 100%;
+  height: auto;
 }
 
 /* Old top row - deprecated but kept for compatibility */
