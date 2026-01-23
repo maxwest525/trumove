@@ -686,8 +686,8 @@ export default function Index() {
                         <CheckCircle className="w-12 h-12" />
                       </div>
                       <h1 className="tru-qb-question">Request received!</h1>
-                      <p className="tru-qb-subtitle">
-                        A TruMove specialist will be contacting you shortly to discuss your move details and provide a personalized quote.
+                      <p className="tru-qb-subtitle tru-qb-subtitle-bold">
+                        <strong>A TruMove specialist will be contacting you shortly</strong> to discuss your move details and provide a personalized quote.
                       </p>
                       
                       <div className="tru-qb-confirmation-divider">
@@ -695,6 +695,24 @@ export default function Index() {
                       </div>
                       
                       <div className="tru-qb-options-stack-full">
+                        <button 
+                          type="button" 
+                          className="tru-qb-option-card tru-qb-option-card-outline"
+                          onClick={() => navigate("/book")}
+                        >
+                          <Video className="w-5 h-5" />
+                          <div className="tru-qb-option-text">
+                            <span className="tru-qb-option-title">Video Consult</span>
+                            <span className="tru-qb-option-desc">Schedule a walkthrough</span>
+                          </div>
+                        </button>
+                        <a href="tel:+16097277647" className="tru-qb-option-card tru-qb-option-card-outline">
+                          <Phone className="w-5 h-5" />
+                          <div className="tru-qb-option-text">
+                            <span className="tru-qb-option-title">Call Us Now</span>
+                            <span className="tru-qb-option-desc">(609) 727-7647</span>
+                          </div>
+                        </a>
                         <button 
                           type="button" 
                           className="tru-qb-option-card"
@@ -706,23 +724,7 @@ export default function Index() {
                             <span className="tru-qb-option-desc">Build your inventory</span>
                           </div>
                         </button>
-                        <button 
-                          type="button" 
-                          className="tru-qb-option-card"
-                          onClick={() => navigate("/book")}
-                        >
-                          <Video className="w-5 h-5" />
-                          <div className="tru-qb-option-text">
-                            <span className="tru-qb-option-title">Video Consult</span>
-                            <span className="tru-qb-option-desc">Schedule a walkthrough</span>
-                          </div>
-                        </button>
                       </div>
-                      
-                      <a href="tel:+16097277647" className="tru-qb-call-link">
-                        <Phone className="w-4 h-4" />
-                        <span>Or call us now: (609) 727-7647</span>
-                      </a>
                     </div>
                   )}
                 </div>

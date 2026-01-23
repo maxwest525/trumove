@@ -318,32 +318,34 @@
 .tru-hero-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  flex: 0 0 220px;
-  width: 220px;
-  align-self: stretch;
-}
-
-/* Stacked variant - vertically stacked pills */
-.tru-hero-sidebar.tru-hero-sidebar-stacked {
-  flex: 0 0 200px;
-  width: 200px;
   gap: 12px;
+  flex: 0 0 180px;
+  width: 180px;
+  align-self: flex-start;
 }
 
+/* Stacked variant - vertically stacked collapsed pills */
+.tru-hero-sidebar.tru-hero-sidebar-stacked {
+  flex: 0 0 180px;
+  width: 180px;
+  gap: 10px;
+}
+
+/* Collapsed summary card pill */
 .tru-hero-sidebar-stacked .tru-floating-summary-card {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   width: 100%;
   display: flex;
   flex-direction: column;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 2px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 20px;
+  border-radius: 16px;
   box-shadow: 
     0 1px 2px hsl(var(--tm-ink) / 0.03),
     0 4px 8px hsl(var(--tm-ink) / 0.04),
     0 12px 24px hsl(var(--tm-ink) / 0.06);
   overflow: hidden;
+  max-height: 200px;
 }
 
 .tru-hero-sidebar-stacked .tru-summary-card-header {
@@ -416,12 +418,62 @@
   text-overflow: ellipsis;
 }
 
-/* Nav wrapper for stacked layout */
+/* Nav wrapper for stacked layout - collapsed pill */
 .tru-hero-sidebar-stacked .tru-floating-nav-wrapper {
   flex: 0 0 auto;
   width: 100%;
   position: relative;
-  min-height: 280px;
+  min-height: auto;
+}
+
+/* Collapsed floating nav in stacked sidebar */
+.tru-hero-sidebar-stacked .tru-floating-nav {
+  position: relative;
+  width: 100%;
+  padding: 8px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  box-shadow: 
+    0 1px 2px hsl(var(--tm-ink) / 0.03),
+    0 4px 8px hsl(var(--tm-ink) / 0.04),
+    0 12px 24px hsl(var(--tm-ink) / 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tru-hero-sidebar-stacked .tru-floating-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 10px;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  color: hsl(var(--tm-ink));
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.tru-hero-sidebar-stacked .tru-floating-nav-item:hover {
+  background: hsl(var(--primary) / 0.08);
+}
+
+.tru-hero-sidebar-stacked .tru-floating-nav-item.is-active {
+  background: hsl(var(--primary) / 0.12);
+  color: hsl(var(--tm-ink));
+}
+
+.tru-hero-sidebar-stacked .tru-floating-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tru-hero-sidebar-stacked .tru-floating-nav-label {
+  display: none;
 }
 
 .tru-hero-sidebar-stacked .tru-floating-nav {
@@ -13284,4 +13336,35 @@
   .unified-dock-row.is-updated {
     animation: none;
   }
+}
+
+/* =============================================
+   CONFIRMATION PAGE - BUTTON VARIANTS
+   ============================================= */
+
+/* Bold subtitle styling */
+.tru-qb-subtitle-bold {
+  font-weight: 500;
+}
+
+.tru-qb-subtitle-bold strong {
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+/* Outline variant for option cards - non-green */
+.tru-qb-option-card.tru-qb-option-card-outline {
+  background: transparent;
+  border: 2px solid hsl(var(--tm-ink) / 0.15);
+}
+
+.tru-qb-option-card.tru-qb-option-card-outline:hover {
+  background: hsl(var(--tm-ink) / 0.03);
+  border-color: hsl(var(--tm-ink) / 0.3);
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.08);
+}
+
+/* Make option cards more compact */
+.tru-qb-options-stack-full .tru-qb-option-card {
+  padding: 12px 14px;
 }
