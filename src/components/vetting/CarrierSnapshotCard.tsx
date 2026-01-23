@@ -216,37 +216,33 @@ function ExternalLinks({ companyName, dotNumber }: { companyName: string; dotNum
   const encodedName = encodeURIComponent(companyName);
   
   return (
-    <div className="flex flex-wrap gap-2 pt-4 border-t border-border/50">
-      <span className="text-xs text-muted-foreground mr-1 self-center">Verify:</span>
+    <div className="grid grid-cols-3 gap-2 pt-4 border-t border-border/50">
       <a
         href={`https://www.bbb.org/search?find_text=${encodedName}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 hover:border-blue-500/40 transition-all"
+        className="flex flex-col items-center justify-center gap-1 p-3 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all"
       >
         <span className="font-bold">BBB</span>
-        Profile
-        <ExternalLink className="w-3 h-3" />
+        <span className="text-[10px] opacity-80">Profile</span>
       </a>
       <a
         href={`https://www.google.com/search?q=${encodedName}+reviews`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/20 hover:border-orange-500/40 transition-all"
+        className="flex flex-col items-center justify-center gap-1 p-3 text-xs font-medium rounded-lg bg-amber-500 hover:bg-amber-600 text-white transition-all"
       >
-        <span className="font-bold">G</span>
-        Reviews
-        <ExternalLink className="w-3 h-3" />
+        <span className="font-bold">Google</span>
+        <span className="text-[10px] opacity-80">Reviews</span>
       </a>
       <a
         href={`https://safer.fmcsa.dot.gov/query.asp?searchtype=ANY&query_type=queryCarrierSnapshot&query_param=USDOT&query_string=${dotNumber}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/20 hover:border-green-500/40 transition-all"
+        className="flex flex-col items-center justify-center gap-1 p-3 text-xs font-medium rounded-lg bg-slate-700 hover:bg-slate-800 text-white transition-all"
       >
-        <Shield className="w-3.5 h-3.5" />
-        FMCSA SAFER
-        <ExternalLink className="w-3 h-3" />
+        <span className="font-bold">FMCSA</span>
+        <span className="text-[10px] opacity-80">SAFER</span>
       </a>
     </div>
   );
@@ -315,9 +311,9 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
         
         {/* TruMove Verified Badge */}
         {riskGrade.isTruMoveVerified && (
-          <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-primary/10 to-green-500/10 border border-primary/30">
-            <CheckCircle2 className="w-4 h-4 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wide">TruMove Verified Partner</span>
+          <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-green-500/50">
+            <CheckCircle2 className="w-4 h-4 text-green-400" />
+            <span className="text-xs font-semibold text-white uppercase tracking-wide">TruMove Verified Partner</span>
           </div>
         )}
         

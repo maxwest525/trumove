@@ -281,7 +281,7 @@ export default function CarrierVetting() {
                 href="https://safer.fmcsa.dot.gov/CompanySnapshot.aspx"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 hover:text-primary hover:underline transition-colors"
+                className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 underline font-medium"
               >
                 Official FMCSA Source
                 <ExternalLink className="w-3 h-3" />
@@ -294,8 +294,8 @@ export default function CarrierVetting() {
           {/* Hero Section - Show when no carriers */}
           {carriers.length === 0 && (
             <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 dark:bg-slate-800 text-white text-sm font-medium mb-6 border border-primary/30">
-                <Zap className="w-4 h-4 text-primary" />
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800 text-white text-sm font-medium mb-6 border border-slate-600">
+                <Zap className="w-4 h-4 text-amber-400" />
                 Instant Carrier Intelligence
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -318,6 +318,10 @@ export default function CarrierVetting() {
                 <span></span><span></span><span></span>
               </div>
               <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
+              <div className="ml-auto flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-300 border border-green-500/30 font-mono">USDOT</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono">FMCSA</span>
+              </div>
             </div>
             <div className="fmcsa-terminal-body">
               <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
