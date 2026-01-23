@@ -1,27 +1,36 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Shield, CheckCircle2, AlertTriangle, Search, ExternalLink, Star, Truck, FileCheck, Activity } from "lucide-react";
+import { 
+  Shield, CheckCircle2, AlertTriangle, Search, ExternalLink, 
+  Star, Truck, FileCheck, Activity, BadgeCheck, Eye, 
+  Scale, UserCheck, TrendingUp, XCircle, ChevronRight
+} from "lucide-react";
+import previewImage from "@/assets/preview-carrier-vetting.jpg";
 
 const VETTING_STEPS = [
   {
     step: 1,
     title: "Pre-screen",
+    icon: UserCheck,
     description: "Business identity, years in business, service areas, and ownership verified."
   },
   {
     step: 2,
     title: "Compliance",
+    icon: FileCheck,
     description: "USDOT / MC status, licensing, insurance, and safety record must meet TruMove standards."
   },
   {
     step: 3,
     title: "Reputation",
+    icon: Star,
     description: "Reviews, complaints, and claims history screened across multiple sources."
   },
   {
     step: 4,
     title: "Live scoring",
+    icon: TrendingUp,
     description: "On time rate, damages, and upcharges tracked on every TruMove job."
   }
 ];
@@ -43,11 +52,11 @@ const REPUTATION_CHECKS = [
 ];
 
 const ZERO_TOLERANCE = [
-  "Hostage loads or extortion – demanding more money after loading or refusing delivery.",
-  "Systematic bait and switch pricing – large, unjustified increases far beyond the quoted range.",
-  "Serious safety violations – unqualified drivers, blatant hours of service abuse, or unsafe vehicles.",
-  "Fraudulent reviews or identities – fake review farms, shell companies, or repeated reincarnations.",
-  "Chronic damage and unpaid claims – patterns that show customers consistently being left unprotected."
+  { title: "Hostage loads", desc: "Demanding more money after loading or refusing delivery." },
+  { title: "Bait and switch", desc: "Large, unjustified increases far beyond the quoted range." },
+  { title: "Safety violations", desc: "Unqualified drivers, hours abuse, or unsafe vehicles." },
+  { title: "Fraudulent identity", desc: "Fake reviews, shell companies, or repeated reincarnations." },
+  { title: "Chronic damage", desc: "Patterns showing customers consistently left unprotected." }
 ];
 
 export default function Vetting() {
@@ -55,7 +64,6 @@ export default function Vetting() {
   const [searchResult, setSearchResult] = useState<null | { company: string; usdot: string; status: string; homeBase: string }>(null);
 
   const handleSearch = () => {
-    // Placeholder - in real app would call API
     if (searchQuery.trim()) {
       setSearchResult({
         company: "Example Moving Co.",
@@ -68,267 +76,340 @@ export default function Vetting() {
 
   return (
     <SiteShell>
-      <div className="max-w-[1480px] mx-auto px-6 py-12">
-        {/* Hero */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-foreground mb-4">
-            Carrier Vetting
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
-            Every mover on TruMove is heavily vetted before they touch your stuff. We treat carrier selection like a safety and compliance problem, not just a sales one.
-          </p>
-          
-          {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center gap-3">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 bg-card text-sm font-semibold">
-              <CheckCircle2 className="w-4 h-4 text-primary" />
-              FMCSA & USDOT verified carriers
+      <div className="tru-vetting-page">
+        {/* Hero Section with Preview Card */}
+        <section className="tru-vetting-hero">
+          <div className="tru-vetting-hero-content">
+            <div className="tru-vetting-badge">
+              <Shield className="w-3.5 h-3.5" />
+              <span>Trust & Safety</span>
             </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 bg-card text-sm font-semibold">
-              <Shield className="w-4 h-4 text-primary" />
-              Insurance & safety record checks
+            
+            <h1 className="tru-vetting-headline">
+              Every Mover,
+              <span className="tru-vetting-headline-accent">Heavily Vetted</span>
+            </h1>
+            
+            <p className="tru-vetting-subheadline">
+              We treat carrier selection like a safety and compliance problem, not just a sales one. 
+              Every mover on TruMove is verified before they touch your stuff.
+            </p>
+
+            {/* Trust Pills */}
+            <div className="tru-vetting-trust-pills">
+              <div className="tru-vetting-pill">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>FMCSA Verified</span>
+              </div>
+              <div className="tru-vetting-pill">
+                <Shield className="w-4 h-4" />
+                <span>Insurance Checked</span>
+              </div>
+              <div className="tru-vetting-pill">
+                <Activity className="w-4 h-4" />
+                <span>Live Scoring</span>
+              </div>
             </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 bg-card text-sm font-semibold">
-              <Star className="w-4 h-4 text-primary" />
-              Live review & claims monitoring
-            </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/60 bg-card text-sm font-semibold">
-              <Activity className="w-4 h-4 text-primary" />
-              AI risk scoring on every job
+
+            <div className="tru-vetting-hero-cta">
+              <Link to="/online-estimate" className="tru-vetting-primary-btn">
+                Get Matched with Vetted Carriers
+              </Link>
             </div>
           </div>
-        </div>
+
+          {/* Hero Visual - Premium Preview Card */}
+          <div className="tru-vetting-hero-visual">
+            <div className="tru-vetting-preview-card">
+              {/* Glow effects */}
+              <div className="tru-vetting-preview-glow" />
+              <div className="tru-vetting-preview-glow-secondary" />
+              
+              {/* Main preview image */}
+              <div className="tru-vetting-preview-image-wrap">
+                <img 
+                  src={previewImage} 
+                  alt="Carrier Vetting Dashboard Preview" 
+                  className="tru-vetting-preview-image"
+                />
+                
+                {/* Overlay gradient */}
+                <div className="tru-vetting-preview-overlay" />
+                
+                {/* Floating verification badges */}
+                <div className="tru-vetting-float-badge tru-vetting-badge-1">
+                  <div className="tru-vetting-float-icon tru-vetting-icon-success">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
+                  <div className="tru-vetting-float-content">
+                    <span className="tru-vetting-float-title">USDOT Verified</span>
+                    <span className="tru-vetting-float-meta">Active • No violations</span>
+                  </div>
+                </div>
+                
+                <div className="tru-vetting-float-badge tru-vetting-badge-2">
+                  <div className="tru-vetting-float-icon tru-vetting-icon-success">
+                    <Shield className="w-4 h-4" />
+                  </div>
+                  <div className="tru-vetting-float-content">
+                    <span className="tru-vetting-float-title">Insurance Active</span>
+                    <span className="tru-vetting-float-meta">$1M Cargo • $750K Liability</span>
+                  </div>
+                </div>
+                
+                <div className="tru-vetting-float-badge tru-vetting-badge-3">
+                  <div className="tru-vetting-float-icon tru-vetting-icon-warning">
+                    <Eye className="w-4 h-4" />
+                  </div>
+                  <div className="tru-vetting-float-content">
+                    <span className="tru-vetting-float-title">Live Monitoring</span>
+                    <span className="tru-vetting-float-meta">98.2% on-time rate</span>
+                  </div>
+                </div>
+
+                {/* Score badge */}
+                <div className="tru-vetting-score-badge">
+                  <div className="tru-vetting-score-ring">
+                    <span className="tru-vetting-score-value">A+</span>
+                  </div>
+                  <div className="tru-vetting-score-label">
+                    <span>TruMove</span>
+                    <span>Score</span>
+                  </div>
+                </div>
+                
+                {/* Stats bar */}
+                <div className="tru-vetting-stats-bar">
+                  <div className="tru-vetting-stat">
+                    <BadgeCheck className="w-3.5 h-3.5" />
+                    <span>847 carriers vetted</span>
+                  </div>
+                  <div className="tru-vetting-stat-divider" />
+                  <div className="tru-vetting-stat">
+                    <XCircle className="w-3.5 h-3.5" />
+                    <span>312 rejected</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* How a mover gets onto TruMove */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-black text-foreground mb-4">How a mover gets onto TruMove</h2>
-          <p className="text-muted-foreground mb-8 max-w-4xl">
-            TruMove does not just add every carrier that knocks on the door. Before a mover is allowed on the platform, they go through a multi-step review that looks at who they are, how they operate, and how they have treated customers in the past. Once approved, they are monitored on every job. If their performance slips or risk signals pop up, they are pushed down in results or removed entirely.
-          </p>
+        <section className="tru-vetting-section">
+          <div className="tru-vetting-section-header">
+            <span className="tru-vetting-section-eyebrow">Vetting Process</span>
+            <h2 className="tru-vetting-section-title">How a Mover Gets Onto TruMove</h2>
+            <p className="tru-vetting-section-desc">
+              Before a mover is allowed on the platform, they go through a multi-step review. 
+              Once approved, they are monitored on every job.
+            </p>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {VETTING_STEPS.map((step) => (
-              <div key={step.step} className="p-5 rounded-xl border border-border/60 bg-card">
-                <div className="w-10 h-10 rounded-full bg-foreground text-background text-lg font-bold flex items-center justify-center mb-3">
-                  {step.step}
+          <div className="tru-vetting-steps">
+            {VETTING_STEPS.map((step, i) => (
+              <div key={step.step} className="tru-vetting-step-wrapper">
+                <div className="tru-vetting-step">
+                  <div className="tru-vetting-step-number">{step.step}</div>
+                  <div className="tru-vetting-step-icon">
+                    <step.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="tru-vetting-step-title">{step.title}</h3>
+                  <p className="tru-vetting-step-desc">{step.description}</p>
                 </div>
-                <div className="text-sm font-bold text-foreground mb-2">{step.title}</div>
-                <p className="text-xs text-muted-foreground">{step.description}</p>
+                {i < VETTING_STEPS.length - 1 && (
+                  <div className="tru-vetting-step-connector">
+                    <ChevronRight className="w-5 h-5" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </section>
 
         {/* What We Check */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-black text-foreground mb-4">What we check on every carrier</h2>
-          <p className="text-muted-foreground mb-8">
-            Here is a snapshot of the data that flows into TruMove's carrier score before a mover is ever shown in your quotes.
-          </p>
+        <section className="tru-vetting-section tru-vetting-checks-section">
+          <div className="tru-vetting-section-header">
+            <span className="tru-vetting-section-eyebrow">Verification</span>
+            <h2 className="tru-vetting-section-title">What We Check on Every Carrier</h2>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-xl border border-border/60 bg-card">
-              <div className="flex items-center gap-2 mb-4">
-                <FileCheck className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-bold text-foreground">Legal, safety & insurance</h3>
+          <div className="tru-vetting-checks-grid">
+            <div className="tru-vetting-check-card">
+              <div className="tru-vetting-check-header">
+                <div className="tru-vetting-check-icon">
+                  <FileCheck className="w-5 h-5" />
+                </div>
+                <h3>Legal, Safety & Insurance</h3>
               </div>
-              <ul className="space-y-2">
+              <ul className="tru-vetting-check-list">
                 {LEGAL_CHECKS.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                    {item}
+                  <li key={item}>
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
             
-            <div className="p-6 rounded-xl border border-border/60 bg-card">
-              <div className="flex items-center gap-2 mb-4">
-                <Star className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-bold text-foreground">Reputation & performance</h3>
+            <div className="tru-vetting-check-card">
+              <div className="tru-vetting-check-header">
+                <div className="tru-vetting-check-icon">
+                  <Star className="w-5 h-5" />
+                </div>
+                <h3>Reputation & Performance</h3>
               </div>
-              <ul className="space-y-2">
+              <ul className="tru-vetting-check-list">
                 {REPUTATION_CHECKS.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                    {item}
+                  <li key={item}>
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
           
-          <p className="mt-6 text-sm text-muted-foreground bg-muted/50 p-4 rounded-xl">
-            If a carrier fails any hard rule, they never go live on TruMove. If their live score drops below our threshold, they are automatically removed from customer facing results until issues are resolved.
-          </p>
+          <div className="tru-vetting-notice">
+            <AlertTriangle className="w-4 h-4" />
+            <p>If a carrier fails any hard rule, they never go live. If their score drops, they're removed from results.</p>
+          </div>
+        </section>
+
+        {/* Zero Tolerance */}
+        <section className="tru-vetting-section">
+          <div className="tru-vetting-section-header">
+            <span className="tru-vetting-section-eyebrow tru-vetting-eyebrow-danger">Zero Tolerance</span>
+            <h2 className="tru-vetting-section-title">Instant Removal for Bad Behavior</h2>
+          </div>
+          
+          <div className="tru-vetting-zero-grid">
+            {ZERO_TOLERANCE.map((item, i) => (
+              <div key={i} className="tru-vetting-zero-item">
+                <div className="tru-vetting-zero-icon">
+                  <XCircle className="w-4 h-4" />
+                </div>
+                <div className="tru-vetting-zero-content">
+                  <span className="tru-vetting-zero-title">{item.title}</span>
+                  <span className="tru-vetting-zero-desc">{item.desc}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* Carrier Lookup */}
-        <section className="mb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="p-6 rounded-xl border border-border/60 bg-card">
-              <h3 className="text-xl font-black text-foreground mb-2">Check any mover's public record.</h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                Use this tool to look up a moving company by name or USDOT number. We will show you the core public info and links to the official federal record and external reviews.
+        <section className="tru-vetting-section tru-vetting-lookup-section">
+          <div className="tru-vetting-lookup-grid">
+            <div className="tru-vetting-lookup-card">
+              <div className="tru-vetting-lookup-icon">
+                <Search className="w-6 h-6" />
+              </div>
+              <h3 className="tru-vetting-lookup-title">Check Any Mover's Public Record</h3>
+              <p className="tru-vetting-lookup-desc">
+                Look up a moving company by name or USDOT number. We'll show you core public info and links to official sources.
               </p>
               
-              <div className="flex gap-3 mb-4">
+              <div className="tru-vetting-search-wrap">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Enter company name or USDOT number"
-                  className="flex-1 h-12 px-4 rounded-xl border border-border/60 bg-background text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="Enter company name or USDOT"
+                  className="tru-vetting-search-input"
                 />
-                <button
-                  type="button"
-                  onClick={handleSearch}
-                  className="h-12 px-6 rounded-xl bg-foreground text-background text-sm font-bold transition-all hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-2"
-                >
+                <button onClick={handleSearch} className="tru-vetting-search-btn">
                   <Search className="w-4 h-4" />
                   Search
                 </button>
               </div>
               
-              <p className="text-xs text-muted-foreground mb-6">
-                This is a convenience lookup that surfaces public data. For full details we always link you to official sources.
-              </p>
-              
-              <div className="space-y-3 p-4 rounded-xl bg-muted/30">
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Company</span>
-                  <span className="text-sm font-semibold">{searchResult?.company || "Waiting for a search…"}</span>
+              <div className="tru-vetting-search-results">
+                <div className="tru-vetting-result-row">
+                  <span>Company</span>
+                  <span>{searchResult?.company || "—"}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">USDOT</span>
-                  <span className="text-sm font-semibold">{searchResult?.usdot || "—"}</span>
+                <div className="tru-vetting-result-row">
+                  <span>USDOT</span>
+                  <span>{searchResult?.usdot || "—"}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Status</span>
-                  <span className="text-sm font-semibold">{searchResult?.status || "—"}</span>
+                <div className="tru-vetting-result-row">
+                  <span>Status</span>
+                  <span className={searchResult?.status === "Active" ? "tru-vetting-status-active" : ""}>
+                    {searchResult?.status || "—"}
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Home base</span>
-                  <span className="text-sm font-semibold">{searchResult?.homeBase || "—"}</span>
+                <div className="tru-vetting-result-row">
+                  <span>Home base</span>
+                  <span>{searchResult?.homeBase || "—"}</span>
                 </div>
               </div>
               
               {searchResult && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <a href="#" className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
-                    View on FMCSA (SAFER) <ExternalLink className="w-3 h-3" />
-                  </a>
-                  <a href="#" className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
-                    View Google Reviews <ExternalLink className="w-3 h-3" />
-                  </a>
-                  <a href="#" className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
-                    View BBB Profile <ExternalLink className="w-3 h-3" />
-                  </a>
+                <div className="tru-vetting-result-links">
+                  <a href="#"><ExternalLink className="w-3 h-3" /> FMCSA Record</a>
+                  <a href="#"><ExternalLink className="w-3 h-3" /> Google Reviews</a>
+                  <a href="#"><ExternalLink className="w-3 h-3" /> BBB Profile</a>
                 </div>
               )}
             </div>
 
-            <div className="p-6 rounded-xl border border-border/60 bg-card">
-              <h3 className="text-xl font-black text-foreground mb-2">Verify TruMove's own credentials.</h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                You should be able to vet us just as easily as we vet carriers. Here are TruMove's credentials and where to verify them directly.
+            <div className="tru-vetting-lookup-card tru-vetting-verify-card">
+              <div className="tru-vetting-lookup-icon">
+                <BadgeCheck className="w-6 h-6" />
+              </div>
+              <h3 className="tru-vetting-lookup-title">Verify TruMove's Credentials</h3>
+              <p className="tru-vetting-lookup-desc">
+                You should be able to vet us just as easily as we vet carriers.
               </p>
               
-              <div className="space-y-3 p-4 rounded-xl bg-muted/30 mb-4">
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Legal entity</span>
-                  <span className="text-sm font-semibold">TruMove Inc.</span>
+              <div className="tru-vetting-search-results">
+                <div className="tru-vetting-result-row">
+                  <span>Legal entity</span>
+                  <span>TruMove Inc.</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">USDOT</span>
-                  <span className="text-sm font-semibold">0000000</span>
+                <div className="tru-vetting-result-row">
+                  <span>USDOT</span>
+                  <span>0000000</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">MC / FF</span>
-                  <span className="text-sm font-semibold">MC 000000</span>
+                <div className="tru-vetting-result-row">
+                  <span>MC / FF</span>
+                  <span>MC 000000</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Primary office</span>
-                  <span className="text-sm font-semibold">City, State</span>
+                <div className="tru-vetting-result-row">
+                  <span>Primary office</span>
+                  <span>City, State</span>
                 </div>
               </div>
               
-              <div className="flex flex-wrap gap-2">
-                <a href="#" className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
-                  View TruMove on FMCSA <ExternalLink className="w-3 h-3" />
-                </a>
-                <a href="#" className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
-                  View TruMove on BBB <ExternalLink className="w-3 h-3" />
-                </a>
-                <a href="#" className="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
-                  View TruMove on Google <ExternalLink className="w-3 h-3" />
-                </a>
+              <div className="tru-vetting-result-links">
+                <a href="#"><ExternalLink className="w-3 h-3" /> TruMove on FMCSA</a>
+                <a href="#"><ExternalLink className="w-3 h-3" /> TruMove on BBB</a>
+                <a href="#"><ExternalLink className="w-3 h-3" /> TruMove on Google</a>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Zero Tolerance */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-black text-foreground mb-4">Zero tolerance for bad behavior.</h2>
-          <p className="text-muted-foreground mb-6">
-            TruMove has written rules that every carrier agrees to before they ever see a job. Certain behavior gets an immediate suspension or permanent removal from the platform.
-          </p>
-          
-          <div className="space-y-3">
-            {ZERO_TOLERANCE.map((item) => (
-              <div key={item} className="flex items-start gap-3 p-4 rounded-xl border border-destructive/20 bg-destructive/5">
-                <span className="w-2 h-2 rounded-full bg-destructive flex-shrink-0 mt-2" />
-                <p className="text-sm text-foreground">{item}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Incident Response */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-black text-foreground mb-4">When something goes wrong.</h2>
-          <p className="text-muted-foreground mb-6">
-            If a carrier has an issue mid-job, TruMove follows a structured response process.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { step: 1, title: "Report received", desc: "Customer or carrier flags the issue." },
-              { step: 2, title: "Initial review", desc: "Ops team reviews within 24 hours." },
-              { step: 3, title: "Resolution path", desc: "Mediation, carrier action, or removal." },
-              { step: 4, title: "Score update", desc: "Incident affects future scoring." }
-            ].map((item) => (
-              <div key={item.step} className="p-5 rounded-xl border border-border/60 bg-card">
-                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center mb-3">
-                  {item.step}
-                </div>
-                <div className="text-sm font-bold text-foreground mb-1">{item.title}</div>
-                <p className="text-xs text-muted-foreground">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* CTA */}
-        <section className="text-center">
-          <h2 className="text-2xl font-black text-foreground mb-4">Ready to book with confidence?</h2>
-          <p className="text-muted-foreground mb-6">
-            Talk to a TruMove specialist and get matched with vetted carriers.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              to="/online-estimate"
-              className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-foreground text-background text-sm font-bold tracking-wide uppercase transition-all hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              Get an Estimate
-            </Link>
-            <Link
-              to="/book"
-              className="inline-flex items-center gap-2 h-12 px-6 rounded-xl border border-border/60 bg-card text-foreground text-sm font-bold tracking-wide uppercase transition-all hover:bg-muted/50"
-            >
-              Book a Consult
-            </Link>
+        <section className="tru-vetting-cta-section">
+          <div className="tru-vetting-cta-card">
+            <div className="tru-vetting-cta-glow" />
+            <div className="tru-vetting-cta-icon">
+              <Shield className="w-8 h-8" />
+            </div>
+            <h2 className="tru-vetting-cta-title">Ready to Book with Confidence?</h2>
+            <p className="tru-vetting-cta-desc">
+              Talk to a TruMove specialist and get matched with vetted carriers.
+            </p>
+            <div className="tru-vetting-cta-buttons">
+              <Link to="/online-estimate" className="tru-vetting-submit-btn">
+                Get an Estimate
+              </Link>
+              <Link to="/book" className="tru-vetting-alt-btn">
+                Book a Consult
+              </Link>
+            </div>
           </div>
         </section>
       </div>
