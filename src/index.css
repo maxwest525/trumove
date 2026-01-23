@@ -14152,7 +14152,45 @@
   flex-wrap: wrap;
 }
 
-/* Outline/secondary style for "Start Scanning Now" */
+/* Primary Dark Button with Green Accents (Analyze Route style) */
+.tru-scan-header-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  background: hsl(var(--tm-ink));
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 
+    0 0 0 1px hsl(var(--primary) / 0.3),
+    0 0 20px hsl(var(--primary) / 0.15),
+    0 0 40px hsl(var(--primary) / 0.1);
+}
+
+.tru-scan-header-btn-primary:hover {
+  background: hsl(var(--tm-ink) / 0.9);
+  box-shadow: 
+    0 0 0 1px hsl(var(--primary) / 0.5),
+    0 0 30px hsl(var(--primary) / 0.25),
+    0 0 60px hsl(var(--primary) / 0.15);
+}
+
+.tru-scan-header-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tru-scan-btn-arrows {
+  color: hsl(var(--primary));
+  font-family: monospace;
+  font-weight: 400;
+}
+
 /* Muted Start Scanning Button */
 .tru-scan-header-btn-muted {
   display: inline-flex;
@@ -14176,27 +14214,6 @@
 .tru-scan-header-btn-muted:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.tru-scan-header-btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 28px;
-  background: transparent;
-  color: hsl(var(--tm-ink));
-  font-size: 14px;
-  font-weight: 700;
-  border-radius: 12px;
-  border: 2px solid hsl(var(--tm-ink) / 0.2);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tru-scan-header-btn-outline:hover {
-  border-color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.05);
-  color: hsl(var(--tm-ink));
 }
 
 .tru-scan-header-btn-outline:disabled {
@@ -14267,6 +14284,13 @@
   flex-wrap: wrap;
 }
 
+/* Spread items across full width */
+.tru-scan-trust-spread {
+  justify-content: space-between;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
 .tru-scan-trust-item-slim {
   display: flex;
   align-items: center;
@@ -14313,8 +14337,96 @@
 }
 
 /* =============================================
-   SCAN ROOM - REFINED STEPS DIVIDER
+   SCAN ROOM - FULL WIDTH STEPS BAR (DARK DIVIDER)
    ============================================= */
+.tru-scan-steps-bar {
+  width: 100%;
+  padding: 20px 24px;
+  background: hsl(var(--tm-ink));
+}
+
+.tru-scan-steps-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.tru-scan-steps-bar-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: hsl(0 0% 100% / 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.tru-scan-steps-bar-line {
+  width: 1px;
+  height: 24px;
+  background: hsl(0 0% 100% / 0.15);
+}
+
+.tru-scan-steps-bar-items {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tru-scan-step-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tru-scan-step-bar-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: hsl(var(--primary));
+  color: hsl(var(--tm-ink));
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tru-scan-step-bar-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+}
+
+.tru-scan-step-bar-arrow {
+  width: 16px;
+  height: 16px;
+  color: hsl(0 0% 100% / 0.3);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .tru-scan-steps-bar-inner {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .tru-scan-steps-bar-line {
+    display: none;
+  }
+  
+  .tru-scan-steps-bar-items {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Legacy steps divider (kept for compatibility) */
 .tru-scan-steps-divider {
   padding: 24px 24px 32px;
   background: transparent;
@@ -14450,6 +14562,17 @@
   pointer-events: none;
 }
 
+/* Grid Pattern Overlay */
+.tru-scan-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(hsl(var(--primary) / 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.6;
+}
+
 .tru-scan-video-scanline {
   position: absolute;
   left: 0;
@@ -14463,6 +14586,52 @@
 @keyframes scanLineMove {
   0%, 100% { top: 10%; }
   50% { top: 85%; }
+}
+
+/* Status Pills Bar - Bottom of video */
+.tru-scan-status-pills {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 8px 16px;
+  background: hsl(var(--tm-ink) / 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 100px;
+  border: 1px solid hsl(var(--primary) / 0.3);
+}
+
+.tru-scan-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--primary));
+}
+
+.tru-scan-status-pill svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tru-scan-status-pill-active {
+  animation: statusGlow 2s ease-in-out infinite;
+}
+
+@keyframes statusGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.tru-scan-status-divider {
+  width: 1px;
+  height: 16px;
+  background: hsl(0 0% 100% / 0.2);
 }
 
 /* Detection Pills - Matching reference design */
@@ -14777,6 +14946,232 @@
 .tru-scan-inv-continue:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px hsl(var(--primary) / 0.4);
+}
+
+/* =============================================
+   SCAN ROOM - V2 INVENTORY PANEL (MATCHES MANUAL BUILDER)
+   ============================================= */
+.tru-scan-inv-panel-v2 {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
+  overflow: hidden;
+}
+
+.tru-scan-inv-header-v2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: hsl(220 15% 96%);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-scan-inv-header-v2 h3 {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: hsl(var(--tm-ink) / 0.5);
+  margin: 0;
+}
+
+.tru-scan-inv-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background: hsl(var(--tm-ink));
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 100px;
+}
+
+.tru-scan-inv-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+@media (max-width: 1200px) {
+  .tru-scan-inv-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .tru-scan-inv-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tru-scan-inv-empty-v2 {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  color: hsl(var(--tm-ink) / 0.4);
+}
+
+.tru-scan-inv-empty-v2 svg {
+  opacity: 0.3;
+}
+
+.tru-scan-inv-empty-v2 p {
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.6);
+  margin: 0;
+}
+
+.tru-scan-inv-empty-v2 span {
+  font-size: 12px;
+}
+
+.tru-scan-inv-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  background: white;
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
+  border-radius: 12px;
+  animation: slideInRow 0.3s ease-out forwards;
+  transition: all 0.15s ease;
+}
+
+.tru-scan-inv-card:hover {
+  border-color: hsl(var(--primary) / 0.2);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.1);
+}
+
+.tru-scan-inv-card-img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.tru-scan-inv-card-img img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+.tru-scan-inv-card-qty {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: hsl(var(--tm-ink));
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.tru-scan-inv-card-info {
+  text-align: center;
+  width: 100%;
+}
+
+.tru-scan-inv-card-name {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.tru-scan-inv-card-meta {
+  display: block;
+  font-size: 10px;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+.tru-scan-inv-footer-v2 {
+  padding: 12px 16px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
+  background: hsl(var(--tm-ink) / 0.02);
+}
+
+.tru-scan-inv-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-scan-inv-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.tru-scan-inv-stat span {
+  font-size: 18px;
+  font-weight: 800;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-scan-inv-stat label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--tm-ink) / 0.4);
+}
+
+.tru-scan-inv-continue-v2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  background: hsl(var(--tm-ink));
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 
+    0 0 0 1px hsl(var(--primary) / 0.3),
+    0 0 15px hsl(var(--primary) / 0.15);
+}
+
+.tru-scan-inv-continue-v2:hover {
+  background: hsl(var(--tm-ink) / 0.9);
+  box-shadow: 
+    0 0 0 1px hsl(var(--primary) / 0.5),
+    0 0 25px hsl(var(--primary) / 0.25);
 }
 
 /* Legacy Hero Section (kept for compatibility) */
