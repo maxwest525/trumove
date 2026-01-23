@@ -66,18 +66,18 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
               items.map((item) => (
                 <tr key={item.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      {/* 20x20 thumbnail */}
-                      <div className="w-5 h-5 flex-shrink-0 rounded overflow-hidden bg-muted/50">
+                    <div className="flex items-center gap-3">
+                      {/* Larger thumbnail */}
+                      <div className="w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden bg-muted/30 border border-border/30">
                         {item.imageUrl ? (
                           <img 
                             src={item.imageUrl} 
                             alt={item.name} 
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain p-0.5"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-[8px] text-muted-foreground">📦</span>
+                            <span className="text-base text-muted-foreground">📦</span>
                           </div>
                         )}
                       </div>
