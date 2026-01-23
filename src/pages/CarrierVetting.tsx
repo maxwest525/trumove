@@ -345,6 +345,18 @@ export default function CarrierVetting() {
             </div>
           )}
 
+          {/* Results Header - Only when carriers exist */}
+          {carriers.length > 0 && (
+            <div className="mb-6 text-center">
+              <h2 className="text-xl font-semibold text-foreground">
+                Carrier Safety Comparison
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Showing {carriers.length} carrier{carriers.length > 1 ? 's' : ''} • Click any card to view full report
+              </p>
+            </div>
+          )}
+
           {/* Results Section */}
           {carriers.length > 0 && (
             <div className="flex gap-6">
@@ -389,16 +401,6 @@ export default function CarrierVetting() {
                         className="sidebar-search"
                       />
                     </div>
-                  )}
-
-                  {/* Clear All - Simple link */}
-                  {carriers.length > 0 && (
-                    <button 
-                      onClick={clearAll}
-                      className="w-full text-sm text-muted-foreground hover:text-foreground text-center py-2 transition-colors"
-                    >
-                      Clear All Carriers
-                    </button>
                   )}
 
                   {/* Risk Grade Legend */}
@@ -493,6 +495,14 @@ export default function CarrierVetting() {
               }}>
                 <span className="text-muted-foreground">Load All Demo Carriers</span>
               </DropdownMenuItem>
+              {carriers.length > 0 && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={clearAll} className="text-red-600 focus:text-red-600">
+                    Clear All Carriers
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

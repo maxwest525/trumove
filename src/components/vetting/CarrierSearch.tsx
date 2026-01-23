@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Search, Building2, Loader2, Hash } from 'lucide-react';
+import { Search, Building2, Loader2, Hash, Truck } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -22,7 +22,7 @@ interface CarrierSearchProps {
 
 export function CarrierSearch({ onSelect, className, isLoading: externalLoading }: CarrierSearchProps) {
   const [query, setQuery] = useState('');
-  const [searchType, setSearchType] = useState<'name' | 'dot'>('name');
+  const [searchType, setSearchType] = useState<'name' | 'dot' | 'mc'>('name');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -32,7 +32,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
   
   const isLoading = isSearching || externalLoading;
 
-  const search = useCallback(async (searchQuery: string, type: 'name' | 'dot') => {
+  const search = useCallback(async (searchQuery: string, type: 'name' | 'dot' | 'mc') => {
     if (!searchQuery.trim() || searchQuery.length < 2) {
       setResults([]);
       return;
@@ -68,12 +68,15 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
           setError('No carriers found matching that name');
         }
       } else {
-        // DOT search returns a single carrier
-        if (data.dotNumber) {
+        // DOT or MC search returns results array
+        const resultList = data.results || [];
+        if (resultList.length > 0) {
+          setResults(resultList);
+        } else if (data.dotNumber) {
           setResults([data]);
         } else {
           setResults([]);
-          setError('No carrier found with that DOT number');
+          setError(type === 'mc' ? 'No carrier found with that MC number' : 'No carrier found with that DOT number');
         }
       }
       setShowResults(true);
@@ -136,14 +139,14 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md px-4 h-9 text-sm font-medium transition-all border',
+              'rounded-md px-3 h-9 text-sm font-medium transition-all border',
               searchType === 'name' 
                 ? 'bg-white/15 text-white border-white/40 shadow-sm' 
                 : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20'
             )}
             onClick={() => setSearchType('name')}
           >
-            <Building2 className="w-4 h-4 mr-2" />
+            <Building2 className="w-4 h-4 mr-1.5" />
             Name
           </Button>
           <Button
@@ -151,15 +154,30 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md px-4 h-9 text-sm font-medium transition-all border',
+              'rounded-md px-3 h-9 text-sm font-medium transition-all border',
               searchType === 'dot' 
                 ? 'bg-white/15 text-white border-white/40 shadow-sm' 
                 : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20'
             )}
             onClick={() => setSearchType('dot')}
           >
-            <Hash className="w-4 h-4 mr-2" />
+            <Hash className="w-4 h-4 mr-1.5" />
             DOT
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn(
+              'rounded-md px-3 h-9 text-sm font-medium transition-all border',
+              searchType === 'mc' 
+                ? 'bg-white/15 text-white border-white/40 shadow-sm' 
+                : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20'
+            )}
+            onClick={() => setSearchType('mc')}
+          >
+            <Truck className="w-4 h-4 mr-1.5" />
+            MC
           </Button>
         </div>
 
@@ -168,7 +186,13 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
           <Input
             type="text"
-            placeholder={searchType === 'name' ? 'Search carrier by company name...' : 'Enter DOT number...'}
+            placeholder={
+              searchType === 'name' 
+                ? 'Search carrier by company name...' 
+                : searchType === 'dot' 
+                  ? 'Enter DOT number...' 
+                  : 'Enter MC number...'
+            }
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setShowResults(true)}
