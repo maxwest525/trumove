@@ -16780,30 +16780,28 @@
   padding: 20px;
 }
 
-/* Override search input in terminal */
-.fmcsa-terminal .relative input {
-  background: hsl(220 20% 12%) !important;
-  border-color: hsl(220 20% 25%) !important;
-  color: white !important;
-  font-size: 15px !important;
+/* Override search input in terminal - HIGH VISIBILITY */
+.fmcsa-terminal input,
+.fmcsa-terminal .relative input,
+.fmcsa-terminal-body input {
+  background: hsl(220 15% 22%) !important;
+  border: 2px solid hsl(220 15% 40%) !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  caret-color: hsl(142 76% 50%);
 }
 
-.fmcsa-terminal .relative input::placeholder {
-  color: hsl(0 0% 55%) !important;
+.fmcsa-terminal input::placeholder,
+.fmcsa-terminal .relative input::placeholder,
+.fmcsa-terminal-body input::placeholder {
+  color: hsl(220 10% 65%) !important;
+  opacity: 1 !important;
 }
 
+.fmcsa-terminal input:focus,
 .fmcsa-terminal .relative input:focus {
-  border-color: hsl(var(--primary) / 0.5) !important;
-  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15), inset 0 1px 8px hsl(var(--primary) / 0.1) !important;
-}
-
-/* Search toggle buttons in terminal */
-.fmcsa-terminal button {
-  color: hsl(0 0% 70%) !important;
-}
-
-.fmcsa-terminal button[class*="bg-primary"] {
-  color: hsl(var(--primary-foreground)) !important;
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.25), inset 0 1px 8px hsl(var(--primary) / 0.1) !important;
 }
 
 /* Feature Cards - Horizontal Layout */

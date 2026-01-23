@@ -291,36 +291,29 @@ export default function CarrierVetting() {
         </div>
 
         <div className="container max-w-7xl mx-auto px-4 py-8">
-          {/* Hero Section - Show when no carriers */}
+          {/* Compact Hero Section - Only show when no carriers */}
           {carriers.length === 0 && (
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800 text-white text-sm font-medium mb-6 border border-slate-600">
-                <Zap className="w-4 h-4 text-amber-400" />
-                Instant Carrier Intelligence
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Verify Any Moving Company in Seconds
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 flex items-center justify-center gap-2">
+                <Zap className="w-6 h-6 text-primary" />
+                Verify Any Carrier in Seconds
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-2">
-                Access real-time FMCSA safety data, insurance status, and compliance records 
-                for any DOT-registered carrier in the United States.
-              </p>
-              <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-                Search by DOT#, MC#, or company name • Compare up to 4 carriers side-by-side
+              <p className="text-sm text-muted-foreground">
+                Real-time FMCSA safety data • Insurance verification • Compare up to 4 carriers
               </p>
             </div>
           )}
 
-          {/* Search Section - Always visible */}
-          <div className="fmcsa-terminal max-w-2xl mx-auto mb-8">
+          {/* Search Terminal - Always visible */}
+          <div className="fmcsa-terminal max-w-2xl mx-auto mb-6">
             <div className="fmcsa-terminal-header">
               <div className="fmcsa-terminal-dots">
                 <span></span><span></span><span></span>
               </div>
               <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
               <div className="ml-auto flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-300 border border-green-500/30 font-mono">USDOT</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono">FMCSA</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/30 font-mono">USDOT</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30 font-mono">FMCSA</span>
               </div>
             </div>
             <div className="fmcsa-terminal-body">
@@ -332,26 +325,25 @@ export default function CarrierVetting() {
             </div>
           </div>
 
-          {/* Features Grid - Only show when no carriers */}
+          {/* Compact Benefits Strip - Only show when no carriers */}
           {carriers.length === 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto mb-12">
-              {FEATURES.map((feature) => (
-                <div 
-                  key={feature.title} 
-                  className="fmcsa-feature-card group flex items-start gap-4"
-                >
-                  <div className="shrink-0 p-3 rounded-xl bg-primary/10 text-primary">
-                    <feature.icon className="w-6 h-6" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">{feature.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">{feature.description}</p>
-                    <p className="text-xs text-muted-foreground/70 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {feature.detail}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground mb-8">
+              <span className="flex items-center gap-1.5">
+                <Radio className="w-4 h-4 text-primary" />
+                Live FMCSA Data
+              </span>
+              <span className="flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
+                Red Flag Alerts
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Users className="w-4 h-4 text-primary" />
+                Side-by-Side Compare
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Truck className="w-4 h-4 text-primary" />
+                Fleet Intelligence
+              </span>
             </div>
           )}
 

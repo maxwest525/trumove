@@ -129,15 +129,17 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
   return (
     <div ref={containerRef} className={cn('relative', className)}>
       <div className="space-y-3">
-        {/* Search Type Toggle */}
-        <div className="flex rounded-lg overflow-hidden border border-white/20 bg-white/5 w-fit">
+        {/* Search Type Toggle - Subtle white highlight, no green fill */}
+        <div className="flex gap-2">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-none px-4 h-10 text-sm text-white/70 hover:text-white hover:bg-white/10',
-              searchType === 'name' && 'bg-primary text-primary-foreground hover:bg-primary/90'
+              'rounded-md px-4 h-9 text-sm font-medium transition-all border',
+              searchType === 'name' 
+                ? 'bg-white/15 text-white border-white/40 shadow-sm' 
+                : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20'
             )}
             onClick={() => setSearchType('name')}
           >
@@ -149,8 +151,10 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-none px-4 h-10 text-sm text-white/70 hover:text-white hover:bg-white/10',
-              searchType === 'dot' && 'bg-primary text-primary-foreground hover:bg-primary/90'
+              'rounded-md px-4 h-9 text-sm font-medium transition-all border',
+              searchType === 'dot' 
+                ? 'bg-white/15 text-white border-white/40 shadow-sm' 
+                : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20'
             )}
             onClick={() => setSearchType('dot')}
           >
