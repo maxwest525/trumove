@@ -412,7 +412,7 @@ export default function CarrierVetting() {
 
               {/* Right Sidebar */}
               <div className="hidden lg:block w-72 shrink-0">
-                <div className="sticky top-36 space-y-4">
+                <div className="sticky top-[200px] space-y-4">
                   {/* Add Carrier */}
                   {carriers.length < 4 && (
                     <div className="p-3 rounded-xl border border-border bg-card">
