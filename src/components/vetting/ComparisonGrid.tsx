@@ -91,41 +91,6 @@ export function ComparisonGrid({
 
   return (
     <div className={cn('space-y-4', className)}>
-      {/* Search Section */}
-      {canAddMore && (
-        <div className="space-y-3">
-          {showSearch ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">Search for a carrier to compare</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowSearch(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-              <CarrierSearch onSelect={handleAdd} />
-            </div>
-          ) : (
-            <Button
-              variant="outline"
-              className="w-full border-dashed h-14"
-              onClick={() => setShowSearch(true)}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Plus className="w-4 h-4 mr-2" />
-              )}
-              Add Carrier to Compare ({carriers.length}/{maxCarriers})
-            </Button>
-          )}
-        </div>
-      )}
-
       {/* Carriers Grid */}
       {carriers.length > 0 ? (
         <div className={cn(
