@@ -37,7 +37,7 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
   };
 
   return (
-    <div className="rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
+    <div className="print-inventory rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
       {/* Header - Enlarged and Centered */}
       <div className="tru-summary-header-large border-b border-border/40">
         <div className="text-center flex-1">
@@ -60,7 +60,7 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
               <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Cu Ft</th>
               <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Total Weight</th>
               <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Total Cu Ft</th>
-              <th className="w-12"></th>
+              <th className="w-12 print-hide"></th>
             </tr>
           </thead>
           <tbody>
@@ -96,6 +96,8 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{item.room}</td>
                     <td className="px-4 py-3 text-center">
+                      {/* Hidden span for print, input for screen */}
+                      <span className="print-qty-value hidden">{item.quantity}</span>
                       <input
                         type="number"
                         min={1}
@@ -116,7 +118,7 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
                     <td className="px-4 py-3 text-center font-semibold">
                       {item.quantity * cubicFt}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-3 text-center print-hide">
                       <button
                         type="button"
                         onClick={() => onRemoveItem(item.id)}
@@ -140,15 +142,15 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
                 <td className="px-4 py-3 text-center text-sm">—</td>
                 <td className="px-4 py-3 text-center text-sm text-foreground">{totalWeight.toLocaleString()} lbs</td>
                 <td className="px-4 py-3 text-center text-sm text-foreground">{totalCubicFeet} cu ft</td>
-                <td></td>
+                <td className="print-hide"></td>
               </tr>
             </tfoot>
           )}
         </table>
       </div>
 
-      {/* Actions */}
-      <div className="p-4 border-t border-border/40 flex flex-wrap gap-3">
+      {/* Actions - Hidden in print */}
+      <div className="print-actions p-4 border-t border-border/40 flex flex-wrap gap-3">
         <button
           type="button"
           onClick={handlePrint}

@@ -12528,3 +12528,75 @@
 .dark .tru-summary-header-large {
   background: hsl(220 20% 14%);
 }
+
+/* ============================================
+   PRINT STYLES - Only show inventory table
+   ============================================ */
+@media print {
+  /* Hide everything by default */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Show only the inventory table and its contents */
+  .print-inventory,
+  .print-inventory * {
+    visibility: visible;
+  }
+  
+  /* Position the inventory table at top left */
+  .print-inventory {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Hide interactive elements */
+  .print-inventory button,
+  .print-inventory input,
+  .print-inventory .print-hide {
+    display: none !important;
+  }
+  
+  /* Show quantity as text instead of input */
+  .print-inventory .print-qty-value {
+    display: block !important;
+  }
+  
+  /* Style the table for print */
+  .print-inventory table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .print-inventory th,
+  .print-inventory td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .print-inventory th {
+    background: #f5f5f5 !important;
+    font-weight: bold;
+  }
+  
+  .print-inventory .tru-summary-header-large {
+    background: white !important;
+    border-bottom: 2px solid #333 !important;
+    padding: 16px !important;
+  }
+  
+  .print-inventory .tru-qb-title-accent {
+    color: #22c55e !important;
+  }
+  
+  /* Hide the actions footer in print */
+  .print-inventory .print-actions {
+    display: none !important;
+  }
+}
