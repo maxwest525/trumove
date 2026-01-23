@@ -130,7 +130,7 @@ export default function ScanRoom() {
               <button
                 onClick={startDemo}
                 disabled={isScanning}
-                className="tru-scan-header-btn-outline"
+                className="tru-scan-header-btn-muted"
               >
                 <Scan className="w-4 h-4" />
                 Start Scanning Now
@@ -143,39 +143,26 @@ export default function ScanRoom() {
           </div>
         </section>
 
-        {/* How It Works - Section Divider Bar */}
-        <section className="tru-scan-steps-bar">
-          <div className="container max-w-6xl mx-auto px-4">
-            <div className="tru-scan-steps-bar-inner">
-              <h2 className="tru-scan-steps-bar-title">From Video to Quote in 3 Steps</h2>
-              
-              <div className="tru-scan-steps-bar-steps">
-                <div className="tru-scan-steps-bar-step">
-                  <div className="tru-scan-steps-bar-num">1</div>
-                  <div className="tru-scan-steps-bar-text">
-                    <strong>Record Walkthrough</strong>
-                    <span>Pan each room slowly</span>
-                  </div>
+        {/* How It Works - Refined Section Divider */}
+        <section className="tru-scan-steps-divider">
+          <div className="container max-w-5xl mx-auto px-4">
+            <div className="tru-scan-steps-divider-inner">
+              <h2 className="tru-scan-steps-divider-title">From Video to Quote in 3 Steps</h2>
+              <div className="tru-scan-steps-divider-line" />
+              <div className="tru-scan-steps-compact">
+                <div className="tru-scan-step-compact">
+                  <span className="tru-scan-step-num-compact">1</span>
+                  <span className="tru-scan-step-label">Record Walkthrough</span>
                 </div>
-                
-                <ChevronRight className="tru-scan-steps-bar-arrow" />
-                
-                <div className="tru-scan-steps-bar-step">
-                  <div className="tru-scan-steps-bar-num">2</div>
-                  <div className="tru-scan-steps-bar-text">
-                    <strong>AI Identifies Items</strong>
-                    <span>Tagged & measured instantly</span>
-                  </div>
+                <ChevronRight className="tru-scan-step-arrow-compact" />
+                <div className="tru-scan-step-compact">
+                  <span className="tru-scan-step-num-compact">2</span>
+                  <span className="tru-scan-step-label">AI Identifies Items</span>
                 </div>
-                
-                <ChevronRight className="tru-scan-steps-bar-arrow" />
-                
-                <div className="tru-scan-steps-bar-step">
-                  <div className="tru-scan-steps-bar-num">3</div>
-                  <div className="tru-scan-steps-bar-text">
-                    <strong>Get Your Quote</strong>
-                    <span>Accurate & instant</span>
-                  </div>
+                <ChevronRight className="tru-scan-step-arrow-compact" />
+                <div className="tru-scan-step-compact">
+                  <span className="tru-scan-step-num-compact">3</span>
+                  <span className="tru-scan-step-label">Get Your Quote</span>
                 </div>
               </div>
             </div>
@@ -201,44 +188,6 @@ export default function ScanRoom() {
                     </div>
                   )}
                   
-                  {/* Status Bar - Bottom */}
-                  <div className="tru-scan-video-status-bar">
-                    <div className="tru-scan-status-left">
-                      {isScanning ? (
-                        <>
-                          <div className="tru-scan-status-pulse" />
-                          <span>Scanning... {detectedItems.length}/{DEMO_ITEMS.length} items</span>
-                        </>
-                      ) : detectedItems.length > 0 ? (
-                        <>
-                          <CheckCircle className="w-4 h-4" />
-                          <span>Complete — {detectedItems.length} items detected</span>
-                        </>
-                      ) : (
-                        <>
-                          <Eye className="w-4 h-4" />
-                          <span>Ready to scan</span>
-                        </>
-                      )}
-                    </div>
-                    <button 
-                      onClick={startDemo}
-                      disabled={isScanning}
-                      className="tru-scan-status-btn-dark"
-                    >
-                      {isScanning ? (
-                        <>
-                          <div className="tru-scan-spinner-small" />
-                          <span>Scanning</span>
-                        </>
-                      ) : (
-                        <>
-                          <Scan className="w-4 h-4" />
-                          <span>{detectedItems.length > 0 ? 'Scan Again' : 'Start Scan'}</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
                 </div>
               </div>
 
