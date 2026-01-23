@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { MapPin, Loader2, CheckCircle, AlertCircle, XCircle, Navigation } from "lucide-react";
+import { MapPin, Loader2, CheckCircle, AlertCircle, XCircle, Navigation, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -52,11 +52,32 @@ function generateSessionToken(): string {
 // Session token for Mapbox - persists for the component lifecycle
 let mapboxSessionToken = generateSessionToken();
 
+// Normalize address for comparison (remove punctuation, extra spaces, lowercase)
+function normalizeAddress(addr: string): string {
+  return addr
+    .toLowerCase()
+    .replace(/[.,#]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\b(street|st)\b/g, 'st')
+    .replace(/\b(avenue|ave)\b/g, 'ave')
+    .replace(/\b(boulevard|blvd)\b/g, 'blvd')
+    .replace(/\b(drive|dr)\b/g, 'dr')
+    .replace(/\b(road|rd)\b/g, 'rd')
+    .replace(/\b(lane|ln)\b/g, 'ln')
+    .replace(/\b(court|ct)\b/g, 'ct')
+    .replace(/\b(circle|cir)\b/g, 'cir')
+    .replace(/\b(apartment|apt)\b/g, 'apt')
+    .replace(/\b(suite|ste)\b/g, 'ste')
+    .replace(/, united states$/i, '')
+    .trim();
+}
+
 // Mapbox Address Autofill API for verified street addresses
+// Now includes 'place' and 'postcode' types for better ZIP/city coverage
 async function searchMapboxAddresses(query: string): Promise<LocationSuggestion[]> {
   try {
     const res = await fetch(
-      `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&types=address&country=us&language=en&limit=5&session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
+      `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&types=address,place,postcode&country=us&language=en&limit=5&session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return [];
@@ -66,23 +87,24 @@ async function searchMapboxAddresses(query: string): Promise<LocationSuggestion[
       // Mapbox suggest returns: name (street), full_address (complete), place_formatted (city, state, country)
       const streetName = s.name || ''; // e.g., "123 Main Street"
       const fullAddr = s.full_address || ''; // e.g., "123 Main Street, New York, NY 10001, United States"
+      const featureType = s.feature_type || 'address';
       
       // Parse from full_address: "123 Main St, New York, NY 10001, United States"
       const parts = fullAddr.split(', ');
-      const streetAddress = parts[0] || streetName;
-      const city = parts.length >= 3 ? parts[1] : '';
+      const streetAddress = featureType === 'address' ? (parts[0] || streetName) : '';
+      const city = featureType === 'place' ? streetName : (parts.length >= 3 ? parts[1] : '');
       
       // Extract state and zip from "NY 10001" pattern
       const stateZipPart = parts.length >= 3 ? parts[parts.length - 2] : '';
       const stateZipMatch = stateZipPart.match(/^([A-Z]{2})\s*(\d{5})?$/);
       const state = stateZipMatch?.[1] || '';
-      const zip = stateZipMatch?.[2] || '';
+      const zip = stateZipMatch?.[2] || (featureType === 'postcode' ? streetName : '');
       
       // Display the full address without "United States"
       const displayAddr = fullAddr.replace(', United States', '');
       
       // Check if this has a street address component (not just city/state)
-      const hasStreet = streetName && !streetName.match(/^\d{5}$/) && streetName !== city;
+      const hasStreet = featureType === 'address' && streetName && !streetName.match(/^\d{5}$/) && streetName !== city;
       
       return {
         streetAddress,
@@ -260,6 +282,7 @@ export default function LocationAutocomplete({
 }: LocationAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isValidating, setIsValidating] = useState(false); // Loading overlay for validation
   const [isGeolocating, setIsGeolocating] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -267,6 +290,7 @@ export default function LocationAutocomplete({
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [validationLevel, setValidationLevel] = useState<ValidationLevel>(null);
   const [correctionSuggestion, setCorrectionSuggestion] = useState<string | null>(null);
+  const [originalUserInput, setOriginalUserInput] = useState<string>(""); // Track original input for comparison
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -305,8 +329,7 @@ export default function LocationAutocomplete({
     const isPartialZip = /^\d{2,4}$/.test(query.trim());
 
     if (mode === 'address') {
-      // For address mode, ALWAYS use Mapbox first - even for ZIP codes
-      // This ensures we get street-level suggestions
+      // For address mode, use Mapbox with expanded types (address, place, postcode)
       const mapboxResults = await searchMapboxAddresses(query);
       
       if (mapboxResults.length > 0) {
@@ -379,6 +402,7 @@ export default function LocationAutocomplete({
     setIsValid(null);
     setValidationLevel(null);
     setCorrectionSuggestion(null);
+    setOriginalUserInput(newValue); // Track what user typed
     debouncedSearch(newValue);
   };
 
@@ -417,20 +441,29 @@ export default function LocationAutocomplete({
 
   const handleSelect = async (suggestion: LocationSuggestion) => {
     let finalSuggestion = suggestion;
-    const originalInput = value.trim();
     
     // If this is a Mapbox suggestion with an ID, retrieve the full verified address
     if (suggestion.mapboxId && mode === 'address') {
+      setIsValidating(true); // Show loading overlay
       const verified = await retrieveMapboxAddress(suggestion.mapboxId);
+      setIsValidating(false); // Hide loading overlay
+      
       if (verified) {
         finalSuggestion = verified;
         
-        // Check if Mapbox standardized the address differently
-        const originalStreet = originalInput.split(',')[0]?.toLowerCase().trim();
-        const verifiedStreet = verified.streetAddress?.toLowerCase().trim();
-        if (originalStreet && verifiedStreet && originalStreet !== verifiedStreet) {
-          // Show correction suggestion if addresses differ
-          setCorrectionSuggestion(verified.fullAddress.replace(', United States', ''));
+        // Compare user's original input with the standardized Mapbox result
+        const userNormalized = normalizeAddress(originalUserInput || value);
+        const verifiedNormalized = normalizeAddress(verified.fullAddress);
+        
+        // Only show correction if there's a meaningful difference
+        if (userNormalized && verifiedNormalized && userNormalized !== verifiedNormalized) {
+          // Check if the difference is significant (not just formatting)
+          const userStreetPart = userNormalized.split(',')[0]?.trim();
+          const verifiedStreetPart = verifiedNormalized.split(',')[0]?.trim();
+          
+          if (userStreetPart !== verifiedStreetPart) {
+            setCorrectionSuggestion(verified.fullAddress.replace(', United States', ''));
+          }
         }
       }
     }
@@ -456,6 +489,10 @@ export default function LocationAutocomplete({
     onLocationSelect(correctedAddress, '', correctedAddress, true);
     setCorrectionSuggestion(null);
     setValidationLevel('verified');
+  };
+
+  const dismissCorrection = () => {
+    setCorrectionSuggestion(null);
   };
 
   const handleKeyDownInternal = (e: React.KeyboardEvent) => {
@@ -548,6 +585,14 @@ export default function LocationAutocomplete({
         {/* Input with geolocation button */}
         <div className="relative flex items-center gap-2">
           <div className="relative flex-1">
+            {/* Loading overlay for validation */}
+            {isValidating && (
+              <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center z-10 animate-in fade-in duration-200">
+                <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                <span className="ml-2 text-sm text-muted-foreground">Validating...</span>
+              </div>
+            )}
+            
             <input
               ref={inputRef}
               type="text"
@@ -570,13 +615,15 @@ export default function LocationAutocomplete({
               autoFocus={autoFocus}
             />
             
-            {/* Validation indicators with tooltips */}
+            {/* Validation indicators with tooltips - wrapped in span for proper ref handling */}
             {isValid && validationLevel === 'verified' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500 cursor-help" />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help">
+                    <CheckCircle className="w-4 h-4 text-emerald-500" />
+                  </span>
                 </TooltipTrigger>
-                <TooltipContent side="left" className="max-w-[200px]">
+                <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
                   <p className="text-xs">{getTooltipContent()}</p>
                 </TooltipContent>
               </Tooltip>
@@ -584,22 +631,28 @@ export default function LocationAutocomplete({
             {isValid && validationLevel === 'partial' && mode === 'address' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600 cursor-help" />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help">
+                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                  </span>
                 </TooltipTrigger>
-                <TooltipContent side="left" className="max-w-[200px]">
+                <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
                   <p className="text-xs">{getTooltipContent()}</p>
                 </TooltipContent>
               </Tooltip>
             )}
             {isValid && validationLevel === 'partial' && mode === 'city' && (
-              <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                <CheckCircle className="w-4 h-4 text-emerald-500" />
+              </span>
             )}
             {isValid && validationLevel === 'unverifiable' && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <XCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-500 cursor-help" />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 cursor-help">
+                    <XCircle className="w-4 h-4 text-red-500" />
+                  </span>
                 </TooltipTrigger>
-                <TooltipContent side="left" className="max-w-[200px]">
+                <TooltipContent side="left" className="max-w-[200px] bg-popover border border-border z-[150]">
                   <p className="text-xs">{getTooltipContent()}</p>
                 </TooltipContent>
               </Tooltip>
@@ -628,7 +681,7 @@ export default function LocationAutocomplete({
                   )}
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">
+              <TooltipContent side="bottom" className="bg-popover border border-border z-[150]">
                 <p className="text-xs">Use my current location</p>
               </TooltipContent>
             </Tooltip>
@@ -642,16 +695,27 @@ export default function LocationAutocomplete({
           </p>
         )}
         
-        {/* Address correction suggestion */}
+        {/* Address correction suggestion - enhanced with dismiss button and animation */}
         {correctionSuggestion && (
-          <div className="absolute top-full left-0 right-0 mt-1 p-2 bg-amber-50 border border-amber-200 rounded-lg text-sm z-40">
-            <span className="text-amber-700">Did you mean: </span>
-            <button 
-              className="font-medium text-amber-900 underline hover:no-underline"
-              onClick={() => acceptCorrection(correctionSuggestion)}
-            >
-              {correctionSuggestion}
-            </button>
+          <div className="absolute top-full left-0 right-0 mt-1 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg text-sm z-[100] animate-in slide-in-from-top-2 duration-200 shadow-md">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1">
+                <span className="text-amber-700 dark:text-amber-400">Did you mean: </span>
+                <button 
+                  className="font-medium text-amber-900 dark:text-amber-200 underline hover:no-underline"
+                  onClick={() => acceptCorrection(correctionSuggestion)}
+                >
+                  {correctionSuggestion}
+                </button>
+              </div>
+              <button
+                onClick={dismissCorrection}
+                className="p-1 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 rounded transition-colors"
+                aria-label="Dismiss suggestion"
+              >
+                <X className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              </button>
+            </div>
           </div>
         )}
         
@@ -659,8 +723,8 @@ export default function LocationAutocomplete({
           <div 
             ref={dropdownRef}
             className={cn(
-              "absolute left-0 z-50 rounded-lg border border-border/60 bg-card shadow-lg overflow-hidden min-w-full w-max max-w-md",
-              correctionSuggestion ? "top-[calc(100%+48px)]" : showHelperText && mode === 'address' && !isValid ? "top-[calc(100%+28px)]" : "top-full mt-1"
+              "absolute left-0 z-[100] rounded-lg border border-border/60 bg-card shadow-lg overflow-hidden min-w-full w-max max-w-md max-h-[300px] overflow-y-auto",
+              correctionSuggestion ? "top-[calc(100%+60px)]" : showHelperText && mode === 'address' && !isValid ? "top-[calc(100%+28px)]" : "top-full mt-1"
             )}
           >
             {isLoading ? (
@@ -672,7 +736,7 @@ export default function LocationAutocomplete({
               <>
                 {/* Hint for partial results in address mode */}
                 {mode === 'address' && suggestions.length > 0 && suggestions.every(s => !s.streetAddress || s.validationLevel === 'partial') && (
-                  <div className="px-4 py-2 bg-amber-50/50 border-b border-amber-100 text-xs text-amber-700">
+                  <div className="px-4 py-2 bg-amber-50/50 dark:bg-amber-950/30 border-b border-amber-100 dark:border-amber-900 text-xs text-amber-700 dark:text-amber-400">
                     💡 Type a street address for full verification
                   </div>
                 )}
@@ -717,7 +781,7 @@ export default function LocationAutocomplete({
                         </span>
                       )}
                       {!suggestion.streetAddress && mode === 'address' && (
-                        <span className="text-xs text-amber-600 flex items-center gap-1 mt-0.5">
+                        <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-0.5">
                           <AlertCircle className="w-3 h-3" /> City/ZIP only - add street for verification
                         </span>
                       )}
