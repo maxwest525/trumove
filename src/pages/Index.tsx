@@ -124,9 +124,7 @@ export default function Index() {
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [formError, setFormError] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [summaryLocked, setSummaryLocked] = useState(false);
-  const [summaryHovered, setSummaryHovered] = useState(false);
-  const summaryVisible = summaryLocked || summaryHovered;
+  // Removed summaryLocked/summaryHovered - no longer needed for static layout
   
   // Carrier search animation states
   const [isSearchingCarriers, setIsSearchingCarriers] = useState(false);
@@ -149,7 +147,7 @@ export default function Index() {
   const prevSize = useRef(size);
   const prevPropertyType = useRef(propertyType);
   
-  // Animate summary value updates and reveal summary on first input
+  // Animate summary value updates (kept for potential future use)
   useEffect(() => {
     const fieldsToUpdate: string[] = [];
     
@@ -170,14 +168,10 @@ export default function Index() {
     
     if (fieldsToUpdate.length > 0) {
       setUpdatedFields(new Set(fieldsToUpdate));
-      // Auto-lock summary open on any data entry (won't collapse on hover away)
-      if (!summaryLocked) {
-        setSummaryLocked(true);
-      }
       const timer = setTimeout(() => setUpdatedFields(new Set()), 500);
       return () => clearTimeout(timer);
     }
-  }, [fromCity, toCity, distance, moveDate, size, propertyType, summaryLocked]);
+  }, [fromCity, toCity, distance, moveDate, size, propertyType]);
 
   // AI hint for current step
   const aiHint = useMemo(() => 
@@ -785,74 +779,19 @@ export default function Index() {
               </div>
             </div>
 
-            {/* SIDEBAR: Stacked Move Summary + Floating Nav - NOW A PROPER GRID COLUMN */}
-            <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-              {/* Move Summary Card - EXPANDED BY DEFAULT */}
-              <div 
-                className={`tru-floating-summary-card tru-stacked-pill ${summaryLocked ? 'is-locked' : ''}`}
-              >
-                {/* Expanded view - always visible now */}
-                <div className="tru-stacked-pill-expanded">
-                  <div className="tru-summary-card-header">
-                    <span className="tru-summary-card-title">MOVE SUMMARY</span>
-                    {summaryLocked && (
-                      <button 
-                        className="tru-stacked-pill-toggle"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSummaryLocked(false);
-                        }}
-                        aria-label="Collapse summary"
-                      >
-                        <ChevronUp className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                  <div className="tru-summary-card-body">
-                    <div className="tru-summary-info-grid">
-                      <div className={`tru-summary-row ${updatedFields.has('from') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">From</span>
-                        <span className="tru-summary-value">{fromCity || "—"}</span>
-                      </div>
-                      <div className={`tru-summary-row ${updatedFields.has('to') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">To</span>
-                        <span className="tru-summary-value">{toCity || "—"}</span>
-                      </div>
-                      <div className={`tru-summary-row ${updatedFields.has('distance') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">Distance</span>
-                        <span className="tru-summary-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
-                      </div>
-                      <div className={`tru-summary-row ${updatedFields.has('date') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">Date</span>
-                        <span className="tru-summary-value">{moveDate ? format(moveDate, "MMM d") : "—"}</span>
-                      </div>
-                      <div className="tru-summary-row">
-                        <span className="tru-summary-label">ETA</span>
-                        <span className="tru-summary-value">{estimatedDuration || "—"}</span>
-                      </div>
-                      <div className={`tru-summary-row ${updatedFields.has('size') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">Size</span>
-                        <span className="tru-summary-value">{size || "—"}</span>
-                      </div>
-                      <div className={`tru-summary-row ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">Property</span>
-                        <span className="tru-summary-value">
-                          {propertyType 
-                            ? `${propertyType === 'house' ? 'House' : 'Apt'}${propertyType === 'apartment' ? ` F${floor}` : ''}`
-                            : "—"}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="tru-summary-footer">
-                      <span className="tru-summary-powered">Powered by</span>
-                      <img src={logoImg} alt="TruMove" className="tru-summary-logo" />
-                    </div>
-                  </div>
-                </div>
+            {/* SIDEBAR: Icon Strip + Expanded Nav Menu (side by side, static) */}
+            <div className="tru-hero-sidebar">
+              {/* Icon Strip - narrow vertical bar */}
+              <div className="tru-sidebar-icon-strip">
+                <div className="tru-sidebar-icon-item"><MapPin /></div>
+                <div className="tru-sidebar-icon-item"><Route /></div>
+                <div className="tru-sidebar-icon-item"><Clock /></div>
+                <div className="tru-sidebar-icon-item"><Boxes /></div>
+                <span className="tru-sidebar-vertical-label">SUMMARY</span>
               </div>
-
-              {/* Floating Nav - EXPANDED BY DEFAULT */}
-              <div className="tru-floating-nav-wrapper">
+              
+              {/* Expanded Nav Menu - always visible with labels */}
+              <div className="tru-sidebar-expanded-menu">
                 <FloatingNav onChatOpen={() => setChatOpen(true)} />
               </div>
             </div>
