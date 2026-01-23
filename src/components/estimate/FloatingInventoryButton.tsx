@@ -23,8 +23,10 @@ export default function FloatingInventoryButton({
         "bg-card border border-primary/30 rounded-full",
         "shadow-md hover:shadow-lg",
         "transition-all duration-300",
-        "hover:border-primary/60 hover:scale-105"
+        "hover:border-primary/60 hover:scale-105",
+        "group"
       )}
+      title="Click to view your full inventory list"
     >
       <Package className="w-4 h-4 text-primary" />
       <span className="text-sm font-bold text-foreground tabular-nums">{itemCount}</span>
@@ -32,7 +34,9 @@ export default function FloatingInventoryButton({
       <span className="text-xs text-muted-foreground tabular-nums">{totalWeight.toLocaleString()} lbs</span>
       <span className="text-xs text-muted-foreground">•</span>
       <span className="text-xs text-muted-foreground tabular-nums">{totalCubicFeet} cu ft</span>
-      <ArrowDown className="w-3.5 h-3.5 text-primary ml-1" />
+      <span className="text-xs text-muted-foreground mx-1">|</span>
+      <span className="text-xs font-medium text-primary group-hover:underline">View List</span>
+      <ArrowDown className="w-3.5 h-3.5 text-primary group-hover:translate-y-0.5 transition-transform" />
     </button>
   );
 }
