@@ -146,8 +146,8 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'name' 
-                    ? 'bg-primary/10 text-primary border-2 border-primary font-semibold shadow-sm' 
-                    : 'bg-transparent text-muted-foreground border border-border hover:bg-primary/5 hover:text-primary hover:border-primary/50 active:bg-primary/10')
+                    ? 'bg-foreground text-background border-2 border-foreground font-semibold shadow-sm' 
+                    : 'bg-transparent text-muted-foreground border border-border hover:bg-muted hover:text-foreground active:bg-muted')
                 : (searchType === 'name' 
                     ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
                     : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
@@ -166,8 +166,8 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'dot' 
-                    ? 'bg-primary/10 text-primary border-2 border-primary font-semibold shadow-sm' 
-                    : 'bg-transparent text-muted-foreground border border-border hover:bg-primary/5 hover:text-primary hover:border-primary/50 active:bg-primary/10')
+                    ? 'bg-foreground text-background border-2 border-foreground font-semibold shadow-sm' 
+                    : 'bg-transparent text-muted-foreground border border-border hover:bg-muted hover:text-foreground active:bg-muted')
                 : (searchType === 'dot' 
                     ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
                     : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
@@ -186,8 +186,8 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'mc' 
-                    ? 'bg-primary/10 text-primary border-2 border-primary font-semibold shadow-sm' 
-                    : 'bg-transparent text-muted-foreground border border-border hover:bg-primary/5 hover:text-primary hover:border-primary/50 active:bg-primary/10')
+                    ? 'bg-foreground text-background border-2 border-foreground font-semibold shadow-sm' 
+                    : 'bg-transparent text-muted-foreground border border-border hover:bg-muted hover:text-foreground active:bg-muted')
                 : (searchType === 'mc' 
                     ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
                     : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
