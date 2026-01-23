@@ -346,10 +346,10 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
           )}
           
           {/* Carrier Identity - TruMove Verified ABOVE name */}
-          <div className="space-y-2 pr-16">
-            {/* TruMove Verified - Black badge style, ABOVE the name */}
+          <div className="space-y-1.5 pr-16">
+            {/* TruMove Verified - Black badge style, positioned higher */}
             {riskGrade.isTruMoveVerified && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 dark:bg-slate-800 text-white text-[10px] font-medium w-fit">
+              <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-900 dark:bg-slate-800 text-white text-[10px] font-medium w-fit -mt-1">
                 <CheckCircle2 className="w-3 h-3 text-green-400" />
                 <span>TruMove Verified</span>
               </div>
@@ -399,28 +399,38 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
           </div>
         </div>
 
-        {/* Technical Quick Stats */}
-        <div className="flex flex-wrap gap-2 text-xs">
-          <span className="px-2 py-1 rounded bg-muted/50 font-mono text-muted-foreground">
-            {data.fleet.powerUnits} Power Units
+        {/* Technical Quick Stats - Compact icons instead of pills */}
+        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1 font-mono">
+            <Truck className="w-3.5 h-3.5" />
+            {data.fleet.powerUnits} units
           </span>
-          <span className="px-2 py-1 rounded bg-muted/50 font-mono text-muted-foreground">
-            {data.fleet.drivers} Drivers
+          <span className="flex items-center gap-1 font-mono">
+            <span className="text-muted-foreground">•</span>
+            {data.fleet.drivers} drivers
           </span>
-          {worstBasic && (
-            <span className={cn(
-              'px-2 py-1 rounded font-mono',
-              worstBasic.value! >= 65 ? 'bg-amber-100 dark:bg-amber-500/20 text-slate-900 dark:text-amber-200' : 'bg-muted/50 text-muted-foreground'
-            )}>
-              {worstBasic.name} Index: {worstBasic.value}%
+          {worstBasic && worstBasic.value! >= 65 && (
+            <span className="flex items-center gap-1 font-medium">
+              <AlertTriangle className={cn(
+                'w-3.5 h-3.5',
+                worstBasic.value! >= 75 ? 'text-red-500' : 'text-amber-500'
+              )} />
+              <span className={worstBasic.value! >= 75 ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}>
+                {worstBasic.name}: {worstBasic.value}%
+              </span>
             </span>
           )}
-          <span className={cn(
-            'px-2 py-1 rounded font-mono',
-            data.crashes.fatal > 0 ? 'bg-red-100 dark:bg-red-500/20 text-slate-900 dark:text-red-200' : 'bg-muted/50 text-muted-foreground'
-          )}>
-            {data.crashes.total} Crashes (24mo)
-          </span>
+          {data.crashes.total > 0 && (
+            <span className="flex items-center gap-1 font-medium">
+              <AlertTriangle className={cn(
+                'w-3.5 h-3.5',
+                data.crashes.fatal > 0 ? 'text-red-500' : 'text-amber-500'
+              )} />
+              <span className={data.crashes.fatal > 0 ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}>
+                {data.crashes.total} crash{data.crashes.total > 1 ? 'es' : ''}
+              </span>
+            </span>
+          )}
         </div>
 
         {/* Red Flags Summary */}
