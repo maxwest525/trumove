@@ -233,8 +233,8 @@ export default function CarrierVetting() {
   return (
     <SiteShell>
       <div className="min-h-screen bg-background">
-        {/* Government-style Header - STICKY */}
-        <div className="fmcsa-header sticky top-0 z-40">
+        {/* Government-style Header - LOCKED */}
+        <div className="fmcsa-header sticky top-0 z-50 bg-slate-900">
           <div className="container max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
@@ -264,8 +264,8 @@ export default function CarrierVetting() {
           </div>
         </div>
 
-        {/* Trust Strip - STICKY below header */}
-        <div className="bg-muted/30 border-b border-border/50 sticky top-[72px] z-30 backdrop-blur-sm">
+        {/* Trust Strip - LOCKED below header */}
+        <div className="bg-muted/95 border-b border-border/50 sticky top-[72px] z-40 backdrop-blur-md">
           <div className="container max-w-7xl mx-auto px-4 py-3">
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
               {DATA_SOURCES.map((source) => (
@@ -298,7 +298,7 @@ export default function CarrierVetting() {
                 Verify Any Carrier in Seconds
               </h2>
               <p className="text-sm text-muted-foreground">
-                Real-time FMCSA safety data • Insurance verification • Compare up to 4 carriers
+                Real-time FMCSA safety data • Insurance verification • DOT lookup
               </p>
             </div>
           )}
@@ -398,41 +398,15 @@ export default function CarrierVetting() {
               {/* Right Sidebar */}
               <div className="hidden lg:block w-72 shrink-0">
                 <div className="sticky top-36 space-y-4">
-                  {/* Add Carrier */}
+                  {/* Add Carrier with Name/DOT toggle */}
                   {carriers.length < 4 && (
                     <div className="p-4 rounded-xl border border-border bg-card">
                       <h3 className="text-sm font-semibold text-foreground mb-3">Add Carrier</h3>
-                      <div className="space-y-2">
-                        <div className="flex gap-2">
-                          <button 
-                            className="flex-1 px-3 py-2 text-xs font-medium rounded-md border border-border bg-muted/50 text-foreground hover:bg-muted transition-colors"
-                            onClick={() => {
-                              const dotInput = document.getElementById('sidebar-dot-input') as HTMLInputElement;
-                              if (dotInput) dotInput.focus();
-                            }}
-                          >
-                            Search DOT#
-                          </button>
-                        </div>
-                        <div className="relative">
-                          <input
-                            id="sidebar-dot-input"
-                            type="text"
-                            placeholder="Enter DOT number..."
-                            className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                const value = (e.target as HTMLInputElement).value.trim();
-                                if (value) {
-                                  handleAddCarrier(value);
-                                  (e.target as HTMLInputElement).value = '';
-                                }
-                              }
-                            }}
-                          />
-                        </div>
-                        <p className="text-[10px] text-muted-foreground">Press Enter to search</p>
-                      </div>
+                      <CarrierSearch 
+                        onSelect={handleAddCarrier} 
+                        isLoading={isLoading}
+                        className="sidebar-search"
+                      />
                     </div>
                   )}
 

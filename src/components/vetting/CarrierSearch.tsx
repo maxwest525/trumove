@@ -159,7 +159,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             onClick={() => setSearchType('dot')}
           >
             <Hash className="w-4 h-4 mr-2" />
-            DOT#
+            DOT
           </Button>
         </div>
 

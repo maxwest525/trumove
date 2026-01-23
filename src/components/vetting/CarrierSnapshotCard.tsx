@@ -211,7 +211,7 @@ function InsuranceBar({ label, amount, required }: { label: string; amount: stri
   );
 }
 
-// Generate external review links
+// Generate external review links with logos
 function ExternalLinks({ companyName, dotNumber }: { companyName: string; dotNumber: string }) {
   const encodedName = encodeURIComponent(companyName);
   
@@ -221,28 +221,43 @@ function ExternalLinks({ companyName, dotNumber }: { companyName: string; dotNum
         href={`https://www.bbb.org/search?find_text=${encodedName}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex flex-col items-center justify-center gap-1 p-3 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all"
+        className="flex items-center justify-center p-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+        title="Check BBB Profile"
       >
-        <span className="font-bold">BBB</span>
-        <span className="text-[10px] opacity-80">Profile</span>
+        <img 
+          src="https://www.bbb.org/TerminusContent/dist/img/business-profile/accreditation/ab-seal-horizontal.svg" 
+          alt="BBB" 
+          className="h-6 object-contain"
+          onError={(e) => { e.currentTarget.outerHTML = '<span class="font-bold text-blue-600">BBB</span>'; }}
+        />
       </a>
       <a
         href={`https://www.google.com/search?q=${encodedName}+reviews`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex flex-col items-center justify-center gap-1 p-3 text-xs font-medium rounded-lg bg-amber-500 hover:bg-amber-600 text-white transition-all"
+        className="flex items-center justify-center p-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+        title="Google Reviews"
       >
-        <span className="font-bold">Google</span>
-        <span className="text-[10px] opacity-80">Reviews</span>
+        <img 
+          src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" 
+          alt="Google" 
+          className="h-5 object-contain"
+          onError={(e) => { e.currentTarget.outerHTML = '<span class="font-bold text-amber-600">Google</span>'; }}
+        />
       </a>
       <a
         href={`https://safer.fmcsa.dot.gov/query.asp?searchtype=ANY&query_type=queryCarrierSnapshot&query_param=USDOT&query_string=${dotNumber}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex flex-col items-center justify-center gap-1 p-3 text-xs font-medium rounded-lg bg-slate-700 hover:bg-slate-800 text-white transition-all"
+        className="flex items-center justify-center p-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+        title="Official FMCSA SAFER"
       >
-        <span className="font-bold">FMCSA</span>
-        <span className="text-[10px] opacity-80">SAFER</span>
+        <img 
+          src="https://www.fmcsa.dot.gov/themes/custom/fmcsa/logo.svg" 
+          alt="FMCSA" 
+          className="h-5 object-contain dark:invert"
+          onError={(e) => { e.currentTarget.outerHTML = '<span class="font-bold text-slate-600">FMCSA</span>'; }}
+        />
       </a>
     </div>
   );
@@ -293,18 +308,10 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
 
   return (
     <div className="relative">
-      {/* TruMove Verified Badge - OUTSIDE the card, subtle */}
-      {riskGrade.isTruMoveVerified && (
-        <div className="absolute -top-3 left-4 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 dark:bg-slate-700 border border-green-500/40 shadow-sm">
-          <CheckCircle2 className="w-3 h-3 text-green-400" />
-          <span className="text-[10px] font-medium text-white uppercase tracking-wide">TruMove Verified</span>
-        </div>
-      )}
 
       <Card className={cn(
         'bg-card/80 backdrop-blur border-border/50 overflow-hidden transition-all',
         criticalFlags.length > 0 && 'border-red-500/50',
-        riskGrade.isTruMoveVerified && 'mt-3',
         className
       )}>
         <CardHeader className="pb-3 relative">
@@ -331,27 +338,31 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
             </div>
             
             {/* DOT & MC Numbers - Prominent */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="outline" className="text-xs font-mono font-semibold">
-                DOT# {data.carrier.dotNumber}
+                DOT {data.carrier.dotNumber}
               </Badge>
               {data.carrier.mcNumber && (
                 <Badge variant="outline" className="text-xs font-mono">
                   {data.carrier.mcNumber}
                 </Badge>
               )}
+              {/* Risk Grade - Small inline badge */}
+              <div className={cn(
+                'flex items-center gap-1 px-2 py-0.5 rounded border text-xs ml-auto',
+                riskGrade.color
+              )}>
+                <span className="font-bold">{riskGrade.grade}</span>
+              </div>
             </div>
-          </div>
-
-          {/* Risk Grade - Subtle, smaller, right-aligned */}
-          <div className="absolute top-10 right-10">
-            <div className={cn(
-              'flex items-center gap-1.5 px-2 py-1 rounded-lg border text-sm',
-              riskGrade.color
-            )}>
-              <span className="text-lg font-bold">{riskGrade.grade}</span>
-              <span className="text-[10px] font-medium opacity-75">{riskGrade.label}</span>
-            </div>
+            
+            {/* TruMove Verified - Inline subtle */}
+            {riskGrade.isTruMoveVerified && (
+              <div className="flex items-center gap-1.5 mt-1 text-xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+                <span className="font-medium text-slate-600 dark:text-slate-400">TruMove Verified Partner</span>
+              </div>
+            )}
           </div>
         </CardHeader>
 
