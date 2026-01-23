@@ -101,22 +101,32 @@ const FEATURES = [
   }
 ];
 
-// Trust Strip content
+// Trust Strip content - expanded for better visual distribution
 const DATA_SOURCES = [
   {
     icon: Database,
     title: 'SAFER Web Services',
-    description: 'Federal Motor Carrier Safety Administration database'
+    description: 'Official FMCSA database'
   },
   {
     icon: FileCheck,
     title: 'Real-Time Updates',
-    description: 'Authority and insurance data refreshed continuously'
+    description: 'Continuous data refresh'
   },
   {
     icon: TrendingUp,
     title: 'CSA BASIC Scores',
-    description: 'Compliance, Safety, Accountability metrics'
+    description: 'Safety accountability metrics'
+  },
+  {
+    icon: Shield,
+    title: 'Authority Verification',
+    description: 'Operating status confirmed'
+  },
+  {
+    icon: Truck,
+    title: 'Insurance Coverage',
+    description: 'BIPD & cargo verified'
   }
 ];
 
@@ -413,94 +423,78 @@ export default function CarrierVetting() {
                   )}
 
                   {/* Risk Grade Legend */}
-                  <div className="p-3 rounded-xl border border-border bg-card">
-                    <h3 className="text-xs font-bold text-slate-900 dark:text-foreground mb-2">Safety Grade Legend</h3>
-                    <div className="space-y-1.5 text-[10px]">
+                  <div className="p-4 rounded-xl border border-border bg-card">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-foreground mb-3">Safety Grade Legend</h3>
+                    <div className="space-y-2 text-xs">
                       <div className="flex items-center gap-2">
-                        <span className="w-7 h-5 flex items-center justify-center rounded bg-green-500/10 text-green-600 font-bold text-[10px]">A+</span>
+                        <span className="w-8 h-6 flex items-center justify-center rounded bg-green-500/10 text-green-600 font-bold">A+</span>
                         <span className="text-muted-foreground">Excellent - Top-tier</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-7 h-5 flex items-center justify-center rounded bg-green-500/10 text-green-600 font-bold text-[10px]">A</span>
+                        <span className="w-8 h-6 flex items-center justify-center rounded bg-green-500/10 text-green-600 font-bold">A</span>
                         <span className="text-muted-foreground">Very Good</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-7 h-5 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-600 font-bold text-[10px]">B</span>
+                        <span className="w-8 h-6 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-600 font-bold">B</span>
                         <span className="text-muted-foreground">Good - Generally safe</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-7 h-5 flex items-center justify-center rounded bg-amber-500/10 text-amber-600 font-bold text-[10px]">C</span>
+                        <span className="w-8 h-6 flex items-center justify-center rounded bg-amber-500/10 text-amber-600 font-bold">C</span>
                         <span className="text-muted-foreground">Moderate - Some issues</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-7 h-5 flex items-center justify-center rounded bg-orange-500/10 text-orange-600 font-bold text-[10px]">D</span>
+                        <span className="w-8 h-6 flex items-center justify-center rounded bg-orange-500/10 text-orange-600 font-bold">D</span>
                         <span className="text-muted-foreground">Concerning</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-7 h-5 flex items-center justify-center rounded bg-red-500/10 text-red-600 font-bold text-[10px]">F</span>
+                        <span className="w-8 h-6 flex items-center justify-center rounded bg-red-500/10 text-red-600 font-bold">F</span>
                         <span className="text-muted-foreground">High Risk - Avoid</span>
                       </div>
                     </div>
                   </div>
 
                   {/* CSA BASIC Scores Legend */}
-                  <div className="p-3 rounded-xl border border-border bg-card">
-                    <h3 className="text-xs font-bold text-slate-900 dark:text-foreground mb-2">CSA BASIC Safety Scores</h3>
-                    <div className="space-y-1.5 text-[10px] text-muted-foreground">
+                  <div className="p-4 rounded-xl border border-border bg-card">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-foreground mb-3">CSA BASIC Safety Scores</h3>
+                    <div className="space-y-2 text-xs text-muted-foreground">
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-14 shrink-0">Unsafe</span>
+                        <span className="font-medium text-foreground w-16 shrink-0">Unsafe</span>
                         <span>Speeding, reckless driving</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-14 shrink-0">HOS</span>
+                        <span className="font-medium text-foreground w-16 shrink-0">HOS</span>
                         <span>Hours of Service fatigue</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-14 shrink-0">Vehicle</span>
+                        <span className="font-medium text-foreground w-16 shrink-0">Vehicle</span>
                         <span>Brake, equipment defects</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-14 shrink-0">Fitness</span>
+                        <span className="font-medium text-foreground w-16 shrink-0">Fitness</span>
                         <span>Licensing, medical certs</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-14 shrink-0">Crash</span>
+                        <span className="font-medium text-foreground w-16 shrink-0">Crash</span>
                         <span>Crash involvement</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-14 shrink-0">Drugs</span>
+                        <span className="font-medium text-foreground w-16 shrink-0">Drugs</span>
                         <span>Substance violations</span>
                       </div>
-                      <p className="pt-1.5 text-[9px] border-t border-border/50 mt-1.5">
+                      <p className="pt-2 text-[11px] border-t border-border/50 mt-2">
                         Higher percentiles indicate worse performance relative to peers. Scores ≥65% may trigger FMCSA intervention.
                       </p>
                     </div>
                   </div>
                   
                   {/* Insurance Coverage Analysis */}
-                  <div className="p-3 rounded-xl border border-border bg-card">
-                    <h3 className="text-xs font-bold text-slate-900 dark:text-foreground mb-2">Insurance Coverage Analysis</h3>
-                    <p className="text-[9px] text-muted-foreground">
+                  <div className="p-4 rounded-xl border border-border bg-card">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-foreground mb-2">Insurance Coverage Analysis</h3>
+                    <p className="text-xs text-muted-foreground">
                       Federal minimums: $750K BIPD for general freight, $5M for hazmat. Cargo insurance varies by commodity.
                     </p>
                   </div>
 
-                  {/* Quick Stats */}
-                  <div className="p-4 rounded-xl border border-border bg-card">
-                    <h3 className="text-sm font-semibold text-foreground mb-3">Comparison Stats</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Carriers</span>
-                        <span className="font-medium">{carriers.length}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Total Fleet</span>
-                        <span className="font-medium font-mono">
-                          {carriers.reduce((sum, c) => sum + c.fleet.powerUnits, 0)} units
-                        </span>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
