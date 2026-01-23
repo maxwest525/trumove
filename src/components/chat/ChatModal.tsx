@@ -5,9 +5,11 @@ import ChatContainer from "./ChatContainer";
 interface ChatModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialFromLocation?: string;
+  initialToLocation?: string;
 }
 
-export default function ChatModal({ isOpen, onClose }: ChatModalProps) {
+export default function ChatModal({ isOpen, onClose, initialFromLocation, initialToLocation }: ChatModalProps) {
   const navigate = useNavigate();
 
   if (!isOpen) return null;
@@ -39,7 +41,10 @@ export default function ChatModal({ isOpen, onClose }: ChatModalProps) {
         </div>
         
         <div className="chat-modal-body">
-          <ChatContainer />
+          <ChatContainer 
+            initialFromLocation={initialFromLocation}
+            initialToLocation={initialToLocation}
+          />
         </div>
         
         <div className="chat-modal-footer">

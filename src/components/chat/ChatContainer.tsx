@@ -53,6 +53,11 @@ interface Message {
   timestamp: Date;
 }
 
+interface ChatContainerProps {
+  initialFromLocation?: string;
+  initialToLocation?: string;
+}
+
 type ConversationStep = 
   | 'greeting'
   | 'from-zip'
@@ -66,7 +71,7 @@ type ConversationStep =
   | 'phone'
   | 'complete';
 
-export default function ChatContainer() {
+export default function ChatContainer({ initialFromLocation, initialToLocation }: ChatContainerProps) {
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -110,14 +115,39 @@ export default function ChatContainer() {
     }
   }, [messages, isTyping]);
 
-  // Initialize with greeting
+  // Initialize with greeting - check for pre-filled locations
   useEffect(() => {
-    addBotMessage("Hi! I'm your TruMove assistant. Ready to get your instant move quote in under 2 minutes. 🚚");
-    setTimeout(() => {
-      addBotMessage("First up — where are you moving FROM? Just type your ZIP code.");
-      setCurrentStep('from-zip');
-    }, 800);
-  }, []);
+    const hasFromLocation = initialFromLocation && initialFromLocation.trim().length > 0;
+    const hasToLocation = initialToLocation && initialToLocation.trim().length > 0;
+    
+    if (hasFromLocation && hasToLocation) {
+      // Both locations provided - skip to date
+      setFromCity(initialFromLocation);
+      setToCity(initialToLocation);
+      setFormData(prev => ({ ...prev, fromZip: initialFromLocation, toZip: initialToLocation }));
+      addBotMessage(`Hi! I see you're moving from ${initialFromLocation} to ${initialToLocation}. 🚚`);
+      setTimeout(() => {
+        addBotMessage("When are you planning to move?");
+        setCurrentStep('date');
+      }, 800);
+    } else if (hasFromLocation) {
+      // Only from location provided - skip to destination
+      setFromCity(initialFromLocation);
+      setFormData(prev => ({ ...prev, fromZip: initialFromLocation }));
+      addBotMessage(`Hi! I see you're moving from ${initialFromLocation}. 🚚`);
+      setTimeout(() => {
+        addBotMessage("Where are you moving TO? Just type your ZIP code or city.");
+        setCurrentStep('to-zip');
+      }, 800);
+    } else {
+      // No locations - standard greeting
+      addBotMessage("Hi! I'm your TruMove assistant. Ready to get your instant move quote in under 2 minutes. 🚚");
+      setTimeout(() => {
+        addBotMessage("First up — where are you moving FROM? Just type your ZIP code.");
+        setCurrentStep('from-zip');
+      }, 800);
+    }
+  }, [initialFromLocation, initialToLocation]);
 
   const addBotMessage = (content: string) => {
     setIsTyping(true);
