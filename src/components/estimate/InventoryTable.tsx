@@ -172,7 +172,7 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
     window.print();
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const currentDate = format(new Date(), "MMMM d, yyyy");
@@ -198,12 +198,61 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0, 0, 0);
     doc.text("Your Move Inventory", 14, 40);
+
+    // Helper function to load image as base64
+    const loadImageAsBase64 = (url: string): Promise<string | null> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.fillStyle = '#f5f5f5';
+              ctx.fillRect(0, 0, 32, 32);
+              
+              // Calculate scaling to fit while maintaining aspect ratio
+              const scale = Math.min(28 / img.width, 28 / img.height);
+              const scaledWidth = img.width * scale;
+              const scaledHeight = img.height * scale;
+              const x = (32 - scaledWidth) / 2;
+              const y = (32 - scaledHeight) / 2;
+              
+              ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+              resolve(canvas.toDataURL('image/png'));
+            } else {
+              resolve(null);
+            }
+          } catch {
+            resolve(null);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = url;
+      });
+    };
+
+    // Pre-load all images
+    const imagePromises = items.map(async (item) => {
+      if (item.imageUrl) {
+        const base64 = await loadImageAsBase64(item.imageUrl);
+        return { id: item.id, base64 };
+      }
+      return { id: item.id, base64: null };
+    });
+    
+    const loadedImages = await Promise.all(imagePromises);
+    const imageMap = new Map(loadedImages.map(img => [img.id, img.base64]));
     
     // Table data - matching print columns exactly
     const tableData = items.map((item, index) => {
       const cubicFt = getItemCubicFeet(item);
       return [
         (index + 1).toString(),
+        '', // Image placeholder - we'll draw it in didDrawCell
         item.name,
         item.room,
         item.quantity.toString(),
@@ -217,10 +266,10 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
     // Add table with print-matching styling
     autoTable(doc, {
       startY: 50,
-      head: [['#', 'Item', 'Room', 'Qty', 'Weight', 'Cu Ft', 'Total Wt', 'Total Cu Ft']],
+      head: [['#', '', 'Item', 'Room', 'Qty', 'Weight', 'Cu Ft', 'Total Wt', 'Total Cu Ft']],
       body: tableData,
       foot: [[
-        '', '', '', 'Totals:', '—', '—', 
+        '', '', '', '', 'Totals:', '—', '—', 
         `${totalWeight.toLocaleString()} lbs`, 
         `${totalCubicFeet} cu ft`
       ]],
@@ -240,19 +289,21 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
       bodyStyles: {
         fontSize: 9,
         cellPadding: 4,
+        minCellHeight: 12,
       },
       alternateRowStyles: {
         fillColor: [250, 250, 250]
       },
       columnStyles: {
-        0: { cellWidth: 12, halign: 'center' }, // #
-        1: { cellWidth: 45 }, // Item
-        2: { cellWidth: 30 }, // Room
-        3: { cellWidth: 15, halign: 'center' }, // Qty
-        4: { cellWidth: 20, halign: 'center' }, // Weight
-        5: { cellWidth: 18, halign: 'center' }, // Cu Ft
-        6: { cellWidth: 25, halign: 'center' }, // Total Weight
-        7: { cellWidth: 25, halign: 'center' }, // Total Cu Ft
+        0: { cellWidth: 10, halign: 'center' }, // #
+        1: { cellWidth: 14 }, // Image
+        2: { cellWidth: 38 }, // Item
+        3: { cellWidth: 28 }, // Room
+        4: { cellWidth: 12, halign: 'center' }, // Qty
+        5: { cellWidth: 18, halign: 'center' }, // Weight
+        6: { cellWidth: 16, halign: 'center' }, // Cu Ft
+        7: { cellWidth: 22, halign: 'center' }, // Total Weight
+        8: { cellWidth: 22, halign: 'center' }, // Total Cu Ft
       },
       styles: {
         overflow: 'linebreak',
@@ -261,6 +312,25 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
       },
       tableLineColor: [200, 200, 200],
       tableLineWidth: 0.5,
+      didDrawCell: (data) => {
+        // Draw images in the image column (column index 1) for body rows
+        if (data.section === 'body' && data.column.index === 1) {
+          const item = items[data.row.index];
+          if (item) {
+            const base64 = imageMap.get(item.id);
+            if (base64) {
+              try {
+                const imgSize = 10;
+                const x = data.cell.x + (data.cell.width - imgSize) / 2;
+                const y = data.cell.y + (data.cell.height - imgSize) / 2;
+                doc.addImage(base64, 'PNG', x, y, imgSize, imgSize);
+              } catch (e) {
+                // Silently fail if image can't be added
+              }
+            }
+          }
+        }
+      },
     });
     
     // Footer - matching print footer

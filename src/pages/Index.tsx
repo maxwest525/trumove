@@ -366,7 +366,7 @@ export default function Index() {
                 <div className="tru-hero-value-props-container">
                   {/* Value Props - Feature Cards */}
                   <div className={`tru-hero-value-cards ${fromCity ? 'is-hidden' : ''}`}>
-                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/online-estimate")}>
+                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/scan-room")}>
                       <div className="tru-value-card-icon">
                         <Scan className="w-6 h-6" />
                       </div>
