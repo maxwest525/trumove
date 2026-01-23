@@ -243,8 +243,8 @@ export default function CarrierVetting() {
   return (
     <SiteShell>
       <div className="min-h-screen bg-background">
-        {/* Combined Sticky Header Block - locks below TruMove nav */}
-        <div className="sticky top-0 z-40">
+        {/* Combined Sticky Header Block - locks below TruMove nav (72px) */}
+        <div className="sticky top-[72px] z-40">
           {/* Government-style Header */}
           <div className="fmcsa-header bg-slate-900">
             <div className="container max-w-7xl mx-auto px-4 py-4">
