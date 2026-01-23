@@ -129,24 +129,32 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
     setShowResults(false);
   };
 
+  // Detect if in sidebar context
+  const isSidebar = className?.includes('sidebar-search');
+
   return (
     <div ref={containerRef} className={cn('relative', className)}>
       <div className="space-y-3">
-        {/* Search Type Toggle - Subtle white highlight, no green fill */}
-        <div className="flex gap-2">
+        {/* Search Type Toggle - Compact buttons for sidebar, full for terminal */}
+        <div className={cn('flex gap-1.5', isSidebar ? 'flex-wrap' : 'gap-2')}>
           <Button
             type="button"
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md px-3 h-9 text-sm font-medium transition-all border',
-              searchType === 'name' 
-                ? 'bg-white/15 text-white border-white/40 shadow-sm' 
-                : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20'
+              'rounded-md font-medium transition-all border',
+              isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
+              isSidebar
+                ? (searchType === 'name' 
+                    ? 'bg-primary/10 text-primary border-primary/30' 
+                    : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50')
+                : (searchType === 'name' 
+                    ? 'bg-white/15 text-white border-white/40 shadow-sm' 
+                    : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20')
             )}
             onClick={() => setSearchType('name')}
           >
-            <Building2 className="w-4 h-4 mr-1.5" />
+            <Building2 className={cn(isSidebar ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1.5')} />
             Name
           </Button>
           <Button
@@ -154,14 +162,19 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md px-3 h-9 text-sm font-medium transition-all border',
-              searchType === 'dot' 
-                ? 'bg-white/15 text-white border-white/40 shadow-sm' 
-                : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20'
+              'rounded-md font-medium transition-all border',
+              isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
+              isSidebar
+                ? (searchType === 'dot' 
+                    ? 'bg-primary/10 text-primary border-primary/30' 
+                    : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50')
+                : (searchType === 'dot' 
+                    ? 'bg-white/15 text-white border-white/40 shadow-sm' 
+                    : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20')
             )}
             onClick={() => setSearchType('dot')}
           >
-            <Hash className="w-4 h-4 mr-1.5" />
+            <Hash className={cn(isSidebar ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1.5')} />
             DOT
           </Button>
           <Button
@@ -169,40 +182,70 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md px-3 h-9 text-sm font-medium transition-all border',
-              searchType === 'mc' 
-                ? 'bg-white/15 text-white border-white/40 shadow-sm' 
-                : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20'
+              'rounded-md font-medium transition-all border',
+              isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
+              isSidebar
+                ? (searchType === 'mc' 
+                    ? 'bg-primary/10 text-primary border-primary/30' 
+                    : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50')
+                : (searchType === 'mc' 
+                    ? 'bg-white/15 text-white border-white/40 shadow-sm' 
+                    : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20')
             )}
             onClick={() => setSearchType('mc')}
           >
-            <Truck className="w-4 h-4 mr-1.5" />
+            <Truck className={cn(isSidebar ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1.5')} />
             MC
           </Button>
         </div>
 
         {/* Search Input - Full Width */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
-          <Input
-            type="text"
-            placeholder={
-              searchType === 'name' 
-                ? 'Search carrier by company name...' 
-                : searchType === 'dot' 
-                  ? 'Enter DOT number...' 
-                  : 'Enter MC number...'
-            }
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => results.length > 0 && setShowResults(true)}
-            className="pl-12 pr-12 h-12 text-base bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-primary/50 focus:ring-primary/20"
-          />
-          {isLoading && (
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              <Loader2 className="w-5 h-5 text-primary animate-spin" />
-              <span className="text-xs text-primary font-mono hidden sm:inline">Querying FMCSA.gov...</span>
-            </div>
+          {isSidebar ? (
+            <>
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder={
+                  searchType === 'name' 
+                    ? 'Company name...' 
+                    : searchType === 'dot' 
+                      ? 'DOT number...' 
+                      : 'MC number...'
+                }
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => results.length > 0 && setShowResults(true)}
+                className="pl-9 pr-8 h-9 text-sm"
+              />
+              {isLoading && (
+                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary animate-spin" />
+              )}
+            </>
+          ) : (
+            <>
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+              <Input
+                type="text"
+                placeholder={
+                  searchType === 'name' 
+                    ? 'Search carrier by company name...' 
+                    : searchType === 'dot' 
+                      ? 'Enter DOT number...' 
+                      : 'Enter MC number...'
+                }
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => results.length > 0 && setShowResults(true)}
+                className="pl-12 pr-12 h-12 text-base bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-primary/50 focus:ring-primary/20"
+              />
+              {isLoading && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                  <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                  <span className="text-xs text-primary font-mono hidden sm:inline">Querying FMCSA.gov...</span>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
