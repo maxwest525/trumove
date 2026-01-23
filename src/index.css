@@ -112,6 +112,16 @@
   to { transform: translateX(-50%); }
 }
 
+/* Floating animation for cards */
+@keyframes animate-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: animate-float 3s ease-in-out infinite;
+}
+
 /* HERO SECTION */
 .tru-page-frame {
   width: 100%;
