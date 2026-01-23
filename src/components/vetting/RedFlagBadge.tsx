@@ -16,18 +16,18 @@ export function RedFlagBadge({ message, severity, className }: RedFlagBadgeProps
     info: Info
   };
 
-  // Use BLACK text for maximum readability
+  // Icon and text color only - no pill background
   const colorMap = {
-    critical: 'bg-red-100 dark:bg-red-500/20 text-slate-900 dark:text-red-200 border-red-300 dark:border-red-500/30',
-    warning: 'bg-amber-100 dark:bg-amber-500/20 text-slate-900 dark:text-amber-200 border-amber-300 dark:border-amber-500/30',
-    info: 'bg-blue-100 dark:bg-blue-500/20 text-slate-900 dark:text-blue-200 border-blue-300 dark:border-blue-500/30'
+    critical: 'text-red-600 dark:text-red-400',
+    warning: 'text-amber-600 dark:text-amber-400',
+    info: 'text-blue-600 dark:text-blue-400'
   };
 
   const Icon = iconMap[severity];
 
   return (
     <div className={cn(
-      'flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium',
+      'flex items-center gap-1.5 text-xs font-medium',
       colorMap[severity],
       className
     )}>

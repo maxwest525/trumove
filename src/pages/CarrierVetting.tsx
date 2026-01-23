@@ -400,13 +400,13 @@ export default function CarrierVetting() {
                         isLoading={isLoading}
                         className="sidebar-search"
                       />
-                      {/* Clear All - Below the input */}
+                      {/* Clear All - Compact link below input */}
                       {carriers.length > 0 && (
                         <button 
                           onClick={clearAll}
-                          className="w-full mt-3 text-xs text-muted-foreground hover:text-foreground text-center py-1.5 rounded-md hover:bg-muted/50 transition-colors"
+                          className="w-full mt-2 text-[11px] text-muted-foreground hover:text-foreground text-center py-1 transition-colors"
                         >
-                          Clear All Carriers
+                          Clear All
                         </button>
                       )}
                     </div>
