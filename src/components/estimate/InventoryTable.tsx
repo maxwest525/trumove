@@ -1,14 +1,34 @@
-import { Trash2, Printer, Download } from "lucide-react";
+import { useState } from "react";
+import { Trash2, Printer, Download, GripVertical } from "lucide-react";
 import { type InventoryItem, calculateTotalWeight, calculateTotalCubicFeet, DENSITY_FACTOR } from "@/lib/priceCalculator";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { cn } from "@/lib/utils";
 
 interface InventoryTableProps {
   items: InventoryItem[];
   onUpdateItem: (id: string, updates: Partial<InventoryItem>) => void;
   onRemoveItem: (id: string) => void;
   onClear: () => void;
+  onReorder?: (items: InventoryItem[]) => void;
 }
 
 // Helper to get cubic feet for an item
@@ -16,9 +36,137 @@ const getItemCubicFeet = (item: InventoryItem): number => {
   return item.cubicFeet || Math.ceil(item.weightEach / DENSITY_FACTOR);
 };
 
-export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onClear }: InventoryTableProps) {
+// Sortable Row Component
+interface SortableRowProps {
+  item: InventoryItem;
+  index: number;
+  onUpdateItem: (id: string, updates: Partial<InventoryItem>) => void;
+  onRemoveItem: (id: string) => void;
+}
+
+function SortableRow({ item, index, onUpdateItem, onRemoveItem }: SortableRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const cubicFt = getItemCubicFeet(item);
+
+  return (
+    <tr 
+      ref={setNodeRef} 
+      style={style} 
+      className={cn(
+        "border-b border-border/20 hover:bg-muted/20 transition-colors",
+        isDragging && "bg-muted/40 opacity-80 shadow-lg"
+      )}
+    >
+      {/* Drag Handle + Order */}
+      <td className="px-2 py-3 print-hide">
+        <div 
+          className="flex items-center gap-1 cursor-grab active:cursor-grabbing" 
+          {...attributes} 
+          {...listeners}
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs font-bold text-muted-foreground w-5 text-center">{index + 1}</span>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-3">
+          {/* Larger thumbnail */}
+          <div className="w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden bg-muted/30 border border-border/30">
+            {item.imageUrl ? (
+              <img 
+                src={item.imageUrl} 
+                alt={item.name} 
+                className="w-full h-full object-contain p-0.5"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="text-base text-muted-foreground">📦</span>
+              </div>
+            )}
+          </div>
+          <span className="font-medium text-foreground">{item.name}</span>
+        </div>
+      </td>
+      <td className="px-4 py-3 text-muted-foreground">{item.room}</td>
+      <td className="px-4 py-3 text-center">
+        {/* Hidden span for print, input for screen */}
+        <span className="print-qty-value hidden">{item.quantity}</span>
+        <input
+          type="number"
+          min={1}
+          value={item.quantity}
+          onChange={(e) => onUpdateItem(item.id, { quantity: Math.max(1, parseInt(e.target.value) || 1) })}
+          className="w-14 h-8 text-center rounded-lg border border-border/40 bg-background text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 print-hide"
+        />
+      </td>
+      <td className="px-4 py-3 text-center text-muted-foreground">
+        {item.weightEach}
+      </td>
+      <td className="px-4 py-3 text-center text-muted-foreground">
+        {cubicFt}
+      </td>
+      <td className="px-4 py-3 text-center font-semibold">
+        {item.quantity * item.weightEach}
+      </td>
+      <td className="px-4 py-3 text-center font-semibold">
+        {item.quantity * cubicFt}
+      </td>
+      <td className="px-4 py-3 text-center print-hide">
+        <button
+          type="button"
+          onClick={() => onRemoveItem(item.id)}
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+          aria-label="Remove item"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </td>
+    </tr>
+  );
+}
+
+export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onClear, onReorder }: InventoryTableProps) {
+  const [localItems, setLocalItems] = useState(items);
   const totalWeight = calculateTotalWeight(items);
   const totalCubicFeet = calculateTotalCubicFeet(items);
+
+  // Update local items when props change
+  if (items !== localItems && items.length !== localItems.length) {
+    setLocalItems(items);
+  }
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over.id);
+      
+      const newItems = arrayMove(items, oldIndex, newIndex);
+      setLocalItems(newItems);
+      onReorder?.(newItems);
+    }
+  };
 
   const handlePrint = () => {
     window.print();
@@ -51,16 +199,11 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
     doc.setTextColor(0, 0, 0);
     doc.text("Your Move Inventory", 14, 40);
     
-    // Item count
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(100, 100, 100);
-    doc.text(`${items.length} items added`, 14, 48);
-    
     // Table data - matching print columns exactly
-    const tableData = items.map(item => {
+    const tableData = items.map((item, index) => {
       const cubicFt = getItemCubicFeet(item);
       return [
+        (index + 1).toString(),
         item.name,
         item.room,
         item.quantity.toString(),
@@ -73,11 +216,11 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
     
     // Add table with print-matching styling
     autoTable(doc, {
-      startY: 55,
-      head: [['Item', 'Room', 'Qty', 'Weight (lbs)', 'Cu Ft', 'Total Weight', 'Total Cu Ft']],
+      startY: 50,
+      head: [['#', 'Item', 'Room', 'Qty', 'Weight', 'Cu Ft', 'Total Wt', 'Total Cu Ft']],
       body: tableData,
       foot: [[
-        '', '', 'Totals:', '—', '—', 
+        '', '', '', 'Totals:', '—', '—', 
         `${totalWeight.toLocaleString()} lbs`, 
         `${totalCubicFeet} cu ft`
       ]],
@@ -102,13 +245,14 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
         fillColor: [250, 250, 250]
       },
       columnStyles: {
-        0: { cellWidth: 50 }, // Item
-        1: { cellWidth: 35 }, // Room
-        2: { cellWidth: 15, halign: 'center' }, // Qty
-        3: { cellWidth: 25, halign: 'center' }, // Weight
-        4: { cellWidth: 20, halign: 'center' }, // Cu Ft
-        5: { cellWidth: 28, halign: 'center' }, // Total Weight
-        6: { cellWidth: 25, halign: 'center' }, // Total Cu Ft
+        0: { cellWidth: 12, halign: 'center' }, // #
+        1: { cellWidth: 45 }, // Item
+        2: { cellWidth: 30 }, // Room
+        3: { cellWidth: 15, halign: 'center' }, // Qty
+        4: { cellWidth: 20, halign: 'center' }, // Weight
+        5: { cellWidth: 18, halign: 'center' }, // Cu Ft
+        6: { cellWidth: 25, halign: 'center' }, // Total Weight
+        7: { cellWidth: 25, halign: 'center' }, // Total Cu Ft
       },
       styles: {
         overflow: 'linebreak',
@@ -147,109 +291,67 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
           <h3 className="text-lg font-black text-foreground">
             Your Move <span className="tru-qb-title-accent">Inventory</span>
           </h3>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{items.length} items added</p>
         </div>
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border/40 bg-muted/30">
-              <th className="text-left px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Item</th>
-              <th className="text-left px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Room</th>
-              <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Qty</th>
-              <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Weight (lbs)</th>
-              <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Cu Ft</th>
-              <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Total Weight</th>
-              <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Total Cu Ft</th>
-              <th className="w-12 print-hide"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
-                  No items yet. Start by adding a sofa, bed, or boxes.
-                </td>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border/40 bg-muted/30">
+                <th className="w-16 px-2 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground print-hide">Order</th>
+                <th className="text-left px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Item</th>
+                <th className="text-left px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Room</th>
+                <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Qty</th>
+                <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Weight (lbs)</th>
+                <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Cu Ft</th>
+                <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Total Weight</th>
+                <th className="text-center px-4 py-3 font-bold text-xs tracking-wide uppercase text-muted-foreground">Total Cu Ft</th>
+                <th className="w-12 print-hide"></th>
               </tr>
-            ) : (
-              items.map((item) => {
-                const cubicFt = getItemCubicFeet(item);
-                return (
-                  <tr key={item.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        {/* Larger thumbnail */}
-                        <div className="w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden bg-muted/30 border border-border/30">
-                          {item.imageUrl ? (
-                            <img 
-                              src={item.imageUrl} 
-                              alt={item.name} 
-                              className="w-full h-full object-contain p-0.5"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <span className="text-base text-muted-foreground">📦</span>
-                            </div>
-                          )}
-                        </div>
-                        <span className="font-medium text-foreground">{item.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">{item.room}</td>
-                    <td className="px-4 py-3 text-center">
-                      {/* Hidden span for print, input for screen */}
-                      <span className="print-qty-value hidden">{item.quantity}</span>
-                      <input
-                        type="number"
-                        min={1}
-                        value={item.quantity}
-                        onChange={(e) => onUpdateItem(item.id, { quantity: Math.max(1, parseInt(e.target.value) || 1) })}
-                        className="w-14 h-8 text-center rounded-lg border border-border/40 bg-background text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20"
-                      />
-                    </td>
-                    <td className="px-4 py-3 text-center text-muted-foreground">
-                      {item.weightEach}
-                    </td>
-                    <td className="px-4 py-3 text-center text-muted-foreground">
-                      {cubicFt}
-                    </td>
-                    <td className="px-4 py-3 text-center font-semibold">
-                      {item.quantity * item.weightEach}
-                    </td>
-                    <td className="px-4 py-3 text-center font-semibold">
-                      {item.quantity * cubicFt}
-                    </td>
-                    <td className="px-4 py-3 text-center print-hide">
-                      <button
-                        type="button"
-                        onClick={() => onRemoveItem(item.id)}
-                        className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                        aria-label="Remove item"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
+            </thead>
+            <tbody>
+              {items.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
+                    No items yet. Start by adding a sofa, bed, or boxes.
+                  </td>
+                </tr>
+              ) : (
+                <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                  {items.map((item, index) => (
+                    <SortableRow
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      onUpdateItem={onUpdateItem}
+                      onRemoveItem={onRemoveItem}
+                    />
+                  ))}
+                </SortableContext>
+              )}
+            </tbody>
+            {/* Table Footer with Totals */}
+            {items.length > 0 && (
+              <tfoot>
+                <tr className="border-t border-border/40 bg-muted/20 font-bold">
+                  <td className="print-hide"></td>
+                  <td colSpan={3} className="px-4 py-3 text-right text-sm text-muted-foreground">Totals:</td>
+                  <td className="px-4 py-3 text-center text-sm">—</td>
+                  <td className="px-4 py-3 text-center text-sm">—</td>
+                  <td className="px-4 py-3 text-center text-sm text-foreground">{totalWeight.toLocaleString()} lbs</td>
+                  <td className="px-4 py-3 text-center text-sm text-foreground">{totalCubicFeet} cu ft</td>
+                  <td className="print-hide"></td>
+                </tr>
+              </tfoot>
             )}
-          </tbody>
-          {/* Table Footer with Totals */}
-          {items.length > 0 && (
-            <tfoot>
-              <tr className="border-t border-border/40 bg-muted/20 font-bold">
-                <td colSpan={3} className="px-4 py-3 text-right text-sm text-muted-foreground">Totals:</td>
-                <td className="px-4 py-3 text-center text-sm">—</td>
-                <td className="px-4 py-3 text-center text-sm">—</td>
-                <td className="px-4 py-3 text-center text-sm text-foreground">{totalWeight.toLocaleString()} lbs</td>
-                <td className="px-4 py-3 text-center text-sm text-foreground">{totalCubicFeet} cu ft</td>
-                <td className="print-hide"></td>
-              </tr>
-            </tfoot>
-          )}
-        </table>
+          </table>
+        </DndContext>
       </div>
 
       {/* Actions - Hidden in print */}
