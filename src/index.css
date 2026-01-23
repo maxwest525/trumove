@@ -15402,9 +15402,34 @@
 .tru-scan-table-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   padding: 16px 24px;
   border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-scan-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-scan-action-btn:hover:not(:disabled) {
+  background: hsl(var(--muted));
+}
+
+.tru-scan-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 @media (max-width: 768px) {

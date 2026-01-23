@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { 
-  Scan, Camera, Sparkles, CheckCircle, ArrowRight, 
+  Scan, Sparkles, ArrowRight, 
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
-  Eye, Cpu, Upload, ListChecks, Play, Video, FileText,
-  Users, Ruler, Package, Plus, Minus
+  Ruler, Package, Printer, Download
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import previewImage from "@/assets/scan-room-preview.jpg";
 
 // Simulated detected items for the live demo
@@ -31,10 +33,6 @@ const DEMO_ITEMS = [
 
 export default function ScanRoom() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [detectedItems, setDetectedItems] = useState<typeof DEMO_ITEMS>([]);
   const [isScanning, setIsScanning] = useState(false);
 
@@ -55,35 +53,174 @@ export default function ScanRoom() {
     setIsScanning(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.includes("@")) {
-      toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const earlyAccess = JSON.parse(localStorage.getItem("tm_early_access") || "[]");
-    earlyAccess.push({ email, phone, feature: "scan-room", ts: Date.now() });
-    localStorage.setItem("tm_early_access", JSON.stringify(earlyAccess));
-    
-    setIsSubmitting(false);
-    setSubmitted(true);
-    
-    toast({
-      title: "You're on the list!",
-      description: "We'll notify you when Scan Your Room launches.",
-    });
-  };
-
   const totalWeight = detectedItems.reduce((sum, item) => sum + item.weight, 0);
   const totalCuFt = detectedItems.reduce((sum, item) => sum + item.cuft, 0);
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleDownloadPDF = async () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const currentDate = format(new Date(), "MMMM d, yyyy");
+    
+    // Header - Green header bar
+    doc.setFillColor(34, 197, 94);
+    doc.rect(0, 0, pageWidth, 25, 'F');
+    
+    // Logo text
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(255, 255, 255);
+    doc.text("TruMove", 14, 16);
+    
+    // Date on right
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Generated: ${currentDate}`, pageWidth - 14, 16, { align: "right" });
+    
+    // Title
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    doc.text("AI Scanned Inventory", 14, 40);
+
+    // Helper function to load image as base64
+    const loadImageAsBase64 = (url: string): Promise<string | null> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.fillStyle = '#f5f5f5';
+              ctx.fillRect(0, 0, 32, 32);
+              const scale = Math.min(28 / img.width, 28 / img.height);
+              const scaledWidth = img.width * scale;
+              const scaledHeight = img.height * scale;
+              const x = (32 - scaledWidth) / 2;
+              const y = (32 - scaledHeight) / 2;
+              ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+              resolve(canvas.toDataURL('image/png'));
+            } else {
+              resolve(null);
+            }
+          } catch {
+            resolve(null);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = url;
+      });
+    };
+
+    // Pre-load all images
+    const imagePromises = detectedItems.map(async (item) => {
+      if (item.image) {
+        const base64 = await loadImageAsBase64(item.image);
+        return { id: item.id, base64 };
+      }
+      return { id: item.id, base64: null };
+    });
+    
+    const loadedImages = await Promise.all(imagePromises);
+    const imageMap = new Map(loadedImages.map(img => [img.id, img.base64]));
+    
+    // Table data
+    const tableData = detectedItems.map((item, index) => [
+      (index + 1).toString(),
+      '',
+      item.name,
+      item.room,
+      '1',
+      `${item.weight}`,
+      `${item.cuft}`,
+      `${item.weight}`,
+      `${item.cuft}`
+    ]);
+    
+    autoTable(doc, {
+      startY: 50,
+      head: [['#', '', 'Item', 'Room', 'Qty', 'Weight', 'Cu Ft', 'Total Wt', 'Total Cu Ft']],
+      body: tableData,
+      foot: [[
+        '', '', '', '', 'Totals:', '—', '—', 
+        `${totalWeight.toLocaleString()} lbs`, 
+        `${totalCuFt} cu ft`
+      ]],
+      headStyles: {
+        fillColor: [34, 197, 94],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 9,
+        cellPadding: 4,
+      },
+      footStyles: {
+        fillColor: [245, 245, 245],
+        textColor: [0, 0, 0],
+        fontStyle: 'bold',
+        fontSize: 9,
+      },
+      bodyStyles: {
+        fontSize: 9,
+        cellPadding: 4,
+        minCellHeight: 12,
+      },
+      alternateRowStyles: {
+        fillColor: [250, 250, 250]
+      },
+      columnStyles: {
+        0: { cellWidth: 10, halign: 'center' },
+        1: { cellWidth: 14 },
+        2: { cellWidth: 38 },
+        3: { cellWidth: 28 },
+        4: { cellWidth: 12, halign: 'center' },
+        5: { cellWidth: 18, halign: 'center' },
+        6: { cellWidth: 16, halign: 'center' },
+        7: { cellWidth: 22, halign: 'center' },
+        8: { cellWidth: 22, halign: 'center' },
+      },
+      styles: {
+        overflow: 'linebreak',
+        lineColor: [230, 230, 230],
+        lineWidth: 0.5,
+      },
+      tableLineColor: [200, 200, 200],
+      tableLineWidth: 0.5,
+      didDrawCell: (data) => {
+        if (data.section === 'body' && data.column.index === 1) {
+          const item = detectedItems[data.row.index];
+          if (item) {
+            const base64 = imageMap.get(item.id);
+            if (base64) {
+              try {
+                const imgSize = 10;
+                const x = data.cell.x + (data.cell.width - imgSize) / 2;
+                const y = data.cell.y + (data.cell.height - imgSize) / 2;
+                doc.addImage(base64, 'PNG', x, y, imgSize, imgSize);
+              } catch (e) {
+                // Silently fail
+              }
+            }
+          }
+        }
+      },
+    });
+    
+    // Footer
+    const finalY = (doc as any).lastAutoTable.finalY || 100;
+    doc.setFontSize(9);
+    doc.setTextColor(120, 120, 120);
+    doc.text("Generated by TruMove - AI-powered moving quotes", 14, finalY + 12);
+    doc.text("www.trumove.com", 14, finalY + 18);
+    
+    doc.save('trumove-ai-scan-inventory.pdf');
+  };
 
   return (
     <SiteShell>
@@ -298,6 +435,24 @@ export default function ScanRoom() {
                   </div>
                   
                   <div className="tru-scan-table-actions">
+                    <button
+                      type="button"
+                      onClick={handlePrint}
+                      disabled={detectedItems.length === 0}
+                      className="tru-scan-action-btn"
+                    >
+                      <Printer className="w-4 h-4" />
+                      Print inventory
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDownloadPDF}
+                      disabled={detectedItems.length === 0}
+                      className="tru-scan-action-btn"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download as PDF
+                    </button>
                     <Link to="/online-estimate" className="tru-scan-btn-dark">
                       <Sparkles className="w-4 h-4" />
                       Continue to Quote
@@ -309,72 +464,6 @@ export default function ScanRoom() {
           </div>
         </section>
 
-        {/* Early Access CTA */}
-        <section id="early-access" className="tru-scan-section tru-scan-cta-section">
-          <div className="tru-scan-cta-card">
-            <div className="tru-scan-cta-glow" />
-            
-            {!submitted ? (
-              <>
-                <div className="tru-scan-cta-icon">
-                  <Scan className="w-8 h-8" />
-                </div>
-                <h2 className="tru-scan-cta-title">Get Early Access</h2>
-                <p className="tru-scan-cta-desc">
-                  Be the first to try Scan Your Room when it launches.
-                </p>
-                
-                <form onSubmit={handleSubmit} className="tru-scan-cta-form">
-                  <input
-                    type="email"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="tru-scan-input"
-                    required
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone (optional)"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="tru-scan-input"
-                  />
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="tru-scan-submit-btn"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="tru-scan-spinner" />
-                        Joining...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4" />
-                        Join the Waitlist
-                      </>
-                    )}
-                  </button>
-                </form>
-              </>
-            ) : (
-              <div className="tru-scan-success">
-                <div className="tru-scan-success-icon">
-                  <CheckCircle className="w-10 h-10" />
-                </div>
-                <h3 className="tru-scan-success-title">You're on the list!</h3>
-                <p className="tru-scan-success-desc">
-                  We'll email you when Scan Your Room is ready.
-                </p>
-                <Link to="/online-estimate" className="tru-scan-success-link">
-                  Try AI Estimator Now <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            )}
-          </div>
-        </section>
 
         {/* Bottom CTA */}
         <section className="tru-scan-bottom-cta">
