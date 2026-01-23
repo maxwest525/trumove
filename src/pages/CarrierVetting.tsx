@@ -455,7 +455,10 @@ export default function CarrierVetting() {
 
                   {/* CSA BASIC Scores Legend */}
                   <div className="p-4 rounded-xl border border-border bg-card">
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-foreground mb-3">CSA BASIC Safety Scores</h3>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-foreground mb-3 flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4" />
+                      CSA BASIC Safety Scores
+                    </h3>
                     <div className="space-y-2 text-xs text-muted-foreground">
                       <div className="flex items-start gap-2">
                         <span className="font-medium text-foreground w-16 shrink-0">Unsafe</span>
@@ -489,7 +492,10 @@ export default function CarrierVetting() {
                   
                   {/* Insurance Coverage Analysis */}
                   <div className="p-4 rounded-xl border border-border bg-card">
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-foreground mb-2">Insurance Coverage Analysis</h3>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-foreground mb-2 flex items-center gap-2">
+                      <Shield className="w-4 h-4" />
+                      Insurance Coverage Analysis
+                    </h3>
                     <p className="text-xs text-muted-foreground">
                       Federal minimums: $750K BIPD for general freight, $5M for hazmat. Cargo insurance varies by commodity.
                     </p>
