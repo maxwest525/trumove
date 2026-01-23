@@ -356,10 +356,8 @@ export default function Index() {
                   <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
-                  Skip the chaos of mega van lines and shady brokers. We connect you directly with 
-                  small, family-owned moving companies — all vetted through federal FMCSA records, 
-                  continuously monitored for complaints, and matched specifically to your route and timeline. 
-                  Get real pricing based on your actual inventory, not inflated guesses.
+                  Skip mega van lines and shady brokers. We connect you with family-owned moving companies vetted through 
+                  FMCSA records, continuously monitored, and matched to your route. Real pricing from your actual inventory.
                 </p>
                 
                 {/* Value Props Container - Map overlays this section */}
@@ -763,21 +761,21 @@ export default function Index() {
 
               {/* SIDEBAR: Stacked Move Summary + Floating Nav */}
               <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-                {/* Move Summary Card - stays expanded when data entered */}
+                {/* Move Summary Card - matching reference design */}
                 <div 
                   className={`tru-floating-summary-card tru-stacked-pill ${summaryLocked || summaryHovered ? 'is-expanded is-locked' : ''}`}
                   onMouseEnter={() => setSummaryHovered(true)}
                   onMouseLeave={() => setSummaryHovered(false)}
                 >
-                  {/* Collapsed view - vertical "SUMMARY" text */}
+                  {/* Collapsed view - vertical pill with icon */}
                   <div className="tru-stacked-pill-collapsed">
-                    <div className="tru-stacked-pill-indicator">
-                      <span className="tru-stacked-pill-dot"></span>
+                    <div className="tru-stacked-pill-icon-circle">
+                      <MapPin className="w-5 h-5 text-primary" />
                     </div>
                     <span className="tru-stacked-pill-vertical-text">SUMMARY</span>
                   </div>
                   
-                  {/* Expanded view - full summary */}
+                  {/* Expanded view - clean table layout */}
                   <div className="tru-stacked-pill-expanded">
                     <div className="tru-summary-card-header">
                       <span className="tru-summary-card-title">MOVE SUMMARY</span>

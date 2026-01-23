@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Plus, 
   Minus, 
@@ -281,6 +282,7 @@ export default function InventoryBuilder({
   isEstimating = false,
   homeSize
 }: InventoryBuilderProps) {
+  const navigate = useNavigate();
   const [activeRoom, setActiveRoom] = useState('Living Room');
   const [searchQuery, setSearchQuery] = useState('');
   const [itemQuantities, setItemQuantities] = useState<Record<string, number>>({});
@@ -558,19 +560,23 @@ export default function InventoryBuilder({
             </div>
           </button>
 
-          {/* Scan Room Placeholder */}
-          <div className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
-            <div className="p-2 rounded-lg bg-muted">
-              <Camera className="w-4 h-4 text-muted-foreground" />
+          {/* Scan Room - Links to feature page */}
+          <button
+            type="button"
+            onClick={() => navigate("/scan-room")}
+            className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all text-left cursor-pointer"
+          >
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Camera className="w-4 h-4 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-semibold text-muted-foreground">Scan Room</span>
-                <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-muted-foreground/20 text-muted-foreground">Soon</span>
+                <span className="text-xs font-semibold text-foreground">Scan Room</span>
+                <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">Soon</span>
               </div>
-              <span className="text-[10px] text-muted-foreground/70">Auto-detect items via camera</span>
+              <span className="text-[10px] text-muted-foreground">Auto-detect items via camera</span>
             </div>
-          </div>
+          </button>
         </div>
         
         {/* Search Bar & Special Handling Toggle */}
