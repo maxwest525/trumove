@@ -70,29 +70,21 @@ export default function QuoteSnapshotVertical({ items, moveDetails, extendedDeta
       {/* Content - Left aligned rows */}
       <div className="p-4 space-y-2.5 text-left">
         {/* From */}
-        <div className="flex items-start justify-between py-1.5 border-b border-border/30">
+        <div className="flex items-center justify-between py-1.5 border-b border-border/30">
           <span className="text-sm text-muted-foreground">From</span>
-          <div className="text-right">
-            <span className="text-sm font-medium text-foreground">
-              {moveDetails.fromLocation || 'Not set'}
-            </span>
-            {originPropertyLine && (
-              <p className="text-xs text-muted-foreground">{originPropertyLine}</p>
-            )}
-          </div>
+          <span className="text-sm font-medium text-foreground text-right">
+            {moveDetails.fromLocation || 'Not set'}
+            {originPropertyLine && <span className="text-xs text-muted-foreground ml-1">({originPropertyLine})</span>}
+          </span>
         </div>
 
         {/* To */}
-        <div className="flex items-start justify-between py-1.5 border-b border-border/30">
+        <div className="flex items-center justify-between py-1.5 border-b border-border/30">
           <span className="text-sm text-muted-foreground">To</span>
-          <div className="text-right">
-            <span className="text-sm font-medium text-foreground">
-              {moveDetails.toLocation || 'Not set'}
-            </span>
-            {destPropertyLine && (
-              <p className="text-xs text-muted-foreground">{destPropertyLine}</p>
-            )}
-          </div>
+          <span className="text-sm font-medium text-foreground text-right">
+            {moveDetails.toLocation || 'Not set'}
+            {destPropertyLine && <span className="text-xs text-muted-foreground ml-1">({destPropertyLine})</span>}
+          </span>
         </div>
 
         {/* Distance */}
