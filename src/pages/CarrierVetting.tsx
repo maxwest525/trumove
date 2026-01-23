@@ -243,58 +243,61 @@ export default function CarrierVetting() {
   return (
     <SiteShell>
       <div className="min-h-screen bg-background">
-        {/* Government-style Header - LOCKED below site header */}
-        <div className="fmcsa-header sticky top-0 z-40 bg-slate-900">
-          <div className="container max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-4">
-                <div className="fmcsa-shield">
-                  <Shield className="w-8 h-8" />
+        {/* Combined Sticky Header Block - locks below TruMove nav */}
+        <div className="sticky top-0 z-40">
+          {/* Government-style Header */}
+          <div className="fmcsa-header bg-slate-900">
+            <div className="container max-w-7xl mx-auto px-4 py-4">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="fmcsa-shield">
+                    <Shield className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h1 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                      FMCSA Carrier Vetting
+                    </h1>
+                    <p className="text-xs text-white/60">
+                      Safety & Fitness Electronic Records System (SAFER)
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
-                    FMCSA Carrier Vetting
-                  </h1>
-                  <p className="text-xs text-white/60">
-                    Safety & Fitness Electronic Records System (SAFER)
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="fmcsa-badge">
-                  <Database className="w-3.5 h-3.5" />
-                  <span>SAFER Web Services</span>
-                </div>
-                <div className="fmcsa-live-indicator">
-                  <div className="fmcsa-live-dot" />
-                  <span>Live Data</span>
+                <div className="flex items-center gap-3">
+                  <div className="fmcsa-badge">
+                    <Database className="w-3.5 h-3.5" />
+                    <span>SAFER Web Services</span>
+                  </div>
+                  <div className="fmcsa-live-indicator">
+                    <div className="fmcsa-live-dot" />
+                    <span>Live Data</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Trust Strip - LOCKED below FMCSA header */}
-        <div className="bg-muted/95 border-b border-border/50 sticky top-[72px] z-30 backdrop-blur-md">
-          <div className="container max-w-7xl mx-auto px-4 py-3">
-            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
-              {DATA_SOURCES.map((source) => (
-                <div key={source.title} className="flex items-center gap-2">
-                  <source.icon className="w-4 h-4 text-primary shrink-0" />
-                  <div className="text-left">
-                    <p className="text-xs font-medium text-foreground">{source.title}</p>
+          {/* Trust Strip */}
+          <div className="bg-muted/95 border-b border-border/50 backdrop-blur-md">
+            <div className="container max-w-7xl mx-auto px-4 py-3">
+              <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+                {DATA_SOURCES.map((source) => (
+                  <div key={source.title} className="flex items-center gap-2">
+                    <source.icon className="w-4 h-4 text-primary shrink-0" />
+                    <div className="text-left">
+                      <p className="text-xs font-medium text-foreground">{source.title}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-              <a 
-                href="https://safer.fmcsa.dot.gov/CompanySnapshot.aspx"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 underline font-medium"
-              >
-                Official FMCSA Source
-                <ExternalLink className="w-3 h-3" />
-              </a>
+                ))}
+                <a 
+                  href="https://safer.fmcsa.dot.gov/CompanySnapshot.aspx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 underline font-medium"
+                >
+                  Official FMCSA Source
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -412,7 +415,7 @@ export default function CarrierVetting() {
 
               {/* Right Sidebar */}
               <div className="hidden lg:block w-72 shrink-0">
-                <div className="sticky top-[200px] space-y-4">
+                <div className="sticky top-[120px] space-y-4">
                   {/* Add Carrier */}
                   {carriers.length < 4 && (
                     <div className="p-3 rounded-xl border border-border bg-card">
