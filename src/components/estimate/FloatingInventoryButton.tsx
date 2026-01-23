@@ -1,16 +1,14 @@
-import { Package, ArrowDown, ArrowUp } from "lucide-react";
+import { Package, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FloatingInventoryButtonProps {
-  totalCubicFeet: number;
+  itemCount: number;
   onScrollToInventory: () => void;
-  isAtInventory: boolean;
 }
 
 export default function FloatingInventoryButton({ 
-  totalCubicFeet, 
-  onScrollToInventory,
-  isAtInventory 
+  itemCount, 
+  onScrollToInventory
 }: FloatingInventoryButtonProps) {
   return (
     <button
@@ -25,15 +23,13 @@ export default function FloatingInventoryButton({
       )}
     >
       <Package className="w-5 h-5 text-primary" />
-      <span className="text-base font-bold text-foreground tabular-nums">{totalCubicFeet} cu ft</span>
-      <span className="text-sm font-medium text-muted-foreground">
-        {isAtInventory ? "Keep Building" : "View Inventory"}
+      <span className="text-base font-bold text-foreground tabular-nums">
+        {itemCount} {itemCount === 1 ? 'Item' : 'Items'}
       </span>
-      {isAtInventory ? (
-        <ArrowUp className="w-4 h-4 text-primary" />
-      ) : (
-        <ArrowDown className="w-4 h-4 text-primary" />
-      )}
+      <span className="text-sm font-medium text-muted-foreground">
+        View Inventory List
+      </span>
+      <ArrowDown className="w-4 h-4 text-primary" />
     </button>
   );
 }
