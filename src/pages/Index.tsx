@@ -779,20 +779,17 @@ export default function Index() {
               </div>
             </div>
 
-            {/* SIDEBAR: Icon Strip + Expanded Nav Menu (side by side, static) */}
+            {/* SIDEBAR: Summary Pill + Nav Icons Pill (side by side, static) */}
             <div className="tru-hero-sidebar">
-              {/* Icon Strip - narrow vertical bar */}
-              <div className="tru-sidebar-icon-strip">
-                <div className="tru-sidebar-icon-item"><MapPin /></div>
-                <div className="tru-sidebar-icon-item"><Route /></div>
-                <div className="tru-sidebar-icon-item"><Clock /></div>
-                <div className="tru-sidebar-icon-item"><Boxes /></div>
+              {/* Summary Pill - single icon + vertical text */}
+              <div className="tru-sidebar-summary-pill">
+                <div className="tru-sidebar-summary-icon"><MapPin className="w-5 h-5" /></div>
                 <span className="tru-sidebar-vertical-label">SUMMARY</span>
               </div>
               
-              {/* Expanded Nav Menu - always visible with labels */}
-              <div className="tru-sidebar-expanded-menu">
-                <FloatingNav onChatOpen={() => setChatOpen(true)} />
+              {/* Nav Icons Pill - icons only, no labels */}
+              <div className="tru-sidebar-nav-pill">
+                <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
               </div>
             </div>
           </section>

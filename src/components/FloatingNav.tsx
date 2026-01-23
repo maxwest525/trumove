@@ -3,6 +3,7 @@ import { Sparkles, Shield, MessageSquare, MapPin, Video, Headphones, LucideIcon 
 
 interface FloatingNavProps {
   onChatOpen?: () => void;
+  iconsOnly?: boolean;
 }
 
 interface NavItem {
@@ -21,22 +22,15 @@ const navItems: NavItem[] = [
   { icon: Headphones, label: "Call Us", href: "tel:+16097277647" },
 ];
 
-export default function FloatingNav({ onChatOpen }: FloatingNavProps) {
+export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingNavProps) {
   const location = useLocation();
 
   return (
-    <nav className="tru-static-nav-menu">
+    <nav className={`tru-static-nav-menu ${iconsOnly ? 'icons-only' : ''}`}>
       {navItems.map((item) => {
         const isActive = item.href && location.pathname === item.href;
         const Icon = item.icon;
         
-        const itemContent = (
-          <>
-            <Icon className="w-4 h-4" strokeWidth={2} />
-            <span>{item.label}</span>
-          </>
-        );
-
         const itemClasses = `tru-static-nav-item ${isActive ? 'is-active' : ''}`;
 
         if (item.action === "chat") {
@@ -45,8 +39,10 @@ export default function FloatingNav({ onChatOpen }: FloatingNavProps) {
               key={item.label}
               onClick={onChatOpen}
               className={itemClasses}
+              title={item.label}
             >
-              {itemContent}
+              <Icon className="w-5 h-5" strokeWidth={2} />
+              {!iconsOnly && <span>{item.label}</span>}
             </button>
           );
         }
@@ -57,8 +53,10 @@ export default function FloatingNav({ onChatOpen }: FloatingNavProps) {
               key={item.label}
               href={item.href}
               className={itemClasses}
+              title={item.label}
             >
-              {itemContent}
+              <Icon className="w-5 h-5" strokeWidth={2} />
+              {!iconsOnly && <span>{item.label}</span>}
             </a>
           );
         }
@@ -68,8 +66,10 @@ export default function FloatingNav({ onChatOpen }: FloatingNavProps) {
             key={item.label}
             to={item.href!}
             className={itemClasses}
+            title={item.label}
           >
-            {itemContent}
+            <Icon className="w-5 h-5" strokeWidth={2} />
+            {!iconsOnly && <span>{item.label}</span>}
           </Link>
         );
       })}
