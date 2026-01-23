@@ -326,8 +326,7 @@ export default function CarrierVetting() {
             </div>
             <div className="fmcsa-terminal-body">
               <div className="mb-5 text-center">
-                <h3 className="text-xl md:text-2xl font-bold text-white mb-2 flex items-center justify-center gap-3">
-                  <img src="https://www.fmcsa.dot.gov/themes/custom/fmcsa/logo.svg" alt="FMCSA" className="h-6 brightness-0 invert" />
+                <h3 className="text-xl md:text-2xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-b from-white/90 to-white/50 drop-shadow-[0_1px_0_rgba(0,0,0,0.8)]" style={{ textShadow: '0 -1px 0 rgba(255,255,255,0.1), 0 2px 3px rgba(0,0,0,0.5)' }}>
                   FMCSA-Verified Carrier Safety Records
                 </h3>
               </div>
