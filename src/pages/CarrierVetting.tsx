@@ -393,18 +393,18 @@ export default function CarrierVetting() {
                 <div className="sticky top-36 space-y-4">
                   {/* Add Carrier */}
                   {carriers.length < 4 && (
-                    <div className="p-4 rounded-xl border border-border bg-card">
-                      <h3 className="text-sm font-semibold text-foreground mb-3">Add Carrier</h3>
+                    <div className="p-3 rounded-xl border border-border bg-card">
+                      <h3 className="text-xs font-semibold text-foreground mb-2">Add Carrier</h3>
                       <CarrierSearch 
                         onSelect={handleAddCarrier} 
                         isLoading={isLoading}
                         className="sidebar-search"
                       />
-                      {/* Clear All - Compact link below input */}
+                      {/* Clear All - Pill button */}
                       {carriers.length > 0 && (
                         <button 
                           onClick={clearAll}
-                          className="w-full mt-2 text-[11px] text-muted-foreground hover:text-foreground text-center py-1 transition-colors"
+                          className="w-full mt-2 text-[10px] text-muted-foreground hover:text-destructive bg-muted/50 hover:bg-destructive/10 text-center py-1 px-2 rounded-full transition-colors"
                         >
                           Clear All
                         </button>
@@ -413,68 +413,76 @@ export default function CarrierVetting() {
                   )}
 
                   {/* Risk Grade Legend */}
-                  <div className="p-4 rounded-xl border border-border bg-card">
-                    <h3 className="text-sm font-semibold text-foreground mb-3">Safety Grade Legend</h3>
-                    <div className="space-y-2 text-xs">
+                  <div className="p-3 rounded-xl border border-border bg-card">
+                    <h3 className="text-xs font-bold text-slate-900 dark:text-foreground mb-2">Safety Grade Legend</h3>
+                    <div className="space-y-1.5 text-[10px]">
                       <div className="flex items-center gap-2">
-                        <span className="w-8 h-6 flex items-center justify-center rounded bg-green-500/10 text-green-600 font-bold">A+</span>
-                        <span className="text-muted-foreground">Excellent - Top-tier safety</span>
+                        <span className="w-7 h-5 flex items-center justify-center rounded bg-green-500/10 text-green-600 font-bold text-[10px]">A+</span>
+                        <span className="text-muted-foreground">Excellent - Top-tier</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-8 h-6 flex items-center justify-center rounded bg-green-500/10 text-green-600 font-bold">A</span>
-                        <span className="text-muted-foreground">Very Good - Minor concerns</span>
+                        <span className="w-7 h-5 flex items-center justify-center rounded bg-green-500/10 text-green-600 font-bold text-[10px]">A</span>
+                        <span className="text-muted-foreground">Very Good</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-8 h-6 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-600 font-bold">B</span>
+                        <span className="w-7 h-5 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-600 font-bold text-[10px]">B</span>
                         <span className="text-muted-foreground">Good - Generally safe</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-8 h-6 flex items-center justify-center rounded bg-amber-500/10 text-amber-600 font-bold">C</span>
+                        <span className="w-7 h-5 flex items-center justify-center rounded bg-amber-500/10 text-amber-600 font-bold text-[10px]">C</span>
                         <span className="text-muted-foreground">Moderate - Some issues</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-8 h-6 flex items-center justify-center rounded bg-orange-500/10 text-orange-600 font-bold">D</span>
-                        <span className="text-muted-foreground">Concerning - Review needed</span>
+                        <span className="w-7 h-5 flex items-center justify-center rounded bg-orange-500/10 text-orange-600 font-bold text-[10px]">D</span>
+                        <span className="text-muted-foreground">Concerning</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="w-8 h-6 flex items-center justify-center rounded bg-red-500/10 text-red-600 font-bold">F</span>
+                        <span className="w-7 h-5 flex items-center justify-center rounded bg-red-500/10 text-red-600 font-bold text-[10px]">F</span>
                         <span className="text-muted-foreground">High Risk - Avoid</span>
                       </div>
                     </div>
                   </div>
 
                   {/* CSA BASIC Scores Legend */}
-                  <div className="p-4 rounded-xl border border-border bg-card">
-                    <h3 className="text-sm font-semibold text-foreground mb-3">CSA BASIC Scores</h3>
-                    <div className="space-y-2 text-xs text-muted-foreground">
+                  <div className="p-3 rounded-xl border border-border bg-card">
+                    <h3 className="text-xs font-bold text-slate-900 dark:text-foreground mb-2">CSA BASIC Safety Scores</h3>
+                    <div className="space-y-1.5 text-[10px] text-muted-foreground">
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-16 shrink-0">Unsafe</span>
+                        <span className="font-medium text-foreground w-14 shrink-0">Unsafe</span>
                         <span>Speeding, reckless driving</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-16 shrink-0">HOS</span>
+                        <span className="font-medium text-foreground w-14 shrink-0">HOS</span>
                         <span>Hours of Service fatigue</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-16 shrink-0">Vehicle</span>
+                        <span className="font-medium text-foreground w-14 shrink-0">Vehicle</span>
                         <span>Brake, equipment defects</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-16 shrink-0">Fitness</span>
+                        <span className="font-medium text-foreground w-14 shrink-0">Fitness</span>
                         <span>Licensing, medical certs</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-16 shrink-0">Crash</span>
+                        <span className="font-medium text-foreground w-14 shrink-0">Crash</span>
                         <span>Crash involvement</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <span className="font-medium text-foreground w-16 shrink-0">Drugs</span>
+                        <span className="font-medium text-foreground w-14 shrink-0">Drugs</span>
                         <span>Substance violations</span>
                       </div>
-                      <p className="pt-2 text-[10px] italic border-t border-border/50 mt-2">
-                        Higher % = worse vs. peers
+                      <p className="pt-1.5 text-[9px] border-t border-border/50 mt-1.5">
+                        Higher percentiles indicate worse performance relative to peers. Scores ≥65% may trigger FMCSA intervention.
                       </p>
                     </div>
+                  </div>
+                  
+                  {/* Insurance Coverage Analysis */}
+                  <div className="p-3 rounded-xl border border-border bg-card">
+                    <h3 className="text-xs font-bold text-slate-900 dark:text-foreground mb-2">Insurance Coverage Analysis</h3>
+                    <p className="text-[9px] text-muted-foreground">
+                      Federal minimums: $750K BIPD for general freight, $5M for hazmat. Cargo insurance varies by commodity.
+                    </p>
                   </div>
 
                   {/* Quick Stats */}

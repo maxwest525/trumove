@@ -346,10 +346,10 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
           )}
           
           {/* Carrier Identity - TruMove Verified ABOVE name */}
-          <div className="space-y-1.5 pr-16">
-            {/* TruMove Verified - Black badge style, positioned higher */}
+          <div className="space-y-1 pr-16">
+            {/* TruMove Verified - Black badge style, positioned higher inside card */}
             {riskGrade.isTruMoveVerified && (
-              <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-900 dark:bg-slate-800 text-white text-[10px] font-medium w-fit -mt-1">
+              <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-900 dark:bg-slate-800 text-white text-[10px] font-medium w-fit -mt-2 -mb-0.5">
                 <CheckCircle2 className="w-3 h-3 text-green-400" />
                 <span>TruMove Verified</span>
               </div>
