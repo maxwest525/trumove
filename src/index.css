@@ -155,7 +155,7 @@
   grid-template-columns: 1.3fr minmax(420px, 460px) auto;
   gap: 20px;
   align-items: stretch;
-  padding: 16px 40px 24px;
+  padding: 16px 40px 24px 24px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -172,7 +172,7 @@
   max-width: 560px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .tru-hero-eyebrow {
@@ -200,7 +200,7 @@
   line-height: 1.1;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.03em;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .tru-hero-headline-accent {
@@ -214,7 +214,7 @@
   font-size: 15px;
   line-height: 1.6;
   color: hsl(var(--tm-ink) / 0.7);
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 /* Value Props Container - enables map overlay */
@@ -235,7 +235,7 @@
 .tru-hero-value-cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 14px;
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
