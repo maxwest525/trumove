@@ -1,4 +1,4 @@
-import { MapPin, Calendar, Ruler, Car, Package, Scale, Home, Truck } from "lucide-react";
+import { MapPin, Calendar, Ruler, Car, Package, Scale, Home, Truck, Building2, Bed } from "lucide-react";
 import { type InventoryItem, type MoveDetails, calculateTotalWeight, calculateTotalCubicFeet } from "@/lib/priceCalculator";
 import { format } from "date-fns";
 import type { ExtendedMoveDetails } from "./EstimateWizard";
@@ -20,7 +20,7 @@ export default function QuoteSnapshotVertical({ items, moveDetails, extendedDeta
     if (type === 'apartment' && floor) {
       return `Apartment • Floor ${floor} ${hasElevator ? '(Elevator)' : '(Stairs)'}`;
     }
-    return type === 'house' ? 'House' : type;
+    return type === 'house' ? 'House' : type === 'apartment' ? 'Apartment' : type;
   };
 
   // Format home size for display - plain text
@@ -44,18 +44,6 @@ export default function QuoteSnapshotVertical({ items, moveDetails, extendedDeta
     return type === 'long-distance' ? 'Long Distance' : 'Local';
   };
 
-  // Build origin detail line
-  const originPropertyLine = [
-    formatPropertyType(extendedDetails?.fromPropertyType || '', extendedDetails?.fromFloor, extendedDetails?.fromHasElevator),
-    formatHomeSize(extendedDetails?.homeSize || moveDetails.homeSize || '')
-  ].filter(Boolean).join(' • ');
-
-  // Build destination detail line
-  const destPropertyLine = [
-    formatPropertyType(extendedDetails?.toPropertyType || '', extendedDetails?.toFloor, extendedDetails?.toHasElevator),
-    formatHomeSize(extendedDetails?.toHomeSize || '')
-  ].filter(Boolean).join(' • ');
-
   return (
     <div className="tru-move-summary-card is-expanded w-full max-w-[300px]">
       {/* Header - Enlarged and Centered */}
@@ -69,23 +57,47 @@ export default function QuoteSnapshotVertical({ items, moveDetails, extendedDeta
       
       {/* Content - Left aligned rows */}
       <div className="p-4 space-y-2.5 text-left">
-        {/* From */}
+        {/* From Address */}
         <div className="flex items-center justify-between py-1.5 border-b border-border/30">
           <span className="text-sm text-muted-foreground">From</span>
-          <span className="text-sm font-medium text-foreground text-right">
+          <span className="text-sm font-medium text-foreground text-right truncate max-w-[160px]">
             {moveDetails.fromLocation || 'Not set'}
-            {originPropertyLine && <span className="text-xs text-muted-foreground ml-1">({originPropertyLine})</span>}
           </span>
         </div>
 
-        {/* To */}
+        {/* Origin Property Details */}
+        {(extendedDetails?.fromPropertyType || extendedDetails?.homeSize) && (
+          <div className="flex items-center justify-between py-1.5 border-b border-border/30">
+            <span className="text-sm text-muted-foreground">Origin home</span>
+            <span className="text-sm font-medium text-foreground text-right truncate max-w-[160px]">
+              {[
+                formatPropertyType(extendedDetails?.fromPropertyType || '', extendedDetails?.fromFloor, extendedDetails?.fromHasElevator),
+                formatHomeSize(extendedDetails?.homeSize || moveDetails.homeSize || '')
+              ].filter(Boolean).join(' • ') || '-'}
+            </span>
+          </div>
+        )}
+
+        {/* To Address */}
         <div className="flex items-center justify-between py-1.5 border-b border-border/30">
           <span className="text-sm text-muted-foreground">To</span>
-          <span className="text-sm font-medium text-foreground text-right">
+          <span className="text-sm font-medium text-foreground text-right truncate max-w-[160px]">
             {moveDetails.toLocation || 'Not set'}
-            {destPropertyLine && <span className="text-xs text-muted-foreground ml-1">({destPropertyLine})</span>}
           </span>
         </div>
+
+        {/* Destination Property Details */}
+        {(extendedDetails?.toPropertyType || extendedDetails?.toHomeSize) && (
+          <div className="flex items-center justify-between py-1.5 border-b border-border/30">
+            <span className="text-sm text-muted-foreground">Destination home</span>
+            <span className="text-sm font-medium text-foreground text-right truncate max-w-[160px]">
+              {[
+                formatPropertyType(extendedDetails?.toPropertyType || '', extendedDetails?.toFloor, extendedDetails?.toHasElevator),
+                formatHomeSize(extendedDetails?.toHomeSize || '')
+              ].filter(Boolean).join(' • ') || '-'}
+            </span>
+          </div>
+        )}
 
         {/* Distance */}
         <div className="flex items-center justify-between py-1.5 border-b border-border/30">

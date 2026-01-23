@@ -85,6 +85,9 @@ interface InventoryBuilderProps {
   specialHandling?: boolean;
   onSpecialHandlingChange?: (value: boolean) => void;
   isLocked?: boolean;
+  onAIEstimate?: () => void;
+  isEstimating?: boolean;
+  homeSize?: string;
 }
 
 const ROOM_CONFIG = [
@@ -273,7 +276,10 @@ export default function InventoryBuilder({
   onClearAll,
   specialHandling = false,
   onSpecialHandlingChange,
-  isLocked = false
+  isLocked = false,
+  onAIEstimate,
+  isEstimating = false,
+  homeSize
 }: InventoryBuilderProps) {
   const [activeRoom, setActiveRoom] = useState('Living Room');
   const [searchQuery, setSearchQuery] = useState('');
@@ -521,19 +527,23 @@ export default function InventoryBuilder({
 
       {/* Right Content - Item Grid */}
       <div className="flex-1 space-y-3">
-        {/* AI Features Row - AI Estimate + Scan Room */}
+      {/* AI Features Row - AI Estimate + Scan Room */}
         <div className="grid grid-cols-2 gap-3">
-          {/* AI Estimate Button */}
+          {/* AI Estimate Button - slate colors instead of green */}
           <button 
             type="button"
-            className="flex items-center gap-3 p-3 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all text-left"
+            onClick={onAIEstimate}
+            disabled={isEstimating}
+            className="flex items-center gap-3 p-3 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 transition-all text-left disabled:opacity-50"
           >
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Wand2 className="w-4 h-4 text-primary" />
+            <div className="p-2 rounded-lg bg-slate-200">
+              <Wand2 className={cn("w-4 h-4 text-slate-700", isEstimating && "animate-spin")} />
             </div>
             <div className="flex-1 min-w-0">
-              <span className="text-xs font-semibold text-primary block">AI Estimate</span>
-              <span className="text-[10px] text-muted-foreground">Suggest items based on home size</span>
+              <span className="text-xs font-semibold text-slate-700 block">
+                {isEstimating ? 'Estimating...' : 'AI Estimate'}
+              </span>
+              <span className="text-[10px] text-slate-500">Suggest items based on home size</span>
             </div>
           </button>
 
@@ -958,10 +968,10 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
         : "border-border/60 bg-card hover:border-primary/20",
       isAnimating && "tru-item-just-added"
     )}>
-      {/* Item Image or Icon - increased height for better image display */}
+      {/* Item Image or Icon - white background for furniture images */}
       <div className={cn(
         "w-full h-20 rounded-lg flex items-center justify-center mb-1.5 overflow-hidden",
-        quantity > 0 ? "bg-muted/40" : "bg-muted/30"
+        "bg-white"
       )}>
         <div className="w-full h-full flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-105">
           <InventoryItemImage
@@ -1045,10 +1055,10 @@ function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon, isAnimating 
         : "border-border/60 bg-card hover:border-primary/20",
       isAnimating && "tru-item-just-added"
     )}>
-      {/* Item Image or Icon - with hover zoom */}
+      {/* Item Image or Icon - white background for furniture images */}
       <div className={cn(
         "w-16 h-16 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden",
-        quantity > 0 ? "bg-primary/10" : "bg-muted/40"
+        "bg-white"
       )}>
         <div className="w-full h-full flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-105">
           <InventoryItemImage
