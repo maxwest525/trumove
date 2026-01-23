@@ -319,8 +319,39 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    // Search by MC number
+    if (searchType === 'mc' && query) {
+      // MC number search - FMCSA API uses docket number endpoint
+      const mcNumber = query.replace(/[^0-9]/g, ''); // Strip non-numeric chars
+      console.log(`Searching by MC number: ${mcNumber}`);
+      
+      const data = await fetchFMCSA(`/carriers/docket-number/${mcNumber}`, webKey);
+      
+      if (data?.content) {
+        const results = Array.isArray(data.content) ? data.content : [data.content];
+        const formatted = results.slice(0, 20).map((c: any) => ({
+          dotNumber: c.dotNumber?.toString() || c.carrier?.dotNumber?.toString() || '',
+          legalName: c.legalName || c.carrier?.legalName || '',
+          dbaName: c.dbaName || c.carrier?.dbaName || '',
+          city: c.phyCity || c.carrier?.phyCity || '',
+          state: c.phyState || c.carrier?.phyState || '',
+          phone: c.telephone || c.carrier?.telephone || ''
+        })).filter((c: any) => c.dotNumber);
+        
+        return new Response(
+          JSON.stringify({ results: formatted }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      return new Response(
+        JSON.stringify({ results: [] }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
-      JSON.stringify({ error: 'Invalid request. Provide either ?dot=XXXXXXX or ?type=name&q=company_name' }),
+      JSON.stringify({ error: 'Invalid request. Provide either ?dot=XXXXXXX, ?type=mc&q=XXXXXXX, or ?type=name&q=company_name' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

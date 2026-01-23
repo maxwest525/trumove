@@ -1,11 +1,22 @@
 import { useState } from 'react';
-import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star } from 'lucide-react';
+import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star, HelpCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { RedFlagBadge, generateRedFlags, type CarrierData as BaseCarrierData } from './RedFlagBadge';
 import { cn } from '@/lib/utils';
+
+// BASIC score descriptions for tooltips
+const BASIC_DESCRIPTIONS: Record<string, string> = {
+  'Unsafe Driving': 'Measures dangerous driving behaviors like speeding, reckless driving, and improper lane changes. Higher percentile = more violations.',
+  'HOS Compliance': 'Tracks Hours of Service violations - drivers working too long without rest. Critical for fatigue-related safety.',
+  'Vehicle Maintenance': 'Measures brake, light, and equipment defects found during inspections. Indicates fleet maintenance quality.',
+  'Driver Fitness': 'Tracks driver qualification issues - licensing, medical certs, and training records.',
+  'Crash Indicator': 'Measures crash involvement history. Higher percentile = more crashes relative to exposure.',
+  'Controlled Substances': 'Tracks drug and alcohol violations. Any positive result is a serious red flag.'
+};
 
 // Extended type with full crashes data
 interface ExtendedCarrierData extends BaseCarrierData {
@@ -131,10 +142,22 @@ function AuthorityBadge({ status }: { status: string }) {
 }
 
 function BasicScoreBar({ name, percentile, threshold = 65 }: { name: string; percentile: number | null; threshold?: number }) {
+  const description = BASIC_DESCRIPTIONS[name] || 'Safety metric percentile';
+  
   if (percentile === null) {
     return (
       <div className="flex items-center justify-between py-1.5">
-        <span className="text-xs text-muted-foreground">{name}</span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="text-xs text-muted-foreground flex items-center gap-1 cursor-help">
+              {name}
+              <HelpCircle className="w-3 h-3" />
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs">
+            <p>{description}</p>
+          </TooltipContent>
+        </Tooltip>
         <span className="text-xs text-muted-foreground">N/A</span>
       </div>
     );
@@ -149,7 +172,17 @@ function BasicScoreBar({ name, percentile, threshold = 65 }: { name: string; per
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">{name}</span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="text-xs text-muted-foreground flex items-center gap-1 cursor-help">
+              {name}
+              <HelpCircle className="w-3 h-3" />
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs">
+            <p>{description}</p>
+          </TooltipContent>
+        </Tooltip>
         <span className={cn(
           'text-xs font-medium',
           percentile >= 75 ? 'text-red-500' : 
@@ -264,6 +297,14 @@ function ExternalLinks({ companyName, dotNumber }: { companyName: string; dotNum
 }
 
 export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapshotCardProps) {
+  return (
+    <TooltipProvider>
+      <CarrierSnapshotCardInner data={data} onRemove={onRemove} className={className} />
+    </TooltipProvider>
+  );
+}
+
+function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshotCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const redFlags = generateRedFlags(data);
   const criticalFlags = redFlags.filter(f => f.severity === 'critical');
@@ -347,22 +388,22 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
                   {data.carrier.mcNumber}
                 </Badge>
               )}
-              {/* Risk Grade - Small inline badge */}
-              <div className={cn(
-                'flex items-center gap-1 px-2 py-0.5 rounded border text-xs ml-auto',
-                riskGrade.color
-              )}>
-                <span className="font-bold">{riskGrade.grade}</span>
-              </div>
+              {/* TruMove Verified - Black badge style */}
+              {riskGrade.isTruMoveVerified && (
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 dark:bg-slate-800 text-white text-[10px] font-medium">
+                  <CheckCircle2 className="w-3 h-3 text-green-400" />
+                  <span>TruMove Verified</span>
+                </div>
+              )}
             </div>
-            
-            {/* TruMove Verified - Inline subtle */}
-            {riskGrade.isTruMoveVerified && (
-              <div className="flex items-center gap-1.5 mt-1 text-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-                <span className="font-medium text-slate-600 dark:text-slate-400">TruMove Verified Partner</span>
-              </div>
-            )}
+          </div>
+          
+          {/* Risk Grade - Fixed corner position */}
+          <div className={cn(
+            'absolute top-3 right-10 flex items-center justify-center w-8 h-8 rounded-lg border-2 font-bold text-sm',
+            riskGrade.color
+          )}>
+            {riskGrade.grade}
           </div>
         </CardHeader>
 
@@ -390,14 +431,14 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
           {worstBasic && (
             <span className={cn(
               'px-2 py-1 rounded font-mono',
-              worstBasic.value! >= 65 ? 'bg-amber-500/10 text-amber-600' : 'bg-muted/50 text-muted-foreground'
+              worstBasic.value! >= 65 ? 'bg-amber-100 dark:bg-amber-500/20 text-slate-900 dark:text-amber-200' : 'bg-muted/50 text-muted-foreground'
             )}>
               {worstBasic.name} Index: {worstBasic.value}%
             </span>
           )}
           <span className={cn(
             'px-2 py-1 rounded font-mono',
-            data.crashes.fatal > 0 ? 'bg-red-500/10 text-red-600' : 'bg-muted/50 text-muted-foreground'
+            data.crashes.fatal > 0 ? 'bg-red-100 dark:bg-red-500/20 text-slate-900 dark:text-red-200' : 'bg-muted/50 text-muted-foreground'
           )}>
             {data.crashes.total} Crashes (24mo)
           </span>
@@ -405,9 +446,9 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
 
         {/* Red Flags Summary */}
         {redFlags.length > 0 && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/5 border border-red-500/20">
-            <FileWarning className="w-4 h-4 text-red-500 shrink-0" />
-            <span className="text-sm font-medium text-red-600">
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-100 dark:bg-red-500/10 border border-red-500/20">
+            <FileWarning className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
+            <span className="text-sm font-medium text-slate-900 dark:text-red-200">
               {redFlags.length} Red Flag{redFlags.length > 1 ? 's' : ''} Detected
             </span>
           </div>
