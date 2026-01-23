@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import previewImage from "@/assets/preview-ai-scanner.jpg";
+import aiScanVideo from "@/assets/ai-scan-demo.mp4";
 
 // Simulated detected items for the live demo
 const DEMO_ITEMS = [
@@ -45,6 +46,27 @@ export default function ScanRoom() {
   const startDemo = () => {
     setDetectedItems([]);
     setIsScanning(true);
+  };
+
+  // Save detected items and navigate to estimate page
+  const continueToQuote = () => {
+    // Convert demo items to inventory format
+    const inventoryItems = detectedItems.map(item => ({
+      name: item.name,
+      quantity: 1,
+      weight: item.weight,
+      room: item.room,
+    }));
+    
+    // Store in localStorage for Online Estimate page to consume
+    localStorage.setItem("tm_scanned_inventory", JSON.stringify(inventoryItems));
+    
+    toast({
+      title: "Inventory transferred!",
+      description: `${detectedItems.length} items added to your quote.`,
+    });
+    
+    navigate("/online-estimate");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,12 +112,13 @@ export default function ScanRoom() {
               >
                 <X className="w-5 h-5" />
               </button>
-              <iframe
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1"
-                title="AI Room Scanner Demo"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="tru-scan-video-iframe"
+              <video
+                src={aiScanVideo}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="tru-scan-video-player"
               />
             </div>
           </div>
@@ -254,7 +277,13 @@ export default function ScanRoom() {
             <div className="container max-w-5xl mx-auto px-4">
               <div className="tru-scan-inventory-header">
                 <h3>Detected Inventory</h3>
-                <span className="tru-scan-inventory-count">{detectedItems.length} items • {totalWeight.toLocaleString()} lbs</span>
+                <button
+                  onClick={continueToQuote}
+                  className="tru-scan-continue-btn"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                  Continue to Quote
+                </button>
               </div>
               
               <div className="tru-scan-inventory-grid">
@@ -276,6 +305,14 @@ export default function ScanRoom() {
                     <CheckCircle className="w-4 h-4 text-primary shrink-0" />
                   </div>
                 ))}
+              </div>
+              
+              <div className="tru-scan-inventory-footer">
+                <div className="tru-scan-inventory-totals">
+                  <span><strong>{detectedItems.length}</strong> items</span>
+                  <span><strong>{totalWeight.toLocaleString()}</strong> lbs</span>
+                  <span><strong>{totalCuFt}</strong> cu ft</span>
+                </div>
               </div>
             </div>
           </section>
