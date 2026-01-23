@@ -332,8 +332,8 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
     <div className="relative">
 
       <Card className={cn(
-        'bg-card/80 backdrop-blur border-border/50 overflow-hidden transition-all',
-        criticalFlags.length > 0 && 'border-red-500/50',
+        'bg-card/80 backdrop-blur overflow-hidden transition-all',
+        criticalFlags.length > 0 ? 'border-2 border-red-500/50' : 'border border-slate-300 dark:border-slate-600',
         className
       )}>
         <CardHeader className="pb-3 relative">

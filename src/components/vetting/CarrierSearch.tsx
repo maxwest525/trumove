@@ -149,7 +149,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                     ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
                     : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'name' 
-                    ? 'text-white border-green-500/60 shadow-sm' 
+                    ? 'text-white border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
                     : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20 active:bg-white/20')
             )}
             onClick={() => setSearchType('name')}
@@ -169,7 +169,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                     ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
                     : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'dot' 
-                    ? 'text-white border-green-500/60 shadow-sm' 
+                    ? 'text-white border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
                     : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20 active:bg-white/20')
             )}
             onClick={() => setSearchType('dot')}
@@ -189,7 +189,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                     ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
                     : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'mc' 
-                    ? 'text-white border-green-500/60 shadow-sm' 
+                    ? 'text-white border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
                     : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20 active:bg-white/20')
             )}
             onClick={() => setSearchType('mc')}

@@ -326,10 +326,13 @@ export default function CarrierVetting() {
             </div>
             <div className="fmcsa-terminal-body">
               <div className="mb-5 text-center">
-                <h3 className="text-lg font-bold text-white mb-2">FMCSA-Verified Carrier Safety Records</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-2 flex items-center justify-center gap-3">
+                  <img src="https://www.fmcsa.dot.gov/themes/custom/fmcsa/logo.svg" alt="FMCSA" className="h-6 brightness-0 invert" />
+                  FMCSA-Verified Carrier Safety Records
+                </h3>
               </div>
               <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
-              <p className="text-[10px] text-white/50 leading-relaxed mt-4 text-center">
+              <p className="text-xs text-white/60 leading-relaxed mt-4 text-center">
                 All carriers are filtered and continuously monitored per official FMCSA Safety Measurement System (SMS) criteria and federal compliance standards. Click any card for detailed report including Behavior Analysis and Safety Improvement Categories (BASICs), roadside inspection results, crash involvement, and safety fitness evaluation.
               </p>
             </div>
@@ -360,7 +363,7 @@ export default function CarrierVetting() {
           {/* Results Header - Only when carriers exist */}
           {carriers.length > 0 && (
             <div className="mb-6 max-w-3xl mx-auto">
-              <h2 className="text-xl font-bold text-foreground text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center">
                 Carrier Safety Comparison
               </h2>
             </div>
@@ -402,18 +405,18 @@ export default function CarrierVetting() {
                 <div className="sticky top-36 space-y-4">
                   {/* Add Carrier */}
                   {carriers.length < 4 && (
-                    <div className="p-3 rounded-xl border border-border bg-card">
+                    <div className="p-3 rounded-xl border-2 border-primary/40 bg-card">
                       <h3 className="text-xs font-semibold text-foreground mb-2">Add Carrier</h3>
                       <CarrierSearch 
                         onSelect={handleAddCarrier} 
                         isLoading={isLoading}
                         className="sidebar-search"
                       />
-                      {/* Clear All - Pill button */}
+                      {/* Clear All - Pill button with border */}
                       {carriers.length > 0 && (
                         <button 
                           onClick={clearAll}
-                          className="w-full mt-2 text-[10px] text-muted-foreground hover:text-destructive bg-muted/50 hover:bg-destructive/10 text-center py-1 px-2 rounded-full transition-colors"
+                          className="w-full mt-2 text-[10px] text-muted-foreground hover:text-destructive bg-muted/50 hover:bg-destructive/10 border border-border text-center py-1 px-2 rounded-full transition-colors"
                         >
                           Clear All
                         </button>
