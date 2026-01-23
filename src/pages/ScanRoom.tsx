@@ -4,7 +4,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import { 
   Scan, Sparkles, ArrowRight, 
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
-  Ruler, Package, Printer, Download
+  Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -257,7 +257,7 @@ export default function ScanRoom() {
         <section className="tru-scan-header-section">
           <div className="container max-w-4xl mx-auto px-4 text-center">
             <h1 className="tru-scan-main-headline">
-              Let AI Build Your <span className="tru-scan-headline-accent">Virtual Inventory</span>
+              Start Your <span className="tru-scan-headline-accent">AI Inventory Analysis</span>
             </h1>
             <p className="tru-scan-main-subheadline">
               Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
@@ -339,15 +339,26 @@ export default function ScanRoom() {
                 </div>
               </div>
 
-              {/* Begin Scan Button - Bottom Right */}
-              <button 
-                onClick={startDemo}
-                disabled={isScanning}
-                className="tru-scan-begin-pill"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{isScanning ? "Scanning..." : "Begin AI Inventory Scan"}</span>
-              </button>
+              {/* Scan Control Buttons - Bottom Right */}
+              <div className="tru-scan-control-pills">
+                {isScanning ? (
+                  <button 
+                    onClick={() => setIsScanning(false)}
+                    className="tru-scan-stop-pill"
+                  >
+                    <Square className="w-3.5 h-3.5" />
+                    <span>Stop Scan</span>
+                  </button>
+                ) : (
+                  <button 
+                    onClick={startDemo}
+                    className="tru-scan-begin-pill"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Begin AI Inventory Scan</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Floating Inventory Bar */}
@@ -453,10 +464,41 @@ export default function ScanRoom() {
                       <Download className="w-4 h-4" />
                       Download as PDF
                     </button>
-                    <Link to="/online-estimate" className="tru-scan-btn-dark">
-                      <Sparkles className="w-4 h-4" />
-                      Continue to Quote
-                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setDetectedItems([])}
+                      disabled={detectedItems.length === 0}
+                      className="tru-scan-action-btn tru-scan-action-btn-danger"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Clear All
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Save to localStorage for manual builder sync
+                        const inventoryForBuilder = detectedItems.map((item, idx) => ({
+                          id: `scanned-${item.id}-${Date.now()}`,
+                          name: item.name,
+                          room: item.room,
+                          quantity: 1,
+                          weightEach: item.weight,
+                          cubicFeet: item.cuft,
+                          imageUrl: item.image,
+                        }));
+                        localStorage.setItem('tm_scanned_inventory', JSON.stringify(inventoryForBuilder));
+                        toast({
+                          title: "Inventory synced!",
+                          description: "Your scanned items have been added to the manual builder.",
+                        });
+                        navigate('/online-estimate');
+                      }}
+                      disabled={detectedItems.length === 0}
+                      className="tru-scan-btn-dark"
+                    >
+                      <ArrowRightLeft className="w-4 h-4" />
+                      Migrate to Manual Builder
+                    </button>
                   </div>
                 </>
               )}
