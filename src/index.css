@@ -14288,85 +14288,89 @@
 }
 
 /* =============================================
-   SCAN ROOM - INLINE HOW IT WORKS (Between Header & Demo)
+   SCAN ROOM - STEPS BAR (Section Divider)
    ============================================= */
-.tru-scan-how-section-inline {
-  padding: 24px 24px 32px;
+.tru-scan-steps-bar {
+  background: hsl(var(--tm-ink));
+  padding: 20px 24px;
+  margin-bottom: 32px;
 }
 
-.tru-scan-how-title-inline {
-  font-size: 18px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.tru-scan-how-steps-inline {
+.tru-scan-steps-bar-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 24px;
   flex-wrap: wrap;
 }
 
-.tru-scan-how-step-inline {
+.tru-scan-steps-bar-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.tru-scan-steps-bar-steps {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 20px;
-  background: white;
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
+  flex-wrap: wrap;
 }
 
-.tru-scan-how-num-inline {
+.tru-scan-steps-bar-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tru-scan-steps-bar-num {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: hsl(var(--primary));
-  color: hsl(var(--tm-ink));
-  font-size: 13px;
-  font-weight: 800;
+  width: 24px;
+  height: 24px;
+  background: hsl(0 0% 100% / 0.15);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.tru-scan-how-text-inline {
+.tru-scan-steps-bar-text {
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
 
-.tru-scan-how-text-inline strong {
-  font-size: 13px;
-  font-weight: 700;
-  color: hsl(var(--tm-ink));
+.tru-scan-steps-bar-text strong {
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
 }
 
-.tru-scan-how-text-inline span {
-  font-size: 11px;
-  color: hsl(var(--tm-ink) / 0.5);
+.tru-scan-steps-bar-text span {
+  font-size: 10px;
+  color: hsl(0 0% 100% / 0.5);
 }
 
-.tru-scan-how-arrow-inline {
-  width: 16px;
-  height: 16px;
-  color: hsl(var(--tm-ink) / 0.25);
+.tru-scan-steps-bar-arrow {
+  width: 14px;
+  height: 14px;
+  color: hsl(0 0% 100% / 0.3);
   flex-shrink: 0;
 }
 
-@media (max-width: 768px) {
-  .tru-scan-how-steps-inline {
+@media (max-width: 900px) {
+  .tru-scan-steps-bar-inner {
     flex-direction: column;
-    gap: 12px;
+    text-align: center;
   }
   
-  .tru-scan-how-arrow-inline {
-    transform: rotate(90deg);
+  .tru-scan-steps-bar-steps {
+    justify-content: center;
   }
 }
 
@@ -14520,6 +14524,37 @@
   color: hsl(0 0% 100% / 0.6);
 }
 
+/* Dark button style - no green */
+.tru-scan-status-btn-dark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: white;
+  color: hsl(var(--tm-ink));
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-scan-status-btn-dark:hover:not(:disabled) {
+  background: hsl(0 0% 95%);
+}
+
+.tru-scan-status-btn-dark:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.tru-scan-status-btn-dark .tru-scan-spinner-small {
+  border-color: hsl(var(--tm-ink) / 0.2);
+  border-top-color: hsl(var(--tm-ink));
+}
+
+/* Legacy green button (kept for compatibility) */
 .tru-scan-status-btn {
   display: flex;
   align-items: center;
