@@ -35,6 +35,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Scale,
+  Sparkles,
+  Zap,
   type LucideIcon
 } from "lucide-react";
 import { ROOM_SUGGESTIONS, type InventoryItem, type ItemDefinition } from "@/lib/priceCalculator";
@@ -43,6 +45,29 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { CustomItemModal } from "./CustomItemModal";
 import { InventoryItemImage } from "./InventoryItemImage";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface InventoryBuilderProps {
   onAddItem: (item: Omit<InventoryItem, 'id'>) => void;
@@ -67,6 +92,108 @@ const ROOM_CONFIG = [
   { id: 'Exercise & Sports', label: 'Exercise', icon: Dumbbell },
   { id: 'Boxes & Cartons', label: 'Boxes', icon: Box },
 ];
+
+// Popular items for quick access (most commonly moved)
+const POPULAR_ITEMS = [
+  { name: 'Sofa, 3 Cushion', room: 'Living Room' },
+  { name: 'Bed, Queen (complete)', room: 'Bedroom' },
+  { name: 'Dining Table', room: 'Dining Room' },
+  { name: 'Refrigerator (22+ cu ft)', room: 'Appliances' },
+  { name: 'Medium Box', room: 'Boxes & Cartons' },
+  { name: 'Dresser, Triple', room: 'Bedroom' },
+  { name: 'TV, Plasma/LCD', room: 'Living Room' },
+  { name: 'Desk', room: 'Office' },
+  { name: 'Coffee Table', room: 'Living Room' },
+  { name: 'Wardrobe Box', room: 'Boxes & Cartons' },
+  { name: 'Dining Chair', room: 'Dining Room' },
+  { name: 'Bookcase, Medium', room: 'Living Room' },
+];
+
+// Room presets for quick setup
+const ROOM_PRESETS: Record<string, Array<{ name: string; room: string; quantity: number }>> = {
+  'studio': [
+    { name: 'Bed, Full (complete)', room: 'Bedroom', quantity: 1 },
+    { name: 'Dresser, Single', room: 'Bedroom', quantity: 1 },
+    { name: 'Night Stand', room: 'Bedroom', quantity: 1 },
+    { name: 'Sofa, Loveseat', room: 'Living Room', quantity: 1 },
+    { name: 'Coffee Table', room: 'Living Room', quantity: 1 },
+    { name: 'TV, Plasma/LCD', room: 'Living Room', quantity: 1 },
+    { name: 'Kitchen Table', room: 'Kitchen', quantity: 1 },
+    { name: 'Kitchen Chair', room: 'Kitchen', quantity: 2 },
+    { name: 'Medium Box', room: 'Boxes & Cartons', quantity: 15 },
+    { name: 'Small Box', room: 'Boxes & Cartons', quantity: 10 },
+  ],
+  '1br': [
+    { name: 'Bed, Queen (complete)', room: 'Bedroom', quantity: 1 },
+    { name: 'Dresser, Triple', room: 'Bedroom', quantity: 1 },
+    { name: 'Night Stand', room: 'Bedroom', quantity: 2 },
+    { name: 'Sofa, 3 Cushion', room: 'Living Room', quantity: 1 },
+    { name: 'Coffee Table', room: 'Living Room', quantity: 1 },
+    { name: 'TV, Plasma/LCD', room: 'Living Room', quantity: 1 },
+    { name: 'End Table', room: 'Living Room', quantity: 2 },
+    { name: 'Dining Table', room: 'Dining Room', quantity: 1 },
+    { name: 'Dining Chair', room: 'Dining Room', quantity: 4 },
+    { name: 'Refrigerator (22+ cu ft)', room: 'Appliances', quantity: 1 },
+    { name: 'Washer, Front Load', room: 'Appliances', quantity: 1 },
+    { name: 'Dryer, Front Load', room: 'Appliances', quantity: 1 },
+    { name: 'Medium Box', room: 'Boxes & Cartons', quantity: 20 },
+    { name: 'Small Box', room: 'Boxes & Cartons', quantity: 15 },
+    { name: 'Wardrobe Box', room: 'Boxes & Cartons', quantity: 2 },
+  ],
+  '2br': [
+    { name: 'Bed, Queen (complete)', room: 'Bedroom', quantity: 1 },
+    { name: 'Bed, Full (complete)', room: 'Bedroom', quantity: 1 },
+    { name: 'Dresser, Triple', room: 'Bedroom', quantity: 2 },
+    { name: 'Night Stand', room: 'Bedroom', quantity: 4 },
+    { name: 'Sofa, 3 Cushion', room: 'Living Room', quantity: 1 },
+    { name: 'Chair, Overstuffed', room: 'Living Room', quantity: 1 },
+    { name: 'Coffee Table', room: 'Living Room', quantity: 1 },
+    { name: 'TV, Plasma/LCD', room: 'Living Room', quantity: 2 },
+    { name: 'End Table', room: 'Living Room', quantity: 2 },
+    { name: 'Bookcase, Medium', room: 'Living Room', quantity: 1 },
+    { name: 'Dining Table', room: 'Dining Room', quantity: 1 },
+    { name: 'Dining Chair', room: 'Dining Room', quantity: 6 },
+    { name: 'Refrigerator (22+ cu ft)', room: 'Appliances', quantity: 1 },
+    { name: 'Washer, Front Load', room: 'Appliances', quantity: 1 },
+    { name: 'Dryer, Front Load', room: 'Appliances', quantity: 1 },
+    { name: 'Desk', room: 'Office', quantity: 1 },
+    { name: 'Office Chair', room: 'Office', quantity: 1 },
+    { name: 'Medium Box', room: 'Boxes & Cartons', quantity: 30 },
+    { name: 'Small Box', room: 'Boxes & Cartons', quantity: 20 },
+    { name: 'Large Box', room: 'Boxes & Cartons', quantity: 10 },
+    { name: 'Wardrobe Box', room: 'Boxes & Cartons', quantity: 4 },
+  ],
+  '3br': [
+    { name: 'Bed, King (complete)', room: 'Bedroom', quantity: 1 },
+    { name: 'Bed, Queen (complete)', room: 'Bedroom', quantity: 1 },
+    { name: 'Bed, Full (complete)', room: 'Bedroom', quantity: 1 },
+    { name: 'Dresser, Triple', room: 'Bedroom', quantity: 2 },
+    { name: 'Dresser, Double', room: 'Bedroom', quantity: 1 },
+    { name: 'Night Stand', room: 'Bedroom', quantity: 6 },
+    { name: 'Chest of Drawers', room: 'Bedroom', quantity: 2 },
+    { name: 'Sofa, Sectional', room: 'Living Room', quantity: 1 },
+    { name: 'Chair, Overstuffed', room: 'Living Room', quantity: 2 },
+    { name: 'Coffee Table', room: 'Living Room', quantity: 1 },
+    { name: 'TV, Plasma/LCD', room: 'Living Room', quantity: 3 },
+    { name: 'TV Stand', room: 'Living Room', quantity: 2 },
+    { name: 'End Table', room: 'Living Room', quantity: 2 },
+    { name: 'Bookcase, Large', room: 'Living Room', quantity: 1 },
+    { name: 'Dining Table', room: 'Dining Room', quantity: 1 },
+    { name: 'Dining Chair', room: 'Dining Room', quantity: 8 },
+    { name: 'Buffet/Hutch', room: 'Dining Room', quantity: 1 },
+    { name: 'Refrigerator (22+ cu ft)', room: 'Appliances', quantity: 1 },
+    { name: 'Washer, Front Load', room: 'Appliances', quantity: 1 },
+    { name: 'Dryer, Front Load', room: 'Appliances', quantity: 1 },
+    { name: 'Desk', room: 'Office', quantity: 2 },
+    { name: 'Office Chair', room: 'Office', quantity: 2 },
+    { name: 'File Cabinet, 2 Drawer', room: 'Office', quantity: 1 },
+    { name: 'Medium Box', room: 'Boxes & Cartons', quantity: 45 },
+    { name: 'Small Box', room: 'Boxes & Cartons', quantity: 30 },
+    { name: 'Large Box', room: 'Boxes & Cartons', quantity: 15 },
+    { name: 'Wardrobe Box', room: 'Boxes & Cartons', quantity: 6 },
+    { name: 'Dish Pack', room: 'Boxes & Cartons', quantity: 4 },
+  ],
+};
 
 // Icon mapping for inventory items based on item name keywords
 const getItemIcon = (itemName: string, roomId: string): LucideIcon => {
@@ -129,7 +256,7 @@ const getItemIcon = (itemName: string, roomId: string): LucideIcon => {
   return roomConfig?.icon || Box;
 };
 
-const ITEMS_PER_PAGE_OPTIONS = [9, 12, 18, 24];
+const ITEMS_PER_PAGE_OPTIONS = [8, 12, 16, 24];
 
 export default function InventoryBuilder({ 
   onAddItem, 
@@ -144,15 +271,18 @@ export default function InventoryBuilder({
   const [searchQuery, setSearchQuery] = useState('');
   const [itemQuantities, setItemQuantities] = useState<Record<string, number>>({});
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [itemsPerPage, setItemsPerPage] = useState(9);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [customModalOpen, setCustomModalOpen] = useState(false);
   const [recentlyUpdated, setRecentlyUpdated] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [presetDialogOpen, setPresetDialogOpen] = useState(false);
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const prevTotalRef = useRef(0);
 
   // Get all items for search with room info
   const allItemsWithRoom = useMemo(() => {
-    const result: Array<{ name: string; cubicFeet: number; defaultWeight: number; room: string }> = [];
+    const result: Array<{ name: string; cubicFeet: number; defaultWeight: number; room: string; imageUrl?: string }> = [];
     for (const [room, items] of Object.entries(ROOM_SUGGESTIONS)) {
       for (const item of items) {
         result.push({ ...item, room });
@@ -167,7 +297,7 @@ export default function InventoryBuilder({
     const query = searchQuery.toLowerCase();
     return allItemsWithRoom
       .filter(item => item.name.toLowerCase().includes(query))
-      .slice(0, 12);
+      .slice(0, 8);
   }, [searchQuery, allItemsWithRoom]);
 
   // Get room item counts from actual inventory
@@ -238,6 +368,49 @@ export default function InventoryBuilder({
         }
       }
     }
+  };
+
+  // Quick add from search/popular items
+  const handleQuickAdd = (itemName: string, room: string) => {
+    const roomItems = ROOM_SUGGESTIONS[room] || [];
+    const item = roomItems.find(i => i.name === itemName);
+    if (item) {
+      handleQuantityChange(item, room, 1);
+    }
+    setSearchQuery('');
+    setSearchOpen(false);
+  };
+
+  // Apply room preset
+  const handleApplyPreset = () => {
+    if (!selectedPreset) return;
+    
+    // Clear existing inventory
+    setItemQuantities({});
+    onClearAll?.();
+    
+    // Add preset items
+    const presetItems = ROOM_PRESETS[selectedPreset] || [];
+    for (const presetItem of presetItems) {
+      const roomItems = ROOM_SUGGESTIONS[presetItem.room] || [];
+      const item = roomItems.find(i => i.name === presetItem.name);
+      if (item) {
+        const key = `${presetItem.room}-${presetItem.name}`;
+        setItemQuantities(prev => ({ ...prev, [key]: presetItem.quantity }));
+        onAddItem({
+          name: item.name,
+          room: presetItem.room,
+          quantity: presetItem.quantity,
+          weightEach: item.defaultWeight,
+          cubicFeet: item.cubicFeet,
+          specialHandling: false,
+          imageUrl: item.imageUrl,
+        });
+      }
+    }
+    
+    setPresetDialogOpen(false);
+    setSelectedPreset(null);
   };
 
   const handleAddCustomItem = (customItem: {
@@ -338,7 +511,7 @@ export default function InventoryBuilder({
       </div>
 
       {/* Right Content - Item Grid */}
-      <div className="flex-1 space-y-4">
+      <div className="flex-1 space-y-3">
         {/* Instructions Banner - only when no items added */}
         {inventoryItems.length === 0 && (
           <div className="flex items-center gap-3 p-3 rounded-xl border border-primary/20 bg-primary/5">
@@ -348,33 +521,141 @@ export default function InventoryBuilder({
                 Start Building Your Inventory
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Browse rooms on the left, then click + to add items. Your inventory list will appear below.
+                Use Quick Add below, browse rooms on the left, or load a preset to get started.
               </p>
             </div>
           </div>
         )}
+
+        {/* Quick Add Section - Popular Items */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Zap className="w-3.5 h-3.5 text-primary" />
+            <span className="text-[10px] font-black tracking-[0.15em] uppercase text-muted-foreground">
+              Quick Add
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {POPULAR_ITEMS.slice(0, 8).map((popItem) => {
+              const qty = getItemQuantity(popItem.name, popItem.room);
+              return (
+                <button
+                  key={`${popItem.room}-${popItem.name}`}
+                  type="button"
+                  onClick={() => handleQuickAdd(popItem.name, popItem.room)}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all",
+                    qty > 0
+                      ? "bg-primary/15 text-primary border border-primary/30"
+                      : "bg-muted/50 text-foreground/80 border border-border/40 hover:bg-muted hover:border-primary/30"
+                  )}
+                >
+                  <Plus className="w-3 h-3" />
+                  <span className="truncate max-w-[100px]">{popItem.name.split(',')[0]}</span>
+                  {qty > 0 && (
+                    <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 rounded-full">
+                      {qty}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Room Presets */}
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <span className="text-[10px] font-black tracking-[0.15em] uppercase text-muted-foreground">
+            Presets
+          </span>
+          <div className="flex gap-1.5 ml-1">
+            {[
+              { id: 'studio', label: 'Studio' },
+              { id: '1br', label: '1 BR' },
+              { id: '2br', label: '2 BR' },
+              { id: '3br', label: '3+ BR' },
+            ].map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => {
+                  setSelectedPreset(preset.id);
+                  setPresetDialogOpen(true);
+                }}
+                className="px-2.5 py-1 rounded-md text-[10px] font-semibold bg-amber-500/10 text-amber-700 border border-amber-500/30 hover:bg-amber-500/20 transition-all"
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
         
         {/* Search Bar & Special Handling Toggle */}
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search all items..."
-              className="w-full h-10 pl-10 pr-10 rounded-lg border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-muted flex items-center justify-center hover:bg-muted-foreground/20"
-              >
-                <X className="w-3 h-3 text-muted-foreground" />
-              </button>
-            )}
-          </div>
+          {/* Command-based Search */}
+          <Popover open={searchOpen} onOpenChange={setSearchOpen}>
+            <PopoverTrigger asChild>
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    if (e.target.value.trim()) {
+                      setSearchOpen(true);
+                    }
+                  }}
+                  onFocus={() => {
+                    if (searchQuery.trim()) {
+                      setSearchOpen(true);
+                    }
+                  }}
+                  placeholder="Search all items..."
+                  className="w-full h-10 pl-10 pr-10 rounded-lg border border-border/60 bg-card text-sm font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSearchOpen(false);
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-muted flex items-center justify-center hover:bg-muted-foreground/20"
+                  >
+                    <X className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                )}
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-[300px] p-0" align="start">
+              <Command>
+                <CommandList>
+                  {searchResults.length === 0 ? (
+                    <CommandEmpty>No items found.</CommandEmpty>
+                  ) : (
+                    <CommandGroup heading={`${searchResults.length} results`}>
+                      {searchResults.map((item) => (
+                        <CommandItem
+                          key={`${item.room}-${item.name}`}
+                          value={item.name}
+                          onSelect={() => handleQuickAdd(item.name, item.room)}
+                          className="flex items-center justify-between cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            <Plus className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-sm">{item.name}</span>
+                          </div>
+                          <span className="text-[10px] text-muted-foreground">{item.room}</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
           
           {/* Special Handling Toggle */}
           <div className={cn(
@@ -404,29 +685,6 @@ export default function InventoryBuilder({
             />
           </div>
         </div>
-
-        {/* Search Results */}
-        {searchResults.length > 0 && (
-          <div className="p-3 rounded-xl border border-border/60 bg-muted/30">
-            <div className="text-[9px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-2">
-              {searchResults.length} results
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {searchResults.map((item) => (
-                <ItemCard
-                  key={`${item.room}-${item.name}`}
-                  item={item}
-                  room={item.room}
-                  quantity={getItemQuantity(item.name, item.room)}
-                  onAdd={() => handleQuantityChange(item, item.room, 1)}
-                  onRemove={() => handleQuantityChange(item, item.room, -1)}
-                  showRoom
-                  icon={getItemIcon(item.name, item.room)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Room Section Header with View Controls */}
         {!searchQuery && (
@@ -490,7 +748,7 @@ export default function InventoryBuilder({
             {suggestions.length > 0 ? (
               <>
             {viewMode === 'grid' ? (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-4 gap-2">
                     {paginatedSuggestions.map((item) => {
                       const key = `${activeRoom}-${item.name}`;
                       return (
@@ -512,10 +770,10 @@ export default function InventoryBuilder({
                       <button
                         type="button"
                         onClick={() => setCustomModalOpen(true)}
-                        className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all min-h-[120px] text-muted-foreground hover:text-foreground"
+                        className="flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-all min-h-[100px] text-muted-foreground hover:text-foreground"
                       >
-                        <Plus className="w-6 h-6" />
-                        <span className="text-xs font-semibold text-center">Add Custom</span>
+                        <Plus className="w-5 h-5" />
+                        <span className="text-[10px] font-semibold text-center">Add Custom</span>
                       </button>
                     )}
                   </div>
@@ -621,6 +879,24 @@ export default function InventoryBuilder({
         onAdd={handleAddCustomItem}
         defaultRoom={activeRoom}
       />
+
+      {/* Preset Confirmation Dialog */}
+      <AlertDialog open={presetDialogOpen} onOpenChange={setPresetDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Load Preset Inventory?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will replace your current inventory with a typical {selectedPreset === 'studio' ? 'studio apartment' : selectedPreset === '1br' ? '1 bedroom' : selectedPreset === '2br' ? '2 bedroom' : '3+ bedroom'} setup. You can customize it after loading.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleApplyPreset}>
+              Load Preset
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -646,17 +922,17 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
         : "border-border/60 bg-card hover:border-primary/20",
       isAnimating && "tru-item-just-added"
     )}>
-      {/* Item Image or Icon - with hover zoom - reduced height */}
+      {/* Item Image or Icon - increased height for better image display */}
       <div className={cn(
-        "w-full h-16 rounded-lg flex items-center justify-center mb-1.5 overflow-hidden",
+        "w-full h-20 rounded-lg flex items-center justify-center mb-1.5 overflow-hidden",
         quantity > 0 ? "bg-muted/40" : "bg-muted/30"
       )}>
-        <div className="transition-transform duration-300 ease-out group-hover:scale-110">
+        <div className="w-full h-full flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-105">
           <InventoryItemImage
             src={item.imageUrl}
             alt={item.name}
             fallbackIcon={Icon}
-            className="w-full h-full object-contain"
+            className="w-full h-full"
             iconClassName={cn(
               "!w-8 !h-8",
               quantity > 0 ? "text-primary" : "text-muted-foreground/60"
@@ -666,32 +942,32 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
       </div>
       
       {/* Item Name */}
-      <div className="flex-1 min-h-[40px]">
-        <p className="text-xs font-semibold text-foreground leading-tight line-clamp-2">
+      <div className="flex-1 min-h-[36px]">
+        <p className="text-[11px] font-semibold text-foreground leading-tight line-clamp-2">
           {item.name}
         </p>
         {showRoom && (
-          <p className="text-[10px] text-muted-foreground mt-0.5">{room}</p>
+          <p className="text-[9px] text-muted-foreground mt-0.5">{room}</p>
         )}
-        <p className="text-[10px] text-muted-foreground mt-0.5">
+        <p className="text-[9px] text-muted-foreground mt-0.5">
           ~{item.cubicFeet || Math.ceil(item.defaultWeight / 7)} cu.ft
         </p>
       </div>
       
       {/* Quantity Controls */}
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/40">
+      <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-border/40">
         <button
           type="button"
           onClick={onRemove}
           disabled={quantity === 0}
           className={cn(
-            "w-7 h-7 rounded-full flex items-center justify-center transition-all",
+            "w-6 h-6 rounded-full flex items-center justify-center transition-all",
             quantity > 0 
               ? "bg-muted hover:bg-muted-foreground/20 text-foreground" 
               : "bg-muted/50 text-muted-foreground/50 cursor-not-allowed"
           )}
         >
-          <Minus className="w-3.5 h-3.5" />
+          <Minus className="w-3 h-3" />
         </button>
         
         <span className={cn(
@@ -704,9 +980,9 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
         <button
           type="button"
           onClick={onAdd}
-          className="w-7 h-7 rounded-full border-2 border-primary bg-card text-foreground flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
+          className="w-6 h-6 rounded-full border-2 border-primary bg-card text-foreground flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
         >
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="w-3 h-3" />
         </button>
       </div>
     </div>
@@ -735,17 +1011,17 @@ function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon, isAnimating 
     )}>
       {/* Item Image or Icon - with hover zoom */}
       <div className={cn(
-        "w-20 h-20 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden",
+        "w-16 h-16 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden",
         quantity > 0 ? "bg-primary/10" : "bg-muted/40"
       )}>
-        <div className="transition-transform duration-300 ease-out group-hover:scale-110">
+        <div className="w-full h-full flex items-center justify-center transition-transform duration-300 ease-out group-hover:scale-105">
           <InventoryItemImage
             src={item.imageUrl}
             alt={item.name}
             fallbackIcon={Icon}
-            className="w-[72px] h-[72px]"
+            className="w-full h-full"
             iconClassName={cn(
-              "!w-10 !h-10",
+              "!w-8 !h-8",
               quantity > 0 ? "text-primary" : "text-muted-foreground/60"
             )}
           />

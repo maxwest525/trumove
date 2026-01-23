@@ -26,7 +26,7 @@ export function InventoryItemImage({
   }
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative flex items-center justify-center", className)}>
       {!loaded && (
         <div className="absolute inset-0 bg-muted/60 animate-pulse rounded-md" />
       )}
@@ -34,7 +34,7 @@ export function InventoryItemImage({
         src={src}
         alt={alt}
         className={cn(
-          "w-full h-full object-contain transition-opacity duration-200 mix-blend-multiply scale-125",
+          "w-full h-full object-contain transition-opacity duration-200 mix-blend-multiply",
           loaded ? "opacity-100" : "opacity-0"
         )}
         onLoad={() => setLoaded(true)}
