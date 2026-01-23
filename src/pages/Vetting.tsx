@@ -2,416 +2,286 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { 
-  Shield, CheckCircle2, AlertTriangle, Search, ExternalLink, 
+  Shield, CheckCircle2, Search, ExternalLink, 
   Star, Truck, FileCheck, Activity, BadgeCheck, Eye, 
-  Scale, UserCheck, TrendingUp, XCircle, ChevronRight
+  Settings, Home, Users, MapPin, Lock, Bell,
+  ChevronRight, TrendingUp, AlertTriangle, XCircle,
+  Filter, Download, MoreHorizontal
 } from "lucide-react";
-import previewImage from "@/assets/preview-carrier-vetting.jpg";
 
-const VETTING_STEPS = [
-  {
-    step: 1,
-    title: "Pre-screen",
-    icon: UserCheck,
-    description: "Business identity, years in business, service areas, and ownership verified."
-  },
-  {
-    step: 2,
-    title: "Compliance",
-    icon: FileCheck,
-    description: "USDOT / MC status, licensing, insurance, and safety record must meet TruMove standards."
-  },
-  {
-    step: 3,
-    title: "Reputation",
-    icon: Star,
-    description: "Reviews, complaints, and claims history screened across multiple sources."
-  },
-  {
-    step: 4,
-    title: "Live scoring",
-    icon: TrendingUp,
-    description: "On time rate, damages, and upcharges tracked on every TruMove job."
-  }
+// Sample carrier data
+const SAMPLE_CARRIERS = [
+  { id: 1, name: "Swift Family Movers", usdot: "1847293", mc: "MC-847291", status: "Verified", score: "A+", location: "Miami, FL", onTime: "98.2%", claims: 0 },
+  { id: 2, name: "Heartland Van Lines", usdot: "2938471", mc: "MC-293847", status: "Verified", score: "A", location: "Dallas, TX", onTime: "96.8%", claims: 1 },
+  { id: 3, name: "Coastal Moving Co", usdot: "3847291", mc: "MC-384729", status: "Pending", score: "B+", location: "Seattle, WA", onTime: "94.1%", claims: 2 },
+  { id: 4, name: "Mountain Express", usdot: "4928374", mc: "MC-492837", status: "Verified", score: "A", location: "Denver, CO", onTime: "97.5%", claims: 0 },
+  { id: 5, name: "Liberty Logistics", usdot: "5839274", mc: "MC-583927", status: "Review", score: "B", location: "Chicago, IL", onTime: "91.3%", claims: 3 },
 ];
 
-const LEGAL_CHECKS = [
-  "USDOT & MC active, not revoked",
-  "Operating authority for household goods",
-  "Safety rating and CSA scores",
-  "Cargo & liability limits in force",
-  "Worker's comp where required"
-];
-
-const REPUTATION_CHECKS = [
-  "Google, Yelp, BBB review patterns",
-  "Hostage load and scam indicators",
-  "Damage & claim frequency",
-  "On time pickup / delivery rates",
-  "Surprise upcharge rate on move day"
-];
-
-const ZERO_TOLERANCE = [
-  { title: "Hostage loads", desc: "Demanding more money after loading or refusing delivery." },
-  { title: "Bait and switch", desc: "Large, unjustified increases far beyond the quoted range." },
-  { title: "Safety violations", desc: "Unqualified drivers, hours abuse, or unsafe vehicles." },
-  { title: "Fraudulent identity", desc: "Fake reviews, shell companies, or repeated reincarnations." },
-  { title: "Chronic damage", desc: "Patterns showing customers consistently left unprotected." }
+const RECENT_ACTIVITY = [
+  { type: "verified", carrier: "Swift Family Movers", time: "2 hours ago" },
+  { type: "rejected", carrier: "QuickMove LLC", time: "5 hours ago" },
+  { type: "monitoring", carrier: "Heartland Van Lines", time: "1 day ago" },
+  { type: "verified", carrier: "Mountain Express", time: "2 days ago" },
 ];
 
 export default function Vetting() {
+  const [activeTab, setActiveTab] = useState("carriers");
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResult, setSearchResult] = useState<null | { company: string; usdot: string; status: string; homeBase: string }>(null);
 
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      setSearchResult({
-        company: "Example Moving Co.",
-        usdot: "1234567",
-        status: "Active",
-        homeBase: "Miami, FL"
-      });
-    }
-  };
+  const navItems = [
+    { id: "dashboard", icon: Home, label: "Dashboard" },
+    { id: "carriers", icon: Truck, label: "Carriers" },
+    { id: "vetting", icon: Shield, label: "Vetting" },
+    { id: "monitoring", icon: Activity, label: "Monitoring" },
+    { id: "locations", icon: MapPin, label: "Locations" },
+    { id: "users", icon: Users, label: "Users" },
+    { id: "settings", icon: Settings, label: "Settings" },
+  ];
 
   return (
     <SiteShell>
-      <div className="tru-vetting-page">
-        {/* Hero Section with Preview Card */}
-        <section className="tru-vetting-hero">
-          <div className="tru-vetting-hero-content">
-            <div className="tru-vetting-badge">
-              <Shield className="w-3.5 h-3.5" />
-              <span>Trust & Safety</span>
-            </div>
-            
-            <h1 className="tru-vetting-headline">
-              Every Mover,
-              <span className="tru-vetting-headline-accent">Heavily Vetted</span>
-            </h1>
-            
-            <p className="tru-vetting-subheadline">
-              We treat carrier selection like a safety and compliance problem, not just a sales one. 
-              Every mover on TruMove is verified before they touch your stuff.
-            </p>
-
-            {/* Trust Pills */}
-            <div className="tru-vetting-trust-pills">
-              <div className="tru-vetting-pill">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>FMCSA Verified</span>
-              </div>
-              <div className="tru-vetting-pill">
-                <Shield className="w-4 h-4" />
-                <span>Insurance Checked</span>
-              </div>
-              <div className="tru-vetting-pill">
-                <Activity className="w-4 h-4" />
-                <span>Live Scoring</span>
-              </div>
-            </div>
-
-            <div className="tru-vetting-hero-cta">
-              <Link to="/online-estimate" className="tru-vetting-primary-btn">
-                Get Matched with Vetted Carriers
-              </Link>
-            </div>
-          </div>
-
-          {/* Hero Visual - Premium Preview Card */}
-          <div className="tru-vetting-hero-visual">
-            <div className="tru-vetting-preview-card">
-              {/* Glow effects */}
-              <div className="tru-vetting-preview-glow" />
-              <div className="tru-vetting-preview-glow-secondary" />
-              
-              {/* Main preview image */}
-              <div className="tru-vetting-preview-image-wrap">
-                <img 
-                  src={previewImage} 
-                  alt="Carrier Vetting Dashboard Preview" 
-                  className="tru-vetting-preview-image"
-                />
-                
-                {/* Overlay gradient */}
-                <div className="tru-vetting-preview-overlay" />
-                
-                {/* Floating verification badges */}
-                <div className="tru-vetting-float-badge tru-vetting-badge-1">
-                  <div className="tru-vetting-float-icon tru-vetting-icon-success">
-                    <CheckCircle2 className="w-4 h-4" />
-                  </div>
-                  <div className="tru-vetting-float-content">
-                    <span className="tru-vetting-float-title">USDOT Verified</span>
-                    <span className="tru-vetting-float-meta">Active • No violations</span>
-                  </div>
-                </div>
-                
-                <div className="tru-vetting-float-badge tru-vetting-badge-2">
-                  <div className="tru-vetting-float-icon tru-vetting-icon-success">
-                    <Shield className="w-4 h-4" />
-                  </div>
-                  <div className="tru-vetting-float-content">
-                    <span className="tru-vetting-float-title">Insurance Active</span>
-                    <span className="tru-vetting-float-meta">$1M Cargo • $750K Liability</span>
-                  </div>
-                </div>
-                
-                <div className="tru-vetting-float-badge tru-vetting-badge-3">
-                  <div className="tru-vetting-float-icon tru-vetting-icon-warning">
-                    <Eye className="w-4 h-4" />
-                  </div>
-                  <div className="tru-vetting-float-content">
-                    <span className="tru-vetting-float-title">Live Monitoring</span>
-                    <span className="tru-vetting-float-meta">98.2% on-time rate</span>
-                  </div>
-                </div>
-
-                {/* Score badge */}
-                <div className="tru-vetting-score-badge">
-                  <div className="tru-vetting-score-ring">
-                    <span className="tru-vetting-score-value">A+</span>
-                  </div>
-                  <div className="tru-vetting-score-label">
-                    <span>TruMove</span>
-                    <span>Score</span>
-                  </div>
-                </div>
-                
-                {/* Stats bar */}
-                <div className="tru-vetting-stats-bar">
-                  <div className="tru-vetting-stat">
-                    <BadgeCheck className="w-3.5 h-3.5" />
-                    <span>847 carriers vetted</span>
-                  </div>
-                  <div className="tru-vetting-stat-divider" />
-                  <div className="tru-vetting-stat">
-                    <XCircle className="w-3.5 h-3.5" />
-                    <span>312 rejected</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* How a mover gets onto TruMove */}
-        <section className="tru-vetting-section">
-          <div className="tru-vetting-section-header">
-            <span className="tru-vetting-section-eyebrow">Vetting Process</span>
-            <h2 className="tru-vetting-section-title">How a Mover Gets Onto TruMove</h2>
-            <p className="tru-vetting-section-desc">
-              Before a mover is allowed on the platform, they go through a multi-step review. 
-              Once approved, they are monitored on every job.
-            </p>
+      <div className="tru-dashboard">
+        {/* Sidebar */}
+        <aside className="tru-dashboard-sidebar">
+          <div className="tru-dashboard-sidebar-logo">
+            <Shield className="w-6 h-6" />
+            <span>TruVet</span>
           </div>
           
-          <div className="tru-vetting-steps">
-            {VETTING_STEPS.map((step, i) => (
-              <div key={step.step} className="tru-vetting-step-wrapper">
-                <div className="tru-vetting-step">
-                  <div className="tru-vetting-step-number">{step.step}</div>
-                  <div className="tru-vetting-step-icon">
-                    <step.icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="tru-vetting-step-title">{step.title}</h3>
-                  <p className="tru-vetting-step-desc">{step.description}</p>
-                </div>
-                {i < VETTING_STEPS.length - 1 && (
-                  <div className="tru-vetting-step-connector">
-                    <ChevronRight className="w-5 h-5" />
-                  </div>
-                )}
-              </div>
+          <nav className="tru-dashboard-nav">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`tru-dashboard-nav-item ${activeTab === item.id ? 'active' : ''}`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span>{item.label}</span>
+              </button>
             ))}
-          </div>
-        </section>
+          </nav>
 
-        {/* What We Check */}
-        <section className="tru-vetting-section tru-vetting-checks-section">
-          <div className="tru-vetting-section-header">
-            <span className="tru-vetting-section-eyebrow">Verification</span>
-            <h2 className="tru-vetting-section-title">What We Check on Every Carrier</h2>
+          <div className="tru-dashboard-sidebar-footer">
+            <button className="tru-dashboard-nav-item">
+              <Bell className="w-5 h-5" />
+              <span>Alerts</span>
+              <span className="tru-dashboard-badge">3</span>
+            </button>
+            <button className="tru-dashboard-nav-item">
+              <Lock className="w-5 h-5" />
+              <span>Security</span>
+            </button>
           </div>
-          
-          <div className="tru-vetting-checks-grid">
-            <div className="tru-vetting-check-card">
-              <div className="tru-vetting-check-header">
-                <div className="tru-vetting-check-icon">
-                  <FileCheck className="w-5 h-5" />
-                </div>
-                <h3>Legal, Safety & Insurance</h3>
-              </div>
-              <ul className="tru-vetting-check-list">
-                {LEGAL_CHECKS.map((item) => (
-                  <li key={item}>
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+        </aside>
+
+        {/* Main Content */}
+        <main className="tru-dashboard-main">
+          {/* Header */}
+          <header className="tru-dashboard-header">
+            <div className="tru-dashboard-header-left">
+              <h1 className="tru-dashboard-title">Carrier Vetting</h1>
+              <span className="tru-dashboard-subtitle">Monitor and verify all carriers</span>
             </div>
-            
-            <div className="tru-vetting-check-card">
-              <div className="tru-vetting-check-header">
-                <div className="tru-vetting-check-icon">
-                  <Star className="w-5 h-5" />
-                </div>
-                <h3>Reputation & Performance</h3>
-              </div>
-              <ul className="tru-vetting-check-list">
-                {REPUTATION_CHECKS.map((item) => (
-                  <li key={item}>
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          
-          <div className="tru-vetting-notice">
-            <AlertTriangle className="w-4 h-4" />
-            <p>If a carrier fails any hard rule, they never go live. If their score drops, they're removed from results.</p>
-          </div>
-        </section>
-
-        {/* Zero Tolerance */}
-        <section className="tru-vetting-section">
-          <div className="tru-vetting-section-header">
-            <span className="tru-vetting-section-eyebrow tru-vetting-eyebrow-danger">Zero Tolerance</span>
-            <h2 className="tru-vetting-section-title">Instant Removal for Bad Behavior</h2>
-          </div>
-          
-          <div className="tru-vetting-zero-grid">
-            {ZERO_TOLERANCE.map((item, i) => (
-              <div key={i} className="tru-vetting-zero-item">
-                <div className="tru-vetting-zero-icon">
-                  <XCircle className="w-4 h-4" />
-                </div>
-                <div className="tru-vetting-zero-content">
-                  <span className="tru-vetting-zero-title">{item.title}</span>
-                  <span className="tru-vetting-zero-desc">{item.desc}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Carrier Lookup */}
-        <section className="tru-vetting-section tru-vetting-lookup-section">
-          <div className="tru-vetting-lookup-grid">
-            <div className="tru-vetting-lookup-card">
-              <div className="tru-vetting-lookup-icon">
-                <Search className="w-6 h-6" />
-              </div>
-              <h3 className="tru-vetting-lookup-title">Check Any Mover's Public Record</h3>
-              <p className="tru-vetting-lookup-desc">
-                Look up a moving company by name or USDOT number. We'll show you core public info and links to official sources.
-              </p>
-              
-              <div className="tru-vetting-search-wrap">
-                <input
-                  type="text"
+            <div className="tru-dashboard-header-right">
+              <div className="tru-dashboard-search">
+                <Search className="w-4 h-4" />
+                <input 
+                  type="text" 
+                  placeholder="Search carriers..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Enter company name or USDOT"
-                  className="tru-vetting-search-input"
                 />
-                <button onClick={handleSearch} className="tru-vetting-search-btn">
-                  <Search className="w-4 h-4" />
-                  Search
+              </div>
+              <button className="tru-dashboard-icon-btn">
+                <Filter className="w-4 h-4" />
+              </button>
+              <button className="tru-dashboard-icon-btn">
+                <Download className="w-4 h-4" />
+              </button>
+            </div>
+          </header>
+
+          {/* Stats Row */}
+          <div className="tru-dashboard-stats">
+            <div className="tru-dashboard-stat-card">
+              <div className="tru-dashboard-stat-icon tru-stat-success">
+                <BadgeCheck className="w-5 h-5" />
+              </div>
+              <div className="tru-dashboard-stat-content">
+                <span className="tru-dashboard-stat-value">847</span>
+                <span className="tru-dashboard-stat-label">Carriers Vetted</span>
+              </div>
+            </div>
+            
+            <div className="tru-dashboard-stat-card">
+              <div className="tru-dashboard-stat-icon tru-stat-danger">
+                <XCircle className="w-5 h-5" />
+              </div>
+              <div className="tru-dashboard-stat-content">
+                <span className="tru-dashboard-stat-value">312</span>
+                <span className="tru-dashboard-stat-label">Rejected</span>
+              </div>
+            </div>
+            
+            <div className="tru-dashboard-stat-card">
+              <div className="tru-dashboard-stat-icon tru-stat-warning">
+                <Eye className="w-5 h-5" />
+              </div>
+              <div className="tru-dashboard-stat-content">
+                <span className="tru-dashboard-stat-value">23</span>
+                <span className="tru-dashboard-stat-label">Under Review</span>
+              </div>
+            </div>
+            
+            <div className="tru-dashboard-stat-card">
+              <div className="tru-dashboard-stat-icon tru-stat-info">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <div className="tru-dashboard-stat-content">
+                <span className="tru-dashboard-stat-value">98.2%</span>
+                <span className="tru-dashboard-stat-label">Avg On-Time</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Grid */}
+          <div className="tru-dashboard-grid">
+            {/* Carrier Table */}
+            <div className="tru-dashboard-card tru-dashboard-table-card">
+              <div className="tru-dashboard-card-header">
+                <h2>Active Carriers</h2>
+                <button className="tru-dashboard-text-btn">
+                  View All <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
               
-              <div className="tru-vetting-search-results">
-                <div className="tru-vetting-result-row">
-                  <span>Company</span>
-                  <span>{searchResult?.company || "—"}</span>
-                </div>
-                <div className="tru-vetting-result-row">
-                  <span>USDOT</span>
-                  <span>{searchResult?.usdot || "—"}</span>
-                </div>
-                <div className="tru-vetting-result-row">
-                  <span>Status</span>
-                  <span className={searchResult?.status === "Active" ? "tru-vetting-status-active" : ""}>
-                    {searchResult?.status || "—"}
-                  </span>
-                </div>
-                <div className="tru-vetting-result-row">
-                  <span>Home base</span>
-                  <span>{searchResult?.homeBase || "—"}</span>
-                </div>
+              <div className="tru-dashboard-table-wrap">
+                <table className="tru-dashboard-table">
+                  <thead>
+                    <tr>
+                      <th>Carrier</th>
+                      <th>USDOT</th>
+                      <th>Status</th>
+                      <th>Score</th>
+                      <th>On-Time</th>
+                      <th>Claims</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SAMPLE_CARRIERS.map((carrier) => (
+                      <tr key={carrier.id}>
+                        <td>
+                          <div className="tru-dashboard-carrier-cell">
+                            <span className="tru-dashboard-carrier-name">{carrier.name}</span>
+                            <span className="tru-dashboard-carrier-location">{carrier.location}</span>
+                          </div>
+                        </td>
+                        <td><span className="tru-dashboard-mono">{carrier.usdot}</span></td>
+                        <td>
+                          <span className={`tru-dashboard-status tru-status-${carrier.status.toLowerCase()}`}>
+                            {carrier.status}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={`tru-dashboard-score tru-score-${carrier.score.replace('+', 'plus')}`}>
+                            {carrier.score}
+                          </span>
+                        </td>
+                        <td><span className="tru-dashboard-highlight">{carrier.onTime}</span></td>
+                        <td><span className={carrier.claims > 0 ? 'tru-dashboard-warning' : ''}>{carrier.claims}</span></td>
+                        <td>
+                          <button className="tru-dashboard-row-btn">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              
-              {searchResult && (
-                <div className="tru-vetting-result-links">
-                  <a href="#"><ExternalLink className="w-3 h-3" /> FMCSA Record</a>
-                  <a href="#"><ExternalLink className="w-3 h-3" /> Google Reviews</a>
-                  <a href="#"><ExternalLink className="w-3 h-3" /> BBB Profile</a>
-                </div>
-              )}
             </div>
 
-            <div className="tru-vetting-lookup-card tru-vetting-verify-card">
-              <div className="tru-vetting-lookup-icon">
-                <BadgeCheck className="w-6 h-6" />
+            {/* Sidebar Cards */}
+            <div className="tru-dashboard-side-column">
+              {/* Verification Status */}
+              <div className="tru-dashboard-card tru-dashboard-verification-card">
+                <div className="tru-dashboard-verification-header">
+                  <div className="tru-dashboard-verification-icon">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3>USDOT Verified</h3>
+                    <span>Active • No violations</span>
+                  </div>
+                </div>
+                
+                <div className="tru-dashboard-verification-header">
+                  <div className="tru-dashboard-verification-icon">
+                    <Shield className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3>Insurance Active</h3>
+                    <span>$1M Cargo • $750K Liability</span>
+                  </div>
+                </div>
+                
+                <div className="tru-dashboard-verification-header tru-verification-warning">
+                  <div className="tru-dashboard-verification-icon tru-icon-warning">
+                    <Eye className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3>Live Monitoring</h3>
+                    <span>98.2% on-time rate</span>
+                  </div>
+                </div>
               </div>
-              <h3 className="tru-vetting-lookup-title">Verify TruMove's Credentials</h3>
-              <p className="tru-vetting-lookup-desc">
-                You should be able to vet us just as easily as we vet carriers.
-              </p>
-              
-              <div className="tru-vetting-search-results">
-                <div className="tru-vetting-result-row">
-                  <span>Legal entity</span>
-                  <span>TruMove Inc.</span>
+
+              {/* TruMove Score */}
+              <div className="tru-dashboard-card tru-dashboard-score-card">
+                <div className="tru-dashboard-score-ring">
+                  <span>A+</span>
                 </div>
-                <div className="tru-vetting-result-row">
-                  <span>USDOT</span>
-                  <span>0000000</span>
-                </div>
-                <div className="tru-vetting-result-row">
-                  <span>MC / FF</span>
-                  <span>MC 000000</span>
-                </div>
-                <div className="tru-vetting-result-row">
-                  <span>Primary office</span>
-                  <span>City, State</span>
+                <div className="tru-dashboard-score-info">
+                  <h3>TruMove Score</h3>
+                  <span>Top 5% of carriers</span>
                 </div>
               </div>
-              
-              <div className="tru-vetting-result-links">
-                <a href="#"><ExternalLink className="w-3 h-3" /> TruMove on FMCSA</a>
-                <a href="#"><ExternalLink className="w-3 h-3" /> TruMove on BBB</a>
-                <a href="#"><ExternalLink className="w-3 h-3" /> TruMove on Google</a>
+
+              {/* Recent Activity */}
+              <div className="tru-dashboard-card">
+                <div className="tru-dashboard-card-header">
+                  <h2>Recent Activity</h2>
+                </div>
+                <div className="tru-dashboard-activity-list">
+                  {RECENT_ACTIVITY.map((activity, i) => (
+                    <div key={i} className="tru-dashboard-activity-item">
+                      <div className={`tru-dashboard-activity-dot tru-dot-${activity.type}`} />
+                      <div className="tru-dashboard-activity-content">
+                        <span className="tru-dashboard-activity-carrier">{activity.carrier}</span>
+                        <span className="tru-dashboard-activity-type">{activity.type}</span>
+                      </div>
+                      <span className="tru-dashboard-activity-time">{activity.time}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </section>
+        </main>
 
-        {/* CTA */}
-        <section className="tru-vetting-cta-section">
-          <div className="tru-vetting-cta-card">
-            <div className="tru-vetting-cta-glow" />
-            <div className="tru-vetting-cta-icon">
-              <Shield className="w-8 h-8" />
-            </div>
-            <h2 className="tru-vetting-cta-title">Ready to Book with Confidence?</h2>
-            <p className="tru-vetting-cta-desc">
-              Talk to a TruMove specialist and get matched with vetted carriers.
-            </p>
-            <div className="tru-vetting-cta-buttons">
-              <Link to="/online-estimate" className="tru-vetting-submit-btn">
-                Get an Estimate
-              </Link>
-              <Link to="/book" className="tru-vetting-alt-btn">
-                Book a Consult
-              </Link>
-            </div>
+        {/* Floating Badges - Demo */}
+        <div className="tru-dashboard-float-badges">
+          <div className="tru-dashboard-float-badge tru-float-1">
+            <CheckCircle2 className="w-4 h-4" />
+            <span>USDOT Verified</span>
           </div>
-        </section>
+          <div className="tru-dashboard-float-badge tru-float-2">
+            <Shield className="w-4 h-4" />
+            <span>Insurance Active</span>
+          </div>
+        </div>
       </div>
     </SiteShell>
   );
