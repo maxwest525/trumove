@@ -17,17 +17,20 @@ interface SearchResult {
 interface CarrierSearchProps {
   onSelect: (dotNumber: string) => void;
   className?: string;
+  isLoading?: boolean;
 }
 
-export function CarrierSearch({ onSelect, className }: CarrierSearchProps) {
+export function CarrierSearch({ onSelect, className, isLoading: externalLoading }: CarrierSearchProps) {
   const [query, setQuery] = useState('');
   const [searchType, setSearchType] = useState<'name' | 'dot'>('name');
   const [results, setResults] = useState<SearchResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout>();
+  
+  const isLoading = isSearching || externalLoading;
 
   const search = useCallback(async (searchQuery: string, type: 'name' | 'dot') => {
     if (!searchQuery.trim() || searchQuery.length < 2) {
@@ -35,7 +38,7 @@ export function CarrierSearch({ onSelect, className }: CarrierSearchProps) {
       return;
     }
 
-    setIsLoading(true);
+    setIsSearching(true);
     setError(null);
 
     try {
@@ -79,7 +82,7 @@ export function CarrierSearch({ onSelect, className }: CarrierSearchProps) {
       setError('Failed to connect to FMCSA database. Please try again.');
       setResults([]);
     } finally {
-      setIsLoading(false);
+      setIsSearching(false);
     }
   }, []);
 
@@ -125,19 +128,20 @@ export function CarrierSearch({ onSelect, className }: CarrierSearchProps) {
 
   return (
     <div ref={containerRef} className={cn('relative', className)}>
-      <div className="flex gap-2">
-        <div className="flex rounded-lg overflow-hidden border border-border bg-muted/30">
+      <div className="space-y-3">
+        {/* Search Type Toggle */}
+        <div className="flex rounded-lg overflow-hidden border border-white/20 bg-white/5 w-fit">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-none px-3 h-10 text-xs',
+              'rounded-none px-4 h-10 text-sm text-white/70 hover:text-white hover:bg-white/10',
               searchType === 'name' && 'bg-primary text-primary-foreground hover:bg-primary/90'
             )}
             onClick={() => setSearchType('name')}
           >
-            <Building2 className="w-3.5 h-3.5 mr-1.5" />
+            <Building2 className="w-4 h-4 mr-2" />
             Name
           </Button>
           <Button
@@ -145,28 +149,32 @@ export function CarrierSearch({ onSelect, className }: CarrierSearchProps) {
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-none px-3 h-10 text-xs',
+              'rounded-none px-4 h-10 text-sm text-white/70 hover:text-white hover:bg-white/10',
               searchType === 'dot' && 'bg-primary text-primary-foreground hover:bg-primary/90'
             )}
             onClick={() => setSearchType('dot')}
           >
-            <Hash className="w-3.5 h-3.5 mr-1.5" />
+            <Hash className="w-4 h-4 mr-2" />
             DOT#
           </Button>
         </div>
 
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        {/* Search Input - Full Width */}
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
           <Input
             type="text"
-            placeholder={searchType === 'name' ? 'Search carrier by name...' : 'Enter DOT number...'}
+            placeholder={searchType === 'name' ? 'Search carrier by company name...' : 'Enter DOT number...'}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setShowResults(true)}
-            className="pl-10 bg-muted/30 border-border h-10"
+            className="pl-12 pr-12 h-12 text-base bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-primary/50 focus:ring-primary/20"
           />
           {isLoading && (
-            <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin" />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+              <Loader2 className="w-5 h-5 text-primary animate-spin" />
+              <span className="text-xs text-primary font-mono hidden sm:inline">Querying FMCSA.gov...</span>
+            </div>
           )}
         </div>
       </div>
