@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { Package, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,21 +15,38 @@ export default function FloatingInventoryButton({
   totalCubicFeet,
   onScrollToInventory
 }: FloatingInventoryButtonProps) {
+  const [isPulsing, setIsPulsing] = useState(false);
+  const prevCountRef = useRef(itemCount);
+
+  // Trigger pulse animation when item count increases
+  useEffect(() => {
+    if (itemCount > prevCountRef.current) {
+      setIsPulsing(true);
+      const timer = setTimeout(() => setIsPulsing(false), 600);
+      return () => clearTimeout(timer);
+    }
+    prevCountRef.current = itemCount;
+  }, [itemCount]);
+
   return (
     <button
       onClick={onScrollToInventory}
       className={cn(
-        "fixed left-6 top-32 z-50",
+        "sticky top-4 z-40 ml-4 mb-4",
         "flex items-center gap-2 px-4 py-2",
-        "bg-card border border-primary/30 rounded-full",
+        "bg-card border border-border/60 rounded-full",
         "shadow-md hover:shadow-lg",
         "transition-all duration-300",
-        "hover:border-primary/60 hover:scale-105",
-        "group"
+        "hover:border-primary/40 hover:scale-105",
+        "group",
+        isPulsing && "animate-pulse ring-2 ring-primary/50"
       )}
       title="Click to view your full inventory list"
     >
-      <Package className="w-4 h-4 text-primary" />
+      <Package className={cn(
+        "w-4 h-4 text-muted-foreground transition-colors",
+        isPulsing && "text-primary"
+      )} />
       <span className="text-sm font-bold text-foreground tabular-nums">{itemCount}</span>
       <span className="text-xs text-muted-foreground">•</span>
       <span className="text-xs text-muted-foreground tabular-nums">{totalWeight.toLocaleString()} lbs</span>

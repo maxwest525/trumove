@@ -1197,9 +1197,10 @@
 
 /* Expanded state */
 .tru-summary-hover-expand.is-expanded {
-  width: 260px;
-  min-width: 260px;
-  max-width: 260px;
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  flex: 1 1 auto;
 }
 
 .tru-summary-hover-expand.is-expanded .tru-summary-collapsed-bar {
@@ -1210,6 +1211,20 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.tru-summary-hover-expand.is-expanded .tru-summary-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tru-summary-hover-expand.is-expanded .tru-summary-info-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
 /* Map visibility coordination - now handled by flex layout above */
