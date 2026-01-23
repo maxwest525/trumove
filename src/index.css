@@ -314,16 +314,17 @@
   min-width: 520px;
 }
 
-/* Sidebar container for Summary + Nav + Map */
+/* Sidebar container for Unified Dock */
 .tru-hero-sidebar {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  flex: 0 0 auto;
+  flex: 0 0 320px;
+  width: 320px;
   align-self: stretch;
 }
 
-/* Top row: Summary Card + Nav side by side */
+/* Old top row - deprecated but kept for compatibility */
 .tru-hero-sidebar-top {
   display: flex;
   flex-direction: row;
@@ -12653,5 +12654,528 @@
   /* Hide the actions footer in print */
   .print-inventory .print-actions {
     display: none !important;
+  }
+}
+
+/* ========================================
+   UNIFIED DOCK - macOS-Style Smart Dock
+   ======================================== */
+
+/* Aurora Animation */
+@keyframes aurora-shift {
+  0%, 100% { 
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg);
+  }
+  25% { 
+    background-position: 50% 100%;
+    filter: hue-rotate(15deg);
+  }
+  50% { 
+    background-position: 100% 50%;
+    filter: hue-rotate(0deg);
+  }
+  75% { 
+    background-position: 50% 0%;
+    filter: hue-rotate(-15deg);
+  }
+}
+
+/* Value Spring Animation */
+@keyframes dock-value-spring {
+  0% { 
+    opacity: 0;
+    transform: scale(0.8) translateY(4px);
+  }
+  60% { 
+    transform: scale(1.05) translateY(-2px);
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Glow Pulse Animation */
+@keyframes dock-glow-pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Progress Ring Glow */
+@keyframes progress-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px hsl(var(--primary) / 0.8));
+  }
+}
+
+/* Main Dock Container */
+.unified-dock {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  border-radius: 24px;
+  overflow: visible;
+  transition: transform 0.15s ease-out;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+/* Aurora Background Layer - More vibrant */
+.unified-dock-aurora {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary) / 0.25) 0%,
+    hsl(170 70% 45% / 0.15) 25%,
+    hsl(280 60% 55% / 0.1) 50%,
+    hsl(var(--primary) / 0.2) 75%,
+    hsl(200 70% 50% / 0.12) 100%
+  );
+  background-size: 400% 400%;
+  animation: aurora-shift 12s ease infinite;
+  z-index: 0;
+}
+
+/* Glassmorphism Layer - More translucent */
+.unified-dock-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: linear-gradient(
+    180deg,
+    hsl(0 0% 100% / 0.7) 0%,
+    hsl(0 0% 100% / 0.6) 100%
+  );
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  z-index: 1;
+}
+
+/* Content Container */
+.unified-dock-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* Glowing Border - More vibrant */
+.unified-dock-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  border: 2.5px solid transparent;
+  background: linear-gradient(135deg, 
+    hsl(var(--primary) / 0.5), 
+    hsl(170 70% 45% / 0.3),
+    hsl(280 60% 55% / 0.2),
+    hsl(var(--primary) / 0.4)
+  ) border-box;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) padding-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 3;
+  pointer-events: none;
+  animation: dock-glow-pulse 3s ease-in-out infinite;
+}
+
+/* On hover, intensify glow dramatically */
+.unified-dock:hover .unified-dock-glow {
+  background: linear-gradient(135deg, 
+    hsl(var(--primary) / 0.8), 
+    hsl(170 70% 45% / 0.5),
+    hsl(280 60% 55% / 0.35),
+    hsl(var(--primary) / 0.7)
+  ) border-box;
+  animation: none;
+}
+
+/* Drop shadow for depth - More dramatic */
+.unified-dock::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 26px;
+  box-shadow: 
+    0 4px 16px hsl(var(--primary) / 0.08),
+    0 8px 32px hsl(var(--tm-ink) / 0.1),
+    0 20px 60px hsl(var(--tm-ink) / 0.12),
+    0 0 0 1px hsl(var(--tm-ink) / 0.05);
+  z-index: -1;
+  pointer-events: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.unified-dock:hover::after {
+  box-shadow: 
+    0 6px 20px hsl(var(--primary) / 0.12),
+    0 12px 40px hsl(var(--tm-ink) / 0.12),
+    0 24px 70px hsl(var(--tm-ink) / 0.15),
+    0 0 0 1px hsl(var(--primary) / 0.2);
+}
+
+/* =============================================
+   SUMMARY SECTION (Left)
+   ============================================= */
+.unified-dock-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Progress Ring Container */
+.unified-dock-progress-container {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.unified-dock-progress-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(0);
+}
+
+.unified-dock-progress-bg {
+  stroke: hsl(var(--tm-ink) / 0.08);
+}
+
+.unified-dock-progress-fill {
+  stroke: hsl(var(--primary));
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: progress-glow 2s ease-in-out infinite;
+}
+
+.unified-dock-progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+/* Summary Header */
+.unified-dock-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.unified-dock-summary-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+/* Summary Grid */
+.unified-dock-summary-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+.unified-dock-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.04);
+  transition: all 0.3s ease;
+}
+
+.unified-dock-row:last-child {
+  border-bottom: none;
+}
+
+.unified-dock-row.is-updated {
+  animation: dock-value-spring 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(90deg, 
+    hsl(var(--primary) / 0.15), 
+    transparent
+  );
+  border-radius: 6px;
+  margin: 0 -8px;
+  padding: 6px 8px;
+}
+
+.unified-dock-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+.unified-dock-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+  text-align: right;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =============================================
+   DIVIDER
+   ============================================= */
+.unified-dock-divider {
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    hsl(var(--tm-ink) / 0.1) 20%,
+    hsl(var(--tm-ink) / 0.1) 80%,
+    transparent 100%
+  );
+  margin: 0 8px;
+}
+
+/* =============================================
+   NAVIGATION SECTION (Right) - 2x3 Grid
+   ============================================= */
+.unified-dock-nav {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
+  align-items: center;
+  justify-items: center;
+  padding: 8px;
+  min-width: 120px;
+}
+
+.unified-dock-nav-trigger {
+  display: block;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.unified-dock-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 8px;
+  border-radius: 14px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+  position: relative;
+  width: 100%;
+  min-height: 52px;
+  background: hsl(var(--tm-ink) / 0.02);
+}
+
+.unified-dock-nav-item:hover {
+  background: hsl(var(--tm-ink) / 0.06);
+  transform: scale(1.08);
+}
+
+/* Active state with neon glow */
+.unified-dock-nav-item.is-active {
+  background: hsl(var(--primary) / 0.15);
+  box-shadow: 
+    0 0 0 2px hsl(var(--primary) / 0.7),
+    0 0 16px hsl(var(--primary) / 0.4),
+    0 0 32px hsl(var(--primary) / 0.2);
+}
+
+.unified-dock-nav-item.is-active .unified-dock-nav-icon {
+  color: hsl(var(--primary));
+}
+
+.unified-dock-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: hsl(var(--tm-ink) / 0.65);
+  transition: all 0.2s ease;
+}
+
+.unified-dock-nav-trigger:hover .unified-dock-nav-icon {
+  color: hsl(var(--tm-ink));
+}
+
+.unified-dock-nav-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.6);
+  text-align: center;
+  line-height: 1.2;
+  max-width: 54px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =============================================
+   DARK MODE
+   ============================================= */
+.dark .unified-dock-glass {
+  background: linear-gradient(
+    180deg,
+    hsl(var(--tm-ink) / 0.85) 0%,
+    hsl(var(--tm-ink) / 0.75) 100%
+  );
+}
+
+.dark .unified-dock-aurora {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary) / 0.2) 0%,
+    hsl(180 60% 50% / 0.12) 25%,
+    hsl(260 60% 50% / 0.1) 50%,
+    hsl(var(--primary) / 0.15) 75%,
+    hsl(180 60% 50% / 0.12) 100%
+  );
+  background-size: 400% 400%;
+}
+
+.dark .unified-dock-summary-title,
+.dark .unified-dock-label {
+  color: hsl(0 0% 100% / 0.5);
+}
+
+.dark .unified-dock-value,
+.dark .unified-dock-progress-text {
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .unified-dock-nav-icon {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+.dark .unified-dock-nav-trigger:hover .unified-dock-nav-icon {
+  color: hsl(0 0% 100%);
+}
+
+.dark .unified-dock-nav-label {
+  color: hsl(0 0% 100% / 0.5);
+}
+
+.dark .unified-dock-nav-item.is-active {
+  background: hsl(var(--primary) / 0.2);
+  box-shadow: 
+    0 0 0 1.5px hsl(var(--primary)),
+    0 0 16px hsl(var(--primary) / 0.5),
+    0 0 32px hsl(var(--primary) / 0.25);
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 1024px) {
+  .unified-dock {
+    min-height: auto;
+  }
+  
+  .unified-dock-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .unified-dock-divider {
+    width: 100%;
+    height: 1px;
+    margin: 8px 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--tm-ink) / 0.1) 20%,
+      hsl(var(--tm-ink) / 0.1) 80%,
+      transparent 100%
+    );
+  }
+  
+  .unified-dock-nav {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .unified-dock {
+    border-radius: 20px;
+  }
+  
+  .unified-dock-content {
+    padding: 12px;
+  }
+  
+  .unified-dock-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  
+  .unified-dock-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 8px;
+    background: hsl(var(--tm-ink) / 0.02);
+    border-radius: 8px;
+    border-bottom: none;
+  }
+  
+  .unified-dock-value {
+    text-align: left;
+    max-width: 100%;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .unified-dock {
+    transition: none;
+  }
+  
+  .unified-dock-aurora {
+    animation: none;
+  }
+  
+  .unified-dock-glow {
+    animation: none;
+  }
+  
+  .unified-dock-progress-fill {
+    animation: none;
+  }
+  
+  .unified-dock-row.is-updated {
+    animation: none;
   }
 }

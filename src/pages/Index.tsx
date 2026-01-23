@@ -5,7 +5,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
 import FloatingChatButton from "@/components/FloatingChatButton";
 import FloatingQuoteButton from "@/components/FloatingQuoteButton";
-import FloatingNav from "@/components/FloatingNav";
+import UnifiedDock from "@/components/UnifiedDock";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import logoImg from "@/assets/logo.png";
 
@@ -740,81 +740,22 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* SIDEBAR: Summary Card + Floating Nav */}
+              {/* SIDEBAR: Unified Dock */}
               <div className="tru-hero-sidebar">
-                {/* TOP ROW: Summary + Nav side by side */}
-                <div className="tru-hero-sidebar-top">
-                  {/* Summary Card - Hover to expand */}
-                  <div 
-                    className={`tru-floating-summary-card tru-floating-summary-card-compact tru-summary-hover-expand ${summaryVisible ? 'is-expanded' : 'is-collapsed'}`}
-                    onMouseEnter={() => setSummaryHovered(true)}
-                    onMouseLeave={() => setSummaryHovered(false)}
-                  >
-                    {/* Collapsed state - slim bar */}
-                    <div className="tru-summary-collapsed-bar">
-                      <div className="tru-summary-collapsed-indicator">
-                        <Route className="w-4 h-4" />
-                      </div>
-                      <span className="tru-summary-collapsed-label">Summary</span>
-                    </div>
-                    
-                    {/* Expanded content */}
-                    <div className="tru-summary-expanded-content">
-                      <div className="tru-summary-card-header">
-                        <span className="tru-summary-card-title">Move Summary</span>
-                      </div>
-                    
-                      <div className="tru-summary-card-body">
-                        <div className="tru-summary-info-grid">
-                          <div className="tru-summary-row">
-                            <span className="tru-summary-label">From</span>
-                            <span className={`tru-summary-value ${updatedFields.has('from') ? 'is-updated' : ''}`}>{fromCity || "—"}</span>
-                          </div>
-                          <div className="tru-summary-row">
-                            <span className="tru-summary-label">To</span>
-                            <span className={`tru-summary-value ${updatedFields.has('to') ? 'is-updated' : ''}`}>{toCity || "—"}</span>
-                          </div>
-                          <div className="tru-summary-row">
-                            <span className="tru-summary-label">Distance</span>
-                            <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
-                          </div>
-                          <div className="tru-summary-row">
-                            <span className="tru-summary-label">Date</span>
-                            <span className={`tru-summary-value ${updatedFields.has('date') ? 'is-updated' : ''}`}>{moveDate ? format(moveDate, "MMM d, yyyy") : "—"}</span>
-                          </div>
-                          <div className="tru-summary-row">
-                            <span className="tru-summary-label">ETA</span>
-                            <span className={`tru-summary-value ${updatedFields.has('distance') ? 'is-updated' : ''}`}>{estimatedDuration || "—"}</span>
-                          </div>
-                          <div className="tru-summary-row">
-                            <span className="tru-summary-label">Size</span>
-                            <span className={`tru-summary-value ${updatedFields.has('size') ? 'is-updated' : ''}`}>{size || "—"}</span>
-                          </div>
-                          <div className="tru-summary-row">
-                            <span className="tru-summary-label">Property</span>
-                            <span className={`tru-summary-value ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
-                              {propertyType 
-                                ? `${propertyType === 'house' ? 'House' : 'Apartment'}${propertyType === 'apartment' ? ` (Floor ${floor}, ${hasElevator ? 'Elevator' : 'Stairs'})` : ''}`
-                                : "—"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Footer */}
-                      <div className="tru-summary-card-footer">
-                        <span>Powered by</span>
-                        <img src={logoImg} alt="TruMove" className="tru-footer-mini-logo" />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Floating Navigation */}
-                  <div className="tru-floating-nav-wrapper">
-                    <FloatingNav onChatOpen={() => setChatOpen(true)} />
-                  </div>
-                </div>
-
+                <UnifiedDock
+                  fromCity={fromCity}
+                  toCity={toCity}
+                  distance={distance}
+                  moveDate={moveDate}
+                  size={size}
+                  propertyType={propertyType}
+                  estimatedDuration={estimatedDuration}
+                  floor={floor}
+                  hasElevator={hasElevator}
+                  progress={Math.round((step / 3) * 100)}
+                  onChatOpen={() => setChatOpen(true)}
+                  updatedFields={updatedFields}
+                />
               </div>
             
             </div>
