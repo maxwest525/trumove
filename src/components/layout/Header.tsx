@@ -257,29 +257,32 @@ export default function Header() {
                         </div>
                       )}
 
-                      {/* Sub-items for AI Estimator */}
+                      {/* Sub-items for AI Estimator - Choose Your Method */}
                       {item.subItems && item.subItems.length > 0 && (
-                        <div className="mega-menu-subitems">
-                          {item.subItems.map((subItem) => (
-                            <Link 
-                              key={subItem.href} 
-                              to={subItem.href}
-                              className="mega-menu-subitem"
-                            >
-                              <div className="mega-menu-subitem-icon">
-                                <subItem.icon className="w-5 h-5" />
-                              </div>
-                              <div className="mega-menu-subitem-content">
-                                <span className="mega-menu-subitem-label">
-                                  {subItem.label}
-                                  {subItem.badge && (
-                                    <span className="mega-menu-subitem-badge">{subItem.badge}</span>
-                                  )}
-                                </span>
-                                <span className="mega-menu-subitem-desc">{subItem.description}</span>
-                              </div>
-                            </Link>
-                          ))}
+                        <div className="mega-menu-method-selector">
+                          <span className="mega-menu-method-label">Choose Your Method</span>
+                          <div className="mega-menu-method-options">
+                            {item.subItems.map((subItem) => (
+                              <Link 
+                                key={subItem.href} 
+                                to={subItem.href}
+                                className="mega-menu-method-option"
+                              >
+                                <div className="mega-menu-method-icon">
+                                  <subItem.icon className="w-5 h-5" />
+                                </div>
+                                <div className="mega-menu-method-content">
+                                  <span className="mega-menu-method-title">
+                                    {subItem.label}
+                                    {subItem.badge && (
+                                      <span className="mega-menu-method-badge">{subItem.badge}</span>
+                                    )}
+                                  </span>
+                                  <span className="mega-menu-method-desc">{subItem.description}</span>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
                         </div>
                       )}
 
