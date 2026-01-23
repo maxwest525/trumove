@@ -8,6 +8,11 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
+import { toast } from "@/hooks/use-toast";
+
+// Retry configuration
+const MAX_RETRIES = 2;
+const RETRY_DELAY = 500; // ms
 
 // Debounce delay for API calls (ms)
 const DEBOUNCE_DELAY = 350;
@@ -72,88 +77,132 @@ function normalizeAddress(addr: string): string {
     .trim();
 }
 
+// Helper function for retrying API calls
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = MAX_RETRIES,
+  delay: number = RETRY_DELAY
+): Promise<{ result: T | null; failed: boolean; retryCount: number }> {
+  let lastError: Error | null = null;
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await fn();
+      return { result, failed: false, retryCount: attempt };
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, delay * (attempt + 1)));
+      }
+    }
+  }
+  
+  console.warn(`API call failed after ${maxRetries + 1} attempts:`, lastError);
+  return { result: null, failed: true, retryCount: maxRetries + 1 };
+}
+
 // Mapbox Address Autofill API for verified street addresses
 // Now includes 'place' and 'postcode' types for better ZIP/city coverage
-async function searchMapboxAddresses(query: string): Promise<LocationSuggestion[]> {
-  try {
+async function searchMapboxAddresses(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
+  const { result, failed } = await withRetry(async () => {
     const res = await fetch(
       `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&types=address,place,postcode&country=us&language=en&limit=5&session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
       { headers: { 'Accept': 'application/json' } }
     );
-    if (!res.ok) return [];
     
-    const data = await res.json();
-    return (data.suggestions || []).map((s: any) => {
-      // Mapbox suggest returns: name (street), full_address (complete), place_formatted (city, state, country)
-      const streetName = s.name || ''; // e.g., "123 Main Street"
-      const fullAddr = s.full_address || ''; // e.g., "123 Main Street, New York, NY 10001, United States"
-      const featureType = s.feature_type || 'address';
-      
-      // Parse from full_address: "123 Main St, New York, NY 10001, United States"
-      const parts = fullAddr.split(', ');
-      const streetAddress = featureType === 'address' ? (parts[0] || streetName) : '';
-      const city = featureType === 'place' ? streetName : (parts.length >= 3 ? parts[1] : '');
-      
-      // Extract state and zip from "NY 10001" pattern
-      const stateZipPart = parts.length >= 3 ? parts[parts.length - 2] : '';
-      const stateZipMatch = stateZipPart.match(/^([A-Z]{2})\s*(\d{5})?$/);
-      const state = stateZipMatch?.[1] || '';
-      const zip = stateZipMatch?.[2] || (featureType === 'postcode' ? streetName : '');
-      
-      // Display the full address without "United States"
-      const displayAddr = fullAddr.replace(', United States', '');
-      
-      // Check if this has a street address component (not just city/state)
-      const hasStreet = featureType === 'address' && streetName && !streetName.match(/^\d{5}$/) && streetName !== city;
-      
-      return {
-        streetAddress,
-        city,
-        state,
-        zip,
-        display: displayAddr, // Show full street address in dropdown
-        fullAddress: fullAddr,
-        isVerified: false, // Will be verified after retrieve
-        validationLevel: hasStreet ? null : 'partial' as ValidationLevel,
-        mapboxId: s.mapbox_id,
-      };
-    });
-  } catch {
-    return [];
+    if (!res.ok) {
+      throw new Error(`Mapbox API error: ${res.status}`);
+    }
+    
+    return res.json();
+  });
+  
+  if (failed || !result) {
+    return { suggestions: [], failed: true };
   }
+  
+  const suggestions = (result.suggestions || []).map((s: any) => {
+    // Mapbox suggest returns: name (street), full_address (complete), place_formatted (city, state, country)
+    const streetName = s.name || ''; // e.g., "123 Main Street"
+    const fullAddr = s.full_address || ''; // e.g., "123 Main Street, New York, NY 10001, United States"
+    const featureType = s.feature_type || 'address';
+    
+    // Parse from full_address: "123 Main St, New York, NY 10001, United States"
+    const parts = fullAddr.split(', ');
+    const streetAddress = featureType === 'address' ? (parts[0] || streetName) : '';
+    const city = featureType === 'place' ? streetName : (parts.length >= 3 ? parts[1] : '');
+    
+    // Extract state and zip from "NY 10001" pattern
+    const stateZipPart = parts.length >= 3 ? parts[parts.length - 2] : '';
+    const stateZipMatch = stateZipPart.match(/^([A-Z]{2})\s*(\d{5})?$/);
+    const state = stateZipMatch?.[1] || '';
+    const zip = stateZipMatch?.[2] || (featureType === 'postcode' ? streetName : '');
+    
+    // Display the full address without "United States"
+    const displayAddr = fullAddr.replace(', United States', '');
+    
+    // Check if this has a street address component (not just city/state)
+    const hasStreet = featureType === 'address' && streetName && !streetName.match(/^\d{5}$/) && streetName !== city;
+    
+    return {
+      streetAddress,
+      city,
+      state,
+      zip,
+      display: displayAddr, // Show full street address in dropdown
+      fullAddress: fullAddr,
+      isVerified: false, // Will be verified after retrieve
+      validationLevel: hasStreet ? null : 'partial' as ValidationLevel,
+      mapboxId: s.mapbox_id,
+    };
+  });
+  
+  return { suggestions, failed: false };
 }
 
-// Retrieve full verified address from Mapbox
-async function retrieveMapboxAddress(mapboxId: string): Promise<LocationSuggestion | null> {
-  try {
+// Retrieve full verified address from Mapbox with retry
+async function retrieveMapboxAddress(mapboxId: string): Promise<{ address: LocationSuggestion | null; failed: boolean }> {
+  const { result, failed } = await withRetry(async () => {
     const res = await fetch(
       `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
       { headers: { 'Accept': 'application/json' } }
     );
-    if (!res.ok) return null;
+    
+    if (!res.ok) {
+      throw new Error(`Mapbox retrieve error: ${res.status}`);
+    }
     
     // Generate a new session token after retrieve (billing best practice)
     mapboxSessionToken = generateSessionToken();
     
-    const data = await res.json();
-    const feature = data.features?.[0];
-    if (!feature) return null;
-    
-    const props = feature.properties;
-    const context = props.context || {};
-    
-    // Build the verified full address
-    const streetAddress = props.name || '';
-    const city = context.place?.name || '';
-    const state = context.region?.region_code || '';
-    const zip = context.postcode?.name || '';
-    const fullAddr = props.full_address || `${streetAddress}, ${city}, ${state} ${zip}`;
-    const displayAddr = fullAddr.replace(', United States', '');
-    
-    // Street-level verification requires an actual street address
-    const hasStreet = streetAddress && !streetAddress.match(/^\d{5}$/) && streetAddress !== city;
-    
-    return {
+    return res.json();
+  });
+  
+  if (failed || !result) {
+    return { address: null, failed: true };
+  }
+  
+  const feature = result.features?.[0];
+  if (!feature) {
+    return { address: null, failed: false };
+  }
+  
+  const props = feature.properties;
+  const context = props.context || {};
+  
+  // Build the verified full address
+  const streetAddress = props.name || '';
+  const city = context.place?.name || '';
+  const state = context.region?.region_code || '';
+  const zip = context.postcode?.name || '';
+  const fullAddr = props.full_address || `${streetAddress}, ${city}, ${state} ${zip}`;
+  const displayAddr = fullAddr.replace(', United States', '');
+  
+  // Street-level verification requires an actual street address
+  const hasStreet = streetAddress && !streetAddress.match(/^\d{5}$/) && streetAddress !== city;
+  
+  return {
+    address: {
       streetAddress,
       city,
       state,
@@ -163,10 +212,9 @@ async function retrieveMapboxAddress(mapboxId: string): Promise<LocationSuggesti
       isVerified: hasStreet,
       validationLevel: hasStreet ? 'verified' : 'partial',
       mapboxId,
-    };
-  } catch {
-    return null;
-  }
+    },
+    failed: false
+  };
 }
 
 // Photon API for city-only search (mode="city") - CORS-friendly, fallback
@@ -330,10 +378,17 @@ export default function LocationAutocomplete({
 
     if (mode === 'address') {
       // For address mode, use Mapbox with expanded types (address, place, postcode)
-      const mapboxResults = await searchMapboxAddresses(query);
+      const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapboxAddresses(query);
       
-      if (mapboxResults.length > 0) {
-        setSuggestions(mapboxResults);
+      if (mapboxFailed) {
+        toast({
+          title: "Address lookup unavailable",
+          description: "We're having trouble searching for addresses. Please try again.",
+          variant: "destructive",
+        });
+        setSuggestions([]);
+      } else if (mapboxSuggestions.length > 0) {
+        setSuggestions(mapboxSuggestions);
       } else if (isCompleteZip) {
         // Fallback: if Mapbox returns nothing for a ZIP, show city-level with a prompt
         const zipResult = await lookupZip(query.trim());
@@ -445,10 +500,16 @@ export default function LocationAutocomplete({
     // If this is a Mapbox suggestion with an ID, retrieve the full verified address
     if (suggestion.mapboxId && mode === 'address') {
       setIsValidating(true); // Show loading overlay
-      const verified = await retrieveMapboxAddress(suggestion.mapboxId);
+      const { address: verified, failed } = await retrieveMapboxAddress(suggestion.mapboxId);
       setIsValidating(false); // Hide loading overlay
       
-      if (verified) {
+      if (failed) {
+        toast({
+          title: "Verification failed",
+          description: "Couldn't verify this address. Using unverified selection.",
+          variant: "destructive",
+        });
+      } else if (verified) {
         finalSuggestion = verified;
         
         // Compare user's original input with the standardized Mapbox result
