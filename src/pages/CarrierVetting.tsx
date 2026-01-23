@@ -400,6 +400,15 @@ export default function CarrierVetting() {
                         isLoading={isLoading}
                         className="sidebar-search"
                       />
+                      {/* Clear All - Below the input */}
+                      {carriers.length > 0 && (
+                        <button 
+                          onClick={clearAll}
+                          className="w-full mt-3 text-xs text-muted-foreground hover:text-foreground text-center py-1.5 rounded-md hover:bg-muted/50 transition-colors"
+                        >
+                          Clear All Carriers
+                        </button>
+                      )}
                     </div>
                   )}
 
@@ -431,6 +440,40 @@ export default function CarrierVetting() {
                         <span className="w-8 h-6 flex items-center justify-center rounded bg-red-500/10 text-red-600 font-bold">F</span>
                         <span className="text-muted-foreground">High Risk - Avoid</span>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* CSA BASIC Scores Legend */}
+                  <div className="p-4 rounded-xl border border-border bg-card">
+                    <h3 className="text-sm font-semibold text-foreground mb-3">CSA BASIC Scores</h3>
+                    <div className="space-y-2 text-xs text-muted-foreground">
+                      <div className="flex items-start gap-2">
+                        <span className="font-medium text-foreground w-16 shrink-0">Unsafe</span>
+                        <span>Speeding, reckless driving</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="font-medium text-foreground w-16 shrink-0">HOS</span>
+                        <span>Hours of Service fatigue</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="font-medium text-foreground w-16 shrink-0">Vehicle</span>
+                        <span>Brake, equipment defects</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="font-medium text-foreground w-16 shrink-0">Fitness</span>
+                        <span>Licensing, medical certs</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="font-medium text-foreground w-16 shrink-0">Crash</span>
+                        <span>Crash involvement</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="font-medium text-foreground w-16 shrink-0">Drugs</span>
+                        <span>Substance violations</span>
+                      </div>
+                      <p className="pt-2 text-[10px] italic border-t border-border/50 mt-2">
+                        Higher % = worse vs. peers
+                      </p>
                     </div>
                   </div>
 
@@ -495,14 +538,6 @@ export default function CarrierVetting() {
               }}>
                 <span className="text-muted-foreground">Load All Demo Carriers</span>
               </DropdownMenuItem>
-              {carriers.length > 0 && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={clearAll} className="text-red-600 focus:text-red-600">
-                    Clear All Carriers
-                  </DropdownMenuItem>
-                </>
-              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

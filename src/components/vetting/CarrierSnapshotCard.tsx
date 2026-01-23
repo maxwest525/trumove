@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star, HelpCircle } from 'lucide-react';
+import { Phone, MapPin, Truck, Shield, AlertTriangle, CheckCircle2, XCircle, Calendar, FileWarning, X, ChevronDown, ChevronUp, ExternalLink, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -142,22 +142,10 @@ function AuthorityBadge({ status }: { status: string }) {
 }
 
 function BasicScoreBar({ name, percentile, threshold = 65 }: { name: string; percentile: number | null; threshold?: number }) {
-  const description = BASIC_DESCRIPTIONS[name] || 'Safety metric percentile';
-  
   if (percentile === null) {
     return (
       <div className="flex items-center justify-between py-1.5">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="text-xs text-muted-foreground flex items-center gap-1 cursor-help">
-              {name}
-              <HelpCircle className="w-3 h-3" />
-            </span>
-          </TooltipTrigger>
-          <TooltipContent className="max-w-xs">
-            <p>{description}</p>
-          </TooltipContent>
-        </Tooltip>
+        <span className="text-xs text-muted-foreground">{name}</span>
         <span className="text-xs text-muted-foreground">N/A</span>
       </div>
     );
@@ -172,17 +160,7 @@ function BasicScoreBar({ name, percentile, threshold = 65 }: { name: string; per
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="text-xs text-muted-foreground flex items-center gap-1 cursor-help">
-              {name}
-              <HelpCircle className="w-3 h-3" />
-            </span>
-          </TooltipTrigger>
-          <TooltipContent className="max-w-xs">
-            <p>{description}</p>
-          </TooltipContent>
-        </Tooltip>
+        <span className="text-xs text-muted-foreground">{name}</span>
         <span className={cn(
           'text-xs font-medium',
           percentile >= 75 ? 'text-red-500' : 
@@ -367,8 +345,16 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             </Button>
           )}
           
-          {/* Carrier Identity - DBA, DOT, MC at TOP */}
-          <div className="space-y-2 pr-8">
+          {/* Carrier Identity - TruMove Verified ABOVE name */}
+          <div className="space-y-2 pr-16">
+            {/* TruMove Verified - Black badge style, ABOVE the name */}
+            {riskGrade.isTruMoveVerified && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 dark:bg-slate-800 text-white text-[10px] font-medium w-fit">
+                <CheckCircle2 className="w-3 h-3 text-green-400" />
+                <span>TruMove Verified</span>
+              </div>
+            )}
+            
             <div>
               <h3 className="font-semibold text-lg text-foreground leading-tight">
                 {data.carrier.dbaName || data.carrier.legalName}
@@ -387,13 +373,6 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                 <Badge variant="outline" className="text-xs font-mono">
                   {data.carrier.mcNumber}
                 </Badge>
-              )}
-              {/* TruMove Verified - Black badge style */}
-              {riskGrade.isTruMoveVerified && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 dark:bg-slate-800 text-white text-[10px] font-medium">
-                  <CheckCircle2 className="w-3 h-3 text-green-400" />
-                  <span>TruMove Verified</span>
-                </div>
               )}
             </div>
           </div>
