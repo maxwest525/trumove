@@ -3,11 +3,15 @@ import { cn } from "@/lib/utils";
 
 interface FloatingInventoryButtonProps {
   itemCount: number;
+  totalWeight: number;
+  totalCubicFeet: number;
   onScrollToInventory: () => void;
 }
 
 export default function FloatingInventoryButton({ 
-  itemCount, 
+  itemCount,
+  totalWeight,
+  totalCubicFeet,
   onScrollToInventory
 }: FloatingInventoryButtonProps) {
   return (
@@ -15,21 +19,20 @@ export default function FloatingInventoryButton({
       onClick={onScrollToInventory}
       className={cn(
         "fixed right-6 top-32 z-50",
-        "flex items-center gap-3 px-5 py-2.5",
-        "bg-card border-2 border-primary/30 rounded-full",
-        "shadow-lg hover:shadow-xl",
+        "flex items-center gap-2 px-4 py-2",
+        "bg-card border border-primary/30 rounded-full",
+        "shadow-md hover:shadow-lg",
         "transition-all duration-300",
         "hover:border-primary/60 hover:scale-105"
       )}
     >
-      <Package className="w-5 h-5 text-primary" />
-      <span className="text-base font-bold text-foreground tabular-nums">
-        {itemCount} {itemCount === 1 ? 'Item' : 'Items'}
-      </span>
-      <span className="text-sm font-medium text-muted-foreground">
-        View Inventory List
-      </span>
-      <ArrowDown className="w-4 h-4 text-primary" />
+      <Package className="w-4 h-4 text-primary" />
+      <span className="text-sm font-bold text-foreground tabular-nums">{itemCount}</span>
+      <span className="text-xs text-muted-foreground">•</span>
+      <span className="text-xs text-muted-foreground tabular-nums">{totalWeight.toLocaleString()} lbs</span>
+      <span className="text-xs text-muted-foreground">•</span>
+      <span className="text-xs text-muted-foreground tabular-nums">{totalCubicFeet} cu ft</span>
+      <ArrowDown className="w-3.5 h-3.5 text-primary ml-1" />
     </button>
   );
 }
