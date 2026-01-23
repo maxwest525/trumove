@@ -376,6 +376,9 @@ export default function LocationAutocomplete({
     // Check if it's a complete ZIP code (5 digits)
     const isCompleteZip = /^\d{5}$/.test(query.trim());
     const isPartialZip = /^\d{2,4}$/.test(query.trim());
+    
+    // Normalize current input for duplicate detection
+    const normalizedQuery = normalizeAddress(query);
 
     if (mode === 'address') {
       // For address mode, use Mapbox with expanded types (address, place, postcode)
@@ -389,14 +392,25 @@ export default function LocationAutocomplete({
         });
         setSuggestions([]);
       } else if (mapboxSuggestions.length > 0) {
-        setSuggestions(mapboxSuggestions);
+        // Filter out suggestions that are identical to what's already entered
+        const filtered = mapboxSuggestions.filter(s => {
+          const normalizedSuggestion = normalizeAddress(s.fullAddress || s.display);
+          return normalizedSuggestion !== normalizedQuery;
+        });
+        setSuggestions(filtered);
       } else if (isCompleteZip) {
         // Fallback: if Mapbox returns nothing for a ZIP, show city-level with a prompt
         const zipResult = await lookupZip(query.trim());
         if (zipResult) {
           // Mark as partial - needs street address
           zipResult.validationLevel = 'partial';
-          setSuggestions([zipResult]);
+          // Only show if different from current input
+          const normalizedResult = normalizeAddress(zipResult.fullAddress || zipResult.display);
+          if (normalizedResult !== normalizedQuery) {
+            setSuggestions([zipResult]);
+          } else {
+            setSuggestions([]);
+          }
         } else {
           setSuggestions([]);
         }
@@ -405,20 +419,23 @@ export default function LocationAutocomplete({
       }
     } else {
       // City mode: use existing logic
+      let results: LocationSuggestion[] = [];
+      
       if (isCompleteZip) {
         const result = await lookupZip(query.trim());
         if (result) {
-          setSuggestions([result]);
-        } else {
-          setSuggestions([]);
+          results = [result];
         }
-      } else if (isPartialZip) {
-        const results = await searchPhotonCities(query);
-        setSuggestions(results);
       } else {
-        const results = await searchPhotonCities(query);
-        setSuggestions(results);
+        results = await searchPhotonCities(query);
       }
+      
+      // Filter out suggestions that match what's already entered
+      const filtered = results.filter(s => {
+        const normalizedSuggestion = normalizeAddress(s.fullAddress || s.display);
+        return normalizedSuggestion !== normalizedQuery;
+      });
+      setSuggestions(filtered);
     }
 
     setIsLoading(false);
@@ -592,9 +609,10 @@ export default function LocationAutocomplete({
   };
 
   // Handle blur - autofill first/highlighted suggestion (Google Places behavior)
-  const handleBlur = () => {
+  // Also auto-populate ZIP to city/state
+  const handleBlur = async () => {
     // Slightly longer delay to allow click events on dropdown to fire first
-    setTimeout(() => {
+    setTimeout(async () => {
       // If user is clicking a dropdown item, don't interfere - let onClick handle it
       if (isClickingDropdownRef.current) {
         isClickingDropdownRef.current = false;
@@ -605,6 +623,23 @@ export default function LocationAutocomplete({
       if (showDropdown && suggestions.length > 0) {
         const indexToSelect = selectedIndex >= 0 ? selectedIndex : 0;
         handleSelect(suggestions[indexToSelect]);
+      } else if (!showDropdown || suggestions.length === 0) {
+        // If no suggestions shown, check if user typed a complete ZIP code
+        const trimmedValue = value.trim();
+        const isCompleteZip = /^\d{5}$/.test(trimmedValue);
+        
+        if (isCompleteZip && !selectedDisplay) {
+          // Auto-populate city/state from ZIP
+          const zipResult = await lookupZip(trimmedValue);
+          if (zipResult) {
+            const displayText = `${zipResult.city}, ${zipResult.state} ${zipResult.zip}`;
+            setSelectedDisplay(displayText);
+            onValueChange(displayText);
+            onLocationSelect(displayText, zipResult.zip, zipResult.fullAddress, false);
+            setIsValid(true);
+            setValidationLevel('partial');
+          }
+        }
       }
       setShowDropdown(false);
     }, 200);

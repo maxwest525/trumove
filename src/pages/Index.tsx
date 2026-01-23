@@ -356,39 +356,55 @@ export default function Index() {
                   <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
-                  Skip the mega van lines. We connect you with small, family-owned movers — 
-                  all FMCSA verified, all reputation-monitored, all matched to your exact route.
+                  Skip the chaos of mega van lines and shady brokers. We connect you directly with 
+                  small, family-owned moving companies — all vetted through federal FMCSA records, 
+                  continuously monitored for complaints, and matched specifically to your route and timeline. 
+                  Get real pricing based on your actual inventory, not inflated guesses.
                 </p>
                 
                 {/* Value Props Container - Map overlays this section */}
                 <div className="tru-hero-value-props-container">
-                  {/* Value Props - Real Differentiators */}
-                  <div className={`tru-hero-value-props ${fromCity ? 'is-hidden' : ''}`}>
-                    <div className="tru-hero-value-prop">
-                      <div className="tru-hero-value-icon">
-                        <Shield className="w-5 h-5" />
+                  {/* Value Props - Feature Cards */}
+                  <div className={`tru-hero-value-cards ${fromCity ? 'is-hidden' : ''}`}>
+                    <div className="tru-value-card">
+                      <div className="tru-value-card-icon">
+                        <Scan className="w-6 h-6" />
                       </div>
-                      <div className="tru-hero-value-text">
-                        <span className="tru-hero-value-title">4-Stage Carrier Vetting</span>
-                        <span className="tru-hero-value-desc">FMCSA licensed, insurance verified, live scoring on every job</span>
-                      </div>
-                    </div>
-                    <div className="tru-hero-value-prop">
-                      <div className="tru-hero-value-icon">
-                        <Users className="w-5 h-5" />
-                      </div>
-                      <div className="tru-hero-value-text">
-                        <span className="tru-hero-value-title">Small, Family-Owned Movers</span>
-                        <span className="tru-hero-value-desc">No mega van lines — real carriers who treat your move like their own</span>
+                      <div className="tru-value-card-content">
+                        <h3 className="tru-value-card-title">Scan Your Room</h3>
+                        <p className="tru-value-card-desc">Use your phone camera to scan rooms. AI identifies furniture and builds your inventory instantly.</p>
+                        <span className="tru-value-card-badge">Coming Soon</span>
                       </div>
                     </div>
-                    <div className="tru-hero-value-prop">
-                      <div className="tru-hero-value-icon">
-                        <Headphones className="w-5 h-5" />
+                    
+                    <div className="tru-value-card">
+                      <div className="tru-value-card-icon">
+                        <Sparkles className="w-6 h-6" />
                       </div>
-                      <div className="tru-hero-value-text">
-                        <span className="tru-hero-value-title">Personal Agent Guidance</span>
-                        <span className="tru-hero-value-desc">A real person walks you through every step — no call centers</span>
+                      <div className="tru-value-card-content">
+                        <h3 className="tru-value-card-title">AI Inventory Builder</h3>
+                        <p className="tru-value-card-desc">Select your home size and our AI populates a complete inventory list. Edit as needed for accuracy.</p>
+                        <span className="tru-value-card-badge tru-value-card-badge-live">Live</span>
+                      </div>
+                    </div>
+                    
+                    <div className="tru-value-card">
+                      <div className="tru-value-card-icon">
+                        <Shield className="w-6 h-6" />
+                      </div>
+                      <div className="tru-value-card-content">
+                        <h3 className="tru-value-card-title">4-Stage Carrier Vetting</h3>
+                        <p className="tru-value-card-desc">FMCSA license verification, insurance validation, complaint monitoring, and live performance scoring.</p>
+                      </div>
+                    </div>
+                    
+                    <div className="tru-value-card">
+                      <div className="tru-value-card-icon">
+                        <Video className="w-6 h-6" />
+                      </div>
+                      <div className="tru-value-card-content">
+                        <h3 className="tru-value-card-title">Video Walkthrough</h3>
+                        <p className="tru-value-card-desc">Schedule a video call with a specialist who walks through your home virtually for accurate quoting.</p>
                       </div>
                     </div>
                   </div>
@@ -743,46 +759,69 @@ export default function Index() {
 
               {/* SIDEBAR: Stacked Move Summary + Floating Nav */}
               <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-                {/* Move Summary Card */}
-                <div className={`tru-floating-summary-card ${summaryVisible ? 'is-expanded' : ''}`}>
-                  <div className="tru-summary-card-header">
-                    <span className="tru-summary-card-title">Move Summary</span>
+                {/* Move Summary Card - collapsible pill */}
+                <div 
+                  className={`tru-floating-summary-card tru-stacked-pill ${summaryHovered ? 'is-expanded' : ''}`}
+                  onMouseEnter={() => setSummaryHovered(true)}
+                  onMouseLeave={() => setSummaryHovered(false)}
+                >
+                  {/* Collapsed view - vertical "SUMMARY" text */}
+                  <div className="tru-stacked-pill-collapsed">
+                    <div className="tru-stacked-pill-indicator">
+                      <span className="tru-stacked-pill-dot"></span>
+                    </div>
+                    <span className="tru-stacked-pill-vertical-text">SUMMARY</span>
                   </div>
-                  <div className="tru-summary-card-body">
-                    <div className="tru-summary-info-grid">
-                      <div className={`tru-summary-row ${updatedFields.has('from') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">From</span>
-                        <span className="tru-summary-value">{fromCity || "—"}</span>
+                  
+                  {/* Expanded view - full summary */}
+                  <div className="tru-stacked-pill-expanded">
+                    <div className="tru-summary-card-header">
+                      <span className="tru-summary-card-title">Move Summary</span>
+                    </div>
+                    <div className="tru-summary-card-body">
+                      <div className="tru-summary-info-grid">
+                        <div className={`tru-summary-row ${updatedFields.has('from') ? 'is-updated' : ''}`}>
+                          <span className="tru-summary-label">From</span>
+                          <span className="tru-summary-value">{fromCity || "—"}</span>
+                        </div>
+                        <div className={`tru-summary-row ${updatedFields.has('to') ? 'is-updated' : ''}`}>
+                          <span className="tru-summary-label">To</span>
+                          <span className="tru-summary-value">{toCity || "—"}</span>
+                        </div>
+                        <div className={`tru-summary-row ${updatedFields.has('distance') ? 'is-updated' : ''}`}>
+                          <span className="tru-summary-label">Distance</span>
+                          <span className="tru-summary-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
+                        </div>
+                        <div className={`tru-summary-row ${updatedFields.has('date') ? 'is-updated' : ''}`}>
+                          <span className="tru-summary-label">Date</span>
+                          <span className="tru-summary-value">{moveDate ? format(moveDate, "MMM d") : "—"}</span>
+                        </div>
+                        <div className="tru-summary-row">
+                          <span className="tru-summary-label">ETA</span>
+                          <span className="tru-summary-value">{estimatedDuration || "—"}</span>
+                        </div>
+                        <div className={`tru-summary-row ${updatedFields.has('size') ? 'is-updated' : ''}`}>
+                          <span className="tru-summary-label">Size</span>
+                          <span className="tru-summary-value">{size || "—"}</span>
+                        </div>
+                        <div className={`tru-summary-row ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
+                          <span className="tru-summary-label">Property</span>
+                          <span className="tru-summary-value">
+                            {propertyType 
+                              ? `${propertyType === 'house' ? 'House' : 'Apt'}${propertyType === 'apartment' ? ` F${floor}` : ''}`
+                              : "—"}
+                          </span>
+                        </div>
                       </div>
-                      <div className={`tru-summary-row ${updatedFields.has('to') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">To</span>
-                        <span className="tru-summary-value">{toCity || "—"}</span>
-                      </div>
-                      <div className={`tru-summary-row ${updatedFields.has('distance') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">Distance</span>
-                        <span className="tru-summary-value">{distance > 0 ? `${distance.toLocaleString()} mi` : "—"}</span>
-                      </div>
-                      <div className={`tru-summary-row ${updatedFields.has('date') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">Date</span>
-                        <span className="tru-summary-value">{moveDate ? format(moveDate, "MMM d") : "—"}</span>
-                      </div>
-                      <div className={`tru-summary-row ${updatedFields.has('size') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">Size</span>
-                        <span className="tru-summary-value">{size || "—"}</span>
-                      </div>
-                      <div className={`tru-summary-row ${updatedFields.has('propertyType') ? 'is-updated' : ''}`}>
-                        <span className="tru-summary-label">Property</span>
-                        <span className="tru-summary-value">
-                          {propertyType 
-                            ? `${propertyType === 'house' ? 'House' : 'Apt'}${propertyType === 'apartment' ? ` F${floor}` : ''}`
-                            : "—"}
-                        </span>
+                      <div className="tru-summary-footer">
+                        <span className="tru-summary-powered">Powered by</span>
+                        <img src={logoImg} alt="TruMove" className="tru-summary-logo" />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Floating Nav */}
+                {/* Floating Nav - collapsible pill */}
                 <div className="tru-floating-nav-wrapper">
                   <FloatingNav onChatOpen={() => setChatOpen(true)} />
                 </div>
