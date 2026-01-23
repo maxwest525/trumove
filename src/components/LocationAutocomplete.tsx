@@ -40,11 +40,23 @@ interface LocationAutocompleteProps {
   showGeolocation?: boolean; // Show "Use my location" button
 }
 
+// Generate a unique session token for Mapbox API (required for Search Box API)
+function generateSessionToken(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+// Session token for Mapbox - persists for the component lifecycle
+let mapboxSessionToken = generateSessionToken();
+
 // Mapbox Address Autofill API for verified street addresses
 async function searchMapboxAddresses(query: string): Promise<LocationSuggestion[]> {
   try {
     const res = await fetch(
-      `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&types=address&country=us&language=en&limit=5&access_token=${MAPBOX_TOKEN}`,
+      `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(query)}&types=address&country=us&language=en&limit=5&session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return [];
@@ -93,10 +105,13 @@ async function searchMapboxAddresses(query: string): Promise<LocationSuggestion[
 async function retrieveMapboxAddress(mapboxId: string): Promise<LocationSuggestion | null> {
   try {
     const res = await fetch(
-      `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?access_token=${MAPBOX_TOKEN}`,
+      `https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=${mapboxSessionToken}&access_token=${MAPBOX_TOKEN}`,
       { headers: { 'Accept': 'application/json' } }
     );
     if (!res.ok) return null;
+    
+    // Generate a new session token after retrieve (billing best practice)
+    mapboxSessionToken = generateSessionToken();
     
     const data = await res.json();
     const feature = data.features?.[0];
