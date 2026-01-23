@@ -325,17 +325,13 @@ export default function CarrierVetting() {
               </div>
             </div>
             <div className="fmcsa-terminal-body">
-              <div className="mb-4">
-                <h3 className="text-sm font-semibold text-white mb-1">FMCSA-Verified Carrier Safety Records</h3>
-                <p className="text-xs text-white/60 leading-relaxed">
-                  All carriers are filtered and continuously monitored per official FMCSA Safety Measurement System (SMS) criteria and federal compliance standards. Click any card for detailed report including Behavior Analysis and Safety Improvement Categories (BASICs), roadside inspection results, crash involvement, and safety fitness evaluation.
-                </p>
+              <div className="mb-5 text-center">
+                <h3 className="text-lg font-bold text-white mb-2">FMCSA-Verified Carrier Safety Records</h3>
               </div>
               <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
-              <div className="mt-3 flex items-center gap-2 text-sm text-white/60">
-                <Info className="w-3.5 h-3.5" />
-                <span>For best results, search by DOT# or MC#</span>
-              </div>
+              <p className="text-[10px] text-white/50 leading-relaxed mt-4 text-center">
+                All carriers are filtered and continuously monitored per official FMCSA Safety Measurement System (SMS) criteria and federal compliance standards. Click any card for detailed report including Behavior Analysis and Safety Improvement Categories (BASICs), roadside inspection results, crash involvement, and safety fitness evaluation.
+              </p>
             </div>
           </div>
 
@@ -364,7 +360,7 @@ export default function CarrierVetting() {
           {/* Results Header - Only when carriers exist */}
           {carriers.length > 0 && (
             <div className="mb-6 max-w-3xl mx-auto">
-              <h2 className="text-lg font-semibold text-foreground text-center">
+              <h2 className="text-xl font-bold text-foreground text-center">
                 Carrier Safety Comparison
               </h2>
             </div>

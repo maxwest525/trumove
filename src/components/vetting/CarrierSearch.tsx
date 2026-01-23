@@ -142,24 +142,18 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md font-medium transition-all border active:scale-95 relative',
+              'rounded-md font-medium transition-all border active:scale-95',
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'name' 
                     ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
                     : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'name' 
-                    ? 'bg-white/15 text-white border-white/40 shadow-sm' 
+                    ? 'text-white border-green-500/60 shadow-sm' 
                     : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20 active:bg-white/20')
             )}
             onClick={() => setSearchType('name')}
           >
-            {searchType === 'name' && (
-              <span className={cn(
-                'absolute -top-1 -right-1 w-2 h-2 rounded-full',
-                isSidebar ? 'bg-primary' : 'bg-green-400'
-              )} />
-            )}
             <Building2 className={cn(isSidebar ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1.5')} />
             Name
           </Button>
@@ -168,24 +162,18 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md font-medium transition-all border active:scale-95 relative',
+              'rounded-md font-medium transition-all border active:scale-95',
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'dot' 
                     ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
                     : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'dot' 
-                    ? 'bg-white/15 text-white border-white/40 shadow-sm' 
+                    ? 'text-white border-green-500/60 shadow-sm' 
                     : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20 active:bg-white/20')
             )}
             onClick={() => setSearchType('dot')}
           >
-            {searchType === 'dot' && (
-              <span className={cn(
-                'absolute -top-1 -right-1 w-2 h-2 rounded-full',
-                isSidebar ? 'bg-primary' : 'bg-green-400'
-              )} />
-            )}
             <Hash className={cn(isSidebar ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1.5')} />
             DOT
           </Button>
@@ -194,24 +182,18 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md font-medium transition-all border active:scale-95 relative',
+              'rounded-md font-medium transition-all border active:scale-95',
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'mc' 
                     ? 'bg-primary/10 text-primary border-primary/30 shadow-sm' 
                     : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'mc' 
-                    ? 'bg-white/15 text-white border-white/40 shadow-sm' 
+                    ? 'text-white border-green-500/60 shadow-sm' 
                     : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20 active:bg-white/20')
             )}
             onClick={() => setSearchType('mc')}
           >
-            {searchType === 'mc' && (
-              <span className={cn(
-                'absolute -top-1 -right-1 w-2 h-2 rounded-full',
-                isSidebar ? 'bg-primary' : 'bg-green-400'
-              )} />
-            )}
             <Truck className={cn(isSidebar ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1.5')} />
             MC
           </Button>
