@@ -292,67 +292,68 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
   const worstBasic = getWorstBasic();
 
   return (
-    <Card className={cn(
-      'bg-card/80 backdrop-blur border-border/50 overflow-hidden transition-all',
-      criticalFlags.length > 0 && 'border-red-500/50',
-      className
-    )}>
-      <CardHeader className="pb-3 relative">
-        {onRemove && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-2 right-2 h-6 w-6 text-muted-foreground hover:text-foreground"
-            onClick={onRemove}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-        
-        {/* TruMove Verified Badge */}
-        {riskGrade.isTruMoveVerified && (
-          <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-green-500/50">
-            <CheckCircle2 className="w-4 h-4 text-green-400" />
-            <span className="text-xs font-semibold text-white uppercase tracking-wide">TruMove Verified Partner</span>
-          </div>
-        )}
-        
-        {/* Risk Grade Badge */}
-        <div className="flex items-start justify-between pr-8 mb-3">
-          <div className={cn(
-            'flex items-center gap-3 px-4 py-2 rounded-xl border',
-            riskGrade.color
-          )}>
-            <span className="text-3xl font-black">{riskGrade.grade}</span>
-            <div className="text-left">
-              <span className="text-xs font-semibold uppercase tracking-wide">{riskGrade.label}</span>
-              <p className="text-[10px] opacity-75">Safety Score</p>
+    <div className="relative">
+      {/* TruMove Verified Badge - OUTSIDE the card, subtle */}
+      {riskGrade.isTruMoveVerified && (
+        <div className="absolute -top-3 left-4 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 dark:bg-slate-700 border border-green-500/40 shadow-sm">
+          <CheckCircle2 className="w-3 h-3 text-green-400" />
+          <span className="text-[10px] font-medium text-white uppercase tracking-wide">TruMove Verified</span>
+        </div>
+      )}
+
+      <Card className={cn(
+        'bg-card/80 backdrop-blur border-border/50 overflow-hidden transition-all',
+        criticalFlags.length > 0 && 'border-red-500/50',
+        riskGrade.isTruMoveVerified && 'mt-3',
+        className
+      )}>
+        <CardHeader className="pb-3 relative">
+          {onRemove && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 h-6 w-6 text-muted-foreground hover:text-foreground"
+              onClick={onRemove}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+          
+          {/* Carrier Identity - DBA, DOT, MC at TOP */}
+          <div className="space-y-2 pr-8">
+            <div>
+              <h3 className="font-semibold text-lg text-foreground leading-tight">
+                {data.carrier.dbaName || data.carrier.legalName}
+              </h3>
+              {data.carrier.dbaName && data.carrier.dbaName !== data.carrier.legalName && (
+                <p className="text-xs text-muted-foreground">Legal: {data.carrier.legalName}</p>
+              )}
+            </div>
+            
+            {/* DOT & MC Numbers - Prominent */}
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="outline" className="text-xs font-mono font-semibold">
+                DOT# {data.carrier.dotNumber}
+              </Badge>
+              {data.carrier.mcNumber && (
+                <Badge variant="outline" className="text-xs font-mono">
+                  {data.carrier.mcNumber}
+                </Badge>
+              )}
             </div>
           </div>
-        </div>
 
-        <div className="space-y-2">
-          <div>
-            <h3 className="font-semibold text-lg text-foreground leading-tight">
-              {data.carrier.legalName}
-            </h3>
-            {data.carrier.dbaName && data.carrier.dbaName !== data.carrier.legalName && (
-              <p className="text-sm text-muted-foreground">DBA: {data.carrier.dbaName}</p>
-            )}
+          {/* Risk Grade - Subtle, smaller, right-aligned */}
+          <div className="absolute top-10 right-10">
+            <div className={cn(
+              'flex items-center gap-1.5 px-2 py-1 rounded-lg border text-sm',
+              riskGrade.color
+            )}>
+              <span className="text-lg font-bold">{riskGrade.grade}</span>
+              <span className="text-[10px] font-medium opacity-75">{riskGrade.label}</span>
+            </div>
           </div>
-          
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="text-xs font-mono">
-              DOT# {data.carrier.dotNumber}
-            </Badge>
-            {data.carrier.mcNumber && (
-              <Badge variant="outline" className="text-xs font-mono">
-                {data.carrier.mcNumber}
-              </Badge>
-            )}
-          </div>
-        </div>
-      </CardHeader>
+        </CardHeader>
 
       <CardContent className="space-y-4">
         {/* Summary Stats - Always visible */}
@@ -423,7 +424,7 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
             {/* Red Flags Detail */}
             {redFlags.length > 0 && (
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                   <FileWarning className="w-4 h-4" />
                   <span>Red Flag Details</span>
                 </div>
@@ -512,26 +513,26 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
               </div>
 
               <div className="space-y-2 p-3 rounded-lg bg-muted/20">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                <div className="flex items-center gap-2 text-xs font-medium text-foreground">
                   <AlertTriangle className="w-3.5 h-3.5" />
                   <span>Crash History (24 months)</span>
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Fatal</span>
-                    <span className={cn('font-medium font-mono', data.crashes.fatal > 0 && 'text-red-500')}>
+                    <span className="text-foreground">Fatal</span>
+                    <span className={cn('font-medium font-mono', data.crashes.fatal > 0 ? 'text-red-700 dark:text-red-400' : 'text-foreground')}>
                       {data.crashes.fatal}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Injury</span>
-                    <span className={cn('font-medium font-mono', data.crashes.injury > 0 && 'text-amber-500')}>
+                    <span className="text-foreground">Injury</span>
+                    <span className={cn('font-medium font-mono', data.crashes.injury > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-foreground')}>
                       {data.crashes.injury}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Tow-Away</span>
-                    <span className="font-medium font-mono">{data.crashes.towAway}</span>
+                    <span className="text-foreground">Tow-Away</span>
+                    <span className="font-medium font-mono text-foreground">{data.crashes.towAway}</span>
                   </div>
                 </div>
               </div>
@@ -569,5 +570,6 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
         </Collapsible>
       </CardContent>
     </Card>
+    </div>
   );
 }

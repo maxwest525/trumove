@@ -233,8 +233,8 @@ export default function CarrierVetting() {
   return (
     <SiteShell>
       <div className="min-h-screen bg-background">
-        {/* Government-style Header */}
-        <div className="fmcsa-header">
+        {/* Government-style Header - STICKY */}
+        <div className="fmcsa-header sticky top-0 z-40">
           <div className="container max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
@@ -264,16 +264,15 @@ export default function CarrierVetting() {
           </div>
         </div>
 
-        {/* Trust Strip - Data Source Explanation */}
-        <div className="bg-muted/30 border-b border-border/50">
-          <div className="container max-w-7xl mx-auto px-4 py-4">
+        {/* Trust Strip - STICKY below header */}
+        <div className="bg-muted/30 border-b border-border/50 sticky top-[72px] z-30 backdrop-blur-sm">
+          <div className="container max-w-7xl mx-auto px-4 py-3">
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
               {DATA_SOURCES.map((source) => (
-                <div key={source.title} className="flex items-center gap-3">
-                  <source.icon className="w-5 h-5 text-primary shrink-0" />
+                <div key={source.title} className="flex items-center gap-2">
+                  <source.icon className="w-4 h-4 text-primary shrink-0" />
                   <div className="text-left">
-                    <p className="text-sm font-medium text-foreground">{source.title}</p>
-                    <p className="text-xs text-muted-foreground">{source.description}</p>
+                    <p className="text-xs font-medium text-foreground">{source.title}</p>
                   </div>
                 </div>
               ))}
@@ -304,26 +303,27 @@ export default function CarrierVetting() {
             </div>
           )}
 
-          {/* Search Terminal - Always visible */}
-          <div className="fmcsa-terminal max-w-2xl mx-auto mb-6">
-            <div className="fmcsa-terminal-header">
-              <div className="fmcsa-terminal-dots">
-                <span></span><span></span><span></span>
+          {/* Search Terminal - Only show when no carriers */}
+          {carriers.length === 0 && (
+            <div className="fmcsa-terminal max-w-2xl mx-auto mb-6">
+              <div className="fmcsa-terminal-header">
+                <div className="fmcsa-terminal-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
+                <div className="ml-auto flex items-center gap-2">
+                  <img src="https://www.fmcsa.dot.gov/themes/custom/fmcsa/logo.svg" alt="FMCSA" className="h-5 brightness-0 invert opacity-70" />
+                </div>
               </div>
-              <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
-              <div className="ml-auto flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/30 font-mono">USDOT</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30 font-mono">FMCSA</span>
+              <div className="fmcsa-terminal-body">
+                <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
+                <div className="mt-3 flex items-center gap-2 text-sm text-white/60">
+                  <Info className="w-3.5 h-3.5" />
+                  <span>For best results, search by DOT# or MC#</span>
+                </div>
               </div>
             </div>
-            <div className="fmcsa-terminal-body">
-              <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
-              <div className="mt-3 flex items-center gap-2 text-sm text-white/60">
-                <Info className="w-3.5 h-3.5" />
-                <span>For best results, search by DOT# or MC#</span>
-              </div>
-            </div>
-          </div>
+          )}
 
           {/* Compact Benefits Strip - Only show when no carriers */}
           {carriers.length === 0 && (
@@ -397,12 +397,42 @@ export default function CarrierVetting() {
 
               {/* Right Sidebar */}
               <div className="hidden lg:block w-72 shrink-0">
-                <div className="sticky top-24 space-y-4">
+                <div className="sticky top-36 space-y-4">
                   {/* Add Carrier */}
                   {carriers.length < 4 && (
                     <div className="p-4 rounded-xl border border-border bg-card">
                       <h3 className="text-sm font-semibold text-foreground mb-3">Add Carrier</h3>
-                      <CarrierSearch onSelect={handleAddCarrier} className="text-sm" />
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <button 
+                            className="flex-1 px-3 py-2 text-xs font-medium rounded-md border border-border bg-muted/50 text-foreground hover:bg-muted transition-colors"
+                            onClick={() => {
+                              const dotInput = document.getElementById('sidebar-dot-input') as HTMLInputElement;
+                              if (dotInput) dotInput.focus();
+                            }}
+                          >
+                            Search DOT#
+                          </button>
+                        </div>
+                        <div className="relative">
+                          <input
+                            id="sidebar-dot-input"
+                            type="text"
+                            placeholder="Enter DOT number..."
+                            className="w-full px-3 py-2 text-sm rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                const value = (e.target as HTMLInputElement).value.trim();
+                                if (value) {
+                                  handleAddCarrier(value);
+                                  (e.target as HTMLInputElement).value = '';
+                                }
+                              }
+                            }}
+                          />
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">Press Enter to search</p>
+                      </div>
                     </div>
                   )}
 
