@@ -123,54 +123,36 @@ export default function InventoryTable({ items, onUpdateItem, onRemoveItem, onCl
         </table>
       </div>
 
-      {/* Summary */}
-      <div className="p-4 border-t border-border/40">
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
-            <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-1">Total items</div>
-            <div className="text-xl font-black text-foreground">{items.length}</div>
-          </div>
-          <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
-            <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-1">Total weight</div>
-            <div className="text-xl font-black text-foreground">{totalWeight.toLocaleString()} lbs</div>
-          </div>
-          <div className="p-3 rounded-lg border border-border/40 bg-muted/20">
-            <div className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mb-1">Move size</div>
-            <div className="text-base font-bold text-foreground">{moveSize}</div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex flex-wrap gap-3">
+      {/* Actions */}
+      <div className="p-4 border-t border-border/40 flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={handlePrint}
+          disabled={items.length === 0}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card text-sm font-semibold text-foreground hover:bg-muted/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Printer className="w-4 h-4" />
+          Print inventory
+        </button>
+        <button
+          type="button"
+          onClick={handleDownload}
+          disabled={items.length === 0}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card text-sm font-semibold text-foreground hover:bg-muted/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Download className="w-4 h-4" />
+          Download as PDF
+        </button>
+        {items.length > 0 && (
           <button
             type="button"
-            onClick={handlePrint}
-            disabled={items.length === 0}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card text-sm font-semibold text-foreground hover:bg-muted/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={onClear}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-destructive hover:bg-destructive/10 transition-all"
           >
-            <Printer className="w-4 h-4" />
-            Print inventory
+            <Trash2 className="w-4 h-4" />
+            Clear all
           </button>
-          <button
-            type="button"
-            onClick={handleDownload}
-            disabled={items.length === 0}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/60 bg-card text-sm font-semibold text-foreground hover:bg-muted/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Download className="w-4 h-4" />
-            Download as PDF
-          </button>
-          {items.length > 0 && (
-            <button
-              type="button"
-              onClick={onClear}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-destructive hover:bg-destructive/10 transition-all"
-            >
-              <Trash2 className="w-4 h-4" />
-              Clear all
-            </button>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
