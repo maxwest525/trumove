@@ -142,15 +142,15 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md font-medium transition-all border active:scale-95',
+              'rounded-md font-medium transition-all active:scale-95',
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'name' 
-                    ? 'bg-primary/5 text-primary border-primary font-semibold' 
-                    : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
+                    ? 'bg-primary/5 text-primary border-2 border-primary font-semibold' 
+                    : 'bg-transparent text-muted-foreground border border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'name' 
-                    ? 'text-white border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-                    : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20 active:bg-white/20')
+                    ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
+                    : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
             )}
             onClick={() => setSearchType('name')}
           >
@@ -162,15 +162,15 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md font-medium transition-all border active:scale-95',
+              'rounded-md font-medium transition-all active:scale-95',
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'dot' 
-                    ? 'bg-primary/5 text-primary border-primary font-semibold' 
-                    : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
+                    ? 'bg-primary/5 text-primary border-2 border-primary font-semibold' 
+                    : 'bg-transparent text-muted-foreground border border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'dot' 
-                    ? 'text-white border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-                    : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20 active:bg-white/20')
+                    ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
+                    : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
             )}
             onClick={() => setSearchType('dot')}
           >
@@ -182,15 +182,15 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md font-medium transition-all border active:scale-95',
+              'rounded-md font-medium transition-all active:scale-95',
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'mc' 
-                    ? 'bg-primary/5 text-primary border-primary font-semibold' 
-                    : 'bg-transparent text-muted-foreground border-border hover:bg-muted/50 active:bg-muted')
+                    ? 'bg-primary/5 text-primary border-2 border-primary font-semibold' 
+                    : 'bg-transparent text-muted-foreground border border-border hover:bg-muted/50 active:bg-muted')
                 : (searchType === 'mc' 
-                    ? 'text-white border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-                    : 'text-white/60 hover:text-white hover:bg-white/10 border-white/20 active:bg-white/20')
+                    ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
+                    : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
             )}
             onClick={() => setSearchType('mc')}
           >

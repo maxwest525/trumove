@@ -490,7 +490,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                 <Shield className="w-4 h-4" />
                 <span>Insurance Coverage Analysis</span>
               </div>
-              <div className="space-y-3 p-3 rounded-lg bg-muted/20">
+              <div className="space-y-3 p-3 rounded-lg bg-muted/20 border border-border/50">
                 <InsuranceBar 
                   label="Bodily Injury & Property Damage (BIPD)" 
                   amount={data.authority.bipdInsurance} 
@@ -512,7 +512,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                 <AlertTriangle className="w-4 h-4" />
                 <span>CSA BASIC Safety Scores</span>
               </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-3 rounded-lg bg-muted/20">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
                 <BasicScoreBar 
                   name="Unsafe Driving" 
                   percentile={data.basics.unsafeDriving?.percentile ?? null} 

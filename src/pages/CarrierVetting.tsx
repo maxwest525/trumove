@@ -367,13 +367,15 @@ export default function CarrierVetting() {
 
           {/* Results Header - Only when carriers exist */}
           {carriers.length > 0 && (
-            <div className="mt-12 mb-10 max-w-4xl mx-auto text-center border-b border-border pb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-                Carrier Safety Comparison
-              </h2>
-              <p className="text-xs text-muted-foreground mt-4 leading-relaxed max-w-3xl mx-auto">
-                Pursuant to 49 U.S.C. 31144 and 49 CFR Part 385, displayed carriers are evaluated and monitored under the FMCSA Safety Measurement System (SMS), which quantifies performance across Behavior Analysis and Safety Improvement Categories (BASICs) using roadside inspection data, crash records, and compliance history from federal sources. All records are subject to ongoing review for adherence to the safety fitness standard. Click any carrier card to examine the detailed safety profile, encompassing BASIC percentiles, intervention prioritization indicators, violation details, crash involvement, and safety fitness determination outcomes.
-              </p>
+            <div className="mt-12 mb-10 text-center">
+              <div className="inline-block px-8 py-6 bg-gradient-to-b from-muted/50 to-transparent rounded-xl border border-border/50">
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                  Carrier Safety Comparison
+                </h2>
+                <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed max-w-6xl">
+                  Pursuant to 49 U.S.C. 31144 and 49 CFR Part 385, displayed carriers are evaluated and monitored under the FMCSA Safety Measurement System (SMS), which quantifies performance across Behavior Analysis and Safety Improvement Categories (BASICs) using roadside inspection data, crash records, and compliance history from federal sources. All records are subject to ongoing review for adherence to the safety fitness standard. Click any carrier card to examine the detailed safety profile.
+                </p>
+              </div>
             </div>
           )}
 
