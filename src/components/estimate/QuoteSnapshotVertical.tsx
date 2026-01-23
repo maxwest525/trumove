@@ -1,4 +1,4 @@
-import { Pencil, MapPin, Calendar, Ruler, Car, Package, Scale, Home, Truck } from "lucide-react";
+import { MapPin, Calendar, Ruler, Car, Package, Scale, Home, Truck } from "lucide-react";
 import { type InventoryItem, type MoveDetails, calculateTotalWeight, calculateTotalCubicFeet } from "@/lib/priceCalculator";
 import { format } from "date-fns";
 import type { ExtendedMoveDetails } from "./EstimateWizard";
@@ -59,21 +59,12 @@ export default function QuoteSnapshotVertical({ items, moveDetails, extendedDeta
   return (
     <div className="tru-move-summary-card is-expanded w-full max-w-[300px]">
       {/* Header - Enlarged and Centered */}
-      <div className="tru-summary-header-large relative">
+      <div className="tru-summary-header-large">
         <div className="text-center flex-1">
           <h3 className="text-lg font-black text-foreground">
             Move <span className="tru-qb-title-accent">Summary</span>
           </h3>
         </div>
-        {onEdit && (
-          <button 
-            onClick={onEdit}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
-            title="Edit move details"
-          >
-            <Pencil className="w-3.5 h-3.5" />
-          </button>
-        )}
       </div>
       
       {/* Content - Left aligned rows */}
