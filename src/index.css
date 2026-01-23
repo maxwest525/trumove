@@ -14152,6 +14152,33 @@
   flex-wrap: wrap;
 }
 
+/* Outline/secondary style for "Start Scanning Now" */
+.tru-scan-header-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: transparent;
+  color: hsl(var(--tm-ink));
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: 2px solid hsl(var(--tm-ink) / 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-scan-header-btn-outline:hover {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.05);
+  color: hsl(var(--tm-ink));
+}
+
+.tru-scan-header-btn-outline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .tru-scan-header-btn-primary {
   display: inline-flex;
   align-items: center;
@@ -14197,6 +14224,38 @@
 .tru-scan-header-btn-secondary:hover {
   border-color: hsl(var(--primary) / 0.5);
   background: hsl(var(--primary) / 0.05);
+}
+
+/* =============================================
+   SCAN ROOM - TRUST STRIP
+   ============================================= */
+.tru-scan-trust-strip {
+  padding: 20px 24px;
+  background: hsl(var(--tm-ink));
+  margin-bottom: 32px;
+}
+
+.tru-scan-trust-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.tru-scan-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(0 0% 100% / 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tru-scan-trust-item svg {
+  color: hsl(var(--primary));
 }
 
 /* =============================================
@@ -14262,48 +14321,129 @@
   50% { top: 85%; }
 }
 
-.tru-scan-video-labels {
+/* Detection Pills - Matching reference design */
+.tru-scan-video-pills {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.tru-scan-video-label {
+.tru-scan-detection-pill {
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: hsl(var(--tm-ink) / 0.9);
-  backdrop-filter: blur(8px);
-  border-radius: 8px;
-  border: 1px solid hsl(var(--primary) / 0.4);
+  gap: 10px;
+  padding: 10px 16px;
+  background: hsl(0 0% 100% / 0.95);
+  backdrop-filter: blur(12px);
+  border-radius: 100px;
+  box-shadow: 0 8px 24px hsl(var(--tm-ink) / 0.15);
+  animation: pillPopIn 0.4s ease-out forwards;
+}
+
+@keyframes pillPopIn {
+  from { opacity: 0; transform: scale(0.8) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.tru-scan-pill-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: hsl(var(--primary) / 0.15);
+  border-radius: 50%;
+  color: hsl(var(--primary));
+}
+
+.tru-scan-pill-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.tru-scan-pill-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tru-scan-pill-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  white-space: nowrap;
+}
+
+.tru-scan-pill-meta {
   font-size: 11px;
-  font-weight: 600;
-  color: white;
-  animation: fadeInLabel 0.4s ease-out forwards;
+  color: hsl(var(--tm-ink) / 0.5);
 }
 
-@keyframes fadeInLabel {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.tru-scan-video-status {
+/* Video Status Bar - Bottom */
+.tru-scan-video-status-bar {
   position: absolute;
   bottom: 16px;
   left: 16px;
   right: 16px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: hsl(var(--tm-ink) / 0.85);
+  justify-content: space-between;
+  padding: 10px 12px 10px 16px;
+  background: hsl(var(--tm-ink) / 0.9);
   backdrop-filter: blur(8px);
   border-radius: 12px;
+}
+
+.tru-scan-status-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 13px;
   font-weight: 500;
-  color: white;
+  color: hsl(0 0% 100% / 0.8);
+}
+
+.tru-scan-status-left svg {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+.tru-scan-status-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: hsl(var(--primary));
+  color: hsl(var(--tm-ink));
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-scan-status-btn:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.4);
+}
+
+.tru-scan-status-btn:disabled {
+  opacity: 0.8;
+  cursor: default;
+}
+
+.tru-scan-spinner-small {
+  width: 14px;
+  height: 14px;
+  border: 2px solid hsl(var(--tm-ink) / 0.3);
+  border-top-color: hsl(var(--tm-ink));
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .tru-scan-status-pulse {
@@ -14398,9 +14538,15 @@
   gap: 12px;
   padding: 10px 12px;
   border-radius: 12px;
-  background: hsl(var(--tm-ink) / 0.02);
+  background: white;
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
   margin-bottom: 6px;
   animation: slideInRow 0.3s ease-out forwards;
+}
+
+.tru-scan-inv-row:hover {
+  background: hsl(var(--primary) / 0.03);
+  border-color: hsl(var(--primary) / 0.15);
 }
 
 @keyframes slideInRow {
@@ -14408,14 +14554,21 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
+.tru-scan-inv-thumb-wrap {
+  width: 44px;
+  height: 44px;
+  background: hsl(var(--tm-ink) / 0.03);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .tru-scan-inv-thumb {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
-  background: white;
-  border-radius: 8px;
-  padding: 4px;
-  border: 1px solid hsl(var(--tm-ink) / 0.06);
 }
 
 .tru-scan-inv-info {
@@ -14437,6 +14590,21 @@
   display: block;
   font-size: 11px;
   color: hsl(var(--tm-ink) / 0.5);
+  margin-top: 2px;
+}
+
+.tru-scan-inv-qty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: hsl(var(--tm-ink));
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 
 .tru-scan-inv-footer {
