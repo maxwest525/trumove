@@ -130,14 +130,13 @@ export default function ScanRoom() {
               <button
                 onClick={startDemo}
                 disabled={isScanning}
-                className="tru-scan-header-btn-primary"
+                className="tru-scan-btn-dark"
               >
-                <span className="tru-scan-btn-arrows">&lt;&gt;</span>
-                Analyze Route
-                <ArrowRight className="w-4 h-4" />
+                <Sparkles className="w-4 h-4" />
+                Start Scanning
               </button>
-              <Link to="/online-estimate" className="tru-scan-header-btn-secondary">
-                Switch to Manual Builder
+              <Link to="/online-estimate" className="tru-scan-btn-outline">
+                Try Manual Builder
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
