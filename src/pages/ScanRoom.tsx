@@ -5,7 +5,7 @@ import {
   Scan, Camera, Sparkles, CheckCircle, ArrowRight, 
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
   Eye, Cpu, Upload, ListChecks, Play, Video, FileText,
-  Users, Ruler, Package, Plus, Minus
+  Users, Ruler, Package, Plus, Minus, X
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import previewImage from "@/assets/preview-ai-scanner.jpg";
@@ -28,6 +28,7 @@ export default function ScanRoom() {
   const [submitted, setSubmitted] = useState(false);
   const [detectedItems, setDetectedItems] = useState<typeof DEMO_ITEMS>([]);
   const [isScanning, setIsScanning] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   // Simulate live detection
   useEffect(() => {
@@ -79,8 +80,29 @@ export default function ScanRoom() {
   return (
     <SiteShell>
       <div className="tru-scan-page">
-        {/* Hero Section */}
-        <section className="tru-scan-hero">
+        {/* Video Modal */}
+        {showVideo && (
+          <div className="tru-scan-video-modal" onClick={() => setShowVideo(false)}>
+            <div className="tru-scan-video-container" onClick={(e) => e.stopPropagation()}>
+              <button 
+                className="tru-scan-video-close"
+                onClick={() => setShowVideo(false)}
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <iframe
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1"
+                title="AI Room Scanner Demo"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="tru-scan-video-iframe"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Compact Hero + Demo Combined */}
+        <section className="tru-scan-hero tru-scan-hero-expanded">
           <div className="tru-scan-hero-content">
             <div className="tru-scan-badge">
               <Sparkles className="w-3.5 h-3.5" />
@@ -112,8 +134,8 @@ export default function ScanRoom() {
             </div>
           </div>
 
-          {/* Hero Visual - Premium Preview Card Style */}
-          <div className="tru-scan-hero-visual">
+          {/* Hero Visual with Integrated Demo */}
+          <div className="tru-scan-hero-visual tru-scan-hero-visual-expanded">
             <div className="tru-scan-preview-card">
               <div className="tru-scan-preview-glow" />
               <div className="tru-scan-preview-glow-secondary" />
@@ -127,186 +149,137 @@ export default function ScanRoom() {
                 
                 <div className="tru-scan-preview-overlay" />
                 
-                <div className="tru-scan-scanning-overlay">
-                  <div className="tru-scan-grid" />
-                  <div className="tru-scan-line" />
-                </div>
+                {isScanning && (
+                  <div className="tru-scan-scanning-overlay">
+                    <div className="tru-scan-grid" />
+                    <div className="tru-scan-line" />
+                  </div>
+                )}
                 
-                {/* Detection Labels */}
-                <div className="tru-scan-detection-label tru-scan-label-1">
-                  <div className="tru-scan-label-icon">
-                    <Box className="w-4 h-4" />
+                {/* Detection Labels - only show when scanning or complete */}
+                {detectedItems.length >= 1 && (
+                  <div className="tru-scan-detection-label tru-scan-label-1">
+                    <div className="tru-scan-label-icon">
+                      <Box className="w-4 h-4" />
+                    </div>
+                    <div className="tru-scan-label-content">
+                      <span className="tru-scan-label-title">Sofa, 3-Seat</span>
+                      <span className="tru-scan-label-meta">~350 lbs • 45 cu ft</span>
+                    </div>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                   </div>
-                  <div className="tru-scan-label-content">
-                    <span className="tru-scan-label-title">Sofa, 3-Seat</span>
-                    <span className="tru-scan-label-meta">~350 lbs • 45 cu ft</span>
-                  </div>
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                </div>
+                )}
                 
-                <div className="tru-scan-detection-label tru-scan-label-2">
-                  <div className="tru-scan-label-icon">
-                    <Box className="w-4 h-4" />
+                {detectedItems.length >= 2 && (
+                  <div className="tru-scan-detection-label tru-scan-label-2">
+                    <div className="tru-scan-label-icon">
+                      <Box className="w-4 h-4" />
+                    </div>
+                    <div className="tru-scan-label-content">
+                      <span className="tru-scan-label-title">Coffee Table</span>
+                      <span className="tru-scan-label-meta">~45 lbs • 8 cu ft</span>
+                    </div>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                   </div>
-                  <div className="tru-scan-label-content">
-                    <span className="tru-scan-label-title">Coffee Table</span>
-                    <span className="tru-scan-label-meta">~45 lbs • 8 cu ft</span>
-                  </div>
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                </div>
+                )}
                 
-                <div className="tru-scan-detection-label tru-scan-label-3">
-                  <div className="tru-scan-label-icon">
-                    <Box className="w-4 h-4" />
+                {detectedItems.length >= 3 && (
+                  <div className="tru-scan-detection-label tru-scan-label-3">
+                    <div className="tru-scan-label-icon">
+                      <Box className="w-4 h-4" />
+                    </div>
+                    <div className="tru-scan-label-content">
+                      <span className="tru-scan-label-title">TV Stand</span>
+                      <span className="tru-scan-label-meta">~80 lbs • 12 cu ft</span>
+                    </div>
+                    <CheckCircle className="w-4 h-4 text-primary" />
                   </div>
-                  <div className="tru-scan-label-content">
-                    <span className="tru-scan-label-title">TV Stand</span>
-                    <span className="tru-scan-label-meta">~80 lbs • 12 cu ft</span>
-                  </div>
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                </div>
+                )}
 
-                <button className="tru-scan-play-btn">
+                <button 
+                  className="tru-scan-play-btn"
+                  onClick={() => setShowVideo(true)}
+                >
                   <Play className="w-6 h-6" />
                 </button>
                 
                 <div className="tru-scan-stats-bar">
                   <div className="tru-scan-stat">
                     <Eye className="w-3.5 h-3.5" />
-                    <span>12 items detected</span>
+                    <span>{detectedItems.length} items detected</span>
                   </div>
                   <div className="tru-scan-stat-divider" />
                   <div className="tru-scan-stat">
                     <Cpu className="w-3.5 h-3.5" />
-                    <span>AI Active</span>
+                    <span>{isScanning ? 'Scanning...' : 'AI Active'}</span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* Live Inventory Demo Section */}
-        <section className="tru-scan-demo-section">
-          <div className="container max-w-6xl mx-auto px-4">
-            <div className="tru-scan-demo-grid">
-              {/* Left: Simulated Scanner */}
-              <div className="tru-scan-demo-scanner">
-                <div className="tru-scan-demo-header">
-                  <div className="tru-scan-demo-badge">
-                    <Camera className="w-3.5 h-3.5" />
-                    <span>Live Demo</span>
-                  </div>
-                  <h3 className="tru-scan-demo-title">Watch AI Build Your Inventory</h3>
-                </div>
-                
-                <div className="tru-scan-demo-preview">
-                  <img 
-                    src={previewImage} 
-                    alt="Room scan" 
-                    className="tru-scan-demo-image"
-                  />
-                  {isScanning && (
-                    <div className="tru-scan-demo-scanning">
-                      <div className="tru-scan-demo-line" />
-                    </div>
-                  )}
-                  
-                  {/* Status indicator */}
-                  <div className="tru-scan-demo-status">
-                    {isScanning ? (
-                      <>
-                        <div className="tru-scan-demo-pulse" />
-                        <span>Scanning... {detectedItems.length}/{DEMO_ITEMS.length} items</span>
-                      </>
-                    ) : detectedItems.length > 0 ? (
-                      <>
-                        <CheckCircle className="w-4 h-4" />
-                        <span>Scan complete</span>
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="w-4 h-4" />
-                        <span>Ready to scan</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={startDemo}
-                  disabled={isScanning}
-                  className="tru-scan-demo-btn"
-                >
-                  {isScanning ? (
-                    <>
-                      <div className="tru-scan-spinner" />
-                      Detecting Items...
-                    </>
-                  ) : (
-                    <>
-                      <Scan className="w-4 h-4" />
-                      {detectedItems.length > 0 ? 'Scan Again' : 'Start Demo Scan'}
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Right: Live Inventory List */}
-              <div className="tru-scan-demo-inventory">
-                <div className="tru-scan-demo-inv-header">
-                  <h3>Detected Inventory</h3>
-                  <span className="tru-scan-demo-inv-count">{detectedItems.length} items</span>
-                </div>
-                
-                <div className="tru-scan-demo-inv-list">
-                  {detectedItems.length === 0 ? (
-                    <div className="tru-scan-demo-inv-empty">
-                      <Package className="w-8 h-8" />
-                      <p>Click "Start Demo Scan" to see AI detection in action</p>
-                    </div>
-                  ) : (
-                    detectedItems.map((item, idx) => (
-                      <div 
-                        key={item.id} 
-                        className="tru-scan-demo-inv-item"
-                        style={{ animationDelay: `${idx * 0.1}s` }}
-                      >
-                        <img 
-                          src={item.image} 
-                          alt={item.name}
-                          className="tru-scan-demo-inv-img"
-                        />
-                        <div className="tru-scan-demo-inv-info">
-                          <span className="tru-scan-demo-inv-name">{item.name}</span>
-                          <span className="tru-scan-demo-inv-room">{item.room}</span>
-                        </div>
-                        <div className="tru-scan-demo-inv-stats">
-                          <span>{item.weight} lbs</span>
-                          <span>{item.cuft} cu ft</span>
-                        </div>
-                        <CheckCircle className="w-4 h-4 text-primary shrink-0" />
-                      </div>
-                    ))
-                  )}
-                </div>
-                
-                {detectedItems.length > 0 && (
-                  <div className="tru-scan-demo-inv-footer">
-                    <div className="tru-scan-demo-inv-total">
-                      <span>Total Weight</span>
-                      <strong>{totalWeight.toLocaleString()} lbs</strong>
-                    </div>
-                    <div className="tru-scan-demo-inv-total">
-                      <span>Total Volume</span>
-                      <strong>{totalCuFt} cu ft</strong>
-                    </div>
-                  </div>
+            {/* Inline Demo Controls + Inventory */}
+            <div className="tru-scan-inline-demo">
+              <button 
+                onClick={startDemo}
+                disabled={isScanning}
+                className="tru-scan-demo-btn-inline"
+              >
+                {isScanning ? (
+                  <>
+                    <div className="tru-scan-spinner" />
+                    Detecting...
+                  </>
+                ) : (
+                  <>
+                    <Scan className="w-4 h-4" />
+                    {detectedItems.length > 0 ? 'Scan Again' : 'Try Demo Scan'}
+                  </>
                 )}
-              </div>
+              </button>
+              
+              {detectedItems.length > 0 && (
+                <div className="tru-scan-inline-stats">
+                  <span><strong>{detectedItems.length}</strong> items</span>
+                  <span><strong>{totalWeight.toLocaleString()}</strong> lbs</span>
+                  <span><strong>{totalCuFt}</strong> cu ft</span>
+                </div>
+              )}
             </div>
           </div>
         </section>
+
+        {/* Live Inventory Builder - Now inline below hero */}
+        {detectedItems.length > 0 && (
+          <section className="tru-scan-inventory-section">
+            <div className="container max-w-5xl mx-auto px-4">
+              <div className="tru-scan-inventory-header">
+                <h3>Detected Inventory</h3>
+                <span className="tru-scan-inventory-count">{detectedItems.length} items • {totalWeight.toLocaleString()} lbs</span>
+              </div>
+              
+              <div className="tru-scan-inventory-grid">
+                {detectedItems.map((item, idx) => (
+                  <div 
+                    key={item.id} 
+                    className="tru-scan-inventory-card"
+                    style={{ animationDelay: `${idx * 0.08}s` }}
+                  >
+                    <img 
+                      src={item.image} 
+                      alt={item.name}
+                      className="tru-scan-inventory-img"
+                    />
+                    <div className="tru-scan-inventory-info">
+                      <span className="tru-scan-inventory-name">{item.name}</span>
+                      <span className="tru-scan-inventory-meta">{item.weight} lbs • {item.cuft} cu ft</span>
+                    </div>
+                    <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Condensed Features Strip */}
         <section className="tru-scan-features-strip">
