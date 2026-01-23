@@ -467,8 +467,8 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
           <CollapsibleContent className="space-y-4 pt-4">
             {/* Red Flags Detail */}
             {redFlags.length > 0 && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-foreground">
                   <FileWarning className="w-4 h-4" />
                   <span>Red Flag Details</span>
                 </div>
