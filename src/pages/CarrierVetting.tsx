@@ -326,7 +326,13 @@ export default function CarrierVetting() {
             </div>
             <div className="fmcsa-terminal-body">
               <div className="mb-5 text-center">
-                <h3 className="text-xl md:text-2xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-b from-white/90 to-white/50 drop-shadow-[0_1px_0_rgba(0,0,0,0.8)]" style={{ textShadow: '0 -1px 0 rgba(255,255,255,0.1), 0 2px 3px rgba(0,0,0,0.5)' }}>
+                <h3 
+                  className="text-xl md:text-2xl font-bold tracking-wide text-white/80"
+                  style={{ 
+                    textShadow: 'inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 2px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.3)',
+                    letterSpacing: '0.05em'
+                  }}
+                >
                   FMCSA-Verified Carrier Safety Records
                 </h3>
               </div>
@@ -361,10 +367,14 @@ export default function CarrierVetting() {
 
           {/* Results Header - Only when carriers exist */}
           {carriers.length > 0 && (
-            <div className="mb-6 max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center">
+            <div className="mt-10 mb-8 max-w-4xl mx-auto text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                 Carrier Safety Comparison
               </h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                Side-by-side analysis of FMCSA safety records, compliance scores, and risk indicators
+              </p>
+              <div className="w-24 h-1 bg-primary/60 mx-auto mt-4 rounded-full" />
             </div>
           )}
 
@@ -404,7 +414,7 @@ export default function CarrierVetting() {
                 <div className="sticky top-36 space-y-4">
                   {/* Add Carrier */}
                   {carriers.length < 4 && (
-                    <div className="p-3 rounded-xl border-2 border-primary/40 bg-card">
+                    <div className="p-3 rounded-xl border border-border bg-card">
                       <h3 className="text-xs font-semibold text-foreground mb-2">Add Carrier</h3>
                       <CarrierSearch 
                         onSelect={handleAddCarrier} 

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Separator } from '@/components/ui/separator';
 import { RedFlagBadge, generateRedFlags, type CarrierData as BaseCarrierData } from './RedFlagBadge';
 import { cn } from '@/lib/utils';
 
@@ -467,21 +468,24 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
           <CollapsibleContent className="space-y-6 pt-4">
             {/* Red Flags Detail */}
             {redFlags.length > 0 && (
-              <div className="space-y-3 pl-3 border-l-2 border-red-400 dark:border-red-500">
-                <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-foreground">
-                  <FileWarning className="w-4 h-4 text-red-500" />
-                  <span>Red Flag Details</span>
+              <>
+                <div className="space-y-3 pl-3 border-l-2 border-red-400 dark:border-red-500">
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-foreground">
+                    <FileWarning className="w-4 h-4 text-red-500" />
+                    <span>Red Flag Details</span>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    {redFlags.map((flag, i) => (
+                      <RedFlagBadge key={i} message={flag.message} severity={flag.severity} />
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-col gap-1.5">
-                  {redFlags.map((flag, i) => (
-                    <RedFlagBadge key={i} message={flag.message} severity={flag.severity} />
-                  ))}
-                </div>
-              </div>
+                <Separator className="bg-border/60" />
+              </>
             )}
 
             {/* Insurance Details */}
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-foreground">
                 <Shield className="w-4 h-4" />
                 <span>Insurance Coverage Analysis</span>
@@ -500,8 +504,10 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
               </div>
             </div>
 
+            <Separator className="bg-border/60" />
+
             {/* BASIC Scores */}
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-foreground">
                 <AlertTriangle className="w-4 h-4" />
                 <span>CSA BASIC Safety Scores</span>
