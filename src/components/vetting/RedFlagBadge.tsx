@@ -16,11 +16,11 @@ export function RedFlagBadge({ message, severity, className }: RedFlagBadgeProps
     info: Info
   };
 
-  // Use darker text for better readability
+  // Use BLACK text for maximum readability
   const colorMap = {
-    critical: 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 border-red-300 dark:border-red-500/30',
-    warning: 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-500/30',
-    info: 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-500/30'
+    critical: 'bg-red-100 dark:bg-red-500/20 text-slate-900 dark:text-red-200 border-red-300 dark:border-red-500/30',
+    warning: 'bg-amber-100 dark:bg-amber-500/20 text-slate-900 dark:text-amber-200 border-amber-300 dark:border-amber-500/30',
+    info: 'bg-blue-100 dark:bg-blue-500/20 text-slate-900 dark:text-blue-200 border-blue-300 dark:border-blue-500/30'
   };
 
   const Icon = iconMap[severity];
