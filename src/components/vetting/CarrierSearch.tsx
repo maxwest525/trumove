@@ -3,7 +3,7 @@ import { Search, Building2, Loader2, Hash } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
+
 
 interface SearchResult {
   dotNumber: string;
@@ -39,12 +39,6 @@ export function CarrierSearch({ onSelect, className }: CarrierSearchProps) {
     setError(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke('carrier-lookup', {
-        body: null,
-        headers: {},
-      });
-
-      // Use fetch directly since we need query params
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/carrier-lookup?type=${type}&q=${encodeURIComponent(searchQuery)}`,
         {
@@ -55,16 +49,34 @@ export function CarrierSearch({ onSelect, className }: CarrierSearchProps) {
         }
       );
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Search failed');
+        setError(data.error || 'Search failed');
+        setResults([]);
+        setShowResults(true);
+        return;
       }
 
-      const result = await response.json();
-      setResults(result.results || []);
+      if (type === 'name') {
+        const resultList = data.results || [];
+        setResults(resultList);
+        if (resultList.length === 0) {
+          setError('No carriers found matching that name');
+        }
+      } else {
+        // DOT search returns a single carrier
+        if (data.dotNumber) {
+          setResults([data]);
+        } else {
+          setResults([]);
+          setError('No carrier found with that DOT number');
+        }
+      }
       setShowResults(true);
     } catch (err) {
       console.error('Search error:', err);
-      setError('Search failed. Please try again.');
+      setError('Failed to connect to FMCSA database. Please try again.');
       setResults([]);
     } finally {
       setIsLoading(false);
