@@ -303,27 +303,25 @@ export default function CarrierVetting() {
             </div>
           )}
 
-          {/* Search Terminal - Only show when no carriers */}
-          {carriers.length === 0 && (
-            <div className="fmcsa-terminal max-w-2xl mx-auto mb-6">
-              <div className="fmcsa-terminal-header">
-                <div className="fmcsa-terminal-dots">
-                  <span></span><span></span><span></span>
-                </div>
-                <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
-                <div className="ml-auto flex items-center gap-2">
-                  <img src="https://www.fmcsa.dot.gov/themes/custom/fmcsa/logo.svg" alt="FMCSA" className="h-5 brightness-0 invert opacity-70" />
-                </div>
+          {/* FMCSA Terminal - Always Visible */}
+          <div className="fmcsa-terminal max-w-2xl mx-auto mb-6">
+            <div className="fmcsa-terminal-header">
+              <div className="fmcsa-terminal-dots">
+                <span></span><span></span><span></span>
               </div>
-              <div className="fmcsa-terminal-body">
-                <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
-                <div className="mt-3 flex items-center gap-2 text-sm text-white/60">
-                  <Info className="w-3.5 h-3.5" />
-                  <span>For best results, search by DOT# or MC#</span>
-                </div>
+              <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
+              <div className="ml-auto flex items-center gap-2">
+                <img src="https://www.fmcsa.dot.gov/themes/custom/fmcsa/logo.svg" alt="FMCSA" className="h-5 brightness-0 invert opacity-70" />
               </div>
             </div>
-          )}
+            <div className="fmcsa-terminal-body">
+              <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
+              <div className="mt-3 flex items-center gap-2 text-sm text-white/60">
+                <Info className="w-3.5 h-3.5" />
+                <span>For best results, search by DOT# or MC#</span>
+              </div>
+            </div>
+          </div>
 
           {/* Compact Benefits Strip - Only show when no carriers */}
           {carriers.length === 0 && (
@@ -352,23 +350,6 @@ export default function CarrierVetting() {
             <div className="flex gap-6">
               {/* Main Content */}
               <div className="flex-1 min-w-0">
-                {/* Action Bar */}
-                <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-lg font-semibold text-foreground">
-                      Carrier Comparison
-                    </h2>
-                    <span className="text-sm text-muted-foreground">
-                      {carriers.length} of 4 carriers
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm" onClick={clearAll}>
-                      Clear All
-                    </Button>
-                  </div>
-                </div>
-
                 {/* Comparison Grid */}
                 <ComparisonGrid
                   carriers={carriers}
@@ -398,7 +379,7 @@ export default function CarrierVetting() {
               {/* Right Sidebar */}
               <div className="hidden lg:block w-72 shrink-0">
                 <div className="sticky top-36 space-y-4">
-                  {/* Add Carrier with Name/DOT toggle */}
+                  {/* Add Carrier */}
                   {carriers.length < 4 && (
                     <div className="p-4 rounded-xl border border-border bg-card">
                       <h3 className="text-sm font-semibold text-foreground mb-3">Add Carrier</h3>
@@ -408,6 +389,16 @@ export default function CarrierVetting() {
                         className="sidebar-search"
                       />
                     </div>
+                  )}
+
+                  {/* Clear All - Simple link */}
+                  {carriers.length > 0 && (
+                    <button 
+                      onClick={clearAll}
+                      className="w-full text-sm text-muted-foreground hover:text-foreground text-center py-2 transition-colors"
+                    >
+                      Clear All Carriers
+                    </button>
                   )}
 
                   {/* Risk Grade Legend */}
