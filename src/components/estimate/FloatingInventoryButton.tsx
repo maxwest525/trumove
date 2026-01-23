@@ -18,7 +18,7 @@ export default function FloatingInventoryButton({
     <button
       onClick={onScrollToInventory}
       className={cn(
-        "fixed right-6 top-32 z-50",
+        "fixed left-6 top-32 z-50",
         "flex items-center gap-2 px-4 py-2",
         "bg-card border border-primary/30 rounded-full",
         "shadow-md hover:shadow-lg",
