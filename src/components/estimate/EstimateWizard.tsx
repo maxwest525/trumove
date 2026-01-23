@@ -134,6 +134,13 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
     }
   }, []);
 
+  // Auto-populate destination home size from origin home size when entering step 2
+  useEffect(() => {
+    if (step === 2 && !details.toHomeSize && details.homeSize) {
+      setDetails(prev => ({ ...prev, toHomeSize: prev.homeSize }));
+    }
+  }, [step, details.homeSize, details.toHomeSize]);
+
   const updateDetails = useCallback((updates: Partial<ExtendedMoveDetails>) => {
     setDetails(prev => ({ ...prev, ...updates }));
   }, []);

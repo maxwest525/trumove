@@ -317,7 +317,7 @@ export default function Index() {
     switch (step) {
       case 1: return fromZip.length === 5 && fromCity && toZip.length === 5 && toCity && moveDate !== null;
       case 2: return size !== "" && propertyType !== "";
-      case 3: return email.includes("@");
+      case 3: return email.includes("@") && phone.trim().length >= 10;
       default: return false;
     }
   };

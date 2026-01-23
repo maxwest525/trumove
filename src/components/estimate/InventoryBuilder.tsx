@@ -339,6 +339,21 @@ export default function InventoryBuilder({
 
       {/* Right Content - Item Grid */}
       <div className="flex-1 space-y-4">
+        {/* Instructions Banner - only when no items added */}
+        {inventoryItems.length === 0 && (
+          <div className="flex items-center gap-3 p-3 rounded-xl border border-primary/20 bg-primary/5">
+            <Package className="w-5 h-5 text-primary flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-foreground">
+                Start Building Your Inventory
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Browse rooms on the left, then click + to add items. Your inventory list will appear below.
+              </p>
+            </div>
+          </div>
+        )}
+        
         {/* Search Bar & Special Handling Toggle */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
@@ -474,8 +489,8 @@ export default function InventoryBuilder({
             {/* Item Grid/List - Only show active room items */}
             {suggestions.length > 0 ? (
               <>
-                {viewMode === 'grid' ? (
-                  <div className="grid grid-cols-3 gap-3">
+            {viewMode === 'grid' ? (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                     {paginatedSuggestions.map((item) => {
                       const key = `${activeRoom}-${item.name}`;
                       return (
@@ -598,16 +613,6 @@ export default function InventoryBuilder({
         )}
       </div>
 
-      {/* Floating Inventory Summary */}
-      {totalItems > 0 && (
-        <div className="tru-inventory-float-summary">
-          <Package className="w-4 h-4 summary-icon" />
-          <span className="summary-count">{totalItems} items</span>
-          <span className="text-muted-foreground">•</span>
-          <Scale className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="summary-weight">~{totalWeight.toLocaleString()} lbs</span>
-        </div>
-      )}
 
       {/* Custom Item Modal */}
       <CustomItemModal
@@ -635,15 +640,15 @@ interface ItemCardProps {
 function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon, isAnimating }: ItemCardProps) {
   return (
     <div className={cn(
-      "group flex flex-col p-3 rounded-xl border transition-all",
+      "group flex flex-col p-2 rounded-xl border transition-all",
       quantity > 0 
         ? "border-primary/40 bg-primary/5 shadow-sm" 
         : "border-border/60 bg-card hover:border-primary/20",
       isAnimating && "tru-item-just-added"
     )}>
-      {/* Item Image or Icon - with hover zoom */}
+      {/* Item Image or Icon - with hover zoom - reduced height */}
       <div className={cn(
-        "w-full aspect-square rounded-lg flex items-center justify-center mb-2 overflow-hidden",
+        "w-full h-16 rounded-lg flex items-center justify-center mb-1.5 overflow-hidden",
         quantity > 0 ? "bg-muted/40" : "bg-muted/30"
       )}>
         <div className="transition-transform duration-300 ease-out group-hover:scale-110">
@@ -653,7 +658,7 @@ function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon,
             fallbackIcon={Icon}
             className="w-full h-full object-contain"
             iconClassName={cn(
-              "!w-12 !h-12",
+              "!w-8 !h-8",
               quantity > 0 ? "text-primary" : "text-muted-foreground/60"
             )}
           />
