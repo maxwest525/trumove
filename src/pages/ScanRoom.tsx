@@ -167,102 +167,102 @@ export default function ScanRoom() {
           </div>
         </section>
 
-        {/* Two-Column Demo Section */}
+        {/* Demo Section - Video + Inventory Table Below */}
         <section className="tru-scan-split-demo">
-          <div className="container max-w-7xl mx-auto px-4">
-            <div className="tru-scan-split-grid">
-              {/* Left: Scanner Video/Preview */}
-              <div className="tru-scan-split-left">
-                <div className="tru-scan-video-container">
-                  <img 
-                    src={previewImage} 
-                    alt="AI Room Scanner" 
-                    className="tru-scan-video-preview"
-                  />
-                  
-                  {/* Always show scanning overlay with grid pattern */}
-                  <div className="tru-scan-video-overlay">
-                    <div className="tru-scan-grid-pattern" />
-                    {isScanning && <div className="tru-scan-video-scanline" />}
-                  </div>
-                  
-                  {/* Status Pills Bar - Bottom */}
-                  <div className="tru-scan-status-pills">
-                    <div className="tru-scan-status-pill">
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>{detectedItems.length} items detected</span>
-                    </div>
-                    <div className="tru-scan-status-divider" />
-                    <div className="tru-scan-status-pill tru-scan-status-pill-active">
-                      <Cpu className="w-3.5 h-3.5" />
-                      <span>{isScanning ? "Scanning..." : "AI Active"}</span>
-                    </div>
-                  </div>
+          <div className="container max-w-6xl mx-auto px-4">
+            {/* Scanner Video/Preview */}
+            <div className="tru-scan-video-container tru-scan-video-centered">
+              <img 
+                src={previewImage} 
+                alt="AI Room Scanner" 
+                className="tru-scan-video-preview"
+              />
+              
+              {/* Always show scanning overlay with grid pattern */}
+              <div className="tru-scan-video-overlay">
+                <div className="tru-scan-grid-pattern" />
+                {isScanning && <div className="tru-scan-video-scanline" />}
+              </div>
+              
+              {/* Status Pills Bar - Bottom */}
+              <div className="tru-scan-status-pills">
+                <div className="tru-scan-status-pill">
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>{detectedItems.length} items detected</span>
+                </div>
+                <div className="tru-scan-status-divider" />
+                <div className="tru-scan-status-pill tru-scan-status-pill-active">
+                  <Cpu className="w-3.5 h-3.5" />
+                  <span>{isScanning ? "Scanning..." : "AI Active"}</span>
                 </div>
               </div>
+            </div>
 
-              {/* Right: Inventory List - Manual Builder Style */}
-              <div className="tru-scan-split-right">
-                <div className="tru-scan-inv-panel-v2">
-                  <div className="tru-scan-inv-header-v2">
-                    <h3>Detected Inventory</h3>
-                    <span className="tru-scan-inv-count">{detectedItems.length}</span>
-                  </div>
-                  
-                  <div className="tru-scan-inv-grid">
-                    {detectedItems.length === 0 ? (
-                      <div className="tru-scan-inv-empty-v2">
-                        <Scan className="w-10 h-10" />
-                        <p>Items will appear here as they're detected</p>
-                        <span>Click "Analyze Route" above to begin</span>
-                      </div>
-                    ) : (
-                      detectedItems.map((item, idx) => (
-                        <div 
-                          key={item.id} 
-                          className="tru-scan-inv-card"
-                          style={{ animationDelay: `${idx * 0.05}s` }}
-                        >
-                          <div className="tru-scan-inv-card-img">
-                            <img 
-                              src={item.image} 
-                              alt={item.name}
-                            />
-                            <span className="tru-scan-inv-card-qty">1</span>
-                          </div>
-                          <div className="tru-scan-inv-card-info">
-                            <span className="tru-scan-inv-card-name">{item.name}</span>
-                            <span className="tru-scan-inv-card-meta">{item.cuft} cu ft</span>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                  
-                  {detectedItems.length > 0 && (
-                    <div className="tru-scan-inv-footer-v2">
-                      <div className="tru-scan-inv-stats">
-                        <div className="tru-scan-inv-stat">
-                          <span>{detectedItems.length}</span>
-                          <label>Items</label>
-                        </div>
-                        <div className="tru-scan-inv-stat">
-                          <span>{totalCuFt}</span>
-                          <label>Cu Ft</label>
-                        </div>
-                        <div className="tru-scan-inv-stat">
-                          <span>{totalWeight.toLocaleString()}</span>
-                          <label>Lbs</label>
-                        </div>
-                      </div>
-                      <Link to="/online-estimate" className="tru-scan-inv-continue-v2">
-                        Continue to Quote
-                        <ArrowRight className="w-4 h-4" />
-                      </Link>
-                    </div>
-                  )}
-                </div>
+            {/* Inventory Table Below Video */}
+            <div className="tru-scan-table-panel">
+              <div className="tru-scan-table-header">
+                <h3>Your Move <span className="tru-scan-headline-accent">Inventory</span></h3>
               </div>
+              
+              {detectedItems.length === 0 ? (
+                <div className="tru-scan-table-empty">
+                  <Scan className="w-8 h-8" />
+                  <p>Items will appear here as they're detected</p>
+                  <span>Click "Start Scanning" above to begin</span>
+                </div>
+              ) : (
+                <>
+                  <div className="tru-scan-table-wrapper">
+                    <table className="tru-scan-table">
+                      <thead>
+                        <tr>
+                          <th>ORDER</th>
+                          <th>ITEM</th>
+                          <th>ROOM</th>
+                          <th>QTY</th>
+                          <th>WEIGHT (LBS)</th>
+                          <th>CU FT</th>
+                          <th>TOTAL WEIGHT</th>
+                          <th>TOTAL CU FT</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {detectedItems.map((item, idx) => (
+                          <tr key={item.id} style={{ animationDelay: `${idx * 0.05}s` }}>
+                            <td className="tru-scan-table-order">{idx + 1}</td>
+                            <td className="tru-scan-table-item">
+                              <img src={item.image} alt={item.name} />
+                              <span>{item.name}</span>
+                            </td>
+                            <td>{item.room}</td>
+                            <td>1</td>
+                            <td>{item.weight}</td>
+                            <td>{item.cuft}</td>
+                            <td className="tru-scan-table-total">{item.weight}</td>
+                            <td className="tru-scan-table-total">{item.cuft}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colSpan={4}></td>
+                          <td className="tru-scan-table-footer-label">Totals:</td>
+                          <td>—</td>
+                          <td className="tru-scan-table-footer-value">{totalWeight.toLocaleString()} lbs</td>
+                          <td className="tru-scan-table-footer-value">{totalCuFt} cu ft</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                  
+                  <div className="tru-scan-table-actions">
+                    <Link to="/online-estimate" className="tru-scan-btn-dark">
+                      <Sparkles className="w-4 h-4" />
+                      Continue to Quote
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>
