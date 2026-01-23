@@ -14153,6 +14153,31 @@
 }
 
 /* Outline/secondary style for "Start Scanning Now" */
+/* Muted Start Scanning Button */
+.tru-scan-header-btn-muted {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: hsl(var(--tm-ink) / 0.08);
+  color: hsl(var(--tm-ink));
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-scan-header-btn-muted:hover {
+  background: hsl(var(--tm-ink) / 0.12);
+}
+
+.tru-scan-header-btn-muted:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .tru-scan-header-btn-outline {
   display: inline-flex;
   align-items: center;
@@ -14212,18 +14237,18 @@
   gap: 8px;
   padding: 14px 24px;
   background: transparent;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--tm-ink) / 0.7);
   font-size: 14px;
   font-weight: 600;
   border-radius: 12px;
-  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
+  border: none;
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .tru-scan-header-btn-secondary:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  background: hsl(var(--primary) / 0.05);
+  color: hsl(var(--tm-ink));
+  background: hsl(var(--tm-ink) / 0.04);
 }
 
 /* =============================================
@@ -14288,89 +14313,92 @@
 }
 
 /* =============================================
-   SCAN ROOM - STEPS BAR (Section Divider)
+   SCAN ROOM - REFINED STEPS DIVIDER
    ============================================= */
-.tru-scan-steps-bar {
-  background: hsl(var(--tm-ink));
-  padding: 20px 24px;
-  margin-bottom: 32px;
+.tru-scan-steps-divider {
+  padding: 24px 24px 32px;
+  background: transparent;
 }
 
-.tru-scan-steps-bar-inner {
+.tru-scan-steps-divider-inner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.tru-scan-steps-bar-title {
-  font-size: 15px;
+.tru-scan-steps-divider-title {
+  font-size: 13px;
   font-weight: 700;
-  color: white;
+  color: hsl(var(--tm-ink) / 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   margin: 0;
-  white-space: nowrap;
 }
 
-.tru-scan-steps-bar-steps {
+.tru-scan-steps-divider-line {
+  width: 100%;
+  max-width: 600px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--tm-ink) / 0.12) 20%,
+    hsl(var(--tm-ink) / 0.12) 80%,
+    transparent 100%
+  );
+}
+
+.tru-scan-steps-compact {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.tru-scan-steps-bar-step {
+.tru-scan-step-compact {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  padding: 8px 16px;
+  background: hsl(var(--tm-ink) / 0.04);
+  border-radius: 100px;
 }
 
-.tru-scan-steps-bar-num {
+.tru-scan-step-num-compact {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: hsl(0 0% 100% / 0.15);
+  width: 20px;
+  height: 20px;
+  background: hsl(var(--tm-ink));
   color: white;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.tru-scan-steps-bar-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.tru-scan-steps-bar-text strong {
-  font-size: 12px;
+.tru-scan-step-label {
+  font-size: 13px;
   font-weight: 600;
-  color: white;
+  color: hsl(var(--tm-ink));
 }
 
-.tru-scan-steps-bar-text span {
-  font-size: 10px;
-  color: hsl(0 0% 100% / 0.5);
-}
-
-.tru-scan-steps-bar-arrow {
+.tru-scan-step-arrow-compact {
   width: 14px;
   height: 14px;
-  color: hsl(0 0% 100% / 0.3);
+  color: hsl(var(--tm-ink) / 0.25);
   flex-shrink: 0;
 }
 
-@media (max-width: 900px) {
-  .tru-scan-steps-bar-inner {
-    flex-direction: column;
-    text-align: center;
+@media (max-width: 768px) {
+  .tru-scan-steps-compact {
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
-  .tru-scan-steps-bar-steps {
-    justify-content: center;
+  .tru-scan-step-arrow-compact {
+    display: none;
   }
 }
 
@@ -14497,62 +14525,7 @@
 }
 
 /* Video Status Bar - Bottom */
-.tru-scan-video-status-bar {
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
-  right: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px 10px 16px;
-  background: hsl(var(--tm-ink) / 0.9);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-}
-
-.tru-scan-status-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  font-weight: 500;
-  color: hsl(0 0% 100% / 0.8);
-}
-
-.tru-scan-status-left svg {
-  color: hsl(0 0% 100% / 0.6);
-}
-
-/* Dark button style - no green */
-.tru-scan-status-btn-dark {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: white;
-  color: hsl(var(--tm-ink));
-  font-size: 13px;
-  font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tru-scan-status-btn-dark:hover:not(:disabled) {
-  background: hsl(0 0% 95%);
-}
-
-.tru-scan-status-btn-dark:disabled {
-  opacity: 0.7;
-  cursor: default;
-}
-
-.tru-scan-status-btn-dark .tru-scan-spinner-small {
-  border-color: hsl(var(--tm-ink) / 0.2);
-  border-top-color: hsl(var(--tm-ink));
-}
+/* Status bar removed - keeping just legacy styles for compatibility */
 
 /* Legacy green button (kept for compatibility) */
 .tru-scan-status-btn {
