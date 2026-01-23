@@ -12,8 +12,8 @@ export default function Footer() {
         </div>
 
         <div className="flex gap-[14px] flex-wrap items-center">
-          <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/vetting">
-            Carrier Standards
+          <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/carrier-vetting">
+            Carrier Vetting
           </Link>
           <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/book">
             Book a consult
