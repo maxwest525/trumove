@@ -464,7 +464,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             </Button>
           </CollapsibleTrigger>
 
-          <CollapsibleContent className="space-y-4 pt-4">
+          <CollapsibleContent className="space-y-6 pt-4">
             {/* Red Flags Detail */}
             {redFlags.length > 0 && (
               <div className="space-y-3 pl-3 border-l-2 border-red-400 dark:border-red-500">
@@ -481,7 +481,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             )}
 
             {/* Insurance Details */}
-            <div className="space-y-3">
+            <div className="space-y-3 pt-2">
               <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-foreground">
                 <Shield className="w-4 h-4" />
                 <span>Insurance Coverage Analysis</span>
@@ -501,7 +501,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             </div>
 
             {/* BASIC Scores */}
-            <div className="space-y-3">
+            <div className="space-y-3 pt-2">
               <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-foreground">
                 <AlertTriangle className="w-4 h-4" />
                 <span>CSA BASIC Safety Scores</span>
