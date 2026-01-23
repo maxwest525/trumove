@@ -141,9 +141,9 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
   const canContinue = () => {
     switch (step) {
       case 1:
-        return details.fromLocation && details.fromPropertyType && details.homeSize;
+        return details.moveDate !== null && details.fromLocation && details.fromPropertyType && details.homeSize;
       case 2:
-        return details.toLocation && details.toPropertyType && details.toHomeSize && details.moveDate !== null;
+        return details.toLocation && details.toPropertyType && details.toHomeSize;
       case 3:
         return details.name.trim() && details.phone.trim() && details.email.includes('@');
       default:
@@ -198,8 +198,38 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           {step === 1 && (
             <div className="tru-qb-step-content" key="step-1">
               <h1 className="tru-qb-question">Where are you moving from?</h1>
-              <p className="tru-qb-subtitle">Enter your current address details</p>
+              <p className="tru-qb-subtitle">Enter your move date and current address</p>
 
+              {/* Move Date - First field */}
+              <p className="tru-qb-section-label">Move Date</p>
+              <div className="tru-qb-input-wrap">
+                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <button type="button" className="tru-qb-date-btn">
+                      <CalendarIcon className="w-4 h-4" />
+                      <span>
+                        {details.moveDate 
+                          ? format(details.moveDate, "MMMM d, yyyy") 
+                          : "Select a date"}
+                      </span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="form-date-popover" align="center">
+                    <CalendarComponent
+                      mode="single"
+                      selected={details.moveDate || undefined}
+                      onSelect={(date) => {
+                        updateDetails({ moveDate: date || null });
+                        setDatePopoverOpen(false);
+                      }}
+                      disabled={(date) => date < new Date()}
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <p className="tru-qb-section-label">Current Address</p>
               <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                 <LocationAutocomplete
                   value={details.fromLocation}
@@ -430,34 +460,6 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
                 ))}
               </div>
 
-              {/* Move Date */}
-              <p className="tru-qb-section-label">Move Date</p>
-              <div className="tru-qb-input-wrap">
-                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <button type="button" className="tru-qb-date-btn">
-                      <CalendarIcon className="w-4 h-4" />
-                      <span>
-                        {details.moveDate 
-                          ? format(details.moveDate, "MMMM d, yyyy") 
-                          : "Select a date"}
-                      </span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="form-date-popover" align="center">
-                    <CalendarComponent
-                      mode="single"
-                      selected={details.moveDate || undefined}
-                      onSelect={(date) => {
-                        updateDetails({ moveDate: date || null });
-                        setDatePopoverOpen(false);
-                      }}
-                      disabled={(date) => date < new Date()}
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
 
               <button
                 type="button"
