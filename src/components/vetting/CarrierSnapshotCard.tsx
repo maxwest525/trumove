@@ -540,9 +540,11 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
               </div>
             </div>
 
+            <Separator className="bg-border/60" />
+
             {/* Fleet & Crashes */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2 p-3 rounded-lg bg-muted/20">
+              <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <Truck className="w-3.5 h-3.5" />
                   <span>Fleet Details</span>
@@ -559,7 +561,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                 </div>
               </div>
 
-              <div className="space-y-2 p-3 rounded-lg bg-muted/20">
+              <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
                 <div className="flex items-center gap-2 text-xs font-medium text-foreground">
                   <AlertTriangle className="w-3.5 h-3.5" />
                   <span>Crash History (24 months)</span>
@@ -586,7 +588,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             </div>
 
             {/* Location & Contact */}
-            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground p-3 rounded-lg bg-muted/20">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground p-3 rounded-lg bg-muted/20 border border-border/50">
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4" />
                 <span>{data.carrier.address.city}, {data.carrier.address.state}</span>
