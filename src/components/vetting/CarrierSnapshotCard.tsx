@@ -222,7 +222,7 @@ function InsuranceBar({ label, amount, required }: { label: string; amount: stri
   );
 }
 
-// Generate external review links with logos
+// Generate external review links with logos and labels
 function ExternalLinks({ companyName, dotNumber }: { companyName: string; dotNumber: string }) {
   const encodedName = encodeURIComponent(companyName);
   
@@ -232,43 +232,46 @@ function ExternalLinks({ companyName, dotNumber }: { companyName: string; dotNum
         href={`https://www.bbb.org/search?find_text=${encodedName}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center p-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+        className="flex flex-col items-center justify-center gap-1 p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
         title="Check BBB Profile"
       >
         <img 
           src="https://www.bbb.org/TerminusContent/dist/img/business-profile/accreditation/ab-seal-horizontal.svg" 
           alt="BBB" 
-          className="h-6 object-contain"
-          onError={(e) => { e.currentTarget.outerHTML = '<span class="font-bold text-blue-600">BBB</span>'; }}
+          className="h-5 object-contain"
+          onError={(e) => { e.currentTarget.outerHTML = '<span class="font-bold text-blue-600 text-sm">BBB</span>'; }}
         />
+        <span className="text-[10px] font-medium text-muted-foreground">Reviews</span>
       </a>
       <a
         href={`https://www.google.com/search?q=${encodedName}+reviews`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center p-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+        className="flex flex-col items-center justify-center gap-1 p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
         title="Google Reviews"
       >
         <img 
           src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" 
           alt="Google" 
-          className="h-5 object-contain"
-          onError={(e) => { e.currentTarget.outerHTML = '<span class="font-bold text-amber-600">Google</span>'; }}
+          className="h-4 object-contain"
+          onError={(e) => { e.currentTarget.outerHTML = '<span class="font-bold text-amber-600 text-sm">Google</span>'; }}
         />
+        <span className="text-[10px] font-medium text-muted-foreground">Reviews</span>
       </a>
       <a
         href={`https://safer.fmcsa.dot.gov/query.asp?searchtype=ANY&query_type=queryCarrierSnapshot&query_param=USDOT&query_string=${dotNumber}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center p-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+        className="flex flex-col items-center justify-center gap-1 p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
         title="Official FMCSA SAFER"
       >
         <img 
           src="https://www.fmcsa.dot.gov/themes/custom/fmcsa/logo.svg" 
           alt="FMCSA" 
-          className="h-5 object-contain dark:invert"
-          onError={(e) => { e.currentTarget.outerHTML = '<span class="font-bold text-slate-600">FMCSA</span>'; }}
+          className="h-4 object-contain dark:invert"
+          onError={(e) => { e.currentTarget.outerHTML = '<span class="font-bold text-slate-600 text-sm">FMCSA</span>'; }}
         />
+        <span className="text-[10px] font-medium text-muted-foreground">Records</span>
       </a>
     </div>
   );

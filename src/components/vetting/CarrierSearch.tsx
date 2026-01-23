@@ -142,7 +142,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md font-medium transition-all border active:scale-95',
+              'rounded-md font-medium transition-all border active:scale-95 relative',
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'name' 
@@ -154,6 +154,12 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             )}
             onClick={() => setSearchType('name')}
           >
+            {searchType === 'name' && (
+              <span className={cn(
+                'absolute -top-1 -right-1 w-2 h-2 rounded-full',
+                isSidebar ? 'bg-primary' : 'bg-green-400'
+              )} />
+            )}
             <Building2 className={cn(isSidebar ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1.5')} />
             Name
           </Button>
@@ -162,7 +168,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md font-medium transition-all border active:scale-95',
+              'rounded-md font-medium transition-all border active:scale-95 relative',
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'dot' 
@@ -174,6 +180,12 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             )}
             onClick={() => setSearchType('dot')}
           >
+            {searchType === 'dot' && (
+              <span className={cn(
+                'absolute -top-1 -right-1 w-2 h-2 rounded-full',
+                isSidebar ? 'bg-primary' : 'bg-green-400'
+              )} />
+            )}
             <Hash className={cn(isSidebar ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1.5')} />
             DOT
           </Button>
@@ -182,7 +194,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             variant="ghost"
             size="sm"
             className={cn(
-              'rounded-md font-medium transition-all border active:scale-95',
+              'rounded-md font-medium transition-all border active:scale-95 relative',
               isSidebar ? 'h-7 px-2 text-xs flex-1 min-w-0' : 'h-9 px-3 text-sm',
               isSidebar
                 ? (searchType === 'mc' 
@@ -194,6 +206,12 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             )}
             onClick={() => setSearchType('mc')}
           >
+            {searchType === 'mc' && (
+              <span className={cn(
+                'absolute -top-1 -right-1 w-2 h-2 rounded-full',
+                isSidebar ? 'bg-primary' : 'bg-green-400'
+              )} />
+            )}
             <Truck className={cn(isSidebar ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1.5')} />
             MC
           </Button>
