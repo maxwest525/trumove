@@ -184,8 +184,8 @@ export default function ScanRoom() {
                 {isScanning && <div className="tru-scan-video-scanline" />}
               </div>
               
-              {/* Status Pills Bar - Bottom */}
-              <div className="tru-scan-status-pills">
+              {/* Status Pills Bar - Left Side */}
+              <div className="tru-scan-status-pills tru-scan-status-pills-left">
                 <div className="tru-scan-status-pill">
                   <Eye className="w-3.5 h-3.5" />
                   <span>{detectedItems.length} items detected</span>
@@ -196,7 +196,44 @@ export default function ScanRoom() {
                   <span>{isScanning ? "Scanning..." : "AI Active"}</span>
                 </div>
               </div>
+
+              {/* Begin Scan Button - Bottom Right */}
+              <button 
+                onClick={startDemo}
+                disabled={isScanning}
+                className="tru-scan-begin-pill"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{isScanning ? "Scanning..." : "Begin AI Inventory Scan"}</span>
+              </button>
             </div>
+
+            {/* Floating Inventory Bar */}
+            {detectedItems.length > 0 && (
+              <div className="tru-scan-floating-bar">
+                <div className="tru-scan-floating-bar-item">
+                  <Package className="w-4 h-4 text-primary" />
+                  <span className="tru-scan-floating-bar-value">{detectedItems.length}</span>
+                  <span className="tru-scan-floating-bar-label">items</span>
+                </div>
+                <div className="tru-scan-floating-bar-divider" />
+                <div className="tru-scan-floating-bar-item">
+                  <Ruler className="w-4 h-4 text-muted-foreground" />
+                  <span className="tru-scan-floating-bar-value">{totalWeight.toLocaleString()}</span>
+                  <span className="tru-scan-floating-bar-label">lbs</span>
+                </div>
+                <div className="tru-scan-floating-bar-divider" />
+                <div className="tru-scan-floating-bar-item">
+                  <Box className="w-4 h-4 text-muted-foreground" />
+                  <span className="tru-scan-floating-bar-value">{totalCuFt}</span>
+                  <span className="tru-scan-floating-bar-label">cu ft</span>
+                </div>
+                <Link to="/online-estimate" className="tru-scan-floating-bar-btn">
+                  <ArrowRight className="w-4 h-4" />
+                  View All
+                </Link>
+              </div>
+            )}
 
             {/* Inventory Table Below Video */}
             <div className="tru-scan-table-panel">
