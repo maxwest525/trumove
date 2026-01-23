@@ -106,11 +106,31 @@ export default function OnlineEstimate() {
   }, [extendedDetails]);
 
   const handleAddItem = useCallback((item: Omit<InventoryItem, 'id'>) => {
-    const newItem: InventoryItem = {
-      ...item,
-      id: crypto.randomUUID(),
-    };
-    setItems(prev => [...prev, newItem]);
+    setItems(prev => {
+      // Check if identical item exists (same name, room, weight, cubicFeet)
+      const existingIndex = prev.findIndex(existing => 
+        existing.name === item.name && 
+        existing.room === item.room && 
+        existing.weightEach === item.weightEach &&
+        existing.cubicFeet === item.cubicFeet
+      );
+      
+      if (existingIndex !== -1) {
+        // Increment quantity of existing item
+        return prev.map((existing, index) => 
+          index === existingIndex 
+            ? { ...existing, quantity: existing.quantity + (item.quantity || 1) }
+            : existing
+        );
+      }
+      
+      // Add as new item
+      const newItem: InventoryItem = {
+        ...item,
+        id: crypto.randomUUID(),
+      };
+      return [...prev, newItem];
+    });
   }, []);
 
   const handleUpdateItem = useCallback((id: string, updates: Partial<InventoryItem>) => {
