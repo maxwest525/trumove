@@ -611,6 +611,182 @@
   align-items: center;
 }
 
+/* =============================================
+   V2 SUMMARY PILL - Expandable on Hover
+   Matches reference design with smooth animations
+   ============================================= */
+.tru-sidebar-summary-pill-v2 {
+  width: 48px;
+  height: 100%;
+  min-height: 320px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 
+    0 2px 4px hsl(var(--tm-ink) / 0.04),
+    0 8px 16px hsl(var(--tm-ink) / 0.06);
+  transition: 
+    width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.tru-sidebar-summary-pill-v2:hover {
+  width: 180px;
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.08),
+    0 16px 32px hsl(var(--tm-ink) / 0.1);
+}
+
+/* Collapsed state - icon + vertical label */
+.tru-summary-pill-collapsed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px;
+  gap: 8px;
+  width: 48px;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tru-sidebar-summary-pill-v2:hover .tru-summary-pill-collapsed {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.tru-summary-pill-icon-wrap {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.12);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tru-summary-pill-vertical-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: hsl(var(--tm-ink) / 0.4);
+  text-transform: uppercase;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* Expanded state - full content */
+.tru-summary-pill-expanded {
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+  height: 100%;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: 
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s,
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.tru-sidebar-summary-pill-v2:hover .tru-summary-pill-expanded {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tru-summary-pill-header {
+  padding: 14px 16px;
+  background: hsl(220 15% 96%);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+  text-align: center;
+}
+
+.tru-summary-pill-header span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+.tru-summary-pill-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+.tru-summary-pill-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.04);
+}
+
+.tru-summary-pill-row:last-child {
+  border-bottom: none;
+}
+
+.tru-summary-pill-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+.tru-summary-pill-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-summary-pill-footer {
+  padding: 10px 16px;
+  background: hsl(var(--tm-ink) / 0.02);
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+  text-align: center;
+  font-size: 9px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.4);
+}
+
+.tru-summary-pill-brand {
+  font-weight: 700;
+  color: hsl(var(--primary));
+}
+
+/* Nav Icons Pill V2 - with tooltips */
+.tru-sidebar-nav-pill-v2 {
+  width: 48px;
+  height: 100%;
+  min-height: 320px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 24px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 
+    0 2px 4px hsl(var(--tm-ink) / 0.04),
+    0 8px 16px hsl(var(--tm-ink) / 0.06);
+}
+
 /* Nav Icons Pill - icons only */
 .tru-sidebar-nav-pill {
   width: 48px;

@@ -530,23 +530,29 @@ export default function LocationAutocomplete({
       } else if (verified) {
         finalSuggestion = verified;
         
-        // Compare user's original input with the standardized Mapbox result
-        const userNormalized = normalizeAddress(originalUserInput || value);
+        // Compare user's current input with the standardized Mapbox result
+        const currentNormalized = normalizeAddress(value);
         const verifiedNormalized = normalizeAddress(verified.fullAddress);
         const displayNormalized = normalizeAddress(suggestion.display || suggestion.fullAddress || '');
         
         // Only show correction if there's a meaningful difference
-        // AND the suggested correction is different from what user selected from dropdown
-        if (userNormalized && verifiedNormalized && userNormalized !== verifiedNormalized) {
+        // AND the suggested correction is different from what's already in the input
+        // AND the corrected address is different from what user selected from dropdown
+        if (verifiedNormalized && currentNormalized !== verifiedNormalized) {
           // Check if the difference is significant (not just formatting)
-          const userStreetPart = userNormalized.split(',')[0]?.trim();
+          const currentStreetPart = currentNormalized.split(',')[0]?.trim();
           const verifiedStreetPart = verifiedNormalized.split(',')[0]?.trim();
-          
-          // Also check that the verified address is substantially different from what user clicked
           const suggestionStreetPart = displayNormalized.split(',')[0]?.trim();
           
-          // Only show correction if street parts differ AND it's not just repeating what user selected
-          if (userStreetPart !== verifiedStreetPart && suggestionStreetPart !== verifiedStreetPart) {
+          // Don't show correction if:
+          // 1. The street parts are essentially the same
+          // 2. The verified address matches what user clicked
+          // 3. The current input already contains the corrected text
+          const isSameStreet = currentStreetPart === verifiedStreetPart;
+          const matchesSuggestion = suggestionStreetPart === verifiedStreetPart;
+          const inputContainsCorrection = currentNormalized.includes(verifiedStreetPart);
+          
+          if (!isSameStreet && !matchesSuggestion && !inputContainsCorrection) {
             setCorrectionSuggestion(verified.fullAddress.replace(', United States', ''));
           }
         }
