@@ -243,8 +243,8 @@ export default function CarrierVetting() {
   return (
     <SiteShell>
       <div className="min-h-screen bg-background">
-        {/* Government-style Header - LOCKED */}
-        <div className="fmcsa-header sticky top-0 z-50 bg-slate-900">
+        {/* Government-style Header - LOCKED below site header */}
+        <div className="fmcsa-header sticky top-[72px] z-40 bg-slate-900">
           <div className="container max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
@@ -274,8 +274,8 @@ export default function CarrierVetting() {
           </div>
         </div>
 
-        {/* Trust Strip - LOCKED below header */}
-        <div className="bg-muted/95 border-b border-border/50 sticky top-[72px] z-40 backdrop-blur-md">
+        {/* Trust Strip - LOCKED below FMCSA header */}
+        <div className="bg-muted/95 border-b border-border/50 sticky top-[144px] z-30 backdrop-blur-md">
           <div className="container max-w-7xl mx-auto px-4 py-3">
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
               {DATA_SOURCES.map((source) => (
