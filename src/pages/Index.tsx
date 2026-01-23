@@ -366,7 +366,7 @@ export default function Index() {
                 <div className="tru-hero-value-props-container">
                   {/* Value Props - Feature Cards */}
                   <div className={`tru-hero-value-cards ${fromCity ? 'is-hidden' : ''}`}>
-                    <div className="tru-value-card">
+                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/online-estimate")}>
                       <div className="tru-value-card-icon">
                         <Scan className="w-6 h-6" />
                       </div>
@@ -377,7 +377,7 @@ export default function Index() {
                       </div>
                     </div>
                     
-                    <div className="tru-value-card">
+                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/online-estimate")}>
                       <div className="tru-value-card-icon">
                         <Sparkles className="w-6 h-6" />
                       </div>
@@ -388,7 +388,7 @@ export default function Index() {
                       </div>
                     </div>
                     
-                    <div className="tru-value-card">
+                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/vetting")}>
                       <div className="tru-value-card-icon">
                         <Shield className="w-6 h-6" />
                       </div>
@@ -398,7 +398,7 @@ export default function Index() {
                       </div>
                     </div>
                     
-                    <div className="tru-value-card">
+                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/book")}>
                       <div className="tru-value-card-icon">
                         <Video className="w-6 h-6" />
                       </div>
