@@ -306,9 +306,8 @@ export default function CarrierVetting() {
           {/* Compact Hero Section - Only show when no carriers */}
           {carriers.length === 0 && (
             <div className="text-center mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 flex items-center justify-center gap-2">
-                <Zap className="w-6 h-6 text-primary" />
-                Verify Any Carrier in Seconds
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                Verify Any Carrier's Trust & Safety Score in Seconds
               </h2>
               <p className="text-sm text-muted-foreground">
                 Real-time FMCSA safety data • Insurance verification • DOT lookup
