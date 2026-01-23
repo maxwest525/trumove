@@ -595,13 +595,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--primary));
   border-radius: 10px;
+  background: hsl(var(--primary) / 0.08);
 }
 
 .tru-sidebar-icon-item svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .tru-sidebar-vertical-label {
@@ -642,12 +643,12 @@
 .tru-static-nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-size: 13px;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
   font-weight: 500;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--tm-ink) / 0.8);
   text-decoration: none;
   border: none;
   background: transparent;
@@ -656,16 +657,20 @@
 }
 
 .tru-static-nav-item:hover {
-  background: hsl(var(--primary) / 0.08);
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--tm-ink));
 }
 
 .tru-static-nav-item.is-active {
-  background: hsl(var(--primary) / 0.12);
+  background: hsl(var(--primary) / 0.15);
+  color: hsl(var(--tm-ink));
   font-weight: 600;
 }
 
 .tru-static-nav-item svg {
   flex-shrink: 0;
+  width: 16px;
+  height: 16px;
   color: hsl(var(--primary));
 }
 
