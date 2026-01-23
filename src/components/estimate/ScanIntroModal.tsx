@@ -1,18 +1,22 @@
-import { Package, AlertTriangle, Phone, ArrowRight, Video } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Scan, AlertTriangle, Phone, ArrowRight, Video } from "lucide-react";
 
-interface InventoryIntroModalProps {
+interface ScanIntroModalProps {
   isOpen: boolean;
   onClose: () => void;
-  distance: number;
-  moveType: 'local' | 'long-distance' | 'auto';
+  onStartScan: () => void;
 }
 
-export default function InventoryIntroModal({ 
+export default function ScanIntroModal({ 
   isOpen, 
-  onClose, 
-}: InventoryIntroModalProps) {
+  onClose,
+  onStartScan,
+}: ScanIntroModalProps) {
   if (!isOpen) return null;
+
+  const handleStartScan = () => {
+    onClose();
+    onStartScan();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -35,7 +39,7 @@ export default function InventoryIntroModal({
                 Important Notice
               </h3>
               <p className="text-sm text-white/90 font-medium">
-                Your inventory directly affects your price
+                AI scan accuracy affects your quote
               </p>
             </div>
           </div>
@@ -48,12 +52,13 @@ export default function InventoryIntroModal({
             <div className="flex gap-3">
               <div>
                 <p className="font-bold tru-info-title mb-1">
-                  Accurate Inventory = Accurate Quote
+                  Complete Scan = Accurate Quote
                 </p>
                 <p className="text-sm tru-info-text">
-                  The cubic footage of your items is the primary factor in calculating your moving cost. 
-                  Please take your time to add all furniture, boxes, and appliances to ensure your quote is as accurate as possible. 
-                  Missing or underestimated items may result in additional charges on move day.
+                  Our AI will identify furniture, boxes, and appliances from your video scan. 
+                  For best results, slowly pan through each room and ensure all items are visible. 
+                  You can review and adjust the detected inventory before finalizing your quote. 
+                  Missing items may result in additional charges on move day.
                 </p>
               </div>
             </div>
@@ -61,14 +66,14 @@ export default function InventoryIntroModal({
 
           {/* Action Buttons */}
           <div className="space-y-3">
-            {/* Primary CTA - Start Building */}
+            {/* Primary CTA - Start Scan */}
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleStartScan}
               className="tru-inventory-start-btn"
             >
-              <Package className="w-5 h-5" />
-              Start Building My Inventory
+              <Scan className="w-5 h-5" />
+              Start AI Inventory Scan
               <ArrowRight className="w-4 h-4" />
             </button>
             
@@ -81,13 +86,13 @@ export default function InventoryIntroModal({
                 <Phone className="w-4 h-4" />
                 Prefer to talk?
               </a>
-              <Link
-                to="/book"
+              <a
+                href="/book"
                 className="tru-inventory-video-btn"
               >
                 <Video className="w-4 h-4" />
                 Book Video Consult
-              </Link>
+              </a>
             </div>
           </div>
         </div>

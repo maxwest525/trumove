@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
+import ScanIntroModal from "@/components/estimate/ScanIntroModal";
 import { 
   Scan, Sparkles, ArrowRight, 
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
-  Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft
+  Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
+  Phone, Video
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -35,6 +37,7 @@ export default function ScanRoom() {
   const navigate = useNavigate();
   const [detectedItems, setDetectedItems] = useState<typeof DEMO_ITEMS>([]);
   const [isScanning, setIsScanning] = useState(false);
+  const [showIntroModal, setShowIntroModal] = useState(false);
 
   // Simulate live detection
   useEffect(() => {
@@ -47,6 +50,10 @@ export default function ScanRoom() {
       setIsScanning(false);
     }
   }, [isScanning, detectedItems]);
+
+  const handleStartScanClick = () => {
+    setShowIntroModal(true);
+  };
 
   const startDemo = () => {
     setDetectedItems([]);
@@ -265,7 +272,7 @@ export default function ScanRoom() {
             
             <div className="tru-scan-header-buttons">
               <button
-                onClick={startDemo}
+                onClick={handleStartScanClick}
                 disabled={isScanning}
                 className="tru-scan-btn-dark"
               >
@@ -279,6 +286,13 @@ export default function ScanRoom() {
             </div>
           </div>
         </section>
+
+        {/* Scan Intro Modal */}
+        <ScanIntroModal 
+          isOpen={showIntroModal}
+          onClose={() => setShowIntroModal(false)}
+          onStartScan={startDemo}
+        />
 
         {/* How It Works - Full Width Dark Divider Bar */}
         <section className="tru-scan-steps-bar">
@@ -512,14 +526,26 @@ export default function ScanRoom() {
           <p className="tru-scan-bottom-text">
             Can't wait? Try our AI-powered inventory tools now.
           </p>
-          <button
-            onClick={() => navigate("/online-estimate")}
-            className="tru-scan-alt-btn"
-          >
-            <Sparkles className="w-4 h-4" />
-            Build Inventory Manually
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="tru-scan-bottom-buttons">
+            <button
+              onClick={() => navigate("/online-estimate")}
+              className="tru-scan-alt-btn"
+            >
+              <Sparkles className="w-4 h-4" />
+              Build Inventory Manually
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="tru-scan-bottom-secondary">
+            <a href="tel:1-800-555-0123" className="tru-scan-secondary-link">
+              <Phone className="w-4 h-4" />
+              Prefer to talk?
+            </a>
+            <Link to="/book" className="tru-scan-secondary-link">
+              <Video className="w-4 h-4" />
+              Book Video Consult
+            </Link>
+          </div>
         </section>
       </div>
     </SiteShell>
