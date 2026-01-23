@@ -88,6 +88,34 @@ export default function ScanRoom() {
   return (
     <SiteShell>
       <div className="tru-scan-page">
+        {/* Trust Strip - Top */}
+        <section className="tru-scan-trust-strip-slim">
+          <div className="container max-w-6xl mx-auto px-4">
+            <div className="tru-scan-trust-row-slim">
+              <div className="tru-scan-trust-item-slim">
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>No App Required</span>
+              </div>
+              <div className="tru-scan-trust-item-slim">
+                <Zap className="w-3.5 h-3.5" />
+                <span>500+ Item Types</span>
+              </div>
+              <div className="tru-scan-trust-item-slim">
+                <Ruler className="w-3.5 h-3.5" />
+                <span>Auto Dimensions</span>
+              </div>
+              <div className="tru-scan-trust-item-slim">
+                <Clock className="w-3.5 h-3.5" />
+                <span>Save 30+ Minutes</span>
+              </div>
+              <div className="tru-scan-trust-item-slim">
+                <Shield className="w-3.5 h-3.5" />
+                <span>Secure & Private</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Centered Header Section */}
         <section className="tru-scan-header-section">
           <div className="container max-w-4xl mx-auto px-4 text-center">
@@ -115,29 +143,38 @@ export default function ScanRoom() {
           </div>
         </section>
 
-        {/* Trust Strip */}
-        <section className="tru-scan-trust-strip">
-          <div className="container max-w-5xl mx-auto px-4">
-            <div className="tru-scan-trust-row">
-              <div className="tru-scan-trust-item">
-                <Smartphone className="w-4 h-4" />
-                <span>No App Required</span>
+        {/* How It Works - Between Header and Demo */}
+        <section className="tru-scan-how-section-inline">
+          <div className="container max-w-4xl mx-auto px-4">
+            <h2 className="tru-scan-how-title-inline">From Video to Quote in 3 Steps</h2>
+            
+            <div className="tru-scan-how-steps-inline">
+              <div className="tru-scan-how-step-inline">
+                <div className="tru-scan-how-num-inline">1</div>
+                <div className="tru-scan-how-text-inline">
+                  <strong>Record Walkthrough</strong>
+                  <span>Pan each room slowly</span>
+                </div>
               </div>
-              <div className="tru-scan-trust-item">
-                <Zap className="w-4 h-4" />
-                <span>500+ Item Types</span>
+              
+              <ChevronRight className="tru-scan-how-arrow-inline" />
+              
+              <div className="tru-scan-how-step-inline">
+                <div className="tru-scan-how-num-inline">2</div>
+                <div className="tru-scan-how-text-inline">
+                  <strong>AI Identifies Items</strong>
+                  <span>Tagged & measured instantly</span>
+                </div>
               </div>
-              <div className="tru-scan-trust-item">
-                <Ruler className="w-4 h-4" />
-                <span>Auto Dimensions</span>
-              </div>
-              <div className="tru-scan-trust-item">
-                <Clock className="w-4 h-4" />
-                <span>Save 30+ Minutes</span>
-              </div>
-              <div className="tru-scan-trust-item">
-                <Shield className="w-4 h-4" />
-                <span>Secure & Private</span>
+              
+              <ChevronRight className="tru-scan-how-arrow-inline" />
+              
+              <div className="tru-scan-how-step-inline">
+                <div className="tru-scan-how-num-inline">3</div>
+                <div className="tru-scan-how-text-inline">
+                  <strong>Get Your Quote</strong>
+                  <span>Accurate & instant</span>
+                </div>
               </div>
             </div>
           </div>

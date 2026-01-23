@@ -14227,8 +14227,37 @@
 }
 
 /* =============================================
-   SCAN ROOM - TRUST STRIP
+   SCAN ROOM - SLIM TRUST STRIP (TOP)
    ============================================= */
+.tru-scan-trust-strip-slim {
+  padding: 10px 24px;
+  background: hsl(var(--tm-ink));
+}
+
+.tru-scan-trust-row-slim {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.tru-scan-trust-item-slim {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(0 0% 100% / 0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tru-scan-trust-item-slim svg {
+  color: hsl(var(--primary));
+}
+
+/* Legacy trust strip (kept for compatibility) */
 .tru-scan-trust-strip {
   padding: 20px 24px;
   background: hsl(var(--tm-ink));
@@ -14256,6 +14285,89 @@
 
 .tru-scan-trust-item svg {
   color: hsl(var(--primary));
+}
+
+/* =============================================
+   SCAN ROOM - INLINE HOW IT WORKS (Between Header & Demo)
+   ============================================= */
+.tru-scan-how-section-inline {
+  padding: 24px 24px 32px;
+}
+
+.tru-scan-how-title-inline {
+  font-size: 18px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.tru-scan-how-steps-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tru-scan-how-step-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: white;
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
+}
+
+.tru-scan-how-num-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: hsl(var(--primary));
+  color: hsl(var(--tm-ink));
+  font-size: 13px;
+  font-weight: 800;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tru-scan-how-text-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tru-scan-how-text-inline strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-scan-how-text-inline span {
+  font-size: 11px;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+.tru-scan-how-arrow-inline {
+  width: 16px;
+  height: 16px;
+  color: hsl(var(--tm-ink) / 0.25);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .tru-scan-how-steps-inline {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .tru-scan-how-arrow-inline {
+    transform: rotate(90deg);
+  }
 }
 
 /* =============================================
