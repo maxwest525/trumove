@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Shield, Truck, AlertTriangle, Users, TrendingUp, Search, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Shield, Truck, AlertTriangle, TrendingUp, Search } from 'lucide-react';
+
 import SiteShell from '@/components/layout/SiteShell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -89,7 +89,7 @@ const FEATURES = [
   }
 ];
 
-export default function CarrierLookup() {
+export default function CarrierVetting() {
   const [carriers, setCarriers] = useState<CarrierData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -173,22 +173,13 @@ export default function CarrierLookup() {
         <div className="border-b border-border bg-card/50 backdrop-blur sticky top-0 z-40">
           <div className="container max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Link to="/vetting">
-                  <Button variant="ghost" size="sm">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Vetting
-                  </Button>
-                </Link>
-                <div className="h-6 w-px bg-border" />
-                <div>
-                  <h1 className="text-xl font-bold text-foreground">Carrier Lookup</h1>
-                  <p className="text-xs text-muted-foreground">Real-time FMCSA data & comparison</p>
-                </div>
+              <div>
+                <h1 className="text-xl font-bold text-foreground">Carrier Vetting</h1>
+                <p className="text-xs text-muted-foreground">Real-time FMCSA data & comparison</p>
               </div>
               <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 rounded-full bg-green-500/20 text-green-400 text-xs font-medium flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                <div className="px-3 py-1.5 rounded-full bg-primary/20 text-primary text-xs font-medium flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                   Live Data
                 </div>
               </div>

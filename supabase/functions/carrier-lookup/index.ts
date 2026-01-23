@@ -82,15 +82,24 @@ interface CarrierResponse {
 
 async function fetchFMCSA(endpoint: string, webKey: string): Promise<any> {
   const url = `${FMCSA_BASE_URL}${endpoint}?webKey=${webKey}`;
-  console.log(`Fetching FMCSA: ${endpoint}`);
+  console.log(`Fetching FMCSA URL: ${url.replace(webKey, 'HIDDEN')}`);
   
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+      }
+    });
+    
+    console.log(`FMCSA Response status: ${response.status}`);
+    
     if (!response.ok) {
-      console.error(`FMCSA API error: ${response.status} ${response.statusText}`);
+      const responseText = await response.text();
+      console.error(`FMCSA API error: ${response.status} ${response.statusText} - ${responseText.substring(0, 200)}`);
       return null;
     }
     const data = await response.json();
+    console.log(`FMCSA Response data keys: ${Object.keys(data).join(', ')}`);
     return data;
   } catch (error) {
     console.error(`Error fetching ${endpoint}:`, error);
@@ -99,9 +108,26 @@ async function fetchFMCSA(endpoint: string, webKey: string): Promise<any> {
 }
 
 async function searchByName(name: string, webKey: string): Promise<any[]> {
-  const encodedName = encodeURIComponent(name);
+  // FMCSA name search - try with asterisk wildcard for partial matching
+  const searchName = name.trim().replace(/\s+/g, '*');
+  const encodedName = encodeURIComponent(searchName);
+  console.log(`Searching by name: "${name}" -> encoded: "${encodedName}"`);
+  
   const data = await fetchFMCSA(`/carriers/name/${encodedName}`, webKey);
-  return data?.content || [];
+  
+  if (data?.content) {
+    console.log(`Found ${data.content.length} results`);
+    return data.content;
+  }
+  
+  // If no content array, check if it's wrapped differently
+  if (Array.isArray(data)) {
+    console.log(`Found ${data.length} results (array format)`);
+    return data;
+  }
+  
+  console.log('No results found in FMCSA response');
+  return [];
 }
 
 async function getCarrierByDOT(dotNumber: string, webKey: string): Promise<FMCSACarrierBasic | null> {
@@ -257,6 +283,11 @@ const handler = async (req: Request): Promise<Response> => {
         state: c.phyState || '',
         phone: c.telephone || ''
       }));
+      
+      // If no results and FMCSA returned empty, suggest DOT search
+      if (formatted.length === 0) {
+        console.log('No results from FMCSA name search - API may be having issues');
+      }
       
       return new Response(
         JSON.stringify({ results: formatted }),
