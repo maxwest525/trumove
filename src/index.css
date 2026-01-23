@@ -265,15 +265,16 @@
   pointer-events: auto;
 }
 
-/* Individual Value Card */
+/* Individual Value Card - More compact */
 .tru-value-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-start;
   gap: 12px;
-  padding: 20px;
+  padding: 14px;
   background: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(220 15% 98%) 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 16px;
+  border-radius: 12px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -289,9 +290,9 @@
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.3) 100%);
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.3) 100%);
   opacity: 0;
   transition: opacity 0.25s ease;
 }
@@ -299,8 +300,8 @@
 .tru-value-card:hover {
   border-color: hsl(var(--primary) / 0.3);
   box-shadow: 
-    0 4px 20px hsl(var(--primary) / 0.08),
-    0 8px 40px hsl(var(--tm-ink) / 0.06);
+    0 2px 12px hsl(var(--primary) / 0.08),
+    0 4px 24px hsl(var(--tm-ink) / 0.05);
   transform: translateY(-2px);
 }
 
@@ -316,41 +317,52 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 100%);
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid hsl(var(--primary) / 0.2);
+  flex-shrink: 0;
 }
 
 .tru-value-card-icon svg {
+  width: 18px;
+  height: 18px;
   color: hsl(var(--primary));
 }
 
 .tru-value-card-content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
+  min-width: 0;
 }
 
 .tru-value-card-title {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .tru-value-card-desc {
-  font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.6);
-  line-height: 1.5;
+  font-size: 11px;
+  color: hsl(var(--tm-ink) / 0.55);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .tru-value-card-badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
-  font-size: 10px;
+  padding: 2px 6px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -358,7 +370,6 @@
   background: hsl(var(--tm-ink) / 0.06);
   border-radius: 100px;
   width: fit-content;
-  margin-top: 4px;
 }
 
 .tru-value-card-badge-live {
@@ -13590,4 +13601,121 @@
 /* Make option cards more compact */
 .tru-qb-options-stack-full .tru-qb-option-card {
   padding: 12px 14px;
+}
+
+/* =============================================
+   MEGA-MENU SUBITEMS
+   ============================================= */
+.mega-menu-subitems {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.mega-menu-subitem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.mega-menu-subitem:hover {
+  background: hsl(var(--primary) / 0.06);
+}
+
+.mega-menu-subitem-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: hsl(var(--primary) / 0.1);
+  border-radius: 10px;
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.mega-menu-subitem-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mega-menu-subitem-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+}
+
+.mega-menu-subitem-badge {
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: hsl(var(--tm-ink) / 0.08);
+  color: hsl(var(--tm-ink) / 0.6);
+  border-radius: 100px;
+}
+
+.mega-menu-subitem-desc {
+  font-size: 12px;
+  color: hsl(var(--tm-ink) / 0.6);
+  line-height: 1.4;
+}
+
+/* =============================================
+   STACKED PILL - ENHANCED WITH COLLAPSE BUTTON
+   ============================================= */
+
+/* Pills stay expanded when locked (data entered) */
+.tru-stacked-pill.is-locked {
+  width: 200px;
+  border-radius: 16px;
+}
+
+.tru-stacked-pill.is-locked .tru-stacked-pill-collapsed {
+  display: none;
+}
+
+.tru-stacked-pill.is-locked .tru-stacked-pill-expanded {
+  display: flex;
+}
+
+/* Collapse/expand toggle button */
+.tru-stacked-pill-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: hsl(var(--tm-ink) / 0.05);
+  border: none;
+  cursor: pointer;
+  color: hsl(var(--tm-ink) / 0.4);
+  transition: all 0.2s ease;
+}
+
+.tru-stacked-pill-toggle:hover {
+  background: hsl(var(--tm-ink) / 0.1);
+  color: hsl(var(--tm-ink) / 0.7);
+}
+
+/* Summary header with toggle */
+.tru-stacked-pill .tru-summary-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: hsl(var(--primary) / 0.06);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.05);
 }

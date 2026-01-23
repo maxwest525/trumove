@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Menu, X, Sparkles, Phone, Video, ChevronDown, User,
-  Calculator, Calendar, Home, Shield, Bed, Bath, Square, CheckCircle2, Clock
+  Calculator, Calendar, Home, Shield, Bed, Bath, Square, CheckCircle2, Clock, Scan
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import ChatModal from "@/components/chat/ChatModal";
@@ -110,6 +110,7 @@ interface NavItem {
   href: string;
   label: string;
   hasDropdown?: boolean;
+  subItems?: SubNavItem[];
   dropdownContent?: {
     icon: React.ElementType;
     title: string;
@@ -120,6 +121,14 @@ interface NavItem {
   };
 }
 
+interface SubNavItem {
+  href: string;
+  label: string;
+  description: string;
+  icon: React.ElementType;
+  badge?: string;
+}
+
 const NAV: NavItem[] = [
   { href: "/", label: "Home" },
   { 
@@ -128,12 +137,27 @@ const NAV: NavItem[] = [
     hasDropdown: true,
     dropdownContent: {
       icon: Calculator,
-      title: "AI Move Estimator",
-      description: "Get an instant estimate powered by room-by-room AI inventory",
-      features: ["Room-by-room inventory", "Real-time pricing", "Compare carriers"],
+      title: "Choose Your Method",
+      description: "Build your inventory and get instant estimates",
+      features: [],
       cta: "Start Your Estimate",
       PreviewComponent: EstimatorPreview
-    }
+    },
+    subItems: [
+      {
+        href: "/scan-room",
+        label: "Scan Your Room",
+        description: "Use your phone camera to auto-detect furniture",
+        icon: Scan,
+        badge: "Coming Soon"
+      },
+      {
+        href: "/online-estimate",
+        label: "Build Manually",
+        description: "Select items from our visual inventory list",
+        icon: Calculator
+      }
+    ]
   },
   { 
     href: "/book", 
@@ -220,31 +244,65 @@ export default function Header() {
                 </Link>
 
                 {/* Mega-Menu Dropdown */}
-                {item.hasDropdown && item.dropdownContent && activeMenu === item.href && (
+                {item.hasDropdown && activeMenu === item.href && (
                   <div className="header-mega-menu">
                     <div className="mega-menu-content">
-                      <div className="mega-menu-header">
-                        <item.dropdownContent.icon className="mega-menu-icon" />
-                        <div className="mega-menu-text">
-                          <h3>{item.dropdownContent.title}</h3>
-                          <p>{item.dropdownContent.description}</p>
+                      {item.dropdownContent && (
+                        <div className="mega-menu-header">
+                          <item.dropdownContent.icon className="mega-menu-icon" />
+                          <div className="mega-menu-text">
+                            <h3>{item.dropdownContent.title}</h3>
+                            <p>{item.dropdownContent.description}</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
 
-                      {/* Preview Component */}
-                      <item.dropdownContent.PreviewComponent />
+                      {/* Sub-items for AI Estimator */}
+                      {item.subItems && item.subItems.length > 0 && (
+                        <div className="mega-menu-subitems">
+                          {item.subItems.map((subItem) => (
+                            <Link 
+                              key={subItem.href} 
+                              to={subItem.href}
+                              className="mega-menu-subitem"
+                            >
+                              <div className="mega-menu-subitem-icon">
+                                <subItem.icon className="w-5 h-5" />
+                              </div>
+                              <div className="mega-menu-subitem-content">
+                                <span className="mega-menu-subitem-label">
+                                  {subItem.label}
+                                  {subItem.badge && (
+                                    <span className="mega-menu-subitem-badge">{subItem.badge}</span>
+                                  )}
+                                </span>
+                                <span className="mega-menu-subitem-desc">{subItem.description}</span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Preview Component - only show if no subitems */}
+                      {item.dropdownContent && !item.subItems && (
+                        <item.dropdownContent.PreviewComponent />
+                      )}
 
                       {/* Features List */}
-                      <ul className="mega-menu-features">
-                        {item.dropdownContent.features.map(f => (
-                          <li key={f}>{f}</li>
-                        ))}
-                      </ul>
+                      {item.dropdownContent && item.dropdownContent.features.length > 0 && (
+                        <ul className="mega-menu-features">
+                          {item.dropdownContent.features.map(f => (
+                            <li key={f}>{f}</li>
+                          ))}
+                        </ul>
+                      )}
 
-                      {/* CTA */}
-                      <Link to={item.href} className="mega-menu-cta">
-                        {item.dropdownContent.cta}
-                      </Link>
+                      {/* CTA - only show if no subitems */}
+                      {item.dropdownContent && !item.subItems && (
+                        <Link to={item.href} className="mega-menu-cta">
+                          {item.dropdownContent.cta}
+                        </Link>
+                      )}
                     </div>
                   </div>
                 )}
