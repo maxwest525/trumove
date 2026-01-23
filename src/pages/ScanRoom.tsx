@@ -102,7 +102,7 @@ export default function ScanRoom() {
               <button
                 onClick={startDemo}
                 disabled={isScanning}
-                className="tru-scan-header-btn-primary"
+                className="tru-scan-header-btn-outline"
               >
                 <Scan className="w-4 h-4" />
                 Start Scanning Now
@@ -111,6 +111,34 @@ export default function ScanRoom() {
                 Switch to Manual Builder
                 <ArrowRight className="w-4 h-4" />
               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Trust Strip */}
+        <section className="tru-scan-trust-strip">
+          <div className="container max-w-5xl mx-auto px-4">
+            <div className="tru-scan-trust-row">
+              <div className="tru-scan-trust-item">
+                <Smartphone className="w-4 h-4" />
+                <span>No App Required</span>
+              </div>
+              <div className="tru-scan-trust-item">
+                <Zap className="w-4 h-4" />
+                <span>500+ Item Types</span>
+              </div>
+              <div className="tru-scan-trust-item">
+                <Ruler className="w-4 h-4" />
+                <span>Auto Dimensions</span>
+              </div>
+              <div className="tru-scan-trust-item">
+                <Clock className="w-4 h-4" />
+                <span>Save 30+ Minutes</span>
+              </div>
+              <div className="tru-scan-trust-item">
+                <Shield className="w-4 h-4" />
+                <span>Secure & Private</span>
+              </div>
             </div>
           </div>
         </section>
@@ -134,50 +162,68 @@ export default function ScanRoom() {
                     </div>
                   )}
                   
-                  {/* Detection Labels Overlay */}
+                  {/* Detection Pills Overlay - Matching reference design */}
                   {detectedItems.length > 0 && (
-                    <div className="tru-scan-video-labels">
+                    <div className="tru-scan-video-pills">
                       {detectedItems.slice(-3).map((item, idx) => (
                         <div 
                           key={item.id}
-                          className="tru-scan-video-label"
+                          className="tru-scan-detection-pill"
                           style={{ 
-                            top: `${20 + idx * 25}%`,
-                            left: `${15 + idx * 20}%`
+                            top: `${15 + idx * 22}%`,
+                            left: `${10 + idx * 18}%`
                           }}
                         >
-                          <Box className="w-3 h-3" />
-                          <span>{item.name}</span>
-                          <CheckCircle className="w-3 h-3 text-primary" />
+                          <div className="tru-scan-pill-icon">
+                            <CheckCircle className="w-4 h-4" />
+                          </div>
+                          <div className="tru-scan-pill-content">
+                            <span className="tru-scan-pill-name">{item.name}</span>
+                            <span className="tru-scan-pill-meta">~{item.weight} lbs • {item.cuft} cu ft</span>
+                          </div>
+                          <CheckCircle className="w-4 h-4 text-primary" />
                         </div>
                       ))}
                     </div>
                   )}
                   
-                  {/* Status Bar */}
-                  <div className="tru-scan-video-status">
-                    {isScanning ? (
-                      <>
-                        <div className="tru-scan-status-pulse" />
-                        <Cpu className="w-4 h-4" />
-                        <span>AI Active — {detectedItems.length}/{DEMO_ITEMS.length} items detected</span>
-                      </>
-                    ) : detectedItems.length > 0 ? (
-                      <>
-                        <CheckCircle className="w-4 h-4 text-primary" />
-                        <span>Scan complete — {detectedItems.length} items found</span>
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="w-4 h-4" />
-                        <span>Click "Start Scanning Now" to begin demo</span>
-                      </>
-                    )}
+                  {/* Status Bar - Bottom */}
+                  <div className="tru-scan-video-status-bar">
+                    <div className="tru-scan-status-left">
+                      {isScanning ? (
+                        <>
+                          <div className="tru-scan-status-pulse" />
+                          <span>Scanning...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="w-4 h-4" />
+                          <span>Ready to scan</span>
+                        </>
+                      )}
+                    </div>
+                    <button 
+                      onClick={startDemo}
+                      disabled={isScanning}
+                      className="tru-scan-status-btn"
+                    >
+                      {isScanning ? (
+                        <>
+                          <div className="tru-scan-spinner-small" />
+                          <span>{detectedItems.length}/{DEMO_ITEMS.length}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Scan className="w-4 h-4" />
+                          <span>Start Scan</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
 
-              {/* Right: Inventory List */}
+              {/* Right: Inventory List - Manual Builder Style */}
               <div className="tru-scan-split-right">
                 <div className="tru-scan-inv-panel">
                   <div className="tru-scan-inv-panel-header">
@@ -202,16 +248,18 @@ export default function ScanRoom() {
                           className="tru-scan-inv-row"
                           style={{ animationDelay: `${idx * 0.05}s` }}
                         >
-                          <img 
-                            src={item.image} 
-                            alt={item.name}
-                            className="tru-scan-inv-thumb"
-                          />
+                          <div className="tru-scan-inv-thumb-wrap">
+                            <img 
+                              src={item.image} 
+                              alt={item.name}
+                              className="tru-scan-inv-thumb"
+                            />
+                          </div>
                           <div className="tru-scan-inv-info">
                             <span className="tru-scan-inv-name">{item.name}</span>
-                            <span className="tru-scan-inv-meta">{item.room} • {item.weight} lbs • {item.cuft} cu ft</span>
+                            <span className="tru-scan-inv-meta">{item.weight} lbs • {item.cuft} cu ft</span>
                           </div>
-                          <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+                          <div className="tru-scan-inv-qty">1</div>
                         </div>
                       ))
                     )}
