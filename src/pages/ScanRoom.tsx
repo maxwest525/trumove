@@ -8,7 +8,7 @@ import {
   Users, Ruler, Package, Plus, Minus
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import previewImage from "@/assets/preview-ai-scanner.jpg";
+import previewImage from "@/assets/scan-room-preview.jpg";
 
 // Simulated detected items for the live demo
 const DEMO_ITEMS = [
@@ -120,10 +120,10 @@ export default function ScanRoom() {
         <section className="tru-scan-header-section">
           <div className="container max-w-4xl mx-auto px-4 text-center">
             <h1 className="tru-scan-main-headline">
-              Build Your <span className="text-primary">Virtual Inventory</span>
+              Let AI Build Your <span className="tru-scan-headline-accent">Virtual Inventory</span>
             </h1>
             <p className="tru-scan-main-subheadline">
-              Add your household items or scan your rooms so we can accurately model what you are moving and plan your route with confidence.
+              Simply scan your rooms and our AI will identify, measure, and catalog every item automatically.
             </p>
             
             <div className="tru-scan-header-buttons">
