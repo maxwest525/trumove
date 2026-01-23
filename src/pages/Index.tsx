@@ -7,6 +7,12 @@ import FloatingNav from "@/components/FloatingNav";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import logoImg from "@/assets/logo.png";
 
+// Preview images for value cards
+import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
+import previewCarrierVetting from "@/assets/preview-carrier-vetting.jpg";
+import previewVideoConsult from "@/assets/preview-video-consult.jpg";
+import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
+
 import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -164,14 +170,14 @@ export default function Index() {
     
     if (fieldsToUpdate.length > 0) {
       setUpdatedFields(new Set(fieldsToUpdate));
-      // Auto-lock summary open on first location entry (won't collapse on hover away)
-      if ((fieldsToUpdate.includes('from') || fieldsToUpdate.includes('to')) && !summaryLocked) {
+      // Auto-lock summary open on any data entry (won't collapse on hover away)
+      if (!summaryLocked) {
         setSummaryLocked(true);
       }
       const timer = setTimeout(() => setUpdatedFields(new Set()), 500);
       return () => clearTimeout(timer);
     }
-  }, [fromCity, toCity, distance, moveDate, size, propertyType, summaryVisible]);
+  }, [fromCity, toCity, distance, moveDate, size, propertyType, summaryLocked]);
 
   // AI hint for current step
   const aiHint = useMemo(() => 
@@ -358,8 +364,7 @@ export default function Index() {
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
                 <h1 className="tru-hero-headline-main">
-                  Get matched with vetted carriers<br />
-                  <span className="tru-hero-headline-accent">who actually care.</span>
+                  Get matched with vetted carriers <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
                   Skip the complexity of large national van lines and impersonal intermediaries. We connect you directly with trusted, 
@@ -369,9 +374,9 @@ export default function Index() {
                 
                 {/* Value Props Container - Map overlays this section */}
                 <div className="tru-hero-value-props-container">
-                  {/* Value Props - Feature Cards */}
+                  {/* Value Props - Feature Cards with hover previews */}
                   <div className={`tru-hero-value-cards ${fromCity ? 'is-hidden' : ''}`}>
-                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/scan-room")}>
+                    <div className="tru-value-card tru-value-card-clickable tru-value-card-hoverable" onClick={() => navigate("/scan-room")}>
                       <div className="tru-value-card-icon">
                         <Scan className="w-5 h-5" />
                       </div>
@@ -382,22 +387,28 @@ export default function Index() {
                         </h3>
                         <p className="tru-value-card-desc">Point your camera and let AI detect all furniture automatically.</p>
                       </div>
+                      <div className="tru-value-card-preview">
+                        <img src={previewAiScanner} alt="AI Room Scanner Preview" />
+                      </div>
                     </div>
                     
-                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/online-estimate")}>
+                    <div className="tru-value-card tru-value-card-clickable tru-value-card-hoverable" onClick={() => navigate("/property-lookup")}>
                       <div className="tru-value-card-icon">
-                        <Sparkles className="w-5 h-5" />
+                        <MapPin className="w-5 h-5" />
                       </div>
                       <div className="tru-value-card-content">
                         <h3 className="tru-value-card-title">
-                          AI Inventory
+                          Property Lookup
                           <span className="tru-value-card-badge tru-value-card-badge-live">Live</span>
                         </h3>
-                        <p className="tru-value-card-desc">Select home size and AI builds your complete inventory list.</p>
+                        <p className="tru-value-card-desc">Instant bed/bath, sqft, and photos for any address.</p>
+                      </div>
+                      <div className="tru-value-card-preview">
+                        <img src={previewPropertyLookup} alt="Property Lookup Preview" />
                       </div>
                     </div>
                     
-                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/vetting")}>
+                    <div className="tru-value-card tru-value-card-clickable tru-value-card-hoverable" onClick={() => navigate("/vetting")}>
                       <div className="tru-value-card-icon">
                         <Shield className="w-5 h-5" />
                       </div>
@@ -405,15 +416,21 @@ export default function Index() {
                         <h3 className="tru-value-card-title">Carrier Vetting</h3>
                         <p className="tru-value-card-desc">FMCSA verified, insurance validated, complaints monitored.</p>
                       </div>
+                      <div className="tru-value-card-preview">
+                        <img src={previewCarrierVetting} alt="Carrier Vetting Preview" />
+                      </div>
                     </div>
                     
-                    <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/book")}>
+                    <div className="tru-value-card tru-value-card-clickable tru-value-card-hoverable" onClick={() => navigate("/book")}>
                       <div className="tru-value-card-icon">
                         <Video className="w-5 h-5" />
                       </div>
                       <div className="tru-value-card-content">
                         <h3 className="tru-value-card-title">Video Consult</h3>
                         <p className="tru-value-card-desc">Virtual walkthrough with a specialist for accurate quotes.</p>
+                      </div>
+                      <div className="tru-value-card-preview">
+                        <img src={previewVideoConsult} alt="Video Consultation Preview" />
                       </div>
                     </div>
                   </div>
