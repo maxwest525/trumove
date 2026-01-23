@@ -779,18 +779,97 @@ export default function Index() {
               </div>
             </div>
 
-            {/* SIDEBAR: Summary Pill + Nav Icons Pill (side by side, static) */}
+            {/* SIDEBAR: Expandable Summary Pill + Nav Icons Pill */}
             <div className="tru-hero-sidebar">
-              {/* Summary Pill - single icon + vertical text */}
-              <div className="tru-sidebar-summary-pill">
-                <div className="tru-sidebar-summary-icon"><MapPin className="w-5 h-5" /></div>
-                <span className="tru-sidebar-vertical-label">SUMMARY</span>
-              </div>
+              {/* Summary Pill - Expandable on hover matching reference design */}
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="tru-sidebar-summary-pill-v2 group">
+                      {/* Collapsed state: icon + vertical label */}
+                      <div className="tru-summary-pill-collapsed">
+                        <div className="tru-summary-pill-icon-wrap">
+                          <MapPin className="w-5 h-5" />
+                        </div>
+                        <span className="tru-summary-pill-vertical-label">SUMMARY</span>
+                      </div>
+                      
+                      {/* Expanded state: full content - revealed on hover */}
+                      <div className="tru-summary-pill-expanded">
+                        <div className="tru-summary-pill-header">
+                          <span>MOVE SUMMARY</span>
+                        </div>
+                        <div className="tru-summary-pill-body">
+                          <div className="tru-summary-pill-row">
+                            <span className="tru-summary-pill-label">From</span>
+                            <span className="tru-summary-pill-value">{fromCity ? fromCity.split(',')[0] : '—'}</span>
+                          </div>
+                          <div className="tru-summary-pill-row">
+                            <span className="tru-summary-pill-label">To</span>
+                            <span className="tru-summary-pill-value">{toCity ? toCity.split(',')[0] : '—'}</span>
+                          </div>
+                          <div className="tru-summary-pill-row">
+                            <span className="tru-summary-pill-label">Distance</span>
+                            <span className="tru-summary-pill-value">{distance > 0 ? `${distance.toLocaleString()} mi` : '—'}</span>
+                          </div>
+                          <div className="tru-summary-pill-row">
+                            <span className="tru-summary-pill-label">Date</span>
+                            <span className="tru-summary-pill-value">{moveDate ? format(moveDate, "MMM d") : '—'}</span>
+                          </div>
+                          <div className="tru-summary-pill-row">
+                            <span className="tru-summary-pill-label">ETA</span>
+                            <span className="tru-summary-pill-value">{estimatedDuration || '—'}</span>
+                          </div>
+                          <div className="tru-summary-pill-row">
+                            <span className="tru-summary-pill-label">Size</span>
+                            <span className="tru-summary-pill-value">{size || '—'}</span>
+                          </div>
+                          <div className="tru-summary-pill-row">
+                            <span className="tru-summary-pill-label">Property</span>
+                            <span className="tru-summary-pill-value">{propertyType ? propertyType.charAt(0).toUpperCase() + propertyType.slice(1) : '—'}</span>
+                          </div>
+                        </div>
+                        <div className="tru-summary-pill-footer">
+                          Powered by <span className="tru-summary-pill-brand">TruMove</span>
+                        </div>
+                      </div>
+                    </div>
+                  </TooltipTrigger>
+                  {/* Show tooltip preview only when collapsed */}
+                  <TooltipContent side="left" className="tru-summary-tooltip-preview hidden group-hover:hidden">
+                    <div className="tru-summary-preview">
+                      <div className="tru-summary-preview-header">Move Summary</div>
+                      <div className="tru-summary-preview-rows">
+                        {fromCity && (
+                          <div className="tru-summary-preview-row">
+                            <span className="tru-summary-preview-label">From</span>
+                            <span className="tru-summary-preview-value">{fromCity.split(',')[0]}</span>
+                          </div>
+                        )}
+                        {toCity && (
+                          <div className="tru-summary-preview-row">
+                            <span className="tru-summary-preview-label">To</span>
+                            <span className="tru-summary-preview-value">{toCity.split(',')[0]}</span>
+                          </div>
+                        )}
+                        {distance > 0 && (
+                          <div className="tru-summary-preview-row">
+                            <span className="tru-summary-preview-label">Distance</span>
+                            <span className="tru-summary-preview-value">{distance.toLocaleString()} mi</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               
-              {/* Nav Icons Pill - icons only, no labels */}
-              <div className="tru-sidebar-nav-pill">
-                <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
-              </div>
+              {/* Nav Icons Pill - with tooltips */}
+              <TooltipProvider delayDuration={200}>
+                <div className="tru-sidebar-nav-pill-v2">
+                  <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
+                </div>
+              </TooltipProvider>
             </div>
           </section>
 

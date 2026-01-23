@@ -1,5 +1,10 @@
 import { useLocation, Link } from "react-router-dom";
 import { Sparkles, Shield, MessageSquare, MapPin, Video, Headphones, LucideIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface FloatingNavProps {
   onChatOpen?: () => void;
@@ -25,54 +30,76 @@ const navItems: NavItem[] = [
 export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingNavProps) {
   const location = useLocation();
 
+  const renderNavItem = (item: NavItem) => {
+    const isActive = item.href && location.pathname === item.href;
+    const Icon = item.icon;
+    
+    const itemClasses = `tru-static-nav-item ${isActive ? 'is-active' : ''}`;
+
+    const content = (
+      <>
+        <Icon className="w-5 h-5" strokeWidth={2} />
+        {!iconsOnly && <span>{item.label}</span>}
+      </>
+    );
+
+    let element: React.ReactNode;
+
+    if (item.action === "chat") {
+      element = (
+        <button
+          key={item.label}
+          onClick={onChatOpen}
+          className={itemClasses}
+        >
+          {content}
+        </button>
+      );
+    } else if (item.href?.startsWith("tel:")) {
+      element = (
+        <a
+          key={item.label}
+          href={item.href}
+          className={itemClasses}
+        >
+          {content}
+        </a>
+      );
+    } else {
+      element = (
+        <Link
+          key={item.label}
+          to={item.href!}
+          className={itemClasses}
+        >
+          {content}
+        </Link>
+      );
+    }
+
+    // Wrap in tooltip when icons only mode
+    if (iconsOnly) {
+      return (
+        <Tooltip key={item.label}>
+          <TooltipTrigger asChild>
+            {element}
+          </TooltipTrigger>
+          <TooltipContent 
+            side="left" 
+            className="bg-card border border-border text-foreground text-xs font-medium px-3 py-1.5"
+          >
+            {item.label}
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return element;
+  };
+
   return (
     <nav className={`tru-static-nav-menu ${iconsOnly ? 'icons-only' : ''}`}>
-      {navItems.map((item) => {
-        const isActive = item.href && location.pathname === item.href;
-        const Icon = item.icon;
-        
-        const itemClasses = `tru-static-nav-item ${isActive ? 'is-active' : ''}`;
-
-        if (item.action === "chat") {
-          return (
-            <button
-              key={item.label}
-              onClick={onChatOpen}
-              className={itemClasses}
-              title={item.label}
-            >
-              <Icon className="w-5 h-5" strokeWidth={2} />
-              {!iconsOnly && <span>{item.label}</span>}
-            </button>
-          );
-        }
-        
-        if (item.href?.startsWith("tel:")) {
-          return (
-            <a
-              key={item.label}
-              href={item.href}
-              className={itemClasses}
-              title={item.label}
-            >
-              <Icon className="w-5 h-5" strokeWidth={2} />
-              {!iconsOnly && <span>{item.label}</span>}
-            </a>
-          );
-        }
-        
-        return (
-          <Link
-            key={item.label}
-            to={item.href!}
-            className={itemClasses}
-            title={item.label}
-          >
-            <Icon className="w-5 h-5" strokeWidth={2} />
-            {!iconsOnly && <span>{item.label}</span>}
-          </Link>
-        );
-      })}
+      {navItems.map(renderNavItem)}
     </nav>
   );
 }
