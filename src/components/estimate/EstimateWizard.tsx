@@ -65,6 +65,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
   const [step, setStep] = useState(1);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [dateWasAutoPopulated, setDateWasAutoPopulated] = useState(false);
   const prevStep = useRef(1);
 
   useEffect(() => {
@@ -109,6 +110,11 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           };
           return sizeMap[size] || '';
         };
+        
+        // Track if date was auto-populated
+        if (lead.moveDate) {
+          setDateWasAutoPopulated(true);
+        }
         
         setDetails(prev => ({
           ...prev,
@@ -201,7 +207,15 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
               <p className="tru-qb-subtitle">Enter your move date and current address</p>
 
               {/* Move Date - First field */}
-              <p className="tru-qb-section-label">Move Date</p>
+              <div className="flex items-center gap-2">
+                <p className="tru-qb-section-label mb-0">Move Date</p>
+                {dateWasAutoPopulated && details.moveDate && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
+                    <Sparkles className="w-3 h-3" />
+                    Auto-filled
+                  </span>
+                )}
+              </div>
               <div className="tru-qb-input-wrap">
                 <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                   <PopoverTrigger asChild>
@@ -220,6 +234,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
                       selected={details.moveDate || undefined}
                       onSelect={(date) => {
                         updateDetails({ moveDate: date || null });
+                        setDateWasAutoPopulated(false); // Clear auto-populated flag when user manually selects
                         setDatePopoverOpen(false);
                       }}
                       disabled={(date) => date < new Date()}
