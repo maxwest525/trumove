@@ -53,6 +53,31 @@ export default function OnlineEstimate() {
   }, []);
 
   // Auto-populate from homepage data stored in localStorage (including name/email/phone)
+  // Load scanned inventory from Scan Room page
+  useEffect(() => {
+    const scannedInventory = localStorage.getItem("tm_scanned_inventory");
+    if (scannedInventory && items.length === 0) {
+      try {
+        const scannedItems = JSON.parse(scannedInventory);
+        // Convert to InventoryItem format
+        const inventoryItems: InventoryItem[] = scannedItems.map((item: any, index: number) => ({
+          id: `scanned-${index}`,
+          name: item.name,
+          quantity: item.quantity || 1,
+          weight: item.weight,
+          room: item.room || 'Living Room',
+        }));
+        setItems(inventoryItems);
+        // Clear the storage after consuming
+        localStorage.removeItem("tm_scanned_inventory");
+        // Skip intro modal since they already have items
+        setWizardComplete(true);
+      } catch (e) {
+        console.error("Failed to parse scanned inventory:", e);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     const storedLead = localStorage.getItem("tm_lead");
     if (storedLead && !extendedDetails) {

@@ -14178,6 +14178,12 @@
   border: none;
 }
 
+.tru-scan-video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* Hero Section - Expanded for inline demo */
 .tru-scan-hero {
   display: grid;
@@ -14890,6 +14896,46 @@
   display: block;
   font-size: 12px;
   color: hsl(var(--tm-ink) / 0.5);
+}
+
+.tru-scan-continue-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  background: hsl(var(--primary));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-scan-continue-btn:hover {
+  background: hsl(var(--primary) / 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+}
+
+.tru-scan-inventory-footer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
+}
+
+.tru-scan-inventory-totals {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 14px;
+  color: hsl(var(--tm-ink) / 0.6);
+}
+
+.tru-scan-inventory-totals strong {
+  color: hsl(var(--tm-ink));
+  font-weight: 700;
 }
 
 /* ============================================
