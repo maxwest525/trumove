@@ -35,8 +35,8 @@ export default function FloatingInventoryButton({
       <span className="text-xs text-muted-foreground">•</span>
       <span className="text-xs text-muted-foreground tabular-nums">{totalCubicFeet} cu ft</span>
       <span className="text-xs text-muted-foreground mx-1">|</span>
-      <span className="text-xs font-medium text-primary group-hover:underline">View List</span>
-      <ArrowDown className="w-3.5 h-3.5 text-primary group-hover:translate-y-0.5 transition-transform" />
+      <span className="text-xs font-medium text-foreground group-hover:underline">View Inventory</span>
+      <ArrowDown className="w-3.5 h-3.5 text-muted-foreground group-hover:translate-y-0.5 transition-transform" />
     </button>
   );
 }
