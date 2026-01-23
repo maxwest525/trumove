@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import OnlineEstimate from "./pages/OnlineEstimate";
 import Book from "./pages/Book";
 import Vetting from "./pages/Vetting";
+import VettingDashboard from "./pages/VettingDashboard";
 import FAQ from "./pages/FAQ";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/online-estimate" element={<OnlineEstimate />} />
             <Route path="/book" element={<Book />} />
             <Route path="/vetting" element={<Vetting />} />
+            <Route path="/vetting-dashboard" element={<VettingDashboard />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/about" element={<About />} />
             <Route path="/privacy" element={<Privacy />} />
