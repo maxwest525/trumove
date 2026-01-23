@@ -187,13 +187,18 @@ export default function ScanRoom() {
               {/* Status Pills Bar - Left Side */}
               <div className="tru-scan-status-pills tru-scan-status-pills-left">
                 <div className="tru-scan-status-pill">
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>{detectedItems.length} items detected</span>
+                  <Package className="w-3.5 h-3.5" />
+                  <span>{detectedItems.length} items</span>
                 </div>
                 <div className="tru-scan-status-divider" />
-                <div className="tru-scan-status-pill tru-scan-status-pill-active">
-                  <Cpu className="w-3.5 h-3.5" />
-                  <span>{isScanning ? "Scanning..." : "AI Active"}</span>
+                <div className="tru-scan-status-pill">
+                  <Ruler className="w-3.5 h-3.5" />
+                  <span>{totalWeight.toLocaleString()} lbs</span>
+                </div>
+                <div className="tru-scan-status-divider" />
+                <div className="tru-scan-status-pill">
+                  <Box className="w-3.5 h-3.5" />
+                  <span>{totalCuFt} cu ft</span>
                 </div>
               </div>
 
