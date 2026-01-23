@@ -347,12 +347,12 @@ export default function CarrierVetting() {
 
           {/* Results Header - Only when carriers exist */}
           {carriers.length > 0 && (
-            <div className="mb-6 text-center">
-              <h2 className="text-xl font-semibold text-foreground">
-                Carrier Safety Comparison
+            <div className="mb-6 max-w-3xl mx-auto">
+              <h2 className="text-lg font-semibold text-foreground text-center">
+                FMCSA-Verified Carrier Safety Records
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Showing {carriers.length} carrier{carriers.length > 1 ? 's' : ''} • Click any card to view full report
+              <p className="text-xs text-muted-foreground mt-2 text-center leading-relaxed">
+                All carriers are filtered and continuously monitored per official FMCSA Safety Measurement System (SMS) criteria and federal compliance standards. Click any card for detailed report including Behavior Analysis and Safety Improvement Categories (BASICs), roadside inspection results, crash involvement, and safety fitness evaluation.
               </p>
             </div>
           )}
