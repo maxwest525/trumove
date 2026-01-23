@@ -16,23 +16,22 @@ export function RedFlagBadge({ message, severity, className }: RedFlagBadgeProps
     info: Info
   };
 
-  // Icon and text color only - no pill background
-  const colorMap = {
-    critical: 'text-red-600 dark:text-red-400',
-    warning: 'text-amber-600 dark:text-amber-400',
-    info: 'text-blue-600 dark:text-blue-400'
+  // Bright, bold icon colors
+  const iconColorMap = {
+    critical: 'text-red-500 drop-shadow-[0_0_3px_rgba(239,68,68,0.5)]',
+    warning: 'text-amber-500 drop-shadow-[0_0_3px_rgba(245,158,11,0.5)]',
+    info: 'text-blue-500 drop-shadow-[0_0_3px_rgba(59,130,246,0.5)]'
   };
 
   const Icon = iconMap[severity];
 
   return (
     <div className={cn(
-      'flex items-center gap-1.5 text-xs font-medium',
-      colorMap[severity],
+      'flex items-center gap-1.5 text-xs',
       className
     )}>
-      <Icon className="w-3.5 h-3.5 shrink-0" />
-      <span>{message}</span>
+      <Icon className={cn("w-4 h-4 shrink-0 stroke-[2.5]", iconColorMap[severity])} />
+      <span className="font-semibold text-slate-900 dark:text-slate-100">{message}</span>
     </div>
   );
 }
