@@ -40,7 +40,7 @@ interface CarrierSnapshotCardProps {
 }
 
 // Calculate risk grade based on carrier data
-function calculateRiskGrade(data: ExtendedCarrierData): { grade: string; label: string; color: string } {
+function calculateRiskGrade(data: ExtendedCarrierData): { grade: string; label: string; color: string; isTruMoveVerified: boolean } {
   let score = 100;
   
   // Authority status (-40 for inactive/revoked)
@@ -62,6 +62,8 @@ function calculateRiskGrade(data: ExtendedCarrierData): { grade: string; label: 
     data.basics.driverFitness?.percentile,
   ].filter(s => s !== null && s !== undefined) as number[];
   
+  const hasRedFlags = basicScores.some(p => p >= 65);
+  
   basicScores.forEach(percentile => {
     if (percentile >= 75) score -= 8;
     else if (percentile >= 65) score -= 4;
@@ -75,13 +77,17 @@ function calculateRiskGrade(data: ExtendedCarrierData): { grade: string; label: 
   if (data.safety.rating === 'UNSATISFACTORY') score -= 25;
   else if (data.safety.rating === 'CONDITIONAL') score -= 15;
   
+  // TruMove Verified: A+ or A grade, active authority, no red flags
+  const isActive = data.authority.commonStatus === 'ACTIVE' || data.authority.commonStatus === 'AUTHORIZED';
+  const isTruMoveVerified = score >= 80 && isActive && !hasRedFlags && data.crashes.fatal === 0;
+  
   // Determine grade
-  if (score >= 90) return { grade: 'A+', label: 'Excellent', color: 'text-green-500 bg-green-500/10 border-green-500/30' };
-  if (score >= 80) return { grade: 'A', label: 'Very Good', color: 'text-green-500 bg-green-500/10 border-green-500/30' };
-  if (score >= 70) return { grade: 'B', label: 'Good', color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/30' };
-  if (score >= 60) return { grade: 'C', label: 'Moderate', color: 'text-amber-500 bg-amber-500/10 border-amber-500/30' };
-  if (score >= 45) return { grade: 'D', label: 'Concerning', color: 'text-orange-500 bg-orange-500/10 border-orange-500/30' };
-  return { grade: 'F', label: 'High Risk', color: 'text-red-500 bg-red-500/10 border-red-500/30' };
+  if (score >= 90) return { grade: 'A+', label: 'Excellent', color: 'text-green-500 bg-green-500/10 border-green-500/30', isTruMoveVerified };
+  if (score >= 80) return { grade: 'A', label: 'Very Good', color: 'text-green-500 bg-green-500/10 border-green-500/30', isTruMoveVerified };
+  if (score >= 70) return { grade: 'B', label: 'Good', color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/30', isTruMoveVerified: false };
+  if (score >= 60) return { grade: 'C', label: 'Moderate', color: 'text-amber-500 bg-amber-500/10 border-amber-500/30', isTruMoveVerified: false };
+  if (score >= 45) return { grade: 'D', label: 'Concerning', color: 'text-orange-500 bg-orange-500/10 border-orange-500/30', isTruMoveVerified: false };
+  return { grade: 'F', label: 'High Risk', color: 'text-red-500 bg-red-500/10 border-red-500/30', isTruMoveVerified: false };
 }
 
 function AuthorityBadge({ status }: { status: string }) {
@@ -210,34 +216,35 @@ function ExternalLinks({ companyName, dotNumber }: { companyName: string; dotNum
   const encodedName = encodeURIComponent(companyName);
   
   return (
-    <div className="flex flex-wrap gap-2 pt-3 border-t border-border/50">
+    <div className="flex flex-wrap gap-2 pt-4 border-t border-border/50">
+      <span className="text-xs text-muted-foreground mr-1 self-center">Verify:</span>
       <a
         href={`https://www.bbb.org/search?find_text=${encodedName}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+        className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 hover:border-blue-500/40 transition-all"
       >
-        <Star className="w-3 h-3" />
-        BBB Profile
+        <span className="font-bold">BBB</span>
+        Profile
         <ExternalLink className="w-3 h-3" />
       </a>
       <a
         href={`https://www.google.com/search?q=${encodedName}+reviews`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+        className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/20 hover:border-orange-500/40 transition-all"
       >
-        <Star className="w-3 h-3" />
-        Google Reviews
+        <span className="font-bold">G</span>
+        Reviews
         <ExternalLink className="w-3 h-3" />
       </a>
       <a
         href={`https://safer.fmcsa.dot.gov/query.asp?searchtype=ANY&query_type=queryCarrierSnapshot&query_param=USDOT&query_string=${dotNumber}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+        className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/20 hover:border-green-500/40 transition-all"
       >
-        <Shield className="w-3 h-3" />
+        <Shield className="w-3.5 h-3.5" />
         FMCSA SAFER
         <ExternalLink className="w-3 h-3" />
       </a>
@@ -306,6 +313,14 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
           </Button>
         )}
         
+        {/* TruMove Verified Badge */}
+        {riskGrade.isTruMoveVerified && (
+          <div className="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-primary/10 to-green-500/10 border border-primary/30">
+            <CheckCircle2 className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-primary uppercase tracking-wide">TruMove Verified Partner</span>
+          </div>
+        )}
+        
         {/* Risk Grade Badge */}
         <div className="flex items-start justify-between pr-8 mb-3">
           <div className={cn(
@@ -346,12 +361,12 @@ export function CarrierSnapshotCard({ data, onRemove, className }: CarrierSnapsh
       <CardContent className="space-y-4">
         {/* Summary Stats - Always visible */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-            <span className="text-xs font-medium text-muted-foreground">Authority</span>
+          <div className="p-3 rounded-lg bg-muted/30">
+            <div className="text-xs font-medium text-muted-foreground mb-1">Authority Status</div>
             <AuthorityBadge status={data.authority.commonStatus} />
           </div>
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-            <span className="text-xs font-medium text-muted-foreground">Liability</span>
+          <div className="p-3 rounded-lg bg-muted/30">
+            <div className="text-xs font-medium text-muted-foreground mb-1">BIPD Liability</div>
             <span className="text-sm font-semibold text-foreground">{formatInsurance()}</span>
           </div>
         </div>

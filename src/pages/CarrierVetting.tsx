@@ -281,7 +281,7 @@ export default function CarrierVetting() {
                 href="https://safer.fmcsa.dot.gov/CompanySnapshot.aspx"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+                className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 hover:text-primary hover:underline transition-colors"
               >
                 Official FMCSA Source
                 <ExternalLink className="w-3 h-3" />
@@ -293,61 +293,61 @@ export default function CarrierVetting() {
         <div className="container max-w-7xl mx-auto px-4 py-8">
           {/* Hero Section - Show when no carriers */}
           {carriers.length === 0 && (
-            <div className="mb-12">
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-                  <Zap className="w-4 h-4" />
-                  Instant Carrier Intelligence
-                </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Verify Any Moving Company in Seconds
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-2">
-                  Access real-time FMCSA safety data, insurance status, and compliance records 
-                  for any DOT-registered carrier in the United States.
-                </p>
-                <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-                  Search by DOT#, MC#, or company name • Compare up to 4 carriers side-by-side
-                </p>
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 dark:bg-slate-800 text-white text-sm font-medium mb-6 border border-primary/30">
+                <Zap className="w-4 h-4 text-primary" />
+                Instant Carrier Intelligence
               </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Verify Any Moving Company in Seconds
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-2">
+                Access real-time FMCSA safety data, insurance status, and compliance records 
+                for any DOT-registered carrier in the United States.
+              </p>
+              <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+                Search by DOT#, MC#, or company name • Compare up to 4 carriers side-by-side
+              </p>
+            </div>
+          )}
 
-              {/* Search Section - Dark Terminal Style */}
-              <div className="fmcsa-terminal max-w-2xl mx-auto mb-8">
-                <div className="fmcsa-terminal-header">
-                  <div className="fmcsa-terminal-dots">
-                    <span></span><span></span><span></span>
-                  </div>
-                  <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
-                </div>
-                <div className="fmcsa-terminal-body">
-                  <CarrierSearch onSelect={handleAddCarrier} />
-                  <div className="mt-3 flex items-center gap-2 text-sm text-white/60">
-                    <Info className="w-3.5 h-3.5" />
-                    <span>For best results, search by DOT# or MC#</span>
-                  </div>
-                </div>
+          {/* Search Section - Always visible */}
+          <div className="fmcsa-terminal max-w-2xl mx-auto mb-8">
+            <div className="fmcsa-terminal-header">
+              <div className="fmcsa-terminal-dots">
+                <span></span><span></span><span></span>
               </div>
+              <span className="fmcsa-terminal-title">SAFER DATABASE QUERY</span>
+            </div>
+            <div className="fmcsa-terminal-body">
+              <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
+              <div className="mt-3 flex items-center gap-2 text-sm text-white/60">
+                <Info className="w-3.5 h-3.5" />
+                <span>For best results, search by DOT# or MC#</span>
+              </div>
+            </div>
+          </div>
 
-              {/* Features Grid - Horizontal Layout */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                {FEATURES.map((feature) => (
-                  <div 
-                    key={feature.title} 
-                    className="fmcsa-feature-card group flex items-start gap-4"
-                  >
-                    <div className="shrink-0 p-3 rounded-xl bg-primary/10 text-primary">
-                      <feature.icon className="w-6 h-6" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground mb-1">{feature.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-2">{feature.description}</p>
-                      <p className="text-xs text-muted-foreground/70 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {feature.detail}
-                      </p>
-                    </div>
+          {/* Features Grid - Only show when no carriers */}
+          {carriers.length === 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto mb-12">
+              {FEATURES.map((feature) => (
+                <div 
+                  key={feature.title} 
+                  className="fmcsa-feature-card group flex items-start gap-4"
+                >
+                  <div className="shrink-0 p-3 rounded-xl bg-primary/10 text-primary">
+                    <feature.icon className="w-6 h-6" />
                   </div>
-                ))}
-              </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground mb-1">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-2">{feature.description}</p>
+                    <p className="text-xs text-muted-foreground/70 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {feature.detail}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
