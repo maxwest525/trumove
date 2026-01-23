@@ -143,37 +143,39 @@ export default function ScanRoom() {
           </div>
         </section>
 
-        {/* How It Works - Between Header and Demo */}
-        <section className="tru-scan-how-section-inline">
-          <div className="container max-w-4xl mx-auto px-4">
-            <h2 className="tru-scan-how-title-inline">From Video to Quote in 3 Steps</h2>
-            
-            <div className="tru-scan-how-steps-inline">
-              <div className="tru-scan-how-step-inline">
-                <div className="tru-scan-how-num-inline">1</div>
-                <div className="tru-scan-how-text-inline">
-                  <strong>Record Walkthrough</strong>
-                  <span>Pan each room slowly</span>
+        {/* How It Works - Section Divider Bar */}
+        <section className="tru-scan-steps-bar">
+          <div className="container max-w-6xl mx-auto px-4">
+            <div className="tru-scan-steps-bar-inner">
+              <h2 className="tru-scan-steps-bar-title">From Video to Quote in 3 Steps</h2>
+              
+              <div className="tru-scan-steps-bar-steps">
+                <div className="tru-scan-steps-bar-step">
+                  <div className="tru-scan-steps-bar-num">1</div>
+                  <div className="tru-scan-steps-bar-text">
+                    <strong>Record Walkthrough</strong>
+                    <span>Pan each room slowly</span>
+                  </div>
                 </div>
-              </div>
-              
-              <ChevronRight className="tru-scan-how-arrow-inline" />
-              
-              <div className="tru-scan-how-step-inline">
-                <div className="tru-scan-how-num-inline">2</div>
-                <div className="tru-scan-how-text-inline">
-                  <strong>AI Identifies Items</strong>
-                  <span>Tagged & measured instantly</span>
+                
+                <ChevronRight className="tru-scan-steps-bar-arrow" />
+                
+                <div className="tru-scan-steps-bar-step">
+                  <div className="tru-scan-steps-bar-num">2</div>
+                  <div className="tru-scan-steps-bar-text">
+                    <strong>AI Identifies Items</strong>
+                    <span>Tagged & measured instantly</span>
+                  </div>
                 </div>
-              </div>
-              
-              <ChevronRight className="tru-scan-how-arrow-inline" />
-              
-              <div className="tru-scan-how-step-inline">
-                <div className="tru-scan-how-num-inline">3</div>
-                <div className="tru-scan-how-text-inline">
-                  <strong>Get Your Quote</strong>
-                  <span>Accurate & instant</span>
+                
+                <ChevronRight className="tru-scan-steps-bar-arrow" />
+                
+                <div className="tru-scan-steps-bar-step">
+                  <div className="tru-scan-steps-bar-num">3</div>
+                  <div className="tru-scan-steps-bar-text">
+                    <strong>Get Your Quote</strong>
+                    <span>Accurate & instant</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -199,38 +201,18 @@ export default function ScanRoom() {
                     </div>
                   )}
                   
-                  {/* Detection Pills Overlay - Matching reference design */}
-                  {detectedItems.length > 0 && (
-                    <div className="tru-scan-video-pills">
-                      {detectedItems.slice(-3).map((item, idx) => (
-                        <div 
-                          key={item.id}
-                          className="tru-scan-detection-pill"
-                          style={{ 
-                            top: `${15 + idx * 22}%`,
-                            left: `${10 + idx * 18}%`
-                          }}
-                        >
-                          <div className="tru-scan-pill-icon">
-                            <CheckCircle className="w-4 h-4" />
-                          </div>
-                          <div className="tru-scan-pill-content">
-                            <span className="tru-scan-pill-name">{item.name}</span>
-                            <span className="tru-scan-pill-meta">~{item.weight} lbs • {item.cuft} cu ft</span>
-                          </div>
-                          <CheckCircle className="w-4 h-4 text-primary" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
                   {/* Status Bar - Bottom */}
                   <div className="tru-scan-video-status-bar">
                     <div className="tru-scan-status-left">
                       {isScanning ? (
                         <>
                           <div className="tru-scan-status-pulse" />
-                          <span>Scanning...</span>
+                          <span>Scanning... {detectedItems.length}/{DEMO_ITEMS.length} items</span>
+                        </>
+                      ) : detectedItems.length > 0 ? (
+                        <>
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Complete — {detectedItems.length} items detected</span>
                         </>
                       ) : (
                         <>
@@ -242,17 +224,17 @@ export default function ScanRoom() {
                     <button 
                       onClick={startDemo}
                       disabled={isScanning}
-                      className="tru-scan-status-btn"
+                      className="tru-scan-status-btn-dark"
                     >
                       {isScanning ? (
                         <>
                           <div className="tru-scan-spinner-small" />
-                          <span>{detectedItems.length}/{DEMO_ITEMS.length}</span>
+                          <span>Scanning</span>
                         </>
                       ) : (
                         <>
                           <Scan className="w-4 h-4" />
-                          <span>Start Scan</span>
+                          <span>{detectedItems.length > 0 ? 'Scan Again' : 'Start Scan'}</span>
                         </>
                       )}
                     </button>
