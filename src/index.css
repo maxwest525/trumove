@@ -131,7 +131,7 @@
 
 /* HERO */
 .tru-hero {
-  padding: 60px 24px 80px;
+  padding: 24px 24px 40px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -142,9 +142,9 @@
 .tru-hero.tru-hero-split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: stretch;
-  padding: 40px 48px 60px;
+  gap: 32px;
+  align-items: flex-start;
+  padding: 24px 48px 32px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -269,6 +269,11 @@
   overflow: hidden;
 }
 
+/* Clickable variant for interactive cards */
+.tru-value-card.tru-value-card-clickable {
+  cursor: pointer;
+}
+
 .tru-value-card::before {
   content: '';
   position: absolute;
@@ -287,6 +292,10 @@
     0 4px 20px hsl(var(--primary) / 0.08),
     0 8px 40px hsl(var(--tm-ink) / 0.06);
   transform: translateY(-2px);
+}
+
+.tru-value-card.tru-value-card-clickable:active {
+  transform: translateY(0);
 }
 
 .tru-value-card:hover::before {
@@ -402,29 +411,23 @@
 .tru-hero-form-panel {
   display: flex;
   flex-direction: row;
-  gap: 16px;
-  align-items: stretch;
-  height: 100%;
-}
-
-.tru-hero-form-panel > * {
-  height: auto;
-  min-height: 0;
+  gap: 12px;
+  align-items: flex-start;
 }
 
 .tru-hero-form-panel .tru-floating-form-card {
-  flex: 2.5 1 auto;
-  min-width: 520px;
+  flex: 1 1 auto;
+  min-width: 480px;
 }
 
 /* Sidebar container for stacked pills (Move Summary + Nav) */
 .tru-hero-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   flex: 0 0 56px;
   width: 56px;
-  align-self: flex-start;
+  align-self: stretch;
   transition: all 0.3s ease;
 }
 
@@ -432,13 +435,14 @@
 .tru-hero-sidebar.tru-hero-sidebar-stacked {
   flex: 0 0 56px;
   width: 56px;
-  gap: 10px;
+  gap: 8px;
 }
 
-/* Stacked Pill Component - collapsed by default */
+/* Stacked Pill Component - collapsed by default, equal height distribution */
 .tru-stacked-pill {
   position: relative;
   width: 56px;
+  flex: 1;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 2px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 28px;
@@ -449,6 +453,9 @@
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Collapsed view */
@@ -456,8 +463,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 0;
-  gap: 12px;
+  justify-content: center;
+  padding: 12px 0;
+  gap: 8px;
+  height: 100%;
 }
 
 .tru-stacked-pill-indicator {
