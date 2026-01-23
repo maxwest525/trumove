@@ -772,6 +772,7 @@ export default function Index() {
                 </div>
                 
                 {/* Footer inside form card - with trust indicators */}
+                {/* Footer inside form card - with trust indicators */}
                 <div className="tru-floating-form-footer tru-form-footer-trust">
                   <div className="tru-form-trust-items">
                     <span className="tru-form-trust-item"><Lock className="w-3 h-3" /> TLS 1.3 ENCRYPTED</span>
@@ -781,9 +782,10 @@ export default function Index() {
                     <span className="tru-form-trust-item"><Database className="w-3 h-3" /> FIRST-PARTY DATA ONLY</span>
                   </div>
                 </div>
+              </div>
             </div>
 
-            {/* SIDEBAR: Stacked Move Summary + Floating Nav - NOW A GRID COLUMN */}
+            {/* SIDEBAR: Stacked Move Summary + Floating Nav - NOW A PROPER GRID COLUMN */}
             <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
               {/* Move Summary Card - EXPANDED BY DEFAULT */}
               <div 
@@ -854,9 +856,7 @@ export default function Index() {
                 <FloatingNav onChatOpen={() => setChatOpen(true)} />
               </div>
             </div>
-          
-          </div>
-        </section>
+          </section>
 
           {/* TRUST STRIP */}
           <section className="tru-trust-strip">
