@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Shield, CheckCircle, AlertTriangle, TrendingUp, BadgeCheck, FileSearch, Clock, ArrowRight, Star } from "lucide-react";
+import { Shield, CheckCircle, AlertTriangle, TrendingUp, BadgeCheck, FileSearch, Clock, ArrowRight, Star, Search } from "lucide-react";
 import previewImage from "@/assets/preview-carrier-vetting.jpg";
 
 const TRUST_PILLS = [
@@ -73,7 +73,11 @@ export default function Vetting() {
             </div>
 
             <div className="tru-vetting-hero-cta">
-              <Link to="/online-estimate" className="tru-vetting-primary-btn">
+              <Link to="/carrier-vetting" className="tru-vetting-primary-btn">
+                Vet a Carrier
+                <Search className="w-4 h-4" />
+              </Link>
+              <Link to="/online-estimate" className="tru-vetting-secondary-btn">
                 Get Protected Quote
                 <ArrowRight className="w-4 h-4" />
               </Link>

@@ -117,6 +117,7 @@ interface NavItem {
     description: string;
     features: string[];
     cta: string;
+    ctaHref?: string;
     PreviewComponent: React.FC;
   };
 }
@@ -195,6 +196,7 @@ const NAV: NavItem[] = [
       description: "Verify any mover's credentials instantly",
       features: ["FMCSA verification", "Insurance check", "Safety records"],
       cta: "Vet a Mover",
+      ctaHref: "/carrier-vetting",
       PreviewComponent: VettingPreview
     }
   },
@@ -302,7 +304,7 @@ export default function Header() {
 
                       {/* CTA - only show if no subitems */}
                       {item.dropdownContent && !item.subItems && (
-                        <Link to={item.href} className="mega-menu-cta">
+                        <Link to={item.dropdownContent.ctaHref || item.href} className="mega-menu-cta">
                           {item.dropdownContent.cta}
                         </Link>
                       )}
