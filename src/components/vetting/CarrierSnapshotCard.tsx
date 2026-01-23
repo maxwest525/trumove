@@ -469,7 +469,7 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
                   <FileWarning className="w-4 h-4" />
                   <span>Red Flag Details</span>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col gap-1.5">
                   {redFlags.map((flag, i) => (
                     <RedFlagBadge key={i} message={flag.message} severity={flag.severity} />
                   ))}
