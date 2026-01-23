@@ -17,7 +17,7 @@ import {
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown, Scan
+  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp
 } from "lucide-react";
 
 // ZIP lookup
@@ -368,43 +368,47 @@ export default function Index() {
                   <div className={`tru-hero-value-cards ${fromCity ? 'is-hidden' : ''}`}>
                     <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/scan-room")}>
                       <div className="tru-value-card-icon">
-                        <Scan className="w-6 h-6" />
+                        <Scan className="w-5 h-5" />
                       </div>
                       <div className="tru-value-card-content">
-                        <h3 className="tru-value-card-title">Scan Your Room</h3>
-                        <p className="tru-value-card-desc">Use your phone camera to scan rooms. AI identifies furniture and builds your inventory instantly.</p>
-                        <span className="tru-value-card-badge">Coming Soon</span>
+                        <h3 className="tru-value-card-title">
+                          Scan Your Room
+                          <span className="tru-value-card-badge">Soon</span>
+                        </h3>
+                        <p className="tru-value-card-desc">Point your camera and let AI detect all furniture automatically.</p>
                       </div>
                     </div>
                     
                     <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/online-estimate")}>
                       <div className="tru-value-card-icon">
-                        <Sparkles className="w-6 h-6" />
+                        <Sparkles className="w-5 h-5" />
                       </div>
                       <div className="tru-value-card-content">
-                        <h3 className="tru-value-card-title">AI Inventory Builder</h3>
-                        <p className="tru-value-card-desc">Select your home size and our AI populates a complete inventory list. Edit as needed for accuracy.</p>
-                        <span className="tru-value-card-badge tru-value-card-badge-live">Live</span>
+                        <h3 className="tru-value-card-title">
+                          AI Inventory
+                          <span className="tru-value-card-badge tru-value-card-badge-live">Live</span>
+                        </h3>
+                        <p className="tru-value-card-desc">Select home size and AI builds your complete inventory list.</p>
                       </div>
                     </div>
                     
                     <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/vetting")}>
                       <div className="tru-value-card-icon">
-                        <Shield className="w-6 h-6" />
+                        <Shield className="w-5 h-5" />
                       </div>
                       <div className="tru-value-card-content">
-                        <h3 className="tru-value-card-title">4-Stage Carrier Vetting</h3>
-                        <p className="tru-value-card-desc">FMCSA license verification, insurance validation, complaint monitoring, and live performance scoring.</p>
+                        <h3 className="tru-value-card-title">Carrier Vetting</h3>
+                        <p className="tru-value-card-desc">FMCSA verified, insurance validated, complaints monitored.</p>
                       </div>
                     </div>
                     
                     <div className="tru-value-card tru-value-card-clickable" onClick={() => navigate("/book")}>
                       <div className="tru-value-card-icon">
-                        <Video className="w-6 h-6" />
+                        <Video className="w-5 h-5" />
                       </div>
                       <div className="tru-value-card-content">
-                        <h3 className="tru-value-card-title">Video Walkthrough</h3>
-                        <p className="tru-value-card-desc">Schedule a video call with a specialist who walks through your home virtually for accurate quoting.</p>
+                        <h3 className="tru-value-card-title">Video Consult</h3>
+                        <p className="tru-value-card-desc">Virtual walkthrough with a specialist for accurate quotes.</p>
                       </div>
                     </div>
                   </div>
@@ -759,9 +763,9 @@ export default function Index() {
 
               {/* SIDEBAR: Stacked Move Summary + Floating Nav */}
               <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-                {/* Move Summary Card - collapsible pill */}
+                {/* Move Summary Card - stays expanded when data entered */}
                 <div 
-                  className={`tru-floating-summary-card tru-stacked-pill ${summaryHovered ? 'is-expanded' : ''}`}
+                  className={`tru-floating-summary-card tru-stacked-pill ${summaryLocked || summaryHovered ? 'is-expanded is-locked' : ''}`}
                   onMouseEnter={() => setSummaryHovered(true)}
                   onMouseLeave={() => setSummaryHovered(false)}
                 >
@@ -776,7 +780,19 @@ export default function Index() {
                   {/* Expanded view - full summary */}
                   <div className="tru-stacked-pill-expanded">
                     <div className="tru-summary-card-header">
-                      <span className="tru-summary-card-title">Move Summary</span>
+                      <span className="tru-summary-card-title">MOVE SUMMARY</span>
+                      {summaryLocked && (
+                        <button 
+                          className="tru-stacked-pill-toggle"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSummaryLocked(false);
+                          }}
+                          aria-label="Collapse summary"
+                        >
+                          <ChevronUp className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                     <div className="tru-summary-card-body">
                       <div className="tru-summary-info-grid">
