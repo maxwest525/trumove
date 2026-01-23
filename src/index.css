@@ -141,7 +141,7 @@
 
 /* HERO */
 .tru-hero {
-  padding: 24px 24px 40px;
+  padding: 16px 24px 24px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -151,10 +151,10 @@
    ============================================= */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 24px;
   align-items: flex-start;
-  padding: 24px 48px 32px;
+  padding: 16px 48px 24px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -191,12 +191,12 @@
 }
 
 .tru-hero-headline-main {
-  font-size: clamp(36px, 5vw, 56px);
+  font-size: clamp(32px, 4.5vw, 48px);
   font-weight: 800;
   line-height: 1.1;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.03em;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .tru-hero-headline-accent {
@@ -207,16 +207,16 @@
 }
 
 .tru-hero-subheadline {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.6;
   color: hsl(var(--tm-ink) / 0.7);
-  margin-bottom: 36px;
+  margin-bottom: 24px;
 }
 
 /* Value Props Container - enables map overlay */
 .tru-hero-value-props-container {
   position: relative;
-  min-height: 360px;
+  min-height: 280px;
 }
 
 /* Value Props - old style kept for compatibility */
@@ -485,9 +485,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px 0;
-  gap: 8px;
+  padding: 16px 0;
+  gap: 12px;
   height: 100%;
+}
+
+/* Icon circle for collapsed state */
+.tru-stacked-pill-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: hsl(var(--primary) / 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tru-stacked-pill-indicator {

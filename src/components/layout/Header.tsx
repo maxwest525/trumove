@@ -137,9 +137,9 @@ const NAV: NavItem[] = [
     hasDropdown: true,
     dropdownContent: {
       icon: Calculator,
-      title: "Choose Your Method",
+      title: "AI Move Estimator",
       description: "Build your inventory and get instant estimates",
-      features: [],
+      features: ["Visual item selection", "AI-powered suggestions", "Real-time pricing"],
       cta: "Start Your Estimate",
       PreviewComponent: EstimatorPreview
     },
@@ -154,7 +154,7 @@ const NAV: NavItem[] = [
       {
         href: "/online-estimate",
         label: "Build Manually",
-        description: "Select items from our visual inventory list",
+        description: "Select items from our visual inventory catalog",
         icon: Calculator
       }
     ]
@@ -283,8 +283,8 @@ export default function Header() {
                         </div>
                       )}
 
-                      {/* Preview Component - only show if no subitems */}
-                      {item.dropdownContent && !item.subItems && (
+                      {/* Preview Component - show for items with subitems too */}
+                      {item.dropdownContent && (
                         <item.dropdownContent.PreviewComponent />
                       )}
 
