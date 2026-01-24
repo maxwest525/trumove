@@ -1023,6 +1023,13 @@
   background: hsl(var(--primary) / 0.15);
   border: 1px solid hsl(var(--primary) / 0.25);
   border-radius: 50%;
+  transition: all 0.25s ease;
+}
+
+.tru-hero-value-cards-open .tru-value-card-icon:hover {
+  background: hsl(var(--primary) / 0.25);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.3);
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon svg {
