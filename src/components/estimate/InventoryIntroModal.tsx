@@ -60,12 +60,12 @@ export default function InventoryIntroModal({
           </div>
 
           {/* Action Buttons */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {/* Primary CTA - Start Building */}
             <button
               type="button"
               onClick={onClose}
-              className="tru-inventory-start-btn"
+              className="tru-modal-primary-btn"
             >
               <Package className="w-5 h-5" />
               Start Building My Inventory
@@ -76,14 +76,14 @@ export default function InventoryIntroModal({
             <div className="flex items-center justify-center gap-3">
               <a
                 href="tel:1-800-555-0123"
-                className="tru-secondary-action-btn"
+                className="tru-modal-secondary-btn"
               >
                 <Phone className="w-4 h-4" />
                 Prefer to talk?
               </a>
               <Link
                 to="/book"
-                className="tru-secondary-action-btn"
+                className="tru-modal-secondary-btn"
               >
                 <Video className="w-4 h-4" />
                 Book Video Consult

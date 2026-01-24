@@ -26,6 +26,152 @@
   box-shadow: 0 4px 12px hsl(var(--primary) / 0.15);
 }
 
+/* Modal Primary Button - High contrast dark CTA */
+.tru-modal-primary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--background));
+  background: hsl(var(--tm-ink));
+  border: 2px solid hsl(var(--tm-ink));
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.tru-modal-primary-btn:hover {
+  background: hsl(var(--background));
+  color: hsl(var(--tm-ink));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px hsl(var(--tm-ink) / 0.2);
+}
+
+/* Modal Secondary Button - Outlined pill style */
+.tru-modal-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  border: 2px solid hsl(var(--border));
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tru-modal-secondary-btn:hover {
+  background: hsl(var(--muted));
+  border-color: hsl(var(--tm-ink));
+  color: hsl(var(--tm-ink));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.1);
+}
+
+/* Scan Progress Indicator */
+.tru-scan-progress-container {
+  position: absolute;
+  bottom: 60px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: hsl(var(--background) / 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.1);
+}
+
+.tru-scan-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: hsl(var(--muted));
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.tru-scan-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
+  border-radius: 9999px;
+  transition: width 0.3s ease-out;
+}
+
+.tru-scan-progress-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  white-space: nowrap;
+}
+
+/* Scan Table Quantity Controls */
+.tru-scan-qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tru-scan-qty-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: 4px;
+  color: hsl(var(--foreground));
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tru-scan-qty-btn:hover {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.tru-scan-qty-value {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Scan Table Remove Button */
+.tru-scan-remove-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tru-scan-remove-btn:hover {
+  background: hsl(var(--destructive) / 0.1);
+  border-color: hsl(var(--destructive));
+  color: hsl(var(--destructive));
+}
+
 @layer base {
   :root {
     /* TruMove Brand Colors */
