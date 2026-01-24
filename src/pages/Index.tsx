@@ -6,6 +6,8 @@ import MapboxMoveMap from "@/components/MapboxMoveMap";
 import AnimatedRouteMap from "@/components/estimate/AnimatedRouteMap";
 import FloatingNav from "@/components/FloatingNav";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
+import LeadCaptureModal from "@/components/LeadCaptureModal";
+import RouteAnalysisSection from "@/components/RouteAnalysisSection";
 import logoImg from "@/assets/logo.png";
 
 // Preview images for value cards
@@ -139,6 +141,11 @@ export default function Index() {
   // Chat state
   const [chatOpen, setChatOpen] = useState(false);
   
+  // Lead capture modal state
+  const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
+  const [leadCaptureTarget, setLeadCaptureTarget] = useState<"manual" | "ai">("manual");
+  const [hasProvidedContactInfo, setHasProvidedContactInfo] = useState(false);
+  
   // Form state
   const [fromZip, setFromZip] = useState("");
   const [toZip, setToZip] = useState("");
@@ -155,7 +162,6 @@ export default function Index() {
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [formError, setFormError] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  // Removed summaryLocked/summaryHovered - no longer needed for static layout
   
   // Carrier search animation states
   const [isSearchingCarriers, setIsSearchingCarriers] = useState(false);
@@ -347,6 +353,36 @@ export default function Index() {
     setSubmitted(true);
   };
 
+  // Handle inventory flow gating
+  const handleInventoryClick = (flow: "manual" | "ai") => {
+    if (!hasProvidedContactInfo && !name && !email && !phone) {
+      setLeadCaptureTarget(flow);
+      setLeadCaptureOpen(true);
+    } else {
+      // Already have contact info, proceed directly
+      navigate(flow === "ai" ? "/scan-room" : "/online-estimate");
+    }
+  };
+
+  const handleLeadCaptureSubmit = (data: { name: string; email: string; phone: string }) => {
+    setName(data.name);
+    setEmail(data.email);
+    setPhoneNum(data.phone);
+    setHasProvidedContactInfo(true);
+    setLeadCaptureOpen(false);
+    
+    // Store the lead data
+    localStorage.setItem("tm_lead_contact", JSON.stringify({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      ts: Date.now()
+    }));
+    
+    // Navigate to the selected flow
+    navigate(leadCaptureTarget === "ai" ? "/scan-room" : "/online-estimate");
+  };
+
   // Step validation
   const canContinue = () => {
     switch (step) {
@@ -511,7 +547,7 @@ export default function Index() {
             {/* LEFT: Value Proposition */}
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
-                <h1 className="tru-hero-headline-main">
+                <h1 className="tru-hero-headline-main tru-hero-headline-large">
                   Get matched with vetted carriers<br />
                   <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
@@ -521,11 +557,11 @@ export default function Index() {
                   monitored for performance and customer feedback, and perfectly matched to your specific route, timeline, and needs.
                 </p>
                 
-                {/* Value Props Container - Map overlays this section */}
+                {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
                 <div className="tru-hero-value-props-container">
-                  {/* Value Props - Feature Cards with hover previews */}
-                  <div className={`tru-hero-value-cards ${isEngaged ? 'is-expanded' : ''}`}>
-                    <div className="tru-value-card tru-value-card-clickable tru-value-card-hoverable" onClick={() => navigate("/scan-room")}>
+                  {/* Value Cards - Always visible with previews */}
+                  <div className="tru-hero-value-cards tru-hero-value-cards-open">
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
                       <div className="tru-value-card-icon">
                         <Scan className="w-5 h-5" />
                       </div>
@@ -536,12 +572,12 @@ export default function Index() {
                         </h3>
                         <p className="tru-value-card-desc">Point your camera and let AI detect all furniture automatically.</p>
                       </div>
-                      <div className="tru-value-card-preview">
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
                         <img src={previewAiScanner} alt="AI Room Scanner Preview" />
                       </div>
                     </div>
                     
-                    <div className="tru-value-card tru-value-card-clickable tru-value-card-hoverable" onClick={() => navigate("/property-lookup")}>
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/property-lookup")}>
                       <div className="tru-value-card-icon">
                         <MapPin className="w-5 h-5" />
                       </div>
@@ -552,12 +588,12 @@ export default function Index() {
                         </h3>
                         <p className="tru-value-card-desc">Instant bed/bath, sqft, and photos for any address.</p>
                       </div>
-                      <div className="tru-value-card-preview">
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
                         <img src={previewPropertyLookup} alt="Property Lookup Preview" />
                       </div>
                     </div>
                     
-                    <div className="tru-value-card tru-value-card-clickable tru-value-card-hoverable" onClick={() => navigate("/vetting")}>
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
                       <div className="tru-value-card-icon">
                         <Shield className="w-5 h-5" />
                       </div>
@@ -565,12 +601,12 @@ export default function Index() {
                         <h3 className="tru-value-card-title">Carrier Vetting</h3>
                         <p className="tru-value-card-desc">FMCSA verified, insurance validated, complaints monitored.</p>
                       </div>
-                      <div className="tru-value-card-preview">
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
                         <img src={previewCarrierVetting} alt="Carrier Vetting Preview" />
                       </div>
                     </div>
                     
-                    <div className="tru-value-card tru-value-card-clickable tru-value-card-hoverable" onClick={() => navigate("/book")}>
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/book")}>
                       <div className="tru-value-card-icon">
                         <Video className="w-5 h-5" />
                       </div>
@@ -578,7 +614,7 @@ export default function Index() {
                         <h3 className="tru-value-card-title">Video Consult</h3>
                         <p className="tru-value-card-desc">Virtual walkthrough with a specialist for accurate quotes.</p>
                       </div>
-                      <div className="tru-value-card-preview">
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
                         <img src={previewVideoConsult} alt="Video Consultation Preview" />
                       </div>
                     </div>
@@ -587,475 +623,533 @@ export default function Index() {
               </div>
             </div>
 
-            {/* RIGHT 50%: Form + Sidebar Container */}
-            <div className="tru-hero-right-half">
-            <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
-              {/* TOP ROW: Form Card */}
-              <div className="tru-floating-form-card">
-                {/* Form Header - Logo + Skip Button */}
-                {/* Progress Bar */}
-                <div className="tru-form-progress-bar">
-                  <div 
-                    className="tru-form-progress-fill" 
-                    style={{ width: `${(step / 3) * 100}%` }}
-                  />
-                </div>
-                
-                <div className="tru-qb-form-header tru-qb-form-header-pill">
-                  <div className="tru-qb-form-title-group">
-                    <span className="tru-qb-form-title tru-qb-form-title-large">Your move, <span className="tru-qb-title-accent">calculated.</span></span>
-                    <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
+            {/* RIGHT: Form + Sidebar Stacked Vertically */}
+            <div className="tru-hero-right-half tru-hero-right-stacked">
+              <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
+                {/* TOP ROW: Form Card */}
+                <div className="tru-floating-form-card">
+                  {/* Progress Bar */}
+                  <div className="tru-form-progress-bar">
+                    <div 
+                      className="tru-form-progress-fill" 
+                      style={{ width: `${(step / 3) * 100}%` }}
+                    />
                   </div>
-                </div>
+                  
+                  <div className="tru-qb-form-header tru-qb-form-header-pill">
+                    <div className="tru-qb-form-title-group">
+                      <span className="tru-qb-form-title tru-qb-form-title-large">Find the right carrier for your move</span>
+                      <span className="tru-qb-form-subtitle-compact">Enter your route to begin matching</span>
+                    </div>
+                  </div>
 
-                {/* Form Content */}
-                <div className="tru-floating-form-content">
+                  {/* Form Content */}
+                  <div className="tru-floating-form-content">
 
-                  {/* Step 1: Route & Date */}
-                  {step === 1 && (
-                    <div className="tru-qb-step-content" key="step-1">
-                      <h1 className="tru-qb-question tru-qb-question-decorated">Where's your move?</h1>
-                      <p className="tru-qb-subtitle">Enter your route and we'll find your best carrier matches</p>
-                      
-                      {/* FROM + TO Row - Side by Side */}
-                      <div className="tru-qb-location-row">
-                        <div className="tru-qb-location-col">
-                          <p className="tru-qb-section-label">From</p>
-                          <div className="tru-qb-input-wrap tru-qb-zip-wrap">
-                            <LocationAutocomplete
-                              value={fromZip}
-                              onValueChange={(val) => {
-                                setFromZip(val);
-                                if (val.length > 0 && !isEngaged) setIsEngaged(true);
-                              }}
-                              onLocationSelect={async (city, zip, fullAddress) => {
-                                setFromZip(zip);
-                                setFromCity(city);
-                                setFromLocationDisplay(fullAddress || `${city} ${zip}`);
-                                const state = city.split(',')[1]?.trim() || '';
-                                triggerCarrierSearch(state);
-                                // Geocode for static map
-                                const coords = await geocodeLocation(`${city} ${zip}`);
-                                if (coords) setFromCoords(coords);
-                              }}
-                              placeholder="City or ZIP"
+                    {/* Step 1: Route & Date */}
+                    {step === 1 && (
+                      <div className="tru-qb-step-content" key="step-1">
+                        <h1 className="tru-qb-question tru-qb-question-decorated">Where's your move?</h1>
+                        <p className="tru-qb-subtitle">Enter your route and we'll find your best carrier matches</p>
+                        
+                        {/* FROM + TO Row - Side by Side */}
+                        <div className="tru-qb-location-row">
+                          <div className="tru-qb-location-col">
+                            <p className="tru-qb-section-label">From</p>
+                            <div className="tru-qb-input-wrap tru-qb-zip-wrap">
+                              <LocationAutocomplete
+                                value={fromZip}
+                                onValueChange={(val) => {
+                                  setFromZip(val);
+                                  if (val.length > 0 && !isEngaged) setIsEngaged(true);
+                                }}
+                                onLocationSelect={async (city, zip, fullAddress) => {
+                                  setFromZip(zip);
+                                  setFromCity(city);
+                                  setFromLocationDisplay(fullAddress || `${city} ${zip}`);
+                                  const state = city.split(',')[1]?.trim() || '';
+                                  triggerCarrierSearch(state);
+                                  // Geocode for static map
+                                  const coords = await geocodeLocation(`${city} ${zip}`);
+                                  if (coords) setFromCoords(coords);
+                                }}
+                                placeholder="City or ZIP"
+                                autoFocus
+                              />
+                            </div>
+                          </div>
+
+                          <div className="tru-qb-location-col">
+                            <p className="tru-qb-section-label">To</p>
+                            <div className="tru-qb-input-wrap tru-qb-zip-wrap">
+                              <LocationAutocomplete
+                                value={toZip}
+                                onValueChange={(val) => {
+                                  setToZip(val);
+                                  if (val.length > 0 && !isEngaged) setIsEngaged(true);
+                                }}
+                                onLocationSelect={async (city, zip, fullAddress) => {
+                                  setToZip(zip);
+                                  setToCity(city);
+                                  setToLocationDisplay(fullAddress || `${city} ${zip}`);
+                                  if (fromCity) {
+                                    const state = city.split(',')[1]?.trim() || '';
+                                    triggerCarrierSearch(state);
+                                  }
+                                  // Geocode for static map
+                                  const coords = await geocodeLocation(`${city} ${zip}`);
+                                  if (coords) setToCoords(coords);
+                                }}
+                                placeholder="City or ZIP"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Move Date */}
+                        <p className="tru-qb-section-label">Move Date</p>
+                        <div className="tru-qb-input-wrap">
+                          <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                            <PopoverTrigger asChild>
+                              <button type="button" className="tru-qb-date-btn">
+                                <CalendarIcon className="w-5 h-5" />
+                                <span>{moveDate ? format(moveDate, "MMMM d, yyyy") : "Select a date"}</span>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="form-date-popover" align="center">
+                              <CalendarComponent
+                                mode="single"
+                                selected={moveDate || undefined}
+                                onSelect={(date) => {
+                                  setMoveDate(date || null);
+                                  setDatePopoverOpen(false);
+                                }}
+                                disabled={(date) => date < new Date()}
+                                className="pointer-events-auto"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+
+                        <button
+                          type="button"
+                          className={`tru-qb-continue tru-engine-btn ${isSearchingCarriers || isAnalyzing ? 'is-scanning' : ''}`}
+                          disabled={!canContinue() || isSearchingCarriers || isAnalyzing}
+                          onClick={goNext}
+                        >
+                          <Scan className="w-4 h-4 tru-btn-scan" />
+                          <span>{isSearchingCarriers || isAnalyzing ? 'Analyzing...' : 'Analyze Route'}</span>
+                          {!isSearchingCarriers && !isAnalyzing && <ArrowRight className="w-5 h-5 tru-btn-arrow" />}
+                        </button>
+                      </div>
+                    )}
+
+
+                    {/* Step 2: Move Size + Property Type */}
+                    {step === 2 && (
+                      <div className="tru-qb-step-content" key="step-2">
+                        <h1 className="tru-qb-question">What size is your current home?</h1>
+                        <p className="tru-qb-subtitle">This helps us estimate weight and crew size</p>
+                        
+                        <div className="tru-qb-size-grid">
+                          {MOVE_SIZES.map((s) => (
+                            <button
+                              key={s.value}
+                              type="button"
+                              className={`tru-qb-size-btn ${size === s.value ? 'is-active' : ''}`}
+                              onClick={() => setSize(s.value)}
+                            >
+                              {s.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        <p className="tru-qb-section-label">Property Type</p>
+                        <div className="tru-qb-toggles">
+                          <button
+                            type="button"
+                            className={`tru-qb-toggle-card ${propertyType === 'house' ? 'is-active' : ''}`}
+                            onClick={() => setPropertyType('house')}
+                          >
+                            <Home className="tru-qb-toggle-icon" />
+                            <div className="tru-qb-toggle-content">
+                              <span className="tru-qb-toggle-title">House</span>
+                            </div>
+                          </button>
+                          <button
+                            type="button"
+                            className={`tru-qb-toggle-card ${propertyType === 'apartment' ? 'is-active' : ''}`}
+                            onClick={() => setPropertyType('apartment')}
+                          >
+                            <Building2 className="tru-qb-toggle-icon" />
+                            <div className="tru-qb-toggle-content">
+                              <span className="tru-qb-toggle-title">Apartment</span>
+                            </div>
+                          </button>
+                        </div>
+
+                        {propertyType === 'apartment' && (
+                          <>
+                            <p className="tru-qb-section-label animate-fade-in">What floor?</p>
+                            <div className="tru-qb-size-grid animate-fade-in">
+                              {FLOOR_OPTIONS.map((f) => (
+                                <button
+                                  key={f.value}
+                                  type="button"
+                                  className={`tru-qb-size-btn ${floor === f.value ? 'is-active' : ''}`}
+                                  onClick={() => setFloor(f.value)}
+                                >
+                                  {f.label}
+                                </button>
+                              ))}
+                            </div>
+
+                            <p className="tru-qb-section-label animate-fade-in">Access type</p>
+                            <div className="tru-qb-toggles animate-fade-in">
+                              <button
+                                type="button"
+                                className={`tru-qb-toggle-card ${!hasElevator ? 'is-active' : ''}`}
+                                onClick={() => setHasElevator(false)}
+                              >
+                                <MoveVertical className="tru-qb-toggle-icon" />
+                                <div className="tru-qb-toggle-content">
+                                  <span className="tru-qb-toggle-title">Stairs</span>
+                                </div>
+                              </button>
+                              <button
+                                type="button"
+                                className={`tru-qb-toggle-card ${hasElevator ? 'is-active' : ''}`}
+                                onClick={() => setHasElevator(true)}
+                              >
+                                <ArrowUpDown className="tru-qb-toggle-icon" />
+                                <div className="tru-qb-toggle-content">
+                                  <span className="tru-qb-toggle-title">Elevator</span>
+                                </div>
+                              </button>
+                            </div>
+                          </>
+                        )}
+
+                        <button
+                          type="button"
+                          className="tru-qb-continue tru-engine-btn"
+                          disabled={!canContinue()}
+                          onClick={goNext}
+                        >
+                          <span>Match Carriers</span>
+                          <ArrowRight className="w-5 h-5 tru-btn-arrow" />
+                        </button>
+
+                        <button type="button" className="tru-qb-back" onClick={goBack}>
+                          <ChevronLeft className="w-4 h-4" />
+                          <span>Back</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Step 3: Contact - Simplified Lead Capture */}
+                    {step === 3 && !submitted && (
+                      <form className="tru-qb-step-content tru-qb-step-compact" key="step-3" onSubmit={handleSubmit}>
+                        <h1 className="tru-qb-question">Almost done! How can we reach you?</h1>
+                        <p className="tru-qb-subtitle">We'll call you within 1 business day to finalize your quote</p>
+                        
+                        <div className="tru-qb-contact-fields">
+                          <div className="tru-qb-input-wrap tru-qb-glow-always">
+                            <input
+                              type="text"
+                              className={`tru-qb-input ${formError && !name.trim() ? 'has-error' : ''}`}
+                              placeholder="Your name"
+                              value={name}
+                              onChange={(e) => { setName(e.target.value); setFormError(""); }}
                               autoFocus
                             />
                           </div>
-                        </div>
-
-                        <div className="tru-qb-location-col">
-                          <p className="tru-qb-section-label">To</p>
-                          <div className="tru-qb-input-wrap tru-qb-zip-wrap">
-                            <LocationAutocomplete
-                              value={toZip}
-                              onValueChange={(val) => {
-                                setToZip(val);
-                                if (val.length > 0 && !isEngaged) setIsEngaged(true);
-                              }}
-                              onLocationSelect={async (city, zip, fullAddress) => {
-                                setToZip(zip);
-                                setToCity(city);
-                                setToLocationDisplay(fullAddress || `${city} ${zip}`);
-                                if (fromCity) {
-                                  const state = city.split(',')[1]?.trim() || '';
-                                  triggerCarrierSearch(state);
-                                }
-                                // Geocode for static map
-                                const coords = await geocodeLocation(`${city} ${zip}`);
-                                if (coords) setToCoords(coords);
-                              }}
-                              placeholder="City or ZIP"
+                          
+                          <div className="tru-qb-input-row">
+                            <input
+                              type="email"
+                              className={`tru-qb-input ${formError && !email.trim() ? 'has-error' : ''}`}
+                              placeholder="Email"
+                              value={email}
+                              onChange={(e) => { setEmail(e.target.value); setFormError(""); }}
+                              onKeyDown={handleKeyDown}
+                            />
+                            <input
+                              type="tel"
+                              className="tru-qb-input"
+                              placeholder="Phone"
+                              value={phone}
+                              onChange={(e) => { setPhoneNum(e.target.value); setFormError(""); }}
+                              onKeyDown={handleKeyDown}
                             />
                           </div>
                         </div>
-                      </div>
 
-                      {/* Move Date */}
-                      <p className="tru-qb-section-label">Move Date</p>
-                      <div className="tru-qb-input-wrap">
-                        <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                          <PopoverTrigger asChild>
-                            <button type="button" className="tru-qb-date-btn">
-                              <CalendarIcon className="w-5 h-5" />
-                              <span>{moveDate ? format(moveDate, "MMMM d, yyyy") : "Select a date"}</span>
-                            </button>
-                          </PopoverTrigger>
-                          <PopoverContent className="form-date-popover" align="center">
-                            <CalendarComponent
-                              mode="single"
-                              selected={moveDate || undefined}
-                              onSelect={(date) => {
-                                setMoveDate(date || null);
-                                setDatePopoverOpen(false);
-                              }}
-                              disabled={(date) => date < new Date()}
-                              className="pointer-events-auto"
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
+                        {formError && (
+                          <p className="tru-qb-error">{formError}</p>
+                        )}
 
-                      <button
-                        type="button"
-                        className={`tru-qb-continue tru-engine-btn ${isSearchingCarriers || isAnalyzing ? 'is-scanning' : ''}`}
-                        disabled={!canContinue() || isSearchingCarriers || isAnalyzing}
-                        onClick={goNext}
-                      >
-                        <Scan className="w-4 h-4 tru-btn-scan" />
-                        <span>{isSearchingCarriers || isAnalyzing ? 'Analyzing...' : 'Analyze Route'}</span>
-                        {!isSearchingCarriers && !isAnalyzing && <ArrowRight className="w-5 h-5 tru-btn-arrow" />}
-                      </button>
-                    </div>
-                  )}
-
-
-                  {/* Step 2: Move Size + Property Type */}
-                  {step === 2 && (
-                    <div className="tru-qb-step-content" key="step-2">
-                      <h1 className="tru-qb-question">What size is your current home?</h1>
-                      <p className="tru-qb-subtitle">This helps us estimate weight and crew size</p>
-                      
-                      <div className="tru-qb-size-grid">
-                        {MOVE_SIZES.map((s) => (
-                          <button
-                            key={s.value}
-                            type="button"
-                            className={`tru-qb-size-btn ${size === s.value ? 'is-active' : ''}`}
-                            onClick={() => setSize(s.value)}
-                          >
-                            {s.label}
-                          </button>
-                        ))}
-                      </div>
-
-                      <p className="tru-qb-section-label">Property Type</p>
-                      <div className="tru-qb-toggles">
                         <button
-                          type="button"
-                          className={`tru-qb-toggle-card ${propertyType === 'house' ? 'is-active' : ''}`}
-                          onClick={() => setPropertyType('house')}
+                          type="submit"
+                          className="tru-qb-continue tru-engine-btn"
+                          onClick={(e) => { 
+                            if (!canContinue()) {
+                              e.preventDefault();
+                              setFormError("Please enter a valid email and phone number (10+ digits).");
+                            }
+                          }}
                         >
-                          <Home className="tru-qb-toggle-icon" />
-                          <div className="tru-qb-toggle-content">
-                            <span className="tru-qb-toggle-title">House</span>
-                          </div>
+                          <span>Get My Free Quote</span>
+                          <ArrowRight className="w-5 h-5 tru-btn-arrow" />
                         </button>
-                        <button
-                          type="button"
-                          className={`tru-qb-toggle-card ${propertyType === 'apartment' ? 'is-active' : ''}`}
-                          onClick={() => setPropertyType('apartment')}
-                        >
-                          <Building2 className="tru-qb-toggle-icon" />
-                          <div className="tru-qb-toggle-content">
-                            <span className="tru-qb-toggle-title">Apartment</span>
-                          </div>
+
+                        <button type="button" className="tru-qb-back" onClick={goBack}>
+                          <ChevronLeft className="w-4 h-4" />
+                          <span>Back</span>
                         </button>
-                      </div>
 
-                      {propertyType === 'apartment' && (
-                        <>
-                          <p className="tru-qb-section-label animate-fade-in">What floor?</p>
-                          <div className="tru-qb-size-grid animate-fade-in">
-                            {FLOOR_OPTIONS.map((f) => (
-                              <button
-                                key={f.value}
-                                type="button"
-                                className={`tru-qb-size-btn ${floor === f.value ? 'is-active' : ''}`}
-                                onClick={() => setFloor(f.value)}
-                              >
-                                {f.label}
-                              </button>
-                            ))}
-                          </div>
+                        <p className="tru-qb-disclaimer-bottom">
+                          By submitting, you agree we may contact you. <Lock className="w-3 h-3 inline" /> Secure & never sold.
+                        </p>
+                      </form>
+                    )}
 
-                          <p className="tru-qb-section-label animate-fade-in">Access type</p>
-                          <div className="tru-qb-toggles animate-fade-in">
-                            <button
-                              type="button"
-                              className={`tru-qb-toggle-card ${!hasElevator ? 'is-active' : ''}`}
-                              onClick={() => setHasElevator(false)}
-                            >
-                              <MoveVertical className="tru-qb-toggle-icon" />
-                              <div className="tru-qb-toggle-content">
-                                <span className="tru-qb-toggle-title">Stairs</span>
-                              </div>
-                            </button>
-                            <button
-                              type="button"
-                              className={`tru-qb-toggle-card ${hasElevator ? 'is-active' : ''}`}
-                              onClick={() => setHasElevator(true)}
-                            >
-                              <ArrowUpDown className="tru-qb-toggle-icon" />
-                              <div className="tru-qb-toggle-content">
-                                <span className="tru-qb-toggle-title">Elevator</span>
-                              </div>
-                            </button>
-                          </div>
-                        </>
-                      )}
-
-                      <button
-                        type="button"
-                        className="tru-qb-continue tru-engine-btn"
-                        disabled={!canContinue()}
-                        onClick={goNext}
-                      >
-                        <span>Match Carriers</span>
-                        <ArrowRight className="w-5 h-5 tru-btn-arrow" />
-                      </button>
-
-                      <button type="button" className="tru-qb-back" onClick={goBack}>
-                        <ChevronLeft className="w-4 h-4" />
-                        <span>Back</span>
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Step 3: Contact - Simplified Lead Capture */}
-                  {step === 3 && !submitted && (
-                    <form className="tru-qb-step-content tru-qb-step-compact" key="step-3" onSubmit={handleSubmit}>
-                      <h1 className="tru-qb-question">Almost done! How can we reach you?</h1>
-                      <p className="tru-qb-subtitle">We'll call you within 1 business day to finalize your quote</p>
-                      
-                      <div className="tru-qb-contact-fields">
-                        <div className="tru-qb-input-wrap tru-qb-glow-always">
-                          <input
-                            type="text"
-                            className={`tru-qb-input ${formError && !name.trim() ? 'has-error' : ''}`}
-                            placeholder="Your name"
-                            value={name}
-                            onChange={(e) => { setName(e.target.value); setFormError(""); }}
-                            autoFocus
-                          />
+                    {/* Post-Submission Confirmation */}
+                    {step === 3 && submitted && (
+                      <div className="tru-qb-step-content tru-qb-confirmation" key="step-confirmed">
+                        <div className="tru-qb-confirmation-icon">
+                          <CheckCircle className="w-12 h-12" />
+                        </div>
+                        <h1 className="tru-qb-question">Request received!</h1>
+                        <p className="tru-qb-subtitle tru-qb-subtitle-bold">
+                          <strong>A TruMove specialist will be contacting you shortly</strong> to discuss your move details and provide a personalized quote.
+                        </p>
+                        
+                        <div className="tru-qb-confirmation-divider">
+                          <span>Take control of your move:</span>
                         </div>
                         
-                        <div className="tru-qb-input-row">
-                          <input
-                            type="email"
-                            className={`tru-qb-input ${formError && !email.trim() ? 'has-error' : ''}`}
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => { setEmail(e.target.value); setFormError(""); }}
-                            onKeyDown={handleKeyDown}
-                          />
-                          <input
-                            type="tel"
-                            className="tru-qb-input"
-                            placeholder="Phone"
-                            value={phone}
-                            onChange={(e) => { setPhoneNum(e.target.value); setFormError(""); }}
-                            onKeyDown={handleKeyDown}
-                          />
+                        <div className="tru-qb-options-stack-full">
+                          <button 
+                            type="button" 
+                            className="tru-qb-option-card tru-qb-option-card-outline"
+                            onClick={() => navigate("/book")}
+                          >
+                            <Video className="w-5 h-5" />
+                            <div className="tru-qb-option-text">
+                              <span className="tru-qb-option-title">Video Consult</span>
+                              <span className="tru-qb-option-desc">Schedule a walkthrough</span>
+                            </div>
+                          </button>
+                          <a href="tel:+16097277647" className="tru-qb-option-card tru-qb-option-card-outline">
+                            <Phone className="w-5 h-5" />
+                            <div className="tru-qb-option-text">
+                              <span className="tru-qb-option-title">Call Us Now</span>
+                              <span className="tru-qb-option-desc">(609) 727-7647</span>
+                            </div>
+                          </a>
+                          <button 
+                            type="button" 
+                            className="tru-qb-option-card"
+                            onClick={() => navigate("/online-estimate")}
+                          >
+                            <Sparkles className="w-5 h-5" />
+                            <div className="tru-qb-option-text">
+                              <span className="tru-qb-option-title">AI Estimator</span>
+                              <span className="tru-qb-option-desc">Build your inventory</span>
+                            </div>
+                          </button>
                         </div>
                       </div>
-
-                      {formError && (
-                        <p className="tru-qb-error">{formError}</p>
-                      )}
-
-                      <button
-                        type="submit"
-                        className="tru-qb-continue tru-engine-btn"
-                        onClick={(e) => { 
-                          if (!canContinue()) {
-                            e.preventDefault();
-                            setFormError("Please enter a valid email and phone number (10+ digits).");
-                          }
-                        }}
-                      >
-                        <span>Get My Free Quote</span>
-                        <ArrowRight className="w-5 h-5 tru-btn-arrow" />
-                      </button>
-
-                      <button type="button" className="tru-qb-back" onClick={goBack}>
-                        <ChevronLeft className="w-4 h-4" />
-                        <span>Back</span>
-                      </button>
-
-                      <p className="tru-qb-disclaimer-bottom">
-                        By submitting, you agree we may contact you. <Lock className="w-3 h-3 inline" /> Secure & never sold.
-                      </p>
-                    </form>
-                  )}
-
-                  {/* Post-Submission Confirmation */}
-                  {step === 3 && submitted && (
-                    <div className="tru-qb-step-content tru-qb-confirmation" key="step-confirmed">
-                      <div className="tru-qb-confirmation-icon">
-                        <CheckCircle className="w-12 h-12" />
-                      </div>
-                      <h1 className="tru-qb-question">Request received!</h1>
-                      <p className="tru-qb-subtitle tru-qb-subtitle-bold">
-                        <strong>A TruMove specialist will be contacting you shortly</strong> to discuss your move details and provide a personalized quote.
-                      </p>
-                      
-                      <div className="tru-qb-confirmation-divider">
-                        <span>Take control of your move:</span>
-                      </div>
-                      
-                      <div className="tru-qb-options-stack-full">
-                        <button 
-                          type="button" 
-                          className="tru-qb-option-card tru-qb-option-card-outline"
-                          onClick={() => navigate("/book")}
-                        >
-                          <Video className="w-5 h-5" />
-                          <div className="tru-qb-option-text">
-                            <span className="tru-qb-option-title">Video Consult</span>
-                            <span className="tru-qb-option-desc">Schedule a walkthrough</span>
-                          </div>
-                        </button>
-                        <a href="tel:+16097277647" className="tru-qb-option-card tru-qb-option-card-outline">
-                          <Phone className="w-5 h-5" />
-                          <div className="tru-qb-option-text">
-                            <span className="tru-qb-option-title">Call Us Now</span>
-                            <span className="tru-qb-option-desc">(609) 727-7647</span>
-                          </div>
-                        </a>
-                        <button 
-                          type="button" 
-                          className="tru-qb-option-card"
-                          onClick={() => navigate("/online-estimate")}
-                        >
-                          <Sparkles className="w-5 h-5" />
-                          <div className="tru-qb-option-text">
-                            <span className="tru-qb-option-title">AI Estimator</span>
-                            <span className="tru-qb-option-desc">Build your inventory</span>
-                          </div>
-                        </button>
-                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Footer inside form card - with trust indicators */}
+                  <div className="tru-floating-form-footer tru-form-footer-trust">
+                    <div className="tru-form-trust-items">
+                      <span className="tru-form-trust-item"><Lock className="w-3 h-3" /> TLS 1.3 ENCRYPTED</span>
+                      <span className="tru-form-trust-divider">•</span>
+                      <span className="tru-form-trust-item"><Shield className="w-3 h-3" /> FMCSA LICENSE VERIFIED</span>
+                      <span className="tru-form-trust-divider">•</span>
+                      <span className="tru-form-trust-item"><Database className="w-3 h-3" /> FIRST-PARTY DATA ONLY</span>
                     </div>
-                  )}
-                </div>
-                
-                {/* Footer inside form card - with trust indicators */}
-                {/* Footer inside form card - with trust indicators */}
-                <div className="tru-floating-form-footer tru-form-footer-trust">
-                  <div className="tru-form-trust-items">
-                    <span className="tru-form-trust-item"><Lock className="w-3 h-3" /> TLS 1.3 ENCRYPTED</span>
-                    <span className="tru-form-trust-divider">•</span>
-                    <span className="tru-form-trust-item"><Shield className="w-3 h-3" /> FMCSA LICENSE VERIFIED</span>
-                    <span className="tru-form-trust-divider">•</span>
-                    <span className="tru-form-trust-item"><Database className="w-3 h-3" /> FIRST-PARTY DATA ONLY</span>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* SIDEBAR: Expandable Summary Pill + Nav Icons Pill */}
-            <div className="tru-hero-sidebar">
-              {/* Summary Pill - Expandable on hover matching reference design */}
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="tru-sidebar-summary-pill-v2 group">
-                      {/* Collapsed state: icon + vertical label */}
-                      <div className="tru-summary-pill-collapsed">
-                        <div className="tru-summary-pill-icon-wrap">
-                          <MapPin className="w-5 h-5" />
+              {/* SIDEBAR: Summary Pill + Nav Icons Pill - STACKED VERTICALLY */}
+              <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
+                {/* Summary Pill - Expandable on hover */}
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="tru-sidebar-summary-pill-v3 group">
+                        {/* Collapsed state: icon + vertical label */}
+                        <div className="tru-summary-pill-collapsed">
+                          <div className="tru-summary-pill-icon-wrap">
+                            <MapPin className="w-5 h-5" />
+                          </div>
+                          <span className="tru-summary-pill-vertical-label">SUMMARY</span>
                         </div>
-                        <span className="tru-summary-pill-vertical-label">SUMMARY</span>
+                        
+                        {/* Expanded state: full content - revealed on hover */}
+                        <div className="tru-summary-pill-expanded">
+                          <div className="tru-summary-pill-header">
+                            <span>MOVE SUMMARY</span>
+                          </div>
+                          <div className="tru-summary-pill-body">
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">From</span>
+                              <span className="tru-summary-pill-value">{fromCity ? fromCity.split(',')[0] : '—'}</span>
+                            </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">To</span>
+                              <span className="tru-summary-pill-value">{toCity ? toCity.split(',')[0] : '—'}</span>
+                            </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">Distance</span>
+                              <span className="tru-summary-pill-value">{distance > 0 ? `${distance.toLocaleString()} mi` : '—'}</span>
+                            </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">Date</span>
+                              <span className="tru-summary-pill-value">{moveDate ? format(moveDate, "MMM d") : '—'}</span>
+                            </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">ETA</span>
+                              <span className="tru-summary-pill-value">{estimatedDuration || '—'}</span>
+                            </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">Size</span>
+                              <span className="tru-summary-pill-value">{size || '—'}</span>
+                            </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">Property</span>
+                              <span className="tru-summary-pill-value">{propertyType ? propertyType.charAt(0).toUpperCase() + propertyType.slice(1) : '—'}</span>
+                            </div>
+                          </div>
+                          <div className="tru-summary-pill-footer">
+                            Powered by <span className="tru-summary-pill-brand">TruMove</span>
+                          </div>
+                        </div>
                       </div>
-                      
-                      {/* Expanded state: full content - revealed on hover */}
-                      <div className="tru-summary-pill-expanded">
-                        <div className="tru-summary-pill-header">
-                          <span>MOVE SUMMARY</span>
-                        </div>
-                        <div className="tru-summary-pill-body">
-                          <div className="tru-summary-pill-row">
-                            <span className="tru-summary-pill-label">From</span>
-                            <span className="tru-summary-pill-value">{fromCity ? fromCity.split(',')[0] : '—'}</span>
-                          </div>
-                          <div className="tru-summary-pill-row">
-                            <span className="tru-summary-pill-label">To</span>
-                            <span className="tru-summary-pill-value">{toCity ? toCity.split(',')[0] : '—'}</span>
-                          </div>
-                          <div className="tru-summary-pill-row">
-                            <span className="tru-summary-pill-label">Distance</span>
-                            <span className="tru-summary-pill-value">{distance > 0 ? `${distance.toLocaleString()} mi` : '—'}</span>
-                          </div>
-                          <div className="tru-summary-pill-row">
-                            <span className="tru-summary-pill-label">Date</span>
-                            <span className="tru-summary-pill-value">{moveDate ? format(moveDate, "MMM d") : '—'}</span>
-                          </div>
-                          <div className="tru-summary-pill-row">
-                            <span className="tru-summary-pill-label">ETA</span>
-                            <span className="tru-summary-pill-value">{estimatedDuration || '—'}</span>
-                          </div>
-                          <div className="tru-summary-pill-row">
-                            <span className="tru-summary-pill-label">Size</span>
-                            <span className="tru-summary-pill-value">{size || '—'}</span>
-                          </div>
-                          <div className="tru-summary-pill-row">
-                            <span className="tru-summary-pill-label">Property</span>
-                            <span className="tru-summary-pill-value">{propertyType ? propertyType.charAt(0).toUpperCase() + propertyType.slice(1) : '—'}</span>
-                          </div>
-                        </div>
-                        <div className="tru-summary-pill-footer">
-                          Powered by <span className="tru-summary-pill-brand">TruMove</span>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="tru-summary-tooltip-preview hidden group-hover:hidden">
+                      <div className="tru-summary-preview">
+                        <div className="tru-summary-preview-header">Move Summary</div>
+                        <div className="tru-summary-preview-rows">
+                          {fromCity && (
+                            <div className="tru-summary-preview-row">
+                              <span className="tru-summary-preview-label">From</span>
+                              <span className="tru-summary-preview-value">{fromCity.split(',')[0]}</span>
+                            </div>
+                          )}
+                          {toCity && (
+                            <div className="tru-summary-preview-row">
+                              <span className="tru-summary-preview-label">To</span>
+                              <span className="tru-summary-preview-value">{toCity.split(',')[0]}</span>
+                            </div>
+                          )}
+                          {distance > 0 && (
+                            <div className="tru-summary-preview-row">
+                              <span className="tru-summary-preview-label">Distance</span>
+                              <span className="tru-summary-preview-value">{distance.toLocaleString()} mi</span>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  </TooltipTrigger>
-                  {/* Show tooltip preview only when collapsed */}
-                  <TooltipContent side="left" className="tru-summary-tooltip-preview hidden group-hover:hidden">
-                    <div className="tru-summary-preview">
-                      <div className="tru-summary-preview-header">Move Summary</div>
-                      <div className="tru-summary-preview-rows">
-                        {fromCity && (
-                          <div className="tru-summary-preview-row">
-                            <span className="tru-summary-preview-label">From</span>
-                            <span className="tru-summary-preview-value">{fromCity.split(',')[0]}</span>
-                          </div>
-                        )}
-                        {toCity && (
-                          <div className="tru-summary-preview-row">
-                            <span className="tru-summary-preview-label">To</span>
-                            <span className="tru-summary-preview-value">{toCity.split(',')[0]}</span>
-                          </div>
-                        )}
-                        {distance > 0 && (
-                          <div className="tru-summary-preview-row">
-                            <span className="tru-summary-preview-label">Distance</span>
-                            <span className="tru-summary-preview-value">{distance.toLocaleString()} mi</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              
-              {/* Nav Icons Pill - with tooltips */}
-              <TooltipProvider delayDuration={200}>
-                <div className="tru-sidebar-nav-pill-v2">
-                  <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
-                </div>
-              </TooltipProvider>
-            </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                {/* Nav Icons Pill - Stacked below summary */}
+                <TooltipProvider delayDuration={200}>
+                  <div className="tru-sidebar-nav-pill-v3">
+                    <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
+                  </div>
+                </TooltipProvider>
+              </div>
             </div>
           </section>
 
-          {/* TRUST STRIP */}
+          {/* TRUST STRIP - Without "Save 30+ Minutes" */}
           <section className="tru-trust-strip">
             <div className="tru-trust-strip-inner">
               <div className="tru-trust-strip-item">
                 <Shield className="w-4 h-4" />
                 <span>USDOT Compliant</span>
               </div>
+              <span className="tru-trust-strip-dot">•</span>
               <div className="tru-trust-strip-item">
                 <CheckCircle className="w-4 h-4" />
                 <span>Bonded & Insured</span>
               </div>
+              <span className="tru-trust-strip-dot">•</span>
               <div className="tru-trust-strip-item">
                 <Truck className="w-4 h-4" />
                 <span>FMCSA Authorized</span>
               </div>
+              <span className="tru-trust-strip-dot">•</span>
               <div className="tru-trust-strip-item">
                 <Star className="w-4 h-4" />
                 <span>Licensed Broker</span>
+              </div>
+            </div>
+          </section>
+
+          {/* ROUTE ANALYSIS SECTION - Under Trust Strip */}
+          <RouteAnalysisSection 
+            fromCity={fromCity}
+            toCity={toCity}
+            distance={distance}
+            isAnalyzing={isSearchingCarriers}
+          />
+
+          {/* START YOUR AI INVENTORY ANALYSIS - 3 Step Section */}
+          <section className="tru-ai-steps-section">
+            <div className="tru-ai-steps-inner">
+              <h2 className="tru-ai-steps-title">Start Your AI Inventory Analysis</h2>
+              <div className="tru-ai-steps-grid">
+                <div className="tru-ai-step">
+                  <div className="tru-ai-step-number">1</div>
+                  <div className="tru-ai-step-content">
+                    <h3 className="tru-ai-step-title">Upload Room Photos</h3>
+                    <p className="tru-ai-step-desc">Take photos showing all furniture and items in each room.</p>
+                  </div>
+                </div>
+                <div className="tru-ai-step">
+                  <div className="tru-ai-step-number">2</div>
+                  <div className="tru-ai-step-content">
+                    <h3 className="tru-ai-step-title">AI Detects & Measures</h3>
+                    <p className="tru-ai-step-desc">Our AI identifies items and calculates weight and volume.</p>
+                  </div>
+                </div>
+                <div className="tru-ai-step">
+                  <div className="tru-ai-step-number">3</div>
+                  <div className="tru-ai-step-content">
+                    <h3 className="tru-ai-step-title">Review & Get Quote</h3>
+                    <p className="tru-ai-step-desc">Verify your inventory and receive an accurate estimate.</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Inventory Action Buttons - Same Visual Style */}
+              <div className="tru-inventory-actions">
+                <button 
+                  type="button" 
+                  className="tru-inventory-action-btn"
+                  onClick={() => handleInventoryClick("manual")}
+                >
+                  <Boxes className="w-5 h-5" />
+                  <span>Build Inventory Manually</span>
+                </button>
+                <button 
+                  type="button" 
+                  className="tru-inventory-action-btn"
+                  onClick={() => navigate("/book")}
+                >
+                  <Video className="w-5 h-5" />
+                  <span>Prefer to talk? Book Video Consult</span>
+                </button>
               </div>
             </div>
           </section>
@@ -1217,7 +1311,13 @@ export default function Index() {
       {/* Chat Modal */}
       <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       
-
+      {/* Lead Capture Modal */}
+      <LeadCaptureModal
+        isOpen={leadCaptureOpen}
+        onClose={() => setLeadCaptureOpen(false)}
+        onSubmit={handleLeadCaptureSubmit}
+        targetFlow={leadCaptureTarget}
+      />
 
     </SiteShell>
   );
