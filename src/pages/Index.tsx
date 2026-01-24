@@ -665,8 +665,7 @@ export default function Index() {
                     {/* Step 1: Route & Date */}
                     {step === 1 && (
                       <div className="tru-qb-step-content" key="step-1">
-                        <h1 className="tru-qb-question tru-qb-question-decorated">Where's your move?</h1>
-                        <p className="tru-qb-subtitle">Enter your route and we'll find your best carrier matches</p>
+                        <h1 className="tru-qb-question tru-qb-question-decorated">Tell us more about your move</h1>
                         
                         {/* FROM + TO Row - Side by Side */}
                         <div className="tru-qb-location-row">
