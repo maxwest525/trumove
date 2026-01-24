@@ -395,6 +395,73 @@ export default function Index() {
         <div className="tru-page-inner">
         {/* HERO - Split Layout */}
           <section className="tru-hero tru-hero-split">
+            {/* Full-Page Analyzing Overlay */}
+            {isAnalyzing && (
+              <div className="tru-analyze-fullpage-overlay">
+                <div className="tru-analyze-fullpage-content">
+                  <div className="tru-analyze-fullpage-header">
+                    <Radar className="w-6 h-6 tru-analyzing-icon" />
+                    <span className="tru-analyze-fullpage-title">
+                      {analyzePhase === 0 && "Locating origin..."}
+                      {analyzePhase === 1 && "Locating destination..."}
+                      {analyzePhase === 2 && "Mapping your route..."}
+                    </span>
+                  </div>
+                  
+                  <div className="tru-analyze-fullpage-maps">
+                    {/* Origin Satellite */}
+                    <div className={`tru-analyze-fullpage-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
+                      <div className="tru-analyze-fullpage-label">
+                        <MapPin className="w-4 h-4" />
+                        <span>Origin</span>
+                      </div>
+                      <div className="tru-analyze-fullpage-frame">
+                        <img 
+                          src={fromCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/400x280@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
+                          alt="Origin location"
+                          className="tru-analyze-fullpage-img"
+                        />
+                        <div className="tru-analyze-fullpage-city">{fromCity}</div>
+                      </div>
+                    </div>
+                    
+                    {/* Route Connector */}
+                    <div className={`tru-analyze-fullpage-connector ${analyzePhase >= 2 ? 'is-active' : ''}`}>
+                      <div className="tru-analyze-connector-line">
+                        <div className="tru-analyze-connector-fill" />
+                      </div>
+                      <div className="tru-analyze-connector-info">
+                        <Truck className="w-5 h-5" />
+                        <span>{distance.toLocaleString()} mi</span>
+                      </div>
+                    </div>
+                    
+                    {/* Destination Satellite */}
+                    <div className={`tru-analyze-fullpage-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
+                      <div className="tru-analyze-fullpage-label">
+                        <MapPin className="w-4 h-4" />
+                        <span>Destination</span>
+                      </div>
+                      <div className="tru-analyze-fullpage-frame">
+                        <img 
+                          src={toCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/400x280@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
+                          alt="Destination location"
+                          className="tru-analyze-fullpage-img"
+                        />
+                        <div className="tru-analyze-fullpage-city">{toCity}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Duration estimate */}
+                  <div className={`tru-analyze-fullpage-duration ${analyzePhase >= 2 ? 'is-active' : ''}`}>
+                    <Clock className="w-4 h-4" />
+                    <span>Est. transit: {estimatedDuration}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {/* LEFT: Value Proposition */}
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
@@ -594,66 +661,6 @@ export default function Index() {
                     </div>
                   )}
 
-                  {/* Analyzing Transition Overlay */}
-                  {isAnalyzing && (
-                    <div className="tru-qb-analyzing-overlay" key="analyzing">
-                      <div className="tru-qb-analyzing-header">
-                        <Radar className="w-5 h-5 tru-analyzing-icon" />
-                        <span className="tru-analyzing-title">
-                          {analyzePhase === 0 && "Locating origin..."}
-                          {analyzePhase === 1 && "Locating destination..."}
-                          {analyzePhase === 2 && "Mapping route..."}
-                        </span>
-                      </div>
-                      
-                      <div className="tru-qb-analyzing-maps">
-                        {/* Origin View */}
-                        <div className={`tru-analyze-map-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
-                          <div className="tru-analyze-map-label">
-                            <MapPin className="w-3.5 h-3.5" />
-                            <span>Origin</span>
-                          </div>
-                          <div className="tru-analyze-map-frame">
-                            <img 
-                              src={fromCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},13,0/280x160@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
-                              alt="Origin location"
-                              className="tru-analyze-map-img"
-                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                            />
-                            <div className="tru-analyze-map-city">{fromCity}</div>
-                          </div>
-                        </div>
-                        
-                        {/* Destination View */}
-                        <div className={`tru-analyze-map-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
-                          <div className="tru-analyze-map-label">
-                            <MapPin className="w-3.5 h-3.5" />
-                            <span>Destination</span>
-                          </div>
-                          <div className="tru-analyze-map-frame">
-                            <img 
-                              src={toCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},13,0/280x160@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
-                              alt="Destination location"
-                              className="tru-analyze-map-img"
-                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                            />
-                            <div className="tru-analyze-map-city">{toCity}</div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Route Progress */}
-                      <div className={`tru-analyze-route-bar ${analyzePhase >= 2 ? 'is-active' : ''}`}>
-                        <div className="tru-analyze-route-line">
-                          <div className="tru-analyze-route-fill" />
-                        </div>
-                        <div className="tru-analyze-route-info">
-                          <Truck className="w-4 h-4" />
-                          <span>{distance.toLocaleString()} miles • {estimatedDuration}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
 
                   {/* Step 2: Move Size + Property Type */}
                   {step === 2 && (
