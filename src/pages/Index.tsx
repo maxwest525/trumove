@@ -751,7 +751,7 @@ export default function Index() {
                                 </div>
                               )}
                               {distance > 0 && (
-                                <div className="tru-qb-route-summary-distance">
+                                <div className={`tru-qb-route-summary-distance ${updatedFields.has('distance') ? 'is-pulsing' : ''}`}>
                                   <Route className="w-3.5 h-3.5" />
                                   <span>{distance.toLocaleString()} mi</span>
                                   <span className="tru-qb-route-summary-type">{moveType === 'long-distance' ? 'Long Distance' : 'Local'}</span>
