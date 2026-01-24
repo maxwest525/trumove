@@ -6,7 +6,7 @@ import {
   Scan, Sparkles, ArrowRight, 
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
-  Phone, Video, Minus, Plus, X
+  Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -49,6 +49,7 @@ export default function ScanRoom() {
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
+  const [uploadedPhotos, setUploadedPhotos] = useState<{ id: string; url: string; name: string }[]>([]);
 
   // Simulate live detection
   useEffect(() => {
@@ -329,73 +330,172 @@ export default function ScanRoom() {
           </div>
         </section>
 
-        {/* Demo Section - Video + Inventory Table Below */}
+        {/* Room Inventory Analysis Section */}
         <section className="tru-scan-split-demo">
           <div className="container max-w-6xl mx-auto px-4">
-            {/* Scanner Video/Preview */}
-            <div className="tru-scan-video-container tru-scan-video-centered">
-              <img 
-                src={previewImage} 
-                alt="AI Room Scanner" 
-                className="tru-scan-video-preview"
-              />
-              
-              {/* Always show scanning overlay with grid pattern */}
-              <div className="tru-scan-video-overlay">
-                <div className="tru-scan-grid-pattern" />
-                {isScanning && <div className="tru-scan-video-scanline" />}
-              </div>
-              
-              {/* Status Pills Bar - Left Side */}
-              <div className="tru-scan-status-pills tru-scan-status-pills-left">
-                <div className="tru-scan-status-pill">
-                  <Package className="w-3.5 h-3.5" />
-                  <span>{detectedItems.length} items</span>
+            {/* Section Header */}
+            <div className="tru-scan-analysis-header">
+              <h2 className="tru-scan-analysis-title">
+                Room <span className="tru-scan-headline-accent">Inventory Analysis</span>
+              </h2>
+              <p className="tru-scan-analysis-subtitle">
+                Upload photos of your rooms and let our AI identify every item automatically
+              </p>
+            </div>
+
+            {/* Three Column Layout: Upload | Scanner | Photo Library */}
+            <div className="tru-scan-analysis-grid">
+              {/* Left: Upload Area */}
+              <div className="tru-scan-upload-panel">
+                <div className="tru-scan-upload-header">
+                  <Upload className="w-4 h-4" />
+                  <span>Upload Photos</span>
                 </div>
-                <div className="tru-scan-status-divider" />
-                <div className="tru-scan-status-pill">
-                  <Ruler className="w-3.5 h-3.5" />
-                  <span>{totalWeight.toLocaleString()} lbs</span>
+                <div className="tru-scan-upload-zone">
+                  <input
+                    type="file"
+                    id="photo-upload"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => {
+                      const files = e.target.files;
+                      if (files) {
+                        Array.from(files).forEach(file => {
+                          const url = URL.createObjectURL(file);
+                          setUploadedPhotos(prev => [...prev, {
+                            id: `photo-${Date.now()}-${Math.random()}`,
+                            url,
+                            name: file.name
+                          }]);
+                        });
+                      }
+                    }}
+                  />
+                  <label htmlFor="photo-upload" className="tru-scan-upload-dropzone">
+                    <div className="tru-scan-upload-icon">
+                      <ImageIcon className="w-8 h-8" />
+                    </div>
+                    <p className="tru-scan-upload-text">
+                      Drag & drop photos here
+                    </p>
+                    <span className="tru-scan-upload-hint">or click to browse</span>
+                    <span className="tru-scan-upload-formats">JPG, PNG, HEIC</span>
+                  </label>
                 </div>
-                <div className="tru-scan-status-divider" />
-                <div className="tru-scan-status-pill">
-                  <Box className="w-3.5 h-3.5" />
-                  <span>{totalCuFt} cu ft</span>
+                <div className="tru-scan-upload-tips">
+                  <p>📸 Capture entire rooms</p>
+                  <p>💡 Good lighting helps</p>
+                  <p>📐 Multiple angles work best</p>
                 </div>
               </div>
 
-              {/* Progress Bar - Only show during scanning */}
-              {isScanning && (
-                <div className="tru-scan-progress-container">
-                  <div className="tru-scan-progress-bar">
-                    <div 
-                      className="tru-scan-progress-fill"
-                      style={{ width: `${(detectedItems.length / DEMO_ITEMS.length) * 100}%` }}
-                    />
+              {/* Center: Scanner Preview */}
+              <div className="tru-scan-video-container">
+                <img 
+                  src={previewImage} 
+                  alt="AI Room Scanner" 
+                  className="tru-scan-video-preview"
+                />
+                
+                {/* Always show scanning overlay with grid pattern */}
+                <div className="tru-scan-video-overlay">
+                  <div className="tru-scan-grid-pattern" />
+                  {isScanning && <div className="tru-scan-video-scanline" />}
+                </div>
+                
+                {/* Status Pills Bar - Left Side */}
+                <div className="tru-scan-status-pills tru-scan-status-pills-left">
+                  <div className="tru-scan-status-pill">
+                    <Package className="w-3.5 h-3.5" />
+                    <span>{detectedItems.length} items</span>
                   </div>
-                  <span className="tru-scan-progress-text">
-                    {Math.round((detectedItems.length / DEMO_ITEMS.length) * 100)}% Complete
-                  </span>
+                  <div className="tru-scan-status-divider" />
+                  <div className="tru-scan-status-pill">
+                    <Ruler className="w-3.5 h-3.5" />
+                    <span>{totalWeight.toLocaleString()} lbs</span>
+                  </div>
+                  <div className="tru-scan-status-divider" />
+                  <div className="tru-scan-status-pill">
+                    <Box className="w-3.5 h-3.5" />
+                    <span>{totalCuFt} cu ft</span>
+                  </div>
                 </div>
-              )}
 
-              {/* Scan Control Buttons - Bottom Right */}
-              <div className="tru-scan-control-pills">
-                {isScanning ? (
-                  <button 
-                    onClick={() => setIsScanning(false)}
-                    className="tru-scan-stop-pill"
+                {/* Progress Bar - Only show during scanning */}
+                {isScanning && (
+                  <div className="tru-scan-progress-container">
+                    <div className="tru-scan-progress-bar">
+                      <div 
+                        className="tru-scan-progress-fill"
+                        style={{ width: `${(detectedItems.length / DEMO_ITEMS.length) * 100}%` }}
+                      />
+                    </div>
+                    <span className="tru-scan-progress-text">
+                      {Math.round((detectedItems.length / DEMO_ITEMS.length) * 100)}% Complete
+                    </span>
+                  </div>
+                )}
+
+                {/* Scan Control Buttons - Bottom Right */}
+                <div className="tru-scan-control-pills">
+                  {isScanning ? (
+                    <button 
+                      onClick={() => setIsScanning(false)}
+                      className="tru-scan-stop-pill"
+                    >
+                      <Square className="w-3.5 h-3.5" />
+                      <span>Stop Scan</span>
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={startDemo}
+                      className="tru-scan-begin-pill"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Begin AI Inventory Scan</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Right: Photo Library */}
+              <div className="tru-scan-library-panel">
+                <div className="tru-scan-library-header">
+                  <FolderOpen className="w-4 h-4" />
+                  <span>Photo Library</span>
+                  <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
+                </div>
+                <div className="tru-scan-library-grid">
+                  {uploadedPhotos.length === 0 ? (
+                    <div className="tru-scan-library-empty">
+                      <ImageIcon className="w-6 h-6" />
+                      <p>No photos yet</p>
+                      <span>Upload photos to begin</span>
+                    </div>
+                  ) : (
+                    uploadedPhotos.map(photo => (
+                      <div key={photo.id} className="tru-scan-library-item">
+                        <img src={photo.url} alt={photo.name} />
+                        <button
+                          onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
+                          className="tru-scan-library-remove"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+                {uploadedPhotos.length > 0 && (
+                  <button
+                    onClick={() => {
+                      handleStartScanClick();
+                    }}
+                    className="tru-scan-library-analyze-btn"
                   >
-                    <Square className="w-3.5 h-3.5" />
-                    <span>Stop Scan</span>
-                  </button>
-                ) : (
-                  <button 
-                    onClick={startDemo}
-                    className="tru-scan-begin-pill"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Begin AI Inventory Scan</span>
+                    <Sparkles className="w-4 h-4" />
+                    Analyze {uploadedPhotos.length} Photo{uploadedPhotos.length !== 1 ? 's' : ''}
                   </button>
                 )}
               </div>
