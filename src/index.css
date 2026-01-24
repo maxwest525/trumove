@@ -786,27 +786,23 @@
 /* =============================================
    SPLIT HERO LAYOUT - Homepage
    ============================================= */
-/* Static three-column layout - form visually centered */
-/* SYMMETRIC GRID: Form locked to true viewport center */
+/* Static three-column layout */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 1fr minmax(380px, 440px) 1fr;
-  gap: 32px;
-  align-items: center;
-  justify-content: center;
-  padding: 16px 40px 24px 40px;
-  max-width: 1400px;
+  grid-template-columns: 1fr minmax(420px, 460px) auto;
+  gap: 20px;
+  align-items: stretch;
+  padding: 16px 24px 24px 24px;
+  max-width: 1480px;
   margin: 0 auto;
 }
 
-/* LEFT PANEL: Value Proposition - hugs form from left */
+/* LEFT PANEL: Value Proposition */
 .tru-hero-content-panel {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
-  max-width: 660px;
-  margin-left: auto;
 }
 
 .tru-hero-content-inner {
@@ -843,13 +839,7 @@
   margin-bottom: 20px;
 }
 
-.tru-hero-headline-line1 {
-  display: block;
-  white-space: nowrap;
-}
-
 .tru-hero-headline-accent {
-  display: block;
   background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(150 80% 40%) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1208,15 +1198,12 @@
    STATIC SIDEBAR - Icon Strip + Expanded Menu
    ============================================= */
 
-/* Sidebar container - vertical stacked layout for pills */
-/* Sidebar container - hugs form from right */
+/* Sidebar container - horizontal layout for pills */
 .tru-hero-sidebar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
-  align-items: center;
-  justify-self: start;
-  margin-left: 0;
+  align-self: stretch;
 }
 
 /* Summary Pill - narrow vertical bar with single icon + text */
@@ -1265,12 +1252,12 @@
    Matches reference design with smooth animations
    ============================================= */
 .tru-sidebar-summary-pill-v2 {
-  width: 52px;
-  height: auto;
-  min-height: 140px;
+  width: 48px;
+  height: 100%;
+  min-height: 320px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 26px;
+  border-radius: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1286,7 +1273,7 @@
 }
 
 .tru-sidebar-summary-pill-v2:hover {
-  width: 200px;
+  width: 180px;
   box-shadow: 
     0 4px 12px hsl(var(--tm-ink) / 0.08),
     0 16px 32px hsl(var(--tm-ink) / 0.1);
@@ -1419,15 +1406,15 @@
   color: hsl(var(--primary));
 }
 
-/* Nav Icons Pill V2 - compact vertical stack */
+/* Nav Icons Pill V2 - with tooltips */
 .tru-sidebar-nav-pill-v2 {
-  width: 52px;
-  height: auto;
-  min-height: 160px;
+  width: 48px;
+  height: 100%;
+  min-height: 320px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 26px;
-  padding: 10px 8px;
+  border-radius: 24px;
+  padding: 12px 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;

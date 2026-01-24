@@ -358,11 +358,13 @@ export default function Index() {
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
                 <h1 className="tru-hero-headline-main">
-                  <span className="tru-hero-headline-line1">Get matched with vetted carriers</span>
+                  Get matched with vetted carriers<br />
                   <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
-                  Skip the van line runaround. We connect you with vetted, family-owned carriers matched to your route and timeline—carefully screened through FMCSA records, continuously monitored, with honest pricing and personalized care.
+                  Skip the complexity of large national van lines and impersonal intermediaries. We connect you directly with trusted, 
+                  small, family-owned moving companies — each one carefully vetted through official federal FMCSA records, continuously 
+                  monitored for performance and customer feedback, and perfectly matched to your specific route, timeline, and needs.
                 </p>
                 
                 {/* Value Props Container - Map overlays this section */}
