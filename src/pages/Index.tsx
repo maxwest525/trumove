@@ -128,6 +128,7 @@ export default function Index() {
   const [analyzePhase, setAnalyzePhase] = useState(0); // 0: origin, 1: destination, 2: route
   const [fromCoords, setFromCoords] = useState<[number, number] | null>(null);
   const [toCoords, setToCoords] = useState<[number, number] | null>(null);
+  const [routeProgress, setRouteProgress] = useState(0); // 0-100 for route drawing animation
   const [routeGeometry, setRouteGeometry] = useState<string | null>(null);
   
   // UI engagement state - cards expand when user starts typing
@@ -383,13 +384,27 @@ export default function Index() {
         // Phase 0: Show origin (0-2s)
         setTimeout(() => setAnalyzePhase(1), 2000);
         // Phase 1: Show destination (2-4s)
-        setTimeout(() => setAnalyzePhase(2), 4000);
-        // Phase 2: Show route map (4-6.5s)
         setTimeout(() => {
-          setIsAnalyzing(false);
-          setAnalyzePhase(0);
-          setStep(2);
-        }, 6500);
+          setAnalyzePhase(2);
+          // Start route progress animation
+          setRouteProgress(0);
+          let progress = 0;
+          const progressInterval = setInterval(() => {
+            progress += 2;
+            if (progress >= 100) {
+              progress = 100;
+              clearInterval(progressInterval);
+              // Wait a moment at 100% before transitioning
+              setTimeout(() => {
+                setIsAnalyzing(false);
+                setAnalyzePhase(0);
+                setRouteProgress(0);
+                setStep(2);
+              }, 500);
+            }
+            setRouteProgress(progress);
+          }, 50);
+        }, 4000);
       } else {
         setStep(step + 1);
       }
@@ -469,7 +484,7 @@ export default function Index() {
                     </div>
                   </div>
                   
-                  {/* Route Overview Map - Third map showing full route */}
+                  {/* Route Overview Map - Third map showing full route with animated drawing */}
                   <div className={`tru-analyze-route-map ${analyzePhase >= 2 ? 'is-active' : ''}`}>
                     <div className="tru-analyze-popup-label">
                       <Truck className="w-4 h-4" />
@@ -485,6 +500,31 @@ export default function Index() {
                           onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
                         />
                       )}
+                      {/* Animated route line overlay */}
+                      <div className="tru-analyze-route-line-container">
+                        <div 
+                          className="tru-analyze-route-line-progress" 
+                          style={{ width: `${routeProgress}%` }}
+                        />
+                        <div 
+                          className="tru-analyze-route-truck-icon"
+                          style={{ left: `${routeProgress}%` }}
+                        >
+                          <Truck className="w-4 h-4" />
+                        </div>
+                      </div>
+                      {/* Loading progress indicator */}
+                      <div className="tru-analyze-route-loading">
+                        <div className="tru-analyze-route-loading-bar">
+                          <div 
+                            className="tru-analyze-route-loading-fill"
+                            style={{ width: `${routeProgress}%` }}
+                          />
+                        </div>
+                        <span className="tru-analyze-route-loading-text">
+                          {routeProgress < 100 ? `Analyzing... ${routeProgress}%` : 'Route Ready!'}
+                        </span>
+                      </div>
                       <div className="tru-analyze-route-overlay">
                         <div className="tru-analyze-route-stats-inline">
                           <span className="tru-analyze-route-distance">{distance.toLocaleString()} miles</span>
