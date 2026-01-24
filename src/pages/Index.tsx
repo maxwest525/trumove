@@ -502,18 +502,6 @@ export default function Index() {
                           progress={routeProgress}
                         />
                       )}
-                      {/* Loading progress indicator */}
-                      <div className="tru-analyze-route-loading">
-                        <div className="tru-analyze-route-loading-bar">
-                          <div 
-                            className="tru-analyze-route-loading-fill"
-                            style={{ width: `${routeProgress}%` }}
-                          />
-                        </div>
-                        <span className="tru-analyze-route-loading-text">
-                          {routeProgress < 100 ? `Analyzing... ${routeProgress}%` : 'Route Ready!'}
-                        </span>
-                      </div>
                       <div className="tru-analyze-route-overlay">
                         <div className="tru-analyze-route-stats-inline">
                           <span className="tru-analyze-route-distance">{distance.toLocaleString()} miles</span>
