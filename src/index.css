@@ -789,10 +789,10 @@
 /* Static three-column layout */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 1.3fr minmax(420px, 460px) auto;
+  grid-template-columns: 1fr minmax(420px, 460px) auto;
   gap: 20px;
   align-items: stretch;
-  padding: 16px 40px 24px 24px;
+  padding: 16px 24px 24px 24px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -806,7 +806,6 @@
 }
 
 .tru-hero-content-inner {
-  max-width: 560px;
   display: flex;
   flex-direction: column;
   gap: 24px;
