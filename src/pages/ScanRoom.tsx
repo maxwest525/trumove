@@ -6,8 +6,10 @@ import {
   Scan, Sparkles, ArrowRight, 
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
-  Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen
+  Phone, Video, Minus, Plus, X, Upload, ImageIcon, FolderOpen, Lock, User, Mail
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
@@ -53,6 +55,15 @@ export default function ScanRoom() {
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
   
+  // Lead capture state
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [leadForm, setLeadForm] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
+  const [showLeadCapture, setShowLeadCapture] = useState(false);
+  
   // Sample room photos for the library demo
   const samplePhotos = [
     { id: 'sample-1', url: sampleRoomLiving, name: 'Living Room' },
@@ -62,17 +73,33 @@ export default function ScanRoom() {
   
   const [uploadedPhotos, setUploadedPhotos] = useState<{ id: string; url: string; name: string }[]>(samplePhotos);
 
-  // Simulate live detection
+  // Simulate live detection - show lead capture when scan completes
   useEffect(() => {
     if (isScanning && detectedItems.length < DEMO_ITEMS.length) {
       const timer = setTimeout(() => {
         setDetectedItems(prev => [...prev, DEMO_ITEMS[prev.length]]);
       }, 1200);
       return () => clearTimeout(timer);
-    } else if (detectedItems.length >= DEMO_ITEMS.length) {
+    } else if (detectedItems.length >= DEMO_ITEMS.length && isScanning) {
       setIsScanning(false);
+      // Show lead capture when scan completes
+      if (!isUnlocked) {
+        setShowLeadCapture(true);
+      }
     }
-  }, [isScanning, detectedItems]);
+  }, [isScanning, detectedItems, isUnlocked]);
+
+  const handleLeadSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (leadForm.name && leadForm.email && leadForm.phone) {
+      setIsUnlocked(true);
+      setShowLeadCapture(false);
+      toast({
+        title: "Inventory Unlocked!",
+        description: "You can now edit and manage your scanned items.",
+      });
+    }
+  };
 
   const handleStartScanClick = () => {
     setShowIntroModal(true);
@@ -475,29 +502,28 @@ export default function ScanRoom() {
                 </div>
               </div>
 
-              {/* Right: Photo Library */}
-              <div className="tru-scan-library-panel">
+              {/* Right: Photo Library - Compact */}
+              <div className="tru-scan-library-panel tru-scan-library-compact">
                 <div className="tru-scan-library-header">
-                  <FolderOpen className="w-4 h-4" />
-                  <span>Photo Library</span>
+                  <FolderOpen className="w-3.5 h-3.5" />
+                  <span>Library</span>
                   <span className="tru-scan-library-count">{uploadedPhotos.length}</span>
                 </div>
-                <div className="tru-scan-library-grid">
+                <div className="tru-scan-library-grid tru-scan-library-grid-compact">
                   {uploadedPhotos.length === 0 ? (
-                    <div className="tru-scan-library-empty">
-                      <ImageIcon className="w-6 h-6" />
-                      <p>No photos yet</p>
-                      <span>Upload photos to begin</span>
+                    <div className="tru-scan-library-empty tru-scan-library-empty-compact">
+                      <ImageIcon className="w-5 h-5" />
+                      <p>No photos</p>
                     </div>
                   ) : (
                     uploadedPhotos.map(photo => (
-                      <div key={photo.id} className="tru-scan-library-item">
+                      <div key={photo.id} className="tru-scan-library-item tru-scan-library-item-compact">
                         <img src={photo.url} alt={photo.name} />
                         <button
                           onClick={() => setUploadedPhotos(prev => prev.filter(p => p.id !== photo.id))}
-                          className="tru-scan-library-remove"
+                          className="tru-scan-library-remove tru-scan-library-remove-compact"
                         >
-                          <X className="w-3 h-3" />
+                          <X className="w-2.5 h-2.5" />
                         </button>
                       </div>
                     ))
@@ -508,10 +534,10 @@ export default function ScanRoom() {
                     onClick={() => {
                       handleStartScanClick();
                     }}
-                    className="tru-scan-library-analyze-btn"
+                    className="tru-scan-library-analyze-btn tru-scan-library-analyze-btn-compact"
                   >
-                    <Sparkles className="w-4 h-4" />
-                    Analyze {uploadedPhotos.length} Photo{uploadedPhotos.length !== 1 ? 's' : ''}
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Analyze ({uploadedPhotos.length})
                   </button>
                 )}
               </div>
@@ -544,10 +570,85 @@ export default function ScanRoom() {
               </div>
             )}
 
+            {/* Lead Capture Modal */}
+            {showLeadCapture && (
+              <div className="tru-scan-lead-overlay">
+                <div className="tru-scan-lead-modal">
+                  <div className="tru-scan-lead-header">
+                    <Lock className="w-5 h-5 text-primary" />
+                    <h3>Unlock Your Inventory</h3>
+                  </div>
+                  <p className="tru-scan-lead-desc">
+                    Enter your details to unlock and edit your scanned items
+                  </p>
+                  <form onSubmit={handleLeadSubmit} className="tru-scan-lead-form">
+                    <div className="tru-scan-lead-field">
+                      <Label htmlFor="lead-name" className="tru-scan-lead-label">
+                        <User className="w-3.5 h-3.5" />
+                        Full Name
+                      </Label>
+                      <Input
+                        id="lead-name"
+                        type="text"
+                        placeholder="John Smith"
+                        value={leadForm.name}
+                        onChange={(e) => setLeadForm(prev => ({ ...prev, name: e.target.value }))}
+                        required
+                        className="tru-scan-lead-input"
+                      />
+                    </div>
+                    <div className="tru-scan-lead-field">
+                      <Label htmlFor="lead-email" className="tru-scan-lead-label">
+                        <Mail className="w-3.5 h-3.5" />
+                        Email
+                      </Label>
+                      <Input
+                        id="lead-email"
+                        type="email"
+                        placeholder="john@example.com"
+                        value={leadForm.email}
+                        onChange={(e) => setLeadForm(prev => ({ ...prev, email: e.target.value }))}
+                        required
+                        className="tru-scan-lead-input"
+                      />
+                    </div>
+                    <div className="tru-scan-lead-field">
+                      <Label htmlFor="lead-phone" className="tru-scan-lead-label">
+                        <Phone className="w-3.5 h-3.5" />
+                        Phone
+                      </Label>
+                      <Input
+                        id="lead-phone"
+                        type="tel"
+                        placeholder="(555) 123-4567"
+                        value={leadForm.phone}
+                        onChange={(e) => setLeadForm(prev => ({ ...prev, phone: e.target.value }))}
+                        required
+                        className="tru-scan-lead-input"
+                      />
+                    </div>
+                    <button type="submit" className="tru-scan-lead-submit">
+                      <Lock className="w-4 h-4" />
+                      Unlock Inventory
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+
             {/* Inventory Table Below Video */}
-            <div className="tru-scan-table-panel">
+            <div className={`tru-scan-table-panel ${!isUnlocked && detectedItems.length > 0 ? 'tru-scan-table-locked' : ''}`}>
               <div className="tru-scan-table-header">
                 <h3>Your Move <span className="tru-scan-headline-accent">Inventory</span></h3>
+                {!isUnlocked && detectedItems.length > 0 && (
+                  <button 
+                    onClick={() => setShowLeadCapture(true)}
+                    className="tru-scan-unlock-btn"
+                  >
+                    <Lock className="w-3.5 h-3.5" />
+                    Unlock to Edit
+                  </button>
+                )}
               </div>
               
               {detectedItems.length === 0 ? (
@@ -583,23 +684,26 @@ export default function ScanRoom() {
                             </td>
                             <td>{item.room}</td>
                             <td>
-                              <div className="tru-scan-qty-controls">
+                              <div className={`tru-scan-qty-controls ${!isUnlocked ? 'tru-scan-qty-disabled' : ''}`}>
                                 <button 
-                                  onClick={() => setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
+                                  onClick={() => isUnlocked && setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
                                   className="tru-scan-qty-btn"
-                                  title="Remove item"
+                                  title={isUnlocked ? "Remove item" : "Unlock to edit"}
+                                  disabled={!isUnlocked}
                                 >
                                   <Minus className="w-3 h-3" />
                                 </button>
                                 <span className="tru-scan-qty-value">1</span>
                                 <button 
                                   onClick={() => {
+                                    if (!isUnlocked) return;
                                     // Duplicate item with new ID
                                     const newItem = { ...item, id: Date.now() + Math.random() };
                                     setDetectedItems(prev => [...prev, newItem]);
                                   }}
                                   className="tru-scan-qty-btn"
-                                  title="Add another"
+                                  title={isUnlocked ? "Add another" : "Unlock to edit"}
+                                  disabled={!isUnlocked}
                                 >
                                   <Plus className="w-3 h-3" />
                                 </button>
@@ -611,9 +715,10 @@ export default function ScanRoom() {
                             <td className="tru-scan-table-total">{item.cuft}</td>
                             <td>
                               <button
-                                onClick={() => setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
-                                className="tru-scan-remove-btn"
-                                title="Remove item"
+                                onClick={() => isUnlocked && setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
+                                className={`tru-scan-remove-btn ${!isUnlocked ? 'tru-scan-remove-disabled' : ''}`}
+                                title={isUnlocked ? "Remove item" : "Unlock to edit"}
+                                disabled={!isUnlocked}
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -637,7 +742,7 @@ export default function ScanRoom() {
                     <button
                       type="button"
                       onClick={handlePrint}
-                      disabled={detectedItems.length === 0}
+                      disabled={detectedItems.length === 0 || !isUnlocked}
                       className="tru-scan-action-btn"
                     >
                       <Printer className="w-4 h-4" />
@@ -646,7 +751,7 @@ export default function ScanRoom() {
                     <button
                       type="button"
                       onClick={handleDownloadPDF}
-                      disabled={detectedItems.length === 0}
+                      disabled={detectedItems.length === 0 || !isUnlocked}
                       className="tru-scan-action-btn"
                     >
                       <Download className="w-4 h-4" />
@@ -655,7 +760,7 @@ export default function ScanRoom() {
                     <button
                       type="button"
                       onClick={() => setShowClearDialog(true)}
-                      disabled={detectedItems.length === 0}
+                      disabled={detectedItems.length === 0 || !isUnlocked}
                       className="tru-scan-action-btn tru-scan-action-btn-danger"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -664,6 +769,10 @@ export default function ScanRoom() {
                     <button
                       type="button"
                       onClick={() => {
+                        if (!isUnlocked) {
+                          setShowLeadCapture(true);
+                          return;
+                        }
                         // Save to localStorage for manual builder sync
                         const inventoryForBuilder = detectedItems.map((item, idx) => ({
                           id: `scanned-${item.id}-${Date.now()}`,
@@ -684,8 +793,9 @@ export default function ScanRoom() {
                       disabled={detectedItems.length === 0}
                       className="tru-scan-btn-dark"
                     >
-                      <ArrowRightLeft className="w-4 h-4" />
-                      Migrate to Manual Builder
+                      {!isUnlocked && <Lock className="w-4 h-4" />}
+                      {isUnlocked && <ArrowRightLeft className="w-4 h-4" />}
+                      {isUnlocked ? 'Migrate to Manual Builder' : 'Unlock & Migrate'}
                     </button>
                   </div>
                 </>

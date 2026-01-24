@@ -427,6 +427,218 @@
   box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
 }
 
+/* Compact Library Styles */
+.tru-scan-library-compact {
+  padding: 0.75rem;
+  gap: 0.5rem;
+}
+
+.tru-scan-library-compact .tru-scan-library-header {
+  font-size: 0.75rem;
+  padding-bottom: 0.375rem;
+}
+
+.tru-scan-library-grid-compact {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.375rem;
+  max-height: 200px;
+}
+
+.tru-scan-library-item-compact {
+  border-radius: 0.375rem;
+}
+
+.tru-scan-library-remove-compact {
+  width: 16px;
+  height: 16px;
+  top: 2px;
+  right: 2px;
+}
+
+.tru-scan-library-empty-compact {
+  padding: 1rem 0.5rem;
+  gap: 0.25rem;
+}
+
+.tru-scan-library-empty-compact p {
+  font-size: 0.75rem;
+}
+
+.tru-scan-library-analyze-btn-compact {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.6875rem;
+  border-radius: 0.375rem;
+}
+
+/* Lead Capture Modal Overlay */
+.tru-scan-lead-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--tm-ink) / 0.6);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.tru-scan-lead-modal {
+  width: 100%;
+  max-width: 400px;
+  margin: 1rem;
+  padding: 2rem;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  box-shadow: 0 24px 48px hsl(var(--tm-ink) / 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tru-scan-lead-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.tru-scan-lead-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+.tru-scan-lead-desc {
+  text-align: center;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 1.5rem;
+}
+
+.tru-scan-lead-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tru-scan-lead-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.tru-scan-lead-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--muted-foreground));
+}
+
+.tru-scan-lead-input {
+  height: 44px;
+  font-size: 0.9375rem;
+  border-radius: 0.5rem;
+}
+
+.tru-scan-lead-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--background));
+  background: hsl(var(--primary));
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-scan-lead-submit:hover {
+  background: hsl(var(--primary-dark, var(--primary)));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px hsl(var(--primary) / 0.3);
+}
+
+/* Locked Table State */
+.tru-scan-table-locked {
+  position: relative;
+}
+
+.tru-scan-table-locked::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: hsl(var(--background) / 0.4);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 1rem;
+}
+
+.tru-scan-table-locked .tru-scan-table-header {
+  position: relative;
+  z-index: 2;
+}
+
+.tru-scan-unlock-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: hsl(var(--background));
+  background: hsl(var(--primary));
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-scan-unlock-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+}
+
+.tru-scan-qty-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.tru-scan-remove-disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
 @layer base {
   :root {
     /* TruMove Brand Colors */
