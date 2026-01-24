@@ -13,6 +13,16 @@ import { format } from "date-fns";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import previewImage from "@/assets/scan-room-preview.jpg";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Simulated detected items for the live demo
 const DEMO_ITEMS = [
@@ -38,6 +48,7 @@ export default function ScanRoom() {
   const [detectedItems, setDetectedItems] = useState<typeof DEMO_ITEMS>([]);
   const [isScanning, setIsScanning] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
 
   // Simulate live detection
   useEffect(() => {
@@ -480,7 +491,7 @@ export default function ScanRoom() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setDetectedItems([])}
+                      onClick={() => setShowClearDialog(true)}
                       disabled={detectedItems.length === 0}
                       className="tru-scan-action-btn tru-scan-action-btn-danger"
                     >
@@ -502,8 +513,8 @@ export default function ScanRoom() {
                         }));
                         localStorage.setItem('tm_scanned_inventory', JSON.stringify(inventoryForBuilder));
                         toast({
-                          title: "Inventory synced!",
-                          description: "Your scanned items have been added to the manual builder.",
+                          title: "Inventory Migrated Successfully!",
+                          description: `${detectedItems.length} items have been synced to the manual builder.`,
                         });
                         navigate('/online-estimate');
                       }}
@@ -537,16 +548,43 @@ export default function ScanRoom() {
             </button>
           </div>
           <div className="tru-scan-bottom-secondary">
-            <a href="tel:1-800-555-0123" className="tru-scan-secondary-link">
+            <a href="tel:1-800-555-0123" className="tru-secondary-action-btn">
               <Phone className="w-4 h-4" />
               Prefer to talk?
             </a>
-            <Link to="/book" className="tru-scan-secondary-link">
+            <Link to="/book" className="tru-secondary-action-btn">
               <Video className="w-4 h-4" />
               Book Video Consult
             </Link>
           </div>
         </section>
+
+        {/* Clear All Confirmation Dialog */}
+        <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Clear All Items?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will remove all {detectedItems.length} items from your scanned inventory. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  setDetectedItems([]);
+                  toast({
+                    title: "Inventory Cleared",
+                    description: "All scanned items have been removed.",
+                  });
+                }}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Clear All
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </SiteShell>
   );
