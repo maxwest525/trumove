@@ -786,15 +786,33 @@
 /* =============================================
    SPLIT HERO LAYOUT - Homepage
    ============================================= */
-/* Static three-column layout */
+/* 50/50 Two-column layout */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 1fr minmax(420px, 460px) auto;
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
   align-items: stretch;
   padding: 16px 24px 24px 24px;
   max-width: 1480px;
   margin: 0 auto;
+}
+
+/* Right half - Form + Sidebar together */
+.tru-hero-right-half {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: stretch;
+  height: 100%;
+}
+
+.tru-hero-right-half .tru-hero-form-panel {
+  flex: 1;
+  min-width: 360px;
+}
+
+.tru-hero-right-half .tru-hero-sidebar {
+  flex-shrink: 0;
 }
 
 /* LEFT PANEL: Value Proposition */
@@ -1911,6 +1929,15 @@
     grid-template-columns: 1fr;
     gap: 40px;
     padding: 40px 24px 60px;
+  }
+  
+  .tru-hero-right-half {
+    flex-direction: column;
+  }
+  
+  .tru-hero-right-half .tru-hero-form-panel {
+    min-width: 0;
+    width: 100%;
   }
   
   .tru-hero-form-panel {
