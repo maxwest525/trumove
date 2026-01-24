@@ -875,6 +875,12 @@
   margin-bottom: 28px;
 }
 
+@media (min-width: 1024px) {
+  .tru-hero-subheadline {
+    max-width: 90%;
+  }
+}
+
 /* =============================================
    STACKED SIDEBAR - Summary + Nav Pills Vertically
    ============================================= */
