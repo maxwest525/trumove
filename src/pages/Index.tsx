@@ -548,13 +548,15 @@ export default function Index() {
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
                 <h1 className="tru-hero-headline-main">
-                  Get Matched With Vetted Carriers<br />
-                  <span className="tru-hero-headline-accent">Who Actually Care.</span>
+                  <span className="tru-hero-headline-line">
+                    Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> Get You Matched With
+                  </span>
+                  <span className="tru-hero-headline-line">
+                    Vetted Carriers <span className="tru-hero-headline-accent">Who Actually Care.</span>
+                  </span>
                 </h1>
                 <p className="tru-hero-subheadline">
-                  Skip the complexity of large national van lines and impersonal intermediaries. We connect you directly with trusted, 
-                  small, family-owned moving companies — each one carefully vetted through official federal FMCSA records, continuously 
-                  monitored for performance and customer feedback, and perfectly matched to your specific route, timeline, and needs.
+                  Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data, so we can confidently match you with carriers that best meet your needs.
                 </p>
                 
                 {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}

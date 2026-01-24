@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hero Inline Logo */
+.tru-hero-inline-logo {
+  height: 32px;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 6px;
+}
+
+.tru-hero-headline-line {
+  display: block;
+}
+
 /* Secondary Action Button - Used for secondary CTAs like phone/video consult */
 .tru-secondary-action-btn {
   display: inline-flex;
