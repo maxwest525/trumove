@@ -53,6 +53,45 @@ async function lookupZip(zip: string): Promise<string | null> {
   return null;
 }
 
+// Decode polyline to array of [lng, lat] coordinates
+function decodePolyline(encoded: string): [number, number][] {
+  const coords: [number, number][] = [];
+  let index = 0;
+  let lat = 0;
+  let lng = 0;
+
+  while (index < encoded.length) {
+    let shift = 0;
+    let result = 0;
+    let byte: number;
+
+    do {
+      byte = encoded.charCodeAt(index++) - 63;
+      result |= (byte & 0x1f) << shift;
+      shift += 5;
+    } while (byte >= 0x20);
+
+    const dlat = result & 1 ? ~(result >> 1) : result >> 1;
+    lat += dlat;
+
+    shift = 0;
+    result = 0;
+
+    do {
+      byte = encoded.charCodeAt(index++) - 63;
+      result |= (byte & 0x1f) << shift;
+      shift += 5;
+    } while (byte >= 0x20);
+
+    const dlng = result & 1 ? ~(result >> 1) : result >> 1;
+    lng += dlng;
+
+    coords.push([lng / 1e5, lat / 1e5]);
+  }
+
+  return coords;
+}
+
 // Geocode a location string to coordinates for static map images
 async function geocodeLocation(location: string): Promise<[number, number] | null> {
   try {
@@ -493,26 +532,118 @@ export default function Index() {
                     <div className="tru-analyze-route-frame">
                       <div className="tru-analyze-popup-shimmer" />
                       {fromCoords && toCoords && (
-                        <img 
-                          src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${routeGeometry ? `path-5+22c55e-0.7(${encodeURIComponent(routeGeometry)}),` : ''}pin-s-a+22c55e(${fromCoords[0]},${fromCoords[1]}),pin-s-b+ef4444(${toCoords[0]},${toCoords[1]})/auto/800x300@2x?padding=60,40,60,40&access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
-                          alt="Route overview"
-                          className="tru-analyze-popup-img"
-                          onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
-                        />
+                        <>
+                          {/* Base map without route line */}
+                          <img 
+                            src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+22c55e(${fromCoords[0]},${fromCoords[1]}),pin-s-b+ef4444(${toCoords[0]},${toCoords[1]})/auto/800x300@2x?padding=60,40,60,40&access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                            alt="Route overview"
+                            className="tru-analyze-popup-img"
+                            onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
+                          />
+                          {/* SVG overlay for animated route line */}
+                          {routeGeometry && (() => {
+                            const coords = decodePolyline(routeGeometry);
+                            if (coords.length < 2) return null;
+                            
+                            // Calculate bounding box with padding
+                            const lngs = coords.map(c => c[0]);
+                            const lats = coords.map(c => c[1]);
+                            const minLng = Math.min(...lngs);
+                            const maxLng = Math.max(...lngs);
+                            const minLat = Math.min(...lats);
+                            const maxLat = Math.max(...lats);
+                            
+                            // Add padding (similar to Mapbox padding=60,40,60,40)
+                            const lngPad = (maxLng - minLng) * 0.15;
+                            const latPad = (maxLat - minLat) * 0.2;
+                            const padMinLng = minLng - lngPad;
+                            const padMaxLng = maxLng + lngPad;
+                            const padMinLat = minLat - latPad;
+                            const padMaxLat = maxLat + latPad;
+                            
+                            // Map coordinates to SVG viewBox (800x300 to match image aspect ratio)
+                            const svgWidth = 800;
+                            const svgHeight = 300;
+                            
+                            const toSvgX = (lng: number) => ((lng - padMinLng) / (padMaxLng - padMinLng)) * svgWidth;
+                            const toSvgY = (lat: number) => svgHeight - ((lat - padMinLat) / (padMaxLat - padMinLat)) * svgHeight;
+                            
+                            const pathD = coords.map((c, i) => 
+                              `${i === 0 ? 'M' : 'L'} ${toSvgX(c[0]).toFixed(2)} ${toSvgY(c[1]).toFixed(2)}`
+                            ).join(' ');
+                            
+                            // Calculate approximate path length for stroke animation
+                            const pathLength = 2000; // Approximate, will be adjusted by CSS
+                            const dashOffset = pathLength * (1 - routeProgress / 100);
+                            
+                            // Find position along path for truck icon
+                            const truckIndex = Math.floor((coords.length - 1) * (routeProgress / 100));
+                            const truckCoord = coords[Math.min(truckIndex, coords.length - 1)];
+                            const truckX = toSvgX(truckCoord[0]);
+                            const truckY = toSvgY(truckCoord[1]);
+                            
+                            return (
+                              <svg 
+                                className="tru-analyze-route-svg-overlay"
+                                viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                                preserveAspectRatio="xMidYMid slice"
+                              >
+                                {/* Glow filter */}
+                                <defs>
+                                  <filter id="routeGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="4" result="blur" />
+                                    <feMerge>
+                                      <feMergeNode in="blur" />
+                                      <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                  </filter>
+                                </defs>
+                                
+                                {/* Background path (faint) */}
+                                <path 
+                                  d={pathD} 
+                                  fill="none" 
+                                  stroke="rgba(34, 197, 94, 0.2)" 
+                                  strokeWidth="6"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                
+                                {/* Animated route line */}
+                                <path 
+                                  d={pathD} 
+                                  fill="none" 
+                                  stroke="#22c55e" 
+                                  strokeWidth="5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeDasharray={pathLength}
+                                  strokeDashoffset={dashOffset}
+                                  filter="url(#routeGlow)"
+                                  style={{ transition: 'stroke-dashoffset 0.05s linear' }}
+                                />
+                                
+                                {/* Truck icon circle */}
+                                <circle 
+                                  cx={truckX} 
+                                  cy={truckY} 
+                                  r="12" 
+                                  fill="white" 
+                                  stroke="#22c55e" 
+                                  strokeWidth="3"
+                                  filter="url(#routeGlow)"
+                                />
+                                <circle 
+                                  cx={truckX} 
+                                  cy={truckY} 
+                                  r="5" 
+                                  fill="#22c55e" 
+                                />
+                              </svg>
+                            );
+                          })()}
+                        </>
                       )}
-                      {/* Animated route line overlay */}
-                      <div className="tru-analyze-route-line-container">
-                        <div 
-                          className="tru-analyze-route-line-progress" 
-                          style={{ width: `${routeProgress}%` }}
-                        />
-                        <div 
-                          className="tru-analyze-route-truck-icon"
-                          style={{ left: `${routeProgress}%` }}
-                        >
-                          <Truck className="w-4 h-4" />
-                        </div>
-                      </div>
                       {/* Loading progress indicator */}
                       <div className="tru-analyze-route-loading">
                         <div className="tru-analyze-route-loading-bar">
