@@ -587,7 +587,8 @@ export default function Index() {
               </div>
             </div>
 
-            {/* RIGHT: Form, Summary, Nav, and Map */}
+            {/* RIGHT 50%: Form + Sidebar Container */}
+            <div className="tru-hero-right-half">
             <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
               {/* TOP ROW: Form Card */}
               <div className="tru-floating-form-card">
@@ -1033,6 +1034,7 @@ export default function Index() {
                   <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
                 </div>
               </TooltipProvider>
+            </div>
             </div>
           </section>
 
