@@ -997,14 +997,9 @@
   object-position: center 60%;
 }
 
-/* Subtle overlay to reduce contrast of preview image green elements */
+/* Remove gradient overlay since text is above image */
 .tru-hero-value-cards-open .tru-value-card-preview-visible::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: hsl(var(--background) / 0.15);
-  z-index: 1;
-  pointer-events: none;
+  display: none;
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon,
@@ -1560,8 +1555,8 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.3) 100%);
+  width: 2px;
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.6) 0%, hsl(var(--primary) / 0.15) 100%);
   opacity: 0;
   transition: opacity 0.25s ease;
 }
