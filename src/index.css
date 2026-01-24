@@ -997,9 +997,14 @@
   object-position: center 60%;
 }
 
-/* Remove gradient overlay since text is above image */
+/* Subtle overlay to reduce contrast of preview image green elements */
 .tru-hero-value-cards-open .tru-value-card-preview-visible::before {
-  display: none;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: hsl(var(--background) / 0.15);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon,
