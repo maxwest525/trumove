@@ -790,27 +790,26 @@
 .tru-hero.tru-hero-split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: stretch;
-  padding: 48px 24px 24px 24px;
-  max-width: 1480px;
+  gap: 48px;
+  align-items: start;
+  padding: 56px 32px 32px 32px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
 /* Right half - Form + Sidebar together */
 .tru-hero-right-half {
   display: flex;
-  flex-direction: row;
-  gap: 12px;
+  flex-direction: column;
+  gap: 16px;
   align-items: flex-start;
   justify-content: flex-start;
-  height: 100%;
 }
 
 .tru-hero-right-half .tru-hero-form-panel {
   width: 100%;
-  min-width: 420px;
-  max-width: 460px;
+  min-width: 380px;
+  max-width: 420px;
   flex-shrink: 0;
 }
 
@@ -852,12 +851,12 @@
 }
 
 .tru-hero-headline-main {
-  font-size: clamp(24px, 3.2vw, 36px);
+  font-size: clamp(26px, 3.5vw, 40px);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.12;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.02em;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   white-space: normal;
 }
 
@@ -870,14 +869,15 @@
 
 .tru-hero-subheadline {
   font-size: 15px;
-  line-height: 1.6;
-  color: hsl(var(--tm-ink) / 0.7);
-  margin-bottom: 28px;
+  line-height: 1.65;
+  color: hsl(var(--tm-ink) / 0.65);
+  margin-bottom: 32px;
+  max-width: 100%;
 }
 
 @media (min-width: 1024px) {
   .tru-hero-subheadline {
-    max-width: 80%;
+    max-width: 95%;
   }
 }
 
@@ -925,13 +925,14 @@
 /* Feature Cards Container - Constrained to hero text width on desktop */
 .tru-hero-value-props-container {
   width: 100%;
+  margin-top: 28px;
 }
 
 @media (min-width: 1024px) {
   .tru-hero-value-props-container {
-    /* Constrain to 90% of headline text width */
-    width: 80%;
-    max-width: none;
+    /* Constrain to headline width for nested appearance */
+    width: 90%;
+    max-width: 520px;
     margin-left: 0;
     margin-right: auto;
   }
@@ -941,15 +942,16 @@
 .tru-hero-value-cards-open {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  gap: 16px;
   width: 100%;
 }
 
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  min-height: 190px;
-  padding: 12px;
+  min-height: 170px;
+  max-height: 180px;
+  padding: 10px;
   padding-bottom: 0;
   position: relative;
   overflow: hidden;
@@ -1064,13 +1066,15 @@
    ROUTE ANALYSIS SECTION
    ============================================= */
 .tru-route-analysis-section {
-  padding: 32px 24px;
+  padding: 44px 24px 32px;
   background: linear-gradient(180deg, hsl(var(--muted) / 0.5) 0%, hsl(var(--background)) 100%);
   border-top: 1px solid hsl(var(--border));
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .tru-route-analysis-inner {
-  max-width: 800px;
+  max-width: 720px;
   margin: 0 auto;
   text-align: center;
 }
@@ -13817,10 +13821,13 @@
   border-top: 1px solid hsl(var(--tm-ink) / 0.08);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
   margin-top: -12px;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .tru-trust-strip-inner {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   display: flex;
   justify-content: center;
