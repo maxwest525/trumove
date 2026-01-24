@@ -785,32 +785,36 @@
 
 /* =============================================
    SPLIT HERO LAYOUT - Homepage
+   TRUE TWO-COLUMN GRID LAYOUT
    ============================================= */
-/* Two-column layout: Left ~57%, Right ~43% */
+/* Container: Centered, fixed max-width */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 57fr 43fr;
-  gap: 56px;
+  grid-template-columns: 60fr 40fr;
+  gap: 48px;
   align-items: start;
-  padding: 48px 40px 32px 40px;
-  max-width: 1240px;
+  padding: 40px 48px 32px 48px;
+  max-width: 1200px;
   margin: 0 auto;
+  /* Remove any hero-level centering */
+  justify-content: stretch;
 }
 
-/* Right half - Form column anchored */
+/* RIGHT COLUMN: Form anchored, top-aligned with headline */
 .tru-hero-right-half {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: flex-start;
-  padding-top: 0; /* Top-align with headline */
+  padding-top: 0;
+  /* Lock right column width */
+  width: 100%;
+  max-width: 420px;
 }
 
 .tru-hero-right-half .tru-hero-form-panel {
   width: 100%;
-  min-width: 360px;
-  max-width: 400px;
   flex-shrink: 0;
 }
 
@@ -818,19 +822,23 @@
   flex-shrink: 0;
 }
 
-/* LEFT PANEL: Value Proposition */
+/* LEFT COLUMN: Content stacked vertically, all left-aligned */
 .tru-hero-content-panel {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: flex-start;
   height: 100%;
-  max-width: 100%;
+  width: 100%;
 }
 
 .tru-hero-content-inner {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  width: 100%;
+  /* All children share same left edge */
+  align-items: flex-start;
 }
 
 .tru-hero-eyebrow {
@@ -845,7 +853,7 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: hsl(var(--tm-ink));
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .tru-hero-eyebrow svg {
@@ -858,8 +866,10 @@
   line-height: 1.12;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.02em;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   white-space: normal;
+  text-align: left;
+  width: 100%;
 }
 
 .tru-hero-headline-accent {
@@ -873,14 +883,9 @@
   font-size: 15px;
   line-height: 1.65;
   color: hsl(var(--tm-ink) / 0.65);
-  margin-bottom: 16px;
-  max-width: 100%;
-}
-
-@media (min-width: 1024px) {
-  .tru-hero-subheadline {
-    max-width: 100%; /* Match headline width exactly */
-  }
+  margin-bottom: 8px;
+  text-align: left;
+  width: 100%;
 }
 
 /* =============================================
@@ -922,19 +927,22 @@
 }
 
 /* =============================================
-   FEATURE CARDS - OPEN BY DEFAULT
+   FEATURE CARDS - NESTED IN LEFT COLUMN
    ============================================= */
-/* Feature Cards Container - Nested inside left column, left-aligned */
+/* Feature section container: Left-aligned with headline */
 .tru-hero-value-props-container {
   width: 100%;
-  margin-top: 20px;
+  margin-top: 16px;
+  /* Left-align, not centered */
+  margin-left: 0;
+  margin-right: auto;
 }
 
 @media (min-width: 1024px) {
   .tru-hero-value-props-container {
-    /* 92% of left column, left-aligned with headline */
-    width: 92%;
-    max-width: 480px;
+    /* 95% of left column, shares same left edge as headline */
+    width: 95%;
+    max-width: 520px;
     margin-left: 0;
     margin-right: auto;
   }
@@ -948,11 +956,12 @@
   width: 100%;
 }
 
+/* Feature card sizing: reduced by ~10% */
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  min-height: 150px;
-  max-height: 165px;
+  min-height: 140px;
+  max-height: 155px;
   padding: 10px;
   padding-bottom: 0;
   position: relative;
@@ -1068,10 +1077,10 @@
    ROUTE ANALYSIS SECTION
    ============================================= */
 .tru-route-analysis-section {
-  padding: 52px 40px 32px;
+  padding: 56px 48px 32px;
   background: linear-gradient(180deg, hsl(var(--muted) / 0.5) 0%, hsl(var(--background)) 100%);
   border-top: 1px solid hsl(var(--border));
-  max-width: 1240px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -13819,17 +13828,17 @@
    ============================================= */
 .tru-trust-strip {
   background: linear-gradient(180deg, hsl(220 30% 92%) 0%, hsl(220 25% 88%) 100%);
-  padding: 16px 40px;
+  padding: 16px 48px;
   border-top: 1px solid hsl(var(--tm-ink) / 0.08);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
   margin-top: -12px;
-  max-width: 1240px;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .tru-trust-strip-inner {
-  max-width: 1240px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: center;
