@@ -561,13 +561,8 @@ export default function Index() {
                 <div className="tru-hero-value-props-container">
                   {/* Section Headline */}
                   <div className="mb-4 text-center">
-                    <h3 className="text-xl font-bold text-foreground mb-1">Smart Moving Starts Here</h3>
-                    <div className="flex items-center justify-center gap-1.5">
-                      <div className="w-8 h-0.5 bg-primary/60 rounded-full"></div>
-                      <Sparkles className="w-3.5 h-3.5 text-primary/70" />
-                      <div className="w-8 h-0.5 bg-primary/60 rounded-full"></div>
-                    </div>
-                    <p className="text-sm font-medium text-foreground/70 mt-1">The tools that make your move seamless</p>
+                    <h3 className="text-xl font-bold text-foreground">Smart Moving Starts Here</h3>
+                    <p className="text-sm font-medium text-foreground/70">The tools that make your move seamless</p>
                   </div>
                   {/* Value Cards - Always visible with previews */}
                   <div className="tru-hero-value-cards tru-hero-value-cards-open">
