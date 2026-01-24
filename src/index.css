@@ -1454,6 +1454,51 @@
   min-height: 280px;
 }
 
+/* Feature Section Card - Matches Form Card Style */
+.tru-feature-section-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 24px;
+  box-shadow: 
+    0 1px 2px hsl(var(--tm-ink) / 0.03),
+    0 4px 8px hsl(var(--tm-ink) / 0.04),
+    0 12px 24px hsl(var(--tm-ink) / 0.06),
+    0 24px 48px hsl(var(--tm-ink) / 0.08);
+  overflow: hidden;
+}
+
+.tru-feature-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  background: hsl(220 15% 96%);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
+  text-align: center;
+  gap: 2px;
+}
+
+.tru-feature-section-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-feature-section-subtitle {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.45);
+}
+
+/* Cards inside the feature section need padding */
+.tru-feature-section-card .tru-hero-value-cards {
+  padding: 16px;
+}
+
 /* Value Props - old style kept for compatibility */
 .tru-hero-value-props {
   display: flex;

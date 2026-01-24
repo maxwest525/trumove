@@ -558,11 +558,11 @@ export default function Index() {
                 </p>
                 
                 {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
-                <div className="tru-hero-value-props-container rounded-xl bg-slate-100/80 p-5 shadow-sm">
-                  {/* Section Headline */}
-                  <div className="mb-4 text-center">
-                    <h3 className="text-xl font-bold text-foreground">Smart Moving Starts Here</h3>
-                    <p className="text-sm font-medium text-foreground/70">The tools that make your move seamless</p>
+                <div className="tru-hero-value-props-container tru-feature-section-card">
+                  {/* Section Headline - Matching form header style */}
+                  <div className="tru-feature-section-header">
+                    <span className="tru-feature-section-title">Smart Moving Starts Here</span>
+                    <span className="tru-feature-section-subtitle">The tools that make your move seamless</span>
                   </div>
                   {/* Value Cards - Always visible with previews */}
                   <div className="tru-hero-value-cards tru-hero-value-cards-open">
