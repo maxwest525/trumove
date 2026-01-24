@@ -12074,7 +12074,8 @@
   text-align: left;
 }
 
-.tru-qb-section-label:first-of-type {
+/* Only remove margin for From/To labels inside location columns */
+.tru-qb-location-col .tru-qb-section-label:first-of-type {
   margin-top: 0;
 }
 
