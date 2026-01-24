@@ -357,16 +357,17 @@ export default function Index() {
         setIsAnalyzing(true);
         setAnalyzePhase(0);
         
-        // Phase 0: Show origin (0-1.2s)
-        setTimeout(() => setAnalyzePhase(1), 1200);
-        // Phase 1: Show destination (1.2-2.4s)
-        setTimeout(() => setAnalyzePhase(2), 2400);
-        // Phase 2: Show route (2.4-4s)
+        // Slower timing for popup modal experience
+        // Phase 0: Show origin (0-2s)
+        setTimeout(() => setAnalyzePhase(1), 2000);
+        // Phase 1: Show destination (2-4s)
+        setTimeout(() => setAnalyzePhase(2), 4000);
+        // Phase 2: Show route connector (4-6.5s)
         setTimeout(() => {
           setIsAnalyzing(false);
           setAnalyzePhase(0);
           setStep(2);
-        }, 4000);
+        }, 6500);
       } else {
         setStep(step + 1);
       }
