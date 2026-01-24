@@ -6,7 +6,7 @@ import {
   Scan, Sparkles, ArrowRight, 
   Smartphone, Box, Clock, Shield, Zap, ChevronRight,
   Ruler, Package, Printer, Download, Square, Trash2, ArrowRightLeft,
-  Phone, Video
+  Phone, Video, Minus, Plus, X
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -364,6 +364,21 @@ export default function ScanRoom() {
                 </div>
               </div>
 
+              {/* Progress Bar - Only show during scanning */}
+              {isScanning && (
+                <div className="tru-scan-progress-container">
+                  <div className="tru-scan-progress-bar">
+                    <div 
+                      className="tru-scan-progress-fill"
+                      style={{ width: `${(detectedItems.length / DEMO_ITEMS.length) * 100}%` }}
+                    />
+                  </div>
+                  <span className="tru-scan-progress-text">
+                    {Math.round((detectedItems.length / DEMO_ITEMS.length) * 100)}% Complete
+                  </span>
+                </div>
+              )}
+
               {/* Scan Control Buttons - Bottom Right */}
               <div className="tru-scan-control-pills">
                 {isScanning ? (
@@ -439,6 +454,7 @@ export default function ScanRoom() {
                           <th>CU FT</th>
                           <th>TOTAL WEIGHT</th>
                           <th>TOTAL CU FT</th>
+                          <th></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -450,17 +466,48 @@ export default function ScanRoom() {
                               <span>{item.name}</span>
                             </td>
                             <td>{item.room}</td>
-                            <td>1</td>
+                            <td>
+                              <div className="tru-scan-qty-controls">
+                                <button 
+                                  onClick={() => setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
+                                  className="tru-scan-qty-btn"
+                                  title="Remove item"
+                                >
+                                  <Minus className="w-3 h-3" />
+                                </button>
+                                <span className="tru-scan-qty-value">1</span>
+                                <button 
+                                  onClick={() => {
+                                    // Duplicate item with new ID
+                                    const newItem = { ...item, id: Date.now() + Math.random() };
+                                    setDetectedItems(prev => [...prev, newItem]);
+                                  }}
+                                  className="tru-scan-qty-btn"
+                                  title="Add another"
+                                >
+                                  <Plus className="w-3 h-3" />
+                                </button>
+                              </div>
+                            </td>
                             <td>{item.weight}</td>
                             <td>{item.cuft}</td>
                             <td className="tru-scan-table-total">{item.weight}</td>
                             <td className="tru-scan-table-total">{item.cuft}</td>
+                            <td>
+                              <button
+                                onClick={() => setDetectedItems(prev => prev.filter(i => i.id !== item.id))}
+                                className="tru-scan-remove-btn"
+                                title="Remove item"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colSpan={4}></td>
+                          <td colSpan={5}></td>
                           <td className="tru-scan-table-footer-label">Totals:</td>
                           <td>—</td>
                           <td className="tru-scan-table-footer-value">{totalWeight.toLocaleString()} lbs</td>
