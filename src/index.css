@@ -923,8 +923,9 @@
 
 @media (min-width: 1024px) {
   .tru-hero-value-props-container {
-    /* Constrain to ~92% of headline "Get Matched With Vetted Carriers" width */
-    max-width: 380px;
+    /* Constrain to 90% of headline "Get Matched With Vetted Carriers" width */
+    width: 90%;
+    max-width: none;
     margin-left: 0;
     margin-right: auto;
   }
@@ -933,8 +934,9 @@
 /* Feature Cards - Portrait Stacked Layout with Slide-Up Hover */
 .tru-hero-value-cards-open {
   display: grid;
-  grid-template-columns: repeat(2, 150px);
+  grid-template-columns: repeat(2, 1fr);
   gap: 14px;
+  width: 100%;
 }
 
 .tru-hero-value-cards-open .tru-value-card-open {
