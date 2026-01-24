@@ -566,69 +566,85 @@ export default function Index() {
                   </div>
                   {/* Value Cards - Always visible with previews */}
                   <div className="tru-hero-value-cards tru-hero-value-cards-open">
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Scan className="w-5 h-5" />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
+                          <div className="tru-value-card-header">
+                            <div className="tru-value-card-icon">
+                              <Scan className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">Scan Your Room</h3>
+                              <p className="tru-value-card-desc">Point your camera and let AI detect all furniture automatically.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-preview tru-value-card-preview-visible">
+                            <img src={previewAiScanner} alt="AI Room Scanner Preview" />
+                          </div>
                         </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">
-                            Scan Your Room
-                          </h3>
-                          <p className="tru-value-card-desc">Point your camera and let AI detect all furniture automatically.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewAiScanner} alt="AI Room Scanner Preview" />
-                      </div>
-                    </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Coming Soon</TooltipContent>
+                    </Tooltip>
                     
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/property-lookup")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <MapPin className="w-5 h-5" />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/property-lookup")}>
+                          <div className="tru-value-card-header">
+                            <div className="tru-value-card-icon">
+                              <MapPin className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">Property Lookup</h3>
+                              <p className="tru-value-card-desc">Instant bed/bath, sqft, and photos for any address.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-preview tru-value-card-preview-visible">
+                            <img src={previewPropertyLookup} alt="Property Lookup Preview" />
+                          </div>
                         </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">
-                            Property Lookup
-                          </h3>
-                          <p className="tru-value-card-desc">Instant bed/bath, sqft, and photos for any address.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewPropertyLookup} alt="Property Lookup Preview" />
-                      </div>
-                    </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Live Now</TooltipContent>
+                    </Tooltip>
                     
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Shield className="w-5 h-5" />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
+                          <div className="tru-value-card-header">
+                            <div className="tru-value-card-icon">
+                              <Shield className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">Carrier Vetting</h3>
+                              <p className="tru-value-card-desc">FMCSA verified, insurance validated, complaints monitored.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-preview tru-value-card-preview-visible">
+                            <img src={previewCarrierVetting} alt="Carrier Vetting Preview" />
+                          </div>
                         </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">Carrier Vetting</h3>
-                          <p className="tru-value-card-desc">FMCSA verified, insurance validated, complaints monitored.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewCarrierVetting} alt="Carrier Vetting Preview" />
-                      </div>
-                    </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Live Now</TooltipContent>
+                    </Tooltip>
                     
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/book")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Video className="w-5 h-5" />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/book")}>
+                          <div className="tru-value-card-header">
+                            <div className="tru-value-card-icon">
+                              <Video className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">Video Consult</h3>
+                              <p className="tru-value-card-desc">Virtual walkthrough with a specialist for accurate quotes.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-preview tru-value-card-preview-visible">
+                            <img src={previewVideoConsult} alt="Video Consultation Preview" />
+                          </div>
                         </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">Video Consult</h3>
-                          <p className="tru-value-card-desc">Virtual walkthrough with a specialist for accurate quotes.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewVideoConsult} alt="Video Consultation Preview" />
-                      </div>
-                    </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Live Now</TooltipContent>
+                    </Tooltip>
                   </div>
                 </div>
               </div>
