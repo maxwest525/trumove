@@ -2858,11 +2858,13 @@
 
 /* Inline logo in form title */
 .tru-qb-form-title-inline {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  display: block;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.tru-qb-form-title-inline br {
+  display: block;
 }
 
 .tru-qb-inline-logo {
