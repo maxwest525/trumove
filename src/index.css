@@ -948,7 +948,7 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  border: 1px solid hsl(var(--border) / 0.6);
+  border: 1px solid hsl(var(--border));
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -1020,8 +1020,9 @@
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon {
-  background: hsl(var(--tm-ink) / 0.1);
-  border-color: hsl(var(--tm-ink) / 0.3);
+  background: hsl(var(--primary) / 0.15);
+  border: 1px solid hsl(var(--primary) / 0.25);
+  border-radius: 50%;
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon svg {
