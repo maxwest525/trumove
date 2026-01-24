@@ -789,12 +789,12 @@
 /* Static three-column layout - form visually centered */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: minmax(200px, 320px) minmax(380px, 440px) 60px;
-  gap: 32px;
+  grid-template-columns: minmax(320px, 480px) minmax(380px, 440px) 60px;
+  gap: 40px;
   align-items: center;
   justify-content: center;
-  padding: 16px 24px 24px 24px;
-  max-width: 900px;
+  padding: 16px 32px 24px 32px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
