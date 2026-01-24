@@ -574,7 +574,6 @@ export default function Index() {
                         <div className="tru-value-card-content">
                           <h3 className="tru-value-card-title">
                             Scan Your Room
-                            <span className="tru-value-card-badge">Soon</span>
                           </h3>
                           <p className="tru-value-card-desc">Point your camera and let AI detect all furniture automatically.</p>
                         </div>
@@ -592,7 +591,6 @@ export default function Index() {
                         <div className="tru-value-card-content">
                           <h3 className="tru-value-card-title">
                             Property Lookup
-                            <span className="tru-value-card-badge tru-value-card-badge-live">Live</span>
                           </h3>
                           <p className="tru-value-card-desc">Instant bed/bath, sqft, and photos for any address.</p>
                         </div>
