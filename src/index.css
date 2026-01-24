@@ -778,7 +778,7 @@
 
 /* HERO */
 .tru-hero {
-  padding: 16px 24px 24px;
+  padding: 48px 24px 24px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -792,7 +792,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 32px;
   align-items: stretch;
-  padding: 16px 24px 24px 24px;
+  padding: 48px 24px 24px 24px;
   max-width: 1480px;
   margin: 0 auto;
 }
