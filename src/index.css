@@ -10895,16 +10895,16 @@
   color: hsl(var(--primary));
 }
 
-/* ===== FULL-PAGE ANALYZING OVERLAY ===== */
+/* ===== ANALYZING POPUP MODAL ===== */
 .tru-analyze-fullpage-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--background) / 0.97);
-  backdrop-filter: blur(12px);
+  background: hsl(var(--tm-ink) / 0.4);
+  backdrop-filter: blur(8px);
   animation: fadeIn 0.3s ease;
 }
 
@@ -10913,9 +10913,27 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 32px 24px;
-  max-width: 900px;
-  width: 100%;
+  padding: 40px 32px;
+  max-width: 840px;
+  width: 90%;
+  background: hsl(var(--background));
+  border-radius: 24px;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 
+    0 25px 50px -12px hsl(var(--tm-ink) / 0.25),
+    0 12px 24px -8px hsl(var(--tm-ink) / 0.15);
+  animation: popupEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popupEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .tru-analyze-fullpage-header {
@@ -10967,8 +10985,8 @@
 
 .tru-analyze-fullpage-frame {
   position: relative;
-  width: 280px;
-  height: 180px;
+  width: 340px;
+  height: 220px;
   background: hsl(var(--muted));
   border-radius: 16px;
   overflow: hidden;
@@ -11019,10 +11037,10 @@
 }
 
 .tru-analyze-connector-line {
-  width: 80px;
-  height: 4px;
+  width: 100px;
+  height: 5px;
   background: hsl(var(--border));
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
@@ -11079,6 +11097,11 @@
 
 /* Mobile responsive */
 @media (max-width: 768px) {
+  .tru-analyze-fullpage-content {
+    padding: 28px 20px;
+    width: 95%;
+  }
+  
   .tru-analyze-fullpage-maps {
     flex-direction: column;
     gap: 16px;
@@ -11093,8 +11116,8 @@
   }
   
   .tru-analyze-fullpage-frame {
-    width: 240px;
-    height: 150px;
+    width: 280px;
+    height: 180px;
   }
   
   .tru-analyze-fullpage-title {
