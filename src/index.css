@@ -11034,7 +11034,7 @@
 /* Cinematic zoom from space animation for satellite maps */
 @keyframes satellite-zoom-in {
   0% {
-    transform: scale(0.4);
+    transform: scale(0.4) translate(0, 0);
     filter: blur(3px);
     opacity: 0;
   }
@@ -11042,14 +11042,35 @@
     opacity: 1;
   }
   100% {
-    transform: scale(1);
+    transform: scale(1.15) translate(0, 0);
     filter: blur(0);
     opacity: 1;
   }
 }
 
+/* Subtle camera drift after zoom completes */
+@keyframes satellite-drift {
+  0% {
+    transform: scale(1.15) translate(0, 0);
+  }
+  25% {
+    transform: scale(1.18) translate(-1%, 0.5%);
+  }
+  50% {
+    transform: scale(1.15) translate(0.5%, -0.5%);
+  }
+  75% {
+    transform: scale(1.18) translate(-0.5%, 0.5%);
+  }
+  100% {
+    transform: scale(1.15) translate(0, 0);
+  }
+}
+
 .tru-analyze-popup-img.is-loaded {
-  animation: satellite-zoom-in 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: 
+    satellite-zoom-in 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    satellite-drift 8s ease-in-out 1.8s infinite;
 }
 
 /* Shimmer loading effect */

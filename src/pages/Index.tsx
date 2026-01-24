@@ -502,13 +502,6 @@ export default function Index() {
                           progress={routeProgress}
                         />
                       )}
-                      <div className="tru-analyze-route-overlay">
-                        <div className="tru-analyze-route-stats-inline">
-                          <span className="tru-analyze-route-distance">{distance.toLocaleString()} miles</span>
-                          <span className="tru-analyze-route-divider">•</span>
-                          <span className="tru-analyze-route-duration">{estimatedDuration}</span>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
