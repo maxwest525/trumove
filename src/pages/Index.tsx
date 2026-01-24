@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
+import AnimatedRouteMap from "@/components/estimate/AnimatedRouteMap";
 import FloatingNav from "@/components/FloatingNav";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import logoImg from "@/assets/logo.png";
@@ -493,40 +494,13 @@ export default function Index() {
                     </div>
                     <div className="tru-analyze-route-frame">
                       <div className="tru-analyze-popup-shimmer" />
-                      {fromCoords && toCoords && (
-                        <>
-                          {/* Base map without route line - always visible */}
-                          <img 
-                            src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+22c55e(${fromCoords[0]},${fromCoords[1]}),pin-s-b+ef4444(${toCoords[0]},${toCoords[1]})/auto/800x300@2x?padding=60,40,60,40&access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
-                            alt="Route overview base"
-                            className="tru-analyze-popup-img tru-analyze-route-base"
-                            onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
-                          />
-                          {/* Map with route path overlay - revealed progressively via clip-path */}
-                          {routeGeometry && (
-                            <img 
-                              src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+22c55e(${fromCoords[0]},${fromCoords[1]}),pin-s-b+ef4444(${toCoords[0]},${toCoords[1]}),path-5+22c55e-1(${encodeURIComponent(routeGeometry)})/auto/800x300@2x?padding=60,40,60,40&access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
-                              alt="Route overview with path"
-                              className="tru-analyze-popup-img tru-analyze-route-path"
-                              style={{ 
-                                clipPath: `inset(0 ${100 - routeProgress}% 0 0)`,
-                                transition: 'clip-path 0.05s linear'
-                              }}
-                              onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
-                            />
-                          )}
-                          {/* Animated truck icon at the edge of the reveal */}
-                          <div 
-                            className="tru-analyze-route-truck-marker"
-                            style={{ 
-                              left: `${routeProgress}%`,
-                              opacity: routeProgress > 0 && routeProgress < 100 ? 1 : 0,
-                              transition: 'left 0.05s linear, opacity 0.2s ease'
-                            }}
-                          >
-                            <Truck className="w-5 h-5 text-primary" />
-                          </div>
-                        </>
+                      {fromCoords && toCoords && routeGeometry && (
+                        <AnimatedRouteMap
+                          fromCoords={fromCoords}
+                          toCoords={toCoords}
+                          routeGeometry={routeGeometry}
+                          progress={routeProgress}
+                        />
                       )}
                       {/* Loading progress indicator */}
                       <div className="tru-analyze-route-loading">
