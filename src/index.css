@@ -10997,13 +10997,42 @@
 }
 
 .tru-analyze-popup-img {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.tru-analyze-popup-img.is-loaded {
+  opacity: 1;
+}
+
+/* Shimmer loading effect */
+.tru-analyze-popup-shimmer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted-foreground) / 0.15) 50%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerMove 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmerMove {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .tru-analyze-popup-city {
   position: absolute;
+  z-index: 3;
   bottom: 12px;
   left: 12px;
   right: 12px;
@@ -11020,75 +11049,59 @@
   text-overflow: ellipsis;
 }
 
-/* Route Drawer - Animated line from origin to destination */
-.tru-analyze-route-drawer {
+/* Third Map - Route Overview */
+.tru-analyze-route-map {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
   width: 100%;
-  max-width: 700px;
+  max-width: 800px;
   opacity: 0;
-  transform: translateY(16px);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.tru-analyze-route-drawer.is-active {
+.tru-analyze-route-map.is-active {
   opacity: 1;
   transform: translateY(0);
 }
 
-.tru-analyze-route-track {
+.tru-analyze-route-map .tru-analyze-popup-label {
+  margin-bottom: 12px;
+}
+
+.tru-analyze-route-frame {
   position: relative;
   width: 100%;
-  height: 8px;
-  background: hsl(var(--border));
-  border-radius: 4px;
-  overflow: visible;
+  height: 200px;
+  background: hsl(var(--muted));
+  border-radius: 16px;
+  overflow: hidden;
+  border: 3px solid hsl(var(--border));
+  box-shadow: 
+    0 12px 40px hsl(var(--tm-ink) / 0.15),
+    0 4px 12px hsl(var(--tm-ink) / 0.1);
 }
 
-.tru-analyze-route-line {
+.tru-analyze-route-overlay {
   position: absolute;
+  z-index: 3;
+  bottom: 0;
   left: 0;
-  top: 0;
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(165 70% 35%));
-  border-radius: 4px;
-  animation: routeLineDraw 2s ease-out forwards;
+  right: 0;
+  padding: 16px;
+  background: linear-gradient(to top, hsl(var(--tm-ink) / 0.8) 0%, transparent 100%);
+  display: flex;
+  justify-content: center;
 }
 
-@keyframes routeLineDraw {
-  0% { width: 0%; }
-  100% { width: 100%; }
-}
-
-.tru-analyze-route-truck {
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  transform: translate(-50%, -50%);
-  width: 28px;
-  height: 28px;
-  color: hsl(var(--primary));
-  background: hsl(var(--background));
-  border-radius: 50%;
-  padding: 4px;
-  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.2);
-  animation: truckDrive 2s ease-out forwards;
-}
-
-@keyframes truckDrive {
-  0% { left: 0%; }
-  100% { left: 100%; }
-}
-
-.tru-analyze-route-stats {
+.tru-analyze-route-stats-inline {
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 12px 28px;
-  background: hsl(var(--muted));
+  gap: 12px;
+  padding: 10px 24px;
+  background: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(8px);
   border-radius: 999px;
   border: 1px solid hsl(var(--border));
 }
@@ -11097,6 +11110,10 @@
   font-size: 16px;
   font-weight: 800;
   color: hsl(var(--primary));
+}
+
+.tru-analyze-route-divider {
+  color: hsl(var(--muted-foreground));
 }
 
 .tru-analyze-route-duration {
@@ -11126,8 +11143,8 @@
     font-size: 20px;
   }
   
-  .tru-analyze-route-drawer {
-    max-width: 320px;
+  .tru-analyze-route-frame {
+    height: 160px;
   }
 }
 
@@ -11145,9 +11162,13 @@
     font-size: 18px;
   }
   
-  .tru-analyze-route-stats {
-    gap: 16px;
-    padding: 10px 20px;
+  .tru-analyze-route-frame {
+    height: 140px;
+  }
+  
+  .tru-analyze-route-stats-inline {
+    gap: 8px;
+    padding: 8px 16px;
   }
   
   .tru-analyze-route-distance {
