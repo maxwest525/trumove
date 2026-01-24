@@ -857,7 +857,7 @@
   line-height: 1.15;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.02em;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   white-space: normal;
 }
 
