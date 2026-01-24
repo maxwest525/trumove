@@ -786,14 +786,15 @@
 /* =============================================
    SPLIT HERO LAYOUT - Homepage
    ============================================= */
-/* Static three-column layout */
+/* Static three-column layout - form centered, pills stacked right */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 1fr minmax(420px, 460px) auto;
-  gap: 20px;
-  align-items: stretch;
+  grid-template-columns: 1fr minmax(380px, 420px) 60px;
+  gap: 24px;
+  align-items: center;
+  justify-items: center;
   padding: 16px 24px 24px 24px;
-  max-width: 1480px;
+  max-width: 1320px;
   margin: 0 auto;
 }
 
@@ -1198,12 +1199,13 @@
    STATIC SIDEBAR - Icon Strip + Expanded Menu
    ============================================= */
 
-/* Sidebar container - horizontal layout for pills */
+/* Sidebar container - vertical stacked layout for pills */
 .tru-hero-sidebar {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 8px;
-  align-self: stretch;
+  align-items: center;
+  justify-self: end;
 }
 
 /* Summary Pill - narrow vertical bar with single icon + text */
@@ -1252,12 +1254,12 @@
    Matches reference design with smooth animations
    ============================================= */
 .tru-sidebar-summary-pill-v2 {
-  width: 48px;
-  height: 100%;
-  min-height: 320px;
+  width: 52px;
+  height: auto;
+  min-height: 140px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 24px;
+  border-radius: 26px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1273,7 +1275,7 @@
 }
 
 .tru-sidebar-summary-pill-v2:hover {
-  width: 180px;
+  width: 200px;
   box-shadow: 
     0 4px 12px hsl(var(--tm-ink) / 0.08),
     0 16px 32px hsl(var(--tm-ink) / 0.1);
@@ -1406,15 +1408,15 @@
   color: hsl(var(--primary));
 }
 
-/* Nav Icons Pill V2 - with tooltips */
+/* Nav Icons Pill V2 - compact vertical stack */
 .tru-sidebar-nav-pill-v2 {
-  width: 48px;
-  height: 100%;
-  min-height: 320px;
+  width: 52px;
+  height: auto;
+  min-height: 160px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 24px;
-  padding: 12px 8px;
+  border-radius: 26px;
+  padding: 10px 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
