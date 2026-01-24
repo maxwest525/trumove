@@ -417,10 +417,12 @@ export default function Index() {
                         <span>Origin</span>
                       </div>
                       <div className="tru-analyze-popup-frame">
+                        <div className="tru-analyze-popup-shimmer" />
                         <img 
                           src={fromCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/560x400@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
                           alt="Origin location"
                           className="tru-analyze-popup-img"
+                          onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
                         />
                         <div className="tru-analyze-popup-city">{fromCity}</div>
                       </div>
@@ -433,25 +435,41 @@ export default function Index() {
                         <span>Destination</span>
                       </div>
                       <div className="tru-analyze-popup-frame">
+                        <div className="tru-analyze-popup-shimmer" />
                         <img 
                           src={toCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/560x400@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
                           alt="Destination location"
                           className="tru-analyze-popup-img"
+                          onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
                         />
                         <div className="tru-analyze-popup-city">{toCity}</div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Animated Route Line */}
-                  <div className={`tru-analyze-route-drawer ${analyzePhase >= 2 ? 'is-active' : ''}`}>
-                    <div className="tru-analyze-route-track">
-                      <div className="tru-analyze-route-line" />
-                      <Truck className="tru-analyze-route-truck" />
+                  {/* Route Overview Map - Third map showing full route */}
+                  <div className={`tru-analyze-route-map ${analyzePhase >= 2 ? 'is-active' : ''}`}>
+                    <div className="tru-analyze-popup-label">
+                      <Truck className="w-4 h-4" />
+                      <span>Your Route</span>
                     </div>
-                    <div className="tru-analyze-route-stats">
-                      <span className="tru-analyze-route-distance">{distance.toLocaleString()} miles</span>
-                      <span className="tru-analyze-route-duration">{estimatedDuration}</span>
+                    <div className="tru-analyze-route-frame">
+                      <div className="tru-analyze-popup-shimmer" />
+                      {fromCoords && toCoords && (
+                        <img 
+                          src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+22c55e(${fromCoords[0]},${fromCoords[1]}),pin-s-b+ef4444(${toCoords[0]},${toCoords[1]})/auto/800x300@2x?padding=60,40,60,40&access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                          alt="Route overview"
+                          className="tru-analyze-popup-img"
+                          onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
+                        />
+                      )}
+                      <div className="tru-analyze-route-overlay">
+                        <div className="tru-analyze-route-stats-inline">
+                          <span className="tru-analyze-route-distance">{distance.toLocaleString()} miles</span>
+                          <span className="tru-analyze-route-divider">•</span>
+                          <span className="tru-analyze-route-duration">{estimatedDuration}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -532,11 +550,6 @@ export default function Index() {
                         <img src={previewVideoConsult} alt="Video Consultation Preview" />
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* Map Overlay - appears when first ZIP validated */}
-                  <div className={`tru-hero-map-overlay ${fromCity ? 'is-active' : ''}`}>
-                    <MapboxMoveMap fromZip={fromZip} toZip={toZip} visible={!!fromCity} />
                   </div>
                 </div>
               </div>
