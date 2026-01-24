@@ -103,7 +103,7 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
       bounds: bounds,
-      fitBoundsOptions: { padding: 30, maxZoom: 8 },
+      fitBoundsOptions: { padding: 50, maxZoom: 10 },
       interactive: false,
       attributionControl: false
     });
