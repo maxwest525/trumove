@@ -2854,7 +2854,7 @@
 .tru-qb-form-header-pill .tru-qb-form-title.tru-qb-form-title-large {
   font-size: 24px;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   color: hsl(var(--tm-ink));
 }
 
@@ -2871,8 +2871,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   white-space: nowrap;
+  letter-spacing: 0.01em;
 }
 
 .tru-qb-inline-logo {
@@ -12084,9 +12085,35 @@
 /* Location Row - Side by Side */
 .tru-qb-location-row {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
-  max-width: 360px;
+  max-width: 400px;
+  align-items: flex-end;
+}
+
+/* Route Connector Arrow */
+.tru-qb-route-connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 44px;
+  flex-shrink: 0;
+  color: hsl(var(--primary));
+  opacity: 0.6;
+}
+
+/* Enhanced Input Styling */
+.tru-qb-input-enhanced input {
+  border: 2px solid hsl(var(--tm-ink) / 0.12);
+  transition: all 0.25s ease;
+}
+
+.tru-qb-input-enhanced input:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 0 0 3px hsl(var(--primary) / 0.1),
+    0 4px 12px hsl(var(--primary) / 0.08);
 }
 
 .tru-qb-location-col {

@@ -681,11 +681,11 @@ export default function Index() {
                       <div className="tru-qb-step-content" key="step-1">
                         <h1 className="tru-qb-question tru-qb-question-decorated">Tell us more about your move</h1>
                         
-                        {/* FROM + TO Row - Side by Side */}
+                        {/* FROM + TO Row - Side by Side with Route Connector */}
                         <div className="tru-qb-location-row">
                           <div className="tru-qb-location-col">
-                            <p className="tru-qb-section-label">From</p>
-                            <div className="tru-qb-input-wrap tru-qb-zip-wrap">
+                            <p className="tru-qb-section-label"><MapPin className="w-3 h-3" /> From</p>
+                            <div className="tru-qb-input-wrap tru-qb-zip-wrap tru-qb-input-enhanced">
                               <LocationAutocomplete
                                 value={fromZip}
                                 onValueChange={(val) => {
@@ -708,9 +708,14 @@ export default function Index() {
                             </div>
                           </div>
 
+                          {/* Route Connector */}
+                          <div className="tru-qb-route-connector">
+                            <ArrowRight className="w-4 h-4" />
+                          </div>
+
                           <div className="tru-qb-location-col">
-                            <p className="tru-qb-section-label">To</p>
-                            <div className="tru-qb-input-wrap tru-qb-zip-wrap">
+                            <p className="tru-qb-section-label"><MapPin className="w-3 h-3" /> To</p>
+                            <div className="tru-qb-input-wrap tru-qb-zip-wrap tru-qb-input-enhanced">
                               <LocationAutocomplete
                                 value={toZip}
                                 onValueChange={(val) => {
@@ -734,6 +739,7 @@ export default function Index() {
                             </div>
                           </div>
                         </div>
+
 
                         {/* Move Date */}
                         <p className="tru-qb-section-label">Move Date</p>
