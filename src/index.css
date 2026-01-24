@@ -923,7 +923,8 @@
 
 @media (min-width: 1024px) {
   .tru-hero-value-props-container {
-    max-width: 92%;
+    /* Constrain to ~92% of headline "Get Matched With Vetted Carriers" width */
+    max-width: 380px;
     margin-left: 0;
     margin-right: auto;
   }
