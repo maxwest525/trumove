@@ -919,14 +919,14 @@
 /* Feature Cards - Portrait Stacked Layout with Slide-Up Hover */
 .tru-hero-value-cards-open {
   display: grid;
-  grid-template-columns: repeat(2, 170px);
+  grid-template-columns: repeat(2, 150px);
   gap: 14px;
 }
 
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  min-height: 220px;
+  min-height: 190px;
   padding: 12px;
   padding-bottom: 0;
   position: relative;
@@ -1003,12 +1003,12 @@
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon {
-  background: hsl(var(--primary) / 0.1);
-  border-color: hsl(var(--primary) / 0.3);
+  background: hsl(var(--tm-ink) / 0.1);
+  border-color: hsl(var(--tm-ink) / 0.3);
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon svg {
-  color: hsl(var(--primary));
+  color: hsl(var(--tm-ink));
 }
 
 /* =============================================
