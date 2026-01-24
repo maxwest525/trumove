@@ -916,6 +916,19 @@
 /* =============================================
    FEATURE CARDS - OPEN BY DEFAULT
    ============================================= */
+/* Feature Cards Container - Constrained to hero text width on desktop */
+.tru-hero-value-props-container {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .tru-hero-value-props-container {
+    max-width: 92%;
+    margin-left: 0;
+    margin-right: auto;
+  }
+}
+
 /* Feature Cards - Portrait Stacked Layout with Slide-Up Hover */
 .tru-hero-value-cards-open {
   display: grid;
