@@ -3569,8 +3569,8 @@
 }
 
 .tru-qb-route-summary-item:last-child {
-  text-align: right;
-  align-items: flex-end;
+  text-align: center;
+  align-items: center;
 }
 
 .tru-qb-route-summary-label {
