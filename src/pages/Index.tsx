@@ -128,6 +128,10 @@ export default function Index() {
   const [analyzePhase, setAnalyzePhase] = useState(0); // 0: origin, 1: destination, 2: route
   const [fromCoords, setFromCoords] = useState<[number, number] | null>(null);
   const [toCoords, setToCoords] = useState<[number, number] | null>(null);
+  const [routeGeometry, setRouteGeometry] = useState<string | null>(null);
+  
+  // UI engagement state - cards expand when user starts typing
+  const [isEngaged, setIsEngaged] = useState(false);
   
   // Chat state
   const [chatOpen, setChatOpen] = useState(false);
@@ -350,19 +354,37 @@ export default function Index() {
     }
   };
 
-  const goNext = () => {
+  const goNext = async () => {
     if (canContinue() && step < 3) {
       // If on step 1, trigger analyzing transition
       if (step === 1) {
         setIsAnalyzing(true);
         setAnalyzePhase(0);
         
+        // Fetch route geometry for the third map
+        if (fromCoords && toCoords) {
+          try {
+            const token = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
+            const res = await fetch(
+              `https://api.mapbox.com/directions/v5/mapbox/driving/${fromCoords[0]},${fromCoords[1]};${toCoords[0]},${toCoords[1]}?geometries=polyline&overview=full&access_token=${token}`
+            );
+            if (res.ok) {
+              const data = await res.json();
+              if (data.routes && data.routes[0]) {
+                setRouteGeometry(data.routes[0].geometry);
+              }
+            }
+          } catch (e) {
+            console.error('Failed to fetch route:', e);
+          }
+        }
+        
         // Slower timing for popup modal experience
         // Phase 0: Show origin (0-2s)
         setTimeout(() => setAnalyzePhase(1), 2000);
         // Phase 1: Show destination (2-4s)
         setTimeout(() => setAnalyzePhase(2), 4000);
-        // Phase 2: Show route connector (4-6.5s)
+        // Phase 2: Show route map (4-6.5s)
         setTimeout(() => {
           setIsAnalyzing(false);
           setAnalyzePhase(0);
@@ -457,7 +479,7 @@ export default function Index() {
                       <div className="tru-analyze-popup-shimmer" />
                       {fromCoords && toCoords && (
                         <img 
-                          src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+22c55e(${fromCoords[0]},${fromCoords[1]}),pin-s-b+ef4444(${toCoords[0]},${toCoords[1]})/auto/800x300@2x?padding=60,40,60,40&access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                          src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${routeGeometry ? `path-5+22c55e-0.7(${encodeURIComponent(routeGeometry)}),` : ''}pin-s-a+22c55e(${fromCoords[0]},${fromCoords[1]}),pin-s-b+ef4444(${toCoords[0]},${toCoords[1]})/auto/800x300@2x?padding=60,40,60,40&access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
                           alt="Route overview"
                           className="tru-analyze-popup-img"
                           onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
@@ -492,7 +514,7 @@ export default function Index() {
                 {/* Value Props Container - Map overlays this section */}
                 <div className="tru-hero-value-props-container">
                   {/* Value Props - Feature Cards with hover previews */}
-                  <div className={`tru-hero-value-cards ${fromCity ? 'is-hidden' : ''}`}>
+                  <div className={`tru-hero-value-cards ${isEngaged ? 'is-expanded' : ''}`}>
                     <div className="tru-value-card tru-value-card-clickable tru-value-card-hoverable" onClick={() => navigate("/scan-room")}>
                       <div className="tru-value-card-icon">
                         <Scan className="w-5 h-5" />
@@ -591,7 +613,10 @@ export default function Index() {
                           <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                             <LocationAutocomplete
                               value={fromZip}
-                              onValueChange={(val) => setFromZip(val)}
+                              onValueChange={(val) => {
+                                setFromZip(val);
+                                if (val.length > 0 && !isEngaged) setIsEngaged(true);
+                              }}
                               onLocationSelect={async (city, zip, fullAddress) => {
                                 setFromZip(zip);
                                 setFromCity(city);
@@ -613,7 +638,10 @@ export default function Index() {
                           <div className="tru-qb-input-wrap tru-qb-zip-wrap">
                             <LocationAutocomplete
                               value={toZip}
-                              onValueChange={(val) => setToZip(val)}
+                              onValueChange={(val) => {
+                                setToZip(val);
+                                if (val.length > 0 && !isEngaged) setIsEngaged(true);
+                              }}
                               onLocationSelect={async (city, zip, fullAddress) => {
                                 setToZip(zip);
                                 setToCity(city);
