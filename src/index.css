@@ -785,36 +785,32 @@
 
 /* =============================================
    SPLIT HERO LAYOUT - Homepage
-   TRUE TWO-COLUMN GRID LAYOUT
    ============================================= */
-/* Container: Centered, fixed max-width */
+/* 50/50 Two-column layout */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 60fr 40fr;
-  gap: 48px;
-  align-items: start;
-  padding: 40px 48px 32px 48px;
-  max-width: 1200px;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: stretch;
+  padding: 48px 24px 24px 24px;
+  max-width: 1480px;
   margin: 0 auto;
-  /* Remove any hero-level centering */
-  justify-content: stretch;
 }
 
-/* RIGHT COLUMN: Form anchored, top-aligned with headline */
+/* Right half - Form + Sidebar together */
 .tru-hero-right-half {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: stretch;
+  flex-direction: row;
+  gap: 12px;
+  align-items: flex-start;
   justify-content: flex-start;
-  padding-top: 0;
-  /* Lock right column width */
-  width: 100%;
-  max-width: 420px;
+  height: 100%;
 }
 
 .tru-hero-right-half .tru-hero-form-panel {
   width: 100%;
+  min-width: 420px;
+  max-width: 460px;
   flex-shrink: 0;
 }
 
@@ -822,23 +818,18 @@
   flex-shrink: 0;
 }
 
-/* LEFT COLUMN: Content stacked vertically, all left-aligned */
+/* LEFT PANEL: Value Proposition */
 .tru-hero-content-panel {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;
   height: 100%;
-  width: 100%;
 }
 
 .tru-hero-content-inner {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  /* All children share same left edge */
-  align-items: flex-start;
+  gap: 24px;
 }
 
 .tru-hero-eyebrow {
@@ -853,7 +844,7 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: hsl(var(--tm-ink));
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
 .tru-hero-eyebrow svg {
@@ -861,15 +852,13 @@
 }
 
 .tru-hero-headline-main {
-  font-size: clamp(26px, 3.5vw, 40px);
+  font-size: clamp(24px, 3.2vw, 36px);
   font-weight: 800;
-  line-height: 1.12;
+  line-height: 1.15;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.02em;
   margin-bottom: 8px;
   white-space: normal;
-  text-align: left;
-  width: 100%;
 }
 
 .tru-hero-headline-accent {
@@ -881,11 +870,15 @@
 
 .tru-hero-subheadline {
   font-size: 15px;
-  line-height: 1.65;
-  color: hsl(var(--tm-ink) / 0.65);
-  margin-bottom: 8px;
-  text-align: left;
-  width: 100%;
+  line-height: 1.6;
+  color: hsl(var(--tm-ink) / 0.7);
+  margin-bottom: 28px;
+}
+
+@media (min-width: 1024px) {
+  .tru-hero-subheadline {
+    max-width: 80%;
+  }
 }
 
 /* =============================================
@@ -927,22 +920,18 @@
 }
 
 /* =============================================
-   FEATURE CARDS - NESTED IN LEFT COLUMN
+   FEATURE CARDS - OPEN BY DEFAULT
    ============================================= */
-/* Feature section container: Left-aligned with headline */
+/* Feature Cards Container - Constrained to hero text width on desktop */
 .tru-hero-value-props-container {
   width: 100%;
-  margin-top: 16px;
-  /* Left-align, not centered */
-  margin-left: 0;
-  margin-right: auto;
 }
 
 @media (min-width: 1024px) {
   .tru-hero-value-props-container {
-    /* 95% of left column, shares same left edge as headline */
-    width: 95%;
-    max-width: 520px;
+    /* Constrain to 90% of headline text width */
+    width: 80%;
+    max-width: none;
     margin-left: 0;
     margin-right: auto;
   }
@@ -956,13 +945,11 @@
   width: 100%;
 }
 
-/* Feature card sizing: reduced by ~10% */
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  min-height: 140px;
-  max-height: 155px;
-  padding: 10px;
+  min-height: 190px;
+  padding: 12px;
   padding-bottom: 0;
   position: relative;
   overflow: hidden;
@@ -1077,15 +1064,13 @@
    ROUTE ANALYSIS SECTION
    ============================================= */
 .tru-route-analysis-section {
-  padding: 56px 48px 32px;
+  padding: 32px 24px;
   background: linear-gradient(180deg, hsl(var(--muted) / 0.5) 0%, hsl(var(--background)) 100%);
   border-top: 1px solid hsl(var(--border));
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .tru-route-analysis-inner {
-  max-width: 720px;
+  max-width: 800px;
   margin: 0 auto;
   text-align: center;
 }
@@ -1127,7 +1112,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 16px;
   margin-bottom: 20px;
 }
 
@@ -1470,7 +1455,7 @@
 /* Value Props Container - enables map overlay */
 .tru-hero-value-props-container {
   position: relative;
-  min-height: 260px;
+  min-height: 280px;
 }
 
 /* Feature Section Card - Matches Form Card Style */
@@ -13828,13 +13813,10 @@
    ============================================= */
 .tru-trust-strip {
   background: linear-gradient(180deg, hsl(220 30% 92%) 0%, hsl(220 25% 88%) 100%);
-  padding: 16px 48px;
+  padding: 16px 24px;
   border-top: 1px solid hsl(var(--tm-ink) / 0.08);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
   margin-top: -12px;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .tru-trust-strip-inner {

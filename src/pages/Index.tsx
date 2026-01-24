@@ -552,7 +552,9 @@ export default function Index() {
                   <span className="tru-hero-headline-accent">Who Actually Care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
-                  Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data — so you can confidently find the good carriers, not just the biggest ones.
+                  Skip the complexity of large national van lines and impersonal intermediaries. We connect you directly with trusted, 
+                  small, family-owned moving companies — each one carefully vetted through official federal FMCSA records, continuously 
+                  monitored for performance and customer feedback, and perfectly matched to your specific route, timeline, and needs.
                 </p>
                 
                 {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
@@ -1036,99 +1038,97 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* SIDEBAR: Summary Pill + Nav Icons Pill - TEMPORARILY HIDDEN */}
-              {false && (
-                <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-                  {/* Summary Pill - Expandable on hover */}
-                  <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="tru-sidebar-summary-pill-v3 group">
-                          {/* Collapsed state: icon + vertical label */}
-                          <div className="tru-summary-pill-collapsed">
-                            <div className="tru-summary-pill-icon-wrap">
-                              <MapPin className="w-5 h-5" />
-                            </div>
-                            <span className="tru-summary-pill-vertical-label">SUMMARY</span>
+              {/* SIDEBAR: Summary Pill + Nav Icons Pill - STACKED VERTICALLY */}
+              <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
+                {/* Summary Pill - Expandable on hover */}
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="tru-sidebar-summary-pill-v3 group">
+                        {/* Collapsed state: icon + vertical label */}
+                        <div className="tru-summary-pill-collapsed">
+                          <div className="tru-summary-pill-icon-wrap">
+                            <MapPin className="w-5 h-5" />
                           </div>
-                          
-                          {/* Expanded state: full content - revealed on hover */}
-                          <div className="tru-summary-pill-expanded">
-                            <div className="tru-summary-pill-header">
-                              <span>MOVE SUMMARY</span>
+                          <span className="tru-summary-pill-vertical-label">SUMMARY</span>
+                        </div>
+                        
+                        {/* Expanded state: full content - revealed on hover */}
+                        <div className="tru-summary-pill-expanded">
+                          <div className="tru-summary-pill-header">
+                            <span>MOVE SUMMARY</span>
+                          </div>
+                          <div className="tru-summary-pill-body">
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">From</span>
+                              <span className="tru-summary-pill-value">{fromCity ? fromCity.split(',')[0] : '—'}</span>
                             </div>
-                            <div className="tru-summary-pill-body">
-                              <div className="tru-summary-pill-row">
-                                <span className="tru-summary-pill-label">From</span>
-                                <span className="tru-summary-pill-value">{fromCity ? fromCity.split(',')[0] : '—'}</span>
-                              </div>
-                              <div className="tru-summary-pill-row">
-                                <span className="tru-summary-pill-label">To</span>
-                                <span className="tru-summary-pill-value">{toCity ? toCity.split(',')[0] : '—'}</span>
-                              </div>
-                              <div className="tru-summary-pill-row">
-                                <span className="tru-summary-pill-label">Distance</span>
-                                <span className="tru-summary-pill-value">{distance > 0 ? `${distance.toLocaleString()} mi` : '—'}</span>
-                              </div>
-                              <div className="tru-summary-pill-row">
-                                <span className="tru-summary-pill-label">Date</span>
-                                <span className="tru-summary-pill-value">{moveDate ? format(moveDate, "MMM d") : '—'}</span>
-                              </div>
-                              <div className="tru-summary-pill-row">
-                                <span className="tru-summary-pill-label">ETA</span>
-                                <span className="tru-summary-pill-value">{estimatedDuration || '—'}</span>
-                              </div>
-                              <div className="tru-summary-pill-row">
-                                <span className="tru-summary-pill-label">Size</span>
-                                <span className="tru-summary-pill-value">{size || '—'}</span>
-                              </div>
-                              <div className="tru-summary-pill-row">
-                                <span className="tru-summary-pill-label">Property</span>
-                                <span className="tru-summary-pill-value">{propertyType ? propertyType.charAt(0).toUpperCase() + propertyType.slice(1) : '—'}</span>
-                              </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">To</span>
+                              <span className="tru-summary-pill-value">{toCity ? toCity.split(',')[0] : '—'}</span>
                             </div>
-                            <div className="tru-summary-pill-footer">
-                              Powered by <span className="tru-summary-pill-brand">TruMove</span>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">Distance</span>
+                              <span className="tru-summary-pill-value">{distance > 0 ? `${distance.toLocaleString()} mi` : '—'}</span>
                             </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">Date</span>
+                              <span className="tru-summary-pill-value">{moveDate ? format(moveDate, "MMM d") : '—'}</span>
+                            </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">ETA</span>
+                              <span className="tru-summary-pill-value">{estimatedDuration || '—'}</span>
+                            </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">Size</span>
+                              <span className="tru-summary-pill-value">{size || '—'}</span>
+                            </div>
+                            <div className="tru-summary-pill-row">
+                              <span className="tru-summary-pill-label">Property</span>
+                              <span className="tru-summary-pill-value">{propertyType ? propertyType.charAt(0).toUpperCase() + propertyType.slice(1) : '—'}</span>
+                            </div>
+                          </div>
+                          <div className="tru-summary-pill-footer">
+                            Powered by <span className="tru-summary-pill-brand">TruMove</span>
                           </div>
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="left" className="tru-summary-tooltip-preview hidden group-hover:hidden">
-                        <div className="tru-summary-preview">
-                          <div className="tru-summary-preview-header">Move Summary</div>
-                          <div className="tru-summary-preview-rows">
-                            {fromCity && (
-                              <div className="tru-summary-preview-row">
-                                <span className="tru-summary-preview-label">From</span>
-                                <span className="tru-summary-preview-value">{fromCity.split(',')[0]}</span>
-                              </div>
-                            )}
-                            {toCity && (
-                              <div className="tru-summary-preview-row">
-                                <span className="tru-summary-preview-label">To</span>
-                                <span className="tru-summary-preview-value">{toCity.split(',')[0]}</span>
-                              </div>
-                            )}
-                            {distance > 0 && (
-                              <div className="tru-summary-preview-row">
-                                <span className="tru-summary-preview-label">Distance</span>
-                                <span className="tru-summary-preview-value">{distance.toLocaleString()} mi</span>
-                              </div>
-                            )}
-                          </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="tru-summary-tooltip-preview hidden group-hover:hidden">
+                      <div className="tru-summary-preview">
+                        <div className="tru-summary-preview-header">Move Summary</div>
+                        <div className="tru-summary-preview-rows">
+                          {fromCity && (
+                            <div className="tru-summary-preview-row">
+                              <span className="tru-summary-preview-label">From</span>
+                              <span className="tru-summary-preview-value">{fromCity.split(',')[0]}</span>
+                            </div>
+                          )}
+                          {toCity && (
+                            <div className="tru-summary-preview-row">
+                              <span className="tru-summary-preview-label">To</span>
+                              <span className="tru-summary-preview-value">{toCity.split(',')[0]}</span>
+                            </div>
+                          )}
+                          {distance > 0 && (
+                            <div className="tru-summary-preview-row">
+                              <span className="tru-summary-preview-label">Distance</span>
+                              <span className="tru-summary-preview-value">{distance.toLocaleString()} mi</span>
+                            </div>
+                          )}
                         </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  
-                  {/* Nav Icons Pill - Stacked below summary */}
-                  <TooltipProvider delayDuration={200}>
-                    <div className="tru-sidebar-nav-pill-v3">
-                      <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
-                    </div>
-                  </TooltipProvider>
-                </div>
-              )}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                {/* Nav Icons Pill - Stacked below summary */}
+                <TooltipProvider delayDuration={200}>
+                  <div className="tru-sidebar-nav-pill-v3">
+                    <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
+                  </div>
+                </TooltipProvider>
+              </div>
             </div>
           </section>
 
