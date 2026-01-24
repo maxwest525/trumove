@@ -652,7 +652,8 @@ export default function Index() {
                   <div className="tru-qb-form-header tru-qb-form-header-pill">
                     <div className="tru-qb-form-title-group">
                       <span className="tru-qb-form-title tru-qb-form-title-large tru-qb-form-title-inline">
-                        Let <img src={logoImg} alt="TruMove" className="tru-qb-inline-logo" /> find the<br />right carrier for you
+                        <span className="tru-qb-title-line">Let <img src={logoImg} alt="TruMove" className="tru-qb-inline-logo" /> find the</span>
+                        <span className="tru-qb-title-line">right carrier for you</span>
                       </span>
                       <span className="tru-qb-form-subtitle-compact">Enter your route to begin matching</span>
                     </div>
