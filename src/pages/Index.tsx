@@ -558,7 +558,7 @@ export default function Index() {
                 </p>
                 
                 {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
-                <div className="tru-hero-value-props-container border border-border/40 rounded-xl bg-muted/40 p-4">
+                <div className="tru-hero-value-props-container rounded-xl bg-slate-100/80 p-5 shadow-sm">
                   {/* Section Headline */}
                   <div className="mb-4 text-center">
                     <h3 className="text-xl font-bold text-foreground">Smart Moving Starts Here</h3>
