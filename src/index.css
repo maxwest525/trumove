@@ -875,34 +875,26 @@
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* Value cards fade out when map activates */
+/* Value cards expand when user starts typing - show previews */
+.tru-hero-value-cards.is-expanded .tru-value-card {
+  min-height: 120px;
+}
+
+.tru-hero-value-cards.is-expanded .tru-value-card-preview {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tru-hero-value-cards.is-expanded .tru-value-card-preview img {
+  transform: scale(1);
+}
+
+/* Legacy hidden state (no longer used) */
 .tru-hero-value-cards.is-hidden,
 .tru-hero-value-props.is-hidden {
   opacity: 0;
   pointer-events: none;
   transform: translateY(10px);
-}
-
-/* Map overlay - covers only the value props area */
-.tru-hero-map-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 16px;
-  overflow: hidden;
-  opacity: 0;
-  transform: scale(0.98);
-  pointer-events: none;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  z-index: 5;
-}
-
-.tru-hero-map-overlay.is-active {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
 }
 
 /* Individual Value Card - More compact with hover preview */
