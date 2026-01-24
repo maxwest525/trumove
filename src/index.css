@@ -924,7 +924,7 @@
 @media (min-width: 1024px) {
   .tru-hero-value-props-container {
     /* Constrain to 90% of headline text width */
-    width: 72%;
+    width: 85%;
     max-width: none;
     margin-left: 0;
     margin-right: auto;
