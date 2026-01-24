@@ -78,17 +78,17 @@ export default function ScanIntroModal({
             </button>
             
             {/* Secondary CTAs */}
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-3">
               <a
                 href="tel:1-800-555-0123"
-                className="tru-inventory-call-btn"
+                className="tru-secondary-action-btn"
               >
                 <Phone className="w-4 h-4" />
                 Prefer to talk?
               </a>
               <a
                 href="/book"
-                className="tru-inventory-video-btn"
+                className="tru-secondary-action-btn"
               >
                 <Video className="w-4 h-4" />
                 Book Video Consult
