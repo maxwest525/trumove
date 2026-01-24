@@ -560,9 +560,9 @@ export default function Index() {
                 {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
                 <div className="tru-hero-value-props-container">
                   {/* Section Headline */}
-                  <div className="mb-4">
-                    <h3 className="text-lg font-bold text-primary mb-1">Smart Moving Starts Here</h3>
-                    <p className="text-sm text-muted-foreground">Explore the tools that power a stress-free move</p>
+                  <div className="mb-4 text-center">
+                    <h3 className="text-lg font-bold text-foreground mb-1">Smart Moving Starts Here</h3>
+                    <p className="text-sm text-muted-foreground">See how we simplify every step</p>
                   </div>
                   {/* Value Cards - Always visible with previews */}
                   <div className="tru-hero-value-cards tru-hero-value-cards-open">
