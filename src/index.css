@@ -1472,17 +1472,27 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 14px 20px;
+  padding: 14px 20px 0;
   background: hsl(220 15% 96%);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
   text-align: center;
   gap: 2px;
+  position: relative;
+}
+
+.tru-feature-section-header::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(160 80% 45%));
+  border-radius: 2px;
+  margin-top: 10px;
 }
 
 .tru-feature-section-title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 800;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   color: hsl(var(--tm-ink));
 }
 
