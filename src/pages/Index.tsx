@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
-import MoveMapTriptych from "@/components/MoveMapTriptych";
+import MapboxMoveMap from "@/components/MapboxMoveMap";
 import FloatingNav from "@/components/FloatingNav";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import logoImg from "@/assets/logo.png";
@@ -430,15 +430,9 @@ export default function Index() {
                     </div>
                   </div>
                   
-                  {/* Map Triptych - 3-panel view: origin satellite, destination satellite, route */}
+                  {/* Map Overlay - appears when first ZIP validated */}
                   <div className={`tru-hero-map-overlay ${fromCity ? 'is-active' : ''}`}>
-                    <MoveMapTriptych 
-                      fromZip={fromZip} 
-                      toZip={toZip} 
-                      fromCity={fromCity}
-                      toCity={toCity}
-                      visible={!!fromCity} 
-                    />
+                    <MapboxMoveMap fromZip={fromZip} toZip={toZip} visible={!!fromCity} />
                   </div>
                 </div>
               </div>
