@@ -362,7 +362,7 @@ export default function Index() {
                   <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
-                  Skip the van line runaround. We connect you with vetted, family-owned carriers matched to your route and timeline.
+                  Skip the van line runaround. We connect you with vetted, family-owned carriers matched to your route and timeline—carefully screened through FMCSA records, continuously monitored, with honest pricing and personalized care.
                 </p>
                 
                 {/* Value Props Container - Map overlays this section */}
