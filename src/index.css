@@ -802,13 +802,16 @@
   display: flex;
   flex-direction: row;
   gap: 12px;
-  align-items: stretch;
+  align-items: flex-start;
+  justify-content: flex-start;
   height: 100%;
 }
 
 .tru-hero-right-half .tru-hero-form-panel {
-  flex: 1;
-  min-width: 360px;
+  width: 100%;
+  min-width: 420px;
+  max-width: 460px;
+  flex-shrink: 0;
 }
 
 .tru-hero-right-half .tru-hero-sidebar {
