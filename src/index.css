@@ -991,6 +991,7 @@
   opacity: 1 !important;
   transform: none !important;
   margin-bottom: 12px;
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
 }
 
 .tru-hero-value-cards-open .tru-value-card-preview-visible img {
@@ -1773,7 +1774,7 @@
   font-size: 14px;
   font-weight: 700;
   color: hsl(var(--tm-ink));
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   display: flex;
   align-items: center;
   gap: 6px;
