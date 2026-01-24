@@ -547,7 +547,7 @@ export default function Index() {
             {/* LEFT: Value Proposition */}
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
-                <h1 className="tru-hero-headline-main tru-hero-headline-large">
+                <h1 className="tru-hero-headline-main">
                   Get matched with vetted carriers<br />
                   <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
