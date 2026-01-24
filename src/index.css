@@ -877,8 +877,8 @@
 
 /* Value cards expand when user starts typing - smooth transitions with info visible */
 .tru-hero-value-cards.is-expanded .tru-value-card {
-  min-height: 140px;
-  padding-bottom: 56px;
+  min-height: 180px;
+  padding-bottom: 64px;
 }
 
 .tru-hero-value-cards.is-expanded .tru-value-card-preview {
@@ -11020,6 +11020,24 @@
   box-shadow: 
     0 12px 40px hsl(var(--tm-ink) / 0.15),
     0 4px 12px hsl(var(--tm-ink) / 0.1);
+  perspective: 1000px;
+  perspective-origin: center center;
+}
+
+/* Cinematic vignette overlay */
+.tru-analyze-popup-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    hsl(var(--tm-ink) / 0.15) 70%,
+    hsl(var(--tm-ink) / 0.4) 100%
+  );
+  border-radius: inherit;
 }
 
 .tru-analyze-popup-img {
@@ -11034,7 +11052,7 @@
 /* Cinematic zoom from space animation for satellite maps */
 @keyframes satellite-zoom-in {
   0% {
-    transform: scale(0.4) translate(0, 0);
+    transform: scale(0.4) rotateX(0deg) rotateY(0deg);
     filter: blur(3px);
     opacity: 0;
   }
@@ -11042,28 +11060,28 @@
     opacity: 1;
   }
   100% {
-    transform: scale(1.15) translate(0, 0);
+    transform: scale(1.15) rotateX(2deg) rotateY(-1deg);
     filter: blur(0);
     opacity: 1;
   }
 }
 
-/* Subtle camera drift after zoom completes */
+/* Subtle camera drift with 3D tilt after zoom completes */
 @keyframes satellite-drift {
   0% {
-    transform: scale(1.15) translate(0, 0);
+    transform: scale(1.15) translate(0, 0) rotateX(2deg) rotateY(-1deg);
   }
   25% {
-    transform: scale(1.18) translate(-1%, 0.5%);
+    transform: scale(1.18) translate(-1%, 0.5%) rotateX(3deg) rotateY(0.5deg);
   }
   50% {
-    transform: scale(1.15) translate(0.5%, -0.5%);
+    transform: scale(1.15) translate(0.5%, -0.5%) rotateX(1deg) rotateY(-2deg);
   }
   75% {
-    transform: scale(1.18) translate(-0.5%, 0.5%);
+    transform: scale(1.18) translate(-0.5%, 0.5%) rotateX(2.5deg) rotateY(1deg);
   }
   100% {
-    transform: scale(1.15) translate(0, 0);
+    transform: scale(1.15) translate(0, 0) rotateX(2deg) rotateY(-1deg);
   }
 }
 
