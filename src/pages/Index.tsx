@@ -560,7 +560,10 @@ export default function Index() {
                 {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
                 <div className="tru-hero-value-props-container">
                   {/* Section Headline */}
-                  <h3 className="text-base font-semibold text-foreground/80 mb-3">Smart Moving Starts Here</h3>
+                  <div className="mb-4">
+                    <h3 className="text-lg font-bold text-primary mb-1">Smart Moving Starts Here</h3>
+                    <p className="text-sm text-muted-foreground">Explore the tools that power a stress-free move</p>
+                  </div>
                   {/* Value Cards - Always visible with previews */}
                   <div className="tru-hero-value-cards tru-hero-value-cards-open">
                     <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
