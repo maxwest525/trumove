@@ -745,7 +745,7 @@ export default function Index() {
                           <div className="tru-qb-route-summary">
                             <div className="tru-qb-route-summary-inner">
                               {fromCity && (
-                                <div className="tru-qb-route-summary-item">
+                                <div className={`tru-qb-route-summary-item ${updatedFields.has('from') ? 'is-pulsing' : ''}`}>
                                   <span className="tru-qb-route-summary-label">Origin</span>
                                   <span className="tru-qb-route-summary-value">{fromCity}</span>
                                 </div>
@@ -758,7 +758,7 @@ export default function Index() {
                                 </div>
                               )}
                               {toCity && (
-                                <div className="tru-qb-route-summary-item">
+                                <div className={`tru-qb-route-summary-item ${updatedFields.has('to') ? 'is-pulsing' : ''}`}>
                                   <span className="tru-qb-route-summary-label">Destination</span>
                                   <span className="tru-qb-route-summary-value">{toCity}</span>
                                 </div>

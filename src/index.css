@@ -3543,6 +3543,29 @@
   flex-direction: column;
   gap: 2px;
   min-width: 0;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.tru-qb-route-summary-item.is-pulsing {
+  animation: item-pulse 0.5s ease-out;
+}
+
+.tru-qb-route-summary-item.is-pulsing .tru-qb-route-summary-value {
+  color: hsl(var(--primary));
+}
+
+@keyframes item-pulse {
+  0% {
+    background: transparent;
+  }
+  50% {
+    background: hsl(var(--primary) / 0.12);
+  }
+  100% {
+    background: transparent;
+  }
 }
 
 .tru-qb-route-summary-item:last-child {
