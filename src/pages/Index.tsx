@@ -558,9 +558,9 @@ export default function Index() {
                 </p>
                 
                 {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
-                <div className="tru-hero-value-props-container">
+                <div className="tru-hero-value-props-container border border-border/40 rounded-xl bg-muted/20 p-4">
                   {/* Section Headline */}
-                  <div className="mb-4 text-center border border-border/40 rounded-lg bg-muted/30 px-4 py-3">
+                  <div className="mb-4 text-center">
                     <h3 className="text-xl font-bold text-foreground">Smart Moving Starts Here</h3>
                     <p className="text-sm font-medium text-foreground/70">The tools that make your move seamless</p>
                   </div>
