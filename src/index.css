@@ -2856,6 +2856,22 @@
   color: hsl(var(--tm-ink));
 }
 
+/* Inline logo in form title */
+.tru-qb-form-title-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tru-qb-inline-logo {
+  height: 22px;
+  width: auto;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
 /* Input Focus Glow Animation */
 @keyframes glow-pulse {
   0%, 100% { 
