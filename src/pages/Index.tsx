@@ -740,9 +740,35 @@ export default function Index() {
                           </div>
                         </div>
 
+                        {/* Real-time Route Summary Strip */}
+                        {(fromCity || toCity || distance > 0) && (
+                          <div className="tru-qb-route-summary">
+                            <div className="tru-qb-route-summary-inner">
+                              {fromCity && (
+                                <div className="tru-qb-route-summary-item">
+                                  <span className="tru-qb-route-summary-label">Origin</span>
+                                  <span className="tru-qb-route-summary-value">{fromCity}</span>
+                                </div>
+                              )}
+                              {distance > 0 && (
+                                <div className="tru-qb-route-summary-distance">
+                                  <Route className="w-3.5 h-3.5" />
+                                  <span>{distance.toLocaleString()} mi</span>
+                                  <span className="tru-qb-route-summary-type">{moveType === 'long-distance' ? 'Long Distance' : 'Local'}</span>
+                                </div>
+                              )}
+                              {toCity && (
+                                <div className="tru-qb-route-summary-item">
+                                  <span className="tru-qb-route-summary-label">Destination</span>
+                                  <span className="tru-qb-route-summary-value">{toCity}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
 
                         {/* Move Date */}
-                        <p className="tru-qb-section-label">Move Date</p>
+                        <p className="tru-qb-section-label" style={{ marginTop: '1.25rem' }}>Move Date</p>
                         <div className="tru-qb-input-wrap">
                           <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                             <PopoverTrigger asChild>
