@@ -11029,11 +11029,27 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.4s ease;
+}
+
+/* Cinematic zoom from space animation for satellite maps */
+@keyframes satellite-zoom-in {
+  0% {
+    transform: scale(0.4);
+    filter: blur(3px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    filter: blur(0);
+    opacity: 1;
+  }
 }
 
 .tru-analyze-popup-img.is-loaded {
-  opacity: 1;
+  animation: satellite-zoom-in 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Shimmer loading effect */
