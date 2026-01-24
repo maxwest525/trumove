@@ -53,6 +53,24 @@ async function lookupZip(zip: string): Promise<string | null> {
   return null;
 }
 
+// Geocode a location string to coordinates for static map images
+async function geocodeLocation(location: string): Promise<[number, number] | null> {
+  try {
+    const token = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
+    const res = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?country=us&limit=1&access_token=${token}`
+    );
+    if (res.ok) {
+      const data = await res.json();
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center;
+        return [lng, lat];
+      }
+    }
+  } catch {}
+  return null;
+}
+
 const MOVE_SIZES = [
   { label: "Studio", value: "Studio" },
   { label: "1 Bed", value: "1 Bedroom" },
@@ -104,6 +122,12 @@ export default function Index() {
   
   // Step tracking (1-4)
   const [step, setStep] = useState(1);
+  
+  // Analyzing transition state
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analyzePhase, setAnalyzePhase] = useState(0); // 0: origin, 1: destination, 2: route
+  const [fromCoords, setFromCoords] = useState<[number, number] | null>(null);
+  const [toCoords, setToCoords] = useState<[number, number] | null>(null);
   
   // Chat state
   const [chatOpen, setChatOpen] = useState(false);
@@ -328,7 +352,24 @@ export default function Index() {
 
   const goNext = () => {
     if (canContinue() && step < 3) {
-      setStep(step + 1);
+      // If on step 1, trigger analyzing transition
+      if (step === 1) {
+        setIsAnalyzing(true);
+        setAnalyzePhase(0);
+        
+        // Phase 0: Show origin (0-1.2s)
+        setTimeout(() => setAnalyzePhase(1), 1200);
+        // Phase 1: Show destination (1.2-2.4s)
+        setTimeout(() => setAnalyzePhase(2), 2400);
+        // Phase 2: Show route (2.4-4s)
+        setTimeout(() => {
+          setIsAnalyzing(false);
+          setAnalyzePhase(0);
+          setStep(2);
+        }, 4000);
+      } else {
+        setStep(step + 1);
+      }
     }
   };
 
@@ -475,12 +516,15 @@ export default function Index() {
                             <LocationAutocomplete
                               value={fromZip}
                               onValueChange={(val) => setFromZip(val)}
-                              onLocationSelect={(city, zip, fullAddress) => {
+                              onLocationSelect={async (city, zip, fullAddress) => {
                                 setFromZip(zip);
                                 setFromCity(city);
                                 setFromLocationDisplay(fullAddress || `${city} ${zip}`);
                                 const state = city.split(',')[1]?.trim() || '';
                                 triggerCarrierSearch(state);
+                                // Geocode for static map
+                                const coords = await geocodeLocation(`${city} ${zip}`);
+                                if (coords) setFromCoords(coords);
                               }}
                               placeholder="City or ZIP"
                               autoFocus
@@ -494,7 +538,7 @@ export default function Index() {
                             <LocationAutocomplete
                               value={toZip}
                               onValueChange={(val) => setToZip(val)}
-                              onLocationSelect={(city, zip, fullAddress) => {
+                              onLocationSelect={async (city, zip, fullAddress) => {
                                 setToZip(zip);
                                 setToCity(city);
                                 setToLocationDisplay(fullAddress || `${city} ${zip}`);
@@ -502,6 +546,9 @@ export default function Index() {
                                   const state = city.split(',')[1]?.trim() || '';
                                   triggerCarrierSearch(state);
                                 }
+                                // Geocode for static map
+                                const coords = await geocodeLocation(`${city} ${zip}`);
+                                if (coords) setToCoords(coords);
                               }}
                               placeholder="City or ZIP"
                             />
@@ -536,14 +583,75 @@ export default function Index() {
 
                       <button
                         type="button"
-                        className={`tru-qb-continue tru-engine-btn ${isSearchingCarriers ? 'is-scanning' : ''}`}
-                        disabled={!canContinue() || isSearchingCarriers}
+                        className={`tru-qb-continue tru-engine-btn ${isSearchingCarriers || isAnalyzing ? 'is-scanning' : ''}`}
+                        disabled={!canContinue() || isSearchingCarriers || isAnalyzing}
                         onClick={goNext}
                       >
                         <Scan className="w-4 h-4 tru-btn-scan" />
-                        <span>{isSearchingCarriers ? 'Analyzing...' : 'Analyze Route'}</span>
-                        {!isSearchingCarriers && <ArrowRight className="w-5 h-5 tru-btn-arrow" />}
+                        <span>{isSearchingCarriers || isAnalyzing ? 'Analyzing...' : 'Analyze Route'}</span>
+                        {!isSearchingCarriers && !isAnalyzing && <ArrowRight className="w-5 h-5 tru-btn-arrow" />}
                       </button>
+                    </div>
+                  )}
+
+                  {/* Analyzing Transition Overlay */}
+                  {isAnalyzing && (
+                    <div className="tru-qb-analyzing-overlay" key="analyzing">
+                      <div className="tru-qb-analyzing-header">
+                        <Radar className="w-5 h-5 tru-analyzing-icon" />
+                        <span className="tru-analyzing-title">
+                          {analyzePhase === 0 && "Locating origin..."}
+                          {analyzePhase === 1 && "Locating destination..."}
+                          {analyzePhase === 2 && "Mapping route..."}
+                        </span>
+                      </div>
+                      
+                      <div className="tru-qb-analyzing-maps">
+                        {/* Origin View */}
+                        <div className={`tru-analyze-map-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
+                          <div className="tru-analyze-map-label">
+                            <MapPin className="w-3.5 h-3.5" />
+                            <span>Origin</span>
+                          </div>
+                          <div className="tru-analyze-map-frame">
+                            <img 
+                              src={fromCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},13,0/280x160@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
+                              alt="Origin location"
+                              className="tru-analyze-map-img"
+                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            />
+                            <div className="tru-analyze-map-city">{fromCity}</div>
+                          </div>
+                        </div>
+                        
+                        {/* Destination View */}
+                        <div className={`tru-analyze-map-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
+                          <div className="tru-analyze-map-label">
+                            <MapPin className="w-3.5 h-3.5" />
+                            <span>Destination</span>
+                          </div>
+                          <div className="tru-analyze-map-frame">
+                            <img 
+                              src={toCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},13,0/280x160@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
+                              alt="Destination location"
+                              className="tru-analyze-map-img"
+                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            />
+                            <div className="tru-analyze-map-city">{toCity}</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Route Progress */}
+                      <div className={`tru-analyze-route-bar ${analyzePhase >= 2 ? 'is-active' : ''}`}>
+                        <div className="tru-analyze-route-line">
+                          <div className="tru-analyze-route-fill" />
+                        </div>
+                        <div className="tru-analyze-route-info">
+                          <Truck className="w-4 h-4" />
+                          <span>{distance.toLocaleString()} miles • {estimatedDuration}</span>
+                        </div>
+                      </div>
                     </div>
                   )}
 
