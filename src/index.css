@@ -12049,7 +12049,7 @@
   font-weight: 800;
   letter-spacing: -0.02em;
   color: hsl(var(--tm-ink));
-  margin-bottom: 8px;
+  margin-bottom: 24px;
 }
 
 .tru-qb-subtitle {
@@ -12068,7 +12068,7 @@
   font-weight: 700;
   color: hsl(var(--tm-ink) / 0.5);
   margin-bottom: 8px;
-  margin-top: 16px;
+  margin-top: 24px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   text-align: left;
