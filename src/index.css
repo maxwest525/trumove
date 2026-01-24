@@ -852,7 +852,7 @@
 }
 
 .tru-hero-headline-main {
-  font-size: clamp(32px, 4.5vw, 48px);
+  font-size: clamp(24px, 3.2vw, 36px);
   font-weight: 800;
   line-height: 1.15;
   color: hsl(var(--tm-ink));

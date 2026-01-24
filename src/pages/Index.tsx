@@ -548,9 +548,8 @@ export default function Index() {
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
                 <h1 className="tru-hero-headline-main">
-                  Get Matched With<br />
-                  Vetted Carriers<br />
-                  <span className="tru-hero-headline-accent">who actually care.</span>
+                  Get Matched With Vetted Carriers<br />
+                  <span className="tru-hero-headline-accent">Who Actually Care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
                   Skip the complexity of large national van lines and impersonal intermediaries. We connect you directly with trusted, 
