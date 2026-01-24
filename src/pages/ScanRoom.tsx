@@ -13,6 +13,9 @@ import { format } from "date-fns";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import previewImage from "@/assets/scan-room-preview.jpg";
+import sampleRoomLiving from "@/assets/sample-room-living.jpg";
+import sampleRoomBedroom from "@/assets/sample-room-bedroom.jpg";
+import sampleRoomKitchen from "@/assets/sample-room-kitchen.jpg";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,9 +55,9 @@ export default function ScanRoom() {
   
   // Sample room photos for the library demo
   const samplePhotos = [
-    { id: 'sample-1', url: previewImage, name: 'Living Room' },
-    { id: 'sample-2', url: previewImage, name: 'Master Bedroom' },
-    { id: 'sample-3', url: previewImage, name: 'Kitchen' },
+    { id: 'sample-1', url: sampleRoomLiving, name: 'Living Room' },
+    { id: 'sample-2', url: sampleRoomBedroom, name: 'Master Bedroom' },
+    { id: 'sample-3', url: sampleRoomKitchen, name: 'Kitchen' },
   ];
   
   const [uploadedPhotos, setUploadedPhotos] = useState<{ id: string; url: string; name: string }[]>(samplePhotos);
