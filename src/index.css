@@ -14781,6 +14781,10 @@
   background: hsl(var(--tm-ink));
 }
 
+.tru-scan-steps-bar-compact {
+  padding: 16px 24px;
+}
+
 .tru-scan-steps-bar-inner {
   display: flex;
   align-items: center;
@@ -14789,6 +14793,12 @@
   max-width: 1000px;
   margin: 0 auto;
   flex-wrap: wrap;
+}
+
+.tru-scan-steps-spread {
+  justify-content: space-between;
+  max-width: 1100px;
+  gap: 16px;
 }
 
 .tru-scan-steps-bar-title {

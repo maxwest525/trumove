@@ -50,11 +50,11 @@ export default function ScanRoom() {
   const [showIntroModal, setShowIntroModal] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
   
-  // Sample photos for the library demo
+  // Sample room photos for the library demo
   const samplePhotos = [
-    { id: 'sample-1', url: '/inventory/living-room/sofa-3-cushion.png', name: 'Living Room' },
-    { id: 'sample-2', url: '/inventory/bedroom/bed-queen.png', name: 'Master Bedroom' },
-    { id: 'sample-3', url: '/inventory/kitchen/kitchen-table.png', name: 'Kitchen' },
+    { id: 'sample-1', url: previewImage, name: 'Living Room' },
+    { id: 'sample-2', url: previewImage, name: 'Master Bedroom' },
+    { id: 'sample-3', url: previewImage, name: 'Kitchen' },
   ];
   
   const [uploadedPhotos, setUploadedPhotos] = useState<{ id: string; url: string; name: string }[]>(samplePhotos);
@@ -314,34 +314,30 @@ export default function ScanRoom() {
           onStartScan={startDemo}
         />
 
-        {/* How It Works - Full Width Dark Divider Bar */}
-        <section className="tru-scan-steps-bar">
-          <div className="tru-scan-steps-bar-inner">
-            <h2 className="tru-scan-steps-bar-title">From Photos to Quote in 3 Simple Steps</h2>
-            <div className="tru-scan-steps-bar-line" />
-            <div className="tru-scan-steps-bar-items">
-              <div className="tru-scan-step-bar-item">
-                <span className="tru-scan-step-bar-num">1</span>
-                <div className="tru-scan-step-bar-content">
-                  <span className="tru-scan-step-bar-label">Upload Room Photos</span>
-                  <span className="tru-scan-step-bar-desc">Take photos of each room showing all furniture and items</span>
-                </div>
+        {/* How It Works - Compact Steps Bar */}
+        <section className="tru-scan-steps-bar tru-scan-steps-bar-compact">
+          <div className="tru-scan-steps-bar-inner tru-scan-steps-spread">
+            <div className="tru-scan-step-bar-item">
+              <span className="tru-scan-step-bar-num">1</span>
+              <div className="tru-scan-step-bar-content">
+                <span className="tru-scan-step-bar-label">Upload Room Photos</span>
+                <span className="tru-scan-step-bar-desc">Take photos of each room showing all furniture and items</span>
               </div>
-              <ChevronRight className="tru-scan-step-bar-arrow" />
-              <div className="tru-scan-step-bar-item">
-                <span className="tru-scan-step-bar-num">2</span>
-                <div className="tru-scan-step-bar-content">
-                  <span className="tru-scan-step-bar-label">AI Detects & Measures</span>
-                  <span className="tru-scan-step-bar-desc">Our AI identifies items and calculates weight & volume</span>
-                </div>
+            </div>
+            <ChevronRight className="tru-scan-step-bar-arrow" />
+            <div className="tru-scan-step-bar-item">
+              <span className="tru-scan-step-bar-num">2</span>
+              <div className="tru-scan-step-bar-content">
+                <span className="tru-scan-step-bar-label">AI Detects & Measures</span>
+                <span className="tru-scan-step-bar-desc">Our AI identifies items and calculates weight & volume</span>
               </div>
-              <ChevronRight className="tru-scan-step-bar-arrow" />
-              <div className="tru-scan-step-bar-item">
-                <span className="tru-scan-step-bar-num">3</span>
-                <div className="tru-scan-step-bar-content">
-                  <span className="tru-scan-step-bar-label">Review & Get Quote</span>
-                  <span className="tru-scan-step-bar-desc">Verify your inventory and receive an instant estimate</span>
-                </div>
+            </div>
+            <ChevronRight className="tru-scan-step-bar-arrow" />
+            <div className="tru-scan-step-bar-item">
+              <span className="tru-scan-step-bar-num">3</span>
+              <div className="tru-scan-step-bar-content">
+                <span className="tru-scan-step-bar-label">Review & Get Quote</span>
+                <span className="tru-scan-step-bar-desc">Verify your inventory and receive an instant estimate</span>
               </div>
             </div>
           </div>
