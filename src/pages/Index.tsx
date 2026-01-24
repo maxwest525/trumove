@@ -651,7 +651,9 @@ export default function Index() {
                   
                   <div className="tru-qb-form-header tru-qb-form-header-pill">
                     <div className="tru-qb-form-title-group">
-                      <span className="tru-qb-form-title tru-qb-form-title-large">Find the right carrier for your move</span>
+                      <span className="tru-qb-form-title tru-qb-form-title-large tru-qb-form-title-inline">
+                        Let <img src={logoImg} alt="TruMove" className="tru-qb-inline-logo" /> find the right carrier for you
+                      </span>
                       <span className="tru-qb-form-subtitle-compact">Enter your route to begin matching</span>
                     </div>
                   </div>
