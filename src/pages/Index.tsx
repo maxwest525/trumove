@@ -548,7 +548,8 @@ export default function Index() {
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
                 <h1 className="tru-hero-headline-main">
-                  Get matched with vetted carriers<br />
+                  Get Matched With<br />
+                  Vetted Carriers<br />
                   <span className="tru-hero-headline-accent">who actually care.</span>
                 </h1>
                 <p className="tru-hero-subheadline">
