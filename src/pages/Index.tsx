@@ -399,65 +399,60 @@ export default function Index() {
             {/* Full-Page Analyzing Overlay */}
             {isAnalyzing && (
               <div className="tru-analyze-fullpage-overlay">
-                <div className="tru-analyze-fullpage-content">
-                  <div className="tru-analyze-fullpage-header">
+                <div className="tru-analyze-popup-modal">
+                  <div className="tru-analyze-popup-header">
                     <Radar className="w-6 h-6 tru-analyzing-icon" />
-                    <span className="tru-analyze-fullpage-title">
+                    <span className="tru-analyze-popup-title">
                       {analyzePhase === 0 && "Locating origin..."}
                       {analyzePhase === 1 && "Locating destination..."}
-                      {analyzePhase === 2 && "Mapping your route..."}
+                      {analyzePhase === 2 && "Analyzing route..."}
                     </span>
                   </div>
                   
-                  <div className="tru-analyze-fullpage-maps">
+                  <div className="tru-analyze-popup-maps">
                     {/* Origin Satellite */}
-                    <div className={`tru-analyze-fullpage-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
-                      <div className="tru-analyze-fullpage-label">
+                    <div className={`tru-analyze-popup-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
+                      <div className="tru-analyze-popup-label">
                         <MapPin className="w-4 h-4" />
                         <span>Origin</span>
                       </div>
-                      <div className="tru-analyze-fullpage-frame">
+                      <div className="tru-analyze-popup-frame">
                         <img 
-                          src={fromCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/400x280@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
+                          src={fromCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/560x400@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
                           alt="Origin location"
-                          className="tru-analyze-fullpage-img"
+                          className="tru-analyze-popup-img"
                         />
-                        <div className="tru-analyze-fullpage-city">{fromCity}</div>
-                      </div>
-                    </div>
-                    
-                    {/* Route Connector */}
-                    <div className={`tru-analyze-fullpage-connector ${analyzePhase >= 2 ? 'is-active' : ''}`}>
-                      <div className="tru-analyze-connector-line">
-                        <div className="tru-analyze-connector-fill" />
-                      </div>
-                      <div className="tru-analyze-connector-info">
-                        <Truck className="w-5 h-5" />
-                        <span>{distance.toLocaleString()} mi</span>
+                        <div className="tru-analyze-popup-city">{fromCity}</div>
                       </div>
                     </div>
                     
                     {/* Destination Satellite */}
-                    <div className={`tru-analyze-fullpage-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
-                      <div className="tru-analyze-fullpage-label">
+                    <div className={`tru-analyze-popup-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
+                      <div className="tru-analyze-popup-label">
                         <MapPin className="w-4 h-4" />
                         <span>Destination</span>
                       </div>
-                      <div className="tru-analyze-fullpage-frame">
+                      <div className="tru-analyze-popup-frame">
                         <img 
-                          src={toCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/400x280@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
+                          src={toCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/560x400@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
                           alt="Destination location"
-                          className="tru-analyze-fullpage-img"
+                          className="tru-analyze-popup-img"
                         />
-                        <div className="tru-analyze-fullpage-city">{toCity}</div>
+                        <div className="tru-analyze-popup-city">{toCity}</div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Duration estimate */}
-                  <div className={`tru-analyze-fullpage-duration ${analyzePhase >= 2 ? 'is-active' : ''}`}>
-                    <Clock className="w-4 h-4" />
-                    <span>Est. transit: {estimatedDuration}</span>
+                  {/* Animated Route Line */}
+                  <div className={`tru-analyze-route-drawer ${analyzePhase >= 2 ? 'is-active' : ''}`}>
+                    <div className="tru-analyze-route-track">
+                      <div className="tru-analyze-route-line" />
+                      <Truck className="tru-analyze-route-truck" />
+                    </div>
+                    <div className="tru-analyze-route-stats">
+                      <span className="tru-analyze-route-distance">{distance.toLocaleString()} miles</span>
+                      <span className="tru-analyze-route-duration">{estimatedDuration}</span>
+                    </div>
                   </div>
                 </div>
               </div>

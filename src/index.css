@@ -10903,32 +10903,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--tm-ink) / 0.4);
-  backdrop-filter: blur(8px);
+  background: hsl(var(--tm-ink) / 0.5);
+  backdrop-filter: blur(12px);
   animation: fadeIn 0.3s ease;
 }
 
-.tru-analyze-fullpage-content {
+.tru-analyze-popup-modal {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 40px 32px;
-  max-width: 840px;
-  width: 90%;
+  padding: 48px 40px;
+  max-width: 960px;
+  width: 95%;
   background: hsl(var(--background));
-  border-radius: 24px;
+  border-radius: 28px;
   border: 1px solid hsl(var(--border));
   box-shadow: 
-    0 25px 50px -12px hsl(var(--tm-ink) / 0.25),
-    0 12px 24px -8px hsl(var(--tm-ink) / 0.15);
+    0 30px 60px -15px hsl(var(--tm-ink) / 0.3),
+    0 15px 30px -10px hsl(var(--tm-ink) / 0.2);
   animation: popupEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes popupEnter {
   from {
     opacity: 0;
-    transform: scale(0.9) translateY(20px);
+    transform: scale(0.92) translateY(30px);
   }
   to {
     opacity: 1;
@@ -10936,192 +10936,226 @@
   }
 }
 
-.tru-analyze-fullpage-header {
+.tru-analyze-popup-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 32px;
+  gap: 14px;
+  margin-bottom: 36px;
 }
 
-.tru-analyze-fullpage-title {
-  font-size: 22px;
+.tru-analyze-popup-title {
+  font-size: 24px;
   font-weight: 800;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.02em;
 }
 
-.tru-analyze-fullpage-maps {
+.tru-analyze-popup-maps {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: 24px;
+  gap: 32px;
   width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
-.tru-analyze-fullpage-panel {
+.tru-analyze-popup-panel {
   opacity: 0;
-  transform: scale(0.9) translateY(20px);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.9) translateY(24px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.tru-analyze-fullpage-panel.is-active {
+.tru-analyze-popup-panel.is-active {
   opacity: 1;
   transform: scale(1) translateY(0);
 }
 
-.tru-analyze-fullpage-label {
+.tru-analyze-popup-label {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  margin-bottom: 8px;
-  font-size: 12px;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: hsl(var(--tm-ink) / 0.6);
 }
 
-.tru-analyze-fullpage-frame {
+.tru-analyze-popup-frame {
   position: relative;
-  width: 340px;
-  height: 220px;
+  width: 400px;
+  height: 280px;
   background: hsl(var(--muted));
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
-  border: 2px solid hsl(var(--border));
+  border: 3px solid hsl(var(--border));
   box-shadow: 
-    0 8px 32px hsl(var(--tm-ink) / 0.12),
-    0 2px 8px hsl(var(--tm-ink) / 0.08);
+    0 12px 40px hsl(var(--tm-ink) / 0.15),
+    0 4px 12px hsl(var(--tm-ink) / 0.1);
 }
 
-.tru-analyze-fullpage-img {
+.tru-analyze-popup-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.tru-analyze-fullpage-city {
+.tru-analyze-popup-city {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
-  padding: 6px 12px;
-  font-size: 13px;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  padding: 8px 16px;
+  font-size: 14px;
   font-weight: 700;
   color: hsl(0 0% 100%);
-  background: hsl(var(--tm-ink) / 0.8);
-  backdrop-filter: blur(6px);
-  border-radius: 8px;
+  background: hsl(var(--tm-ink) / 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Route Connector between maps */
-.tru-analyze-fullpage-connector {
+/* Route Drawer - Animated line from origin to destination */
+.tru-analyze-route-drawer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
-}
-
-.tru-analyze-fullpage-connector.is-active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.tru-analyze-connector-line {
-  width: 100px;
-  height: 5px;
-  background: hsl(var(--border));
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.tru-analyze-connector-fill {
+  gap: 16px;
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(165 70% 40%));
-  border-radius: 2px;
-  animation: routeProgress 1s ease forwards;
-}
-
-.tru-analyze-connector-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 700;
-  color: hsl(var(--primary));
-}
-
-.tru-analyze-connector-info svg {
-  animation: truckMove 1.5s ease-in-out infinite;
-}
-
-@keyframes truckMove {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(4px); }
-}
-
-.tru-analyze-fullpage-duration {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink));
-  background: hsl(var(--muted));
-  border-radius: 999px;
-  border: 1px solid hsl(var(--border));
+  max-width: 700px;
   opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+  transform: translateY(16px);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.tru-analyze-fullpage-duration.is-active {
+.tru-analyze-route-drawer.is-active {
   opacity: 1;
   transform: translateY(0);
 }
 
-.tru-analyze-fullpage-duration svg {
+.tru-analyze-route-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: hsl(var(--border));
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.tru-analyze-route-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(165 70% 35%));
+  border-radius: 4px;
+  animation: routeLineDraw 2s ease-out forwards;
+}
+
+@keyframes routeLineDraw {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.tru-analyze-route-truck {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  color: hsl(var(--primary));
+  background: hsl(var(--background));
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.2);
+  animation: truckDrive 2s ease-out forwards;
+}
+
+@keyframes truckDrive {
+  0% { left: 0%; }
+  100% { left: 100%; }
+}
+
+.tru-analyze-route-stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 28px;
+  background: hsl(var(--muted));
+  border-radius: 999px;
+  border: 1px solid hsl(var(--border));
+}
+
+.tru-analyze-route-distance {
+  font-size: 16px;
+  font-weight: 800;
   color: hsl(var(--primary));
 }
 
-/* Mobile responsive */
-@media (max-width: 768px) {
-  .tru-analyze-fullpage-content {
-    padding: 28px 20px;
-    width: 95%;
+.tru-analyze-route-duration {
+  font-size: 15px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.8);
+}
+
+/* Mobile responsive for popup modal */
+@media (max-width: 900px) {
+  .tru-analyze-popup-modal {
+    padding: 32px 24px;
+    width: 96%;
   }
   
-  .tru-analyze-fullpage-maps {
+  .tru-analyze-popup-maps {
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
   }
   
-  .tru-analyze-fullpage-connector {
-    transform: rotate(90deg) scale(0.8);
+  .tru-analyze-popup-frame {
+    width: 320px;
+    height: 220px;
   }
   
-  .tru-analyze-fullpage-connector.is-active {
-    transform: rotate(90deg) scale(1);
+  .tru-analyze-popup-title {
+    font-size: 20px;
   }
   
-  .tru-analyze-fullpage-frame {
+  .tru-analyze-route-drawer {
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tru-analyze-popup-modal {
+    padding: 24px 16px;
+  }
+  
+  .tru-analyze-popup-frame {
     width: 280px;
     height: 180px;
   }
   
-  .tru-analyze-fullpage-title {
+  .tru-analyze-popup-title {
     font-size: 18px;
+  }
+  
+  .tru-analyze-route-stats {
+    gap: 16px;
+    padding: 10px 20px;
+  }
+  
+  .tru-analyze-route-distance {
+    font-size: 14px;
+  }
+  
+  .tru-analyze-route-duration {
+    font-size: 13px;
   }
 }
 
