@@ -393,12 +393,12 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
       <CardContent className="space-y-4">
         {/* Summary Stats - Always visible */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-lg bg-muted/30">
-            <div className="text-xs font-medium text-muted-foreground mb-1">Authority Status</div>
+          <div className="p-3 rounded-lg bg-muted/30 border border-border/60">
+            <div className="text-xs font-semibold text-slate-900 dark:text-foreground mb-1">Authority Status</div>
             <AuthorityBadge status={data.authority.commonStatus} />
           </div>
-          <div className="p-3 rounded-lg bg-muted/30">
-            <div className="text-xs font-medium text-muted-foreground mb-1">BIPD Liability</div>
+          <div className="p-3 rounded-lg bg-muted/30 border border-border/60">
+            <div className="text-xs font-semibold text-slate-900 dark:text-foreground mb-1">BIPD Liability</div>
             <span className="text-sm font-semibold text-foreground">{formatInsurance()}</span>
           </div>
         </div>
