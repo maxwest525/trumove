@@ -567,7 +567,7 @@ export default function Index() {
               </div>
             )}
             
-            {/* Hero Header with Headline + Subheadline + Arrow */}
+            {/* Hero Header with Headline + Subheadline */}
             <div className="tru-hero-header-section">
               <h1 className="tru-hero-headline-main">
                 Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> match you with <span className="tru-hero-headline-accent">vetted carriers</span>
@@ -575,17 +575,6 @@ export default function Index() {
               <p className="tru-hero-subheadline">
                 Our AI scans your rooms to build accurate inventories, while FMCSA safety data helps match you with trusted movers.
               </p>
-              <div className="tru-hero-trust-inline">
-                <span className="tru-hero-trust-item"><Shield className="w-3 h-3" /> FMCSA Licensed</span>
-                <span className="tru-hero-trust-sep">•</span>
-                <span className="tru-hero-trust-item"><Star className="w-3 h-3" /> 5-Star</span>
-                <span className="tru-hero-trust-sep">•</span>
-                <span className="tru-hero-trust-item"><Users className="w-3 h-3" /> 1,000+ Families</span>
-              </div>
-              {/* Animated arrow pointing to form */}
-              <div className="tru-hero-arrow-indicator">
-                <ChevronDown className="w-5 h-5" />
-              </div>
             </div>
 
             {/* LEFT: Feature Cards with parallax */}
