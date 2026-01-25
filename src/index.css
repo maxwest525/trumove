@@ -2,6 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hero Section Animations */
+@keyframes hero-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-logo-glow {
+  0% {
+    filter: drop-shadow(0 0 0 hsl(var(--primary) / 0));
+  }
+  100% {
+    filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.4));
+  }
+}
+
+/* Hero Container */
+.tru-hero-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Hero Headline Main */
+.tru-hero-headline-main {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.15;
+  animation: hero-fade-up 0.8s ease-out forwards;
+}
+
 /* Hero Inline Logo */
 .tru-hero-inline-logo {
   height: 1.1em;
@@ -11,6 +47,7 @@
   position: relative;
   top: 0.1em;
   transition: filter 0.3s ease;
+  animation: hero-logo-glow 0.8s ease-out 0.6s forwards;
 }
 
 .tru-hero-inline-logo:hover {
@@ -20,6 +57,15 @@
 .tru-hero-headline-line {
   display: block;
   text-align: center;
+}
+
+/* Hero Subheadline */
+.tru-hero-subheadline {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+  animation: hero-fade-up 0.8s ease-out 0.2s forwards;
+  opacity: 0;
 }
 
 /* Secondary Action Button - Used for secondary CTAs like phone/video consult */

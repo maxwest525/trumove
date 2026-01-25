@@ -546,7 +546,7 @@ export default function Index() {
             
             {/* LEFT: Value Proposition */}
             <div className="tru-hero-content-panel">
-              <div className="tru-hero-content-inner">
+              <div className="tru-hero-content-inner tru-hero-content">
                 <h1 className="tru-hero-headline-main">
                   <span className="tru-hero-headline-line">
                     Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> Get You Matched With
