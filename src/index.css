@@ -984,11 +984,11 @@
 /* Hero Split Layout - Compact with inline header */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 420px 1fr;
+  grid-template-columns: 520px 1fr;
   grid-template-rows: auto 1fr;
-  gap: 12px;
+  gap: 8px;
   align-items: start;
-  padding: 8px 24px 24px 24px;
+  padding: 4px 24px 16px 24px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -1084,7 +1084,7 @@
 
 .tru-hero-right-half .tru-hero-form-panel {
   width: 100%;
-  min-width: 480px;
+  min-width: 500px;
   max-width: 520px;
   flex-shrink: 0;
 }
@@ -1219,25 +1219,19 @@
   }
 }
 
-/* Feature Cards - Portrait Stacked Layout with Slide-Up Hover */
+/* Feature Cards - 3x2 Compact Grid */
 .tru-hero-value-cards-open {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  width: 100%;
-}
-
-/* Compact 6-card grid on desktop */
-.tru-hero-value-cards-compact {
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
+  width: 100%;
 }
 
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  min-height: 140px;
-  padding: 10px;
+  min-height: 100px;
+  padding: 8px;
   padding-bottom: 0;
   position: relative;
   overflow: hidden;
@@ -1246,20 +1240,26 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Smaller text for compact cards */
-.tru-hero-value-cards-compact .tru-value-card-title {
-  font-size: 12px;
+/* Compact card text */
+.tru-hero-value-cards-open .tru-value-card-title {
+  font-size: 11px;
+  font-weight: 600;
 }
 
-.tru-hero-value-cards-compact .tru-value-card-desc {
-  font-size: 10px;
-  line-height: 1.3;
+.tru-hero-value-cards-open .tru-value-card-desc {
+  font-size: 9px;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.tru-hero-value-cards-compact .tru-value-card-icon {
-  width: 28px;
-  height: 28px;
-  padding: 6px;
+.tru-hero-value-cards-open .tru-value-card-icon {
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+  flex-shrink: 0;
 }
 
 /* Hover: Lift + Glow + Border */
