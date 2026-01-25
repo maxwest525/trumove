@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Shield, Truck, Users, Star, ChevronDown, ChevronUp, CheckCircle2, Award, Home, Building, Package, ArrowRight, Heart } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Shield, Truck, Users, Star, ChevronDown, ChevronUp, CheckCircle2, Award, Home, Building, Package, ArrowRight, Heart, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,6 +8,12 @@ import { toast } from 'sonner';
 import heroImage from '@/assets/classic-hero-truck.jpg';
 import familyPhoto from '@/assets/classic-family-1.jpg';
 import familyMovingPhoto from '@/assets/classic-family-moving.jpg';
+import serviceResidential from '@/assets/service-residential.jpg';
+import serviceLongDistance from '@/assets/service-longdistance.jpg';
+import serviceCommercial from '@/assets/service-commercial.jpg';
+import servicePacking from '@/assets/service-packing.jpg';
+import serviceSenior from '@/assets/service-senior.jpg';
+import serviceStorage from '@/assets/service-storage.jpg';
 
 const Classic = () => {
   const [formData, setFormData] = useState({
@@ -74,33 +80,39 @@ Variant: classic
   const services = [
     {
       title: 'Residential Moving',
-      description: 'Full-service home moving with careful handling of all your belongings.',
+      description: 'Full-service home moving with the personal touch of a local mover.',
       icon: Home,
+      image: serviceResidential,
     },
     {
       title: 'Long Distance',
-      description: 'Nationwide relocations with tracking and guaranteed delivery dates.',
+      description: 'Coast-to-coast moves with one point of contact from start to finish.',
       icon: Truck,
+      image: serviceLongDistance,
     },
     {
       title: 'Commercial Moving',
-      description: 'Office and business relocations with minimal downtime.',
+      description: 'Office relocations handled with professionalism and care.',
       icon: Building,
+      image: serviceCommercial,
     },
     {
       title: 'Packing Services',
-      description: 'Professional packing with quality materials included.',
+      description: 'We pack it like it\'s our own grandmother\'s china.',
       icon: Package,
+      image: servicePacking,
     },
     {
       title: 'Senior Moving',
-      description: 'Specialized services for seniors with extra care and patience.',
+      description: 'Patient, compassionate service for our valued seniors.',
       icon: Users,
+      image: serviceSenior,
     },
     {
       title: 'Storage Solutions',
-      description: 'Secure short and long-term storage options available.',
+      description: 'Secure, climate-controlled storage when you need it.',
       icon: Shield,
+      image: serviceStorage,
     },
   ];
 
@@ -212,15 +224,17 @@ Variant: classic
           <div className="absolute inset-0 bg-[#1a365d]/70" />
           <div className="relative container mx-auto px-4 py-20">
             <div className="max-w-2xl">
-              <div className="inline-block bg-amber-500 text-white px-4 py-1 text-sm font-bold mb-4 rounded">
-                TRUSTED SINCE 1998
+              <div className="inline-flex items-center gap-2 bg-amber-500 text-white px-4 py-1 text-sm font-bold mb-4 rounded">
+                <Heart className="w-4 h-4" />
+                FAMILY OWNED SINCE 1998
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                Your Trusted Partner for Stress-Free Moving
+                Small Company Care.<br />
+                <span className="text-amber-400">Nationwide Reach.</span>
               </h1>
               <p className="text-xl text-white/90 mb-8 leading-relaxed">
-                Whether you're moving across town or across the country, our experienced team 
-                is here to make your move simple, safe, and affordable.
+                We're still the same family business that started with one truck and a handshake — 
+                now serving all 50 states with the personal touch you deserve.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a 
@@ -237,6 +251,57 @@ Variant: classic
                   <Phone className="w-5 h-5" />
                   Call 1-800-555-MOVE
                 </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Badges Strip */}
+      <section className="bg-white border-b border-gray-200 py-6">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+            {/* BBB Accredited */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-[#005a8c] rounded flex items-center justify-center">
+                <span className="text-white font-bold text-lg">BBB</span>
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-gray-500 uppercase tracking-wide">Accredited Business</div>
+                <div className="text-[#1a365d] font-bold">A+ Rating</div>
+              </div>
+            </div>
+            
+            {/* FMCSA Licensed */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-[#1a365d] rounded flex items-center justify-center">
+                <Shield className="w-6 h-6 text-amber-400" />
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-gray-500 uppercase tracking-wide">FMCSA</div>
+                <div className="text-[#1a365d] font-bold">Licensed Carrier</div>
+              </div>
+            </div>
+            
+            {/* Fully Insured */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-emerald-600 rounded flex items-center justify-center">
+                <BadgeCheck className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-gray-500 uppercase tracking-wide">Coverage</div>
+                <div className="text-[#1a365d] font-bold">Fully Insured</div>
+              </div>
+            </div>
+            
+            {/* USDOT */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-[#1a365d] rounded flex items-center justify-center">
+                <Truck className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-gray-500 uppercase tracking-wide">USDOT</div>
+                <div className="text-[#1a365d] font-bold">Registered</div>
               </div>
             </div>
           </div>
@@ -265,23 +330,33 @@ Variant: classic
               OUR SERVICES
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] mb-4">
-              Moving Services That Cover Every Detail
+              Big Enough to Handle It. Small Enough to Care.
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              From start to finish, we handle every aspect of your move with professionalism and care.
+              Every move gets the personal attention of our family — whether you're moving down the block or across the country.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {services.map((service, index) => (
               <div 
                 key={index} 
-                className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-xl hover:border-amber-400 transition-all duration-300 group"
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl hover:border-amber-400 transition-all duration-300 group"
               >
-                <div className="w-14 h-14 bg-[#1a365d] rounded-lg flex items-center justify-center mb-4 group-hover:bg-amber-500 transition-colors">
-                  <service.icon className="w-7 h-7 text-white" />
+                <div className="relative h-40 overflow-hidden">
+                  <img 
+                    src={service.image} 
+                    alt={service.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a365d]/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3 w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                    <service.icon className="w-5 h-5 text-white" />
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-[#1a365d] mb-3">{service.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{service.description}</p>
+                <div className="p-5">
+                  <h3 className="text-xl font-bold text-[#1a365d] mb-2">{service.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{service.description}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -444,11 +519,11 @@ Variant: classic
                 FAMILY OWNED & OPERATED
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] mb-4">
-                Three Generations of Moving Excellence
+                Local Values. National Service.
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                What started as a father-son operation in 1998 has grown into one of the most trusted 
-                moving companies in America — still run by the same family that started it all.
+                We've grown from a one-truck operation to serving all 50 states — but we've never 
+                forgotten that every move is personal. You'll always talk to family, not a call center.
               </p>
             </div>
             
@@ -460,22 +535,22 @@ Variant: classic
                   className="rounded-xl shadow-xl w-full"
                 />
                 <p className="text-center text-sm text-gray-500 mt-3 italic">
-                  The Mitchell Family — Owners of TruMove since 1998
+                  The Mitchell Family — Three generations, one commitment to you
                 </p>
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-[#1a365d] mb-4">
-                  "We Treat Your Belongings Like Our Own"
+                  "Your Move Is Personal to Us"
                 </h3>
                 <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                  When our father started this company with a single truck and a handshake, he made 
-                  one promise: treat every customer's belongings the same way you'd treat your own 
-                  grandmother's antiques. That promise hasn't changed.
+                  In 1998, our father started this company with one truck and a simple promise: 
+                  treat every customer like family. That's still how we operate today — even though 
+                  we now move families coast to coast.
                 </p>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  Today, with over 50,000 successful moves under our belt, we're proud that our 
-                  children now work alongside us — carrying on the same values of honesty, hard work, 
-                  and genuine care that built this company.
+                  When you call TruMove, you're not getting a faceless corporation. You're getting 
+                  a family that's been moving families for over 25 years. Our grandchildren now 
+                  help out on weekends — that's how much this business means to us.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
