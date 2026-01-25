@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
-  Menu, X, Sparkles, Phone, Video, ChevronDown, User,
+  Menu, X, Phone, Video, ChevronDown, User,
   Calculator, Calendar, Home, Shield, Bed, Bath, Square, CheckCircle2, Clock, Scan
 } from "lucide-react";
 import logo from "@/assets/logo.png";
-import ChatModal from "@/components/chat/ChatModal";
 
 // Mega-menu preview components
 const EstimatorPreview = () => (
@@ -205,7 +204,6 @@ const NAV: NavItem[] = [
 export default function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -316,27 +314,18 @@ export default function Header() {
 
           {/* Action Cluster */}
           <div className="header-actions">
-            <button 
-              type="button" 
-              className="header-btn header-btn-chat has-glow"
-              onClick={() => setChatOpen(true)}
-              aria-label="Open AI Chat"
-            >
-              <Sparkles className="w-4 h-4 sparkles-icon" />
-              <span>AI Chat</span>
-            </button>
             <a href="tel:+16097277647" className="header-btn header-btn-call">
               <Phone className="w-4 h-4" />
               <span>Call</span>
             </a>
             
-            {/* Spacer for right alignment */}
+            {/* Spacer to push Agent Login to the right */}
             <div className="flex-1" />
             
-            {/* Agent Login Button - Right aligned */}
+            {/* Agent Login Button - Far Right */}
             <Link 
               to="/agent-login" 
-              className="header-btn header-btn-agent ml-auto"
+              className="header-btn header-btn-agent"
               aria-label="Agent Login"
             >
               <User className="w-4 h-4" />
@@ -371,17 +360,6 @@ export default function Header() {
               ))}
             </nav>
             <div className="header-mobile-actions">
-              <button 
-                type="button" 
-                className="header-mobile-btn"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setChatOpen(true);
-                }}
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>AI Chat</span>
-              </button>
               <a href="tel:+16097277647" className="header-mobile-btn">
                 <Phone className="w-4 h-4" />
                 <span>Call Now</span>
@@ -407,9 +385,6 @@ export default function Header() {
           </div>
         )}
       </header>
-
-      {/* Chat Modal */}
-      <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </>
   );
 }
