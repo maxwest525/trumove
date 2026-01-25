@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Shield, Truck, Users, Star, ChevronDown, ChevronUp, CheckCircle2, Award, Home, Building, Package, ArrowRight } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Shield, Truck, Users, Star, ChevronDown, ChevronUp, CheckCircle2, Award, Home, Building, Package, ArrowRight, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import heroImage from '@/assets/classic-hero-truck.jpg';
+import familyPhoto from '@/assets/classic-family-1.jpg';
+import familyMovingPhoto from '@/assets/classic-family-moving.jpg';
 
 const Classic = () => {
   const [formData, setFormData] = useState({
@@ -194,7 +196,7 @@ Variant: classic
           </nav>
           <a 
             href="#quote" 
-            className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded font-bold transition-colors shadow-md"
+            className="border-2 border-amber-500 text-amber-600 hover:bg-amber-500 hover:text-white px-6 py-3 rounded font-bold transition-colors"
           >
             Get Free Quote
           </a>
@@ -223,7 +225,7 @@ Variant: classic
               <div className="flex flex-col sm:flex-row gap-4">
                 <a 
                   href="#quote" 
-                  className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-4 rounded text-lg font-bold transition-colors text-center shadow-lg flex items-center justify-center gap-2"
+                  className="border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white px-8 py-4 rounded text-lg font-bold transition-colors text-center shadow-lg flex items-center justify-center gap-2"
                 >
                   Get Your Free Quote
                   <ArrowRight className="w-5 h-5" />
@@ -369,26 +371,7 @@ Variant: classic
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
-                    Move Type
-                  </label>
-                  <Select
-                    value={formData.moveType}
-                    onValueChange={(value) => setFormData({ ...formData, moveType: value })}
-                  >
-                    <SelectTrigger className="h-12 text-base border-gray-300">
-                      <SelectValue placeholder="Select type..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="local">Local Move</SelectItem>
-                      <SelectItem value="longdistance">Long Distance</SelectItem>
-                      <SelectItem value="commercial">Commercial</SelectItem>
-                      <SelectItem value="senior">Senior Moving</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
                     Move Size
@@ -412,7 +395,7 @@ Variant: classic
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
-                    Move Date
+                    Preferred Move Date
                   </label>
                   <Input
                     type="date"
@@ -451,26 +434,48 @@ Variant: classic
         </div>
       </section>
 
-      {/* About Section */}
+      {/* Family-Owned Section */}
       <section id="about" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center mb-14">
+              <div className="inline-flex items-center gap-2 bg-amber-500/10 text-amber-600 px-4 py-1 text-sm font-bold mb-4 rounded">
+                <Heart className="w-4 h-4" />
+                FAMILY OWNED & OPERATED
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] mb-4">
+                Three Generations of Moving Excellence
+              </h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                What started as a father-son operation in 1998 has grown into one of the most trusted 
+                moving companies in America — still run by the same family that started it all.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
               <div>
-                <div className="inline-block bg-amber-500/10 text-amber-600 px-4 py-1 text-sm font-bold mb-4 rounded">
-                  ABOUT US
-                </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] mb-6">
-                  Family-Owned & Operated Since 1998
-                </h2>
+                <img 
+                  src={familyPhoto} 
+                  alt="The TruMove Family" 
+                  className="rounded-xl shadow-xl w-full"
+                />
+                <p className="text-center text-sm text-gray-500 mt-3 italic">
+                  The Mitchell Family — Owners of TruMove since 1998
+                </p>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-[#1a365d] mb-4">
+                  "We Treat Your Belongings Like Our Own"
+                </h3>
                 <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                  For over 25 years, TruMove has been helping families and businesses relocate with 
-                  care and professionalism. What started as a small family operation has grown into 
-                  one of the most trusted moving companies in the nation.
+                  When our father started this company with a single truck and a handshake, he made 
+                  one promise: treat every customer's belongings the same way you'd treat your own 
+                  grandmother's antiques. That promise hasn't changed.
                 </p>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  We treat every move like we're moving our own family. Our team of experienced 
-                  professionals is dedicated to making your relocation as smooth and stress-free as possible.
+                  Today, with over 50,000 successful moves under our belt, we're proud that our 
+                  children now work alongside us — carrying on the same values of honesty, hard work, 
+                  and genuine care that built this company.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
@@ -491,31 +496,46 @@ Variant: classic
                   </div>
                 </div>
               </div>
-              <div className="bg-[#1a365d] rounded-xl p-8 text-white">
-                <Award className="w-16 h-16 text-amber-400 mb-6" />
-                <h3 className="text-2xl font-bold mb-4">Our Promise to You</h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
-                    <span>On-time pickup and delivery, guaranteed</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
-                    <span>Careful handling of all your belongings</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
-                    <span>Transparent pricing with no surprises</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
-                    <span>Professional, uniformed, and background-checked crew</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
-                    <span>Real-time tracking for long-distance moves</span>
-                  </li>
-                </ul>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="order-2 lg:order-1">
+                <div className="bg-[#1a365d] rounded-xl p-8 text-white">
+                  <Award className="w-16 h-16 text-amber-400 mb-6" />
+                  <h3 className="text-2xl font-bold mb-4">Our Family Promise</h3>
+                  <ul className="space-y-4">
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                      <span>On-time pickup and delivery, guaranteed</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                      <span>Careful handling of all your belongings</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                      <span>Transparent pricing with no surprises</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                      <span>Background-checked, trained crew members</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                      <span>A real person answers when you call</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="order-1 lg:order-2">
+                <img 
+                  src={familyMovingPhoto} 
+                  alt="Happy family on moving day" 
+                  className="rounded-xl shadow-xl w-full"
+                />
+                <p className="text-center text-sm text-gray-500 mt-3 italic">
+                  Making moving day a happy memory for families everywhere
+                </p>
               </div>
             </div>
           </div>
