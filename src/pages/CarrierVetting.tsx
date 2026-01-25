@@ -418,7 +418,7 @@ export default function CarrierVetting() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleAddCarrier(MOCK_CARRIER_GOOD.carrier.dotNumber)}
+                    onClick={() => loadDemoCarrier(MOCK_CARRIER_GOOD)}
                     className="gap-2 border-green-500/30 hover:border-green-500/60 hover:bg-green-500/10"
                   >
                     <CheckCircle2 className="w-4 h-4 text-green-500" />
@@ -428,7 +428,7 @@ export default function CarrierVetting() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleAddCarrier(MOCK_CARRIER_BAD.carrier.dotNumber)}
+                    onClick={() => loadDemoCarrier(MOCK_CARRIER_BAD)}
                     className="gap-2 border-red-500/30 hover:border-red-500/60 hover:bg-red-500/10"
                   >
                     <AlertTriangle className="w-4 h-4 text-red-500" />
@@ -438,7 +438,7 @@ export default function CarrierVetting() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleAddCarrier(MOCK_CARRIER_MIXED.carrier.dotNumber)}
+                    onClick={() => loadDemoCarrier(MOCK_CARRIER_MIXED)}
                     className="gap-2 border-amber-500/30 hover:border-amber-500/60 hover:bg-amber-500/10"
                   >
                     <AlertCircle className="w-4 h-4 text-amber-500" />
