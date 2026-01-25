@@ -21,6 +21,7 @@ import previewVideoConsult from "@/assets/preview-video-consult.jpg";
 import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
+import previewPhoneRep from "@/assets/preview-phone-rep.jpg";
 
 import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -590,6 +591,7 @@ export default function Index() {
                 <div className="tru-hero-value-props-container tru-feature-section-card-clean">
                   {/* Value Cards - Always visible with previews */}
                   <div className="tru-hero-value-cards tru-hero-value-cards-open">
+                    {/* Row 1 */}
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
@@ -603,13 +605,13 @@ export default function Index() {
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewAiScanner} alt="Inventory Builder Preview" />
+                            <img src={sampleRoomLiving} alt="Inventory Builder Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>Live Now</TooltipContent>
                     </Tooltip>
-                    
+
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
@@ -623,13 +625,13 @@ export default function Index() {
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={sampleRoomLiving} alt="AI Room Scanner Preview" />
+                            <img src={previewAiScanner} alt="AI Room Scanner Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>Coming Soon</TooltipContent>
                     </Tooltip>
-                    
+
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
@@ -649,7 +651,8 @@ export default function Index() {
                       </TooltipTrigger>
                       <TooltipContent>Live Now</TooltipContent>
                     </Tooltip>
-                    
+
+                    {/* Row 2 */}
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/book")}>
@@ -658,12 +661,32 @@ export default function Index() {
                               <Video className="w-4 h-4" />
                             </div>
                             <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">TruMove Specialist</h3>
+                              <h3 className="tru-value-card-title">Video Consult</h3>
                               <p className="tru-value-card-desc">Live video consultation for personalized guidance.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewVideoConsult} alt="TruMove Specialist Preview" />
+                            <img src={previewVideoConsult} alt="Video Consult Preview" />
+                          </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Live Now</TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="tru-value-card tru-value-card-open" onClick={() => setChatOpen(true)}>
+                          <div className="tru-value-card-header">
+                            <div className="tru-value-card-icon">
+                              <Phone className="w-4 h-4" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">TruMove Specialist</h3>
+                              <p className="tru-value-card-desc">Speak with a dedicated moving expert.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-preview tru-value-card-preview-visible">
+                            <img src={previewPhoneRep} alt="TruMove Specialist Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
@@ -684,26 +707,6 @@ export default function Index() {
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
                             <img src={previewPropertyLookup} alt="FMCSA Verification Preview" />
-                          </div>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>Live Now</TooltipContent>
-                    </Tooltip>
-
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
-                          <div className="tru-value-card-header">
-                            <div className="tru-value-card-icon">
-                              <DollarSign className="w-4 h-4" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Instant Pricing</h3>
-                              <p className="tru-value-card-desc">Get accurate quotes in minutes, not hours.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={scanRoomPreview} alt="Instant Pricing Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
