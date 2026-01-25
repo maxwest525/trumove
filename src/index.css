@@ -5650,6 +5650,7 @@
   position: relative;
   width: 100%;
   max-width: 600px;
+  min-height: 420px;
   border-radius: 20px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
@@ -5657,7 +5658,7 @@
     0 1px 3px hsl(var(--tm-ink) / 0.04),
     0 16px 48px hsl(var(--tm-ink) / 0.1),
     0 0 0 1px hsl(var(--tm-ink) / 0.02);
-  padding: 28px 32px;
+  padding: 32px 36px;
   overflow: hidden;
 }
 

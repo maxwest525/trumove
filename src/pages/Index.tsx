@@ -568,7 +568,7 @@ export default function Index() {
                 Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> match you with <span className="tru-hero-headline-accent">vetted carriers</span>
               </h1>
               <p className="tru-hero-subheadline">
-                Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data, so we can confidently match you with carriers that best meet your needs.
+                Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
               </p>
             </div>
 
