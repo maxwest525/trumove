@@ -1217,19 +1217,9 @@
 /* =============================================
    FEATURE CARDS - OPEN BY DEFAULT
    ============================================= */
-/* Feature Cards Container - Constrained to hero text width on desktop */
+/* Feature Cards Container - Full width for 3-column grid */
 .tru-hero-value-props-container {
   width: 100%;
-}
-
-@media (min-width: 1024px) {
-  .tru-hero-value-props-container {
-    /* Constrain to 90% of headline text width */
-    width: 80%;
-    max-width: none;
-    margin-left: 0;
-    margin-right: auto;
-  }
 }
 
 /* Feature Cards - 3-column Grid Layout */
