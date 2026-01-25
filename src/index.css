@@ -924,7 +924,7 @@
   padding-bottom: 32px;
 }
 
-/* Right half - Form + Sidebar together */
+/* LEFT: Form + Sidebar together (swapped from right) */
 .tru-hero-right-half {
   display: flex;
   flex-direction: row;
@@ -932,6 +932,7 @@
   align-items: flex-start;
   justify-content: flex-start;
   height: 100%;
+  order: 1; /* Move to left (first position) */
 }
 
 .tru-hero-right-half .tru-hero-form-panel {
@@ -945,12 +946,13 @@
   flex-shrink: 0;
 }
 
-/* LEFT PANEL: Value Proposition */
+/* RIGHT PANEL: Value Proposition (swapped from left) */
 .tru-hero-content-panel {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
+  order: 2; /* Move to right (second position) */
 }
 
 .tru-hero-content-inner {
