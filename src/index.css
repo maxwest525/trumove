@@ -1233,7 +1233,7 @@
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  height: 180px;
+  min-height: 180px;
   padding: 12px;
   padding-bottom: 0;
   position: relative;
