@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle, Printer, Lock, Activity, ClipboardCheck } from 'lucide-react';
 
 import SiteShell from '@/components/layout/SiteShell';
 import { Button } from '@/components/ui/button';
@@ -109,22 +109,22 @@ const DATA_SOURCES = [
     description: 'Official FMCSA database'
   },
   {
-    icon: FileCheck,
+    icon: Activity,
     title: 'Real-Time Updates',
     description: 'Continuous data refresh'
   },
   {
-    icon: TrendingUp,
+    icon: ClipboardCheck,
     title: 'CSA BASIC Scores',
     description: 'Safety accountability metrics'
   },
   {
-    icon: Shield,
+    icon: Lock,
     title: 'Authority Verification',
     description: 'Operating status confirmed'
   },
   {
-    icon: Truck,
+    icon: Shield,
     title: 'Insurance Coverage',
     description: 'BIPD & cargo verified'
   }
@@ -263,6 +263,10 @@ export default function CarrierVetting() {
 
   const clearAll = useCallback(() => {
     setCarriers([]);
+  }, []);
+
+  const handlePrintReport = useCallback(() => {
+    window.print();
   }, []);
 
   return (
@@ -421,7 +425,7 @@ export default function CarrierVetting() {
                 {[1, 2, 3].map((i) => (
                   <div 
                     key={i} 
-                    className="relative p-6 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 min-h-[280px] flex flex-col items-center justify-center text-center group hover:border-primary/30 hover:bg-muted/30 transition-all duration-300"
+                    className="relative p-8 rounded-xl border-2 border-dashed border-slate-300 dark:border-border/60 bg-slate-50/50 dark:bg-muted/20 min-h-[300px] flex flex-col items-center justify-center text-center group hover:border-primary/40 hover:bg-slate-100/50 dark:hover:bg-muted/30 transition-all duration-300 shadow-sm"
                     style={{ 
                       animation: `pulse-subtle 3s ease-in-out infinite`,
                       animationDelay: `${i * 0.5}s`
@@ -436,19 +440,20 @@ export default function CarrierVetting() {
                       }}
                     >
                       {/* Placeholder Icon */}
-                      <div className="w-16 h-16 rounded-full bg-muted/50 border border-border/50 flex items-center justify-center mb-4 group-hover:border-primary/30 transition-colors">
-                        <Shield className="w-8 h-8 text-muted-foreground/40 group-hover:text-primary/40 transition-colors" />
-                      </div>
-                      
-                      {/* Placeholder Text - Shimmer effect */}
-                      <div className="space-y-2">
-                        <div className="h-4 w-32 bg-gradient-to-r from-muted/40 via-muted/70 to-muted/40 rounded mx-auto bg-[length:200%_100%] animate-[shimmer_2s_infinite]" />
-                        <div className="h-3 w-24 bg-gradient-to-r from-muted/30 via-muted/50 to-muted/30 rounded mx-auto bg-[length:200%_100%] animate-[shimmer_2s_infinite]" style={{ animationDelay: '0.3s' }} />
+                      <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-muted/50 border-2 border-slate-200 dark:border-border/50 flex items-center justify-center mb-5 group-hover:border-primary/30 transition-colors shadow-inner">
+                        <Truck className="w-10 h-10 text-slate-400 dark:text-muted-foreground/40 group-hover:text-primary/50 transition-colors" />
                       </div>
                       
                       {/* Slot Label */}
-                      <p className="mt-4 text-xs text-muted-foreground/60 font-medium">
-                        Carrier Slot {i}
+                      <div className="px-4 py-1.5 rounded-full bg-slate-200/70 dark:bg-muted/50 border border-slate-300 dark:border-border/50">
+                        <p className="text-sm font-semibold text-slate-600 dark:text-muted-foreground">
+                          Carrier Slot {i}
+                        </p>
+                      </div>
+
+                      {/* Helper text */}
+                      <p className="mt-3 text-xs text-slate-500 dark:text-muted-foreground/60">
+                        Search above or try a demo
                       </p>
                     </div>
                   </div>
@@ -499,22 +504,22 @@ export default function CarrierVetting() {
                 <h3 className="text-center text-sm font-semibold text-foreground mb-6">How It Works</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
-                      <span className="text-sm font-bold text-primary">1</span>
+                    <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-100 flex items-center justify-center mx-auto mb-3 shadow-md">
+                      <span className="text-sm font-bold text-white dark:text-slate-900">1</span>
                     </div>
                     <h4 className="text-sm font-medium text-foreground mb-1">Search by DOT or Name</h4>
                     <p className="text-xs text-muted-foreground">Enter a carrier's DOT number or company name in the search above</p>
                   </div>
                   <div className="text-center">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
-                      <span className="text-sm font-bold text-primary">2</span>
+                    <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-100 flex items-center justify-center mx-auto mb-3 shadow-md">
+                      <span className="text-sm font-bold text-white dark:text-slate-900">2</span>
                     </div>
                     <h4 className="text-sm font-medium text-foreground mb-1">Review Safety Data</h4>
                     <p className="text-xs text-muted-foreground">See instant FMCSA safety scores, insurance status, and red flags</p>
                   </div>
                   <div className="text-center">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
-                      <span className="text-sm font-bold text-primary">3</span>
+                    <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-100 flex items-center justify-center mx-auto mb-3 shadow-md">
+                      <span className="text-sm font-bold text-white dark:text-slate-900">3</span>
                     </div>
                     <h4 className="text-sm font-medium text-foreground mb-1">Compare Up to 4</h4>
                     <p className="text-xs text-muted-foreground">Add multiple carriers to compare their safety records side-by-side</p>
@@ -528,9 +533,20 @@ export default function CarrierVetting() {
           {carriers.length > 0 && (
             <div className="mt-12 mb-10 text-center">
               <div className="inline-block px-8 py-6 bg-gradient-to-b from-muted/50 to-transparent rounded-xl border border-border/50">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-                  Carrier Safety Comparison
-                </h2>
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                    Carrier Safety Comparison
+                  </h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePrintReport}
+                    className="gap-2 print:hidden"
+                  >
+                    <Printer className="w-4 h-4" />
+                    Print Report
+                  </Button>
+                </div>
                 <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed max-w-6xl">
                   Pursuant to 49 U.S.C. 31144 and 49 CFR Part 385, displayed carriers are evaluated and monitored under the FMCSA Safety Measurement System (SMS), which quantifies performance across Behavior Analysis and Safety Improvement Categories (BASICs) using roadside inspection data, crash records, and compliance history from federal sources. All records are subject to ongoing review for adherence to the safety fitness standard. Click any carrier card to examine the detailed safety profile.
                 </p>

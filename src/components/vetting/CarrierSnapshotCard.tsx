@@ -381,13 +381,32 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             </div>
           </div>
           
-          {/* Risk Grade - Fixed corner position */}
-          <div className={cn(
-            'absolute top-3 right-10 flex items-center justify-center w-8 h-8 rounded-lg border-2 font-bold text-sm',
-            riskGrade.color
-          )}>
-            {riskGrade.grade}
-          </div>
+          {/* Risk Grade - Fixed corner position with tooltip */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className={cn(
+                  'absolute top-3 right-10 flex items-center justify-center w-8 h-8 rounded-lg border-2 font-bold text-sm cursor-help',
+                  riskGrade.color
+                )}>
+                  {riskGrade.grade}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[220px]">
+                <div className="text-xs space-y-1">
+                  <p className="font-semibold">{riskGrade.label} Safety Grade</p>
+                  <p className="text-muted-foreground">
+                    {riskGrade.grade === 'A+' && 'Exceptional safety record with top-tier metrics across all categories.'}
+                    {riskGrade.grade === 'A' && 'Very good safety profile with minimal concerns.'}
+                    {riskGrade.grade === 'B' && 'Good overall safety with some areas for improvement.'}
+                    {riskGrade.grade === 'C' && 'Moderate safety performance with notable issues.'}
+                    {riskGrade.grade === 'D' && 'Concerning safety record with significant red flags.'}
+                    {riskGrade.grade === 'F' && 'High risk carrier with critical safety violations.'}
+                  </p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </CardHeader>
 
       <CardContent className="space-y-4">
