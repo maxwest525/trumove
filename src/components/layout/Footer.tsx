@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border/40 bg-white">
+    <footer className="border-t border-border/40 bg-white relative z-[60]">
       <div className="max-w-[1480px] mx-auto px-[22px] py-[24px] flex items-start justify-between gap-[16px] flex-wrap">
         <div className="flex flex-col gap-[6px]">
           <div className="font-extrabold text-foreground">TruMove</div>
