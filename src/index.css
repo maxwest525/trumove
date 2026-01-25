@@ -1232,19 +1232,19 @@
   }
 }
 
-/* Feature Cards - 2x3 Grid Layout */
+/* Feature Cards - 3-column Grid Layout */
 .tru-hero-value-cards-open {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
   width: 100%;
 }
 
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  min-height: 160px;
-  padding: 10px;
+  min-height: 180px;
+  padding: 12px;
   padding-bottom: 0;
   position: relative;
   overflow: hidden;
@@ -1255,13 +1255,13 @@
 
 /* Card text styling */
 .tru-hero-value-cards-open .tru-value-card-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .tru-hero-value-cards-open .tru-value-card-desc {
-  font-size: 10px;
-  line-height: 1.35;
+  font-size: 11px;
+  line-height: 1.4;
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon {
