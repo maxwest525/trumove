@@ -587,7 +587,7 @@ export default function Index() {
                     <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
                       <div className="tru-value-card-header">
                         <div className="tru-value-card-icon">
-                          <Boxes className="w-4 h-4" />
+                          <Boxes className="w-5 h-5" />
                         </div>
                         <div className="tru-value-card-content">
                           <h3 className="tru-value-card-title">Inventory Builder</h3>
@@ -602,7 +602,7 @@ export default function Index() {
                     <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
                       <div className="tru-value-card-header">
                         <div className="tru-value-card-icon">
-                          <Scan className="w-4 h-4" />
+                          <Scan className="w-5 h-5" />
                         </div>
                         <div className="tru-value-card-content">
                           <h3 className="tru-value-card-title">AI Room Scanner</h3>
@@ -617,7 +617,7 @@ export default function Index() {
                     <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
                       <div className="tru-value-card-header">
                         <div className="tru-value-card-icon">
-                          <Radar className="w-4 h-4" />
+                          <Radar className="w-5 h-5" />
                         </div>
                         <div className="tru-value-card-content">
                           <h3 className="tru-value-card-title">Smart Carrier Match</h3>
@@ -632,7 +632,7 @@ export default function Index() {
                     <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/book")}>
                       <div className="tru-value-card-header">
                         <div className="tru-value-card-icon">
-                          <Video className="w-4 h-4" />
+                          <Video className="w-5 h-5" />
                         </div>
                         <div className="tru-value-card-content">
                           <h3 className="tru-value-card-title">TruMove Specialist</h3>
@@ -647,7 +647,7 @@ export default function Index() {
                     <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
                       <div className="tru-value-card-header">
                         <div className="tru-value-card-icon">
-                          <ShieldCheck className="w-4 h-4" />
+                          <ShieldCheck className="w-5 h-5" />
                         </div>
                         <div className="tru-value-card-content">
                           <h3 className="tru-value-card-title">FMCSA Verified</h3>
@@ -662,7 +662,7 @@ export default function Index() {
                     <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
                       <div className="tru-value-card-header">
                         <div className="tru-value-card-icon">
-                          <DollarSign className="w-4 h-4" />
+                          <DollarSign className="w-5 h-5" />
                         </div>
                         <div className="tru-value-card-content">
                           <h3 className="tru-value-card-title">Instant Pricing</h3>
