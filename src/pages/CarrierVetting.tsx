@@ -477,16 +477,45 @@ export default function CarrierVetting() {
           )}
 
           {/* Section Header */}
-          <div className="mb-6 text-center">
-            <h2 className="text-xl font-semibold text-foreground mb-2">
-              {carriers.length === 0 ? 'Carrier Safety Snapshots' : `Comparing ${carriers.length} Carrier${carriers.length > 1 ? 's' : ''}`}
+          <div className="mb-8 text-center">
+            {/* Green accent bar */}
+            <div className="w-12 h-1 bg-primary rounded-full mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-foreground mb-3">
+              {carriers.length === 0 ? 'Carrier FMCSA Results' : `Comparing ${carriers.length} Carrier${carriers.length > 1 ? 's' : ''}`}
             </h2>
-            <p className="text-sm text-muted-foreground">
-              {carriers.length === 0 
-                ? 'Search above to view real-time FMCSA safety data, red flag alerts, and fleet intelligence'
-                : 'Side-by-side comparison with live FMCSA data and automated risk detection'
-              }
-            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+              {carriers.length === 0 ? (
+                <>
+                  <span className="flex items-center gap-1.5">
+                    <Radio className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
+                    Real-time data
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
+                    Red flag alerts
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Truck className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
+                    Fleet intelligence
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
+                    Side-by-side comparison
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Radio className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
+                    Live FMCSA data
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
+                    Automated risk detection
+                  </span>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Empty State Placeholder - Only show when no carriers */}
