@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Truck } from 'lucide-react';
+import React, { useState } from 'react';
+import { Truck, Sparkles } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 
 interface FloatingTruckChatProps {
@@ -8,53 +8,44 @@ interface FloatingTruckChatProps {
 
 export default function FloatingTruckChat({ className = '' }: FloatingTruckChatProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [showButton, setShowButton] = useState(true);
+  const [showButton] = useState(true);
 
   return (
     <>
-      {/* Floating Truck Button */}
+      {/* Floating Pill Button */}
       <button
         onClick={() => setIsOpen(true)}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         className={`
           fixed bottom-6 right-6 z-50
-          w-16 h-16 rounded-full
-          bg-primary text-primary-foreground
-          shadow-lg shadow-primary/30
-          flex items-center justify-center
+          px-5 py-3 rounded-full
+          bg-card text-foreground
+          border border-border
+          shadow-[0_4px_24px_-4px_hsl(var(--primary)/0.25),0_0_0_1px_hsl(var(--primary)/0.1)]
+          flex items-center gap-3
           transition-all duration-300 ease-out
-          hover:scale-110 hover:shadow-xl hover:shadow-primary/40
-          focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+          hover:shadow-[0_8px_32px_-4px_hsl(var(--primary)/0.35),0_0_0_1px_hsl(var(--primary)/0.2)]
+          hover:scale-[1.02] hover:-translate-y-0.5
+          focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2
           ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
         `}
-        aria-label="AI Moving Assistant"
+        aria-label="AI Moving Helper"
       >
-        {/* Pulse ring animation */}
-        <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-20" />
-        
-        {/* Truck Icon with driving animation */}
-        <div className="relative z-10 flex items-center justify-center">
-          <Truck className="w-7 h-7 animate-truck-bounce" />
+        {/* Truck Icon Container */}
+        <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-primary/10 border border-primary/20">
+          <Truck className="w-5 h-5 text-primary animate-truck-bounce" />
+          {/* Sparkle indicator */}
+          <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-primary animate-pulse" />
         </div>
         
-        {/* Tooltip */}
-        <span
-          className={`
-            absolute right-full mr-3 px-3 py-2
-            bg-card text-card-foreground text-sm font-medium
-            rounded-lg whitespace-nowrap shadow-lg border border-border
-            transition-all duration-200
-            ${isHovered && showButton ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2 pointer-events-none'}
-          `}
-        >
-          <span className="flex items-center gap-2">
-            <span className="text-primary">●</span>
-            AI Moving Assistant
-          </span>
-        </span>
+        {/* Text Label */}
+        <div className="flex flex-col items-start">
+          <span className="text-sm font-semibold leading-tight">AI Moving Helper</span>
+          <span className="text-xs text-muted-foreground leading-tight">Ask me anything</span>
+        </div>
+        
+        {/* Status indicator */}
+        <span className="w-2 h-2 rounded-full bg-primary animate-pulse ml-1" />
       </button>
 
       {/* Chat Modal */}
