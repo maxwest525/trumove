@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
-import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle, Printer, Lock, Activity, ClipboardCheck } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle, Printer, Lock, Activity, ClipboardCheck, Share2, FileDown, Copy, Check } from 'lucide-react';
 
 import SiteShell from '@/components/layout/SiteShell';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { CarrierSearch } from '@/components/vetting/CarrierSearch';
 import { useToast } from '@/hooks/use-toast';
 import { MOCK_CARRIERS, MOCK_CARRIER_GOOD, MOCK_CARRIER_BAD, MOCK_CARRIER_MIXED, type MockCarrierData } from '@/data/mockCarriers';
 import { cn } from '@/lib/utils';
+import { generateCarrierComparisonPdf } from '@/lib/carrierPdfExport';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -134,7 +136,121 @@ export default function CarrierVetting() {
   const [carriers, setCarriers] = useState<CarrierData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [hasCopiedShare, setHasCopiedShare] = useState(false);
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
+
+  // Fetch carrier details function - defined first so it can be used in useEffect
+  const fetchCarrierDetails = useCallback(async (dotNumber: string): Promise<CarrierData | null> => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/carrier-lookup?dot=${dotNumber}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Carrier not found');
+        }
+        const responseText = await response.text();
+        if (responseText.includes('Webkey not found')) {
+          throw new Error('FMCSA_API_UNAVAILABLE');
+        }
+        throw new Error('Failed to fetch carrier details');
+      }
+
+      const data = await response.json();
+      if (data?.content === 'Webkey not found') {
+        throw new Error('FMCSA_API_UNAVAILABLE');
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error fetching carrier:', error);
+      throw error;
+    }
+  }, []);
+
+  // Load carriers from URL params on mount
+  useEffect(() => {
+    const dotNumbers = searchParams.get('dots');
+    if (dotNumbers && carriers.length === 0) {
+      const dots = dotNumbers.split(',').filter(Boolean);
+      dots.forEach(dot => {
+        const demoCarrier = MOCK_CARRIERS.find(c => c.carrier.dotNumber === dot);
+        if (demoCarrier) {
+          setCarriers(prev => {
+            if (prev.some(c => c.carrier.dotNumber === dot)) return prev;
+            if (prev.length >= 4) return prev;
+            return [...prev, demoCarrier as CarrierData];
+          });
+        } else {
+          fetchCarrierDetails(dot).then(data => {
+            if (data) {
+              setCarriers(prev => {
+                if (prev.some(c => c.carrier.dotNumber === dot)) return prev;
+                if (prev.length >= 4) return prev;
+                return [...prev, data];
+              });
+            }
+          }).catch(console.error);
+        }
+      });
+    }
+  }, [searchParams, fetchCarrierDetails]);
+
+  // Generate share URL
+  const generateShareUrl = useCallback(() => {
+    if (carriers.length === 0) return '';
+    const dotNumbers = carriers.map(c => c.carrier.dotNumber).join(',');
+    const baseUrl = window.location.origin + window.location.pathname;
+    return `${baseUrl}?dots=${dotNumbers}`;
+  }, [carriers]);
+
+  // Copy share URL to clipboard
+  const handleCopyShareUrl = useCallback(async () => {
+    const url = generateShareUrl();
+    if (!url) return;
+    
+    try {
+      await navigator.clipboard.writeText(url);
+      setHasCopiedShare(true);
+      toast({
+        title: 'Link copied!',
+        description: 'Share URL has been copied to clipboard.',
+      });
+      setTimeout(() => setHasCopiedShare(false), 2000);
+    } catch (err) {
+      toast({
+        title: 'Failed to copy',
+        description: 'Please copy the URL manually.',
+        variant: 'destructive'
+      });
+    }
+  }, [generateShareUrl, toast]);
+
+  // Export PDF
+  const handleExportPdf = useCallback(() => {
+    if (carriers.length === 0) return;
+    try {
+      generateCarrierComparisonPdf(carriers);
+      toast({
+        title: 'PDF Generated',
+        description: 'Your carrier comparison report has been downloaded.',
+      });
+    } catch (err) {
+      toast({
+        title: 'Export failed',
+        description: 'Could not generate PDF. Please try again.',
+        variant: 'destructive'
+      });
+    }
+  }, [carriers, toast]);
 
   // Load individual demo carrier
   const loadDemoCarrier = useCallback((carrier: MockCarrierData) => {
@@ -165,42 +281,6 @@ export default function CarrierVetting() {
     });
   }, [carriers, toast]);
 
-  const fetchCarrierDetails = useCallback(async (dotNumber: string): Promise<CarrierData | null> => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/carrier-lookup?dot=${dotNumber}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Carrier not found');
-        }
-        // Check for API key issues (usually 404 with "Webkey not found")
-        const responseText = await response.text();
-        if (responseText.includes('Webkey not found')) {
-          throw new Error('FMCSA_API_UNAVAILABLE');
-        }
-        throw new Error('Failed to fetch carrier details');
-      }
-
-      const data = await response.json();
-      // Check if response indicates API key issue
-      if (data?.content === 'Webkey not found') {
-        throw new Error('FMCSA_API_UNAVAILABLE');
-      }
-      
-      return data;
-    } catch (error) {
-      console.error('Error fetching carrier:', error);
-      throw error;
-    }
-  }, []);
 
   const handleAddCarrier = useCallback(async (dotNumber: string) => {
     // Check if already added
@@ -533,19 +613,43 @@ export default function CarrierVetting() {
           {carriers.length > 0 && (
             <div className="mt-12 mb-10 text-center">
               <div className="inline-block px-8 py-6 bg-gradient-to-b from-muted/50 to-transparent rounded-xl border border-border/50">
-                <div className="flex items-center justify-center gap-4 mb-4">
+                <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
                   <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
                     Carrier Safety Comparison
                   </h2>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePrintReport}
-                    className="gap-2 print:hidden"
-                  >
-                    <Printer className="w-4 h-4" />
-                    Print Report
-                  </Button>
+                  <div className="flex items-center gap-2 print:hidden">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCopyShareUrl}
+                      className="gap-2"
+                    >
+                      {hasCopiedShare ? (
+                        <Check className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <Share2 className="w-4 h-4" />
+                      )}
+                      {hasCopiedShare ? 'Copied!' : 'Share'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleExportPdf}
+                      className="gap-2"
+                    >
+                      <FileDown className="w-4 h-4" />
+                      PDF
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handlePrintReport}
+                      className="gap-2"
+                    >
+                      <Printer className="w-4 h-4" />
+                      Print
+                    </Button>
+                  </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed max-w-6xl">
                   Pursuant to 49 U.S.C. 31144 and 49 CFR Part 385, displayed carriers are evaluated and monitored under the FMCSA Safety Measurement System (SMS), which quantifies performance across Behavior Analysis and Safety Improvement Categories (BASICs) using roadside inspection data, crash records, and compliance history from federal sources. All records are subject to ongoing review for adherence to the safety fitness standard. Click any carrier card to examine the detailed safety profile.
