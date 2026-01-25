@@ -16,15 +16,15 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
       <button
         onClick={() => setIsOpen(true)}
         className={`
-          fixed bottom-6 right-6 z-50
-          px-5 py-3 rounded-full
+          fixed bottom-24 right-6 z-50
+          px-5 py-3.5 rounded-full
           bg-card text-foreground
           border border-border
-          shadow-[0_4px_24px_-4px_hsl(var(--primary)/0.25),0_0_0_1px_hsl(var(--primary)/0.1)]
+          shadow-[0_8px_32px_-4px_hsl(var(--primary)/0.3),0_0_0_1px_hsl(var(--primary)/0.15)]
           flex items-center gap-3
           transition-all duration-300 ease-out
-          hover:shadow-[0_8px_32px_-4px_hsl(var(--primary)/0.35),0_0_0_1px_hsl(var(--primary)/0.2)]
-          hover:scale-[1.02] hover:-translate-y-0.5
+          hover:shadow-[0_12px_40px_-4px_hsl(var(--primary)/0.4),0_0_0_1px_hsl(var(--primary)/0.25)]
+          hover:scale-[1.03] hover:-translate-y-1
           focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2
           ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
@@ -32,20 +32,20 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         aria-label="AI Moving Helper"
       >
         {/* Truck Icon Container */}
-        <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-primary/10 border border-primary/20">
-          <Truck className="w-5 h-5 text-primary animate-truck-bounce" />
+        <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-primary/15 border border-primary/25">
+          <Truck className="w-5 h-5 text-foreground animate-truck-bounce" />
           {/* Sparkle indicator */}
-          <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-primary animate-pulse" />
+          <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 text-primary animate-pulse" />
         </div>
         
         {/* Text Label */}
         <div className="flex flex-col items-start">
-          <span className="text-sm font-semibold leading-tight">AI Moving Helper</span>
+          <span className="text-sm font-bold leading-tight">AI Moving Helper</span>
           <span className="text-xs text-muted-foreground leading-tight">Ask me anything</span>
         </div>
         
         {/* Status indicator */}
-        <span className="w-2 h-2 rounded-full bg-primary animate-pulse ml-1" />
+        <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse ml-1" />
       </button>
 
       {/* Chat Modal */}
