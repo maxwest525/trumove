@@ -975,6 +975,19 @@
   padding: 48px 24px 24px;
   max-width: 1480px;
   margin: 0 auto;
+  position: relative;
+}
+
+/* Subtle hero background pattern */
+.tru-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 1px 1px, hsl(var(--tm-ink) / 0.03) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* =============================================
@@ -1219,19 +1232,19 @@
   }
 }
 
-/* Feature Cards - 3x2 Compact Grid */
+/* Feature Cards - 2x3 Grid Layout */
 .tru-hero-value-cards-open {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
   width: 100%;
 }
 
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  min-height: 100px;
-  padding: 8px;
+  min-height: 160px;
+  padding: 10px;
   padding-bottom: 0;
   position: relative;
   overflow: hidden;
@@ -1240,25 +1253,21 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Compact card text */
+/* Card text styling */
 .tru-hero-value-cards-open .tru-value-card-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .tru-hero-value-cards-open .tru-value-card-desc {
-  font-size: 9px;
-  line-height: 1.25;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 10px;
+  line-height: 1.35;
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon {
-  width: 24px;
-  height: 24px;
-  padding: 5px;
+  width: 28px;
+  height: 28px;
+  padding: 6px;
   flex-shrink: 0;
 }
 
