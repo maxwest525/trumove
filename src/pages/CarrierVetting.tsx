@@ -5,6 +5,7 @@ import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info
 import SiteShell from '@/components/layout/SiteShell';
 import { Button } from '@/components/ui/button';
 import { ComparisonGrid } from '@/components/vetting/ComparisonGrid';
+import { ComparisonSummaryTable } from '@/components/vetting/ComparisonSummaryTable';
 import { CarrierSearch } from '@/components/vetting/CarrierSearch';
 import { useToast } from '@/hooks/use-toast';
 import { MOCK_CARRIERS, MOCK_CARRIER_GOOD, MOCK_CARRIER_BAD, MOCK_CARRIER_MIXED, type MockCarrierData } from '@/data/mockCarriers';
@@ -663,6 +664,11 @@ export default function CarrierVetting() {
             <div className="flex gap-6">
               {/* Main Content */}
               <div className="flex-1 min-w-0">
+                {/* Summary Table - Quick scannable comparison */}
+                {carriers.length >= 2 && (
+                  <ComparisonSummaryTable carriers={carriers} />
+                )}
+
                 {/* Comparison Grid */}
                 <ComparisonGrid
                   carriers={carriers}
