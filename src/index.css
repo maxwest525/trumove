@@ -12117,11 +12117,11 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 48px 40px;
-  max-width: 960px;
-  width: 95%;
+  padding: 36px 32px;
+  max-width: 1100px;
+  width: 96%;
   background: hsl(var(--background));
-  border-radius: 28px;
+  border-radius: 24px;
   border: 1px solid hsl(var(--border));
   box-shadow: 
     0 30px 60px -15px hsl(var(--tm-ink) / 0.3),
@@ -12154,6 +12154,110 @@
   letter-spacing: -0.02em;
 }
 
+/* Horizontal Strip Layout for Analyzing */
+.tru-analyze-strip {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.tru-analyze-strip-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0.9) translateY(16px);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tru-analyze-strip-panel.is-active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.tru-analyze-strip-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.tru-analyze-strip-frame {
+  position: relative;
+  width: 280px;
+  height: 160px;
+  background: hsl(var(--muted));
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid hsl(var(--border));
+  box-shadow: 
+    0 8px 24px hsl(var(--tm-ink) / 0.12),
+    0 2px 8px hsl(var(--tm-ink) / 0.08);
+}
+
+.tru-analyze-strip-route .tru-analyze-strip-frame {
+  width: 360px;
+}
+
+.tru-analyze-strip-route-frame {
+  width: 360px !important;
+}
+
+.tru-analyze-strip-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--primary) / 0.08) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+  z-index: 1;
+}
+
+.tru-analyze-strip-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 2;
+}
+
+.tru-analyze-strip-img.is-loaded {
+  opacity: 1;
+}
+
+.tru-analyze-strip-city {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(8px);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  white-space: nowrap;
+  z-index: 10;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.15);
+}
+
+/* Legacy popup maps - keep for compatibility */
 .tru-analyze-popup-maps {
   display: flex;
   align-items: flex-start;

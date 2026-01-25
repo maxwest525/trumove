@@ -502,60 +502,60 @@ export default function Index() {
                     </span>
                   </div>
                   
-                  <div className="tru-analyze-popup-maps">
+                  <div className="tru-analyze-strip">
                     {/* Origin Satellite */}
-                    <div className={`tru-analyze-popup-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
-                      <div className="tru-analyze-popup-label">
-                        <MapPin className="w-4 h-4" />
+                    <div className={`tru-analyze-strip-panel ${analyzePhase >= 0 ? 'is-active' : ''}`}>
+                      <div className="tru-analyze-strip-label">
+                        <MapPin className="w-3.5 h-3.5" />
                         <span>Origin</span>
                       </div>
-                      <div className="tru-analyze-popup-frame">
-                        <div className="tru-analyze-popup-shimmer" />
+                      <div className="tru-analyze-strip-frame">
+                        <div className="tru-analyze-strip-shimmer" />
                         <img 
-                          src={fromCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},16,0/560x400@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
+                          src={fromCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/400x200@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
                           alt="Origin location"
-                          className="tru-analyze-popup-img"
+                          className="tru-analyze-strip-img"
                           onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
                         />
-                        <div className="tru-analyze-popup-city">{fromCity}</div>
+                        <div className="tru-analyze-strip-city">{fromCity}</div>
+                      </div>
+                    </div>
+                    
+                    {/* Route Map - Center */}
+                    <div className={`tru-analyze-strip-panel tru-analyze-strip-route ${analyzePhase >= 2 ? 'is-active' : ''}`}>
+                      <div className="tru-analyze-strip-label">
+                        <Truck className="w-3.5 h-3.5" />
+                        <span>Your Route</span>
+                      </div>
+                      <div className="tru-analyze-strip-frame tru-analyze-strip-route-frame">
+                        <div className="tru-analyze-strip-shimmer" />
+                        {fromCoords && toCoords && routeGeometry && (
+                          <AnimatedRouteMap
+                            fromCoords={fromCoords}
+                            toCoords={toCoords}
+                            routeGeometry={routeGeometry}
+                            progress={routeProgress}
+                          />
+                        )}
                       </div>
                     </div>
                     
                     {/* Destination Satellite */}
-                    <div className={`tru-analyze-popup-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
-                      <div className="tru-analyze-popup-label">
-                        <MapPin className="w-4 h-4" />
+                    <div className={`tru-analyze-strip-panel ${analyzePhase >= 1 ? 'is-active' : ''}`}>
+                      <div className="tru-analyze-strip-label">
+                        <MapPin className="w-3.5 h-3.5" />
                         <span>Destination</span>
                       </div>
-                      <div className="tru-analyze-popup-frame">
-                        <div className="tru-analyze-popup-shimmer" />
+                      <div className="tru-analyze-strip-frame">
+                        <div className="tru-analyze-strip-shimmer" />
                         <img 
-                          src={toCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},16,0/560x400@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
+                          src={toCoords ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/400x200@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g` : ''}
                           alt="Destination location"
-                          className="tru-analyze-popup-img"
+                          className="tru-analyze-strip-img"
                           onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
                         />
-                        <div className="tru-analyze-popup-city">{toCity}</div>
+                        <div className="tru-analyze-strip-city">{toCity}</div>
                       </div>
-                    </div>
-                  </div>
-                  
-                  {/* Route Overview Map - Third map showing full route with animated drawing */}
-                  <div className={`tru-analyze-route-map ${analyzePhase >= 2 ? 'is-active' : ''}`}>
-                    <div className="tru-analyze-popup-label">
-                      <Truck className="w-4 h-4" />
-                      <span>Your Route</span>
-                    </div>
-                    <div className="tru-analyze-route-frame">
-                      <div className="tru-analyze-popup-shimmer" />
-                      {fromCoords && toCoords && routeGeometry && (
-                        <AnimatedRouteMap
-                          fromCoords={fromCoords}
-                          toCoords={toCoords}
-                          routeGeometry={routeGeometry}
-                          progress={routeProgress}
-                        />
-                      )}
                     </div>
                   </div>
                 </div>
