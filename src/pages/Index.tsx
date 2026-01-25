@@ -23,6 +23,7 @@ import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 
 import ChatModal from "@/components/chat/ChatModal";
+import FloatingTruckChat from "@/components/FloatingTruckChat";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { calculateDistance } from "@/lib/distanceCalculator";
@@ -1404,8 +1405,8 @@ export default function Index() {
         heroRef={heroSectionRef}
       />
 
-      {/* Chat Modal */}
-      <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+      {/* Floating Truck AI Chat Button */}
+      <FloatingTruckChat />
       
       {/* Lead Capture Modal */}
       <LeadCaptureModal

@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Floating Truck Animation */
+@keyframes truck-bounce {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(2deg);
+  }
+}
+
+.animate-truck-bounce {
+  animation: truck-bounce 1.5s ease-in-out infinite;
+}
+
 /* Hero Section Animations - Refined Timing */
 @keyframes hero-fade-up {
   0% {
