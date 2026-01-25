@@ -600,26 +600,13 @@ export default function Index() {
                 <ArrowRight className="w-4 h-4" />
               </button>
               
-              {/* Trust Badge Row */}
-              <div className="tru-hero-trust-badges">
-                <span className="tru-hero-trust-badge">
-                  <Shield className="w-3.5 h-3.5" />
-                  FMCSA Licensed
-                </span>
-                <span className="tru-hero-trust-divider">•</span>
-                <span className="tru-hero-trust-badge">
-                  <Star className="w-3.5 h-3.5" />
-                  5-Star Rated
-                </span>
-                <span className="tru-hero-trust-divider">•</span>
-                <span className="tru-hero-trust-badge">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  Bonded & Insured
-                </span>
-              </div>
-              <div className="tru-hero-social-proof">
-                <Users className="w-4 h-4" />
-                <span>Trusted by <strong>1,000+</strong> families nationwide</span>
+              {/* Compact Trust Row - All inline */}
+              <div className="tru-hero-trust-inline">
+                <span className="tru-hero-trust-item"><Shield className="w-3 h-3" /> FMCSA Licensed</span>
+                <span className="tru-hero-trust-sep">•</span>
+                <span className="tru-hero-trust-item"><Star className="w-3 h-3" /> 5-Star</span>
+                <span className="tru-hero-trust-sep">•</span>
+                <span className="tru-hero-trust-item"><Users className="w-3 h-3" /> 1,000+ Families</span>
               </div>
             </div>
 
