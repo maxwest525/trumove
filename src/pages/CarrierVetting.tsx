@@ -133,6 +133,7 @@ const DATA_SOURCES = [
 export default function CarrierVetting() {
   const [carriers, setCarriers] = useState<CarrierData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Load individual demo carrier
@@ -180,10 +181,21 @@ export default function CarrierVetting() {
         if (response.status === 404) {
           throw new Error('Carrier not found');
         }
+        // Check for API key issues (usually 404 with "Webkey not found")
+        const responseText = await response.text();
+        if (responseText.includes('Webkey not found')) {
+          throw new Error('FMCSA_API_UNAVAILABLE');
+        }
         throw new Error('Failed to fetch carrier details');
       }
 
-      return await response.json();
+      const data = await response.json();
+      // Check if response indicates API key issue
+      if (data?.content === 'Webkey not found') {
+        throw new Error('FMCSA_API_UNAVAILABLE');
+      }
+      
+      return data;
     } catch (error) {
       console.error('Error fetching carrier:', error);
       throw error;
@@ -212,6 +224,7 @@ export default function CarrierVetting() {
     }
 
     setIsLoading(true);
+    setApiError(null);
     try {
       const data = await fetchCarrierDetails(dotNumber);
       if (data) {
@@ -222,11 +235,23 @@ export default function CarrierVetting() {
         });
       }
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to load carrier data',
-        variant: 'destructive'
-      });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load carrier data';
+      
+      // Check for FMCSA API unavailability
+      if (errorMessage === 'FMCSA_API_UNAVAILABLE') {
+        setApiError('The FMCSA SAFER Web Services API is currently unavailable. This may be due to scheduled maintenance or a temporary outage. Please try again later or use the demo carriers below to explore the tool.');
+        toast({
+          title: 'FMCSA API Unavailable',
+          description: 'The federal carrier database is temporarily unavailable. Try demo carriers instead.',
+          variant: 'destructive'
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: errorMessage,
+          variant: 'destructive'
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -364,6 +389,27 @@ export default function CarrierVetting() {
                 <Truck className="w-4 h-4 text-primary" />
                 Fleet Intelligence
               </span>
+            </div>
+          )}
+
+          {/* API Error Alert */}
+          {apiError && (
+            <div className="mb-8 max-w-3xl mx-auto animate-fade-in">
+              <div className="p-4 rounded-lg border border-amber-500/50 bg-amber-500/10 flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <h4 className="text-sm font-semibold text-foreground mb-1">FMCSA API Temporarily Unavailable</h4>
+                  <p className="text-sm text-muted-foreground">{apiError}</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-3 gap-2"
+                    onClick={() => setApiError(null)}
+                  >
+                    Dismiss
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
 
