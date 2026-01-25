@@ -997,12 +997,12 @@
 /* Hero Split Layout - Compact with inline header */
 .tru-hero.tru-hero-split {
   display: grid;
-  grid-template-columns: 580px 1fr;
+  grid-template-columns: 520px 1fr;
   grid-template-rows: auto 1fr;
   gap: 32px 48px;
   align-items: start;
   padding: 4px 24px 16px 24px;
-  max-width: 1520px;
+  max-width: 1480px;
   margin: 0 auto;
 }
 
@@ -1097,8 +1097,8 @@
 
 .tru-hero-right-half .tru-hero-form-panel {
   width: 100%;
-  min-width: 560px;
-  max-width: 580px;
+  min-width: 500px;
+  max-width: 520px;
   flex-shrink: 0;
 }
 
@@ -14357,9 +14357,9 @@
 .tru-estimate-wizard-content {
   position: relative;
   width: 100%;
-  max-width: 580px;
+  max-width: 520px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 28px;
   overflow: visible;
 }
 
