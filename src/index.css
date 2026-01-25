@@ -999,7 +999,7 @@
   display: grid;
   grid-template-columns: 520px 1fr;
   grid-template-rows: auto 1fr;
-  gap: 8px;
+  gap: 32px 24px;
   align-items: start;
   padding: 4px 24px 16px 24px;
   max-width: 1480px;
@@ -1013,15 +1013,15 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0 0 12px 0;
-  gap: 8px;
+  padding: 0 0 24px 0;
+  gap: 12px;
   position: relative;
 }
 
 .tru-hero-header-section .tru-hero-headline-main {
-  font-size: clamp(24px, 4vw, 36px);
+  font-size: clamp(32px, 5vw, 56px);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.15;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.02em;
   margin: 0;
@@ -1029,20 +1029,20 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .tru-hero-header-section .tru-hero-inline-logo {
-  height: 0.9em;
+  height: 1em;
   display: inline-block;
   vertical-align: middle;
 }
 
 .tru-hero-header-section .tru-hero-subheadline {
-  font-size: 14px;
-  line-height: 1.5;
-  color: hsl(var(--tm-ink) / 0.65);
-  max-width: 540px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: hsl(var(--tm-ink) / 0.7);
+  max-width: 640px;
   margin: 0;
   font-weight: 500;
 }
