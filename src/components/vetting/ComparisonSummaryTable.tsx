@@ -108,7 +108,7 @@ export function ComparisonSummaryTable({ carriers, className }: ComparisonSummar
               </TableHead>
               <TableHead className="font-bold text-slate-900 dark:text-foreground text-center whitespace-nowrap">
                 <div className="flex items-center justify-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5" />
+                  <Shield className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
                   Grade
                 </div>
               </TableHead>
@@ -117,25 +117,25 @@ export function ComparisonSummaryTable({ carriers, className }: ComparisonSummar
               </TableHead>
               <TableHead className="font-bold text-slate-900 dark:text-foreground text-center whitespace-nowrap">
                 <div className="flex items-center justify-center gap-1.5">
-                  <DollarSign className="w-3.5 h-3.5" />
+                  <DollarSign className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
                   BIPD
                 </div>
               </TableHead>
               <TableHead className="font-bold text-slate-900 dark:text-foreground text-center whitespace-nowrap">
                 <div className="flex items-center justify-center gap-1.5">
-                  <Truck className="w-3.5 h-3.5" />
+                  <Truck className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
                   Fleet
                 </div>
               </TableHead>
               <TableHead className="font-bold text-slate-900 dark:text-foreground text-center whitespace-nowrap">
                 <div className="flex items-center justify-center gap-1.5">
-                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <AlertTriangle className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
                   Crashes (24mo)
                 </div>
               </TableHead>
               <TableHead className="font-bold text-slate-900 dark:text-foreground text-center whitespace-nowrap">
                 <div className="flex items-center justify-center gap-1.5">
-                  <Car className="w-3.5 h-3.5" />
+                  <Car className="w-3.5 h-3.5 text-slate-900 dark:text-foreground" />
                   Fatal
                 </div>
               </TableHead>
