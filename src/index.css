@@ -1233,9 +1233,9 @@
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  min-height: 240px;
+  height: 260px;
   padding: 14px;
-  padding-bottom: 0;
+  padding-bottom: 14px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -1247,11 +1247,17 @@
 .tru-hero-value-cards-open .tru-value-card-title {
   font-size: 14px;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .tru-hero-value-cards-open .tru-value-card-desc {
   font-size: 12px;
   line-height: 1.4;
+  flex-shrink: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon {
@@ -1281,20 +1287,21 @@
   margin-bottom: 8px;
   position: relative;
   z-index: 10;
+  flex-shrink: 0;
 }
 
-/* Preview visible - flows below header */
+/* Preview visible - fixed height for consistency */
 .tru-hero-value-cards-open .tru-value-card-preview-visible {
   position: relative;
   inset: unset;
-  flex: 1;
-  min-height: 140px;
+  height: 150px;
+  flex-shrink: 0;
   margin: 0;
+  margin-top: auto;
   border-radius: 8px;
   overflow: hidden;
   opacity: 1 !important;
   transform: none !important;
-  margin-bottom: 14px;
   border: 1px solid hsl(var(--tm-ink) / 0.1);
 }
 
