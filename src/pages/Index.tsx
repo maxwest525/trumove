@@ -598,7 +598,7 @@ export default function Index() {
                 {/* Value Props Container - Feature Cards without header */}
                 <div className="tru-hero-value-props-container tru-feature-section-card-clean">
                   {/* Value Cards - Always visible with previews */}
-                  <div className="tru-hero-value-cards tru-hero-value-cards-open tru-hero-value-cards-compact">
+                  <div className="tru-hero-value-cards tru-hero-value-cards-open">
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
