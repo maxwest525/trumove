@@ -1053,10 +1053,10 @@
 }
 
 .tru-hero-header-section .tru-hero-subheadline {
-  font-size: 18px;
-  line-height: 1.6;
-  color: hsl(var(--tm-ink) / 0.7);
-  max-width: 640px;
+  font-size: 20px;
+  line-height: 1.7;
+  color: hsl(var(--tm-ink) / 0.75);
+  max-width: 920px;
   margin: 0;
   font-weight: 500;
 }
