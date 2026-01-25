@@ -1141,12 +1141,12 @@
 }
 
 .tru-hero-headline-main {
-  font-size: clamp(28px, 3.5vw, 42px);
+  font-size: clamp(32px, 4vw, 52px);
   font-weight: 800;
   line-height: 1.15;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.025em;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   white-space: normal;
   text-shadow: 0 1px 2px hsl(var(--background) / 0.5);
 }
@@ -1160,12 +1160,12 @@
 }
 
 .tru-hero-subheadline {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.7;
   color: hsl(var(--tm-ink));
-  margin-bottom: 28px;
+  margin-bottom: 32px;
   font-weight: 500;
-  max-width: 640px;
+  max-width: 700px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -14140,10 +14140,10 @@
    ============================================= */
 .tru-trust-strip {
   background: linear-gradient(180deg, hsl(220 30% 92%) 0%, hsl(220 25% 88%) 100%);
-  padding: 16px 24px;
+  padding: 20px 24px;
   border-top: 1px solid hsl(var(--tm-ink) / 0.08);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
-  margin-top: -12px;
+  margin-top: 40px;
 }
 
 .tru-trust-strip-inner {
