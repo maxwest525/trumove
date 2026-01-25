@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck } from 'lucide-react';
+import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle } from 'lucide-react';
 
 import SiteShell from '@/components/layout/SiteShell';
 import { Button } from '@/components/ui/button';
@@ -369,31 +369,83 @@ export default function CarrierVetting() {
 
           {/* Empty State Placeholder - Only show when no carriers */}
           {carriers.length === 0 && (
-            <div className="mt-4 mb-8">
+            <div className="mt-4 mb-8 animate-fade-in">
               {/* Placeholder Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
                 {[1, 2, 3].map((i) => (
                   <div 
                     key={i} 
                     className="relative p-6 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 min-h-[280px] flex flex-col items-center justify-center text-center group hover:border-primary/30 hover:bg-muted/30 transition-all duration-300"
+                    style={{ 
+                      animation: `pulse-subtle 3s ease-in-out infinite`,
+                      animationDelay: `${i * 0.5}s`
+                    }}
                   >
-                    {/* Placeholder Icon */}
-                    <div className="w-16 h-16 rounded-full bg-muted/50 border border-border/50 flex items-center justify-center mb-4 group-hover:border-primary/30 transition-colors">
-                      <Shield className="w-8 h-8 text-muted-foreground/40 group-hover:text-primary/40 transition-colors" />
+                    {/* Floating animation wrapper */}
+                    <div 
+                      className="flex flex-col items-center"
+                      style={{ 
+                        animation: `float-gentle 4s ease-in-out infinite`,
+                        animationDelay: `${i * 0.3}s`
+                      }}
+                    >
+                      {/* Placeholder Icon */}
+                      <div className="w-16 h-16 rounded-full bg-muted/50 border border-border/50 flex items-center justify-center mb-4 group-hover:border-primary/30 transition-colors">
+                        <Shield className="w-8 h-8 text-muted-foreground/40 group-hover:text-primary/40 transition-colors" />
+                      </div>
+                      
+                      {/* Placeholder Text - Shimmer effect */}
+                      <div className="space-y-2">
+                        <div className="h-4 w-32 bg-gradient-to-r from-muted/40 via-muted/70 to-muted/40 rounded mx-auto bg-[length:200%_100%] animate-[shimmer_2s_infinite]" />
+                        <div className="h-3 w-24 bg-gradient-to-r from-muted/30 via-muted/50 to-muted/30 rounded mx-auto bg-[length:200%_100%] animate-[shimmer_2s_infinite]" style={{ animationDelay: '0.3s' }} />
+                      </div>
+                      
+                      {/* Slot Label */}
+                      <p className="mt-4 text-xs text-muted-foreground/60 font-medium">
+                        Carrier Slot {i}
+                      </p>
                     </div>
-                    
-                    {/* Placeholder Text */}
-                    <div className="space-y-2">
-                      <div className="h-4 w-32 bg-muted/60 rounded mx-auto" />
-                      <div className="h-3 w-24 bg-muted/40 rounded mx-auto" />
-                    </div>
-                    
-                    {/* Slot Label */}
-                    <p className="mt-4 text-xs text-muted-foreground/60 font-medium">
-                      Carrier Slot {i}
-                    </p>
                   </div>
                 ))}
+              </div>
+
+              {/* Demo Carrier Buttons */}
+              <div className="mt-8 max-w-2xl mx-auto">
+                <p className="text-center text-sm text-muted-foreground mb-4">
+                  Try it out with sample carriers:
+                </p>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAddCarrier(MOCK_CARRIER_GOOD.carrier.dotNumber)}
+                    className="gap-2 border-green-500/30 hover:border-green-500/60 hover:bg-green-500/10"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    <span>Sunrise Movers</span>
+                    <span className="text-xs text-muted-foreground">(Safe)</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAddCarrier(MOCK_CARRIER_BAD.carrier.dotNumber)}
+                    className="gap-2 border-red-500/30 hover:border-red-500/60 hover:bg-red-500/10"
+                  >
+                    <AlertTriangle className="w-4 h-4 text-red-500" />
+                    <span>Fast & Cheap</span>
+                    <span className="text-xs text-muted-foreground">(Risky)</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAddCarrier(MOCK_CARRIER_MIXED.carrier.dotNumber)}
+                    className="gap-2 border-amber-500/30 hover:border-amber-500/60 hover:bg-amber-500/10"
+                  >
+                    <AlertCircle className="w-4 h-4 text-amber-500" />
+                    <span>Regional Van Lines</span>
+                    <span className="text-xs text-muted-foreground">(Mixed)</span>
+                  </Button>
+                </div>
               </div>
               
               {/* How It Works Section */}
