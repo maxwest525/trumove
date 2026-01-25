@@ -457,24 +457,26 @@ export default function CarrierVetting() {
 
           {/* Compact Benefits Strip - Only show when no carriers */}
           {carriers.length === 0 && (
-                  <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground mb-8">
-                    <span className="flex items-center gap-1.5">
-                      <Radio className="w-4 h-4 text-slate-900 dark:text-foreground" />
-                      Live FMCSA Data
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <AlertTriangle className="w-4 h-4 text-slate-900 dark:text-foreground" />
-                      Red Flag Alerts
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Users className="w-4 h-4 text-slate-900 dark:text-foreground" />
-                      Side-by-Side Compare
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Truck className="w-4 h-4 text-slate-900 dark:text-foreground" />
-                      Fleet Intelligence
-                    </span>
-                  </div>
+            <div className="mb-8 py-4 px-6 rounded-lg bg-muted/50 border border-border/50">
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <Radio className="w-4 h-4 text-slate-900 dark:text-foreground" />
+                  Live FMCSA Data
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-slate-900 dark:text-foreground" />
+                  Red Flag Alerts
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-slate-900 dark:text-foreground" />
+                  Side-by-Side Compare
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Truck className="w-4 h-4 text-slate-900 dark:text-foreground" />
+                  Fleet Intelligence
+                </span>
+              </div>
+            </div>
           )}
 
           {/* API Error Alert */}
