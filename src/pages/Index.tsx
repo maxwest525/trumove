@@ -5,9 +5,12 @@ import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
 import AnimatedRouteMap from "@/components/estimate/AnimatedRouteMap";
 import FloatingNav from "@/components/FloatingNav";
+import ScrollAwareBottomDock from "@/components/ScrollAwareBottomDock";
+import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import RouteAnalysisSection from "@/components/RouteAnalysisSection";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import logoImg from "@/assets/logo.png";
 
 // Preview images for value cards
@@ -123,7 +126,14 @@ function getAiHint(step: number, fromCity: string, toCity: string, distance: num
 export default function Index() {
   const navigate = useNavigate();
   const quoteBuilderRef = useRef<HTMLDivElement>(null);
+  const heroSectionRef = useRef<HTMLElement>(null);
   
+  // Scroll-triggered animation for hero content
+  const [heroContentRef, isHeroInView] = useScrollAnimation<HTMLDivElement>({
+    threshold: 0.1,
+    rootMargin: "0px",
+    triggerOnce: true,
+  });
   // Step tracking (1-4)
   const [step, setStep] = useState(1);
   
@@ -470,7 +480,11 @@ export default function Index() {
       <div className="tru-page-frame">
         <div className="tru-page-inner">
         {/* HERO - Split Layout */}
-          <section className="tru-hero tru-hero-split">
+          <section className="tru-hero tru-hero-split" ref={heroSectionRef}>
+            {/* Particle Background Effect */}
+            <HeroParticles />
+            <div className="tru-hero-particles-overlay" />
+            
             {/* Full-Page Analyzing Overlay */}
             {isAnalyzing && (
               <div className="tru-analyze-fullpage-overlay">
@@ -544,8 +558,11 @@ export default function Index() {
               </div>
             )}
             
-            {/* HERO TOP: Centered Headline + Subheadline */}
-            <div className="tru-hero-top-section">
+            {/* HERO TOP: Centered Headline + Subheadline with scroll animation */}
+            <div 
+              ref={heroContentRef}
+              className={`tru-hero-top-section tru-animate-on-scroll ${isHeroInView ? 'is-in-view' : ''}`}
+            >
               <h1 className="tru-hero-headline-main">
                 <span className="tru-hero-headline-line">
                   Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> Get You Matched With
@@ -1368,6 +1385,12 @@ export default function Index() {
         </div>
       </div>
 
+
+      {/* Scroll-Aware Bottom Navigation Dock */}
+      <ScrollAwareBottomDock 
+        onChatOpen={() => setChatOpen(true)} 
+        heroRef={heroSectionRef}
+      />
 
       {/* Chat Modal */}
       <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />

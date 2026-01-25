@@ -21069,3 +21069,148 @@
 .sidebar-search .absolute.left-4 svg {
   color: hsl(var(--muted-foreground)) !important;
 }
+
+/* =============================================
+   SCROLL-AWARE BOTTOM DOCK
+   ============================================= */
+.tru-bottom-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 0 16px 16px;
+  pointer-events: none;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+.tru-bottom-dock.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tru-bottom-dock-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 8px 12px;
+  background: hsl(var(--card) / 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--border));
+  border-radius: 9999px;
+  box-shadow: 
+    0 8px 32px hsl(var(--tm-ink) / 0.15),
+    0 2px 8px hsl(var(--tm-ink) / 0.1),
+    inset 0 1px 0 hsl(var(--background) / 0.5);
+}
+
+.tru-dock-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tru-dock-item:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--muted));
+}
+
+.tru-dock-item.is-active {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+}
+
+.tru-dock-label {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .tru-dock-label {
+    display: inline;
+  }
+  
+  .tru-bottom-dock-inner {
+    gap: 8px;
+    padding: 10px 16px;
+  }
+}
+
+/* =============================================
+   HERO PARTICLES CANVAS
+   ============================================= */
+.tru-hero-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* =============================================
+   SCROLL-TRIGGERED ANIMATIONS
+   ============================================= */
+.tru-animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), 
+              transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tru-animate-on-scroll.is-in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered children */
+.tru-animate-on-scroll.is-in-view .tru-stagger-1 { transition-delay: 0.1s; }
+.tru-animate-on-scroll.is-in-view .tru-stagger-2 { transition-delay: 0.2s; }
+.tru-animate-on-scroll.is-in-view .tru-stagger-3 { transition-delay: 0.3s; }
+.tru-animate-on-scroll.is-in-view .tru-stagger-4 { transition-delay: 0.4s; }
+.tru-animate-on-scroll.is-in-view .tru-stagger-5 { transition-delay: 0.5s; }
+
+/* Hero section relative positioning for particles */
+.tru-hero.tru-hero-split {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ensure hero content stays above particles */
+.tru-hero-top-section,
+.tru-hero-content-panel,
+.tru-hero-right-half {
+  position: relative;
+  z-index: 1;
+}
+
+/* Subtle gradient overlay for better text readability */
+.tru-hero-particles-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 40%,
+    transparent 0%,
+    hsl(var(--background) / 0.3) 70%,
+    hsl(var(--background) / 0.6) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
