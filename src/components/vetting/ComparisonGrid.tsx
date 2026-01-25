@@ -94,11 +94,11 @@ export function ComparisonGrid({
       {/* Carriers Grid */}
       {carriers.length > 0 ? (
       <div className={cn(
-        'grid gap-6',
-          carriers.length === 1 && 'grid-cols-1 max-w-xl',
-          carriers.length === 2 && 'grid-cols-1 lg:grid-cols-2',
-          carriers.length >= 3 && 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3',
-          carriers.length >= 4 && 'grid-cols-1 lg:grid-cols-2'
+        'grid',
+          carriers.length === 1 && 'grid-cols-1 max-w-xl gap-8',
+          carriers.length === 2 && 'grid-cols-1 lg:grid-cols-2 gap-8',
+          carriers.length === 3 && 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8',
+          carriers.length >= 4 && 'grid-cols-1 lg:grid-cols-2 gap-6'
         )}>
           {carriers.map((carrier, index) => (
             <CarrierSnapshotCard
