@@ -739,10 +739,10 @@ Variant: classic
               </p>
               <div className="flex items-center gap-4">
                 <div className="bg-white/10 px-3 py-2 rounded text-sm">
-                  <span className="text-white/60">USDOT #</span> 1234567
+                  <span className="text-white/60">USDOT #</span> 4507647
                 </div>
                 <div className="bg-white/10 px-3 py-2 rounded text-sm">
-                  <span className="text-white/60">MC #</span> 987654
+                  <span className="text-white/60">MC #</span> 1784124
                 </div>
               </div>
             </div>
