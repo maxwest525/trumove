@@ -1283,12 +1283,12 @@
   z-index: 10;
 }
 
-/* Preview visible - flows below header with fixed height */
+/* Preview visible - flows below header */
 .tru-hero-value-cards-open .tru-value-card-preview-visible {
   position: relative;
   inset: unset;
-  height: 100px;
-  flex-shrink: 0;
+  flex: 1;
+  min-height: 120px;
   margin: 0;
   border-radius: 8px;
   overflow: hidden;
