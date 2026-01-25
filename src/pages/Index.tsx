@@ -19,6 +19,8 @@ import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
 import previewCarrierVetting from "@/assets/preview-carrier-vetting.jpg";
 import previewVideoConsult from "@/assets/preview-video-consult.jpg";
 import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
+import sampleRoomLiving from "@/assets/sample-room-living.jpg";
+import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 
 import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -608,7 +610,7 @@ export default function Index() {
                             </div>
                             <div className="tru-value-card-content">
                               <h3 className="tru-value-card-title">Inventory Builder</h3>
-                              <p className="tru-value-card-desc">Build your item list room by room.</p>
+                              <p className="tru-value-card-desc">Build your item list room by room for accurate pricing estimates.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
@@ -628,11 +630,11 @@ export default function Index() {
                             </div>
                             <div className="tru-value-card-content">
                               <h3 className="tru-value-card-title">AI Room Scanner</h3>
-                              <p className="tru-value-card-desc">Camera detects furniture instantly.</p>
+                              <p className="tru-value-card-desc">Point your camera and AI detects furniture instantly.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewPropertyLookup} alt="AI Room Scanner Preview" />
+                            <img src={scanRoomPreview} alt="AI Room Scanner Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
@@ -648,7 +650,7 @@ export default function Index() {
                             </div>
                             <div className="tru-value-card-content">
                               <h3 className="tru-value-card-title">Smart Carrier Match</h3>
-                              <p className="tru-value-card-desc">Algorithm finds your best carrier.</p>
+                              <p className="tru-value-card-desc">Our algorithm finds the best carrier for your route.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
@@ -668,7 +670,7 @@ export default function Index() {
                             </div>
                             <div className="tru-value-card-content">
                               <h3 className="tru-value-card-title">TruMove Specialist</h3>
-                              <p className="tru-value-card-desc">Live video consultation.</p>
+                              <p className="tru-value-card-desc">Live video consultation for personalized guidance.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
@@ -688,11 +690,11 @@ export default function Index() {
                             </div>
                             <div className="tru-value-card-content">
                               <h3 className="tru-value-card-title">FMCSA Verified</h3>
-                              <p className="tru-value-card-desc">Real-time safety data checks.</p>
+                              <p className="tru-value-card-desc">Real-time safety data checks from official databases.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewCarrierVetting} alt="FMCSA Verification Preview" />
+                            <img src={previewPropertyLookup} alt="FMCSA Verification Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
@@ -708,11 +710,11 @@ export default function Index() {
                             </div>
                             <div className="tru-value-card-content">
                               <h3 className="tru-value-card-title">Instant Pricing</h3>
-                              <p className="tru-value-card-desc">Get accurate quotes in minutes.</p>
+                              <p className="tru-value-card-desc">Get accurate quotes in minutes, not hours.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewAiScanner} alt="Instant Pricing Preview" />
+                            <img src={sampleRoomLiving} alt="Instant Pricing Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
