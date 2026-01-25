@@ -25,12 +25,6 @@ import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
@@ -590,125 +584,95 @@ export default function Index() {
                 <div className="tru-hero-value-props-container tru-feature-section-card-clean">
                   {/* Value Cards - Always visible with previews */}
                   <div className="tru-hero-value-cards tru-hero-value-cards-open">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
-                          <div className="tru-value-card-header">
-                            <div className="tru-value-card-icon">
-                              <Boxes className="w-4 h-4" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Inventory Builder</h3>
-                              <p className="tru-value-card-desc">Build your item list room by room for accurate pricing estimates.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewAiScanner} alt="Inventory Builder Preview" />
-                          </div>
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
+                      <div className="tru-value-card-header">
+                        <div className="tru-value-card-icon">
+                          <Boxes className="w-4 h-4" />
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent>Live Now</TooltipContent>
-                    </Tooltip>
+                        <div className="tru-value-card-content">
+                          <h3 className="tru-value-card-title">Inventory Builder</h3>
+                          <p className="tru-value-card-desc">Build your item list room by room for accurate pricing estimates.</p>
+                        </div>
+                      </div>
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
+                        <img src={previewAiScanner} alt="Inventory Builder Preview" />
+                      </div>
+                    </div>
                     
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
-                          <div className="tru-value-card-header">
-                            <div className="tru-value-card-icon">
-                              <Scan className="w-4 h-4" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">AI Room Scanner</h3>
-                              <p className="tru-value-card-desc">Point your camera and AI detects furniture instantly.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={sampleRoomLiving} alt="AI Room Scanner Preview" />
-                          </div>
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
+                      <div className="tru-value-card-header">
+                        <div className="tru-value-card-icon">
+                          <Scan className="w-4 h-4" />
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent>Coming Soon</TooltipContent>
-                    </Tooltip>
+                        <div className="tru-value-card-content">
+                          <h3 className="tru-value-card-title">AI Room Scanner</h3>
+                          <p className="tru-value-card-desc">Point your camera and AI detects furniture instantly.</p>
+                        </div>
+                      </div>
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
+                        <img src={sampleRoomLiving} alt="AI Room Scanner Preview" />
+                      </div>
+                    </div>
                     
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
-                          <div className="tru-value-card-header">
-                            <div className="tru-value-card-icon">
-                              <Radar className="w-4 h-4" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Smart Carrier Match</h3>
-                              <p className="tru-value-card-desc">Our algorithm finds the best carrier for your route.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewCarrierVetting} alt="Carrier Matching Preview" />
-                          </div>
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
+                      <div className="tru-value-card-header">
+                        <div className="tru-value-card-icon">
+                          <Radar className="w-4 h-4" />
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent>Live Now</TooltipContent>
-                    </Tooltip>
+                        <div className="tru-value-card-content">
+                          <h3 className="tru-value-card-title">Smart Carrier Match</h3>
+                          <p className="tru-value-card-desc">Our algorithm finds the best carrier for your route.</p>
+                        </div>
+                      </div>
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
+                        <img src={previewCarrierVetting} alt="Carrier Matching Preview" />
+                      </div>
+                    </div>
                     
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/book")}>
-                          <div className="tru-value-card-header">
-                            <div className="tru-value-card-icon">
-                              <Video className="w-4 h-4" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">TruMove Specialist</h3>
-                              <p className="tru-value-card-desc">Live video consultation for personalized guidance.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewVideoConsult} alt="TruMove Specialist Preview" />
-                          </div>
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/book")}>
+                      <div className="tru-value-card-header">
+                        <div className="tru-value-card-icon">
+                          <Video className="w-4 h-4" />
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent>Live Now</TooltipContent>
-                    </Tooltip>
+                        <div className="tru-value-card-content">
+                          <h3 className="tru-value-card-title">TruMove Specialist</h3>
+                          <p className="tru-value-card-desc">Live video consultation for personalized guidance.</p>
+                        </div>
+                      </div>
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
+                        <img src={previewVideoConsult} alt="TruMove Specialist Preview" />
+                      </div>
+                    </div>
 
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
-                          <div className="tru-value-card-header">
-                            <div className="tru-value-card-icon">
-                              <ShieldCheck className="w-4 h-4" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">FMCSA Verified</h3>
-                              <p className="tru-value-card-desc">Real-time safety data checks from official databases.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewPropertyLookup} alt="FMCSA Verification Preview" />
-                          </div>
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
+                      <div className="tru-value-card-header">
+                        <div className="tru-value-card-icon">
+                          <ShieldCheck className="w-4 h-4" />
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent>Live Now</TooltipContent>
-                    </Tooltip>
+                        <div className="tru-value-card-content">
+                          <h3 className="tru-value-card-title">FMCSA Verified</h3>
+                          <p className="tru-value-card-desc">Real-time safety data checks from official databases.</p>
+                        </div>
+                      </div>
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
+                        <img src={previewPropertyLookup} alt="FMCSA Verification Preview" />
+                      </div>
+                    </div>
 
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
-                          <div className="tru-value-card-header">
-                            <div className="tru-value-card-icon">
-                              <DollarSign className="w-4 h-4" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Instant Pricing</h3>
-                              <p className="tru-value-card-desc">Get accurate quotes in minutes, not hours.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={scanRoomPreview} alt="Instant Pricing Preview" />
-                          </div>
+                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
+                      <div className="tru-value-card-header">
+                        <div className="tru-value-card-icon">
+                          <DollarSign className="w-4 h-4" />
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent>Live Now</TooltipContent>
-                    </Tooltip>
+                        <div className="tru-value-card-content">
+                          <h3 className="tru-value-card-title">Instant Pricing</h3>
+                          <p className="tru-value-card-desc">Get accurate quotes in minutes, not hours.</p>
+                        </div>
+                      </div>
+                      <div className="tru-value-card-preview tru-value-card-preview-visible">
+                        <img src={scanRoomPreview} alt="Instant Pricing Preview" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
