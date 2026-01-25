@@ -981,22 +981,53 @@
    SPLIT HERO LAYOUT - Homepage
    ============================================= */
 /* 50/50 Two-column layout */
-/* Hero Split Layout - With Full-Width Top Section */
+/* Hero Split Layout - Compact with inline header */
 .tru-hero.tru-hero-split {
   display: grid;
   grid-template-columns: 420px 1fr;
   grid-template-rows: auto 1fr;
-  gap: 16px;
+  gap: 12px;
   align-items: start;
-  padding: 16px 24px 24px 24px;
+  padding: 8px 24px 24px 24px;
   max-width: 1480px;
   margin: 0 auto;
 }
 
-/* Full-width top section spanning both columns */
+/* Compact Hero Header - spans full width */
+.tru-hero-compact-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  gap: 16px;
+}
+
+.tru-hero-compact-headline {
+  font-size: 18px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.tru-hero-compact-logo {
+  height: 22px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.tru-hero-compact-headline .tru-hero-headline-accent {
+  font-weight: 800;
+}
+
+/* Full-width top section spanning both columns (legacy) */
 .tru-hero.tru-hero-split > .tru-hero-top-section {
   grid-column: 1 / -1;
-  padding-bottom: 12px;
+  padding-bottom: 8px;
 }
 
 /* LEFT: Form + Sidebar together (swapped from right) */
