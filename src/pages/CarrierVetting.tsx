@@ -367,6 +367,65 @@ export default function CarrierVetting() {
             </div>
           )}
 
+          {/* Empty State Placeholder - Only show when no carriers */}
+          {carriers.length === 0 && (
+            <div className="mt-4 mb-8">
+              {/* Placeholder Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+                {[1, 2, 3].map((i) => (
+                  <div 
+                    key={i} 
+                    className="relative p-6 rounded-xl border-2 border-dashed border-border/60 bg-muted/20 min-h-[280px] flex flex-col items-center justify-center text-center group hover:border-primary/30 hover:bg-muted/30 transition-all duration-300"
+                  >
+                    {/* Placeholder Icon */}
+                    <div className="w-16 h-16 rounded-full bg-muted/50 border border-border/50 flex items-center justify-center mb-4 group-hover:border-primary/30 transition-colors">
+                      <Shield className="w-8 h-8 text-muted-foreground/40 group-hover:text-primary/40 transition-colors" />
+                    </div>
+                    
+                    {/* Placeholder Text */}
+                    <div className="space-y-2">
+                      <div className="h-4 w-32 bg-muted/60 rounded mx-auto" />
+                      <div className="h-3 w-24 bg-muted/40 rounded mx-auto" />
+                    </div>
+                    
+                    {/* Slot Label */}
+                    <p className="mt-4 text-xs text-muted-foreground/60 font-medium">
+                      Carrier Slot {i}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              
+              {/* How It Works Section */}
+              <div className="mt-10 max-w-3xl mx-auto">
+                <h3 className="text-center text-sm font-semibold text-foreground mb-6">How It Works</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
+                      <span className="text-sm font-bold text-primary">1</span>
+                    </div>
+                    <h4 className="text-sm font-medium text-foreground mb-1">Search by DOT or Name</h4>
+                    <p className="text-xs text-muted-foreground">Enter a carrier's DOT number or company name in the search above</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
+                      <span className="text-sm font-bold text-primary">2</span>
+                    </div>
+                    <h4 className="text-sm font-medium text-foreground mb-1">Review Safety Data</h4>
+                    <p className="text-xs text-muted-foreground">See instant FMCSA safety scores, insurance status, and red flags</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
+                      <span className="text-sm font-bold text-primary">3</span>
+                    </div>
+                    <h4 className="text-sm font-medium text-foreground mb-1">Compare Up to 4</h4>
+                    <p className="text-xs text-muted-foreground">Add multiple carriers to compare their safety records side-by-side</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Results Header - Only when carriers exist */}
           {carriers.length > 0 && (
             <div className="mt-12 mb-10 text-center">
