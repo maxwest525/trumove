@@ -394,11 +394,11 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
         {/* Summary Stats - Always visible */}
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 rounded-lg bg-muted/30 border border-border/60">
-            <div className="text-xs font-semibold text-slate-900 dark:text-foreground mb-1">Authority Status</div>
+            <div className="text-xs font-semibold text-slate-900 dark:text-foreground mb-1 whitespace-nowrap">Authority Status</div>
             <AuthorityBadge status={data.authority.commonStatus} />
           </div>
           <div className="p-3 rounded-lg bg-muted/30 border border-border/60">
-            <div className="text-xs font-semibold text-slate-900 dark:text-foreground mb-1">BIPD Liability</div>
+            <div className="text-xs font-semibold text-slate-900 dark:text-foreground mb-1 whitespace-nowrap">BIPD Liability</div>
             <span className="text-sm font-semibold text-foreground">{formatInsurance()}</span>
           </div>
         </div>
@@ -545,42 +545,42 @@ function CarrierSnapshotCardInner({ data, onRemove, className }: CarrierSnapshot
             {/* Fleet & Crashes */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
                   <Truck className="w-3.5 h-3.5" />
                   <span>Fleet Details</span>
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Power Units</span>
-                    <span className="font-medium font-mono">{data.fleet.powerUnits}</span>
+                    <span className="font-medium font-mono text-foreground">{data.fleet.powerUnits}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Drivers</span>
-                    <span className="font-medium font-mono">{data.fleet.drivers}</span>
+                    <span className="font-medium font-mono text-foreground">{data.fleet.drivers}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2 p-3 rounded-lg bg-muted/20 border border-border/50">
-                <div className="flex items-center gap-2 text-xs font-medium text-foreground">
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 dark:text-foreground">
                   <AlertTriangle className="w-3.5 h-3.5" />
                   <span>Crash History (24 months)</span>
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-foreground">Fatal</span>
+                    <span className="text-muted-foreground">Fatal</span>
                     <span className={cn('font-medium font-mono', data.crashes.fatal > 0 ? 'text-red-700 dark:text-red-400' : 'text-foreground')}>
                       {data.crashes.fatal}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-foreground">Injury</span>
+                    <span className="text-muted-foreground">Injury</span>
                     <span className={cn('font-medium font-mono', data.crashes.injury > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-foreground')}>
                       {data.crashes.injury}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-foreground">Tow-Away</span>
+                    <span className="text-muted-foreground">Tow-Away</span>
                     <span className="font-medium font-mono text-foreground">{data.crashes.towAway}</span>
                   </div>
                 </div>
