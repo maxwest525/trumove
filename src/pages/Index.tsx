@@ -36,7 +36,7 @@ import {
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp
+  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown
 } from "lucide-react";
 
 // ZIP lookup
@@ -565,17 +565,24 @@ export default function Index() {
               </div>
             )}
             
-            {/* Compact Hero Header - Single line */}
-            <div className="tru-hero-compact-header">
-              <h1 className="tru-hero-compact-headline">
-                Let <img src={logoImg} alt="TruMove" className="tru-hero-compact-logo" /> match you with <span className="tru-hero-headline-accent">vetted carriers</span>
+            {/* Hero Header with Headline + Subheadline + Arrow */}
+            <div className="tru-hero-header-section">
+              <h1 className="tru-hero-headline-main">
+                Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> match you with <span className="tru-hero-headline-accent">vetted carriers</span>
               </h1>
+              <p className="tru-hero-subheadline">
+                Our AI scans your rooms to build accurate inventories, while FMCSA safety data helps match you with trusted movers.
+              </p>
               <div className="tru-hero-trust-inline">
                 <span className="tru-hero-trust-item"><Shield className="w-3 h-3" /> FMCSA Licensed</span>
                 <span className="tru-hero-trust-sep">•</span>
                 <span className="tru-hero-trust-item"><Star className="w-3 h-3" /> 5-Star</span>
                 <span className="tru-hero-trust-sep">•</span>
                 <span className="tru-hero-trust-item"><Users className="w-3 h-3" /> 1,000+ Families</span>
+              </div>
+              {/* Animated arrow pointing to form */}
+              <div className="tru-hero-arrow-indicator">
+                <ChevronDown className="w-5 h-5" />
               </div>
             </div>
 
