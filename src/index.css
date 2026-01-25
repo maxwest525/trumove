@@ -1287,8 +1287,7 @@
 .tru-hero-value-cards-open .tru-value-card-preview-visible {
   position: relative;
   inset: unset;
-  height: 90px;
-  flex-shrink: 0;
+  flex: 1;
   margin: 0;
   border-radius: 8px;
   overflow: hidden;
