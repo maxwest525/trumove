@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
+import heroImage from '@/assets/classic-hero-truck.jpg';
 
 const Classic = () => {
   const [formData, setFormData] = useState({
@@ -22,33 +23,50 @@ const Classic = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission with variant field
-    const submissionData = {
-      ...formData,
+    // Store lead data in localStorage (same pattern as main site)
+    localStorage.setItem("tm_lead", JSON.stringify({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      fromCity: formData.movingFrom,
+      toCity: formData.movingTo,
+      moveDate: formData.moveDate,
+      size: formData.moveSize,
       variant: 'classic',
-      timestamp: new Date().toISOString(),
-    };
+      ts: Date.now()
+    }));
 
-    console.log('Classic form submission:', submissionData);
+    // Generate mailto link (same pattern as main site)
+    const subject = encodeURIComponent(`TruMove Classic Quote Request - ${formData.name}`);
+    const body = encodeURIComponent(`
+TruMove Quote Request (Classic Funnel)
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+CONTACT INFORMATION
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone}
 
-    toast.success('Thank you! We will contact you shortly.');
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      moveSize: '',
-      moveDate: '',
-      movingFrom: '',
-      movingTo: '',
-      message: '',
-    });
+MOVE DETAILS
+Moving From: ${formData.movingFrom || 'Not specified'}
+Moving To: ${formData.movingTo || 'Not specified'}
+Move Size: ${formData.moveSize || 'Not specified'}
+Preferred Date: ${formData.moveDate || 'Not specified'}
+
+ADDITIONAL NOTES
+${formData.message || 'None'}
+
+---
+Source: Classic Quote Form
+Variant: classic
+    `.trim());
+
+    window.location.href = `mailto:quotes@trumove.com?subject=${subject}&body=${body}`;
+    
+    toast.success('Opening your email client...');
     setIsSubmitting(false);
   };
 
@@ -172,28 +190,39 @@ const Classic = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-muted/50 to-white py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+      {/* Hero Section with Background Image */}
+      <section className="relative min-h-[500px] md:min-h-[600px] flex items-center">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${heroImage})` }}
+        >
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+        
+        {/* Content */}
+        <div className="relative container mx-auto px-4 py-16 md:py-24">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
               Trusted Movers Who Treat You Like Family
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed drop-shadow">
               Moving can be stressful. We're here to make it simple, safe, and worry-free. 
               With decades of experience, we handle your belongings with the care they deserve.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start gap-4">
               <a 
                 href="#quote" 
-                className="w-full sm:w-auto bg-primary text-primary-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors text-center"
+                className="w-full sm:w-auto bg-primary text-primary-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors text-center shadow-lg"
               >
                 Get Your Free Quote
               </a>
               <a 
                 href="tel:1-800-555-MOVE" 
-                className="w-full sm:w-auto border-2 border-primary text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/5 transition-colors text-center"
+                className="w-full sm:w-auto bg-white text-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/90 transition-colors text-center shadow-lg flex items-center justify-center gap-2"
               >
+                <Phone className="w-5 h-5" />
                 Call 1-800-555-MOVE
               </a>
             </div>
