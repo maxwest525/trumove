@@ -11,6 +11,7 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import RouteAnalysisSection from "@/components/RouteAnalysisSection";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useParallax } from "@/hooks/useParallax";
 import logoImg from "@/assets/logo.png";
 
 // Preview images for value cards
@@ -134,6 +135,12 @@ export default function Index() {
     rootMargin: "0px",
     triggerOnce: true,
   });
+  
+  // Parallax effects for hero elements
+  const [parallaxHeadlineRef, headlineParallax] = useParallax<HTMLDivElement>({ speed: 0.15, direction: "up" });
+  const [parallaxCardsRef, cardsParallax] = useParallax<HTMLDivElement>({ speed: 0.08, direction: "up" });
+  const [parallaxFormRef, formParallax] = useParallax<HTMLDivElement>({ speed: 0.05, direction: "up" });
+  
   // Step tracking (1-4)
   const [step, setStep] = useState(1);
   
@@ -558,12 +565,20 @@ export default function Index() {
               </div>
             )}
             
-            {/* HERO TOP: Centered Headline + Subheadline with scroll animation */}
+            {/* HERO TOP: Centered Headline + Subheadline with scroll animation + parallax */}
             <div 
-              ref={heroContentRef}
-              className={`tru-hero-top-section tru-animate-on-scroll ${isHeroInView ? 'is-in-view' : ''}`}
+              ref={(el) => {
+                // Combine refs for scroll animation and parallax
+                if (heroContentRef) (heroContentRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+                if (parallaxHeadlineRef) (parallaxHeadlineRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+              }}
+              className={`tru-hero-top-section tru-hero-parallax-container tru-animate-on-scroll ${isHeroInView ? 'is-in-view' : ''}`}
+              style={{
+                transform: `translateY(${headlineParallax.y}px)`,
+                opacity: headlineParallax.opacity,
+              }}
             >
-              <h1 className="tru-hero-headline-main">
+              <h1 className="tru-hero-headline-main tru-hero-parallax-headline">
                 <span className="tru-hero-headline-line">
                   Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> Get You Matched With
                 </span>
@@ -576,8 +591,14 @@ export default function Index() {
               </p>
             </div>
 
-            {/* LEFT: Feature Cards */}
-            <div className="tru-hero-content-panel">
+            {/* LEFT: Feature Cards with parallax */}
+            <div 
+              ref={parallaxCardsRef}
+              className="tru-hero-content-panel tru-hero-parallax-cards"
+              style={{
+                transform: `translateY(${cardsParallax.y}px)`,
+              }}
+            >
               <div className="tru-hero-content-inner">
                 {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
                 <div className="tru-hero-value-props-container tru-feature-section-card">
@@ -672,8 +693,14 @@ export default function Index() {
               </div>
             </div>
 
-            {/* RIGHT: Form + Sidebar Stacked Vertically */}
-            <div className="tru-hero-right-half tru-hero-right-stacked">
+            {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
+            <div 
+              ref={parallaxFormRef}
+              className="tru-hero-right-half tru-hero-right-stacked"
+              style={{
+                transform: `translateY(${formParallax.y}px)`,
+              }}
+            >
               <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
                 {/* TOP ROW: Form Card */}
                 <div className="tru-floating-form-card">

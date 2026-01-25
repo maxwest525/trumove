@@ -21160,9 +21160,9 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
+  pointer-events: auto;
   z-index: 0;
-  opacity: 0.6;
+  opacity: 0.75;
 }
 
 /* =============================================
@@ -21206,11 +21206,93 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    ellipse 80% 60% at 50% 40%,
+    ellipse 100% 80% at 50% 30%,
     transparent 0%,
-    hsl(var(--background) / 0.3) 70%,
-    hsl(var(--background) / 0.6) 100%
+    hsl(var(--background) / 0.2) 50%,
+    hsl(var(--background) / 0.5) 100%
   );
   pointer-events: none;
   z-index: 0;
+}
+
+/* =============================================
+   BACK TO TOP BUTTON
+   ============================================= */
+.tru-back-to-top {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 51;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 
+    0 4px 16px hsl(var(--primary) / 0.4),
+    0 2px 8px hsl(var(--tm-ink) / 0.1);
+  transform: translateY(100px) scale(0.8);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.tru-back-to-top.is-visible {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tru-back-to-top:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 
+    0 8px 24px hsl(var(--primary) / 0.5),
+    0 4px 12px hsl(var(--tm-ink) / 0.15);
+}
+
+.tru-back-to-top:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+@media (min-width: 768px) {
+  .tru-back-to-top {
+    bottom: 100px;
+    right: 32px;
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* =============================================
+   PARALLAX HERO CONTENT
+   ============================================= */
+.tru-hero-parallax-container {
+  will-change: transform, opacity;
+  transition: opacity 0.1s ease-out;
+}
+
+.tru-hero-parallax-headline {
+  will-change: transform;
+}
+
+.tru-hero-parallax-cards {
+  will-change: transform;
+}
+
+/* Parallax layer speeds */
+.tru-parallax-fast {
+  --parallax-speed: 0.4;
+}
+
+.tru-parallax-medium {
+  --parallax-speed: 0.25;
+}
+
+.tru-parallax-slow {
+  --parallax-speed: 0.1;
 }

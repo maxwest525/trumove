@@ -7,18 +7,28 @@ interface Particle {
   speedX: number;
   speedY: number;
   opacity: number;
-  hue: number;
+  baseOpacity: number;
+  pulseOffset: number;
 }
 
 interface HeroParticlesProps {
   className?: string;
+  density?: "subtle" | "normal" | "dramatic";
 }
 
-export default function HeroParticles({ className = "" }: HeroParticlesProps) {
+const densitySettings = {
+  subtle: { count: 30, opacity: 0.3, lineOpacity: 0.08, connectionDistance: 100 },
+  normal: { count: 60, opacity: 0.5, lineOpacity: 0.15, connectionDistance: 140 },
+  dramatic: { count: 80, opacity: 0.7, lineOpacity: 0.25, connectionDistance: 180 },
+};
+
+export default function HeroParticles({ className = "", density = "dramatic" }: HeroParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
   const particlesRef = useRef<Particle[]>([]);
+  const mouseRef = useRef({ x: 0, y: 0, active: false });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const settings = densitySettings[density];
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -40,16 +50,39 @@ export default function HeroParticles({ className = "" }: HeroParticlesProps) {
     updateDimensions();
 
     // Initialize particles
-    const particleCount = Math.min(50, Math.floor((dimensions.width * dimensions.height) / 20000));
-    particlesRef.current = Array.from({ length: particleCount }, () => createParticle(canvas.width, canvas.height));
+    const particleCount = Math.min(settings.count, Math.floor((dimensions.width * dimensions.height) / 12000));
+    particlesRef.current = Array.from({ length: particleCount }, () => 
+      createParticle(canvas.width, canvas.height, settings.opacity)
+    );
 
     const resizeObserver = new ResizeObserver(updateDimensions);
     if (canvas.parentElement) {
       resizeObserver.observe(canvas.parentElement);
     }
 
-    return () => resizeObserver.disconnect();
-  }, []);
+    // Mouse tracking for interactive effect
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        active: true,
+      };
+    };
+
+    const handleMouseLeave = () => {
+      mouseRef.current.active = false;
+    };
+
+    canvas.addEventListener("mousemove", handleMouseMove);
+    canvas.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      resizeObserver.disconnect();
+      canvas.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [settings.count, settings.opacity]);
 
   useEffect(() => {
     if (dimensions.width === 0 || dimensions.height === 0) return;
@@ -61,12 +94,17 @@ export default function HeroParticles({ className = "" }: HeroParticlesProps) {
     if (!ctx) return;
 
     // Reinitialize particles when dimensions change
-    const particleCount = Math.min(50, Math.floor((dimensions.width * dimensions.height) / 20000));
+    const particleCount = Math.min(settings.count, Math.floor((dimensions.width * dimensions.height) / 12000));
     if (particlesRef.current.length !== particleCount) {
-      particlesRef.current = Array.from({ length: particleCount }, () => createParticle(dimensions.width, dimensions.height));
+      particlesRef.current = Array.from({ length: particleCount }, () => 
+        createParticle(dimensions.width, dimensions.height, settings.opacity)
+      );
     }
 
+    let time = 0;
+
     const animate = () => {
+      time += 0.01;
       ctx.clearRect(0, 0, dimensions.width, dimensions.height);
 
       particlesRef.current.forEach((particle, index) => {
@@ -74,11 +112,27 @@ export default function HeroParticles({ className = "" }: HeroParticlesProps) {
         particle.x += particle.speedX;
         particle.y += particle.speedY;
 
+        // Mouse interaction - particles are attracted/repelled slightly
+        if (mouseRef.current.active) {
+          const dx = mouseRef.current.x - particle.x;
+          const dy = mouseRef.current.y - particle.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 200) {
+            const force = (200 - distance) / 200 * 0.02;
+            particle.x -= dx * force * 0.5;
+            particle.y -= dy * force * 0.5;
+          }
+        }
+
         // Wrap around edges
         if (particle.x < -10) particle.x = dimensions.width + 10;
         if (particle.x > dimensions.width + 10) particle.x = -10;
         if (particle.y < -10) particle.y = dimensions.height + 10;
         if (particle.y > dimensions.height + 10) particle.y = -10;
+
+        // Pulsing opacity
+        const pulse = Math.sin(time + particle.pulseOffset) * 0.3 + 0.7;
+        particle.opacity = particle.baseOpacity * pulse;
 
         // Fade in/out based on position
         const edgeDistance = Math.min(
@@ -87,38 +141,61 @@ export default function HeroParticles({ className = "" }: HeroParticlesProps) {
           dimensions.width - particle.x,
           dimensions.height - particle.y
         );
-        const fadeFactor = Math.min(1, edgeDistance / 100);
+        const fadeFactor = Math.min(1, edgeDistance / 80);
 
-        // Draw particle as soft glowing dot
-        const gradient = ctx.createRadialGradient(
-          particle.x, particle.y, 0,
-          particle.x, particle.y, particle.size * 2
-        );
-        
-        // Use primary green color (hsl 142 76% 36%)
+        // Draw particle as soft glowing dot with multiple layers
         const alpha = particle.opacity * fadeFactor;
-        gradient.addColorStop(0, `hsla(142, 76%, 50%, ${alpha})`);
-        gradient.addColorStop(0.5, `hsla(142, 76%, 45%, ${alpha * 0.5})`);
-        gradient.addColorStop(1, `hsla(142, 76%, 40%, 0)`);
-
+        
+        // Outer glow
+        const outerGradient = ctx.createRadialGradient(
+          particle.x, particle.y, 0,
+          particle.x, particle.y, particle.size * 4
+        );
+        outerGradient.addColorStop(0, `hsla(142, 76%, 55%, ${alpha * 0.3})`);
+        outerGradient.addColorStop(0.5, `hsla(142, 76%, 50%, ${alpha * 0.1})`);
+        outerGradient.addColorStop(1, `hsla(142, 76%, 45%, 0)`);
+        
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size * 2, 0, Math.PI * 2);
-        ctx.fillStyle = gradient;
+        ctx.arc(particle.x, particle.y, particle.size * 4, 0, Math.PI * 2);
+        ctx.fillStyle = outerGradient;
         ctx.fill();
 
-        // Connect nearby particles with subtle lines
+        // Inner core
+        const innerGradient = ctx.createRadialGradient(
+          particle.x, particle.y, 0,
+          particle.x, particle.y, particle.size * 1.5
+        );
+        innerGradient.addColorStop(0, `hsla(142, 80%, 65%, ${alpha})`);
+        innerGradient.addColorStop(0.6, `hsla(142, 76%, 50%, ${alpha * 0.6})`);
+        innerGradient.addColorStop(1, `hsla(142, 76%, 45%, 0)`);
+
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size * 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = innerGradient;
+        ctx.fill();
+
+        // Connect nearby particles with gradient lines
         particlesRef.current.slice(index + 1).forEach((other) => {
           const dx = other.x - particle.x;
           const dy = other.y - particle.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 120) {
-            const lineAlpha = (1 - distance / 120) * 0.15 * fadeFactor;
+          if (distance < settings.connectionDistance) {
+            const lineAlpha = (1 - distance / settings.connectionDistance) * settings.lineOpacity * fadeFactor;
+            
+            // Create gradient line
+            const lineGradient = ctx.createLinearGradient(
+              particle.x, particle.y, other.x, other.y
+            );
+            lineGradient.addColorStop(0, `hsla(142, 76%, 55%, ${lineAlpha})`);
+            lineGradient.addColorStop(0.5, `hsla(142, 76%, 50%, ${lineAlpha * 0.7})`);
+            lineGradient.addColorStop(1, `hsla(142, 76%, 55%, ${lineAlpha})`);
+            
             ctx.beginPath();
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(other.x, other.y);
-            ctx.strokeStyle = `hsla(142, 76%, 50%, ${lineAlpha})`;
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = lineGradient;
+            ctx.lineWidth = 0.8;
             ctx.stroke();
           }
         });
@@ -134,7 +211,7 @@ export default function HeroParticles({ className = "" }: HeroParticlesProps) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [dimensions]);
+  }, [dimensions, settings]);
 
   return (
     <canvas
@@ -145,14 +222,16 @@ export default function HeroParticles({ className = "" }: HeroParticlesProps) {
   );
 }
 
-function createParticle(width: number, height: number): Particle {
+function createParticle(width: number, height: number, maxOpacity: number): Particle {
+  const baseOpacity = Math.random() * maxOpacity * 0.6 + maxOpacity * 0.2;
   return {
     x: Math.random() * width,
     y: Math.random() * height,
-    size: Math.random() * 2 + 1,
-    speedX: (Math.random() - 0.5) * 0.3,
-    speedY: (Math.random() - 0.5) * 0.3,
-    opacity: Math.random() * 0.4 + 0.1,
-    hue: 142, // Primary green
+    size: Math.random() * 2.5 + 1.5,
+    speedX: (Math.random() - 0.5) * 0.4,
+    speedY: (Math.random() - 0.5) * 0.4,
+    opacity: baseOpacity,
+    baseOpacity,
+    pulseOffset: Math.random() * Math.PI * 2,
   };
 }
