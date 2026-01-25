@@ -623,7 +623,7 @@ export default function Index() {
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={scanRoomPreview} alt="AI Room Scanner Preview" />
+                            <img src={sampleRoomLiving} alt="AI Room Scanner Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
@@ -703,7 +703,7 @@ export default function Index() {
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={sampleRoomLiving} alt="Instant Pricing Preview" />
+                            <img src={scanRoomPreview} alt="Instant Pricing Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>

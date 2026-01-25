@@ -1844,11 +1844,11 @@
   transition: opacity 0.4s ease;
 }
 
-/* Value Cards - New 2x2 Grid Layout - Compact */
+/* Value Cards - Base Grid (overridden by tru-hero-value-cards-open) */
 .tru-hero-value-cards {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
