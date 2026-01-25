@@ -19,6 +19,7 @@ import PropertyLookup from "./pages/PropertyLookup";
 import Auth from "./pages/Auth";
 import AgentLogin from "./pages/AgentLogin";
 import ScanRoom from "./pages/ScanRoom";
+import Classic from "./pages/Classic";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/agent-login" element={<AgentLogin />} />
             <Route path="/scan-room" element={<ScanRoom />} />
+            <Route path="/classic" element={<Classic />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
