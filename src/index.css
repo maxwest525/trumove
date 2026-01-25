@@ -1084,8 +1084,8 @@
 
 .tru-hero-right-half .tru-hero-form-panel {
   width: 100%;
-  min-width: 420px;
-  max-width: 460px;
+  min-width: 480px;
+  max-width: 520px;
   flex-shrink: 0;
 }
 
@@ -1223,21 +1223,43 @@
 .tru-hero-value-cards-open {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  gap: 10px;
   width: 100%;
+}
+
+/* Compact 6-card grid on desktop */
+.tru-hero-value-cards-compact {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  min-height: 190px;
-  padding: 12px;
+  min-height: 140px;
+  padding: 10px;
   padding-bottom: 0;
   position: relative;
   overflow: hidden;
   cursor: pointer;
   border: 1px solid hsl(var(--border));
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smaller text for compact cards */
+.tru-hero-value-cards-compact .tru-value-card-title {
+  font-size: 12px;
+}
+
+.tru-hero-value-cards-compact .tru-value-card-desc {
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.tru-hero-value-cards-compact .tru-value-card-icon {
+  width: 28px;
+  height: 28px;
+  padding: 6px;
 }
 
 /* Hover: Lift + Glow + Border */
@@ -2936,7 +2958,7 @@
   display: flex;
   flex-direction: column;
   height: auto;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  background: hsl(var(--background));
   border: 2px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 24px;
   box-shadow: 
@@ -2946,6 +2968,8 @@
     0 24px 48px hsl(var(--tm-ink) / 0.08);
   overflow: hidden;
   transition: height 0.3s ease;
+  position: relative;
+  z-index: 5;
 }
 
 /* Compact form variant - auto-height, tighter spacing */
