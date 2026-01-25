@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Shield, Truck, Users, Star, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Shield, Truck, Users, Star, ChevronDown, ChevronUp, CheckCircle2, Award, Home, Building, Package, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import logo from '@/assets/logo.png';
 import heroImage from '@/assets/classic-hero-truck.jpg';
 
 const Classic = () => {
@@ -15,6 +13,7 @@ const Classic = () => {
     email: '',
     phone: '',
     moveSize: '',
+    moveType: '',
     moveDate: '',
     movingFrom: '',
     movingTo: '',
@@ -27,7 +26,6 @@ const Classic = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Store lead data in localStorage (same pattern as main site)
     localStorage.setItem("tm_lead", JSON.stringify({
       name: formData.name,
       email: formData.email,
@@ -36,14 +34,14 @@ const Classic = () => {
       toCity: formData.movingTo,
       moveDate: formData.moveDate,
       size: formData.moveSize,
+      moveType: formData.moveType,
       variant: 'classic',
       ts: Date.now()
     }));
 
-    // Generate mailto link (same pattern as main site)
-    const subject = encodeURIComponent(`TruMove Classic Quote Request - ${formData.name}`);
+    const subject = encodeURIComponent(`TruMove Quote Request - ${formData.name}`);
     const body = encodeURIComponent(`
-TruMove Quote Request (Classic Funnel)
+TruMove Quote Request
 
 CONTACT INFORMATION
 Name: ${formData.name}
@@ -53,6 +51,7 @@ Phone: ${formData.phone}
 MOVE DETAILS
 Moving From: ${formData.movingFrom || 'Not specified'}
 Moving To: ${formData.movingTo || 'Not specified'}
+Move Type: ${formData.moveType || 'Not specified'}
 Move Size: ${formData.moveSize || 'Not specified'}
 Preferred Date: ${formData.moveDate || 'Not specified'}
 
@@ -72,186 +71,215 @@ Variant: classic
 
   const services = [
     {
-      title: 'Local Moving',
-      description: 'Quick, efficient moves across town. Our experienced team knows every neighborhood.',
-      icon: Truck,
+      title: 'Residential Moving',
+      description: 'Full-service home moving with careful handling of all your belongings.',
+      icon: Home,
     },
     {
       title: 'Long Distance',
-      description: 'Coast-to-coast relocations handled with precision, safety, and reliable timing.',
-      icon: MapPin,
+      description: 'Nationwide relocations with tracking and guaranteed delivery dates.',
+      icon: Truck,
     },
     {
-      title: 'Senior Moving',
-      description: 'Gentle, compassionate services designed specifically for seniors and their families.',
-      icon: Users,
+      title: 'Commercial Moving',
+      description: 'Office and business relocations with minimal downtime.',
+      icon: Building,
     },
     {
       title: 'Packing Services',
-      description: 'Professional packing with quality materials to protect your valuables.',
+      description: 'Professional packing with quality materials included.',
+      icon: Package,
+    },
+    {
+      title: 'Senior Moving',
+      description: 'Specialized services for seniors with extra care and patience.',
+      icon: Users,
+    },
+    {
+      title: 'Storage Solutions',
+      description: 'Secure short and long-term storage options available.',
       icon: Shield,
     },
   ];
 
-  const whyChooseUs = [
-    {
-      title: 'Fully Licensed & Insured',
-      description: 'Your belongings are protected from start to finish with comprehensive coverage.',
-    },
-    {
-      title: 'Nationwide Coverage',
-      description: 'Whether moving across town or across the country, we have you covered.',
-    },
-    {
-      title: 'Friendly, Professional Team',
-      description: 'Our movers are trained, respectful, and dedicated to making your move easy.',
-    },
-    {
-      title: 'No Hidden Fees',
-      description: 'Transparent pricing with no surprises. You always know what you\'re paying for.',
-    },
+  const stats = [
+    { value: '25+', label: 'Years Experience' },
+    { value: '50,000+', label: 'Moves Completed' },
+    { value: '4.9/5', label: 'Customer Rating' },
+    { value: '100%', label: 'Licensed & Insured' },
   ];
 
   const testimonials = [
     {
       name: 'Margaret S.',
-      text: 'The crew was wonderful - so patient and careful with my antiques. I couldn\'t have asked for better service.',
+      location: 'Tampa, FL',
+      text: 'The crew was wonderful - so patient and careful with my antiques. I couldn\'t have asked for better service. They made my move completely stress-free.',
     },
     {
       name: 'Robert & Linda M.',
-      text: 'After 40 years in our home, we were dreading the move. TruMove made it completely stress-free.',
+      location: 'Atlanta, GA',
+      text: 'After 40 years in our home, we were dreading the move. TruMove made it completely worry-free. Professional from start to finish.',
     },
     {
       name: 'James T.',
-      text: 'Professional, punctual, and reasonably priced. They treated our furniture like it was their own.',
+      location: 'Phoenix, AZ',
+      text: 'Professional, punctual, and reasonably priced. They treated our furniture like it was their own. Would recommend to anyone.',
     },
   ];
 
   const faqs = [
     {
       question: 'How far in advance should I book my move?',
-      answer: 'We recommend booking at least 2-4 weeks in advance, especially during peak moving seasons (May through September). This ensures we can accommodate your preferred dates.',
+      answer: 'We recommend booking at least 2-4 weeks in advance, especially during peak moving seasons (May through September). This ensures we can accommodate your preferred dates and provide you with our best rates.',
     },
     {
       question: 'Do you provide packing materials and services?',
-      answer: 'Yes! We offer complete packing services including all materials - boxes, tape, bubble wrap, and specialty containers for fragile items. You can choose full-service packing or just the materials.',
+      answer: 'Yes! We offer complete packing services including all materials - boxes, tape, bubble wrap, and specialty containers for fragile items. You can choose full-service packing or purchase materials only.',
     },
     {
-      question: 'What items can\'t you move?',
-      answer: 'For safety reasons, we cannot transport hazardous materials, perishables, plants, or items of extraordinary value like cash or important documents. We\'re happy to provide a complete list.',
+      question: 'Are you licensed and insured?',
+      answer: 'Absolutely. We are fully licensed with the U.S. Department of Transportation and carry comprehensive insurance coverage. Your belongings are protected throughout the entire moving process.',
     },
     {
       question: 'How do you calculate the cost of a move?',
-      answer: 'Moving costs depend on distance, volume of belongings, and services needed. We provide free, no-obligation estimates after understanding your specific needs.',
+      answer: 'Moving costs depend on distance, volume of belongings, and services needed. We provide free, no-obligation estimates after understanding your specific needs. There are no hidden fees.',
     },
     {
       question: 'What if something gets damaged during the move?',
-      answer: 'All moves include basic liability coverage. We also offer additional protection options. Our team takes every precaution, and in the rare event of damage, we have a straightforward claims process.',
+      answer: 'All moves include basic liability coverage. We also offer additional protection options for high-value items. In the rare event of damage, we have a straightforward claims process to make things right.',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Top Bar - Phone CTA */}
-      <div className="bg-primary text-primary-foreground py-3">
-        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6">
-          <span className="text-base font-semibold">Get Your Free Quote Today</span>
-          <a 
-            href="tel:1-800-555-MOVE" 
-            className="flex items-center gap-2 text-lg font-bold hover:underline"
-          >
-            <Phone className="w-5 h-5" />
-            Call Us: 1-800-555-MOVE
+    <div className="min-h-screen bg-white font-sans">
+      {/* Top Utility Bar */}
+      <div className="bg-[#1a365d] text-white py-2 text-sm">
+        <div className="container mx-auto px-4 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <a href="mailto:info@trumove.com" className="flex items-center gap-2 hover:text-amber-300 transition-colors">
+              <Mail className="w-4 h-4" />
+              info@trumove.com
+            </a>
+            <span className="hidden md:flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Mon-Sat: 8:00 AM - 6:00 PM
+            </span>
+          </div>
+          <a href="tel:1-800-555-6683" className="flex items-center gap-2 font-bold hover:text-amber-300 transition-colors">
+            <Phone className="w-4 h-4" />
+            1-800-555-MOVE
           </a>
         </div>
       </div>
 
-      {/* Header */}
-      <header className="bg-white border-b border-border py-4 sticky top-0 z-50 shadow-sm">
+      {/* Main Header */}
+      <header className="bg-white border-b-4 border-[#1a365d] py-4 sticky top-0 z-50 shadow-md">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="TruMove" className="h-10" />
-            <span className="text-2xl font-bold text-foreground">TruMove</span>
+            <div className="w-12 h-12 bg-[#1a365d] rounded-lg flex items-center justify-center">
+              <Truck className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <span className="text-2xl font-bold text-[#1a365d] tracking-tight">TruMove</span>
+              <div className="text-xs text-gray-500 -mt-1">Professional Moving Services</div>
+            </div>
           </div>
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="#services" className="text-base text-foreground hover:text-primary transition-colors">Services</a>
-            <a href="#quote" className="text-base text-foreground hover:text-primary transition-colors">Get Quote</a>
-            <a href="#about" className="text-base text-foreground hover:text-primary transition-colors">About Us</a>
-            <a href="#faq" className="text-base text-foreground hover:text-primary transition-colors">FAQ</a>
+          <nav className="hidden lg:flex items-center gap-8">
+            <a href="#home" className="text-[#1a365d] font-medium hover:text-amber-600 transition-colors">Home</a>
+            <a href="#services" className="text-[#1a365d] font-medium hover:text-amber-600 transition-colors">Services</a>
+            <a href="#about" className="text-[#1a365d] font-medium hover:text-amber-600 transition-colors">About Us</a>
+            <a href="#testimonials" className="text-[#1a365d] font-medium hover:text-amber-600 transition-colors">Testimonials</a>
+            <a href="#faq" className="text-[#1a365d] font-medium hover:text-amber-600 transition-colors">FAQ</a>
+            <a href="#contact" className="text-[#1a365d] font-medium hover:text-amber-600 transition-colors">Contact</a>
           </nav>
           <a 
-            href="tel:1-800-555-MOVE" 
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+            href="#quote" 
+            className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded font-bold transition-colors shadow-md"
           >
-            <Phone className="w-4 h-4" />
-            <span className="hidden sm:inline">1-800-555-MOVE</span>
-            <span className="sm:hidden">Call Now</span>
+            Get Free Quote
           </a>
         </div>
       </header>
 
-      {/* Hero Section with Background Image */}
-      <section className="relative min-h-[500px] md:min-h-[600px] flex items-center">
-        {/* Background Image */}
+      {/* Hero Section */}
+      <section id="home" className="relative">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="min-h-[600px] bg-cover bg-center flex items-center"
           style={{ backgroundImage: `url(${heroImage})` }}
         >
-          {/* Dark overlay for text readability */}
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
-        
-        {/* Content */}
-        <div className="relative container mx-auto px-4 py-16 md:py-24">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
-              Trusted Movers Who Treat You Like Family
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed drop-shadow">
-              Moving can be stressful. We're here to make it simple, safe, and worry-free. 
-              With decades of experience, we handle your belongings with the care they deserve.
-            </p>
-            <div className="flex flex-col sm:flex-row items-start gap-4">
-              <a 
-                href="#quote" 
-                className="w-full sm:w-auto bg-primary text-primary-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors text-center shadow-lg"
-              >
-                Get Your Free Quote
-              </a>
-              <a 
-                href="tel:1-800-555-MOVE" 
-                className="w-full sm:w-auto bg-white text-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/90 transition-colors text-center shadow-lg flex items-center justify-center gap-2"
-              >
-                <Phone className="w-5 h-5" />
-                Call 1-800-555-MOVE
-              </a>
+          <div className="absolute inset-0 bg-[#1a365d]/70" />
+          <div className="relative container mx-auto px-4 py-20">
+            <div className="max-w-2xl">
+              <div className="inline-block bg-amber-500 text-white px-4 py-1 text-sm font-bold mb-4 rounded">
+                TRUSTED SINCE 1998
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                Your Trusted Partner for Stress-Free Moving
+              </h1>
+              <p className="text-xl text-white/90 mb-8 leading-relaxed">
+                Whether you're moving across town or across the country, our experienced team 
+                is here to make your move simple, safe, and affordable.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a 
+                  href="#quote" 
+                  className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-4 rounded text-lg font-bold transition-colors text-center shadow-lg flex items-center justify-center gap-2"
+                >
+                  Get Your Free Quote
+                  <ArrowRight className="w-5 h-5" />
+                </a>
+                <a 
+                  href="tel:1-800-555-6683" 
+                  className="bg-white hover:bg-gray-100 text-[#1a365d] px-8 py-4 rounded text-lg font-bold transition-colors text-center shadow-lg flex items-center justify-center gap-2"
+                >
+                  <Phone className="w-5 h-5" />
+                  Call 1-800-555-MOVE
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-16 bg-white">
+      {/* Stats Bar */}
+      <section className="bg-[#1a365d] py-8">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Moving Services For Every Need
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-white">
+                <div className="text-3xl md:text-4xl font-bold text-amber-400 mb-1">{stat.value}</div>
+                <div className="text-sm md:text-base opacity-80">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-14">
+            <div className="inline-block bg-amber-500/10 text-amber-600 px-4 py-1 text-sm font-bold mb-4 rounded">
+              OUR SERVICES
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] mb-4">
+              Moving Services That Cover Every Detail
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We cover every detail so you don't have to. From packing to unpacking, local moves to cross-country relocations.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              From start to finish, we handle every aspect of your move with professionalism and care.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {services.map((service, index) => (
               <div 
                 key={index} 
-                className="bg-muted/30 border border-border rounded-xl p-6 text-center hover:shadow-lg hover:border-primary/30 transition-all duration-300"
+                className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-xl hover:border-amber-400 transition-all duration-300 group"
               >
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <service.icon className="w-8 h-8 text-primary" />
+                <div className="w-14 h-14 bg-[#1a365d] rounded-lg flex items-center justify-center mb-4 group-hover:bg-amber-500 transition-colors">
+                  <service.icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">{service.title}</h3>
-                <p className="text-base text-muted-foreground leading-relaxed">{service.description}</p>
+                <h3 className="text-xl font-bold text-[#1a365d] mb-3">{service.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{service.description}</p>
               </div>
             ))}
           </div>
@@ -259,21 +287,21 @@ Variant: classic
       </section>
 
       {/* Quote Form Section */}
-      <section id="quote" className="py-16 bg-muted/50">
+      <section id="quote" className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Get Your Free Quote
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-[#1a365d] rounded-t-xl p-8 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                Get Your Free Moving Quote
               </h2>
-              <p className="text-lg text-muted-foreground">
-                Tell us about your move and we'll provide a no-obligation estimate. We pride ourselves on fair, transparent pricing.
+              <p className="text-lg text-white/80">
+                Fill out the form below and we'll get back to you within 24 hours
               </p>
             </div>
-            <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit} className="bg-gray-50 rounded-b-xl shadow-2xl p-8 border border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-base font-medium text-foreground mb-2">
+                  <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
                     Your Name *
                   </label>
                   <Input
@@ -282,11 +310,11 @@ Variant: classic
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Full Name"
                     required
-                    className="h-12 text-base"
+                    className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-base font-medium text-foreground mb-2">
+                  <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
                     Phone Number *
                   </label>
                   <Input
@@ -295,12 +323,13 @@ Variant: classic
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="(555) 123-4567"
                     required
-                    className="h-12 text-base"
+                    className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-base font-medium text-foreground mb-2">
+              
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
                   Email Address *
                 </label>
                 <Input
@@ -309,71 +338,93 @@ Variant: classic
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="your@email.com"
                   required
-                  className="h-12 text-base"
+                  className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-base font-medium text-foreground mb-2">
-                    Move Size
-                  </label>
-                  <Select
-                    value={formData.moveSize}
-                    onValueChange={(value) => setFormData({ ...formData, moveSize: value })}
-                  >
-                    <SelectTrigger className="h-12 text-base">
-                      <SelectValue placeholder="Select size..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="studio">Studio / Small Apartment</SelectItem>
-                      <SelectItem value="1bed">1 Bedroom</SelectItem>
-                      <SelectItem value="2bed">2 Bedrooms</SelectItem>
-                      <SelectItem value="3bed">3 Bedrooms</SelectItem>
-                      <SelectItem value="4bed">4+ Bedrooms</SelectItem>
-                      <SelectItem value="office">Office / Commercial</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-base font-medium text-foreground mb-2">
-                    Preferred Move Date
-                  </label>
-                  <Input
-                    type="date"
-                    value={formData.moveDate}
-                    onChange={(e) => setFormData({ ...formData, moveDate: e.target.value })}
-                    className="h-12 text-base"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-base font-medium text-foreground mb-2">
+                  <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
                     Moving From
                   </label>
                   <Input
                     type="text"
                     value={formData.movingFrom}
                     onChange={(e) => setFormData({ ...formData, movingFrom: e.target.value })}
-                    placeholder="City, State or ZIP"
-                    className="h-12 text-base"
+                    placeholder="City, State or ZIP Code"
+                    className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-base font-medium text-foreground mb-2">
+                  <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
                     Moving To
                   </label>
                   <Input
                     type="text"
                     value={formData.movingTo}
                     onChange={(e) => setFormData({ ...formData, movingTo: e.target.value })}
-                    placeholder="City, State or ZIP"
-                    className="h-12 text-base"
+                    placeholder="City, State or ZIP Code"
+                    className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-base font-medium text-foreground mb-2">
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div>
+                  <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
+                    Move Type
+                  </label>
+                  <Select
+                    value={formData.moveType}
+                    onValueChange={(value) => setFormData({ ...formData, moveType: value })}
+                  >
+                    <SelectTrigger className="h-12 text-base border-gray-300">
+                      <SelectValue placeholder="Select type..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="local">Local Move</SelectItem>
+                      <SelectItem value="longdistance">Long Distance</SelectItem>
+                      <SelectItem value="commercial">Commercial</SelectItem>
+                      <SelectItem value="senior">Senior Moving</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
+                    Move Size
+                  </label>
+                  <Select
+                    value={formData.moveSize}
+                    onValueChange={(value) => setFormData({ ...formData, moveSize: value })}
+                  >
+                    <SelectTrigger className="h-12 text-base border-gray-300">
+                      <SelectValue placeholder="Select size..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="studio">Studio</SelectItem>
+                      <SelectItem value="1bed">1 Bedroom</SelectItem>
+                      <SelectItem value="2bed">2 Bedrooms</SelectItem>
+                      <SelectItem value="3bed">3 Bedrooms</SelectItem>
+                      <SelectItem value="4bed">4+ Bedrooms</SelectItem>
+                      <SelectItem value="office">Office</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
+                    Move Date
+                  </label>
+                  <Input
+                    type="date"
+                    value={formData.moveDate}
+                    onChange={(e) => setFormData({ ...formData, moveDate: e.target.value })}
+                    className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+                  />
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
                   Additional Details (Optional)
                 </label>
                 <Textarea
@@ -381,69 +432,125 @@ Variant: classic
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   placeholder="Tell us about any special requirements, large items, or questions..."
                   rows={4}
-                  className="text-base"
+                  className="text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
                 />
               </div>
+
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full h-14 text-lg font-semibold"
+                className="w-full h-14 text-lg font-bold bg-amber-500 hover:bg-amber-600 text-white rounded"
               >
-                {isSubmitting ? 'Sending...' : 'Request My Free Quote'}
+                {isSubmitting ? 'Sending...' : 'Request My Free Quote →'}
               </Button>
-              <p className="text-center text-sm text-muted-foreground">
-                No obligation • Quick response • Transparent pricing
+              <p className="text-center text-sm text-gray-500 mt-4">
+                ✓ No Obligation &nbsp;&nbsp; ✓ Quick Response &nbsp;&nbsp; ✓ Transparent Pricing
               </p>
             </form>
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section id="about" className="py-16 bg-white">
+      {/* About Section */}
+      <section id="about" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Why Choose TruMove?
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              When you choose us, you choose peace of mind. Here's what to expect.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {whyChooseUs.map((item, index) => (
-              <div key={index} className="flex items-start gap-4 p-6 bg-muted/30 rounded-xl">
-                <CheckCircle2 className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">{item.title}</h3>
-                  <p className="text-base text-muted-foreground leading-relaxed">{item.description}</p>
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-block bg-amber-500/10 text-amber-600 px-4 py-1 text-sm font-bold mb-4 rounded">
+                  ABOUT US
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] mb-6">
+                  Family-Owned & Operated Since 1998
+                </h2>
+                <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                  For over 25 years, TruMove has been helping families and businesses relocate with 
+                  care and professionalism. What started as a small family operation has grown into 
+                  one of the most trusted moving companies in the nation.
+                </p>
+                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                  We treat every move like we're moving our own family. Our team of experienced 
+                  professionals is dedicated to making your relocation as smooth and stress-free as possible.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-6 h-6 text-amber-500" />
+                    <span className="text-[#1a365d] font-medium">Fully Licensed</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-6 h-6 text-amber-500" />
+                    <span className="text-[#1a365d] font-medium">Fully Insured</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-6 h-6 text-amber-500" />
+                    <span className="text-[#1a365d] font-medium">No Hidden Fees</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-6 h-6 text-amber-500" />
+                    <span className="text-[#1a365d] font-medium">24/7 Support</span>
+                  </div>
                 </div>
               </div>
-            ))}
+              <div className="bg-[#1a365d] rounded-xl p-8 text-white">
+                <Award className="w-16 h-16 text-amber-400 mb-6" />
+                <h3 className="text-2xl font-bold mb-4">Our Promise to You</h3>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                    <span>On-time pickup and delivery, guaranteed</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                    <span>Careful handling of all your belongings</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                    <span>Transparent pricing with no surprises</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                    <span>Professional, uniformed, and background-checked crew</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
+                    <span>Real-time tracking for long-distance moves</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 bg-muted/50">
+      <section id="testimonials" className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <div className="text-center mb-14">
+            <div className="inline-block bg-amber-500/10 text-amber-600 px-4 py-1 text-sm font-bold mb-4 rounded">
+              TESTIMONIALS
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] mb-4">
               What Our Customers Say
             </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Don't just take our word for it. Here's what our customers have to say about their experience.
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-border">
+              <div key={index} className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                    <Star key={i} className="w-5 h-5 text-amber-500 fill-amber-500" />
                   ))}
                 </div>
-                <p className="text-base text-muted-foreground mb-4 leading-relaxed italic">
+                <p className="text-gray-600 mb-6 leading-relaxed">
                   "{testimonial.text}"
                 </p>
-                <p className="text-base font-semibold text-foreground">{testimonial.name}</p>
+                <div className="border-t border-gray-200 pt-4">
+                  <p className="font-bold text-[#1a365d]">{testimonial.name}</p>
+                  <p className="text-sm text-gray-500">{testimonial.location}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -451,13 +558,16 @@ Variant: classic
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-16 bg-white">
+      <section id="faq" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <div className="text-center mb-14">
+            <div className="inline-block bg-amber-500/10 text-amber-600 px-4 py-1 text-sm font-bold mb-4 rounded">
+              FAQ
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Have questions? We have answers. If you don't see your question here, give us a call.
             </p>
           </div>
@@ -465,22 +575,22 @@ Variant: classic
             {faqs.map((faq, index) => (
               <div 
                 key={index} 
-                className="border border-border rounded-xl overflow-hidden bg-white"
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden"
               >
                 <button
                   onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                  className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
+                  className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
                 >
-                  <span className="text-lg font-medium text-foreground pr-4">{faq.question}</span>
+                  <span className="text-lg font-medium text-[#1a365d] pr-4">{faq.question}</span>
                   {expandedFaq === index ? (
-                    <ChevronUp className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                    <ChevronUp className="w-5 h-5 text-amber-500 flex-shrink-0" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                    <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
                   )}
                 </button>
                 {expandedFaq === index && (
                   <div className="px-5 pb-5">
-                    <p className="text-base text-muted-foreground leading-relaxed">{faq.answer}</p>
+                    <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
                   </div>
                 )}
               </div>
@@ -490,24 +600,24 @@ Variant: classic
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-primary text-primary-foreground">
+      <section className="py-16 bg-[#1a365d]">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to Get Started?
           </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+          <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
             Contact us today for a free, no-obligation quote. We're here to make your move as smooth as possible.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a 
               href="#quote" 
-              className="w-full sm:w-auto bg-white text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/90 transition-colors text-center"
+              className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-4 rounded text-lg font-bold transition-colors text-center shadow-lg"
             >
-              Get Free Quote
+              Get Your Free Quote
             </a>
             <a 
-              href="tel:1-800-555-MOVE" 
-              className="w-full sm:w-auto border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+              href="tel:1-800-555-6683" 
+              className="bg-transparent border-2 border-white text-white px-8 py-4 rounded text-lg font-bold hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
             >
               <Phone className="w-5 h-5" />
               1-800-555-MOVE
@@ -517,53 +627,74 @@ Variant: classic
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-12">
+      <footer id="contact" className="bg-[#0f2744] text-white py-16">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             {/* Company Info */}
-            <div>
+            <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
-                <img src={logo} alt="TruMove" className="h-8 brightness-0 invert" />
-                <span className="text-xl font-bold">TruMove</span>
+                <div className="w-10 h-10 bg-amber-500 rounded flex items-center justify-center">
+                  <Truck className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-2xl font-bold">TruMove</span>
               </div>
-              <p className="text-sm opacity-80 leading-relaxed">
-                Professional moving services with care and integrity. Licensed, insured, and trusted by families nationwide.
+              <p className="text-white/70 leading-relaxed mb-6 max-w-md">
+                Professional moving services with care and integrity. Licensed, insured, 
+                and trusted by families nationwide for over 25 years.
               </p>
+              <div className="flex items-center gap-4">
+                <div className="bg-white/10 px-3 py-2 rounded text-sm">
+                  <span className="text-white/60">USDOT #</span> 1234567
+                </div>
+                <div className="bg-white/10 px-3 py-2 rounded text-sm">
+                  <span className="text-white/60">MC #</span> 987654
+                </div>
+              </div>
             </div>
+            
             {/* Contact Info */}
             <div>
-              <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
-              <div className="space-y-3 text-sm opacity-80">
-                <a href="tel:1-800-555-MOVE" className="flex items-center gap-2 hover:opacity-100">
+              <h4 className="text-lg font-bold mb-4">Contact Us</h4>
+              <div className="space-y-3 text-white/70">
+                <a href="tel:1-800-555-6683" className="flex items-center gap-2 hover:text-amber-400 transition-colors">
                   <Phone className="w-4 h-4" />
                   1-800-555-MOVE
                 </a>
-                <a href="mailto:info@trumove.com" className="flex items-center gap-2 hover:opacity-100">
+                <a href="mailto:info@trumove.com" className="flex items-center gap-2 hover:text-amber-400 transition-colors">
                   <Mail className="w-4 h-4" />
                   info@trumove.com
                 </a>
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  Mon-Sat: 8am - 6pm
+                  Mon-Sat: 8:00 AM - 6:00 PM
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  Serving All 50 States
                 </div>
               </div>
             </div>
+            
             {/* Quick Links */}
             <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <div className="space-y-2 text-sm opacity-80">
-                <a href="#services" className="block hover:opacity-100">Our Services</a>
-                <a href="#quote" className="block hover:opacity-100">Get a Quote</a>
-                <a href="#faq" className="block hover:opacity-100">FAQ</a>
+              <h4 className="text-lg font-bold mb-4">Quick Links</h4>
+              <div className="space-y-2 text-white/70">
+                <a href="#home" className="block hover:text-amber-400 transition-colors">Home</a>
+                <a href="#services" className="block hover:text-amber-400 transition-colors">Our Services</a>
+                <a href="#quote" className="block hover:text-amber-400 transition-colors">Get a Quote</a>
+                <a href="#about" className="block hover:text-amber-400 transition-colors">About Us</a>
+                <a href="#faq" className="block hover:text-amber-400 transition-colors">FAQ</a>
               </div>
             </div>
           </div>
-          <Separator className="bg-background/20 mb-8" />
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm opacity-70">
-            <p>© {new Date().getFullYear()} TruMove. All rights reserved.</p>
-            <div className="flex items-center gap-6">
-              <a href="/privacy" className="hover:opacity-100">Privacy Policy</a>
-              <a href="/terms" className="hover:opacity-100">Terms of Service</a>
+          
+          <div className="border-t border-white/10 pt-8">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
+              <p>© {new Date().getFullYear()} TruMove. All rights reserved.</p>
+              <div className="flex items-center gap-6">
+                <a href="/privacy" className="hover:text-amber-400 transition-colors">Privacy Policy</a>
+                <a href="/terms" className="hover:text-amber-400 transition-colors">Terms of Service</a>
+              </div>
             </div>
           </div>
         </div>
