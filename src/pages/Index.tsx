@@ -565,42 +565,11 @@ export default function Index() {
               </div>
             )}
             
-            {/* HERO TOP: Centered Headline + Subheadline with scroll animation + parallax */}
-            <div 
-              ref={(el) => {
-                // Combine refs for scroll animation and parallax
-                if (heroContentRef) (heroContentRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-                if (parallaxHeadlineRef) (parallaxHeadlineRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-              }}
-              className={`tru-hero-top-section tru-hero-parallax-container tru-animate-on-scroll ${isHeroInView ? 'is-in-view' : ''}`}
-              style={{
-                transform: `translateY(${headlineParallax.y}px)`,
-                /* Keep opacity at 1 for bold, readable messaging */
-              }}
-            >
-              <h1 className="tru-hero-headline-main tru-hero-parallax-headline">
-                <span className="tru-hero-headline-line">
-                  Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> Get You Matched With
-                </span>
-                <span className="tru-hero-headline-line">
-                  Vetted Carriers <span className="tru-hero-headline-accent">Who Actually Care.</span>
-                </span>
+            {/* Compact Hero Header - Single line */}
+            <div className="tru-hero-compact-header">
+              <h1 className="tru-hero-compact-headline">
+                Let <img src={logoImg} alt="TruMove" className="tru-hero-compact-logo" /> match you with <span className="tru-hero-headline-accent">vetted carriers</span>
               </h1>
-              <p className="tru-hero-subheadline">
-                Skip the complexity of large national van lines. We use <span className="tru-hero-highlight">AI inventory scanning</span> and <span className="tru-hero-highlight">live video consults</span> to understand your move, then vet carriers using <span className="tru-hero-highlight">verified FMCSA and DOT safety data</span>, so we can confidently match you with carriers that best meet your needs.
-              </p>
-              <button 
-                className="tru-hero-cta-btn"
-                onClick={() => {
-                  const formEl = document.querySelector('.tru-floating-form-card');
-                  if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }}
-              >
-                <span>Start Building Your Move</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-              
-              {/* Compact Trust Row - All inline */}
               <div className="tru-hero-trust-inline">
                 <span className="tru-hero-trust-item"><Shield className="w-3 h-3" /> FMCSA Licensed</span>
                 <span className="tru-hero-trust-sep">•</span>
@@ -625,38 +594,18 @@ export default function Index() {
                   <div className="tru-hero-value-cards tru-hero-value-cards-open">
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
+                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
                           <div className="tru-value-card-header">
                             <div className="tru-value-card-icon">
-                              <Scan className="w-5 h-5" />
+                              <Boxes className="w-5 h-5" />
                             </div>
                             <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Scan Your Room</h3>
-                              <p className="tru-value-card-desc">Point your camera and let AI detect all furniture automatically.</p>
+                              <h3 className="tru-value-card-title">Inventory Builder</h3>
+                              <p className="tru-value-card-desc">Build your item list room by room for accurate pricing.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewAiScanner} alt="AI Room Scanner Preview" />
-                          </div>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>Coming Soon</TooltipContent>
-                    </Tooltip>
-                    
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/property-lookup")}>
-                          <div className="tru-value-card-header">
-                            <div className="tru-value-card-icon">
-                              <MapPin className="w-5 h-5" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Property Lookup</h3>
-                              <p className="tru-value-card-desc">Instant bed/bath, sqft, and photos for any address.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewPropertyLookup} alt="Property Lookup Preview" />
+                            <img src={previewAiScanner} alt="Inventory Builder Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
@@ -665,18 +614,38 @@ export default function Index() {
                     
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
+                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
                           <div className="tru-value-card-header">
                             <div className="tru-value-card-icon">
-                              <Shield className="w-5 h-5" />
+                              <Scan className="w-5 h-5" />
                             </div>
                             <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Carrier Vetting</h3>
-                              <p className="tru-value-card-desc">FMCSA verified, insurance validated, complaints monitored.</p>
+                              <h3 className="tru-value-card-title">AI Room Scanner</h3>
+                              <p className="tru-value-card-desc">Point your camera — AI detects furniture instantly.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewCarrierVetting} alt="Carrier Vetting Preview" />
+                            <img src={previewPropertyLookup} alt="AI Room Scanner Preview" />
+                          </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Coming Soon</TooltipContent>
+                    </Tooltip>
+                    
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
+                          <div className="tru-value-card-header">
+                            <div className="tru-value-card-icon">
+                              <Radar className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">Smart Carrier Match</h3>
+                              <p className="tru-value-card-desc">Our algorithm finds the best carrier for your route.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-preview tru-value-card-preview-visible">
+                            <img src={previewCarrierVetting} alt="Carrier Matching Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
@@ -691,12 +660,12 @@ export default function Index() {
                               <Video className="w-5 h-5" />
                             </div>
                             <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Video Consult</h3>
-                              <p className="tru-value-card-desc">Virtual walkthrough with a specialist for accurate quotes.</p>
+                              <h3 className="tru-value-card-title">TruMove Specialist</h3>
+                              <p className="tru-value-card-desc">Live video consult for personalized guidance.</p>
                             </div>
                           </div>
                           <div className="tru-value-card-preview tru-value-card-preview-visible">
-                            <img src={previewVideoConsult} alt="Video Consultation Preview" />
+                            <img src={previewVideoConsult} alt="TruMove Specialist Preview" />
                           </div>
                         </div>
                       </TooltipTrigger>
