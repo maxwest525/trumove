@@ -617,6 +617,10 @@ export default function Index() {
                   Bonded & Insured
                 </span>
               </div>
+              <div className="tru-hero-social-proof">
+                <Users className="w-4 h-4" />
+                <span>Trusted by <strong>1,000+</strong> families nationwide</span>
+              </div>
             </div>
 
             {/* LEFT: Feature Cards with parallax */}
