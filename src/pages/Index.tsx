@@ -596,10 +596,27 @@ export default function Index() {
                   if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }}
               >
-                <Sparkles className="w-5 h-5" />
-                <span>Start Your Free Quote</span>
+                <span>Start Building Your Move</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
+              
+              {/* Trust Badge Row */}
+              <div className="tru-hero-trust-badges">
+                <span className="tru-hero-trust-badge">
+                  <Shield className="w-3.5 h-3.5" />
+                  FMCSA Licensed
+                </span>
+                <span className="tru-hero-trust-divider">•</span>
+                <span className="tru-hero-trust-badge">
+                  <Star className="w-3.5 h-3.5" />
+                  5-Star Rated
+                </span>
+                <span className="tru-hero-trust-divider">•</span>
+                <span className="tru-hero-trust-badge">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  Bonded & Insured
+                </span>
+              </div>
             </div>
 
             {/* LEFT: Feature Cards with parallax */}
@@ -611,13 +628,8 @@ export default function Index() {
               }}
             >
               <div className="tru-hero-content-inner">
-                {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
-                <div className="tru-hero-value-props-container tru-feature-section-card">
-                  {/* Section Headline - Matching form header style */}
-                  <div className="tru-feature-section-header">
-                    <span className="tru-feature-section-title">Smart Moving Starts Here</span>
-                    <span className="tru-feature-section-subtitle">The tools that make your move seamless</span>
-                  </div>
+                {/* Value Props Container - Feature Cards without header */}
+                <div className="tru-hero-value-props-container tru-feature-section-card-clean">
                   {/* Value Cards - Always visible with previews */}
                   <div className="tru-hero-value-cards tru-hero-value-cards-open">
                     <Tooltip>
