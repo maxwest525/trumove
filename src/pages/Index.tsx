@@ -587,8 +587,19 @@ export default function Index() {
                 </span>
               </h1>
               <p className="tru-hero-subheadline">
-                Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data, so we can confidently match you with carriers that best meet your needs.
+                Skip the complexity of large national van lines. We use <span className="tru-hero-highlight">AI inventory scanning</span> and <span className="tru-hero-highlight">live video consults</span> to understand your move, then vet carriers using <span className="tru-hero-highlight">verified FMCSA and DOT safety data</span>, so we can confidently match you with carriers that best meet your needs.
               </p>
+              <button 
+                className="tru-hero-cta-btn"
+                onClick={() => {
+                  const formEl = document.querySelector('.tru-floating-form-card');
+                  if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }}
+              >
+                <Sparkles className="w-5 h-5" />
+                <span>Start Your Free Quote</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
 
             {/* LEFT: Feature Cards with parallax */}
