@@ -455,30 +455,6 @@ export default function CarrierVetting() {
             </div>
           </div>
 
-          {/* Compact Benefits Strip - Only show when no carriers */}
-          {carriers.length === 0 && (
-            <div className="mb-8 py-4 px-6 rounded-lg bg-muted/50 border border-border/50">
-              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <Radio className="w-4 h-4 text-slate-900 dark:text-foreground" />
-                  Live FMCSA Data
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <AlertTriangle className="w-4 h-4 text-slate-900 dark:text-foreground" />
-                  Red Flag Alerts
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-slate-900 dark:text-foreground" />
-                  Side-by-Side Compare
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Truck className="w-4 h-4 text-slate-900 dark:text-foreground" />
-                  Fleet Intelligence
-                </span>
-              </div>
-            </div>
-          )}
-
           {/* API Error Alert */}
           {apiError && (
             <div className="mb-8 max-w-3xl mx-auto animate-fade-in">
@@ -500,9 +476,22 @@ export default function CarrierVetting() {
             </div>
           )}
 
+          {/* Section Header */}
+          <div className="mb-6 text-center">
+            <h2 className="text-xl font-semibold text-foreground mb-2">
+              {carriers.length === 0 ? 'Carrier Safety Snapshots' : `Comparing ${carriers.length} Carrier${carriers.length > 1 ? 's' : ''}`}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {carriers.length === 0 
+                ? 'Search above to view real-time FMCSA safety data, red flag alerts, and fleet intelligence'
+                : 'Side-by-side comparison with live FMCSA data and automated risk detection'
+              }
+            </p>
+          </div>
+
           {/* Empty State Placeholder - Only show when no carriers */}
           {carriers.length === 0 && (
-            <div className="mt-4 mb-8 animate-fade-in">
+            <div className="mb-8 animate-fade-in">
               {/* Placeholder Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
                 {[1, 2, 3].map((i) => (
