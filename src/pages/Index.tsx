@@ -544,21 +544,24 @@ export default function Index() {
               </div>
             )}
             
-            {/* LEFT: Value Proposition */}
+            {/* HERO TOP: Centered Headline + Subheadline */}
+            <div className="tru-hero-top-section">
+              <h1 className="tru-hero-headline-main">
+                <span className="tru-hero-headline-line">
+                  Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> Get You Matched With
+                </span>
+                <span className="tru-hero-headline-line">
+                  Vetted Carriers <span className="tru-hero-headline-accent">Who Actually Care.</span>
+                </span>
+              </h1>
+              <p className="tru-hero-subheadline">
+                Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data, so we can confidently match you with carriers that best meet your needs.
+              </p>
+            </div>
+
+            {/* LEFT: Feature Cards */}
             <div className="tru-hero-content-panel">
-              <div className="tru-hero-content-inner tru-hero-content">
-                <h1 className="tru-hero-headline-main">
-                  <span className="tru-hero-headline-line">
-                    Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> Get You Matched With
-                  </span>
-                  <span className="tru-hero-headline-line">
-                    Vetted Carriers <span className="tru-hero-headline-accent">Who Actually Care.</span>
-                  </span>
-                </h1>
-                <p className="tru-hero-subheadline">
-                  Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data, so we can confidently match you with carriers that best meet your needs.
-                </p>
-                
+              <div className="tru-hero-content-inner">
                 {/* Value Props Container - Feature Cards OPEN BY DEFAULT */}
                 <div className="tru-hero-value-props-container tru-feature-section-card">
                   {/* Section Headline - Matching form header style */}
@@ -1040,22 +1043,18 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* SIDEBAR: Summary Pill + Nav Icons Pill - STACKED VERTICALLY */}
+              {/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill
               <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-                {/* Summary Pill - Expandable on hover */}
                 <TooltipProvider delayDuration={0}>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="tru-sidebar-summary-pill-v3 group">
-                        {/* Collapsed state: icon + vertical label */}
                         <div className="tru-summary-pill-collapsed">
                           <div className="tru-summary-pill-icon-wrap">
                             <MapPin className="w-5 h-5" />
                           </div>
                           <span className="tru-summary-pill-vertical-label">SUMMARY</span>
                         </div>
-                        
-                        {/* Expanded state: full content - revealed on hover */}
                         <div className="tru-summary-pill-expanded">
                           <div className="tru-summary-pill-header">
                             <span>MOVE SUMMARY</span>
@@ -1123,14 +1122,13 @@ export default function Index() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                
-                {/* Nav Icons Pill - Stacked below summary */}
                 <TooltipProvider delayDuration={200}>
                   <div className="tru-sidebar-nav-pill-v3">
                     <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
                   </div>
                 </TooltipProvider>
               </div>
+              */}
             </div>
           </section>
 
