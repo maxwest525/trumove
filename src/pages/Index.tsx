@@ -575,7 +575,7 @@ export default function Index() {
               className={`tru-hero-top-section tru-hero-parallax-container tru-animate-on-scroll ${isHeroInView ? 'is-in-view' : ''}`}
               style={{
                 transform: `translateY(${headlineParallax.y}px)`,
-                opacity: headlineParallax.opacity,
+                /* Keep opacity at 1 for bold, readable messaging */
               }}
             >
               <h1 className="tru-hero-headline-main tru-hero-parallax-headline">
