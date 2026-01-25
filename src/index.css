@@ -1233,9 +1233,9 @@
 .tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  height: 260px;
-  padding: 14px;
-  padding-bottom: 14px;
+  height: 200px;
+  padding: 12px;
+  padding-bottom: 12px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -1245,14 +1245,14 @@
 
 /* Card text styling */
 .tru-hero-value-cards-open .tru-value-card-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .tru-hero-value-cards-open .tru-value-card-desc {
-  font-size: 12px;
-  line-height: 1.4;
+  font-size: 11px;
+  line-height: 1.35;
   flex-shrink: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1261,9 +1261,9 @@
 }
 
 .tru-hero-value-cards-open .tru-value-card-icon {
-  width: 36px;
-  height: 36px;
-  padding: 8px;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
   flex-shrink: 0;
 }
 
@@ -1294,11 +1294,11 @@
 .tru-hero-value-cards-open .tru-value-card-preview-visible {
   position: relative;
   inset: unset;
-  height: 150px;
+  height: 100px;
   flex-shrink: 0;
   margin: 0;
   margin-top: auto;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
   opacity: 1 !important;
   transform: none !important;
@@ -1311,6 +1311,26 @@
   object-fit: cover;
   object-position: center 20%;
   transition: object-position 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom object-position per card for optimal cropping */
+.tru-value-card-open[data-preview="inventory"] .tru-value-card-preview-visible img {
+  object-position: center 15%;
+}
+.tru-value-card-open[data-preview="scanner"] .tru-value-card-preview-visible img {
+  object-position: center 30%;
+}
+.tru-value-card-open[data-preview="carrier"] .tru-value-card-preview-visible img {
+  object-position: center 10%;
+}
+.tru-value-card-open[data-preview="specialist"] .tru-value-card-preview-visible img {
+  object-position: center 25%;
+}
+.tru-value-card-open[data-preview="fmcsa"] .tru-value-card-preview-visible img {
+  object-position: center 35%;
+}
+.tru-value-card-open[data-preview="pricing"] .tru-value-card-preview-visible img {
+  object-position: center 40%;
 }
 
 /* Slide-up reveal on hover */
@@ -2962,6 +2982,7 @@
 
 .tru-floating-form-card {
   min-width: 0;
+  min-height: 420px;
   display: flex;
   flex-direction: column;
   height: auto;
