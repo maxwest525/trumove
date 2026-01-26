@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
-import { Boxes, Scan, Radar, Video, ShieldCheck, DollarSign } from "lucide-react";
 
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -13,42 +12,36 @@ import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 
 const features = [
   {
-    icon: Boxes,
     title: "Inventory Builder",
     desc: "Build your item list room by room for accurate pricing estimates.",
     image: previewAiScanner,
     route: "/online-estimate",
   },
   {
-    icon: Scan,
     title: "AI Room Scanner",
     desc: "Point your camera and AI detects furniture instantly.",
     image: sampleRoomLiving,
     route: "/scan-room",
   },
   {
-    icon: Radar,
     title: "Smart Carrier Match",
     desc: "Our algorithm finds the best carrier for your route.",
     image: previewCarrierVetting,
     route: "/vetting",
   },
   {
-    icon: Video,
     title: "TruMove Specialist",
     desc: "Live video consultation for personalized guidance.",
     image: previewVideoConsult,
     route: "/book",
   },
   {
-    icon: ShieldCheck,
     title: "FMCSA Verified",
     desc: "Real-time safety data checks from official databases.",
     image: previewPropertyLookup,
     route: "/vetting",
   },
   {
-    icon: DollarSign,
     title: "Instant Pricing",
     desc: "Get accurate quotes in minutes, not hours.",
     image: scanRoomPreview,
@@ -118,9 +111,6 @@ export default function FeatureCarousel() {
                 onMouseLeave={() => setHoveredIndex(null)}
               >
                 <div className="features-carousel-card-header">
-                  <div className="features-carousel-card-icon">
-                    <feature.icon className="w-5 h-5" />
-                  </div>
                   <div className="features-carousel-card-text">
                     <h3 className="features-carousel-card-title">{feature.title}</h3>
                     <p className="features-carousel-card-desc">{feature.desc}</p>
