@@ -1072,10 +1072,6 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* Feature Carousel - Directly under the form */}
-                <div className="tru-feature-carousel-under-form">
-                  <FeatureCarousel autoplayInterval={4000} />
-                </div>
               </div>
 
               {/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill
@@ -1165,6 +1161,11 @@ export default function Index() {
               </div>
               */}
             </div>
+          </section>
+
+          {/* FEATURE CAROUSEL - Full Width Under Hero */}
+          <section className="tru-feature-carousel-section">
+            <FeatureCarousel autoplayInterval={4000} />
           </section>
 
           {/* TRUST STRIP - Without "Save 30+ Minutes" */}
