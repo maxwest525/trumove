@@ -96,7 +96,7 @@ Thank you!
                     onClick={() => setSelectedTime(time)}
                     className={`h-12 rounded-xl text-sm font-semibold transition-all duration-150
                       ${selectedTime === time
-                        ? 'bg-primary text-primary-foreground shadow-[0_0_0_4px_hsl(var(--primary)/0.18)]'
+                        ? 'bg-foreground text-background shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]'
                         : 'border border-border/60 bg-card text-foreground hover:bg-muted/50'
                       }`}
                   >

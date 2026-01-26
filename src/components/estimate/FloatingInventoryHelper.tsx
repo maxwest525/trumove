@@ -67,7 +67,7 @@ export default function FloatingInventoryHelper({
       {/* Scroll to Bottom Button */}
       <button
         onClick={onScrollToBottom}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground hover:bg-background hover:text-foreground text-background border border-transparent hover:border-foreground shadow-[0_2px_8px_hsl(var(--primary)/0.2)] transition-all"
         aria-label="Scroll to inventory table"
       >
         <ArrowDown className="w-4 h-4" />

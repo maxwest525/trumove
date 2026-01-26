@@ -32,20 +32,17 @@ export default function FloatingChatButton({ className = '' }: FloatingChatButto
         className={`
           fixed bottom-6 right-6 z-50
           w-14 h-14 rounded-full
-          bg-primary text-primary-foreground
-          shadow-lg shadow-primary/30
+          bg-foreground text-background
+          shadow-lg shadow-[0_4px_16px_hsl(var(--primary)/0.3)]
           flex items-center justify-center
           transition-all duration-300 ease-out
-          hover:scale-110 hover:shadow-xl hover:shadow-primary/40
+          hover:scale-110 hover:shadow-xl hover:shadow-[0_8px_24px_hsl(var(--primary)/0.4)]
           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
           ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
         `}
         aria-label="AI Moving Helper"
       >
-        {/* Pulse ring animation */}
-        <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-20" />
-        
         {/* Icon */}
         <Sparkles className="w-6 h-6 relative z-10" />
         
