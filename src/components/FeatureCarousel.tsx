@@ -59,32 +59,44 @@ const features = [
 export default function FeatureCarousel() {
   const navigate = useNavigate();
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
-  // Track current slide for center emphasis
+  // Autoplay with 5 second interval, pauses on hover
   useEffect(() => {
-    if (!api) return;
+    if (!api || isPaused) return;
 
-    setCurrent(api.selectedScrollSnap());
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 5000);
 
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap());
-    });
-  }, [api]);
+    return () => clearInterval(interval);
+  }, [api, isPaused]);
+
+  // Pause autoplay on hover/interaction
+  const handleMouseEnter = useCallback(() => {
+    setIsPaused(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsPaused(false);
+  }, []);
 
   return (
-    <div className="features-carousel">
+    <div 
+      className="features-carousel"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <Carousel
         setApi={setApi}
-        opts={{ align: "center", loop: true, dragFree: true }}
+        opts={{ align: "start", loop: true, dragFree: true }}
         className="features-carousel-container"
       >
         <CarouselContent className="features-carousel-content">
           {features.map((feature, index) => (
             <CarouselItem key={index} className="features-carousel-item">
               <div 
-                className="features-carousel-card" 
-                data-active={current === index}
+                className="features-carousel-card"
                 onClick={() => navigate(feature.route)}
                 role="button"
                 tabIndex={0}

@@ -1165,6 +1165,7 @@ export default function Index() {
 
           {/* FULL-WIDTH FEATURE CAROUSEL */}
           <section className="tru-feature-carousel-fullwidth">
+            <h2 className="features-carousel-headline">A Smarter Way To Move</h2>
             <FeatureCarousel />
           </section>
 

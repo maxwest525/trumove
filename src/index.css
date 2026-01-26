@@ -14653,8 +14653,8 @@
 .tru-feature-carousel-fullwidth {
   width: 100%;
   max-width: 1480px;
-  margin: 0 auto;
-  padding: 0 24px;
+  margin: 64px auto 0;
+  padding: 32px 24px;
   background: transparent;
 }
 
@@ -14664,9 +14664,18 @@
   padding: 0;
 }
 
+/* Section Headline */
+.features-carousel-headline {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin-bottom: 32px;
+}
+
 /* ============================================
    FEATURES CAROUSEL - NEW SCOPED STYLES
-   Image-forward, near-square cards
+   4-card layout, no center emphasis, autoplay
    ============================================ */
 
 .features-carousel {
@@ -14689,29 +14698,31 @@
   margin-left: 0 !important;
 }
 
-/* 3 cards visible - center aligned with peek */
+/* 4 cards visible on desktop */
 .features-carousel-item {
-  flex: 0 0 calc(33.333% - 16px) !important;
+  flex: 0 0 calc(25% - 18px) !important;
   min-width: 0;
   padding-left: 0 !important;
   position: relative;
-  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* Card styling - near-square, image-forward */
+/* Card styling - smaller, consistent sizing, no transforms */
 .features-carousel-card {
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px;
   cursor: pointer;
-  height: 320px;
+  height: 280px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
   position: relative;
   overflow: visible;
-  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 250ms ease, box-shadow 250ms ease;
+  transform: none;
+  will-change: auto;
+  box-sizing: border-box;
 }
 
 /* Top accent stripe */
@@ -14728,23 +14739,7 @@
   transition: opacity 0.25s ease;
 }
 
-/* Center card emphasis */
-.features-carousel-card[data-active="true"] {
-  transform: scale(1.03);
-  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.12);
-  z-index: 5;
-}
-
-.features-carousel-card[data-active="true"]::before {
-  opacity: 1;
-}
-
-.features-carousel-card[data-active="false"] {
-  transform: scale(0.97);
-  opacity: 0.85;
-}
-
-/* Hover effects */
+/* Hover effects - no transforms to prevent border artifacts */
 .features-carousel-card:hover {
   border-color: hsl(var(--primary) / 0.4);
   box-shadow: 0 6px 24px hsl(var(--primary) / 0.12);
@@ -14754,9 +14749,9 @@
   opacity: 1;
 }
 
+/* Remove active state transform to prevent border flicker */
 .features-carousel-card:active {
-  transform: scale(0.99);
-  transition: all 100ms ease;
+  transform: none;
 }
 
 .features-carousel-card:focus-visible {
@@ -14764,14 +14759,14 @@
   outline-offset: 2px;
 }
 
-/* Header section - 35% of card */
+/* Header section */
 .features-carousel-card-header {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   flex-shrink: 0;
-  margin-bottom: 16px;
-  min-height: 80px;
+  margin-bottom: 12px;
+  min-height: 70px;
 }
 
 /* Icon badge - circular with subtle green bg and grey border */
@@ -14823,27 +14818,27 @@
   overflow: hidden;
 }
 
-/* Image wrapper - 60-65% of card, fixed height */
+/* Image wrapper - fixed 150px height with tight padding */
 .features-carousel-card-image-wrapper {
-  height: 180px;
-  flex: 1;
+  height: 150px;
+  width: 100%;
+  padding: 8px;
   background: hsl(var(--muted) / 0.3);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden;
   margin-top: auto;
 }
 
-/* Image - fully visible, never cropped */
+/* Image - edge-to-edge with controlled cropping */
 .features-carousel-card-image-wrapper img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  border-radius: 4px;
   transition: transform 0.4s ease;
 }
 
@@ -14881,7 +14876,14 @@
   right: -48px;
 }
 
-/* Responsive: 2 columns on tablet */
+/* Responsive: 3 cards on large tablet */
+@media (max-width: 1279px) {
+  .features-carousel-item {
+    flex: 0 0 calc(33.333% - 16px) !important;
+  }
+}
+
+/* Responsive: 2 cards on tablet */
 @media (max-width: 1024px) {
   .features-carousel-item {
     flex: 0 0 calc(50% - 12px) !important;
@@ -14896,24 +14898,24 @@
   }
 }
 
-/* Responsive: 1 column on mobile */
+/* Responsive: 1 card on mobile */
 @media (max-width: 640px) {
   .features-carousel-item {
     flex: 0 0 100% !important;
   }
   
   .features-carousel-card {
-    height: 320px;
-  }
-  
-  .features-carousel-card[data-active="false"] {
-    transform: scale(1);
-    opacity: 1;
+    height: 280px;
   }
   
   .features-carousel-prev,
   .features-carousel-next {
     display: none;
+  }
+  
+  .features-carousel-headline {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
   }
 }
 
