@@ -21,6 +21,16 @@ import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 
+// Warm hero background image
+import heroMoversFamily from "@/assets/hero-movers-family.jpg";
+
+// New section components
+import WhyChooseSection from "@/components/home/WhyChooseSection";
+import TestimonialsSection from "@/components/home/TestimonialsSection";
+import TrustBadgesSection from "@/components/home/TrustBadgesSection";
+import FinalCtaSection from "@/components/home/FinalCtaSection";
+import FeatureShowcase from "@/components/home/FeatureShowcase";
+
 import ChatModal from "@/components/chat/ChatModal";
 import FloatingTruckChat from "@/components/FloatingTruckChat";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -34,6 +44,9 @@ import {
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown
 } from "lucide-react";
+
+// Import homepage section styles
+import "@/styles/homepage-sections.css";
 
 // ZIP lookup
 const ZIP_LOOKUP: Record<string, string> = {
@@ -561,122 +574,35 @@ export default function Index() {
               </div>
             )}
             
-            {/* Hero Header with Headline + Subheadline */}
-            <div className="tru-hero-header-section">
-              <h1 className="tru-hero-headline-main">
-                Let <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> match you with <span className="tru-hero-headline-accent">vetted carriers</span>
-              </h1>
-              <p className="tru-hero-subheadline">
-                Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
-              </p>
-            </div>
-
-            {/* LEFT: Feature Cards with parallax */}
-            <div 
-              ref={parallaxCardsRef}
-              className="tru-hero-content-panel tru-hero-parallax-cards"
-              style={{
-                transform: `translateY(${cardsParallax.y}px)`,
-              }}
-            >
-              <div className="tru-hero-content-inner">
-                {/* Value Props Container - Feature Cards without header */}
-                <div className="tru-hero-value-props-container tru-feature-section-card-clean">
-                  {/* Value Cards - Always visible with previews */}
-                  <div className="tru-hero-value-cards tru-hero-value-cards-open">
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Boxes className="w-5 h-5" />
-                        </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">Inventory Builder</h3>
-                          <p className="tru-value-card-desc">Build your item list room by room for accurate pricing estimates.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewAiScanner} alt="Inventory Builder Preview" />
-                      </div>
-                    </div>
-                    
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Scan className="w-5 h-5" />
-                        </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">AI Room Scanner</h3>
-                          <p className="tru-value-card-desc">Point your camera and AI detects furniture instantly.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={sampleRoomLiving} alt="AI Room Scanner Preview" />
-                      </div>
-                    </div>
-                    
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Radar className="w-5 h-5" />
-                        </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">Smart Carrier Match</h3>
-                          <p className="tru-value-card-desc">Our algorithm finds the best carrier for your route.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewCarrierVetting} alt="Carrier Matching Preview" />
-                      </div>
-                    </div>
-                    
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/book")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Video className="w-5 h-5" />
-                        </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">TruMove Specialist</h3>
-                          <p className="tru-value-card-desc">Live video consultation for personalized guidance.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewVideoConsult} alt="TruMove Specialist Preview" />
-                      </div>
-                    </div>
-
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <ShieldCheck className="w-5 h-5" />
-                        </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">FMCSA Verified</h3>
-                          <p className="tru-value-card-desc">Real-time safety data checks from official databases.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewPropertyLookup} alt="FMCSA Verification Preview" />
-                      </div>
-                    </div>
-
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <DollarSign className="w-5 h-5" />
-                        </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">Instant Pricing</h3>
-                          <p className="tru-value-card-desc">Get accurate quotes in minutes, not hours.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={scanRoomPreview} alt="Instant Pricing Preview" />
-                      </div>
+            {/* Hero with Warm Background and Form Side-by-Side */}
+            <div className="tru-hero-warm-wrapper" style={{ display: 'grid', gridTemplateColumns: '1fr 520px', gap: '48px', alignItems: 'start', paddingBottom: '32px' }}>
+              {/* LEFT: Warm Hero Content */}
+              <div className="tru-hero-warm" style={{ position: 'relative', minHeight: '500px', borderRadius: '24px', overflow: 'hidden' }}>
+                <div className="tru-hero-warm-bg">
+                  <img src={heroMoversFamily} alt="Professional movers helping a family" />
+                  <div className="tru-hero-warm-overlay" />
+                </div>
+                
+                <div className="tru-hero-warm-content">
+                  <div className="tru-hero-warm-text">
+                    <h1 className="tru-hero-warm-headline">
+                      Your <span className="tru-hero-warm-headline-accent">Stress-Free Move</span> Starts Here — With People Who Care
+                    </h1>
+                    <p className="tru-hero-warm-subheadline">
+                      TruMove uses smart AI to match you with vetted, independent carriers who prioritize service over corporate profits. Get fair prices, total transparency, and real help — no van line headaches.
+                    </p>
+                    <div className="tru-hero-warm-ctas" style={{ marginTop: '20px' }}>
+                      <button 
+                        className="tru-hero-warm-cta-secondary"
+                        onClick={() => navigate("/book")}
+                      >
+                        <Video className="w-5 h-5" />
+                        <span>Book a Free Video Consult</span>
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
             {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
             <div 
@@ -1162,9 +1088,14 @@ export default function Index() {
               </div>
               */}
             </div>
+            {/* Close the hero wrapper */}
+            </div>
           </section>
 
-          {/* TRUST STRIP - Without "Save 30+ Minutes" */}
+          {/* WHY CHOOSE TRUMOVE - New Section */}
+          <WhyChooseSection />
+
+          {/* TRUST STRIP - Updated with expanded badges */}
           <section className="tru-trust-strip">
             <div className="tru-trust-strip-inner">
               <div className="tru-trust-strip-item">
@@ -1186,16 +1117,13 @@ export default function Index() {
                 <Star className="w-4 h-4" />
                 <span>Licensed Broker</span>
               </div>
+              <span className="tru-trust-strip-dot">•</span>
+              <div className="tru-trust-strip-item">
+                <Lock className="w-4 h-4" />
+                <span>Secure Payments</span>
+              </div>
             </div>
           </section>
-
-          {/* ROUTE ANALYSIS SECTION - Under Trust Strip */}
-          <RouteAnalysisSection 
-            fromCity={fromCity}
-            toCity={toCity}
-            distance={distance}
-            isAnalyzing={isSearchingCarriers}
-          />
 
           {/* START YOUR AI INVENTORY ANALYSIS - 3 Step Section */}
           <section className="tru-ai-steps-section">
@@ -1325,60 +1253,17 @@ export default function Index() {
 
 
 
-          {/* SMART ESTIMATES & PROTECTION */}
-          <section className="tru-mission-wrap">
-            <div className="tru-mission-inner">
-              <div className="tru-guarantee-wrap">
-                <div className="tru-guarantee-card">
-                  <div>
-                    <div className="tru-guarantee-tag"><span className="tru-guarantee-tag-dot"></span><span>Smart Estimates</span></div>
-                    <div className="tru-guarantee-title">Realistic pricing based on federal data.</div>
-                    <div className="tru-guarantee-text">Our estimates are calculated using federally regulated data, carrier rates, and real availability — not guesswork.</div>
-                    <ul className="tru-guarantee-list">
-                      <li><strong>Data-driven estimates</strong> — based on federal SAFER Web data</li>
-                      <li><strong>Payment protection</strong> — pay through TruMove, not the mover</li>
-                      <li><strong>Vetted movers only</strong> — licensed, insured, and monitored</li>
-                      <li><strong>24/7 tracking</strong> — know where your stuff is, always</li>
-                      <li><strong>Dedicated support</strong> — one specialist for your entire move</li>
-                    </ul>
-                  </div>
-                  <div className="tru-guarantee-side">
-                    <div className="tru-guarantee-side-stats">
-                      <div className="tru-guarantee-side-stat">
-                        <Database className="w-5 h-5 text-primary" />
-                        <div>
-                          <span className="tru-guarantee-side-num">Federal</span>
-                          <span className="tru-guarantee-side-label">SAFER Web Data</span>
-                        </div>
-                      </div>
-                      <div className="tru-guarantee-side-stat">
-                        <CreditCard className="w-5 h-5 text-primary" />
-                        <div>
-                          <span className="tru-guarantee-side-num">Secure</span>
-                          <span className="tru-guarantee-side-label">Payment Protection</span>
-                        </div>
-                      </div>
-                      <div className="tru-guarantee-side-stat">
-                        <ShieldCheck className="w-5 h-5 text-primary" />
-                        <div>
-                          <span className="tru-guarantee-side-num">Vetted</span>
-                          <span className="tru-guarantee-side-label">Licensed Movers</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="tru-trust-wrap">
-                <div className="tru-trust-row">
-                  <span className="tru-trust-label">Every mover on our platform is verified.</span>
-                  {["FMCSA Authorized", "USDOT Compliant", "Insured & Bonded"].map(b => (
-                    <span key={b} className="tru-trust-badge"><span className="tru-trust-dot"></span><span>{b}</span></span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
+          {/* TESTIMONIALS SECTION */}
+          <TestimonialsSection />
+
+          {/* FEATURE SHOWCASE - Tech + Human Images */}
+          <FeatureShowcase />
+
+          {/* TRUST BADGES EXPANDED */}
+          <TrustBadgesSection />
+
+          {/* FINAL CTA SECTION */}
+          <FinalCtaSection />
 
         </div>
       </div>

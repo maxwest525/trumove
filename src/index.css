@@ -886,6 +886,11 @@
     --tm-status-h: 44px;
     --tm-marquee-normal: 34s;
     --tm-marquee-fast: 18s;
+    
+    /* Warm Accent Colors - for CTAs and trust elements */
+    --tm-warm: 30 90% 55%;
+    --tm-warm-light: 35 95% 65%;
+    --tm-trust: 142 60% 45%;
 
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
