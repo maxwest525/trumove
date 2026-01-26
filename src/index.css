@@ -14649,15 +14649,13 @@
   animation-delay: calc(var(--stagger-index, 0) * 0.1s);
 }
 
-/* VALUE CARD CAROUSEL STYLES - Constrained Width, Text-First */
+/* VALUE CARD CAROUSEL STYLES - Individual Pill Cards */
 .tru-feature-carousel-fullwidth {
   width: 100%;
   max-width: 1480px;
   margin: 0 auto;
   padding: 0 24px;
-  border-top: 1px solid hsl(var(--border));
-  border-bottom: 1px solid hsl(var(--border));
-  background: hsl(var(--background));
+  background: transparent;
 }
 
 .tru-feature-carousel-wrapper {
@@ -14676,26 +14674,25 @@
 
 .tru-value-carousel-content {
   display: flex;
-  gap: 0;
+  gap: 16px;
   margin-left: 0 !important;
 }
 
-/* 3 cards visible at once with vertical separators */
+/* 3 cards visible at once - individual pills with gap */
 .tru-value-carousel-item {
-  flex: 0 0 33.333% !important;
+  flex: 0 0 calc(33.333% - 11px) !important;
   min-width: 0;
   padding-left: 0 !important;
-  border-right: 1px solid hsl(var(--border));
+  border: none;
   position: relative;
 }
 
 .tru-value-carousel-item:last-child {
-  border-right: none;
+  border: none;
 }
 
-/* First visible item gets left border */
 .tru-value-carousel-item:first-child {
-  border-left: 1px solid hsl(var(--border));
+  border: none;
 }
 
 /* Carousel card entrance animation */
@@ -14715,11 +14712,11 @@
   animation: carousel-card-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Card styling - text-first compact layout */
+/* Card styling - individual pill/box style */
 .tru-value-card-carousel {
-  background: hsl(var(--background));
-  border: none;
-  border-radius: 0;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 16px;
   padding: 20px 24px;
   cursor: pointer;
   height: 100%;
@@ -14728,21 +14725,24 @@
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
 }
 
 /* Hover feedback */
 .tru-value-card-carousel:hover {
-  background: hsl(var(--muted) / 0.5);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.1);
+  transform: translateY(-2px);
 }
 
 .tru-value-card-carousel:active {
-  transform: scale(0.99);
+  transform: scale(0.99) translateY(0);
   transition: all 100ms ease;
 }
 
 .tru-value-card-carousel:focus-visible {
   outline: 2px solid hsl(var(--primary));
-  outline-offset: -2px;
+  outline-offset: 2px;
 }
 
 /* Always expanded card style */
