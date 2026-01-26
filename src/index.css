@@ -14730,27 +14730,27 @@
 }
 
 /* Carousel content - fully reset Embla defaults */
+/* Carousel content - Embla ignores CSS gap, so we use padding on items */
 .features-carousel-content {
   display: flex;
-  gap: 16px;  /* Consistent gap between all cards */
   margin-left: 0 !important;
   margin-right: 0 !important;
-  padding: 8px 0;  /* Vertical only - no horizontal to prevent 5th card peeking */
+  padding: 8px 8px;  /* Horizontal padding prevents edge clipping */
 }
 
-/* 4 cards visible - proper calculation:
-   Total gaps = 3 × 16px = 48px
-   Each card = (100% - 48px) / 4 */
+/* 4 cards visible - 25% each, padding creates gaps */
 .features-carousel-item {
-  flex: 0 0 calc((100% - 48px) / 4) !important;
+  flex: 0 0 25% !important;
   min-width: 0;
-  padding: 0 !important;
+  padding: 0 8px !important;  /* 8px each side = 16px visual gap between cards */
   margin: 0 !important;
   position: relative;
   overflow: visible !important;
+  box-sizing: border-box;  /* Include padding in width calculation */
 }
 
 /* Card styling - smaller, consistent sizing, no transforms */
+/* Card styling - GPU-accelerated to prevent blur */
 .features-carousel-card {
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
@@ -14762,13 +14762,12 @@
   flex-direction: column;
   box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
   position: relative;
-  overflow: visible;
-  transition: transform 300ms ease, border-color 250ms ease, box-shadow 300ms ease;
-  transform: none;
-  will-change: transform;
+  overflow: hidden;
+  transition: border-color 250ms ease, box-shadow 300ms ease;
   box-sizing: border-box;
+  /* Anti-blur fixes - force GPU layer */
+  transform: translateZ(0);
   backface-visibility: hidden;
-  /* Fix font blurriness */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -14924,17 +14923,17 @@
   right: -48px;
 }
 
-/* Responsive: 3 cards on large tablet - 2 gaps × 16px = 32px */
+/* Responsive: 3 cards on large tablet */
 @media (max-width: 1279px) {
   .features-carousel-item {
-    flex: 0 0 calc((100% - 32px) / 3) !important;
+    flex: 0 0 33.333% !important;
   }
 }
 
-/* Responsive: 2 cards on tablet - 1 gap × 16px = 16px */
+/* Responsive: 2 cards on tablet */
 @media (max-width: 1024px) {
   .features-carousel-item {
-    flex: 0 0 calc((100% - 16px) / 2) !important;
+    flex: 0 0 50% !important;
   }
   
   .features-carousel-prev {
@@ -14946,10 +14945,11 @@
   }
 }
 
-/* Responsive: 1 card on mobile - 0 gaps */
+/* Responsive: 1 card on mobile */
 @media (max-width: 640px) {
   .features-carousel-item {
     flex: 0 0 100% !important;
+    padding: 0 4px !important;
   }
   
   .features-carousel-card {
