@@ -44,8 +44,12 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
             group"
           aria-label="Open AI Helper"
         >
-          <ChevronLeft className="w-4 h-4 text-background/70 group-hover:text-background transition-colors" />
-          <Hand className="w-5 h-5 text-background animate-wave" />
+          <div className="p-1 rounded-full border border-background/50">
+            <ChevronLeft className="w-4 h-4 text-background/70 group-hover:text-background transition-colors" />
+          </div>
+          <div className="p-1 rounded-full border border-background/50">
+            <Hand className="w-5 h-5 text-background animate-wave" />
+          </div>
         </button>
         <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
       </>
