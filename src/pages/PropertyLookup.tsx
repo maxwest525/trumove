@@ -442,7 +442,7 @@ export default function PropertyLookup() {
           <div className="mt-10 text-center">
             <a
               href="/online-estimate"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-lg hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-foreground text-background font-bold text-lg hover:bg-background hover:text-foreground border border-transparent hover:border-foreground shadow-[0_4px_16px_hsl(var(--primary)/0.3)] hover:shadow-[0_8px_24px_hsl(var(--primary)/0.4)] transition-all duration-200"
             >
               Get Your Instant Quote
               <ArrowRight className="w-5 h-5" />

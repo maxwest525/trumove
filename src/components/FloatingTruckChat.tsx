@@ -26,7 +26,6 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
           hover:shadow-[0_12px_40px_-4px_hsl(var(--primary)/0.5),0_6px_20px_-2px_hsl(var(--tm-ink)/0.35)]
           hover:scale-[1.03] hover:-translate-y-1
           focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2
-          animate-[attention-pulse_3s_ease-in-out_infinite]
           ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
         `}
