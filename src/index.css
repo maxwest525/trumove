@@ -14713,8 +14713,7 @@
   max-width: 100%;
   padding: 0;
   position: relative;
-  overflow-x: clip;  /* Contain horizontally */
-  overflow-y: visible;  /* Allow vertical for hover */
+  overflow: hidden;  /* Strict clipping to hide 5th card */
 }
 
 /* Carousel content - fully reset Embla defaults */
@@ -14723,7 +14722,7 @@
   gap: 16px;  /* Consistent gap between all cards */
   margin-left: 0 !important;
   margin-right: 0 !important;
-  padding: 8px 8px;  /* Equal horizontal padding to prevent edge clipping */
+  padding: 8px 0;  /* Vertical only - no horizontal to prevent 5th card peeking */
 }
 
 /* 4 cards visible - proper calculation:
