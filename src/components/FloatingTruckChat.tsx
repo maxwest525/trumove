@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, Sparkles, Hand } from 'lucide-react';
+import { Truck, Sparkles, Hand, ChevronRight, ChevronLeft } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 
 interface FloatingTruckChatProps {
@@ -10,32 +10,45 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
   const [isOpen, setIsOpen] = useState(false);
   const [showButton] = useState(true);
   
-  // Hide state with localStorage persistence
-  const [isHidden, setIsHidden] = useState(() => {
-    return localStorage.getItem('tm_ai_helper_hidden') === 'true';
+  // Minimized state with localStorage persistence
+  const [isMinimized, setIsMinimized] = useState(() => {
+    return localStorage.getItem('tm_ai_helper_minimized') === 'true';
   });
 
-  const handleHide = (e: React.MouseEvent) => {
+  const handleMinimize = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsHidden(true);
-    localStorage.setItem('tm_ai_helper_hidden', 'true');
+    setIsMinimized(true);
+    localStorage.setItem('tm_ai_helper_minimized', 'true');
   };
 
   const handleReopen = () => {
-    setIsHidden(false);
-    localStorage.removeItem('tm_ai_helper_hidden');
+    setIsMinimized(false);
+    localStorage.removeItem('tm_ai_helper_minimized');
   };
 
-  // Show minimized indicator when hidden
-  if (isHidden) {
+  // When minimized - show a vertical strip on the right edge
+  if (isMinimized) {
     return (
-      <button
-        onClick={handleReopen}
-        className="fixed bottom-24 right-6 z-50 w-12 h-12 rounded-full bg-foreground text-background border-2 border-primary/30 shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-xl animate-pulse"
-        aria-label="Reopen AI Helper"
-      >
-        <Hand className="w-5 h-5 animate-wave" />
-      </button>
+      <>
+        <button
+          onClick={handleReopen}
+          className="fixed bottom-24 right-0 z-50 
+            px-2 py-4 
+            bg-foreground text-background 
+            rounded-l-xl
+            border-2 border-r-0 border-primary/30
+            shadow-lg 
+            flex flex-col items-center gap-2
+            transition-all duration-300 
+            hover:px-3 hover:shadow-xl
+            group"
+          aria-label="Open AI Helper"
+        >
+          <ChevronLeft className="w-4 h-4 text-background/70 group-hover:text-background transition-colors" />
+          <Hand className="w-5 h-5 text-background animate-wave" />
+        </button>
+        <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      </>
     );
   }
 
@@ -76,13 +89,14 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         {/* Status indicator - smaller and more subtle */}
         <span className="w-2 h-2 rounded-full bg-primary ml-1" />
         
-        {/* Waving hand dismiss button */}
+        {/* Minimize button with hand + arrow */}
         <button
-          onClick={handleHide}
-          className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-colors group"
+          onClick={handleMinimize}
+          className="absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full bg-muted border border-border flex items-center justify-center gap-0.5 hover:bg-primary/20 hover:border-primary/40 transition-colors group"
           aria-label="Minimize AI Helper"
         >
-          <Hand className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground group-hover:animate-wave" />
+          <Hand className="w-3 h-3 text-muted-foreground group-hover:text-foreground group-hover:animate-wave" />
+          <ChevronRight className="w-2.5 h-2.5 text-muted-foreground group-hover:text-foreground" />
         </button>
       </button>
 
