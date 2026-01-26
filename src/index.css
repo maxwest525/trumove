@@ -14649,7 +14649,7 @@
   animation-delay: calc(var(--stagger-index, 0) * 0.1s);
 }
 
-/* VALUE CARD CAROUSEL STYLES - Individual Pill Cards */
+/* VALUE CARD CAROUSEL STYLES - Individual Pill Cards (Legacy - keeping for backwards compat) */
 .tru-feature-carousel-fullwidth {
   width: 100%;
   max-width: 1480px;
@@ -14663,6 +14663,263 @@
   margin: 0;
   padding: 0;
 }
+
+/* ============================================
+   FEATURES CAROUSEL - NEW SCOPED STYLES
+   Image-forward, near-square cards
+   ============================================ */
+
+.features-carousel {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.features-carousel-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  position: relative;
+  overflow: visible;
+}
+
+.features-carousel-content {
+  display: flex;
+  gap: 24px;
+  margin-left: 0 !important;
+}
+
+/* 3 cards visible - center aligned with peek */
+.features-carousel-item {
+  flex: 0 0 calc(33.333% - 16px) !important;
+  min-width: 0;
+  padding-left: 0 !important;
+  position: relative;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Card styling - near-square, image-forward */
+.features-carousel-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
+  position: relative;
+  overflow: visible;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Top accent stripe */
+.features-carousel-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, hsl(var(--primary) / 0.6), hsl(var(--primary) / 0.2));
+  border-radius: 16px 16px 0 0;
+  opacity: 0.7;
+  transition: opacity 0.25s ease;
+}
+
+/* Center card emphasis */
+.features-carousel-card[data-active="true"] {
+  transform: scale(1.03);
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.12);
+  z-index: 5;
+}
+
+.features-carousel-card[data-active="true"]::before {
+  opacity: 1;
+}
+
+.features-carousel-card[data-active="false"] {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+/* Hover effects */
+.features-carousel-card:hover {
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 6px 24px hsl(var(--primary) / 0.12);
+}
+
+.features-carousel-card:hover::before {
+  opacity: 1;
+}
+
+.features-carousel-card:active {
+  transform: scale(0.99);
+  transition: all 100ms ease;
+}
+
+.features-carousel-card:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Header section - 35% of card */
+.features-carousel-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+  min-height: 80px;
+}
+
+/* Icon badge - circular with subtle green bg and grey border */
+.features-carousel-card-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px solid hsl(var(--border));
+  border-radius: 50%;
+  color: hsl(var(--tm-ink) / 0.6);
+  transition: all 0.25s ease;
+}
+
+.features-carousel-card:hover .features-carousel-card-icon {
+  background: hsl(var(--primary) / 0.12);
+  color: hsl(var(--tm-ink) / 0.8);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
+}
+
+.features-carousel-card-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Typography - clamped to 1-2 lines */
+.features-carousel-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin-bottom: 4px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.features-carousel-card-desc {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Image wrapper - 60-65% of card, fixed height */
+.features-carousel-card-image-wrapper {
+  height: 180px;
+  flex: 1;
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  margin-top: auto;
+}
+
+/* Image - fully visible, never cropped */
+.features-carousel-card-image-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  transition: transform 0.4s ease;
+}
+
+.features-carousel-card:hover .features-carousel-card-image-wrapper img {
+  transform: scale(1.02);
+}
+
+/* Navigation arrows */
+.features-carousel-prev,
+.features-carousel-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.1);
+  z-index: 10;
+  transition: all 200ms ease;
+  width: 40px;
+  height: 40px;
+}
+
+.features-carousel-prev:hover,
+.features-carousel-next:hover {
+  background: hsl(var(--primary)) !important;
+  border-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground));
+}
+
+.features-carousel-prev {
+  left: -48px;
+}
+
+.features-carousel-next {
+  right: -48px;
+}
+
+/* Responsive: 2 columns on tablet */
+@media (max-width: 1024px) {
+  .features-carousel-item {
+    flex: 0 0 calc(50% - 12px) !important;
+  }
+  
+  .features-carousel-prev {
+    left: -24px;
+  }
+  
+  .features-carousel-next {
+    right: -24px;
+  }
+}
+
+/* Responsive: 1 column on mobile */
+@media (max-width: 640px) {
+  .features-carousel-item {
+    flex: 0 0 100% !important;
+  }
+  
+  .features-carousel-card {
+    height: 320px;
+  }
+  
+  .features-carousel-card[data-active="false"] {
+    transform: scale(1);
+    opacity: 1;
+  }
+  
+  .features-carousel-prev,
+  .features-carousel-next {
+    display: none;
+  }
+}
+
+/* ============================================
+   LEGACY CAROUSEL STYLES (keeping for compat)
+   ============================================ */
 
 .tru-value-carousel {
   width: 100%;
@@ -14678,7 +14935,6 @@
   margin-left: 0 !important;
 }
 
-/* 3 cards visible at once - individual pills with gap */
 .tru-value-carousel-item {
   flex: 0 0 calc(33.333% - 11px) !important;
   min-width: 0;
@@ -14687,32 +14943,6 @@
   position: relative;
 }
 
-.tru-value-carousel-item:last-child {
-  border: none;
-}
-
-.tru-value-carousel-item:first-child {
-  border: none;
-}
-
-/* Carousel card entrance animation */
-@keyframes carousel-card-enter {
-  0% {
-    opacity: 0;
-    transform: translateY(30px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.tru-carousel-card-enter {
-  opacity: 0;
-  animation: carousel-card-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* Card styling - individual pill/box style */
 .tru-value-card-carousel {
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
@@ -14729,7 +14959,6 @@
   position: relative;
 }
 
-/* Top accent stripe */
 .tru-value-card-carousel::before {
   content: '';
   position: absolute;
@@ -14747,7 +14976,6 @@
   opacity: 1;
 }
 
-/* Hover feedback */
 .tru-value-card-carousel:hover {
   border-color: hsl(var(--primary) / 0.4);
   box-shadow: 0 4px 16px hsl(var(--primary) / 0.1);
@@ -14764,7 +14992,6 @@
   outline-offset: 2px;
 }
 
-/* Always expanded card style */
 .tru-value-card-expanded {
   height: 100% !important;
 }
@@ -14815,7 +15042,6 @@
   line-height: 1.5;
 }
 
-/* Thumbnail preview - compact */
 .tru-preview-always-visible {
   height: auto !important;
   opacity: 1 !important;
@@ -14848,7 +15074,6 @@
   transform: scale(1.03);
 }
 
-/* Carousel navigation buttons - outside the cards */
 .tru-value-carousel-prev,
 .tru-value-carousel-next {
   position: absolute;
@@ -14878,7 +15103,6 @@
   right: -48px;
 }
 
-/* Carousel dot indicators */
 .tru-carousel-indicators {
   display: flex;
   align-items: center;
@@ -14908,12 +15132,10 @@
   border-radius: 4px;
 }
 
-/* Feature carousel legacy container - deprecated */
 .tru-feature-carousel-under-form {
   display: none;
 }
 
-/* Responsive: 2 columns on tablet */
 @media (max-width: 1024px) {
   .tru-value-carousel-item {
     flex: 0 0 50% !important;
@@ -14932,7 +15154,6 @@
   }
 }
 
-/* Responsive: 1 column on mobile */
 @media (max-width: 640px) {
   .tru-value-carousel-item {
     flex: 0 0 100% !important;
