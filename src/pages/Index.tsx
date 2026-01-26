@@ -588,10 +588,6 @@ export default function Index() {
             <HeroParticles />
             <div className="tru-hero-particles-overlay" />
             
-            {/* Trust Badges - Right Side Overlay */}
-            <div className="tru-hero-trust-right">
-              <TrustCompactSection />
-            </div>
             
             {/* Full-Page Analyzing Overlay */}
             {isAnalyzing && (
