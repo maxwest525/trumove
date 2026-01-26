@@ -32,6 +32,7 @@ import ChatModal from "@/components/chat/ChatModal";
 import FloatingTruckChat from "@/components/FloatingTruckChat";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
@@ -125,6 +126,53 @@ function getAiHint(step: number, fromCity: string, toCity: string, distance: num
     default:
       return "";
   }
+}
+
+// Trust Compact Section with scroll-triggered staggered reveal
+function TrustCompactSection() {
+  const [sectionRef, isInView] = useScrollAnimation<HTMLElement>({
+    threshold: 0.2,
+    rootMargin: "0px",
+    triggerOnce: true,
+  });
+
+  const stats = [
+    { icon: Database, label: "Federal SAFER Data" },
+    { icon: CreditCard, label: "Secure Payments" },
+    { icon: ShieldCheck, label: "Vetted Movers" },
+  ];
+
+  const badges = ["FMCSA Authorized", "USDOT Compliant", "Insured & Bonded"];
+
+  return (
+    <section className="tru-trust-compact" ref={sectionRef}>
+      <div className="tru-trust-compact-inner">
+        <div className="tru-trust-compact-stats">
+          {stats.map((stat, index) => (
+            <div 
+              key={stat.label}
+              className={`tru-trust-compact-stat ${isInView ? 'in-view' : ''}`}
+              style={{ '--stagger-index': index } as React.CSSProperties}
+            >
+              <stat.icon className="w-5 h-5" />
+              <span>{stat.label}</span>
+            </div>
+          ))}
+        </div>
+        <div className="tru-trust-compact-badges">
+          {badges.map((badge, index) => (
+            <span 
+              key={badge} 
+              className={`tru-trust-compact-badge ${isInView ? 'in-view' : ''}`}
+              style={{ '--stagger-index': index + 3 } as React.CSSProperties}
+            >
+              {badge}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export default function Index() {
@@ -588,100 +636,119 @@ export default function Index() {
               }}
             >
               <div className="tru-hero-content-inner">
-                {/* Value Props Container - Feature Cards without header */}
+                {/* Value Props Container - Feature Cards as Carousel */}
                 <div className="tru-hero-value-props-container tru-feature-section-card-clean">
-                  {/* Value Cards - Always visible with previews */}
-                  <div className="tru-hero-value-cards tru-hero-value-cards-open">
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Boxes className="w-5 h-5" />
+                  {/* Value Cards - Horizontal Carousel with hover-to-expand */}
+                  <Carousel
+                    opts={{ align: "start", loop: true, dragFree: true }}
+                    className="tru-value-carousel"
+                  >
+                    <CarouselContent className="tru-value-carousel-content">
+                      <CarouselItem className="tru-value-carousel-item">
+                        <div className="tru-value-card-carousel" onClick={() => navigate("/online-estimate")}>
+                          <div className="tru-value-card-carousel-header">
+                            <div className="tru-value-card-icon">
+                              <Boxes className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">Inventory Builder</h3>
+                              <p className="tru-value-card-desc">Build your item list room by room for accurate pricing estimates.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-carousel-preview">
+                            <img src={previewAiScanner} alt="Inventory Builder Preview" />
+                          </div>
                         </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">Inventory Builder</h3>
-                          <p className="tru-value-card-desc">Build your item list room by room for accurate pricing estimates.</p>
+                      </CarouselItem>
+                      
+                      <CarouselItem className="tru-value-carousel-item">
+                        <div className="tru-value-card-carousel" onClick={() => navigate("/scan-room")}>
+                          <div className="tru-value-card-carousel-header">
+                            <div className="tru-value-card-icon">
+                              <Scan className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">AI Room Scanner</h3>
+                              <p className="tru-value-card-desc">Point your camera and AI detects furniture instantly.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-carousel-preview">
+                            <img src={sampleRoomLiving} alt="AI Room Scanner Preview" />
+                          </div>
                         </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewAiScanner} alt="Inventory Builder Preview" />
-                      </div>
-                    </div>
-                    
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/scan-room")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Scan className="w-5 h-5" />
+                      </CarouselItem>
+                      
+                      <CarouselItem className="tru-value-carousel-item">
+                        <div className="tru-value-card-carousel" onClick={() => navigate("/vetting")}>
+                          <div className="tru-value-card-carousel-header">
+                            <div className="tru-value-card-icon">
+                              <Radar className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">Smart Carrier Match</h3>
+                              <p className="tru-value-card-desc">Our algorithm finds the best carrier for your route.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-carousel-preview">
+                            <img src={previewCarrierVetting} alt="Carrier Matching Preview" />
+                          </div>
                         </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">AI Room Scanner</h3>
-                          <p className="tru-value-card-desc">Point your camera and AI detects furniture instantly.</p>
+                      </CarouselItem>
+                      
+                      <CarouselItem className="tru-value-carousel-item">
+                        <div className="tru-value-card-carousel" onClick={() => navigate("/book")}>
+                          <div className="tru-value-card-carousel-header">
+                            <div className="tru-value-card-icon">
+                              <Video className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">TruMove Specialist</h3>
+                              <p className="tru-value-card-desc">Live video consultation for personalized guidance.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-carousel-preview">
+                            <img src={previewVideoConsult} alt="TruMove Specialist Preview" />
+                          </div>
                         </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={sampleRoomLiving} alt="AI Room Scanner Preview" />
-                      </div>
-                    </div>
-                    
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Radar className="w-5 h-5" />
-                        </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">Smart Carrier Match</h3>
-                          <p className="tru-value-card-desc">Our algorithm finds the best carrier for your route.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewCarrierVetting} alt="Carrier Matching Preview" />
-                      </div>
-                    </div>
-                    
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/book")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <Video className="w-5 h-5" />
-                        </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">TruMove Specialist</h3>
-                          <p className="tru-value-card-desc">Live video consultation for personalized guidance.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewVideoConsult} alt="TruMove Specialist Preview" />
-                      </div>
-                    </div>
+                      </CarouselItem>
 
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/vetting")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <ShieldCheck className="w-5 h-5" />
+                      <CarouselItem className="tru-value-carousel-item">
+                        <div className="tru-value-card-carousel" onClick={() => navigate("/vetting")}>
+                          <div className="tru-value-card-carousel-header">
+                            <div className="tru-value-card-icon">
+                              <ShieldCheck className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">FMCSA Verified</h3>
+                              <p className="tru-value-card-desc">Real-time safety data checks from official databases.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-carousel-preview">
+                            <img src={previewPropertyLookup} alt="FMCSA Verification Preview" />
+                          </div>
                         </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">FMCSA Verified</h3>
-                          <p className="tru-value-card-desc">Real-time safety data checks from official databases.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={previewPropertyLookup} alt="FMCSA Verification Preview" />
-                      </div>
-                    </div>
+                      </CarouselItem>
 
-                    <div className="tru-value-card tru-value-card-open" onClick={() => navigate("/online-estimate")}>
-                      <div className="tru-value-card-header">
-                        <div className="tru-value-card-icon">
-                          <DollarSign className="w-5 h-5" />
+                      <CarouselItem className="tru-value-carousel-item">
+                        <div className="tru-value-card-carousel" onClick={() => navigate("/online-estimate")}>
+                          <div className="tru-value-card-carousel-header">
+                            <div className="tru-value-card-icon">
+                              <DollarSign className="w-5 h-5" />
+                            </div>
+                            <div className="tru-value-card-content">
+                              <h3 className="tru-value-card-title">Instant Pricing</h3>
+                              <p className="tru-value-card-desc">Get accurate quotes in minutes, not hours.</p>
+                            </div>
+                          </div>
+                          <div className="tru-value-card-carousel-preview">
+                            <img src={scanRoomPreview} alt="Instant Pricing Preview" />
+                          </div>
                         </div>
-                        <div className="tru-value-card-content">
-                          <h3 className="tru-value-card-title">Instant Pricing</h3>
-                          <p className="tru-value-card-desc">Get accurate quotes in minutes, not hours.</p>
-                        </div>
-                      </div>
-                      <div className="tru-value-card-preview tru-value-card-preview-visible">
-                        <img src={scanRoomPreview} alt="Instant Pricing Preview" />
-                      </div>
-                    </div>
-                  </div>
+                      </CarouselItem>
+                    </CarouselContent>
+                    <CarouselPrevious className="tru-value-carousel-prev" />
+                    <CarouselNext className="tru-value-carousel-next" />
+                  </Carousel>
                 </div>
               </div>
             </div>
@@ -1314,30 +1381,8 @@ export default function Index() {
             </div>
           </section>
 
-          {/* TRUST FOOTER - Compact */}
-          <section className="tru-trust-compact">
-            <div className="tru-trust-compact-inner">
-              <div className="tru-trust-compact-stats">
-                <div className="tru-trust-compact-stat">
-                  <Database className="w-5 h-5" />
-                  <span>Federal SAFER Data</span>
-                </div>
-                <div className="tru-trust-compact-stat">
-                  <CreditCard className="w-5 h-5" />
-                  <span>Secure Payments</span>
-                </div>
-                <div className="tru-trust-compact-stat">
-                  <ShieldCheck className="w-5 h-5" />
-                  <span>Vetted Movers</span>
-                </div>
-              </div>
-              <div className="tru-trust-compact-badges">
-                {["FMCSA Authorized", "USDOT Compliant", "Insured & Bonded"].map(b => (
-                  <span key={b} className="tru-trust-compact-badge">{b}</span>
-                ))}
-              </div>
-            </div>
-          </section>
+          {/* TRUST FOOTER - Compact with staggered reveal */}
+          <TrustCompactSection />
 
         </div>
       </div>
