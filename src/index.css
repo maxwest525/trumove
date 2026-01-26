@@ -14663,30 +14663,65 @@
 
 .tru-value-carousel-item {
   padding-left: 8px;
-  flex: 0 0 260px;
+  flex: 0 0 100%;
   min-width: 0;
+}
+
+/* Carousel card entrance animation */
+@keyframes carousel-card-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tru-carousel-card-enter {
+  opacity: 0;
+  animation: carousel-card-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .tru-value-card-carousel {
   background: #ffffff;
   border: 1px solid hsl(var(--tm-line));
   border-radius: 14px;
-  padding: 16px;
+  padding: 20px;
   cursor: pointer;
-  height: 90px;
+  height: auto;
   overflow: hidden;
-  transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
 }
 
+/* Click feedback for carousel cards */
 .tru-value-card-carousel:hover {
-  height: 220px;
   border-color: hsl(var(--primary) / 0.4);
   box-shadow: 
-    0 16px 40px hsl(var(--primary) / 0.15),
-    0 8px 20px hsl(var(--tm-ink) / 0.08);
-  transform: translateY(-4px);
+    0 16px 40px hsl(var(--primary) / 0.12),
+    0 8px 20px hsl(var(--tm-ink) / 0.06);
+  transform: translateY(-3px);
+}
+
+.tru-value-card-carousel:active {
+  transform: translateY(0) scale(0.985);
+  box-shadow: 
+    0 4px 12px hsl(var(--primary) / 0.1),
+    0 2px 6px hsl(var(--tm-ink) / 0.04);
+  transition: all 100ms ease;
+}
+
+.tru-value-card-carousel:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Always expanded card style */
+.tru-value-card-expanded {
+  height: auto !important;
 }
 
 .tru-value-card-carousel-header {
@@ -14696,31 +14731,31 @@
   flex-shrink: 0;
 }
 
+/* Always visible preview */
+.tru-preview-always-visible {
+  height: auto !important;
+  opacity: 1 !important;
+  margin-top: 16px;
+}
+
 .tru-value-card-carousel-preview {
   margin-top: 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
-  height: 0;
-  opacity: 0;
   transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 }
 
-.tru-value-card-carousel:hover .tru-value-card-carousel-preview {
-  height: 110px;
-  opacity: 1;
-}
-
 .tru-value-card-carousel-preview img {
   width: 100%;
-  height: 100%;
+  height: 200px;
   object-fit: cover;
   object-position: center 30%;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tru-value-card-carousel:hover .tru-value-card-carousel-preview img {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 /* Carousel navigation buttons */
@@ -14744,11 +14779,11 @@
 }
 
 .tru-value-carousel-prev {
-  left: -16px;
+  left: 12px;
 }
 
 .tru-value-carousel-next {
-  right: -16px;
+  right: 12px;
 }
 
 /* Carousel dot indicators */
@@ -14757,7 +14792,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .tru-carousel-dot {
@@ -14789,7 +14824,7 @@
 /* Feature carousel under form */
 .tru-feature-carousel-under-form {
   margin-top: 24px;
-  padding: 0 8px;
+  padding: 0;
 }
 
 /* Trust panel in hero left side */
