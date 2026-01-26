@@ -5,7 +5,6 @@ import SiteShell from "@/components/layout/SiteShell";
 import MapboxMoveMap from "@/components/MapboxMoveMap";
 import AnimatedRouteMap from "@/components/estimate/AnimatedRouteMap";
 import FloatingNav from "@/components/FloatingNav";
-import ScrollAwareBottomDock from "@/components/ScrollAwareBottomDock";
 import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
@@ -1382,11 +1381,6 @@ export default function Index() {
       </div>
 
 
-      {/* Scroll-Aware Bottom Navigation Dock */}
-      <ScrollAwareBottomDock 
-        onChatOpen={() => setChatOpen(true)} 
-        heroRef={heroSectionRef}
-      />
 
       {/* Floating Truck AI Chat Button */}
       <FloatingTruckChat />
