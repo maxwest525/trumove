@@ -14485,13 +14485,13 @@
   background: #ffffff;
   border: 1px solid hsl(var(--tm-line));
   cursor: pointer;
-  transition: all 200ms ease;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tru-steps-compact-card:hover {
-  border-color: hsl(var(--primary) / 0.3);
-  box-shadow: 0 8px 24px hsl(var(--tm-ink) / 0.08);
-  transform: translateY(-2px);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 12px 32px hsl(var(--tm-ink) / 0.12);
+  transform: translateY(-4px) scale(1.015);
 }
 
 .tru-steps-compact-num {
@@ -14506,6 +14506,13 @@
   font-size: 14px;
   font-weight: 800;
   flex-shrink: 0;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tru-steps-compact-card:hover .tru-steps-compact-num {
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+  transform: scale(1.1);
+  background: hsl(var(--primary));
 }
 
 .tru-steps-compact-card-content {
@@ -14518,6 +14525,11 @@
   font-weight: 700;
   color: hsl(var(--tm-ink));
   margin-bottom: 2px;
+  transition: color 200ms ease;
+}
+
+.tru-steps-compact-card:hover .tru-steps-compact-card-content h3 {
+  color: hsl(var(--primary));
 }
 
 .tru-steps-compact-card-content p {
@@ -14529,15 +14541,27 @@
 .tru-steps-compact-arrow {
   color: hsl(var(--tm-ink) / 0.3);
   flex-shrink: 0;
-  transition: all 200ms ease;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tru-steps-compact-card:hover .tru-steps-compact-arrow {
   color: hsl(var(--primary));
-  transform: translateX(2px);
+  transform: translateX(6px);
+  opacity: 1;
 }
 
-/* TRUST COMPACT */
+/* TRUST COMPACT - with staggered reveal animation */
+@keyframes trust-badge-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .tru-trust-compact {
   padding: 24px;
   background: hsl(var(--tm-ink) / 0.02);
@@ -14581,6 +14605,12 @@
   font-size: 13px;
   font-weight: 600;
   color: hsl(var(--tm-ink) / 0.7);
+  opacity: 0;
+}
+
+.tru-trust-compact-stat.in-view {
+  animation: trust-badge-reveal 0.5s ease-out forwards;
+  animation-delay: calc(var(--stagger-index, 0) * 0.1s);
 }
 
 .tru-trust-compact-stat svg {
@@ -14611,6 +14641,114 @@
   background: #ffffff;
   border: 1px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 999px;
+  opacity: 0;
+}
+
+.tru-trust-compact-badge.in-view {
+  animation: trust-badge-reveal 0.5s ease-out forwards;
+  animation-delay: calc(var(--stagger-index, 0) * 0.1s);
+}
+
+/* VALUE CARD CAROUSEL STYLES */
+.tru-value-carousel {
+  width: 100%;
+  padding: 8px 0;
+}
+
+.tru-value-carousel-content {
+  display: flex;
+  gap: 0;
+  margin-left: -8px;
+}
+
+.tru-value-carousel-item {
+  padding-left: 8px;
+  flex: 0 0 260px;
+  min-width: 0;
+}
+
+.tru-value-card-carousel {
+  background: #ffffff;
+  border: 1px solid hsl(var(--tm-line));
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  height: 90px;
+  overflow: hidden;
+  transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.tru-value-card-carousel:hover {
+  height: 220px;
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 
+    0 16px 40px hsl(var(--primary) / 0.15),
+    0 8px 20px hsl(var(--tm-ink) / 0.08);
+  transform: translateY(-4px);
+}
+
+.tru-value-card-carousel-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.tru-value-card-carousel-preview {
+  margin-top: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.tru-value-card-carousel:hover .tru-value-card-carousel-preview {
+  height: 110px;
+  opacity: 1;
+}
+
+.tru-value-card-carousel-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tru-value-card-carousel:hover .tru-value-card-carousel-preview img {
+  transform: scale(1.05);
+}
+
+/* Carousel navigation buttons */
+.tru-value-carousel-prev,
+.tru-value-carousel-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--tm-line));
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.1);
+  z-index: 10;
+  transition: all 200ms ease;
+}
+
+.tru-value-carousel-prev:hover,
+.tru-value-carousel-next:hover {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: white;
+}
+
+.tru-value-carousel-prev {
+  left: -16px;
+}
+
+.tru-value-carousel-next {
+  right: -16px;
 }
 
 /* =============================================
