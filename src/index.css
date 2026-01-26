@@ -3009,8 +3009,9 @@
   flex-direction: column;
   height: auto;
   background: hsl(var(--background));
-  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
   border-radius: 24px;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04), 0 8px 24px hsl(var(--tm-ink) / 0.03);
   overflow: hidden;
   transition: height 0.3s ease;
   position: relative;
@@ -9182,7 +9183,7 @@
   justify-content: center;
   border-radius: 14px;
   background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.05));
-  border: 1.5px solid hsl(var(--tm-ink) / 0.6);
+  border: 1px solid hsl(var(--tm-ink) / 0.12);
   margin-bottom: 20px;
   color: hsl(var(--tm-ink));
 }
@@ -20020,7 +20021,7 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.06) 100%);
-  border: 1.5px solid hsl(var(--tm-ink) / 0.6);
+  border: 1px solid hsl(var(--tm-ink) / 0.12);
   border-radius: 16px;
   color: hsl(var(--tm-ink));
   margin-bottom: 14px;
