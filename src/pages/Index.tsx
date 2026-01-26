@@ -673,16 +673,14 @@ export default function Index() {
             </div>
 
 
-            {/* HERO GRID: Form + Value Prop Side by Side */}
-            <div className="tru-hero-main-grid">
-              {/* LEFT: Form Panel with parallax */}
-              <div 
-                ref={parallaxFormRef}
-                className="tru-hero-form-wrapper"
-                style={{
-                  transform: `translateY(${formParallax.y}px)`,
-                }}
-              >
+            {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
+            <div 
+              ref={parallaxFormRef}
+              className="tru-hero-right-half tru-hero-right-stacked"
+              style={{
+                transform: `translateY(${formParallax.y}px)`,
+              }}
+            >
               <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
                 {/* TOP ROW: Form Card */}
                 <div className="tru-floating-form-card">
@@ -1071,7 +1069,6 @@ export default function Index() {
                 </div>
 
               </div>
-              </div>
 
               {/* RIGHT SIDE: Value Proposition Content */}
               <div className="tru-hero-content-panel">
@@ -1087,7 +1084,6 @@ export default function Index() {
                   </p>
                 </div>
               </div>
-            </div>
 
               {/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill
               <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
@@ -1175,6 +1171,7 @@ export default function Index() {
                 </TooltipProvider>
               </div>
               */}
+            </div>
           </section>
 
           {/* FULL-WIDTH FEATURE CAROUSEL */}
