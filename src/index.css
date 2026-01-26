@@ -14786,10 +14786,122 @@
   width: 100%;
 }
 
-/* Feature carousel under form */
+/* Feature carousel under form - DEPRECATED */
 .tru-feature-carousel-under-form {
   margin-top: 24px;
   padding: 0 8px;
+}
+
+/* Feature carousel inside form - full width, 3 columns, always expanded */
+.tru-feature-carousel-in-form {
+  margin-top: 16px;
+  margin-left: -28px;
+  margin-right: -28px;
+  margin-bottom: -20px;
+  padding: 0 20px 16px;
+  width: calc(100% + 56px);
+  overflow: hidden;
+  background: linear-gradient(to bottom, transparent 0%, hsl(var(--muted) / 0.3) 100%);
+  border-top: 1px solid hsl(var(--tm-line) / 0.5);
+}
+
+/* Expanded wrapper variant */
+.tru-feature-carousel-expanded {
+  width: 100%;
+  padding-left: 4px;
+}
+
+/* 3-column carousel variant */
+.tru-value-carousel-3col {
+  width: 100%;
+  padding: 12px 0 4px;
+}
+
+/* Override default carousel margins for 3-col layout */
+.tru-value-carousel-3col > div {
+  overflow: visible !important;
+}
+
+.tru-value-carousel-3col .tru-value-carousel-content {
+  margin-left: 0 !important;
+}
+
+.tru-value-carousel-item-3col {
+  padding-left: 8px !important;
+  flex: 0 0 calc(33.333%);
+  min-width: 140px;
+}
+
+.tru-value-carousel-item-3col:first-child {
+  padding-left: 4px !important;
+}
+
+/* Always expanded card variant */
+.tru-value-card-expanded {
+  height: auto !important;
+  min-height: 170px;
+}
+
+.tru-value-card-expanded:hover {
+  height: auto !important;
+  transform: translateY(-4px);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 
+    0 12px 32px hsl(var(--primary) / 0.15),
+    0 6px 16px hsl(var(--tm-ink) / 0.08);
+}
+
+/* Preview always visible variant */
+.tru-value-card-preview-visible {
+  height: 80px !important;
+  opacity: 1 !important;
+  margin-top: 8px;
+}
+
+/* Smaller card text in 3-col layout */
+.tru-value-card-expanded .tru-value-card-title {
+  font-size: 13px;
+}
+
+.tru-value-card-expanded .tru-value-card-desc {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.tru-value-card-expanded .tru-value-card-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+}
+
+.tru-value-card-expanded .tru-value-card-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Hide nav arrows in compact 3-col mode */
+.tru-feature-carousel-in-form .tru-value-carousel-prev,
+.tru-feature-carousel-in-form .tru-value-carousel-next {
+  display: none;
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 768px) {
+  .tru-value-carousel-item-3col {
+    flex: 0 0 calc(85% - 8px);
+    min-width: 220px;
+  }
+  
+  .tru-feature-carousel-in-form {
+    margin-left: -12px;
+    margin-right: -12px;
+    padding: 0 12px;
+  }
+  
+  .tru-feature-carousel-in-form .tru-value-carousel-prev,
+  .tru-feature-carousel-in-form .tru-value-carousel-next {
+    display: flex;
+  }
 }
 
 /* Trust panel in hero left side */

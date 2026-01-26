@@ -837,6 +837,11 @@ export default function Index() {
                           <span>{isSearchingCarriers || isAnalyzing ? 'Analyzing...' : 'Analyze Route'}</span>
                           {!isSearchingCarriers && !isAnalyzing && <ArrowRight className="w-5 h-5 tru-btn-arrow" />}
                         </button>
+
+                        {/* Feature Carousel - Full width inside form */}
+                        <div className="tru-feature-carousel-in-form">
+                          <FeatureCarousel autoplayInterval={4000} />
+                        </div>
                       </div>
                     )}
 
@@ -1072,10 +1077,6 @@ export default function Index() {
                   </div>
                 </div>
 
-                {/* Feature Carousel - Directly under the form */}
-                <div className="tru-feature-carousel-under-form">
-                  <FeatureCarousel autoplayInterval={4000} />
-                </div>
               </div>
 
               {/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
-import { Boxes, Scan, Radar, Video, ShieldCheck, DollarSign } from "lucide-react";
+import { Boxes, Scan, Radar, Video, DollarSign } from "lucide-react";
 
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -39,13 +39,6 @@ const features = [
     desc: "Live video consultation for personalized guidance.",
     image: previewVideoConsult,
     route: "/book",
-  },
-  {
-    icon: ShieldCheck,
-    title: "FMCSA Verified",
-    desc: "Real-time safety data checks from official databases.",
-    image: previewPropertyLookup,
-    route: "/vetting",
   },
   {
     icon: DollarSign,
@@ -96,20 +89,20 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
 
   return (
     <div 
-      className="tru-feature-carousel-wrapper"
+      className="tru-feature-carousel-wrapper tru-feature-carousel-expanded"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       <Carousel
         setApi={setApi}
-        opts={{ align: "start", loop: true }}
-        className="tru-value-carousel"
+        opts={{ align: "start", loop: true, slidesToScroll: 1 }}
+        className="tru-value-carousel tru-value-carousel-3col"
       >
         <CarouselContent className="tru-value-carousel-content">
           {features.map((feature, index) => (
-            <CarouselItem key={index} className="tru-value-carousel-item">
+            <CarouselItem key={index} className="tru-value-carousel-item tru-value-carousel-item-3col">
               <div 
-                className="tru-value-card-carousel" 
+                className="tru-value-card-carousel tru-value-card-expanded" 
                 onClick={() => navigate(feature.route)}
               >
                 <div className="tru-value-card-carousel-header">
@@ -121,7 +114,7 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
                     <p className="tru-value-card-desc">{feature.desc}</p>
                   </div>
                 </div>
-                <div className="tru-value-card-carousel-preview">
+                <div className="tru-value-card-carousel-preview tru-value-card-preview-visible">
                   <img src={feature.image} alt={`${feature.title} Preview`} />
                 </div>
               </div>
