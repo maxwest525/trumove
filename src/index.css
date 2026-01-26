@@ -14719,15 +14719,16 @@
 
 .features-carousel-content {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   margin-left: 0 !important;
-  padding: 8px 4px; /* Horizontal padding for card borders */
+  padding: 8px 8px;
 }
 
-/* 4 cards visible on desktop - account for gaps */
+/* 4 cards visible on desktop - smaller to ensure gaps */
 .features-carousel-item {
-  flex: 0 0 calc(25% - 15px) !important;
-  min-width: 0;
+  flex: 0 0 calc(24% - 12px) !important;
+  min-width: 220px;
+  max-width: 280px;
   padding: 0 !important;
   margin: 0 !important;
   position: relative;
