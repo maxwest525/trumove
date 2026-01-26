@@ -184,6 +184,9 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
   return (
     <>
       <div className="tru-floating-form-card">
+        {/* Decorative Accent Stripe */}
+        <div className="tru-form-accent-stripe" />
+        
         {/* Progress Bar */}
         <div className="tru-form-progress-bar">
           <div 
