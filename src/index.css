@@ -11937,7 +11937,26 @@
 }
 
 .tru-qb-question-decorated::after {
-  display: none;
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 1px;
+  background: hsl(var(--tm-ink) / 0.12);
+  display: block;
+}
+
+.tru-hero-content-panel .tru-hero-headline-main {
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.tru-hero-content-panel .tru-hero-subheadline {
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 /* Form Footer */
