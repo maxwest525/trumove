@@ -3027,20 +3027,24 @@
 /* Compact form variant - auto-height, tighter spacing */
 .tru-floating-form-card.tru-floating-form-compact {
   height: auto;
+  min-height: auto;
+  border-radius: 12px;
 }
 
 .tru-floating-form-card.tru-floating-form-compact .tru-floating-form-content {
-  padding: 12px 20px 8px;
+  padding: 16px 20px 12px;
   min-height: auto;
-  gap: 4px;
+  gap: 0;
 }
 
 .tru-floating-form-card.tru-floating-form-compact .tru-qb-form-header.tru-qb-form-header-pill {
   padding: 10px 16px;
+  border-radius: 12px 12px 0 0;
 }
 
 .tru-floating-form-card.tru-floating-form-compact .tru-qb-section-label {
   margin-bottom: 4px;
+  font-size: 0.6875rem;
 }
 
 .tru-floating-form-card.tru-floating-form-compact .tru-qb-toggles {
@@ -3048,7 +3052,107 @@
 }
 
 .tru-floating-form-card.tru-floating-form-compact .tru-floating-form-footer {
-  padding: 6px 16px;
+  padding: 8px 16px;
+}
+
+/* Compact form steps */
+.tru-qb-step-compact .tru-qb-question {
+  font-size: clamp(16px, 2.5vw, 18px);
+  margin-bottom: 12px;
+}
+
+.tru-qb-step-compact .tru-qb-subtitle {
+  font-size: 0.75rem;
+  margin-bottom: 12px;
+}
+
+.tru-qb-step-compact .tru-qb-location-row {
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tru-qb-step-compact .tru-qb-input-wrap {
+  margin-bottom: 0;
+}
+
+.tru-qb-step-compact .tru-qb-input {
+  height: 38px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.tru-qb-step-compact .tru-qb-date-btn {
+  height: 38px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.tru-qb-step-compact .tru-qb-size-grid {
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tru-qb-step-compact .tru-qb-size-btn {
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.tru-qb-step-compact .tru-qb-toggle-card {
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.tru-qb-step-compact .tru-engine-btn {
+  padding: 10px 20px;
+  font-size: 13px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.tru-qb-step-compact .tru-qb-back {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.tru-qb-question-compact {
+  font-size: clamp(16px, 2.5vw, 18px) !important;
+  margin-bottom: 12px !important;
+}
+
+/* Dark header variant */
+.tru-qb-form-header-dark {
+  background: hsl(var(--tm-ink)) !important;
+  border-bottom: none !important;
+}
+
+.tru-qb-form-header-dark .tru-qb-form-title {
+  color: hsl(var(--background)) !important;
+}
+
+.tru-qb-form-header-dark .tru-qb-form-subtitle-compact {
+  color: hsl(var(--background) / 0.6) !important;
+}
+
+/* Thin progress bar */
+.tru-form-progress-bar-thin {
+  height: 2px;
+}
+
+/* Compact form title */
+.tru-qb-form-title-compact {
+  font-size: 14px !important;
+}
+
+/* Compact route summary */
+.tru-qb-step-compact .tru-qb-route-summary {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+}
+
+.tru-qb-step-compact .tru-qb-route-summary-item,
+.tru-qb-step-compact .tru-qb-route-summary-distance {
+  font-size: 11px;
 }
 
 /* =============================================
