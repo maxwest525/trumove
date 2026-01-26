@@ -14727,9 +14727,9 @@
   padding: 8px 8px;  /* Horizontal padding prevents edge clipping */
 }
 
-/* 4 cards visible - 25% each, padding creates gaps */
+/* 5 cards visible - 20% each, padding creates gaps */
 .features-carousel-item {
-  flex: 0 0 25% !important;
+  flex: 0 0 20% !important;
   min-width: 0;
   padding: 0 8px !important;  /* 8px each side = 16px visual gap between cards */
   margin: 0 !important;
@@ -14796,34 +14796,12 @@
   outline-offset: 2px;
 }
 
-/* Header section */
+/* Header section - text only, no icon */
 .features-carousel-card-header {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  flex-direction: column;
   flex-shrink: 0;
   margin-bottom: 8px;
-  min-height: 56px;
-}
-
-/* Icon badge - circular with very subtle green bg and subtle border */
-.features-carousel-card-icon {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: hsl(var(--primary) / 0.04);
-  border: 1px solid hsl(var(--border) / 0.5);
-  border-radius: 50%;
-  color: hsl(var(--tm-ink) / 0.6);
-  transition: all 0.25s ease;
-}
-
-.features-carousel-card:hover .features-carousel-card-icon {
-  background: hsl(var(--primary) / 0.06);
-  color: hsl(var(--tm-ink) / 0.8);
 }
 
 .features-carousel-card-text {
@@ -14912,10 +14890,10 @@
   right: -48px;
 }
 
-/* Responsive: 3 cards on large tablet */
+/* Responsive: 4 cards on large tablet */
 @media (max-width: 1279px) {
   .features-carousel-item {
-    flex: 0 0 33.333% !important;
+    flex: 0 0 25% !important;
   }
 }
 
