@@ -14658,25 +14658,13 @@
 .tru-value-carousel-content {
   display: flex;
   gap: 0;
-  margin-left: -16px;
+  margin-left: -8px;
 }
 
 .tru-value-carousel-item {
-  padding-left: 16px;
-  flex: 0 0 calc(33.333% - 11px);
+  padding-left: 8px;
+  flex: 0 0 100%;
   min-width: 0;
-}
-
-@media (max-width: 1024px) {
-  .tru-value-carousel-item {
-    flex: 0 0 calc(50% - 8px);
-  }
-}
-
-@media (max-width: 640px) {
-  .tru-value-carousel-item {
-    flex: 0 0 calc(100% - 16px);
-  }
 }
 
 /* Carousel card entrance animation */
