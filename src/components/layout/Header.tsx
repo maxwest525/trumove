@@ -70,7 +70,7 @@ const ConsultPreview = () => (
 const PropertyPreview = () => (
   <div className="mega-menu-property">
     <div className="mega-property-image">
-      <Home className="w-8 h-8" />
+      <Home className="w-8 h-8 text-foreground" />
     </div>
     <div className="mega-property-info">
       <span className="mega-property-address">123 Main St, Anytown</span>
