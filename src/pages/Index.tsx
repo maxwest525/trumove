@@ -1165,7 +1165,7 @@ export default function Index() {
 
           {/* FULL-WIDTH FEATURE CAROUSEL */}
           <section className="tru-feature-carousel-fullwidth">
-            <FeatureCarousel autoplayInterval={4000} />
+            <FeatureCarousel />
           </section>
 
           {/* TRUST STRIP - Without "Save 30+ Minutes" */}

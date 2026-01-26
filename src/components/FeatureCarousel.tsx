@@ -56,22 +56,15 @@ const features = [
   },
 ];
 
-interface FeatureCarouselProps {
-  autoplayInterval?: number;
-}
-
-export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCarouselProps) {
+export default function FeatureCarousel() {
   const navigate = useNavigate();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
 
-  // Track current slide
+  // Track current slide for center emphasis
   useEffect(() => {
     if (!api) return;
 
-    setCount(api.scrollSnapList().length);
     setCurrent(api.selectedScrollSnap());
 
     api.on("select", () => {
@@ -79,62 +72,43 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
     });
   }, [api]);
 
-  // Autoplay with pause on hover
-  useEffect(() => {
-    if (!api || isPaused) return;
-
-    const interval = setInterval(() => {
-      api.scrollNext();
-    }, autoplayInterval);
-
-    return () => clearInterval(interval);
-  }, [api, isPaused, autoplayInterval]);
-
-  const scrollTo = useCallback((index: number) => {
-    api?.scrollTo(index);
-  }, [api]);
-
   return (
-    <div 
-      className="tru-feature-carousel-wrapper"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
+    <div className="features-carousel">
       <Carousel
         setApi={setApi}
-        opts={{ align: "start", loop: true, dragFree: true }}
-        className="tru-value-carousel"
+        opts={{ align: "center", loop: true, dragFree: true }}
+        className="features-carousel-container"
       >
-        <CarouselContent className="tru-value-carousel-content">
+        <CarouselContent className="features-carousel-content">
           {features.map((feature, index) => (
-            <CarouselItem key={index} className="tru-value-carousel-item">
+            <CarouselItem key={index} className="features-carousel-item">
               <div 
-                className="tru-value-card-carousel tru-value-card-expanded" 
+                className="features-carousel-card" 
+                data-active={current === index}
                 onClick={() => navigate(feature.route)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && navigate(feature.route)}
               >
-                <div className="tru-value-card-carousel-header">
-                  <div className="tru-value-card-icon">
+                <div className="features-carousel-card-header">
+                  <div className="features-carousel-card-icon">
                     <feature.icon className="w-5 h-5" />
                   </div>
-                  <div className="tru-value-card-content">
-                    <h3 className="tru-value-card-title">{feature.title}</h3>
-                    <p className="tru-value-card-desc">{feature.desc}</p>
+                  <div className="features-carousel-card-text">
+                    <h3 className="features-carousel-card-title">{feature.title}</h3>
+                    <p className="features-carousel-card-desc">{feature.desc}</p>
                   </div>
                 </div>
-                <div className="tru-value-card-carousel-preview tru-preview-always-visible">
+                <div className="features-carousel-card-image-wrapper">
                   <img src={feature.image} alt={`${feature.title} Preview`} />
                 </div>
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="tru-value-carousel-prev" />
-        <CarouselNext className="tru-value-carousel-next" />
+        <CarouselPrevious className="features-carousel-prev" />
+        <CarouselNext className="features-carousel-next" />
       </Carousel>
-
     </div>
   );
 }
