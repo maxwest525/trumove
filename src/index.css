@@ -14727,9 +14727,9 @@
   padding: 8px 8px;  /* Horizontal padding prevents edge clipping */
 }
 
-/* 5 cards visible - 20% each, padding creates gaps */
+/* 4 cards visible - 25% each, padding creates gaps */
 .features-carousel-item {
-  flex: 0 0 20% !important;
+  flex: 0 0 25% !important;
   min-width: 0;
   padding: 0 8px !important;  /* 8px each side = 16px visual gap between cards */
   margin: 0 !important;
@@ -14890,10 +14890,10 @@
   right: -48px;
 }
 
-/* Responsive: 4 cards on large tablet */
+/* Responsive: 3 cards on large tablet */
 @media (max-width: 1279px) {
   .features-carousel-item {
-    flex: 0 0 25% !important;
+    flex: 0 0 33.333% !important;
   }
 }
 
