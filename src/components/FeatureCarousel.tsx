@@ -63,7 +63,7 @@ export default function FeatureCarousel() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const scrollIntervalRef = useRef<number | null>(null);
 
-  // Smooth continuous scroll - gentle nudge every 50ms
+  // Autoplay with 4s interval, pauses on hover
   useEffect(() => {
     if (!api || isPaused) {
       if (scrollIntervalRef.current) {
@@ -75,7 +75,7 @@ export default function FeatureCarousel() {
 
     scrollIntervalRef.current = window.setInterval(() => {
       api.scrollNext();
-    }, 4000); // Slower interval for calmer autoplay
+    }, 4000);
 
     return () => {
       if (scrollIntervalRef.current) {
@@ -109,7 +109,7 @@ export default function FeatureCarousel() {
           {features.map((feature, index) => (
             <CarouselItem key={index} className="features-carousel-item">
               <div 
-                className="features-carousel-card"
+                className={`features-carousel-card ${hoveredIndex === index ? 'is-enlarged' : ''}`}
                 onClick={() => navigate(feature.route)}
                 role="button"
                 tabIndex={0}
@@ -130,12 +130,9 @@ export default function FeatureCarousel() {
                   <img src={feature.image} alt={`${feature.title} Preview`} />
                 </div>
                 
-                {/* Hover preview overlay */}
+                {/* Hover label */}
                 {hoveredIndex === index && (
-                  <div className="features-carousel-preview-overlay">
-                    <img src={feature.image} alt={`${feature.title} Full Preview`} />
-                    <span className="features-carousel-preview-label">Click to explore</span>
-                  </div>
+                  <span className="features-carousel-hover-label">Click to explore</span>
                 )}
               </div>
             </CarouselItem>
