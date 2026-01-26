@@ -278,35 +278,94 @@ Variant: classic
           style={{ backgroundImage: `url(${heroImage})` }}
         >
           <div className="absolute inset-0 bg-[#1a365d]/70" />
-          <div className="relative container mx-auto px-4 py-20">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 bg-amber-500 text-white px-4 py-1 text-sm font-bold mb-4 rounded">
-                <Heart className="w-4 h-4" />
-                FAMILY OWNED SINCE 1998
+          <div className="relative container mx-auto px-4 py-16">
+            <div className="grid lg:grid-cols-[1fr_380px] gap-12 items-center">
+              {/* Left Content */}
+              <div>
+                <div className="inline-flex items-center gap-2 bg-amber-500 text-white px-4 py-1 text-sm font-bold mb-4 rounded">
+                  <Heart className="w-4 h-4" />
+                  FAMILY OWNED SINCE 1998
+                </div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                  Small Company Care.<br />
+                  <span className="text-amber-400">Nationwide Reach.</span>
+                </h1>
+                <p className="text-xl text-white/90 mb-8 leading-relaxed max-w-xl">
+                  We're still the same family business that started with one truck and a handshake — 
+                  now serving all 50 states with the personal touch you deserve.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a 
+                    href="#quote" 
+                    className="border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white px-8 py-4 rounded text-lg font-bold transition-colors text-center shadow-lg flex items-center justify-center gap-2"
+                  >
+                    Get Your Free Quote
+                    <ArrowRight className="w-5 h-5" />
+                  </a>
+                  <a 
+                    href="tel:1-800-555-6683" 
+                    className="bg-white hover:bg-gray-100 text-[#1a365d] px-8 py-4 rounded text-lg font-bold transition-colors text-center shadow-lg flex items-center justify-center gap-2"
+                  >
+                    <Phone className="w-5 h-5" />
+                    Call 1-800-555-MOVE
+                  </a>
+                </div>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                Small Company Care.<br />
-                <span className="text-amber-400">Nationwide Reach.</span>
-              </h1>
-              <p className="text-xl text-white/90 mb-8 leading-relaxed">
-                We're still the same family business that started with one truck and a handshake — 
-                now serving all 50 states with the personal touch you deserve.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a 
-                  href="#quote" 
-                  className="border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white px-8 py-4 rounded text-lg font-bold transition-colors text-center shadow-lg flex items-center justify-center gap-2"
-                >
-                  Get Your Free Quote
-                  <ArrowRight className="w-5 h-5" />
-                </a>
-                <a 
-                  href="tel:1-800-555-6683" 
-                  className="bg-white hover:bg-gray-100 text-[#1a365d] px-8 py-4 rounded text-lg font-bold transition-colors text-center shadow-lg flex items-center justify-center gap-2"
-                >
-                  <Phone className="w-5 h-5" />
-                  Call 1-800-555-MOVE
-                </a>
+              
+              {/* Right Compact Form */}
+              <div className="hidden lg:block bg-white rounded-xl shadow-2xl overflow-hidden">
+                <div className="bg-[#1a365d] px-6 py-4 text-center">
+                  <h3 className="text-lg font-bold text-white">Get Your Free Quote</h3>
+                  <p className="text-white/70 text-sm">No obligation • Response in 24hrs</p>
+                </div>
+                <div className="p-5 space-y-3">
+                  <Input
+                    placeholder="Your Name"
+                    value={formData.name}
+                    onChange={(e) => handleFieldChange('name', e.target.value)}
+                    className="h-11 border-gray-200 focus:border-amber-400 focus:ring-amber-400/20"
+                  />
+                  <Input
+                    type="email"
+                    placeholder="Email Address"
+                    value={formData.email}
+                    onChange={(e) => handleFieldChange('email', e.target.value)}
+                    className="h-11 border-gray-200 focus:border-amber-400 focus:ring-amber-400/20"
+                  />
+                  <Input
+                    type="tel"
+                    placeholder="Phone Number"
+                    value={formData.phone}
+                    onChange={(e) => handleFieldChange('phone', e.target.value)}
+                    className="h-11 border-gray-200 focus:border-amber-400 focus:ring-amber-400/20"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      placeholder="Moving From"
+                      value={formData.movingFrom}
+                      onChange={(e) => handleFieldChange('movingFrom', e.target.value)}
+                      className="h-11 border-gray-200 focus:border-amber-400 focus:ring-amber-400/20"
+                    />
+                    <Input
+                      placeholder="Moving To"
+                      value={formData.movingTo}
+                      onChange={(e) => handleFieldChange('movingTo', e.target.value)}
+                      className="h-11 border-gray-200 focus:border-amber-400 focus:ring-amber-400/20"
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    className="w-full h-12 bg-amber-500 hover:bg-amber-600 text-white font-bold text-base"
+                  >
+                    {isSubmitting ? 'Sending...' : 'Get Free Quote'}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                  <p className="text-center text-xs text-gray-500">
+                    <Shield className="w-3 h-3 inline mr-1" />
+                    Your info is secure & never shared
+                  </p>
+                </div>
               </div>
             </div>
           </div>
