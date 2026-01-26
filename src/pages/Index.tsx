@@ -1255,135 +1255,86 @@ export default function Index() {
             </div>
           </section>
 
-          {/* CONSULT SECTION - Video & Phone */}
-          <section className="tru-consult-wrap">
-            <div className="tru-consult-inner">
-              <div className="tru-consult-content">
-                <div className="tru-consult-icon-wrap">
-                  <Headphones className="w-8 h-8" />
-                </div>
-                <h2 className="tru-consult-title">Need a real conversation?</h2>
-                <p className="tru-consult-text">
-                  Talk to a TruMove specialist. We'll review your quote line-by-line, 
-                  vet your movers together, and answer every question — no pressure, no upsells.
-                </p>
-                <div className="tru-consult-actions">
-                  <button className="tru-consult-btn tru-consult-btn-video" onClick={() => navigate("/book")}>
-                    <Video className="w-5 h-5" />
-                    <span>Book a Video Consult</span>
-                  </button>
-                  <a href="tel:+16097277647" className="tru-consult-btn tru-consult-btn-phone">
-                    <Phone className="w-5 h-5" />
-                    <span>Call (609) 727-7647</span>
-                  </a>
-                </div>
+          {/* CONSULT SECTION - Compact */}
+          <section className="tru-consult-compact">
+            <div className="tru-consult-compact-inner">
+              <div className="tru-consult-compact-icon">
+                <Headphones className="w-6 h-6" />
               </div>
-              <div className="tru-consult-features">
-                <div className="tru-consult-feature">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>Walk through your home virtually</span>
+              <div className="tru-consult-compact-content">
+                <h2 className="tru-consult-compact-title">Need a real conversation?</h2>
+                <p className="tru-consult-compact-text">Talk to a TruMove specialist — no pressure, no upsells.</p>
+              </div>
+              <div className="tru-consult-compact-actions">
+                <button className="tru-consult-compact-btn tru-consult-compact-btn-video" onClick={() => navigate("/book")}>
+                  <Video className="w-4 h-4" />
+                  Video Consult
+                </button>
+                <a href="tel:+16097277647" className="tru-consult-compact-btn tru-consult-compact-btn-phone">
+                  <Phone className="w-4 h-4" />
+                  (609) 727-7647
+                </a>
+              </div>
+            </div>
+          </section>
+
+          {/* HOW IT WORKS - Compact */}
+          <section className="tru-steps-compact">
+            <div className="tru-steps-compact-inner">
+              <div className="tru-steps-compact-header">
+                <span className="tru-steps-compact-badge">How It Works</span>
+                <h2 className="tru-steps-compact-title">Get matched with the right mover.</h2>
+              </div>
+              <div className="tru-steps-compact-grid">
+                <div className="tru-steps-compact-card" onClick={() => navigate("/online-estimate")}>
+                  <div className="tru-steps-compact-num">1</div>
+                  <div className="tru-steps-compact-card-content">
+                    <h3>Build Your Inventory</h3>
+                    <p>AI-powered tools calculate weight and volume from real data.</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 tru-steps-compact-arrow" />
                 </div>
-                <div className="tru-consult-feature">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>Get accurate quotes based on real items</span>
+                <div className="tru-steps-compact-card" onClick={() => navigate("/online-estimate")}>
+                  <div className="tru-steps-compact-num">2</div>
+                  <div className="tru-steps-compact-card-content">
+                    <h3>Get Carrier Matches</h3>
+                    <p>We analyze SAFER Web data to find the best fit.</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 tru-steps-compact-arrow" />
                 </div>
-                <div className="tru-consult-feature">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>Ask questions about carriers and routes</span>
-                </div>
-                <div className="tru-consult-feature">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>No obligation — just honest answers</span>
+                <div className="tru-steps-compact-card" onClick={() => navigate("/online-estimate")}>
+                  <div className="tru-steps-compact-num">3</div>
+                  <div className="tru-steps-compact-card-content">
+                    <h3>Book with Confidence</h3>
+                    <p>Secure payment. Licensed, vetted movers only.</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 tru-steps-compact-arrow" />
                 </div>
               </div>
             </div>
           </section>
 
-          {/* HOW TRUMOVE WORKS */}
-          <section className="tru-diff-wrap">
-            <div className="tru-diff-inner">
-              <div className="tru-diff-kicker">HOW IT WORKS</div>
-              <h2 className="tru-diff-title">Get matched with the right mover at the best rate.</h2>
-              <p className="tru-diff-sub">We use federal SAFER Web data to analyze carriers, rates, and availability — so you don't have to.</p>
-              
-              <div className="tru-diff-grid">
-                <article className="tru-diff-card" onClick={() => navigate("/online-estimate")}>
-                  <div className="tru-diff-icon"><Boxes className="w-6 h-6" /></div>
-                  <h3 className="tru-diff-card-title">Build Your Inventory</h3>
-                  <p className="tru-diff-card-text">Use our AI-powered tools to create your item list. We calculate weight and volume so estimates are based on real data — not guesses.</p>
-                  <span className="tru-diff-cta">Try the Inventory Builder <ArrowRight className="w-3.5 h-3.5" /></span>
-                </article>
-
-                <article className="tru-diff-card" onClick={() => navigate("/online-estimate")}>
-                  <div className="tru-diff-icon"><Radar className="w-6 h-6" /></div>
-                  <h3 className="tru-diff-card-title">Get Matched with Carriers</h3>
-                  <p className="tru-diff-card-text">We analyze federal SAFER Web data, carrier availability, and rates to match you with the right mover at the best price.</p>
-                  <span className="tru-diff-cta">Get Your Estimate <ArrowRight className="w-3.5 h-3.5" /></span>
-                </article>
-
-                <article className="tru-diff-card" onClick={() => navigate("/online-estimate")}>
-                  <div className="tru-diff-icon"><ShieldCheck className="w-6 h-6" /></div>
-                  <h3 className="tru-diff-card-title">Book with Confidence</h3>
-                  <p className="tru-diff-card-text">Pay through TruMove for secure transactions. We only work with licensed, vetted movers — protecting you from scams and surprises.</p>
-                  <span className="tru-diff-cta">Start Your Estimate <ArrowRight className="w-3.5 h-3.5" /></span>
-                </article>
-              </div>
-            </div>
-          </section>
-
-
-
-          {/* SMART ESTIMATES & PROTECTION */}
-          <section className="tru-mission-wrap">
-            <div className="tru-mission-inner">
-              <div className="tru-guarantee-wrap">
-                <div className="tru-guarantee-card">
-                  <div>
-                    <div className="tru-guarantee-tag"><span className="tru-guarantee-tag-dot"></span><span>Smart Estimates</span></div>
-                    <div className="tru-guarantee-title">Realistic pricing based on federal data.</div>
-                    <div className="tru-guarantee-text">Our estimates are calculated using federally regulated data, carrier rates, and real availability — not guesswork.</div>
-                    <ul className="tru-guarantee-list">
-                      <li><strong>Data-driven estimates</strong> — based on federal SAFER Web data</li>
-                      <li><strong>Payment protection</strong> — pay through TruMove, not the mover</li>
-                      <li><strong>Vetted movers only</strong> — licensed, insured, and monitored</li>
-                      <li><strong>24/7 tracking</strong> — know where your stuff is, always</li>
-                      <li><strong>Dedicated support</strong> — one specialist for your entire move</li>
-                    </ul>
-                  </div>
-                  <div className="tru-guarantee-side">
-                    <div className="tru-guarantee-side-stats">
-                      <div className="tru-guarantee-side-stat">
-                        <Database className="w-5 h-5 text-primary" />
-                        <div>
-                          <span className="tru-guarantee-side-num">Federal</span>
-                          <span className="tru-guarantee-side-label">SAFER Web Data</span>
-                        </div>
-                      </div>
-                      <div className="tru-guarantee-side-stat">
-                        <CreditCard className="w-5 h-5 text-primary" />
-                        <div>
-                          <span className="tru-guarantee-side-num">Secure</span>
-                          <span className="tru-guarantee-side-label">Payment Protection</span>
-                        </div>
-                      </div>
-                      <div className="tru-guarantee-side-stat">
-                        <ShieldCheck className="w-5 h-5 text-primary" />
-                        <div>
-                          <span className="tru-guarantee-side-num">Vetted</span>
-                          <span className="tru-guarantee-side-label">Licensed Movers</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          {/* TRUST FOOTER - Compact */}
+          <section className="tru-trust-compact">
+            <div className="tru-trust-compact-inner">
+              <div className="tru-trust-compact-stats">
+                <div className="tru-trust-compact-stat">
+                  <Database className="w-5 h-5" />
+                  <span>Federal SAFER Data</span>
+                </div>
+                <div className="tru-trust-compact-stat">
+                  <CreditCard className="w-5 h-5" />
+                  <span>Secure Payments</span>
+                </div>
+                <div className="tru-trust-compact-stat">
+                  <ShieldCheck className="w-5 h-5" />
+                  <span>Vetted Movers</span>
                 </div>
               </div>
-              <div className="tru-trust-wrap">
-                <div className="tru-trust-row">
-                  <span className="tru-trust-label">Every mover on our platform is verified.</span>
-                  {["FMCSA Authorized", "USDOT Compliant", "Insured & Bonded"].map(b => (
-                    <span key={b} className="tru-trust-badge"><span className="tru-trust-dot"></span><span>{b}</span></span>
-                  ))}
-                </div>
+              <div className="tru-trust-compact-badges">
+                {["FMCSA Authorized", "USDOT Compliant", "Insured & Bonded"].map(b => (
+                  <span key={b} className="tru-trust-compact-badge">{b}</span>
+                ))}
               </div>
             </div>
           </section>
