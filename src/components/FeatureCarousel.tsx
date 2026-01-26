@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
 import { Boxes, Scan, Radar, Video, ShieldCheck, DollarSign } from "lucide-react";
@@ -60,16 +60,28 @@ export default function FeatureCarousel() {
   const navigate = useNavigate();
   const [api, setApi] = useState<CarouselApi>();
   const [isPaused, setIsPaused] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const scrollIntervalRef = useRef<number | null>(null);
 
-  // Autoplay with 5 second interval, pauses on hover
+  // Smooth continuous scroll - gentle nudge every 50ms
   useEffect(() => {
-    if (!api || isPaused) return;
+    if (!api || isPaused) {
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+        scrollIntervalRef.current = null;
+      }
+      return;
+    }
 
-    const interval = setInterval(() => {
+    scrollIntervalRef.current = window.setInterval(() => {
       api.scrollNext();
-    }, 5000);
+    }, 4000); // Slower interval for calmer autoplay
 
-    return () => clearInterval(interval);
+    return () => {
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+      }
+    };
   }, [api, isPaused]);
 
   // Pause autoplay on hover/interaction
@@ -79,6 +91,7 @@ export default function FeatureCarousel() {
 
   const handleMouseLeave = useCallback(() => {
     setIsPaused(false);
+    setHoveredIndex(null);
   }, []);
 
   return (
@@ -101,6 +114,8 @@ export default function FeatureCarousel() {
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && navigate(feature.route)}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
               >
                 <div className="features-carousel-card-header">
                   <div className="features-carousel-card-icon">
@@ -114,6 +129,14 @@ export default function FeatureCarousel() {
                 <div className="features-carousel-card-image-wrapper">
                   <img src={feature.image} alt={`${feature.title} Preview`} />
                 </div>
+                
+                {/* Hover preview overlay */}
+                {hoveredIndex === index && (
+                  <div className="features-carousel-preview-overlay">
+                    <img src={feature.image} alt={`${feature.title} Full Preview`} />
+                    <span className="features-carousel-preview-label">Click to explore</span>
+                  </div>
+                )}
               </div>
             </CarouselItem>
           ))}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, Sparkles } from 'lucide-react';
+import { Truck, Sparkles, X } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 
 interface FloatingTruckChatProps {
@@ -9,6 +9,20 @@ interface FloatingTruckChatProps {
 export default function FloatingTruckChat({ className = '' }: FloatingTruckChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showButton] = useState(true);
+  
+  // Hide state with localStorage persistence
+  const [isHidden, setIsHidden] = useState(() => {
+    return localStorage.getItem('tm_ai_helper_hidden') === 'true';
+  });
+
+  const handleHide = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsHidden(true);
+    localStorage.setItem('tm_ai_helper_hidden', 'true');
+  };
+
+  // Don't render if hidden
+  if (isHidden) return null;
 
   return (
     <>
@@ -46,6 +60,15 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         
         {/* Status indicator - smaller and more subtle */}
         <span className="w-2 h-2 rounded-full bg-primary ml-1" />
+        
+        {/* Small dismiss X button */}
+        <button
+          onClick={handleHide}
+          className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
+          aria-label="Hide AI Helper"
+        >
+          <X className="w-3 h-3" />
+        </button>
       </button>
 
       {/* Chat Modal */}
