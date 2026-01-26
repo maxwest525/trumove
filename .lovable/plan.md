@@ -1,55 +1,53 @@
 
+# Plan: Adjust Right-Side Content Panel Typography & Spacing
 
-# Plan: Fix Right-Side Content Panel Layout
+## Overview
+Refine the typography sizing, line height, and spacing of the right-side value proposition panel to better balance with the form card on the left, using the screenshot format as a baseline reference.
 
-## Problem Identified
-The "blagg is gay" content is appearing **underneath** the form instead of **beside it** because:
+## Changes
 
-1. **Extra grid children** - `HeroParticles`, `tru-hero-particles-overlay`, and the analyzing overlay modal are all children of the grid container without explicit `grid-column` positioning
-2. **Implicit grid rows** - These extra elements are consuming grid cells, pushing the content panel to a new row
-
-## Solution
-
-### 1. Position Non-Layout Elements Absolutely
+### 1. Update Content Panel Typography
 **File:** `src/index.css`
 
-Add positioning rules so the particles and overlay don't participate in the grid layout:
+Add specific styling for the content panel elements:
 
 ```css
-.tru-hero.tru-hero-split > .tru-hero-particles,
-.tru-hero.tru-hero-split > .tru-hero-particles-overlay,
-.tru-hero.tru-hero-split > .tru-analyze-fullpage-overlay {
-  position: absolute;
-  grid-column: unset;
-  grid-row: unset;
+/* Right panel specific headline sizing - more compact */
+.tru-hero-content-panel .tru-hero-headline-main {
+  font-size: 2rem;         /* Smaller than the main hero headline */
+  line-height: 1.2;
+  text-align: left;
+  justify-content: flex-start;
+  margin-bottom: 0;
+}
+
+/* Right panel subheadline - tighter, balanced text */
+.tru-hero-content-panel .tru-hero-subheadline {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
+  max-width: 480px;        /* Constrain width for readability */
+  color: hsl(var(--tm-ink) / 0.75);
+}
+
+/* Reduce gap between elements in content panel */
+.tru-hero-content-panel .tru-hero-content-inner {
+  gap: 16px;               /* Tighter spacing (from 24px) */
+  padding-top: 8px;        /* Slight offset to align with form */
 }
 ```
 
-Or alternatively, explicitly position them:
-
-```css
-.tru-hero.tru-hero-split > .tru-analyze-fullpage-overlay {
-  grid-column: 1 / -1;
-  grid-row: 1 / -1;
-}
-```
-
-### 2. Ensure Form and Content Panel Share the Same Row
+### 2. Adjust Strong Tag Styling in Description
 **File:** `src/index.css`
 
-Explicitly assign both the form (`tru-hero-right-half`) and the content panel (`tru-hero-content-panel`) to row 2:
+Ensure the bolded keywords stand out properly:
 
 ```css
-.tru-hero-right-half {
-  grid-row: 2;
-  grid-column: 1;
-  order: unset; /* Remove order, use explicit placement */
-}
-
-.tru-hero-content-panel {
-  grid-row: 2;
-  grid-column: 2;
-  order: unset; /* Remove order, use explicit placement */
+.tru-hero-content-panel .tru-hero-subheadline strong {
+  color: hsl(var(--tm-ink));
+  font-weight: 600;
 }
 ```
 
@@ -57,22 +55,23 @@ Explicitly assign both the form (`tru-hero-right-half`) and the content panel (`
 
 ```text
 +--------------------------------------------------+
-| Row 1: tru-hero-header-section (full width)      |
-| "Trumove. A Smarter Way To Move."                |
+| Row 1: "Trumove. A Smarter Way To Move."         |
 +--------------------------------------------------+
-| Row 2:                                           |
-|  Column 1 (520px)  |  Column 2 (1fr)             |
-|  [Quote Form]      |  "blagg is gay"             |
-|   - Progress bar   |   [description text...]     |
-|   - From/To inputs |   [lorem ipsum...]          |
-|   - Continue btn   |                             |
+| [Form Card 520px]     |  blagg is gay            |
+|  - Progress bar       |  (2rem, tight line-height)|
+|  - FROM/TO inputs     |                          |
+|  - Continue btn       |  Skip the complexity...  |
+|                       |  (0.95rem, 1.6 lh)       |
+|                       |                          |
+|                       |  Lorem ipsum...          |
+|                       |  (same, 60% opacity)     |
 +--------------------------------------------------+
 ```
 
 ## Files Modified
-1. `src/index.css` - Add explicit grid row/column assignments to ensure side-by-side layout
+1. `src/index.css` - Update typography and spacing rules for `.tru-hero-content-panel`
 
 ## No Other Changes
-- The form dimensions and spacing remain unchanged
-- Only the grid placement rules are updated
-
+- JSX structure remains the same
+- Form dimensions and layout unchanged
+- Only typography/spacing refinements applied
