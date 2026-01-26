@@ -80,10 +80,21 @@ export default {
             height: "0",
           },
         },
+        "attention-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 8px 32px -4px hsl(var(--primary)/0.4), 0 4px 16px -2px hsl(var(--tm-ink)/0.3)",
+            transform: "scale(1)",
+          },
+          "50%": {
+            boxShadow: "0 12px 40px -4px hsl(var(--primary)/0.55), 0 6px 20px -2px hsl(var(--tm-ink)/0.4)",
+            transform: "scale(1.02)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "attention-pulse": "attention-pulse 3s ease-in-out infinite",
       },
     },
   },
