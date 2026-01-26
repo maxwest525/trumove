@@ -139,6 +139,24 @@
   margin: 0 auto;
   opacity: 0;
   animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+  font-size: 17px;
+  line-height: 1.6;
+  color: hsl(var(--tm-ink) / 0.75);
+}
+
+.tru-hero-subheadline strong {
+  color: hsl(var(--tm-ink));
+  font-weight: 600;
+}
+
+/* Inline logo in subheadline - smaller version */
+.tru-hero-inline-logo-sub {
+  height: 0.95em;
+  display: inline-block;
+  vertical-align: baseline;
+  margin: 0 4px 0 0;
+  position: relative;
+  top: 0.08em;
 }
 
 /* Subtle highlight for key phrases */
@@ -148,6 +166,24 @@
   border-radius: 4px;
   font-weight: 600;
   color: hsl(var(--tm-ink));
+}
+
+/* Headline accent word */
+.tru-hero-headline-accent {
+  color: hsl(var(--primary));
+  position: relative;
+}
+
+.tru-hero-headline-accent::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 4px;
+  background: hsl(var(--primary) / 0.25);
+  border-radius: 2px;
+  z-index: -1;
 }
 
 /* Hero CTA Button - Compact outlined style */
@@ -1588,7 +1624,16 @@
   font-size: 24px;
   font-weight: 800;
   color: hsl(var(--tm-ink));
+  margin-bottom: 8px;
+}
+
+.tru-ai-steps-subtitle {
+  font-size: 15px;
+  color: hsl(var(--tm-ink) / 0.6);
   margin-bottom: 32px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .tru-ai-steps-grid {
@@ -1612,12 +1657,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--tm-ink) / 0.08);
-  border: 1px solid hsl(var(--tm-ink) / 0.15);
+  background: hsl(var(--primary) / 0.12);
+  border: 1px solid hsl(var(--primary) / 0.25);
   border-radius: 50%;
   font-size: 14px;
   font-weight: 700;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--primary));
   flex-shrink: 0;
 }
 
@@ -1639,7 +1684,7 @@
   line-height: 1.4;
 }
 
-/* Inventory Action Buttons - Identical Styling */
+/* Inventory Action Buttons */
 .tru-inventory-actions {
   display: flex;
   justify-content: center;
@@ -1671,6 +1716,27 @@
 
 .tru-inventory-action-btn svg {
   color: hsl(var(--primary));
+}
+
+/* Primary Action Button - Solid fill for main CTA */
+.tru-inventory-action-btn-primary {
+  background: hsl(var(--tm-ink));
+  color: hsl(var(--background));
+  border-color: hsl(var(--tm-ink));
+}
+
+.tru-inventory-action-btn-primary:hover {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.tru-inventory-action-btn-primary svg {
+  color: hsl(var(--background));
+}
+
+.tru-inventory-action-btn-primary:hover svg {
+  color: hsl(var(--primary-foreground));
 }
 
 /* =============================================
