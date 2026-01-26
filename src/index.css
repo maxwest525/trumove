@@ -14649,7 +14649,19 @@
   animation-delay: calc(var(--stagger-index, 0) * 0.1s);
 }
 
-/* VALUE CARD CAROUSEL STYLES - Full Width 3-Column Layout */
+/* VALUE CARD CAROUSEL STYLES - Full Viewport Width */
+.tru-feature-carousel-fullwidth {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  border-top: 1px solid hsl(var(--border));
+  border-bottom: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+}
+
 .tru-feature-carousel-wrapper {
   width: 100%;
   margin: 0;
@@ -14661,6 +14673,7 @@
   max-width: 100%;
   padding: 0;
   position: relative;
+  overflow: visible;
 }
 
 .tru-value-carousel-content {
@@ -14867,11 +14880,9 @@
   border-radius: 4px;
 }
 
-/* Feature carousel under form - full width */
+/* Feature carousel legacy container - deprecated */
 .tru-feature-carousel-under-form {
-  margin-top: 32px;
-  padding: 0 48px;
-  width: 100%;
+  display: none;
 }
 
 /* Responsive: 2 columns on tablet */
