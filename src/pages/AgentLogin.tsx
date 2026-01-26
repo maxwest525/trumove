@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { FileText, Receipt, CreditCard, Truck, Users, BarChart3 } from "lucide-react";
@@ -48,6 +49,7 @@ const AGENT_TOOLS = [
 ];
 
 export default function AgentLogin() {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <SiteShell centered>
       <div className="agent-dashboard-page">

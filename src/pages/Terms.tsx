@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import SiteShell from "@/components/layout/SiteShell";
 
 export default function Terms() {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <SiteShell>
       <div className="max-w-[900px] mx-auto px-6 py-12">

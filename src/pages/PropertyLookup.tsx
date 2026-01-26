@@ -1,4 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+
+// Scroll to top on mount
+const useScrollToTop = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+};
 import SiteShell from "@/components/layout/SiteShell";
 import { MapPin, Navigation, ArrowRight, Loader2, Eye, Map, Clock, Route, CheckCircle } from "lucide-react";
 import mapboxgl from 'mapbox-gl';
@@ -298,6 +305,7 @@ function RouteMap({
 }
 
 export default function PropertyLookup() {
+  useScrollToTop();
   const [originAddress, setOriginAddress] = useState("");
   const [destAddress, setDestAddress] = useState("");
   const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);

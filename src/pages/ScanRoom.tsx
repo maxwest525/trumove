@@ -1,4 +1,11 @@
 import { useState, useEffect } from "react";
+
+// Scroll to top on mount
+const useScrollToTop = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+};
 import { useNavigate, Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import ScanIntroModal from "@/components/estimate/ScanIntroModal";
@@ -49,6 +56,7 @@ const DEMO_ITEMS = [
 ];
 
 export default function ScanRoom() {
+  useScrollToTop();
   const navigate = useNavigate();
   const [detectedItems, setDetectedItems] = useState<typeof DEMO_ITEMS>([]);
   const [isScanning, setIsScanning] = useState(false);

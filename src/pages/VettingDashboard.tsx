@@ -1,4 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Scroll to top on mount
+const useScrollToTop = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+};
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { 
@@ -26,6 +33,7 @@ const RECENT_ACTIVITY = [
 ];
 
 export default function VettingDashboard() {
+  useScrollToTop();
   const [activeTab, setActiveTab] = useState("carriers");
   const [searchQuery, setSearchQuery] = useState("");
 

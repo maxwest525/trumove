@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 type SignatureField = "initial1" | "initial2" | "initial3" | "signature";
 
 export default function Auth() {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const { toast } = useToast();
   const [typedName, setTypedName] = useState("");
   const [signatures, setSignatures] = useState<Record<SignatureField, boolean>>({

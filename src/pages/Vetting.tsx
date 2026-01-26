@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { Shield, CheckCircle, AlertTriangle, TrendingUp, BadgeCheck, FileSearch, Clock, ArrowRight, Star, Search } from "lucide-react";
@@ -41,6 +42,7 @@ const STATS = [
 ];
 
 export default function Vetting() {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <SiteShell>
       <div className="tru-vetting-page">

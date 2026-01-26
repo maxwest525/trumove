@@ -1,4 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
+
+// Scroll to top on mount
+const useScrollToTop = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+};
 import { useSearchParams } from 'react-router-dom';
 import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle, Printer, Lock, Activity, ClipboardCheck, Share2, FileDown, Copy, Check } from 'lucide-react';
 
@@ -134,6 +141,7 @@ const DATA_SOURCES = [
 ];
 
 export default function CarrierVetting() {
+  useScrollToTop();
   const [carriers, setCarriers] = useState<CarrierData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);

@@ -1,4 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+
+// Scroll to top on mount
+const useScrollToTop = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+};
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import { Video, Phone, Calendar, Clock, Shield, Zap, FileText, CheckCircle2, ExternalLink } from "lucide-react";
@@ -10,6 +17,7 @@ const TIME_SLOTS = [
 ];
 
 export default function Book() {
+  useScrollToTop();
   const [selectedDate, setSelectedDate] = useState<number>(0);
   const [selectedTime, setSelectedTime] = useState<string>("");
 
