@@ -1378,23 +1378,6 @@ export default function Index() {
             </div>
           </section>
 
-          {/* FINAL CTA */}
-          <section className="tru-final-cta-wrap">
-            <div className="tru-final-cta-inner">
-              <h2 className="tru-final-cta-title">Ready to move?</h2>
-              <p className="tru-final-cta-sub">Get your free quote in 60 seconds. No spam, no callbacks you didn't ask for.</p>
-              <div className="tru-final-cta-actions">
-                <button className="tru-btn-primary-xl" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                  <span>Build Your Quote</span><ArrowRight className="w-5 h-5" />
-                </button>
-                <div className="tru-final-cta-or">or</div>
-                <a href="tel:+18005551234" className="tru-final-cta-phone">
-                  <Phone className="w-4 h-4" />
-                  <span>Call (800) 555-1234</span>
-                </a>
-              </div>
-            </div>
-          </section>
         </div>
       </div>
 
