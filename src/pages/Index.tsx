@@ -700,7 +700,7 @@ export default function Index() {
                         <span className="tru-qb-title-line">Let <img src={logoImg} alt="TruMove" className="tru-qb-inline-logo" /> find the</span>
                         <span className="tru-qb-title-line">right carrier for you</span>
                       </span>
-                      <span className="tru-qb-form-subtitle-compact">Enter your route to begin matching</span>
+                      
                     </div>
                   </div>
 
@@ -710,7 +710,7 @@ export default function Index() {
                     {/* Step 1: Route & Date */}
                     {step === 1 && (
                       <div className="tru-qb-step-content" key="step-1">
-                        <h1 className="tru-qb-question tru-qb-question-decorated">Tell us more about your move</h1>
+                        <h1 className="tru-qb-question tru-qb-question-decorated">Enter your route to begin matching</h1>
                         
                         {/* FROM + TO Row - Side by Side with Route Connector */}
                         <div className="tru-qb-location-row">
