@@ -14717,16 +14717,20 @@
   overflow-y: visible;  /* Allow vertical for hover */
 }
 
+/* Carousel content - fully reset Embla defaults */
 .features-carousel-content {
   display: flex;
-  gap: 20px;
+  gap: 16px;  /* Consistent gap between all cards */
   margin-left: 0 !important;
-  padding: 8px 4px; /* Horizontal padding for card borders */
+  margin-right: 0 !important;
+  padding: 8px 8px;  /* Equal horizontal padding to prevent edge clipping */
 }
 
-/* 4 cards visible on desktop - account for gaps */
+/* 4 cards visible - proper calculation:
+   Total gaps = 3 × 16px = 48px
+   Each card = (100% - 48px) / 4 */
 .features-carousel-item {
-  flex: 0 0 calc(25% - 15px) !important;
+  flex: 0 0 calc((100% - 48px) / 4) !important;
   min-width: 0;
   padding: 0 !important;
   margin: 0 !important;
@@ -14904,17 +14908,17 @@
   right: -48px;
 }
 
-/* Responsive: 3 cards on large tablet */
+/* Responsive: 3 cards on large tablet - 2 gaps × 16px = 32px */
 @media (max-width: 1279px) {
   .features-carousel-item {
-    flex: 0 0 calc(33.333% - 16px) !important;
+    flex: 0 0 calc((100% - 32px) / 3) !important;
   }
 }
 
-/* Responsive: 2 cards on tablet */
+/* Responsive: 2 cards on tablet - 1 gap × 16px = 16px */
 @media (max-width: 1024px) {
   .features-carousel-item {
-    flex: 0 0 calc(50% - 12px) !important;
+    flex: 0 0 calc((100% - 16px) / 2) !important;
   }
   
   .features-carousel-prev {
@@ -14926,7 +14930,7 @@
   }
 }
 
-/* Responsive: 1 card on mobile */
+/* Responsive: 1 card on mobile - 0 gaps */
 @media (max-width: 640px) {
   .features-carousel-item {
     flex: 0 0 100% !important;
