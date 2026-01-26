@@ -14708,18 +14708,26 @@
   overflow: visible;
 }
 
+/* Override Embla's overflow:hidden on the scroll wrapper */
+.features-carousel-container > div:first-child {
+  overflow: visible !important;
+}
+
 .features-carousel-content {
   display: flex;
   gap: 24px;
   margin-left: 0 !important;
+  padding: 12px 0; /* Vertical padding for scale overflow */
 }
 
 /* 4 cards visible on desktop */
 .features-carousel-item {
   flex: 0 0 calc(25% - 18px) !important;
   min-width: 0;
-  padding-left: 0 !important;
+  padding: 0 !important; /* Remove all padding */
+  margin: 0 !important; /* Remove all margin */
   position: relative;
+  overflow: visible !important;
 }
 
 /* Card styling - smaller, consistent sizing, no transforms */
@@ -14951,9 +14959,7 @@
   transform: scale(1.02);
 }
 
-.features-carousel-item {
-  overflow: visible !important;
-}
+/* Removed duplicate - overflow already set in main .features-carousel-item rule */
 
 /* Hover label on enlarged card */
 .features-carousel-hover-label {
