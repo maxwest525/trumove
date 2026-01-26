@@ -314,6 +314,8 @@ Variant: classic
               
               {/* Right Compact Form */}
               <div className="hidden lg:block bg-white rounded-xl shadow-2xl overflow-hidden">
+                {/* Accent Stripe */}
+                <div className="h-[3px] bg-gradient-to-r from-[#1a365d]/60 via-amber-500 to-[#1a365d]/60" />
                 <div className="bg-[#1a365d] px-6 py-4 text-center">
                   <h3 className="text-lg font-bold text-white">Get Your Free Quote</h3>
                   <p className="text-white/70 text-sm">No obligation • Response in 24hrs</p>
@@ -481,8 +483,10 @@ Variant: classic
       {/* Quote Form Section */}
       <section id="quote" className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-[#1a365d] rounded-t-xl p-8 text-center">
+          <div className="max-w-4xl mx-auto overflow-hidden rounded-xl shadow-xl">
+            {/* Accent Stripe */}
+            <div className="h-[3px] bg-gradient-to-r from-[#1a365d]/60 via-amber-500 to-[#1a365d]/60" />
+            <div className="bg-[#1a365d] p-8 text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
                 Get Your Free Moving Quote
               </h2>
