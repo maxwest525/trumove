@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
 import {
@@ -48,6 +49,7 @@ const FAQ_ITEMS = [
 ];
 
 export default function FAQ() {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <SiteShell>
       <div className="max-w-[900px] mx-auto px-6 py-12">

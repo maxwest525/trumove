@@ -1,4 +1,11 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+
+// Scroll to top on mount
+const useScrollToTop = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+};
 import { useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import SiteShell from "@/components/layout/SiteShell";
@@ -121,6 +128,7 @@ function getAiHint(step: number, fromCity: string, toCity: string, distance: num
 }
 
 export default function Index() {
+  useScrollToTop();
   const navigate = useNavigate();
   const quoteBuilderRef = useRef<HTMLDivElement>(null);
   const heroSectionRef = useRef<HTMLElement>(null);

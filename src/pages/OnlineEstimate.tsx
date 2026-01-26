@@ -1,4 +1,11 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+
+// Scroll to top on mount
+const useScrollToTop = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+};
 import { format } from "date-fns";
 import { Lock, Package } from "lucide-react";
 import ChatModal from "@/components/chat/ChatModal";
@@ -31,6 +38,7 @@ function mapHomeSize(size: string): string {
 }
 
 export default function OnlineEstimate() {
+  useScrollToTop();
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [wizardComplete, setWizardComplete] = useState(false);
   const [showIntroModal, setShowIntroModal] = useState(false);
