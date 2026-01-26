@@ -102,12 +102,12 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
     >
       <Carousel
         setApi={setApi}
-        opts={{ align: "start", loop: true, slidesToScroll: 3 }}
+        opts={{ align: "start", loop: true, dragFree: true }}
         className="tru-value-carousel"
       >
         <CarouselContent className="tru-value-carousel-content">
           {features.map((feature, index) => (
-            <CarouselItem key={index} className="tru-value-carousel-item tru-carousel-card-enter">
+            <CarouselItem key={index} className="tru-value-carousel-item">
               <div 
                 className="tru-value-card-carousel tru-value-card-expanded" 
                 onClick={() => navigate(feature.route)}
