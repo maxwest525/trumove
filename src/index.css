@@ -14821,7 +14821,55 @@
   width: 100%;
 }
 
-/* Feature carousel under form */
+/* Animation ready state - before in view */
+.tru-feature-carousel-wrapper:not(.is-visible) .tru-value-card-carousel {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Animated state - after scrolled into view */
+.tru-feature-carousel-wrapper.is-visible .tru-value-card-carousel {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll-triggered card entrance animation */
+@keyframes carousel-card-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tru-card-animate-in {
+  animation: carousel-card-slide-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Full-width carousel section */
+.tru-feature-carousel-section {
+  width: 100%;
+  padding: 40px 24px;
+  background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted) / 0.3) 100%);
+}
+
+@media (min-width: 768px) {
+  .tru-feature-carousel-section {
+    padding: 60px 48px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tru-feature-carousel-section {
+    padding: 80px 64px;
+  }
+}
+
+/* Feature carousel under form - deprecated but kept for backwards compat */
 .tru-feature-carousel-under-form {
   margin-top: 24px;
   padding: 0;

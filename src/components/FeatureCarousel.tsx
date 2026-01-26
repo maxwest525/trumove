@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
 import { Boxes, Scan, Radar, Video, ShieldCheck, DollarSign } from "lucide-react";
@@ -66,6 +66,27 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Intersection Observer for scroll-triggered animation
+  useEffect(() => {
+    if (!carouselRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasAnimated) {
+            setHasAnimated(true);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(carouselRef.current);
+    return () => observer.disconnect();
+  }, [hasAnimated]);
 
   // Track current slide
   useEffect(() => {
@@ -96,7 +117,8 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
 
   return (
     <div 
-      className="tru-feature-carousel-wrapper"
+      ref={carouselRef}
+      className={`tru-feature-carousel-wrapper ${hasAnimated ? 'is-visible' : ''}`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -107,13 +129,18 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
       >
         <CarouselContent className="tru-value-carousel-content">
           {features.map((feature, index) => (
-            <CarouselItem key={index} className="tru-value-carousel-item tru-carousel-card-enter">
+            <CarouselItem 
+              key={index} 
+              className="tru-value-carousel-item"
+              style={{ '--card-index': index } as React.CSSProperties}
+            >
               <div 
-                className="tru-value-card-carousel tru-value-card-expanded" 
+                className={`tru-value-card-carousel tru-value-card-expanded ${hasAnimated ? 'tru-card-animate-in' : ''}`}
                 onClick={() => navigate(feature.route)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && navigate(feature.route)}
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="tru-value-card-carousel-header">
                   <div className="tru-value-card-icon">
