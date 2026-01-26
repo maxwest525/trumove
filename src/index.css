@@ -9708,19 +9708,19 @@
   background: hsl(var(--primary) / 0.3);
 }
 
-/* Pill-shaped active state - dark outline style */
+/* Pill-shaped active state - green tint with dark border */
 .header-nav-link.is-active {
   color: hsl(var(--tm-ink));
-  background: transparent;
+  background: hsl(var(--primary) / 0.08);
   border: 2px solid hsl(var(--tm-ink) / 0.7);
   font-weight: 700;
-  box-shadow: none;
+  box-shadow: 0 1px 4px hsl(var(--tm-ink) / 0.08);
   padding: 6px 12px;
 }
 
 .dark .header-nav-link.is-active {
   color: hsl(var(--foreground));
-  background: transparent;
+  background: hsl(var(--primary) / 0.1);
   border: 2px solid hsl(var(--foreground) / 0.7);
 }
 
