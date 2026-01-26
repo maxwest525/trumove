@@ -3009,13 +3009,8 @@
   flex-direction: column;
   height: auto;
   background: hsl(var(--background));
-  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
   border-radius: 24px;
-  box-shadow: 
-    0 1px 2px hsl(var(--tm-ink) / 0.03),
-    0 4px 8px hsl(var(--tm-ink) / 0.04),
-    0 12px 24px hsl(var(--tm-ink) / 0.06),
-    0 24px 48px hsl(var(--tm-ink) / 0.08);
   overflow: hidden;
   transition: height 0.3s ease;
   position: relative;
@@ -3256,16 +3251,16 @@
 /* Input Focus Glow Animation */
 @keyframes glow-pulse {
   0%, 100% { 
-    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1), 0 0 8px hsl(var(--primary) / 0.06); 
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.06); 
   }
   50% { 
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15), 0 0 12px hsl(var(--primary) / 0.1); 
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.08); 
   }
 }
 
 .tru-input-glow:focus {
   animation: glow-pulse 2s ease-in-out infinite;
-  border-color: hsl(var(--primary) / 0.5) !important;
+  border-color: hsl(var(--primary) / 0.35) !important;
 }
 
 /* Pulsing origin marker for single-location map state */
@@ -7903,29 +7898,19 @@
   text-align: center;
   color: hsl(var(--tm-ink));
   background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
-  border: 3px solid hsl(var(--tm-ink) / 0.15);
+  border: 2px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 16px;
   outline: none;
   transition: all 200ms ease;
-  box-shadow: 
-    0 8px 32px hsl(var(--tm-ink) / 0.1),
-    inset 0 2px 0 rgba(255, 255, 255, 0.9);
 }
 
 .tru-focus-input:hover {
-  border-color: hsl(var(--primary) / 0.4);
-  transform: translateY(-2px);
-  box-shadow: 
-    0 12px 40px hsl(var(--tm-ink) / 0.12),
-    inset 0 2px 0 rgba(255, 255, 255, 0.9);
+  border-color: hsl(var(--primary) / 0.35);
 }
 
 .tru-focus-input:focus {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 
-    0 0 0 2px hsl(var(--primary) / 0.08),
-    0 8px 24px hsl(var(--tm-ink) / 0.08);
-  transform: translateY(-1px);
+  border-color: hsl(var(--primary) / 0.45);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.1);
 }
 
 .tru-focus-input::placeholder {
@@ -9197,7 +9182,7 @@
   justify-content: center;
   border-radius: 14px;
   background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.05));
-  border: 1px solid hsl(var(--primary) / 0.25);
+  border: 1.5px solid hsl(var(--tm-ink) / 0.6);
   margin-bottom: 20px;
   color: hsl(var(--tm-ink));
 }
@@ -12816,32 +12801,19 @@
   letter-spacing: normal;
   color: hsl(var(--tm-ink));
   background: #ffffff;
-  border: 1px solid hsl(var(--tm-ink) / 0.12);
+  border: 1px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 16px;
   outline: none;
-  transition: all 250ms ease;
-  box-shadow: 
-    0 8px 32px hsl(var(--tm-ink) / 0.1),
-    0 2px 8px hsl(var(--tm-ink) / 0.05),
-    inset 0 2px 0 rgba(255, 255, 255, 0.95);
+  transition: all 200ms ease;
 }
 
 .tru-qb-input:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  transform: translateY(-2px);
-  box-shadow: 
-    0 12px 40px hsl(var(--tm-ink) / 0.12),
-    0 4px 12px hsl(var(--primary) / 0.1),
-    inset 0 2px 0 rgba(255, 255, 255, 0.95);
+  border-color: hsl(var(--primary) / 0.4);
 }
 
 .tru-qb-input:focus {
   border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 
-    0 0 0 2px hsl(var(--primary) / 0.08),
-    0 8px 32px hsl(var(--tm-ink) / 0.1),
-    inset 0 2px 0 rgba(255, 255, 255, 0.95);
-  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.1);
 }
 
 /* Location Autocomplete Styles */
@@ -12990,11 +12962,10 @@
   font-weight: 500;
   color: hsl(var(--tm-ink));
   background: #ffffff;
-  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
+  border: 1px solid hsl(var(--tm-ink) / 0.15);
   border-radius: 8px;
   cursor: pointer;
   transition: all 200ms ease;
-  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.06);
 }
 
 .tru-qb-date-btn:hover {
@@ -13711,23 +13682,17 @@
    ============================================= */
 
 .tru-qb-input:focus {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 
-    0 0 0 2px hsl(var(--primary) / 0.1),
-    0 0 12px hsl(var(--primary) / 0.06),
-    0 6px 20px hsl(var(--tm-ink) / 0.06);
-  transform: translateY(-1px);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-color: hsl(var(--primary) / 0.35);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.08);
+  transform: translateY(0);
+  transition: all 0.2s ease;
 }
 
 .tru-qb-date-btn:focus,
 .tru-qb-date-btn:hover {
-  border-color: hsl(var(--primary));
-  box-shadow: 
-    0 0 0 4px hsl(var(--primary) / 0.15),
-    0 0 16px hsl(var(--primary) / 0.1),
-    0 8px 32px hsl(var(--tm-ink) / 0.1);
-  transform: translateY(-2px);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.1);
+  transform: translateY(-1px);
 }
 
 /* Button Press Animations */
@@ -14625,13 +14590,12 @@
   height: 56px;
   padding: 0 18px;
   border-radius: 14px;
-  border: 2px solid hsl(var(--tm-ink) / 0.1);
+  border: 1.5px solid hsl(var(--tm-ink) / 0.12);
   background: #ffffff;
   font-size: 16px;
   font-weight: 600;
   color: hsl(var(--tm-ink));
   transition: all 0.2s ease;
-  box-shadow: inset 0 2px 4px hsl(var(--tm-ink) / 0.03);
 }
 
 .tru-wizard-input.has-icon {
@@ -14640,10 +14604,8 @@
 
 .tru-wizard-input:focus {
   outline: none;
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 
-    inset 0 2px 4px hsl(var(--tm-ink) / 0.03),
-    0 0 0 2px hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.06);
 }
 
 .tru-wizard-input::placeholder {
@@ -20058,6 +20020,7 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.06) 100%);
+  border: 1.5px solid hsl(var(--tm-ink) / 0.6);
   border-radius: 16px;
   color: hsl(var(--tm-ink));
   margin-bottom: 14px;
