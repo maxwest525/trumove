@@ -1,107 +1,151 @@
 
-# Fix Carousel Cards Overflowing Screen
+# Fix Carousel Card Spacing and Clipping Issues
 
-## Problem
-The previous fix set `overflow: visible !important` on the Embla carousel wrapper, which broke the horizontal containment. Cards are now extending off the right side of the screen.
+## Problem Analysis
+Looking at the screenshots, there are multiple issues:
+1. **Cards being cut off** - borders are clipped on the sides
+2. **Inconsistent gaps** - some cards are touching while others have space between them
+3. **Layout math conflicts** - Embla carousel has built-in spacing that conflicts with our custom CSS
 
-## Root Cause Analysis
-- Embla carousel uses `overflow: hidden` on its wrapper (line 139 in carousel.tsx)
-- We need horizontal clipping to contain the scrollable cards
-- We only need vertical overflow for the hover scale effect (top/bottom borders)
-- The CSS `overflow: visible !important` was too aggressive
+## Root Cause
+The Embla carousel component (`carousel.tsx`) has hardcoded spacing:
+- `CarouselContent` applies `-ml-4` (negative 16px margin)
+- `CarouselItem` applies `pl-4` (16px padding left)
+
+Our custom CSS tries to override with `gap: 20px` but these conflict, creating inconsistent spacing.
 
 ## Solution
-Use `clip-path` combined with `overflow-y: visible` to:
-1. Keep horizontal containment (cards don't extend off screen)
-2. Allow vertical overflow for hover scale effects
-
-Alternatively, use `overflow: clip` with `overflow-clip-margin` or apply padding inside the wrapper.
-
-The cleanest approach is:
-1. **Remove** the `overflow: visible !important` on the Embla wrapper
-2. **Add padding** inside the `.features-carousel-content` wrapper to give room for scaled cards
-3. Use `overflow-x: hidden; overflow-y: visible` on the container
+Rather than fighting Embla's default spacing system, we need to **work with it** or **fully override it**. The cleanest approach is to fully override the defaults and use a consistent gap-based system.
 
 ---
 
 ## Files to Modify
 
-### `src/index.css` (around lines 14703-14731)
+| File | Changes |
+|------|---------|
+| `src/index.css` | Fix carousel spacing calculations and ensure consistent gaps |
 
-**Changes:**
+---
 
-1. **Remove** the problematic override on line 14712-14714:
-```css
-/* DELETE THIS RULE */
-.features-carousel-container > div:first-child {
-  overflow: visible !important;
-}
-```
+## Detailed Changes
 
-2. **Update** `.features-carousel-container` to use split overflow:
-```css
-.features-carousel-container {
-  width: 100%;
-  max-width: 100%;
-  padding: 0;
-  position: relative;
-  overflow-x: clip;  /* Contain horizontally */
-  overflow-y: visible;  /* Allow vertical for hover */
-}
-```
+### `src/index.css` (lines 14720-14735)
 
-3. **Update** `.features-carousel-content` padding:
+**Current Problem:**
 ```css
 .features-carousel-content {
-  display: flex;
-  gap: 24px;
-  margin-left: 0 !important;
-  padding: 16px 0;  /* Increased vertical padding for scale room */
+  gap: 20px;
+  margin-left: 0 !important;  /* Overrides -ml-4 */
+  padding: 8px 4px;
 }
-```
 
-4. **Keep** `.features-carousel-item` with `overflow: visible`:
-```css
 .features-carousel-item {
-  /* ... existing ... */
-  overflow: visible !important;
+  flex: 0 0 calc(25% - 15px) !important;
+  padding: 0 !important;  /* Overrides pl-4 */
 }
 ```
 
-5. **Reduce scale** from 1.04 to 1.02 to minimize overflow issues:
+The math doesn't account properly for 4 cards with gaps. With `gap: 20px` and 4 cards, there are 3 gaps total = 60px. Each card should be `calc((100% - 60px) / 4)`.
+
+**Fixed CSS:**
+
 ```css
-.features-carousel-card.is-enlarged {
-  transform: scale(1.02);  /* Even more subtle */
+/* Carousel content - fully reset Embla defaults */
+.features-carousel-content {
+  display: flex;
+  gap: 16px;  /* Consistent gap between all cards */
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 8px 8px;  /* Equal horizontal padding to prevent edge clipping */
+}
+
+/* 4 cards visible - proper calculation:
+   Total gaps = 3 × 16px = 48px
+   Each card = (100% - 48px) / 4 */
+.features-carousel-item {
+  flex: 0 0 calc((100% - 48px) / 4) !important;
+  min-width: 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  position: relative;
+  overflow: visible;
+}
+
+/* Ensure card fills its container with consistent sizing */
+.features-carousel-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+```
+
+**Key calculations:**
+- **Gap**: 16px (consistent, divisible number)
+- **Total gap space**: 3 gaps × 16px = 48px
+- **Each card width**: `calc((100% - 48px) / 4)` = exactly 25% minus share of gaps
+- **Container padding**: 8px on each side to prevent border clipping
+
+### Responsive Breakpoints Update
+
+Also need to fix the responsive widths:
+
+```css
+/* 3 cards on tablet: 2 gaps × 16px = 32px */
+@media (max-width: 1024px) {
+  .features-carousel-item {
+    flex: 0 0 calc((100% - 32px) / 3) !important;
+  }
+}
+
+/* 2 cards on small tablet: 1 gap × 16px = 16px */
+@media (max-width: 768px) {
+  .features-carousel-item {
+    flex: 0 0 calc((100% - 16px) / 2) !important;
+  }
+}
+
+/* 1 card on mobile: 0 gaps */
+@media (max-width: 480px) {
+  .features-carousel-item {
+    flex: 0 0 100% !important;
+  }
 }
 ```
 
 ---
 
-## Alternative Approach (if overflow-x:clip doesn't work)
+## Visual Summary
 
-If split overflow doesn't solve it, we can:
-1. Keep `overflow: hidden` on the Embla wrapper (default)
-2. Add extra padding to `.features-carousel-content` (e.g., `padding: 20px 0`)
-3. Reduce scale effect further or remove it entirely
-4. Use `box-shadow` for emphasis instead of `transform: scale`
+### Current State (Broken)
+```
+|[Card]|[Card]  [Card][Card]|
+   ^       ^        ^
+   cut    big gap   touching
+```
 
-This approach works within Embla's constraints rather than fighting them.
+### After Fix (Correct)
+```
+| [Card] [Card] [Card] [Card] |
+    16px   16px   16px
+   ^--- consistent gaps ---^
+```
 
 ---
 
 ## Summary of Changes
 
-| Line Range | Current | New |
-|------------|---------|-----|
-| 14703-14709 | `overflow: visible` | `overflow-x: clip; overflow-y: visible` |
-| 14711-14714 | Override rule | **DELETE** this rule |
-| 14720 | `padding: 12px 0` | `padding: 16px 0` |
-| is-enlarged | `scale(1.04)` | `scale(1.02)` or remove |
+| Property | Current | New |
+|----------|---------|-----|
+| `gap` | 20px | 16px |
+| `padding` | 8px 4px | 8px 8px |
+| Card width | `calc(25% - 15px)` | `calc((100% - 48px) / 4)` |
+| 3-card width | `calc(33.333% - 13.33px)` | `calc((100% - 32px) / 3)` |
+| 2-card width | `calc(50% - 10px)` | `calc((100% - 16px) / 2)` |
 
 ---
 
 ## Expected Result
-- Cards stay contained within the viewport horizontally
-- Navigation arrows and carousel scrolling work correctly
-- Hover scale effect shows full borders (top and bottom)
-- Consistent gaps between cards maintained
+- All 4 cards visible with exactly 16px gap between each
+- No cards cut off on sides (8px padding buffer)
+- Consistent spacing throughout scrolling
+- Cards never touch each other
+- Proper responsive behavior at different screen sizes
