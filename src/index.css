@@ -1168,7 +1168,33 @@
 .tru-hero-content-inner {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+/* Right panel specific headline sizing - more compact */
+.tru-hero-content-panel .tru-hero-headline-main {
+  font-size: 2rem;
+  line-height: 1.2;
+  text-align: left;
+  justify-content: flex-start;
+  margin-bottom: 0;
+}
+
+/* Right panel subheadline - tighter, balanced text */
+.tru-hero-content-panel .tru-hero-subheadline {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
+  max-width: 480px;
+  color: hsl(var(--tm-ink) / 0.75);
+}
+
+.tru-hero-content-panel .tru-hero-subheadline strong {
+  color: hsl(var(--tm-ink));
+  font-weight: 600;
 }
 
 .tru-hero-eyebrow {
