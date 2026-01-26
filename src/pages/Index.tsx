@@ -588,6 +588,11 @@ export default function Index() {
             <HeroParticles />
             <div className="tru-hero-particles-overlay" />
             
+            {/* Trust Badges - Right Side Overlay */}
+            <div className="tru-hero-trust-right">
+              <TrustCompactSection />
+            </div>
+            
             {/* Full-Page Analyzing Overlay */}
             {isAnalyzing && (
               <div className="tru-analyze-fullpage-overlay">
@@ -671,10 +676,6 @@ export default function Index() {
               </p>
             </div>
 
-            {/* LEFT: Trust strip moved here */}
-            <div className="tru-hero-content-panel tru-hero-trust-panel">
-              <TrustCompactSection />
-            </div>
 
             {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
             <div 
