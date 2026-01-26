@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, Sparkles, X } from 'lucide-react';
+import { Truck, Sparkles, Hand } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 
 interface FloatingTruckChatProps {
@@ -21,8 +21,23 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
     localStorage.setItem('tm_ai_helper_hidden', 'true');
   };
 
-  // Don't render if hidden
-  if (isHidden) return null;
+  const handleReopen = () => {
+    setIsHidden(false);
+    localStorage.removeItem('tm_ai_helper_hidden');
+  };
+
+  // Show minimized indicator when hidden
+  if (isHidden) {
+    return (
+      <button
+        onClick={handleReopen}
+        className="fixed bottom-24 right-6 z-50 w-12 h-12 rounded-full bg-foreground text-background border-2 border-primary/30 shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-xl animate-pulse"
+        aria-label="Reopen AI Helper"
+      >
+        <Hand className="w-5 h-5 animate-wave" />
+      </button>
+    );
+  }
 
   return (
     <>
@@ -61,13 +76,13 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         {/* Status indicator - smaller and more subtle */}
         <span className="w-2 h-2 rounded-full bg-primary ml-1" />
         
-        {/* Small dismiss X button */}
+        {/* Waving hand dismiss button */}
         <button
           onClick={handleHide}
-          className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
-          aria-label="Hide AI Helper"
+          className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-colors group"
+          aria-label="Minimize AI Helper"
         >
-          <X className="w-3 h-3" />
+          <Hand className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground group-hover:animate-wave" />
         </button>
       </button>
 

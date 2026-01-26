@@ -14936,47 +14936,56 @@
 }
 
 /* Hover preview overlay */
-.features-carousel-preview-overlay {
+/* Card enlargement on hover */
+.features-carousel-card.is-enlarged {
+  transform: scale(1.08);
+  z-index: 20;
+  box-shadow: 0 16px 48px hsl(var(--tm-ink) / 0.18);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+.features-carousel-card.is-enlarged .features-carousel-card-image-wrapper img {
+  transform: scale(1.05);
+}
+
+/* Hover label on enlarged card */
+.features-carousel-hover-label {
   position: absolute;
-  bottom: calc(100% + 12px);
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 320px;
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 12px;
-  padding: 8px;
-  box-shadow: 0 12px 40px hsl(var(--tm-ink) / 0.15);
-  z-index: 50;
-  animation: previewFadeIn 0.2s ease-out;
-}
-
-.features-carousel-preview-overlay img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.features-carousel-preview-label {
-  display: block;
-  text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 500;
   color: hsl(var(--muted-foreground));
-  margin-top: 8px;
-  padding-bottom: 4px;
+  background: hsl(var(--background) / 0.9);
+  padding: 4px 10px;
+  border-radius: 12px;
+  animation: labelFadeIn 0.15s ease-out;
 }
 
-@keyframes previewFadeIn {
+@keyframes labelFadeIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(8px);
+    transform: translateX(-50%) translateY(4px);
   }
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
+}
+
+/* Waving hand animation */
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(14deg); }
+  40% { transform: rotate(-8deg); }
+  60% { transform: rotate(14deg); }
+  80% { transform: rotate(-4deg); }
+}
+
+.animate-wave {
+  animation: wave 1.5s ease-in-out infinite;
+  transform-origin: 70% 70%;
 }
 
 /* ============================================
