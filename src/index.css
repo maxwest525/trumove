@@ -15255,29 +15255,44 @@
   }
 }
 
-/* Trust panel in hero left side */
-.tru-hero-trust-panel {
-  padding: 16px 0;
+/* Trust badges - positioned on right side of hero */
+.tru-hero-trust-right {
+  position: absolute;
+  right: 80px;
+  bottom: 100px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
-.tru-hero-trust-panel .tru-trust-compact {
+.tru-hero-trust-right .tru-trust-compact {
   background: transparent;
   border: none;
   padding: 0;
 }
 
-.tru-hero-trust-panel .tru-trust-compact-inner {
+.tru-hero-trust-right .tru-trust-compact-inner {
   flex-direction: column;
-  gap: 16px;
-  text-align: left;
+  gap: 12px;
+  text-align: right;
+  align-items: flex-end;
 }
 
-.tru-hero-trust-panel .tru-trust-compact-stats {
-  justify-content: flex-start;
+.tru-hero-trust-right .tru-trust-compact-stats {
+  justify-content: flex-end;
+  gap: 24px;
 }
 
-.tru-hero-trust-panel .tru-trust-compact-badges {
-  justify-content: flex-start;
+.tru-hero-trust-right .tru-trust-compact-badges {
+  justify-content: flex-end;
+}
+
+/* Hide on smaller screens where it overlaps form */
+@media (max-width: 1024px) {
+  .tru-hero-trust-right {
+    display: none;
+  }
 }
 
 /* Step cards parallax animation */
