@@ -1135,7 +1135,8 @@
   align-items: flex-start;
   justify-content: flex-start;
   height: 100%;
-  order: 1; /* Move to left (first position) */
+  grid-row: 2;
+  grid-column: 1;
 }
 
 .tru-hero-right-half .tru-hero-form-panel {
@@ -1145,8 +1146,13 @@
   flex-shrink: 0;
 }
 
-.tru-hero-right-half .tru-hero-sidebar {
-  flex-shrink: 0;
+/* Non-layout elements should not affect grid */
+.tru-hero.tru-hero-split > .tru-hero-particles,
+.tru-hero.tru-hero-split > .tru-hero-particles-overlay,
+.tru-hero.tru-hero-split > .tru-analyze-fullpage-overlay {
+  position: absolute;
+  grid-column: unset;
+  grid-row: unset;
 }
 
 /* RIGHT PANEL: Value Proposition (swapped from left) */
@@ -1155,7 +1161,8 @@
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
-  order: 2; /* Move to right (second position) */
+  grid-row: 2;
+  grid-column: 2;
 }
 
 .tru-hero-content-inner {
