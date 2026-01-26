@@ -667,6 +667,9 @@ export default function Index() {
               <h1 className="tru-hero-headline-main">
                 <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
+              <p className="tru-hero-subheadline">
+                Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
+              </p>
             </div>
 
 
