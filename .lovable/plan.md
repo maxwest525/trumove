@@ -1,236 +1,310 @@
 
-# Feature Carousel Update Plan
+
+# UI Refinements: Feature Carousel, AI Helper, and Navigation
 
 ## Overview
-Update the Features Carousel section with a section headline, consistent card sizing (no scaling), proper spacing, 4-card desktop layout, autoplay with hover pause, and fixed image sizing. Also clean up legacy CSS conflicts causing border artifacts.
+This plan addresses multiple UI refinements focusing on the Features Carousel section, the floating AI Moving Helper visibility control, and the Agent Login button positioning in the floating navigation.
 
 ---
 
-## Files to Modify
+## Changes Summary
 
-1. **`src/components/FeatureCarousel.tsx`** - Component logic
-2. **`src/index.css`** - Carousel-specific CSS (lines 14652-15181)
-3. **`src/pages/Index.tsx`** - Section wrapper and headline
-
----
-
-## Implementation Details
-
-### 1. Add Section Headline and Spacing (Index.tsx)
-
-**Changes to make:**
-- Update the `.tru-feature-carousel-fullwidth` section to include a headline
-- Add "A Smarter Way To Move" as an h2 above the carousel
-- Increase margin-top on the section for 64px spacing from form
-
-```text
-Section structure:
-<section class="tru-feature-carousel-fullwidth">
-  <h2 class="features-carousel-headline">A Smarter Way To Move</h2>
-  <FeatureCarousel />
-</section>
-```
+| Component | Change |
+|-----------|--------|
+| Features Carousel | Subtle green styling, smoother scroll, hover preview |
+| Section Headline | Redesign to be more integrated with carousel |
+| AI Moving Helper | Add hide/dismiss button |
+| Floating Nav (Agent Login) | Move Agent Login to far right position |
 
 ---
 
-### 2. Component Updates (FeatureCarousel.tsx)
+## 1. Features Carousel Styling Refinements
 
-**A. Remove Center Card Emphasis**
-- Remove `data-active` attribute from cards entirely
-- All cards remain the same size at all times
-- Remove the `current` state tracking (no longer needed for emphasis)
+### A. Icon Badge - More Subtle Border and Green Tint
 
-**B. Enable Autoplay with Pause on Hover/Interaction**
-- Add autoplay interval of 5 seconds (calm, not distracting)
-- Add `isPaused` state to track hover/interaction
-- Add `onMouseEnter` and `onMouseLeave` handlers to pause autoplay
-- Carousel continues to support arrow clicks and swipes
+**File: `src/index.css`**
 
-**C. Carousel Options**
-- Change alignment from "center" to "start" for consistent layout
-- Keep `loop: true` for infinite scrolling
-- Set `dragFree: true` for natural swipe feel
+Current styling uses `hsl(var(--primary) / 0.08)` background and `1px solid hsl(var(--border))` border.
 
-```text
-New component state:
-- isPaused: boolean (tracks hover state)
-- Autoplay useEffect with 5s interval, pauses when isPaused is true
-```
+**Changes:**
+- Reduce green background tint from `0.08` to `0.04` (more subtle)
+- Make border even more subtle: `hsl(var(--border) / 0.5)`
+- On hover: increase to `0.06` instead of `0.12`
 
----
-
-### 3. CSS Refactoring (index.css)
-
-**A. Section Spacing**
 ```css
-.tru-feature-carousel-fullwidth {
-  margin-top: 64px;  /* Increased from current spacing */
-  padding-top: 32px;
-  padding-bottom: 32px;
+.features-carousel-card-icon {
+  background: hsl(var(--primary) / 0.04);  /* Was 0.08 */
+  border: 1px solid hsl(var(--border) / 0.5);  /* More subtle */
+}
+
+.features-carousel-card:hover .features-carousel-card-icon {
+  background: hsl(var(--primary) / 0.06);  /* Was 0.12 */
+  box-shadow: none;  /* Remove green glow on hover */
 }
 ```
 
-**B. Section Headline Styling**
+### B. Top Card Accent Stripe - More Subtle Green
+
+**File: `src/index.css`**
+
+Current: `hsl(var(--primary) / 0.6)` to `hsl(var(--primary) / 0.2)` gradient at `opacity: 0.7`
+
+**Changes:**
+- Reduce gradient intensity: `hsl(var(--primary) / 0.3)` to `hsl(var(--primary) / 0.08)`
+- Lower base opacity to `0.4`
+- On hover: increase only to `0.6` (not `1`)
+
+```css
+.features-carousel-card::before {
+  background: linear-gradient(90deg, hsl(var(--primary) / 0.3), hsl(var(--primary) / 0.08));
+  opacity: 0.4;  /* Was 0.7 */
+}
+
+.features-carousel-card:hover::before {
+  opacity: 0.6;  /* Was 1 */
+}
+```
+
+### C. Smooth Continuous Scroll (Marquee-Style)
+
+**File: `src/components/FeatureCarousel.tsx`**
+
+Replace interval-based autoplay with CSS animation for smooth continuous scroll.
+
+**Approach:**
+- Use `embla-carousel-auto-scroll` plugin OR implement custom CSS animation
+- Since we're using Embla carousel via shadcn, we'll use a faster, smoother interval (e.g., 50ms with small scroll increments) to simulate smooth scrolling
+- Alternative: Use CSS `@keyframes` for a true marquee effect on the content
+
+**Implementation:**
+- Keep Embla carousel but add smooth auto-scroll using `scrollBy()` method with small increments
+- Use `requestAnimationFrame` for smoother animation
+- Pause on hover/interaction (already implemented)
+
+```typescript
+// Smooth continuous scroll using scrollBy
+useEffect(() => {
+  if (!api || isPaused) return;
+  
+  let animationId: number;
+  const scroll = () => {
+    api.scrollBy(1, false); // Smooth small increment
+    animationId = requestAnimationFrame(scroll);
+  };
+  
+  // Start slow continuous scroll
+  const intervalId = setInterval(() => {
+    api.scrollBy(0.5, true); // Gentle nudge
+  }, 50);
+  
+  return () => {
+    clearInterval(intervalId);
+    cancelAnimationFrame(animationId);
+  };
+}, [api, isPaused]);
+```
+
+### D. Page Preview on Hover
+
+**File: `src/components/FeatureCarousel.tsx` and `src/index.css`**
+
+Add a tooltip/popover showing a larger preview of the page when hovering over a card.
+
+**Implementation:**
+- Wrap card content in a Tooltip or Popover
+- Show an enlarged version of the preview image on hover
+- Add slight delay to prevent flickering
+
+```tsx
+// Add hover state for preview
+const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+// On card hover, show enlarged preview
+<div 
+  className="features-carousel-card"
+  onMouseEnter={() => setHoveredIndex(index)}
+  onMouseLeave={() => setHoveredIndex(null)}
+>
+  {/* Existing card content */}
+  
+  {/* Preview overlay on hover */}
+  {hoveredIndex === index && (
+    <div className="features-carousel-preview-overlay">
+      <img src={feature.image} alt="Page Preview" />
+    </div>
+  )}
+</div>
+```
+
+---
+
+## 2. Section Headline Redesign
+
+### Problem
+The current "A Smarter Way To Move" headline is disconnected and pushes cards too far from the form.
+
+### Solution Options
+
+**Option A: Inline Headline with Carousel**
+- Remove the standalone h2
+- Integrate headline as a pill badge above the carousel arrows
+- Reduce vertical spacing
+
+**Option B: Compact Badge Above Carousel**
+- Convert headline to a small, styled badge (like "HOW IT WORKS")
+- Position it closer to the carousel with minimal top margin
+- Much smaller font size
+
+**Recommended: Option B**
+
+**File: `src/index.css`**
+
 ```css
 .features-carousel-headline {
   text-align: center;
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: hsl(var(--foreground));
-  margin-bottom: 32px;
-}
-```
-
-**C. Card Sizing - Smaller, Consistent**
-```css
-.features-carousel-card {
-  height: 280px;  /* Reduced from 320px */
-  /* Remove ALL transform/scale rules */
-  transform: none !important; /* Override any inherited transforms */
-}
-```
-
-**D. Remove All Scaling/Emphasis (Critical)**
-```css
-/* DELETE these rules entirely: */
-.features-carousel-card[data-active="true"] { ... }
-.features-carousel-card[data-active="false"] { ... }
-```
-
-**E. 4-Card Desktop Layout with 24px Gaps**
-```css
-.features-carousel-content {
-  gap: 24px;
-}
-
-.features-carousel-item {
-  flex: 0 0 calc(25% - 18px); /* 4 cards with 24px gaps */
-}
-```
-
-**F. Fixed Image Wrapper - Consistent Across All Cards**
-```css
-.features-carousel-card-image-wrapper {
-  height: 150px;        /* Fixed height, same for all */
-  width: 100%;
-  padding: 8px;         /* Tight padding as requested */
-  background: hsl(var(--muted) / 0.3);
-  border-radius: 8px;
-  display: flex;
+  font-size: 0.875rem;  /* Was 1.75rem - much smaller */
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 16px;  /* Was 32px - tighter */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;     /* Allow controlled cropping */
+  gap: 8px;
+  padding: 6px 16px;
+  background: hsl(var(--muted) / 0.3);
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 20px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.features-carousel-card-image-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;    /* Fill the container with controlled cropping */
-  object-position: center 30%; /* Focus on upper portion */
-  border-radius: 4px;
-}
-```
-
-**G. Clean Up Legacy Conflicts (Critical)**
-
-Remove or override these conflicting legacy styles:
-
-| Legacy Rule | Action |
-|-------------|--------|
-| `.tru-value-card-carousel { overflow: hidden }` | Scope to `.tru-value-card-carousel` only, not affecting new classes |
-| `.tru-value-card-carousel:hover { transform: translateY(-2px) }` | Already scoped to legacy class |
-| `.features-carousel-card[data-active]` rules | DELETE entirely |
-| Duplicate carousel indicators | Leave legacy `.tru-carousel-dot` but ensure not rendered in new component |
-
-**H. Border Artifact Fix**
-```css
-.features-carousel-card {
-  /* Ensure stable borders with no transform clipping */
-  transform: none;
-  will-change: auto; /* Prevent compositor layer issues */
-  box-sizing: border-box;
-}
-
-/* Remove :active scale to prevent border flicker */
-.features-carousel-card:active {
-  transform: none; /* Was scale(0.99), now stable */
-}
-```
-
-**I. Responsive Breakpoints**
-
-Desktop (1280px+): 4 cards
-```css
-.features-carousel-item {
-  flex: 0 0 calc(25% - 18px);
-}
-```
-
-Large Tablet (1024px - 1279px): 3 cards
-```css
-@media (max-width: 1279px) {
-  .features-carousel-item {
-    flex: 0 0 calc(33.333% - 16px);
-  }
-}
-```
-
-Tablet (768px - 1023px): 2 cards
-```css
-@media (max-width: 1024px) {
-  .features-carousel-item {
-    flex: 0 0 calc(50% - 12px);
-  }
-}
-```
-
-Mobile (below 768px): 1 card
-```css
-@media (max-width: 640px) {
-  .features-carousel-item {
-    flex: 0 0 100%;
-  }
+.tru-feature-carousel-fullwidth {
+  margin-top: 48px;  /* Reduced from 64px */
+  text-align: center;  /* Center the badge */
 }
 ```
 
 ---
 
-## Technical Summary
+## 3. AI Moving Helper - Add Hide Button
 
-### Files Modified
+**File: `src/components/FloatingTruckChat.tsx`**
 
-1. **`src/pages/Index.tsx`**
-   - Add h2 headline "A Smarter Way To Move" above FeatureCarousel
+Add a small X button or dismiss control to allow users to hide the floating AI helper.
+
+### Implementation
+
+**A. Add dismiss state and localStorage persistence:**
+```typescript
+const [isHidden, setIsHidden] = useState(() => {
+  return localStorage.getItem('tm_ai_helper_hidden') === 'true';
+});
+
+const handleHide = (e: React.MouseEvent) => {
+  e.stopPropagation();
+  setIsHidden(true);
+  localStorage.setItem('tm_ai_helper_hidden', 'true');
+};
+```
+
+**B. Add small X button to the floating pill:**
+```tsx
+{/* Small dismiss X button */}
+<button
+  onClick={handleHide}
+  className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground transition-colors"
+  aria-label="Hide AI Helper"
+>
+  <X className="w-3 h-3" />
+</button>
+```
+
+**C. Conditionally render based on isHidden:**
+```tsx
+if (isHidden) return null;
+```
+
+---
+
+## 4. Agent Login Button - Move to Far Right in Floating Nav
+
+**File: `src/components/FloatingNav.tsx`**
+
+### Current State
+The FloatingNav component doesn't include Agent Login - it only has the 6 nav items (AI Estimator, Carrier Vetting, AI Chat, Property Lookup, Video Consult, Call Us).
+
+The Agent Login button is in the site Header, not in FloatingNav.
+
+### Clarification Needed
+Based on the user's request "move agent login button in the floating nav bar all the way to the right", I need to:
+
+**Option A**: Add Agent Login to FloatingNav as a new item at the end
+**Option B**: The user may be referring to the Header's Agent Login positioning
+
+**Assuming Option A - Add to FloatingNav:**
+
+**File: `src/components/FloatingNav.tsx`**
+
+Add Agent Login as the last item in the navItems array:
+
+```typescript
+const navItems: NavItem[] = [
+  { icon: Sparkles, label: "AI Estimator", href: "/online-estimate" },
+  { icon: Shield, label: "Carrier Vetting", href: "/vetting" },
+  { icon: MessageSquare, label: "AI Chat", href: null, action: "chat" },
+  { icon: MapPin, label: "Property Lookup", href: "/property-lookup" },
+  { icon: Video, label: "Video Consult", href: "/book" },
+  { icon: Headphones, label: "Call Us", href: "tel:+16097277647" },
+  // NEW: Agent Login at the far right
+  { icon: User, label: "Agent Login", href: "/agent-login" },
+];
+```
+
+**CSS (index.css) - Visually separate Agent Login:**
+```css
+.tru-static-nav-item:last-child {
+  margin-left: auto;  /* Push to far right */
+  border-left: 1px solid hsl(var(--border) / 0.3);
+  padding-left: 12px;
+}
+```
+
+---
+
+## Files Modified
+
+1. **`src/index.css`**
+   - Subtle icon badge styling (reduced green tint)
+   - Subtle top accent stripe (reduced opacity)
+   - Compact headline styling (badge format)
+   - Reduced section top margin
+   - Visual separator for Agent Login in nav
 
 2. **`src/components/FeatureCarousel.tsx`**
-   - Add autoplay with 5-second interval
-   - Add isPaused state and hover handlers for autoplay pause
-   - Remove data-active tracking (no center emphasis)
-   - Update carousel opts alignment
+   - Smooth continuous scroll (faster, smaller increments)
+   - Hover preview state for cards
+   - Preview overlay component on hover
 
-3. **`src/index.css`**
-   - Add `.features-carousel-headline` styles
-   - Update `.tru-feature-carousel-fullwidth` with 64px margin-top
-   - Change card height to 280px (smaller)
-   - Set 4-card desktop layout (25% width)
-   - Fixed image wrapper at 150px height with 8px padding
-   - Use object-fit: cover for edge-to-edge images
-   - DELETE all data-active scaling rules
-   - Remove :active transform to prevent border artifacts
-   - Keep legacy `.tru-value-*` styles isolated for backwards compatibility
-   - Add responsive breakpoints for 3/2/1 cards
+3. **`src/components/FloatingTruckChat.tsx`**
+   - Add `isHidden` state with localStorage persistence
+   - Add dismiss X button with stopPropagation
+   - Import X icon from lucide-react
 
-### Key Changes Summary
+4. **`src/components/FloatingNav.tsx`**
+   - Add User icon import
+   - Add Agent Login as last navItem
 
-| Aspect | Before | After |
-|--------|--------|-------|
-| Section headline | None | "A Smarter Way To Move" |
-| Spacing from form | ~32px | 64px minimum |
-| Desktop cards | 3 with center emphasis | 4, all same size |
-| Card gaps | ~24px (inconsistent) | 24px (consistent) |
-| Card height | 320px | 280px |
-| Image height | 180px | 150px |
-| Image fit | object-fit: contain | object-fit: cover |
-| Center scaling | scale(1.03) | None |
-| Autoplay | OFF | ON (5s, pause on hover) |
-| Border artifacts | Present | Fixed (no transforms) |
+---
+
+## Technical Approach Summary
+
+| Feature | Approach |
+|---------|----------|
+| Subtle green | Reduce opacity values in CSS |
+| Smooth scroll | Faster interval (50ms) with smaller scroll increments |
+| Hover preview | Overlay positioned absolutely, shown on hover state |
+| Compact headline | Convert to uppercase badge with pill styling |
+| Hide AI helper | useState + localStorage + X button |
+| Agent Login right | Add to navItems array + CSS margin-left: auto |
+
