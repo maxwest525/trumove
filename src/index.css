@@ -14705,19 +14705,15 @@
   max-width: 100%;
   padding: 0;
   position: relative;
-  overflow: visible;
-}
-
-/* Override Embla's overflow:hidden on the scroll wrapper */
-.features-carousel-container > div:first-child {
-  overflow: visible !important;
+  overflow-x: clip;  /* Contain horizontally */
+  overflow-y: visible;  /* Allow vertical for hover */
 }
 
 .features-carousel-content {
   display: flex;
   gap: 24px;
   margin-left: 0 !important;
-  padding: 12px 0; /* Vertical padding for scale overflow */
+  padding: 16px 0; /* Increased vertical padding for scale room */
 }
 
 /* 4 cards visible on desktop */
