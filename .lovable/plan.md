@@ -1,109 +1,78 @@
 
-# Plan: Add Right-Side Hero Content + Visual Separation
 
-## Overview
-This plan adds new headline content on the right side of the hero section while adding a subtle visual separator to replace the removed green line in the form. The changes are designed to be additive without disrupting existing spacing.
+# Plan: Fix Right-Side Content Panel Layout
 
-## Changes
+## Problem Identified
+The "blagg is gay" content is appearing **underneath** the form instead of **beside it** because:
 
-### 1. Add Subtle Visual Separator to Form
+1. **Extra grid children** - `HeroParticles`, `tru-hero-particles-overlay`, and the analyzing overlay modal are all children of the grid container without explicit `grid-column` positioning
+2. **Implicit grid rows** - These extra elements are consuming grid cells, pushing the content panel to a new row
+
+## Solution
+
+### 1. Position Non-Layout Elements Absolutely
 **File:** `src/index.css`
 
-Replace the hidden green line with a subtle bottom border on the question heading for visual separation:
+Add positioning rules so the particles and overlay don't participate in the grid layout:
 
 ```css
-.tru-qb-question-decorated::after {
-  content: '';
+.tru-hero.tru-hero-split > .tru-hero-particles,
+.tru-hero.tru-hero-split > .tru-hero-particles-overlay,
+.tru-hero.tru-hero-split > .tru-analyze-fullpage-overlay {
   position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: hsl(var(--tm-ink) / 0.12);
-  display: block;
+  grid-column: unset;
+  grid-row: unset;
 }
 ```
 
-This adds a very subtle, centered horizontal line below "Enter your route to begin matching" without being as prominent as the green accent was.
-
----
-
-### 2. Add Right-Side Hero Content Section
-**File:** `src/pages/Index.tsx`
-
-Add a new content section positioned on the right side of the hero grid (after the form panel). This will contain:
-
-- **Headline:** "blagg is gay" with "gay" using the `.tru-hero-headline-accent` class for the green gradient
-- **Description:** The provided text about skipping van line complexity, AI scanning, etc.
-
-The new JSX will be inserted after the form panel div closes (around line 920), positioned within the existing grid layout:
-
-```tsx
-{/* RIGHT SIDE: Value Proposition Content */}
-<div className="tru-hero-content-panel">
-  <div className="tru-hero-content-inner">
-    <h2 className="tru-hero-headline-main">
-      blagg is <span className="tru-hero-headline-accent">gay</span>
-    </h2>
-    <p className="tru-hero-subheadline">
-      Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
-    </p>
-    <p className="tru-hero-subheadline" style={{ opacity: 0.6 }}>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    </p>
-  </div>
-</div>
-```
-
----
-
-### 3. Update CSS for Right Panel Styling (if needed)
-**File:** `src/index.css`
-
-The existing `.tru-hero-content-panel` and `.tru-hero-content-inner` classes should work, but may need minor adjustments for text alignment:
+Or alternatively, explicitly position them:
 
 ```css
-.tru-hero-content-panel .tru-hero-headline-main {
-  text-align: left;
-  justify-content: flex-start;
-}
-
-.tru-hero-content-panel .tru-hero-subheadline {
-  text-align: left;
-  margin-left: 0;
-  margin-right: 0;
+.tru-hero.tru-hero-split > .tru-analyze-fullpage-overlay {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
 }
 ```
 
----
+### 2. Ensure Form and Content Panel Share the Same Row
+**File:** `src/index.css`
 
-## Visual Layout Preview
+Explicitly assign both the form (`tru-hero-right-half`) and the content panel (`tru-hero-content-panel`) to row 2:
+
+```css
+.tru-hero-right-half {
+  grid-row: 2;
+  grid-column: 1;
+  order: unset; /* Remove order, use explicit placement */
+}
+
+.tru-hero-content-panel {
+  grid-row: 2;
+  grid-column: 2;
+  order: unset; /* Remove order, use explicit placement */
+}
+```
+
+## Visual Result
 
 ```text
-+------------------------------------------+
-|     Trumove. A Smarter Way To Move.      |  <- Centered header (unchanged)
-|     [subheadline description]            |
-+------------------------------------------+
-|                    |                     |
-|   [Form Card]      |   blagg is gay      |  <- New right content
-|   - Progress bar   |                     |
-|   - From/To inputs |   [description...]  |
-|   - Continue btn   |   [lorem ipsum...]  |
-|                    |                     |
-+------------------------------------------+
++--------------------------------------------------+
+| Row 1: tru-hero-header-section (full width)      |
+| "Trumove. A Smarter Way To Move."                |
++--------------------------------------------------+
+| Row 2:                                           |
+|  Column 1 (520px)  |  Column 2 (1fr)             |
+|  [Quote Form]      |  "blagg is gay"             |
+|   - Progress bar   |   [description text...]     |
+|   - From/To inputs |   [lorem ipsum...]          |
+|   - Continue btn   |                             |
++--------------------------------------------------+
 ```
 
----
-
-## Technical Notes
-
-- **No spacing changes:** The existing grid layout (`grid-template-columns: 520px 1fr`) will automatically position the new content panel
-- **Green gradient reuse:** The `.tru-hero-headline-accent` class already exists and provides the exact gradient styling
-- **Existing classes:** Using `.tru-hero-content-panel` which is already defined in CSS with `order: 2` to position it on the right
-
----
-
 ## Files Modified
-1. `src/pages/Index.tsx` - Add new content panel JSX
-2. `src/index.css` - Update decorated question border, adjust right panel text alignment
+1. `src/index.css` - Add explicit grid row/column assignments to ensure side-by-side layout
+
+## No Other Changes
+- The form dimensions and spacing remain unchanged
+- Only the grid placement rules are updated
+
