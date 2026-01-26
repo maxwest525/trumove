@@ -1481,9 +1481,10 @@
   min-width: 180px;
 }
 
+/* Validated state - neutral styling, no green on green */
 .tru-route-analysis-location.is-validated {
-  border-color: hsl(var(--primary) / 0.4);
-  background: hsl(var(--primary) / 0.05);
+  border-color: hsl(var(--border));
+  background: hsl(var(--background));
 }
 
 .tru-route-location-icon {
@@ -1497,9 +1498,10 @@
   color: hsl(var(--tm-ink) / 0.5);
 }
 
+/* Validated icon - subtle, not green on green */
 .tru-route-analysis-location.is-validated .tru-route-location-icon {
-  background: hsl(var(--primary) / 0.15);
-  color: hsl(var(--primary));
+  background: hsl(var(--muted));
+  color: hsl(var(--tm-ink) / 0.7);
 }
 
 .tru-route-location-content {
@@ -1508,6 +1510,7 @@
   text-align: left;
 }
 
+/* Labels - neutral gray, NOT green */
 .tru-route-location-label {
   font-size: 10px;
   font-weight: 600;
@@ -1516,12 +1519,14 @@
   color: hsl(var(--tm-ink) / 0.5);
 }
 
+/* City values - high contrast dark text */
 .tru-route-location-value {
   font-size: 14px;
   font-weight: 600;
   color: hsl(var(--tm-ink));
 }
 
+/* Checkmark - keep green as success indicator only */
 .tru-route-check {
   color: hsl(var(--primary));
   margin-left: auto;
@@ -1532,6 +1537,7 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  min-width: 100px;
 }
 
 .tru-route-line {
@@ -1542,16 +1548,18 @@
 }
 
 .tru-route-line.is-active {
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.6));
+  background: hsl(var(--tm-ink) / 0.2);
 }
 
+/* Distance badge - HIGH CONTRAST: dark text on light neutral bg */
 .tru-route-distance-badge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.1);
-  padding: 2px 8px;
+  color: hsl(var(--tm-ink));
+  background: hsl(var(--muted));
+  padding: 4px 12px;
   border-radius: 100px;
+  border: 1px solid hsl(var(--border));
 }
 
 .tru-route-analysis-status {
