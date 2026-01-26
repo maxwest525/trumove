@@ -29,17 +29,65 @@ const Classic = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Validation functions
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    const digitsOnly = phone.replace(/\D/g, '');
+    return digitsOnly.length >= 10;
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = 'Please enter your name';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+    } else if (formData.name.length > 100) {
+      newErrors.name = 'Name must be less than 100 characters';
+    }
+
+    // Email validation
+    if (!formData.email.trim()) {
+      newErrors.email = 'Please enter your email address';
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    // Phone validation
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Please enter your phone number';
+    } else if (!validatePhone(formData.phone)) {
+      newErrors.phone = 'Phone number must be at least 10 digits';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      toast.error('Please fix the errors in the form');
+      return;
+    }
+
     setIsSubmitting(true);
 
     localStorage.setItem("tm_lead", JSON.stringify({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      fromCity: formData.movingFrom,
-      toCity: formData.movingTo,
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      fromCity: formData.movingFrom.trim(),
+      toCity: formData.movingTo.trim(),
       moveDate: formData.moveDate,
       size: formData.moveSize,
       moveType: formData.moveType,
@@ -47,24 +95,24 @@ const Classic = () => {
       ts: Date.now()
     }));
 
-    const subject = encodeURIComponent(`TruMove Quote Request - ${formData.name}`);
+    const subject = encodeURIComponent(`TruMove Quote Request - ${formData.name.trim()}`);
     const body = encodeURIComponent(`
 TruMove Quote Request
 
 CONTACT INFORMATION
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
+Name: ${formData.name.trim()}
+Email: ${formData.email.trim()}
+Phone: ${formData.phone.trim()}
 
 MOVE DETAILS
-Moving From: ${formData.movingFrom || 'Not specified'}
-Moving To: ${formData.movingTo || 'Not specified'}
+Moving From: ${formData.movingFrom.trim() || 'Not specified'}
+Moving To: ${formData.movingTo.trim() || 'Not specified'}
 Move Type: ${formData.moveType || 'Not specified'}
 Move Size: ${formData.moveSize || 'Not specified'}
 Preferred Date: ${formData.moveDate || 'Not specified'}
 
 ADDITIONAL NOTES
-${formData.message || 'None'}
+${formData.message.trim() || 'None'}
 
 ---
 Source: Classic Quote Form
@@ -75,6 +123,14 @@ Variant: classic
     
     toast.success('Opening your email client...');
     setIsSubmitting(false);
+  };
+
+  // Clear error when user starts typing
+  const handleFieldChange = (field: string, value: string) => {
+    setFormData({ ...formData, [field]: value });
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: '' });
+    }
   };
 
   const services = [
@@ -384,11 +440,14 @@ Variant: classic
                   <Input
                     type="text"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) => handleFieldChange('name', e.target.value)}
                     placeholder="Full Name"
-                    required
-                    className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+                    maxLength={100}
+                    className={`h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500 ${errors.name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
                   />
+                  {errors.name && (
+                    <p className="mt-1.5 text-sm text-red-600">{errors.name}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-[#1a365d] mb-2 uppercase tracking-wide">
@@ -397,11 +456,13 @@ Variant: classic
                   <Input
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) => handleFieldChange('phone', e.target.value)}
                     placeholder="(555) 123-4567"
-                    required
-                    className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+                    className={`h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500 ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
                   />
+                  {errors.phone && (
+                    <p className="mt-1.5 text-sm text-red-600">{errors.phone}</p>
+                  )}
                 </div>
               </div>
               
@@ -412,11 +473,14 @@ Variant: classic
                 <Input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => handleFieldChange('email', e.target.value)}
                   placeholder="your@email.com"
-                  required
-                  className="h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+                  maxLength={255}
+                  className={`h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500 ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
                 />
+                {errors.email && (
+                  <p className="mt-1.5 text-sm text-red-600">{errors.email}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
