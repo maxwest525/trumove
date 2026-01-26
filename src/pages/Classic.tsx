@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Clock, Shield, Truck, Users, Star, ChevronDown, ChevronUp, CheckCircle2, Award, Home, Building, Package, ArrowRight, Heart, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -779,6 +780,9 @@ Variant: classic
                 <a href="#quote" className="block hover:text-amber-400 transition-colors">Get a Quote</a>
                 <a href="#about" className="block hover:text-amber-400 transition-colors">About Us</a>
                 <a href="#faq" className="block hover:text-amber-400 transition-colors">FAQ</a>
+                <Link to="/" className="block hover:text-[#6b9b76] transition-colors text-white/50 text-sm mt-4">
+                  ← TruMove Main Site
+                </Link>
               </div>
             </div>
           </div>
