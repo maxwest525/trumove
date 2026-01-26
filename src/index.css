@@ -4447,8 +4447,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 48px;
+  justify-content: space-evenly;
+  gap: 32px;
 }
 
 .tru-header-trust-item {
