@@ -1149,13 +1149,29 @@
   flex-shrink: 0;
 }
 
+/* HERO MAIN GRID: Form + Content Side by Side */
+.tru-hero-main-grid {
+  display: grid;
+  grid-template-columns: 520px 1fr;
+  gap: 48px;
+  align-items: start;
+  width: 100%;
+}
+
+.tru-hero-form-wrapper {
+  width: 100%;
+}
+
+.tru-hero-form-wrapper .tru-hero-form-panel {
+  width: 100%;
+}
+
 /* RIGHT PANEL: Value Proposition (swapped from left) */
 .tru-hero-content-panel {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100%;
-  order: 2; /* Move to right (second position) */
+  padding-top: 24px;
 }
 
 .tru-hero-content-inner {
