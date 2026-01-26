@@ -787,6 +787,9 @@ Variant: classic
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
               <p>© {new Date().getFullYear()} TruMove. All rights reserved.</p>
               <div className="flex items-center gap-6">
+                <a href="/" className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                  ← Back to Modern Site
+                </a>
                 <a href="/privacy" className="hover:text-amber-400 transition-colors">Privacy Policy</a>
                 <a href="/terms" className="hover:text-amber-400 transition-colors">Terms of Service</a>
               </div>

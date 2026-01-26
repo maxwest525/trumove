@@ -9708,20 +9708,20 @@
   background: hsl(var(--primary) / 0.3);
 }
 
-/* Pill-shaped active state - matches inventory sidebar buttons */
+/* Pill-shaped active state - dark outline style */
 .header-nav-link.is-active {
   color: hsl(var(--tm-ink));
-  background: hsl(var(--primary) / 0.05);
-  border: 2px solid hsl(var(--primary));
+  background: transparent;
+  border: 2px solid hsl(var(--tm-ink) / 0.7);
   font-weight: 700;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  box-shadow: none;
   padding: 6px 12px;
 }
 
 .dark .header-nav-link.is-active {
   color: hsl(var(--foreground));
-  background: hsl(var(--card));
-  border: 2px solid hsl(var(--primary));
+  background: transparent;
+  border: 2px solid hsl(var(--foreground) / 0.7);
 }
 
 .header-nav-chevron {
@@ -14299,7 +14299,7 @@
    ============================================= */
 .tru-trust-strip {
   background: linear-gradient(180deg, hsl(220 30% 92%) 0%, hsl(220 25% 88%) 100%);
-  padding: 20px 24px;
+  padding: 10px 24px;
   border-top: 1px solid hsl(var(--tm-ink) / 0.08);
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
   margin-top: 40px;
@@ -14319,11 +14319,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.7);
+  color: hsl(var(--tm-ink) / 0.75);
 }
 
 .tru-trust-strip-item svg {
@@ -14337,7 +14337,7 @@
   }
   
   .tru-trust-strip-item {
-    font-size: 9px;
+    font-size: 11px;
   }
 }
 
