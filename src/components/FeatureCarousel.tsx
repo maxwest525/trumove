@@ -102,7 +102,7 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
     >
       <Carousel
         setApi={setApi}
-        opts={{ align: "start", loop: true }}
+        opts={{ align: "start", loop: true, slidesToScroll: 3 }}
         className="tru-value-carousel"
       >
         <CarouselContent className="tru-value-carousel-content">
