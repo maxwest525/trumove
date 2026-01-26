@@ -12757,11 +12757,11 @@
 }
 
 .tru-qb-question {
-  font-size: clamp(22px, 3.5vw, 28px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: clamp(16px, 2.5vw, 18px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: hsl(var(--tm-ink));
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .tru-qb-subtitle {
