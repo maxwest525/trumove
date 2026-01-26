@@ -14713,7 +14713,20 @@
   max-width: 100%;
   padding: 0;
   position: relative;
-  overflow: hidden;  /* Strict clipping to hide 5th card */
+  overflow: hidden;
+}
+
+/* Fade gradient on right edge to hint at more cards */
+.features-carousel-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 48px;
+  background: linear-gradient(to right, transparent, hsl(var(--background)));
+  pointer-events: none;
+  z-index: 5;
 }
 
 /* Carousel content - fully reset Embla defaults */
@@ -14755,6 +14768,10 @@
   will-change: transform;
   box-sizing: border-box;
   backface-visibility: hidden;
+  /* Fix font blurriness */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Top accent stripe - subtle green */
