@@ -34,7 +34,7 @@ export default function FloatingInventoryHelper({
       {/* Stats Pills */}
       <div className="flex items-center gap-1">
         {/* Total Items */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/60 border border-border/40">
           <Package className="w-4 h-4 text-primary" />
           <span className="text-sm font-bold text-foreground">{totalItems}</span>
           <span className="text-xs text-muted-foreground">items</span>

@@ -371,7 +371,7 @@ export default function PropertyLookup() {
             />
 
             {originVerified && originAddress && !isGeocodingOrigin && (
-              <div className="mt-3 p-2.5 rounded-lg bg-primary/10 border border-primary/30 text-xs text-primary font-medium flex items-center gap-2">
+              <div className="mt-3 p-2.5 rounded-lg bg-muted/60 border border-border/60 text-xs text-foreground/70 font-medium flex items-center gap-2">
                 <CheckCircle className="w-3.5 h-3.5" />
                 Address verified
               </div>
