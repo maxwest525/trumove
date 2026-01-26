@@ -33,6 +33,7 @@ import FloatingTruckChat from "@/components/FloatingTruckChat";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import FeatureCarousel from "@/components/FeatureCarousel";
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
@@ -168,6 +169,49 @@ function TrustCompactSection() {
             >
               {badge}
             </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Steps Compact Section with parallax effect
+function StepsCompactSection({ navigate }: { navigate: (path: string) => void }) {
+  const [sectionRef, isInView] = useScrollAnimation<HTMLElement>({
+    threshold: 0.1,
+    rootMargin: "0px",
+    triggerOnce: true,
+  });
+
+  const steps = [
+    { num: 1, title: "Build Your Inventory", desc: "AI-powered tools calculate weight and volume from real data." },
+    { num: 2, title: "Get Carrier Matches", desc: "We analyze SAFER Web data to find the best fit." },
+    { num: 3, title: "Book with Confidence", desc: "Secure payment. Licensed, vetted movers only." },
+  ];
+
+  return (
+    <section className="tru-steps-compact" ref={sectionRef}>
+      <div className="tru-steps-compact-inner">
+        <div className="tru-steps-compact-header">
+          <span className="tru-steps-compact-badge">How It Works</span>
+          <h2 className="tru-steps-compact-title">Get matched with the right mover.</h2>
+        </div>
+        <div className="tru-steps-compact-grid">
+          {steps.map((step, index) => (
+            <div 
+              key={step.num}
+              className={`tru-steps-compact-card tru-steps-parallax-card ${isInView ? 'in-view' : ''}`}
+              style={{ '--card-index': index } as React.CSSProperties}
+              onClick={() => navigate("/online-estimate")}
+            >
+              <div className="tru-steps-compact-num">{step.num}</div>
+              <div className="tru-steps-compact-card-content">
+                <h3>{step.title}</h3>
+                <p>{step.desc}</p>
+              </div>
+              <ArrowRight className="w-4 h-4 tru-steps-compact-arrow" />
+            </div>
           ))}
         </div>
       </div>
@@ -627,130 +671,9 @@ export default function Index() {
               </p>
             </div>
 
-            {/* LEFT: Feature Cards with parallax */}
-            <div 
-              ref={parallaxCardsRef}
-              className="tru-hero-content-panel tru-hero-parallax-cards"
-              style={{
-                transform: `translateY(${cardsParallax.y}px)`,
-              }}
-            >
-              <div className="tru-hero-content-inner">
-                {/* Value Props Container - Feature Cards as Carousel */}
-                <div className="tru-hero-value-props-container tru-feature-section-card-clean">
-                  {/* Value Cards - Horizontal Carousel with hover-to-expand */}
-                  <Carousel
-                    opts={{ align: "start", loop: true, dragFree: true }}
-                    className="tru-value-carousel"
-                  >
-                    <CarouselContent className="tru-value-carousel-content">
-                      <CarouselItem className="tru-value-carousel-item">
-                        <div className="tru-value-card-carousel" onClick={() => navigate("/online-estimate")}>
-                          <div className="tru-value-card-carousel-header">
-                            <div className="tru-value-card-icon">
-                              <Boxes className="w-5 h-5" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Inventory Builder</h3>
-                              <p className="tru-value-card-desc">Build your item list room by room for accurate pricing estimates.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-carousel-preview">
-                            <img src={previewAiScanner} alt="Inventory Builder Preview" />
-                          </div>
-                        </div>
-                      </CarouselItem>
-                      
-                      <CarouselItem className="tru-value-carousel-item">
-                        <div className="tru-value-card-carousel" onClick={() => navigate("/scan-room")}>
-                          <div className="tru-value-card-carousel-header">
-                            <div className="tru-value-card-icon">
-                              <Scan className="w-5 h-5" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">AI Room Scanner</h3>
-                              <p className="tru-value-card-desc">Point your camera and AI detects furniture instantly.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-carousel-preview">
-                            <img src={sampleRoomLiving} alt="AI Room Scanner Preview" />
-                          </div>
-                        </div>
-                      </CarouselItem>
-                      
-                      <CarouselItem className="tru-value-carousel-item">
-                        <div className="tru-value-card-carousel" onClick={() => navigate("/vetting")}>
-                          <div className="tru-value-card-carousel-header">
-                            <div className="tru-value-card-icon">
-                              <Radar className="w-5 h-5" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Smart Carrier Match</h3>
-                              <p className="tru-value-card-desc">Our algorithm finds the best carrier for your route.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-carousel-preview">
-                            <img src={previewCarrierVetting} alt="Carrier Matching Preview" />
-                          </div>
-                        </div>
-                      </CarouselItem>
-                      
-                      <CarouselItem className="tru-value-carousel-item">
-                        <div className="tru-value-card-carousel" onClick={() => navigate("/book")}>
-                          <div className="tru-value-card-carousel-header">
-                            <div className="tru-value-card-icon">
-                              <Video className="w-5 h-5" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">TruMove Specialist</h3>
-                              <p className="tru-value-card-desc">Live video consultation for personalized guidance.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-carousel-preview">
-                            <img src={previewVideoConsult} alt="TruMove Specialist Preview" />
-                          </div>
-                        </div>
-                      </CarouselItem>
-
-                      <CarouselItem className="tru-value-carousel-item">
-                        <div className="tru-value-card-carousel" onClick={() => navigate("/vetting")}>
-                          <div className="tru-value-card-carousel-header">
-                            <div className="tru-value-card-icon">
-                              <ShieldCheck className="w-5 h-5" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">FMCSA Verified</h3>
-                              <p className="tru-value-card-desc">Real-time safety data checks from official databases.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-carousel-preview">
-                            <img src={previewPropertyLookup} alt="FMCSA Verification Preview" />
-                          </div>
-                        </div>
-                      </CarouselItem>
-
-                      <CarouselItem className="tru-value-carousel-item">
-                        <div className="tru-value-card-carousel" onClick={() => navigate("/online-estimate")}>
-                          <div className="tru-value-card-carousel-header">
-                            <div className="tru-value-card-icon">
-                              <DollarSign className="w-5 h-5" />
-                            </div>
-                            <div className="tru-value-card-content">
-                              <h3 className="tru-value-card-title">Instant Pricing</h3>
-                              <p className="tru-value-card-desc">Get accurate quotes in minutes, not hours.</p>
-                            </div>
-                          </div>
-                          <div className="tru-value-card-carousel-preview">
-                            <img src={scanRoomPreview} alt="Instant Pricing Preview" />
-                          </div>
-                        </div>
-                      </CarouselItem>
-                    </CarouselContent>
-                    <CarouselPrevious className="tru-value-carousel-prev" />
-                    <CarouselNext className="tru-value-carousel-next" />
-                  </Carousel>
-                </div>
-              </div>
+            {/* LEFT: Trust strip moved here */}
+            <div className="tru-hero-content-panel tru-hero-trust-panel">
+              <TrustCompactSection />
             </div>
 
             {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
@@ -1148,6 +1071,11 @@ export default function Index() {
                     </div>
                   </div>
                 </div>
+
+                {/* Feature Carousel - Directly under the form */}
+                <div className="tru-feature-carousel-under-form">
+                  <FeatureCarousel autoplayInterval={4000} />
+                </div>
               </div>
 
               {/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill
@@ -1345,44 +1273,8 @@ export default function Index() {
             </div>
           </section>
 
-          {/* HOW IT WORKS - Compact */}
-          <section className="tru-steps-compact">
-            <div className="tru-steps-compact-inner">
-              <div className="tru-steps-compact-header">
-                <span className="tru-steps-compact-badge">How It Works</span>
-                <h2 className="tru-steps-compact-title">Get matched with the right mover.</h2>
-              </div>
-              <div className="tru-steps-compact-grid">
-                <div className="tru-steps-compact-card" onClick={() => navigate("/online-estimate")}>
-                  <div className="tru-steps-compact-num">1</div>
-                  <div className="tru-steps-compact-card-content">
-                    <h3>Build Your Inventory</h3>
-                    <p>AI-powered tools calculate weight and volume from real data.</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 tru-steps-compact-arrow" />
-                </div>
-                <div className="tru-steps-compact-card" onClick={() => navigate("/online-estimate")}>
-                  <div className="tru-steps-compact-num">2</div>
-                  <div className="tru-steps-compact-card-content">
-                    <h3>Get Carrier Matches</h3>
-                    <p>We analyze SAFER Web data to find the best fit.</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 tru-steps-compact-arrow" />
-                </div>
-                <div className="tru-steps-compact-card" onClick={() => navigate("/online-estimate")}>
-                  <div className="tru-steps-compact-num">3</div>
-                  <div className="tru-steps-compact-card-content">
-                    <h3>Book with Confidence</h3>
-                    <p>Secure payment. Licensed, vetted movers only.</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 tru-steps-compact-arrow" />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* TRUST FOOTER - Compact with staggered reveal */}
-          <TrustCompactSection />
+          {/* HOW IT WORKS - Compact with Parallax */}
+          <StepsCompactSection navigate={navigate} />
 
         </div>
       </div>
