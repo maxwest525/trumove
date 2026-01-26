@@ -1,170 +1,109 @@
 
+# Plan: Add Right-Side Hero Content + Visual Separation
 
-# Fix Carousel: Spacing, Clipping, and Blur - Final Solution
+## Overview
+This plan adds new headline content on the right side of the hero section while adding a subtle visual separator to replace the removed green line in the form. The changes are designed to be additive without disrupting existing spacing.
 
-## The Real Problem
+## Changes
 
-You're absolutely right - the cards need to be **slightly smaller** to leave room for spacing. Here's why:
+### 1. Add Subtle Visual Separator to Form
+**File:** `src/index.css`
 
-**Embla Carousel ignores CSS `gap`** because it positions slides using JavaScript `translate3d()` transforms, not native flexbox layout. The current CSS says:
-- Cards are `calc((100% - 48px) / 4)` wide
-- Gap of `16px` between them
+Replace the hidden green line with a subtle bottom border on the question heading for visual separation:
 
-But Embla doesn't see the `gap` - it just places cards side by side based on their width, causing them to touch.
+```css
+.tru-qb-question-decorated::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 1px;
+  background: hsl(var(--tm-ink) / 0.12);
+  display: block;
+}
+```
 
-## The Simple Fix
-
-Instead of complex calculations, use **padding inside each item** to create visual spacing:
-
-| Current (Broken) | Fixed |
-|------------------|-------|
-| `flex: 0 0 calc((100% - 48px) / 4)` + `gap: 16px` | `flex: 0 0 25%` + `padding: 0 8px` |
-| Embla ignores gap, cards touch | Padding creates 16px visual gaps |
+This adds a very subtle, centered horizontal line below "Enter your route to begin matching" without being as prominent as the green accent was.
 
 ---
 
-## Changes to `src/index.css`
+### 2. Add Right-Side Hero Content Section
+**File:** `src/pages/Index.tsx`
 
-### Lines 14733-14751 - Content and Item Styles
+Add a new content section positioned on the right side of the hero grid (after the form panel). This will contain:
 
-**Before:**
-```css
-.features-carousel-content {
-  display: flex;
-  gap: 16px;  /* Embla ignores this! */
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding: 8px 0;
-}
+- **Headline:** "blagg is gay" with "gay" using the `.tru-hero-headline-accent` class for the green gradient
+- **Description:** The provided text about skipping van line complexity, AI scanning, etc.
 
-.features-carousel-item {
-  flex: 0 0 calc((100% - 48px) / 4) !important;
-  min-width: 0;
-  padding: 0 !important;
-  margin: 0 !important;
-  ...
-}
+The new JSX will be inserted after the form panel div closes (around line 920), positioned within the existing grid layout:
+
+```tsx
+{/* RIGHT SIDE: Value Proposition Content */}
+<div className="tru-hero-content-panel">
+  <div className="tru-hero-content-inner">
+    <h2 className="tru-hero-headline-main">
+      blagg is <span className="tru-hero-headline-accent">gay</span>
+    </h2>
+    <p className="tru-hero-subheadline">
+      Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
+    </p>
+    <p className="tru-hero-subheadline" style={{ opacity: 0.6 }}>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+  </div>
+</div>
 ```
 
-**After:**
-```css
-.features-carousel-content {
-  display: flex;
-  /* REMOVED gap - Embla ignores it */
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding: 8px 8px;  /* Add horizontal padding to prevent edge clipping */
-}
+---
 
-.features-carousel-item {
-  flex: 0 0 25% !important;  /* Simple: 4 cards = 25% each */
-  min-width: 0;
-  padding: 0 8px !important;  /* 8px each side = 16px gap between cards */
-  margin: 0 !important;
-  position: relative;
-  overflow: visible !important;
-  box-sizing: border-box;  /* Critical: include padding in width */
-}
-```
+### 3. Update CSS for Right Panel Styling (if needed)
+**File:** `src/index.css`
 
-### Lines 14754-14775 - Card Styles (Fix Blur)
-
-Add `transform: translateZ(0)` to force GPU rendering and prevent subpixel blur:
+The existing `.tru-hero-content-panel` and `.tru-hero-content-inner` classes should work, but may need minor adjustments for text alignment:
 
 ```css
-.features-carousel-card {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 16px;
-  padding: 16px;
-  cursor: pointer;
-  height: 280px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
-  position: relative;
-  overflow: hidden;  /* Changed from visible to hidden */
-  transition: border-color 250ms ease, box-shadow 300ms ease;
-  box-sizing: border-box;
-  /* Anti-blur fixes */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  transform: translateZ(0);  /* Force GPU layer - fixes blur */
-  backface-visibility: hidden;
-}
-```
-
-### Lines 14927-14960 - Responsive Breakpoints
-
-Update to use simple percentages with padding:
-
-```css
-/* 3 cards on large tablet */
-@media (max-width: 1279px) {
-  .features-carousel-item {
-    flex: 0 0 33.333% !important;
-  }
+.tru-hero-content-panel .tru-hero-headline-main {
+  text-align: left;
+  justify-content: flex-start;
 }
 
-/* 2 cards on tablet */
-@media (max-width: 1024px) {
-  .features-carousel-item {
-    flex: 0 0 50% !important;
-  }
-}
-
-/* 1 card on mobile */
-@media (max-width: 640px) {
-  .features-carousel-item {
-    flex: 0 0 100% !important;
-    padding: 0 4px !important;
-  }
+.tru-hero-content-panel .tru-hero-subheadline {
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
 }
 ```
 
 ---
 
-## Visual Explanation
+## Visual Layout Preview
 
 ```text
-CURRENT (Broken - gap ignored by Embla):
-┌──────────────────────────────────────────────────────┐
-│[CARD][CARD][CARD][CARD]                              │
-│  ↑ No gaps, cards touching                           │
-└──────────────────────────────────────────────────────┘
-
-FIXED (padding creates visual gaps):
-┌──────────────────────────────────────────────────────┐
-│ [  CARD  ] [  CARD  ] [  CARD  ] [  CARD  ]          │
-│   ↑8px↑     ↑8px↑     ↑8px↑     ↑8px↑                │
-│   └─ 16px gap between cards ─┘                       │
-└──────────────────────────────────────────────────────┘
++------------------------------------------+
+|     Trumove. A Smarter Way To Move.      |  <- Centered header (unchanged)
+|     [subheadline description]            |
++------------------------------------------+
+|                    |                     |
+|   [Form Card]      |   blagg is gay      |  <- New right content
+|   - Progress bar   |                     |
+|   - From/To inputs |   [description...]  |
+|   - Continue btn   |   [lorem ipsum...]  |
+|                    |                     |
++------------------------------------------+
 ```
 
 ---
 
-## Summary of All Fixes
+## Technical Notes
 
-| Issue | Root Cause | Fix |
-|-------|------------|-----|
-| Cards touching | Embla ignores CSS `gap` | Use `padding: 0 8px` on items |
-| Edge clipping | No container padding | Add `padding: 8px 8px` to content |
-| Blurry text | Subpixel rendering | Add `transform: translateZ(0)` |
-| Complex math | Unnecessary calculations | Simple `25%` / `33.333%` / `50%` |
+- **No spacing changes:** The existing grid layout (`grid-template-columns: 520px 1fr`) will automatically position the new content panel
+- **Green gradient reuse:** The `.tru-hero-headline-accent` class already exists and provides the exact gradient styling
+- **Existing classes:** Using `.tru-hero-content-panel` which is already defined in CSS with `order: 2` to position it on the right
 
 ---
 
-## Technical Details
-
-### Why Padding Works
-
-Each carousel item is `25%` wide with `8px` padding on each side. The card inside fills the remaining space. Between any two cards:
-- Left card's right padding: 8px
-- Right card's left padding: 8px  
-- Total visual gap: 16px
-
-### Why `box-sizing: border-box` is Critical
-
-Without it, the `25%` width + `16px` padding would make items `25% + 16px` wide, breaking the layout. With `border-box`, padding is included in the `25%`.
-
+## Files Modified
+1. `src/pages/Index.tsx` - Add new content panel JSX
+2. `src/index.css` - Update decorated question border, adjust right panel text alignment
