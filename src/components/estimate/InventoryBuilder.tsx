@@ -572,7 +572,7 @@ export default function InventoryBuilder({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-semibold text-foreground">Scan Room</span>
-                <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">Soon</span>
+                <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-muted border border-border/60 text-muted-foreground">Soon</span>
               </div>
               <span className="text-[10px] text-muted-foreground">Auto-detect items via camera</span>
             </div>
@@ -823,7 +823,7 @@ export default function InventoryBuilder({
                           className={cn(
                             "w-7 h-7 rounded-lg text-xs font-semibold transition-all",
                             page === currentPage 
-                              ? "border-2 border-primary bg-primary/10 text-primary" 
+                              ? "border border-border bg-muted text-foreground" 
                               : "text-muted-foreground hover:bg-muted hover:text-foreground"
                           )}
                         >

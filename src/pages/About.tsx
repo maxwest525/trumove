@@ -139,7 +139,7 @@ export default function About() {
                     </span>
                   </th>
                   <th className="text-left px-6 py-4 font-bold text-xs tracking-wide uppercase text-muted-foreground">
-                    <span className="inline-flex items-center gap-2 px-2 py-1 rounded bg-primary/10 text-primary">
+                    <span className="inline-flex items-center gap-2 px-2 py-1 rounded bg-muted/60 border border-border/40 text-foreground font-bold">
                       TruMove
                     </span>
                   </th>

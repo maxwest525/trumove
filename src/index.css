@@ -3008,10 +3008,14 @@
   display: flex;
   flex-direction: column;
   height: auto;
+  min-height: 420px;
   background: hsl(var(--background));
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 24px;
-  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04), 0 8px 24px hsl(var(--tm-ink) / 0.03);
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.06),
+    0 12px 40px hsl(var(--tm-ink) / 0.08),
+    0 24px 60px hsl(var(--tm-ink) / 0.05);
   overflow: hidden;
   transition: height 0.3s ease;
   position: relative;
@@ -3100,14 +3104,15 @@
 }
 
 .tru-floating-form-content {
-  padding: 16px 24px 8px;
+  padding: 24px 28px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 180px;
+  min-height: 280px;
   flex: 1;
-  gap: 6px;
+  gap: 8px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.04);
 }
 
 .tru-floating-form-footer {
@@ -3131,12 +3136,13 @@
   opacity: 0.6;
 }
 
-/* Form Progress Bar */
+/* Form Progress Bar with Divider */
 .tru-form-progress-bar {
   height: 4px;
   background: hsl(var(--tm-ink) / 0.08);
   border-radius: 4px 4px 0 0;
   overflow: hidden;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
 }
 
 .tru-form-progress-fill {
@@ -7317,13 +7323,13 @@
   gap: 8px;
   padding: 6px 12px;
   border-radius: 999px;
-  background: linear-gradient(180deg, hsl(var(--primary) / 0.12), hsl(var(--primary) / 0.04));
-  border: 1px solid hsl(var(--primary) / 0.2);
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.06), hsl(var(--primary) / 0.02));
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.8);
+  color: hsl(var(--tm-ink) / 0.7);
   margin-bottom: 16px;
 }
 
