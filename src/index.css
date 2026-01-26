@@ -14784,17 +14784,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--muted));
+  background: hsl(var(--primary) / 0.08);
   border: 1px solid hsl(var(--border));
   border-radius: 50%;
-  color: hsl(var(--muted-foreground));
+  color: hsl(var(--tm-ink) / 0.6);
   transition: all 0.25s ease;
 }
 
 .tru-value-card-carousel:hover .tru-value-card-icon {
-  background: hsl(var(--muted));
-  border-color: hsl(var(--tm-ink) / 0.2);
-  color: hsl(var(--tm-ink));
+  background: hsl(var(--primary) / 0.12);
+  border-color: hsl(var(--border));
+  color: hsl(var(--tm-ink) / 0.8);
 }
 
 .tru-value-card-content {
