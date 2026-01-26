@@ -15255,15 +15255,16 @@
   }
 }
 
-/* Trust badges - positioned on right side of hero */
+/* Trust badges - positioned center of right half of hero */
 .tru-hero-trust-right {
   position: absolute;
-  right: 80px;
-  bottom: 100px;
+  left: 75%;
+  transform: translateX(-50%);
+  bottom: 60px;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .tru-hero-trust-right .tru-trust-compact {
@@ -15275,17 +15276,17 @@
 .tru-hero-trust-right .tru-trust-compact-inner {
   flex-direction: column;
   gap: 12px;
-  text-align: right;
-  align-items: flex-end;
+  text-align: center;
+  align-items: center;
 }
 
 .tru-hero-trust-right .tru-trust-compact-stats {
-  justify-content: flex-end;
+  justify-content: center;
   gap: 24px;
 }
 
 .tru-hero-trust-right .tru-trust-compact-badges {
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 /* Hide on smaller screens where it overlaps form */
