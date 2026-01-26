@@ -495,11 +495,13 @@ export default function Index() {
     <SiteShell centered>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-        {/* HERO - Split Layout */}
-          <section className="tru-hero tru-hero-split" ref={heroSectionRef}>
-            {/* Particle Background Effect */}
-            <HeroParticles />
-            <div className="tru-hero-particles-overlay" />
+        {/* HERO - Warm Background with Overlay */}
+          <section className="tru-hero-warm-section" ref={heroSectionRef}>
+            {/* Full-bleed Background Image */}
+            <div className="tru-hero-warm-bg-full">
+              <img src={heroMoversFamily} alt="Professional movers helping a family" />
+              <div className="tru-hero-warm-gradient-overlay" />
+            </div>
             
             {/* Full-Page Analyzing Overlay */}
             {isAnalyzing && (
@@ -574,44 +576,39 @@ export default function Index() {
               </div>
             )}
             
-            {/* Hero with Warm Background and Form Side-by-Side */}
-            <div className="tru-hero-warm-wrapper" style={{ display: 'grid', gridTemplateColumns: '1fr 520px', gap: '48px', alignItems: 'start', paddingBottom: '32px' }}>
-              {/* LEFT: Warm Hero Content */}
-              <div className="tru-hero-warm" style={{ position: 'relative', minHeight: '500px', borderRadius: '24px', overflow: 'hidden' }}>
-                <div className="tru-hero-warm-bg">
-                  <img src={heroMoversFamily} alt="Professional movers helping a family" />
-                  <div className="tru-hero-warm-overlay" />
-                </div>
-                
-                <div className="tru-hero-warm-content">
-                  <div className="tru-hero-warm-text">
-                    <h1 className="tru-hero-warm-headline">
-                      Your <span className="tru-hero-warm-headline-accent">Stress-Free Move</span> Starts Here — With People Who Care
-                    </h1>
-                    <p className="tru-hero-warm-subheadline">
-                      TruMove uses smart AI to match you with vetted, independent carriers who prioritize service over corporate profits. Get fair prices, total transparency, and real help — no van line headaches.
-                    </p>
-                    <div className="tru-hero-warm-ctas" style={{ marginTop: '20px' }}>
-                      <button 
-                        className="tru-hero-warm-cta-secondary"
-                        onClick={() => navigate("/book")}
-                      >
-                        <Video className="w-5 h-5" />
-                        <span>Book a Free Video Consult</span>
-                      </button>
-                    </div>
-                  </div>
+            {/* Hero Content Grid: Text Left, Form Right */}
+            <div className="tru-hero-warm-grid">
+              {/* LEFT: Text Content */}
+              <div className="tru-hero-warm-text-content">
+                <h1 className="tru-hero-warm-title">
+                  Your <span className="tru-hero-warm-title-accent">Stress-Free Move</span> Starts Here
+                </h1>
+                <p className="tru-hero-warm-subtitle">
+                  We use smart AI to match you with vetted, independent carriers who prioritize service over corporate profits. Fair prices, total transparency, no van line headaches.
+                </p>
+                <div className="tru-hero-warm-actions">
+                  <button 
+                    className="tru-hero-warm-btn-secondary"
+                    onClick={() => navigate("/book")}
+                  >
+                    <Video className="w-5 h-5" />
+                    <span>Book a Free Video Consult</span>
+                  </button>
+                  <a href="tel:+16097277647" className="tru-hero-warm-btn-phone">
+                    <Phone className="w-4 h-4" />
+                    <span>(609) 727-7647</span>
+                  </a>
                 </div>
               </div>
 
-            {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
-            <div 
-              ref={parallaxFormRef}
-              className="tru-hero-right-half tru-hero-right-stacked"
-              style={{
-                transform: `translateY(${formParallax.y}px)`,
-              }}
-            >
+              {/* RIGHT: Form */}
+              <div 
+                ref={parallaxFormRef}
+                className="tru-hero-form-wrapper"
+                style={{
+                  transform: `translateY(${formParallax.y}px)`,
+                }}
+              >
               <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
                 {/* TOP ROW: Form Card */}
                 <div className="tru-floating-form-card">
