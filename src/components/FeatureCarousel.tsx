@@ -135,17 +135,6 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
         <CarouselNext className="tru-value-carousel-next" />
       </Carousel>
 
-      {/* Dot Indicators */}
-      <div className="tru-carousel-indicators">
-        {Array.from({ length: count }).map((_, index) => (
-          <button
-            key={index}
-            className={`tru-carousel-dot ${index === current ? 'is-active' : ''}`}
-            onClick={() => scrollTo(index)}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
     </div>
   );
 }
