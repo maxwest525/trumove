@@ -15,6 +15,7 @@ import serviceCommercial from '@/assets/service-commercial.jpg';
 import servicePacking from '@/assets/service-packing.jpg';
 import serviceSenior from '@/assets/service-senior.jpg';
 import serviceStorage from '@/assets/service-storage.jpg';
+import logoImage from '@/assets/logo.png';
 
 const Classic = () => {
   const [formData, setFormData] = useState({
@@ -191,9 +192,11 @@ Variant: classic
       <header className="bg-white border-b-4 border-[#1a365d] py-4 sticky top-0 z-50 shadow-md">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-[#1a365d] rounded-lg flex items-center justify-center">
-              <Truck className="w-7 h-7 text-white" />
-            </div>
+            <img 
+              src={logoImage} 
+              alt="TruMove Logo" 
+              className="h-10 w-auto"
+            />
             <div>
               <span className="text-2xl font-bold text-[#1a365d] tracking-tight">TruMove</span>
               <div className="text-xs text-gray-500 -mt-1">Professional Moving Services</div>
@@ -723,26 +726,28 @@ Variant: classic
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="bg-[#0f172a] text-white py-16">
+      <footer id="contact" className="bg-[hsl(222,47%,11%)] text-white py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             {/* Company Info */}
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-[#4a6b52] rounded flex items-center justify-center">
-                  <Truck className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-2xl font-bold"><span className="text-[#6b9b76]">Tru</span>Move</span>
+                <img 
+                  src={logoImage} 
+                  alt="TruMove Logo" 
+                  className="h-8 w-auto brightness-0 invert"
+                />
+                <span className="text-2xl font-bold">TruMove</span>
               </div>
               <p className="text-white/70 leading-relaxed mb-6 max-w-md">
                 Professional moving services with care and integrity. Licensed, insured, 
                 and trusted by families nationwide for over 25 years.
               </p>
               <div className="flex items-center gap-4">
-                <div className="bg-white/10 px-3 py-2 rounded text-sm border border-[#4a6b52]/40">
+                <div className="bg-white/10 px-3 py-2 rounded text-sm border border-white/20">
                   <span className="text-white/60">USDOT #</span> 4507647
                 </div>
-                <div className="bg-white/10 px-3 py-2 rounded text-sm border border-[#4a6b52]/40">
+                <div className="bg-white/10 px-3 py-2 rounded text-sm border border-white/20">
                   <span className="text-white/60">MC #</span> 1784124
                 </div>
               </div>
