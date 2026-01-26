@@ -14744,9 +14744,9 @@
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: 16px;
-  padding: 16px;
+  padding: 12px;
   cursor: pointer;
-  height: 280px;
+  height: 240px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
@@ -14800,10 +14800,10 @@
 .features-carousel-card-header {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
-  margin-bottom: 12px;
-  min-height: 70px;
+  margin-bottom: 8px;
+  min-height: 56px;
 }
 
 /* Icon badge - circular with very subtle green bg and subtle border */
@@ -14854,11 +14854,11 @@
   overflow: hidden;
 }
 
-/* Image wrapper - fixed 150px height with tight padding */
+/* Image wrapper - compact height with tight padding */
 .features-carousel-card-image-wrapper {
-  height: 150px;
+  height: 130px;
   width: 100%;
-  padding: 8px;
+  padding: 4px;
   background: hsl(var(--muted) / 0.3);
   border-radius: 8px;
   display: flex;
