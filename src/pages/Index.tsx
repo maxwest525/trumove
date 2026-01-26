@@ -687,8 +687,7 @@ export default function Index() {
               <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
                 {/* TOP ROW: Form Card */}
                 <div className="tru-floating-form-card">
-                  {/* Decorative Accent Stripe */}
-                  <div className="tru-form-accent-stripe" />
+                  {/* Progress Bar - no accent stripe */}
                   
                   {/* Progress Bar */}
                   <div className="tru-form-progress-bar">

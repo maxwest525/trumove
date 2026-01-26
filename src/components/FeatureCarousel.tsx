@@ -109,7 +109,7 @@ export default function FeatureCarousel() {
           {features.map((feature, index) => (
             <CarouselItem key={index} className="features-carousel-item">
               <div 
-                className={`features-carousel-card ${hoveredIndex === index ? 'is-enlarged' : ''}`}
+                className="features-carousel-card"
                 onClick={() => navigate(feature.route)}
                 role="button"
                 tabIndex={0}

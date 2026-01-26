@@ -1575,7 +1575,7 @@
   gap: 6px;
   font-size: 12px;
   font-weight: 600;
-  color: hsl(var(--primary));
+  color: hsl(var(--tm-ink) / 0.6);
 }
 
 /* =============================================
@@ -14719,17 +14719,17 @@
 
 .features-carousel-content {
   display: flex;
-  gap: 24px;
+  gap: 20px;
   margin-left: 0 !important;
-  padding: 16px 0; /* Increased vertical padding for scale room */
+  padding: 8px 4px; /* Horizontal padding for card borders */
 }
 
-/* 4 cards visible on desktop */
+/* 4 cards visible on desktop - account for gaps */
 .features-carousel-item {
-  flex: 0 0 calc(25% - 18px) !important;
+  flex: 0 0 calc(25% - 15px) !important;
   min-width: 0;
-  padding: 0 !important; /* Remove all padding */
-  margin: 0 !important; /* Remove all margin */
+  padding: 0 !important;
+  margin: 0 !important;
   position: relative;
   overflow: visible !important;
 }
@@ -14768,17 +14768,17 @@
   transition: opacity 0.25s ease;
 }
 
-/* Hover effects - no transforms to prevent border artifacts */
+/* Hover effects - subtle, no scale to prevent clipping */
 .features-carousel-card:hover {
-  border-color: hsl(var(--primary) / 0.3);
+  border-color: hsl(var(--tm-ink) / 0.2);
   box-shadow: 0 6px 24px hsl(var(--tm-ink) / 0.08);
 }
 
 .features-carousel-card:hover::before {
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
-/* Remove active state transform to prevent border flicker */
+/* Remove any transform on active/hover to prevent clipping */
 .features-carousel-card:active {
   transform: none;
 }
