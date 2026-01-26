@@ -107,10 +107,13 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
       >
         <CarouselContent className="tru-value-carousel-content">
           {features.map((feature, index) => (
-            <CarouselItem key={index} className="tru-value-carousel-item">
+            <CarouselItem key={index} className="tru-value-carousel-item tru-carousel-card-enter">
               <div 
-                className="tru-value-card-carousel" 
+                className="tru-value-card-carousel tru-value-card-expanded" 
                 onClick={() => navigate(feature.route)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && navigate(feature.route)}
               >
                 <div className="tru-value-card-carousel-header">
                   <div className="tru-value-card-icon">
@@ -121,7 +124,7 @@ export default function FeatureCarousel({ autoplayInterval = 4000 }: FeatureCaro
                     <p className="tru-value-card-desc">{feature.desc}</p>
                   </div>
                 </div>
-                <div className="tru-value-card-carousel-preview">
+                <div className="tru-value-card-carousel-preview tru-preview-always-visible">
                   <img src={feature.image} alt={`${feature.title} Preview`} />
                 </div>
               </div>
