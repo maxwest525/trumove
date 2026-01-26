@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Clock, Shield, Truck, Users, Star, ChevronDown, ChevronUp, CheckCircle2, Award, Home, Building, Package, ArrowRight, Heart, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +14,6 @@ import serviceCommercial from '@/assets/service-commercial.jpg';
 import servicePacking from '@/assets/service-packing.jpg';
 import serviceSenior from '@/assets/service-senior.jpg';
 import serviceStorage from '@/assets/service-storage.jpg';
-import logoImage from '@/assets/logo.png';
 
 const Classic = () => {
   const [formData, setFormData] = useState({
@@ -192,11 +190,9 @@ Variant: classic
       <header className="bg-white border-b-4 border-[#1a365d] py-4 sticky top-0 z-50 shadow-md">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img 
-              src={logoImage} 
-              alt="TruMove Logo" 
-              className="h-10 w-auto"
-            />
+            <div className="w-12 h-12 bg-[#1a365d] rounded-lg flex items-center justify-center">
+              <Truck className="w-7 h-7 text-white" />
+            </div>
             <div>
               <span className="text-2xl font-bold text-[#1a365d] tracking-tight">TruMove</span>
               <div className="text-xs text-gray-500 -mt-1">Professional Moving Services</div>
@@ -267,7 +263,7 @@ Variant: classic
           <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
             {/* BBB Accredited */}
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#3d5a47] rounded flex items-center justify-center">
+              <div className="w-12 h-12 bg-[#005a8c] rounded flex items-center justify-center">
                 <span className="text-white font-bold text-lg">BBB</span>
               </div>
               <div className="text-left">
@@ -278,8 +274,8 @@ Variant: classic
             
             {/* FMCSA Licensed */}
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#3d5a47] rounded flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-[#1a365d] rounded flex items-center justify-center">
+                <Shield className="w-6 h-6 text-amber-400" />
               </div>
               <div className="text-left">
                 <div className="text-xs text-gray-500 uppercase tracking-wide">FMCSA</div>
@@ -289,7 +285,7 @@ Variant: classic
             
             {/* Fully Insured */}
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#3d5a47] rounded flex items-center justify-center">
+              <div className="w-12 h-12 bg-emerald-600 rounded flex items-center justify-center">
                 <BadgeCheck className="w-6 h-6 text-white" />
               </div>
               <div className="text-left">
@@ -300,7 +296,7 @@ Variant: classic
             
             {/* USDOT */}
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#3d5a47] rounded flex items-center justify-center">
+              <div className="w-12 h-12 bg-[#1a365d] rounded flex items-center justify-center">
                 <Truck className="w-6 h-6 text-white" />
               </div>
               <div className="text-left">
@@ -558,19 +554,19 @@ Variant: classic
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-[#4a6b52]" />
+                    <CheckCircle2 className="w-6 h-6 text-amber-500" />
                     <span className="text-[#1a365d] font-medium">Fully Licensed</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-[#4a6b52]" />
+                    <CheckCircle2 className="w-6 h-6 text-amber-500" />
                     <span className="text-[#1a365d] font-medium">Fully Insured</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-[#4a6b52]" />
+                    <CheckCircle2 className="w-6 h-6 text-amber-500" />
                     <span className="text-[#1a365d] font-medium">No Hidden Fees</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-[#4a6b52]" />
+                    <CheckCircle2 className="w-6 h-6 text-amber-500" />
                     <span className="text-[#1a365d] font-medium">24/7 Support</span>
                   </div>
                 </div>
@@ -579,28 +575,28 @@ Variant: classic
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1">
-                <div className="bg-[#0f172a] rounded-xl p-8 text-white">
-                  <Award className="w-16 h-16 text-[#6b9b76] mb-6" />
+                <div className="bg-[#1a365d] rounded-xl p-8 text-white">
+                  <Award className="w-16 h-16 text-amber-400 mb-6" />
                   <h3 className="text-2xl font-bold mb-4">Our Family Promise</h3>
                   <ul className="space-y-4">
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#6b9b76] rounded-full mt-2" />
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
                       <span>On-time pickup and delivery, guaranteed</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#6b9b76] rounded-full mt-2" />
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
                       <span>Careful handling of all your belongings</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#6b9b76] rounded-full mt-2" />
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
                       <span>Transparent pricing with no surprises</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#6b9b76] rounded-full mt-2" />
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
                       <span>Background-checked, trained crew members</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#6b9b76] rounded-full mt-2" />
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mt-2" />
                       <span>A real person answers when you call</span>
                     </li>
                   </ul>
@@ -726,17 +722,15 @@ Variant: classic
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="bg-[hsl(222,47%,11%)] text-white py-16">
+      <footer id="contact" className="bg-[#0f2744] text-white py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             {/* Company Info */}
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
-                <img 
-                  src={logoImage} 
-                  alt="TruMove Logo" 
-                  className="h-8 w-auto brightness-0 invert"
-                />
+                <div className="w-10 h-10 bg-amber-500 rounded flex items-center justify-center">
+                  <Truck className="w-6 h-6 text-white" />
+                </div>
                 <span className="text-2xl font-bold">TruMove</span>
               </div>
               <p className="text-white/70 leading-relaxed mb-6 max-w-md">
@@ -744,10 +738,10 @@ Variant: classic
                 and trusted by families nationwide for over 25 years.
               </p>
               <div className="flex items-center gap-4">
-                <div className="bg-white/10 px-3 py-2 rounded text-sm border border-white/20">
+                <div className="bg-white/10 px-3 py-2 rounded text-sm">
                   <span className="text-white/60">USDOT #</span> 4507647
                 </div>
-                <div className="bg-white/10 px-3 py-2 rounded text-sm border border-white/20">
+                <div className="bg-white/10 px-3 py-2 rounded text-sm">
                   <span className="text-white/60">MC #</span> 1784124
                 </div>
               </div>
@@ -785,9 +779,6 @@ Variant: classic
                 <a href="#quote" className="block hover:text-amber-400 transition-colors">Get a Quote</a>
                 <a href="#about" className="block hover:text-amber-400 transition-colors">About Us</a>
                 <a href="#faq" className="block hover:text-amber-400 transition-colors">FAQ</a>
-                <Link to="/" className="block hover:text-[#6b9b76] transition-colors text-white/50 text-sm mt-4">
-                  ← TruMove Main Site
-                </Link>
               </div>
             </div>
           </div>
