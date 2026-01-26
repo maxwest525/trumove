@@ -1,5 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
-import { Sparkles, Shield, MessageSquare, MapPin, Video, Headphones, LucideIcon } from "lucide-react";
+import { Sparkles, Shield, MessageSquare, MapPin, Video, Headphones, User, LucideIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -16,6 +16,7 @@ interface NavItem {
   label: string;
   href: string | null;
   action?: string;
+  isAgentLogin?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -25,6 +26,7 @@ const navItems: NavItem[] = [
   { icon: MapPin, label: "Property Lookup", href: "/property-lookup" },
   { icon: Video, label: "Video Consult", href: "/book" },
   { icon: Headphones, label: "Call Us", href: "tel:+16097277647" },
+  { icon: User, label: "Agent Login", href: "/agent-login", isAgentLogin: true },
 ];
 
 export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingNavProps) {
@@ -34,7 +36,7 @@ export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingN
     const isActive = item.href && location.pathname === item.href;
     const Icon = item.icon;
     
-    const itemClasses = `tru-static-nav-item ${isActive ? 'is-active' : ''}`;
+    const itemClasses = `tru-static-nav-item ${isActive ? 'is-active' : ''} ${item.isAgentLogin ? 'is-agent-login' : ''}`;
 
     const content = (
       <>

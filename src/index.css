@@ -2551,6 +2551,13 @@
   color: hsl(var(--tm-ink) / 0.5);
 }
 
+/* Agent Login - pushed to far right with separator */
+.tru-static-nav-item.is-agent-login {
+  margin-left: auto;
+  padding-left: 16px;
+  border-left: 1px solid hsl(var(--border) / 0.4);
+}
+
 /* =============================================
    FLOATING NAV TOOLTIP PREVIEWS
    ============================================= */
@@ -14653,9 +14660,10 @@
 .tru-feature-carousel-fullwidth {
   width: 100%;
   max-width: 1480px;
-  margin: 64px auto 0;
-  padding: 32px 24px;
+  margin: 48px auto 0;
+  padding: 24px 24px 32px;
   background: transparent;
+  text-align: center;
 }
 
 .tru-feature-carousel-wrapper {
@@ -14664,13 +14672,21 @@
   padding: 0;
 }
 
-/* Section Headline */
+/* Section Headline - Compact badge style */
 .features-carousel-headline {
-  text-align: center;
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: hsl(var(--foreground));
-  margin-bottom: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+  padding: 6px 16px;
+  background: hsl(var(--muted) / 0.3);
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 20px;
 }
 
 /* ============================================
@@ -14725,7 +14741,7 @@
   box-sizing: border-box;
 }
 
-/* Top accent stripe */
+/* Top accent stripe - subtle green */
 .features-carousel-card::before {
   content: '';
   position: absolute;
@@ -14733,20 +14749,20 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, hsl(var(--primary) / 0.6), hsl(var(--primary) / 0.2));
+  background: linear-gradient(90deg, hsl(var(--primary) / 0.3), hsl(var(--primary) / 0.08));
   border-radius: 16px 16px 0 0;
-  opacity: 0.7;
+  opacity: 0.4;
   transition: opacity 0.25s ease;
 }
 
 /* Hover effects - no transforms to prevent border artifacts */
 .features-carousel-card:hover {
-  border-color: hsl(var(--primary) / 0.4);
-  box-shadow: 0 6px 24px hsl(var(--primary) / 0.12);
+  border-color: hsl(var(--primary) / 0.3);
+  box-shadow: 0 6px 24px hsl(var(--tm-ink) / 0.08);
 }
 
 .features-carousel-card:hover::before {
-  opacity: 1;
+  opacity: 0.6;
 }
 
 /* Remove active state transform to prevent border flicker */
@@ -14769,7 +14785,7 @@
   min-height: 70px;
 }
 
-/* Icon badge - circular with subtle green bg and grey border */
+/* Icon badge - circular with very subtle green bg and subtle border */
 .features-carousel-card-icon {
   flex-shrink: 0;
   width: 36px;
@@ -14777,17 +14793,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--primary) / 0.08);
-  border: 1px solid hsl(var(--border));
+  background: hsl(var(--primary) / 0.04);
+  border: 1px solid hsl(var(--border) / 0.5);
   border-radius: 50%;
   color: hsl(var(--tm-ink) / 0.6);
   transition: all 0.25s ease;
 }
 
 .features-carousel-card:hover .features-carousel-card-icon {
-  background: hsl(var(--primary) / 0.12);
+  background: hsl(var(--primary) / 0.06);
   color: hsl(var(--tm-ink) / 0.8);
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
 }
 
 .features-carousel-card-text {
@@ -14914,8 +14929,53 @@
   }
   
   .features-carousel-headline {
-    font-size: 1.5rem;
-    margin-bottom: 24px;
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    margin-bottom: 12px;
+  }
+}
+
+/* Hover preview overlay */
+.features-carousel-preview-overlay {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 12px 40px hsl(var(--tm-ink) / 0.15);
+  z-index: 50;
+  animation: previewFadeIn 0.2s ease-out;
+}
+
+.features-carousel-preview-overlay img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.features-carousel-preview-label {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  margin-top: 8px;
+  padding-bottom: 4px;
+}
+
+@keyframes previewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }
 
