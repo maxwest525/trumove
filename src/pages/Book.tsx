@@ -152,7 +152,7 @@ Thank you!
                     <div className="text-sm font-bold text-foreground">TruMove • Live session preview</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-xs font-bold text-primary">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-foreground/10 text-xs font-bold text-foreground">
                   <Shield className="w-3.5 h-3.5" />
                   Secure
                   <span className="text-muted-foreground">00:15</span>
