@@ -7,7 +7,7 @@ import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { TruckAerialView } from "@/components/tracking/TruckAerialView";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
-import { RouteInsights } from "@/components/tracking/RouteInsights";
+// RouteInsights removed - "Did You Know" section eliminated
 import { CheckMyTruckModal, isMultiStop, isSingleStop, type TruckStatus, type MultiStopTruckStatus } from "@/components/tracking/CheckMyTruckModal";
 import { MultiStopSummaryCard } from "@/components/tracking/MultiStopSummaryCard";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
@@ -306,7 +306,11 @@ export default function LiveTracking() {
       {/* Dashboard Header */}
       <header className="tracking-header">
         <div className="flex items-center gap-3">
-          <Truck className="w-5 h-5 text-primary" />
+          <img 
+            src={logoImg} 
+            alt="TruMove" 
+            className="h-6 brightness-0 invert"
+          />
           <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/80">
             Shipment Command Center
           </span>
@@ -597,14 +601,32 @@ export default function LiveTracking() {
             isTracking={isTracking}
           />
 
-          {/* Route Insights - "Did You Know?" */}
-          <RouteInsights
-            originCoords={originCoords}
-            destCoords={destCoords}
-            originName={originName}
-            destName={destName}
-          />
         </div>
+
+        {/* Quick Stats Strip - Below Map */}
+        {routeData && (
+          <div className="tracking-stats-strip" style={{ gridColumn: '1 / -1' }}>
+            <div className="stats-strip-item">
+              <span className="stats-strip-label">ETA</span>
+              <span className="stats-strip-value">{adjustedETA || formatTime(etaTime)}</span>
+            </div>
+            <div className="stats-strip-divider" />
+            <div className="stats-strip-item">
+              <span className="stats-strip-label">Time Left</span>
+              <span className="stats-strip-value">{adjustedDuration || formatDuration(remainingDuration)}</span>
+            </div>
+            <div className="stats-strip-divider" />
+            <div className="stats-strip-item">
+              <span className="stats-strip-label">Distance</span>
+              <span className="stats-strip-value">{Math.round(totalDistance - distanceTraveled)} mi</span>
+            </div>
+            <div className="stats-strip-divider" />
+            <div className="stats-strip-item">
+              <span className="stats-strip-label">Progress</span>
+              <span className="stats-strip-value">{Math.round(progress)}%</span>
+            </div>
+          </div>
+        )}
 
         {/* Weather Strip */}
         <RouteWeather

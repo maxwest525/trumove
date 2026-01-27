@@ -23469,10 +23469,10 @@
   overflow-y: auto;
 }
 
-/* Map Container - Compact for symmetrical dashboard */
+/* Map Container - Expands to fill vertical space */
 .tracking-map-container {
-  min-height: 200px;
-  max-height: 260px;
+  min-height: 300px;
+  flex: 1;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid hsl(var(--border));
@@ -23480,6 +23480,53 @@
 
 .dark .tracking-map-container {
   border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Horizontal Stats Strip - Below Map */
+.tracking-stats-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 14px 24px;
+  background: hsl(var(--muted) / 0.5);
+  border-top: 1px solid hsl(var(--border));
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.dark .tracking-stats-strip {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.stats-strip-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stats-strip-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: hsl(var(--muted-foreground));
+}
+
+.stats-strip-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.stats-strip-divider {
+  width: 1px;
+  height: 36px;
+  background: hsl(var(--border));
+}
+
+.dark .stats-strip-divider {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Dashboard (Right Side) - Larger cards */
