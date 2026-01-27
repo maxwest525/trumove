@@ -1461,12 +1461,13 @@ export default function Index() {
               <div className="tru-why-card-premium">
                 <div className="tru-why-card-glow" />
                 <div className="tru-why-card-inner">
-                  <div className="tru-why-header">
-                    <span className="tru-why-badge">Why TruMove</span>
-                  </div>
-                  
                   {/* Title */}
                   <h3 className="tru-why-title">Why TruMove</h3>
+                  
+                  {/* Subheadline repositioned here */}
+                  <p className="tru-why-subheadline">
+                    Technology, transparency, and control — built for the most important move of your life.
+                  </p>
                   
                   {/* Main Paragraph - Our story/mission */}
                   <p className="tru-why-paragraph">
