@@ -23397,7 +23397,8 @@
   grid-template-columns: 320px 1fr 320px;
   gap: 20px;
   padding: 20px;
-  max-height: calc(100vh - 180px);
+  overflow: auto;
+  min-height: 0;
 }
 
 @media (max-width: 1280px) {
@@ -23409,7 +23410,6 @@
 @media (max-width: 1024px) {
   .tracking-content {
     grid-template-columns: 1fr;
-    max-height: none;
   }
   
   .tracking-sidebar {
@@ -23458,11 +23458,13 @@
   overflow-y: auto;
 }
 
-/* Timeline Container */
+/* Timeline Container - Fixed at bottom, not overlapping */
 .tracking-timeline-container {
-  padding: 16px 20px 20px;
-  background: rgba(255, 255, 255, 0.02);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
 }
 
 /* Glass Card Style */

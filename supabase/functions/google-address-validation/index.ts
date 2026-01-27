@@ -84,20 +84,34 @@ serve(async (req) => {
       console.error(`Google API error: ${response.status}`, errorText);
       
       // Check for specific error types
-      if (response.status === 403) {
+      if (response.status === 400 || response.status === 403) {
+        // Parse the error to give better feedback
+        let errorMessage = 'Address Validation API error';
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.error?.message) {
+            errorMessage = errorData.error.message;
+          }
+        } catch {}
+        
         return new Response(
           JSON.stringify({ 
-            error: 'Address Validation API not enabled or quota exceeded', 
+            error: errorMessage, 
             code: 'API_ERROR',
-            details: 'Please enable the Address Validation API in Google Cloud Console'
+            details: 'The Address Validation API may not be enabled. Enable it at console.cloud.google.com',
+            fallbackToMapbox: true
           }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
       return new Response(
-        JSON.stringify({ error: 'Failed to validate address', code: 'VALIDATION_FAILED' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          error: 'Failed to validate address', 
+          code: 'VALIDATION_FAILED',
+          fallbackToMapbox: true 
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
