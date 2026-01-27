@@ -148,7 +148,7 @@ export function StreetViewPreview({
     return (
       <div className="street-view-compact">
         {/* Compact Image Container */}
-        <div className="relative w-full h-[100px] rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10">
+        <div className="relative w-full h-[180px] rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10">
           {coordinates ? (
             <>
               {isLoading && (
