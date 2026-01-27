@@ -1,91 +1,269 @@
 
-# Plan: Move Form Left & Add Subheadline
+# Plan: Full-Width Hero Background with Parallax + Permanent Route Summary
 
 ## Overview
-Two changes:
-1. Move the form significantly more to the left by adjusting grid and padding
-2. Add a subheadline "Designed to put you in control of your move." under the main headline
+This plan addresses 5 key improvements to the homepage hero section:
 
-## Changes
+1. **Full-Width Hero Background** - Move hero image to span the entire top of the hero section (behind form + content)
+2. **Lighter Gradient Overlay** - Reduce overlay intensity to show more of the image
+3. **Parallax Effect** - Add subtle scroll-based movement to the hero image
+4. **Better Object Position** - Adjust image cropping to show more of the family
+5. **Permanent Route Summary Bar** - Embed a static origin-distance-destination bar in the form with mini map preview
 
-### 1. Shift Form More to the Left
-**File:** `src/index.css`
+---
 
-Adjust the grid layout and padding to push the form leftward without affecting the right content panel:
+## Technical Changes
+
+### 1. Restructure Hero Layout for Full-Width Background Image
+
+**File: `src/pages/Index.tsx`**
+
+Move the hero image from the right content panel to be a background layer for the entire hero section:
+
+```text
+BEFORE:
++------------------+------------------+
+| [Header Headline spanning both]    |
++------------------+------------------+
+| [Form Panel]     | [Image Panel]    |
++------------------+------------------+
+
+AFTER:
++--------------------------------------+
+| [HERO IMAGE - Full width background] |
+|   +------------------+--------------+|
+|   | [Header Headline spanning both] ||
+|   +------------------+--------------+|
+|   | [Form Panel]     | [Content]    ||
+|   +------------------+--------------+|
++--------------------------------------+
+```
+
+Changes:
+- Add a new `tru-hero-bg-image` container as the first child inside `.tru-hero.tru-hero-split`
+- Position the image absolutely to fill the hero section
+- Apply parallax transform via the existing `useParallax` hook
+- Remove the hero image from the right content panel (but KEEP the text content)
+
+### 2. Lighter Gradient Overlay
+
+**File: `src/index.css`**
+
+Update the overlay to use a softer, more directional gradient:
 
 ```css
-/* Update around line 1041-1049 */
-.tru-hero.tru-hero-split {
-  display: grid;
-  grid-template-columns: 520px 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 32px 64px;                    /* Increased column gap from 48px to 64px */
-  align-items: start;
-  padding: 4px 24px 16px 48px;       /* Increased left padding from 24px to 48px */
-  max-width: 1480px;
-  margin: 0 auto;
+.tru-hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    hsl(var(--background) / 0.4) 0%,
+    hsl(var(--background) / 0.7) 30%,
+    hsl(var(--background) / 0.92) 70%,
+    hsl(var(--background)) 100%
+  );
+  z-index: 1;
 }
 ```
 
-This shifts the entire grid (including form) leftward while giving more breathing room between the form and right panel.
+This creates a top-to-bottom fade that:
+- Shows more of the image at the top
+- Provides strong contrast for text at the bottom
+- Blends naturally into the page background
 
-### 2. Add Subheadline Under Main Headline
-**File:** `src/pages/Index.tsx`
+### 3. Parallax Effect on Background Image
 
-Add a new paragraph right after the h1 headline inside `.tru-hero-header-section`:
+**File: `src/pages/Index.tsx`**
+
+Add a new parallax ref specifically for the background image:
 
 ```tsx
-{/* Around lines 666-670 */}
-<div className="tru-hero-header-section">
-  <h1 className="tru-hero-headline-main">
-    <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
-  </h1>
-  {/* NEW: Subheadline */}
-  <p className="tru-hero-header-subheadline">
-    Designed to put you in control of your move.
-  </p>
+const [parallaxBgRef, bgParallax] = useParallax<HTMLDivElement>({ 
+  speed: 0.15, 
+  direction: "up" 
+});
+
+// Apply to the background image container:
+<div 
+  ref={parallaxBgRef}
+  className="tru-hero-bg-image"
+  style={{ transform: `translateY(${bgParallax.y}px) scale(1.05)` }}
+>
+  <img src={heroFamilyMove} ... />
 </div>
 ```
 
-### 3. Style the New Subheadline
-**File:** `src/index.css`
+The slight initial scale (1.05) prevents edges from showing during parallax movement.
 
-Add styling for the new subheadline element (after the headline styles around line 1070):
+### 4. Adjust Image Object Position
+
+**File: `src/index.css`**
+
+Update the hero image positioning to show more of the family:
 
 ```css
-.tru-hero-header-section .tru-hero-header-subheadline {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.7);
-  margin: 8px 0 0 0;
-  letter-spacing: 0.01em;
-  opacity: 0;
-  animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards;
+.tru-hero-bg-image img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%; /* Move focus upward to show faces */
 }
 ```
+
+### 5. Permanent Route Summary Bar in Form
+
+**File: `src/pages/Index.tsx`**
+
+Add a persistent route summary strip that always displays (with placeholder styling when empty):
+
+```tsx
+{/* Permanent Route Summary - Always Visible */}
+<div className="tru-qb-route-bar-permanent">
+  <div className="tru-qb-route-bar-inner">
+    {/* Origin */}
+    <div className="tru-qb-route-bar-endpoint">
+      <MapPin className="w-3.5 h-3.5" />
+      <div className="tru-qb-route-bar-endpoint-text">
+        <span className="tru-qb-route-bar-label">Origin</span>
+        <span className="tru-qb-route-bar-value">
+          {fromCity || "Enter origin"}
+        </span>
+      </div>
+    </div>
+    
+    {/* Mini Map / Distance */}
+    <div className="tru-qb-route-bar-center">
+      {distance > 0 ? (
+        <>
+          <div className="tru-qb-route-bar-mini-map">
+            {/* Tiny Mapbox static route preview */}
+            <img 
+              src={`https://api.mapbox.com/styles/v1/mapbox/light-v11/static/...`}
+              alt="Route preview"
+            />
+          </div>
+          <span className="tru-qb-route-bar-distance">{distance} mi</span>
+        </>
+      ) : (
+        <Route className="w-4 h-4 text-muted-foreground/40" />
+      )}
+    </div>
+    
+    {/* Destination */}
+    <div className="tru-qb-route-bar-endpoint">
+      <MapPin className="w-3.5 h-3.5" />
+      <div className="tru-qb-route-bar-endpoint-text">
+        <span className="tru-qb-route-bar-label">Destination</span>
+        <span className="tru-qb-route-bar-value">
+          {toCity || "Enter destination"}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+**File: `src/index.css`**
+
+Style the permanent route bar to maintain form sizing:
+
+```css
+.tru-qb-route-bar-permanent {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, hsl(var(--tm-ink) / 0.02) 0%, hsl(var(--tm-ink) / 0.05) 100%);
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.tru-qb-route-bar-inner {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tru-qb-route-bar-mini-map {
+  width: 60px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+}
+
+.tru-qb-route-bar-mini-map img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+```
+
+---
+
+## Font Readability Enhancements
+
+Add text shadows and semi-transparent backgrounds to ensure all text remains readable over the hero image:
+
+```css
+.tru-hero-header-section .tru-hero-headline-main {
+  text-shadow: 0 2px 20px hsl(var(--background) / 0.8);
+}
+
+.tru-hero-header-section .tru-hero-header-subheadline {
+  text-shadow: 0 1px 12px hsl(var(--background) / 0.6);
+}
+
+.tru-floating-form-card {
+  background: hsl(var(--card) / 0.97);
+  backdrop-filter: blur(8px);
+}
+```
+
+---
+
+## Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/pages/Index.tsx` | Add hero background image layer with parallax, add permanent route bar component, remove image from right panel |
+| `src/index.css` | Add `.tru-hero-bg-image` styles, update gradient overlay, add permanent route bar styles, add text shadow utilities |
+
+---
 
 ## Visual Result
 
 ```text
 +------------------------------------------------------------------+
-| [Logo] A Smarter Way To Move.                                    |
-| Designed to put you in control of your move.  ← NEW SUBHEADLINE  |
-+------------------------------------------------------------------+
-| ← 48px padding                                                   |
-|                                                                  |
-| [Form Card 520px]          ← 64px gap →   "blagg is gay"         |
-|  - Progress bar                           Skip the complexity... |
-|  - From/To inputs                         Feature icons...       |
-|  - Continue btn                                                  |
-|                                                                  |
+|  [HERO IMAGE - Family moving - parallax scroll effect]           |
+|  +------------------------------------------------------------+  |
+|  | [Gradient Overlay - light top, solid bottom]               |  |
+|  |  +-------------------------------------------------------+ |  |
+|  |  | [Logo] A Smarter Way To Move.                         | |  |
+|  |  | Designed to put you in control of your move.          | |  |
+|  |  +-------------------------------------------------------+ |  |
+|  |                                                            |  |
+|  |  +------------------+              +---------------------+ |  |
+|  |  | FORM CARD        |              | Skip the Van Line   | |  |
+|  |  | +--------------+ |              | AI inventory scan   | |  |
+|  |  | | ROUTE BAR    | |              | Live video consults | |  |
+|  |  | | [O] 953mi [D]| |              | FMCSA vetting       | |  |
+|  |  | +--------------+ |              +---------------------+ |  |
+|  |  | From: ________   |                                      |  |
+|  |  | To: __________   |                                      |  |
+|  |  | Date: ________   |                                      |  |
+|  |  | [Analyze Route]  |                                      |  |
+|  |  +------------------+                                      |  |
+|  +------------------------------------------------------------+  |
 +------------------------------------------------------------------+
 ```
 
-## Files Modified
-1. `src/index.css` - Adjust grid padding/gap and add subheadline styling
-2. `src/pages/Index.tsx` - Add subheadline paragraph element
+---
 
 ## Technical Notes
-- The form stays at 520px width (unchanged)
-- Only positioning adjustments via padding and gap
-- Animation timing on subheadline is staggered to flow after the headline
+
+- The hero image uses `scale(1.05)` to prevent edge reveal during parallax
+- Form card uses `backdrop-filter: blur(8px)` for a frosted glass effect
+- The mini-map in the route bar uses Mapbox Static API at 60x40px
+- All text has appropriate shadows/contrast for readability
+- The permanent route bar replaces the conditional one but keeps the same data bindings
