@@ -1041,7 +1041,7 @@ export default function Index() {
                         <div className="tru-qb-route-summary tru-qb-route-summary-permanent">
                           <div className="tru-qb-route-summary-inner">
                             {/* Origin */}
-                            <div className={`tru-qb-route-summary-item ${updatedFields.has('from') ? 'is-pulsing' : ''}`}>
+                            <div className={`tru-qb-route-summary-item ${fromCity ? 'has-data' : ''} ${updatedFields.has('from') ? 'is-pulsing' : ''}`}>
                               <div className="tru-qb-route-summary-icon">
                                 {fromCoords ? (
                                   <img 
@@ -1069,7 +1069,7 @@ export default function Index() {
                             </div>
                             
                             {/* Destination */}
-                            <div className={`tru-qb-route-summary-item ${updatedFields.has('to') ? 'is-pulsing' : ''}`}>
+                            <div className={`tru-qb-route-summary-item ${toCity ? 'has-data' : ''} ${updatedFields.has('to') ? 'is-pulsing' : ''}`}>
                               <div className="tru-qb-route-summary-icon">
                                 {toCoords ? (
                                   <img 
@@ -1088,16 +1088,6 @@ export default function Index() {
                             </div>
                           </div>
                         </div>
-
-                        {/* Compact Route Preview Map - shows when both locations entered */}
-                        {fromCoords && toCoords && (
-                          <div className="tru-qb-route-preview-map">
-                            <MapboxMoveMap 
-                              fromZip={fromZip}
-                              toZip={toZip}
-                            />
-                          </div>
-                        )}
 
                         {/* Move Date */}
                         <p className="tru-qb-section-label" style={{ marginTop: '1.25rem' }}>Move Date</p>

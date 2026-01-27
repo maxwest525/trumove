@@ -23852,6 +23852,29 @@
 /* =============================================
    PERMANENT ROUTE SUMMARY STRIP
    ============================================= */
+
+/* Entrance animation for route summary */
+@keyframes route-summary-entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtle breathing effect for empty placeholder items */
+@keyframes route-item-breathe {
+  0%, 100% {
+    background: hsl(var(--muted) / 0.35);
+  }
+  50% {
+    background: hsl(var(--muted) / 0.55);
+  }
+}
+
 .tru-qb-route-summary-permanent {
   margin-top: 20px;
   margin-bottom: 12px;
@@ -23861,6 +23884,17 @@
   background: hsl(var(--muted) / 0.25);
   border-radius: 14px;
   border: 1px solid hsl(var(--border) / 0.5);
+  animation: route-summary-entrance 0.5s ease-out;
+}
+
+/* Apply breathing animation to items without data */
+.tru-qb-route-summary-permanent .tru-qb-route-summary-item:not(.has-data) {
+  animation: route-item-breathe 2.5s ease-in-out infinite;
+}
+
+.tru-qb-route-summary-permanent .tru-qb-route-summary-distance:not(.has-value) {
+  animation: route-item-breathe 2.5s ease-in-out infinite;
+  animation-delay: 0.3s;
 }
 
 .tru-qb-route-summary-permanent .tru-qb-route-summary-inner {
