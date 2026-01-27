@@ -8,3 +8,12 @@ verify_jwt = false
 
 [functions.weather-route]
 verify_jwt = false
+
+[functions.google-address-validation]
+verify_jwt = false
+
+[functions.google-routes]
+verify_jwt = false
+
+[functions.google-places-insights]
+verify_jwt = false

@@ -7,6 +7,7 @@ import { TrackingTimeline } from "@/components/tracking/TrackingTimeline";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
+import { RouteInsights } from "@/components/tracking/RouteInsights";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
 import FloatingNav from "@/components/FloatingNav";
@@ -527,6 +528,14 @@ export default function LiveTracking() {
             timeLabel="ETA"
             variant="destination"
             googleApiKey={GOOGLE_MAPS_API_KEY}
+          />
+
+          {/* Route Insights - "Did You Know?" */}
+          <RouteInsights
+            originCoords={originCoords}
+            destCoords={destCoords}
+            originName={originName}
+            destName={destName}
           />
         </div>
 

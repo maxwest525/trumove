@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { Scale, CheckCircle2, AlertCircle, ChevronRight, Radio, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import { 
   WeighStation, 
   findWeighStationsOnRoute, 
@@ -18,6 +19,9 @@ export function WeighStationChecklist({
   progress,
   isTracking
 }: WeighStationChecklistProps) {
+  // Track which stations have had notifications shown
+  const notifiedStations = useRef<Set<string>>(new Set());
+
   // Find weigh stations along the route
   const stationsOnRoute = useMemo(() => {
     if (!routeCoordinates.length) return [];
@@ -33,6 +37,39 @@ export function WeighStationChecklist({
       status: getStationStatus(routeIndex, routeCoordinates.length, progress)
     }));
   }, [stationsOnRoute, routeCoordinates.length, progress]);
+
+  // Show toast notifications for approaching stations
+  useEffect(() => {
+    if (!isTracking) return;
+
+    stationsWithStatus.forEach(({ station, status }) => {
+      const notifyKey = `approaching-${station.id}`;
+      const passedKey = `passed-${station.id}`;
+
+      // Notify when approaching
+      if (status === 'approaching' && !notifiedStations.current.has(notifyKey)) {
+        notifiedStations.current.add(notifyKey);
+        toast.info(`⚖️ Approaching ${station.name}`, {
+          description: `${station.interstate} • Mile ${station.mile_marker} • ${station.state}${station.has_prepass ? ' (PrePass)' : ''}`,
+          duration: 5000,
+        });
+      }
+
+      // Notify when passed
+      if (status === 'passed' && !notifiedStations.current.has(passedKey)) {
+        notifiedStations.current.add(passedKey);
+        toast.success(`✅ Cleared ${station.name}`, {
+          description: `${station.interstate} weigh station passed`,
+          duration: 3000,
+        });
+      }
+    });
+  }, [stationsWithStatus, isTracking]);
+
+  // Reset notifications when route changes
+  useEffect(() => {
+    notifiedStations.current = new Set();
+  }, [routeCoordinates]);
 
   const passedCount = stationsWithStatus.filter(s => s.status === 'passed').length;
   const totalCount = stationsWithStatus.length;
