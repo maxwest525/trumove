@@ -33,6 +33,7 @@ import ChatModal from "@/components/chat/ChatModal";
 import FloatingTruckChat from "@/components/FloatingTruckChat";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import FeatureCarousel from "@/components/FeatureCarousel";
 import { calculateDistance } from "@/lib/distanceCalculator";
@@ -477,44 +478,50 @@ export default function Index() {
     {
       id: 'ai-scanner',
       icon: Scan,
-      title: 'AI Room Scanner',
-      shortDesc: 'Instant inventory from photos or video',
-      longDesc: 'Upload photos of your rooms and our AI automatically identifies furniture, calculates weight and volume, and generates an accurate inventory list in seconds.'
+      title: 'Computer Vision Inventory',
+      shortDesc: 'AI scans your rooms in seconds',
+      longDesc: 'Our proprietary neural network detects furniture, estimates cubic footage, and calculates weight — eliminating the guesswork that leads to surprise fees on move day.',
+      hoverTip: 'Skip the clipboard. Snap photos and let AI do the counting.'
     },
     {
       id: 'video-consults',
       icon: Video,
-      title: 'Live Video Consults',
-      shortDesc: 'Walk your home with a moving specialist',
-      longDesc: 'Schedule a live video call where a TruMove specialist walks through your home with you, providing personalized guidance and an accurate quote.'
+      title: 'Live Video Walk-Through',
+      shortDesc: 'Real-time consultation with experts',
+      longDesc: 'A TruMove specialist joins you via video to walk your home room-by-room. They catch details photos miss and build a quote you can actually trust.',
+      hoverTip: 'Like FaceTime, but with a moving pro on the other end.'
     },
     {
       id: 'fmcsa-vetting',
       icon: ShieldCheck,
-      title: 'FMCSA + DOT Safety Vetting',
-      shortDesc: 'Verified federal safety and compliance data',
-      longDesc: 'We query the federal SAFER Web Services database to verify operating authority, insurance coverage, and safety ratings for every carrier we recommend.'
+      title: 'FMCSA Safety Intelligence',
+      shortDesc: 'Federal database cross-reference',
+      longDesc: 'We pull real-time data from the SAFER Web Services API — checking operating authority, crash history, and compliance ratings before any carrier makes our list.',
+      hoverTip: 'Same data the feds use. Zero guesswork.'
     },
     {
       id: 'authority-check',
       icon: Shield,
-      title: 'Authority Verification',
-      shortDesc: 'Confirm licensing and operating authority',
-      longDesc: 'Every carrier is checked for active operating authority status. We flag any revoked, suspended, or inactive licenses before you book.'
+      title: 'License Verification Engine',
+      shortDesc: 'Active authority confirmation',
+      longDesc: 'Every carrier is validated for active MC and USDOT numbers. Revoked, suspended, or lapsed licenses get flagged instantly — you only see vetted options.',
+      hoverTip: "If it's not active, you won't see it."
     },
     {
       id: 'insurance-check',
       icon: CreditCard,
-      title: 'Insurance Coverage Checks',
-      shortDesc: 'Validated cargo and liability coverage',
-      longDesc: 'We verify that carriers maintain adequate bodily injury, property damage, and cargo insurance coverage that meets or exceeds federal minimums.'
+      title: 'Coverage Validation',
+      shortDesc: 'Insurance limits verified on file',
+      longDesc: 'We confirm cargo, liability, and bodily injury coverage meets or exceeds federal minimums — so your belongings are protected before they leave the driveway.',
+      hoverTip: 'Proof of coverage, not just promises.'
     },
     {
       id: 'transparency',
       icon: Zap,
-      title: 'Real-Time Updates',
-      shortDesc: 'Know exactly where your move stands',
-      longDesc: 'Get real-time updates on carrier matching, booking status, and move day coordination. No black box - you see everything we see.'
+      title: 'Zero Black Box',
+      shortDesc: 'Full visibility at every stage',
+      longDesc: 'From carrier matching to move-day coordination, you see exactly what we see. Real-time status updates, no hidden fees, no corporate runaround.',
+      hoverTip: "You're in the loop. Always."
     }
   ];
   
@@ -1460,24 +1467,38 @@ export default function Index() {
                     confidently match you with carriers that best meet your needs.
                   </p>
                   
-                  {/* Feature Rows - All 6 features as clickable rows with stagger animation */}
+                  {/* Feature Rows - All 6 features as clickable rows with hover tooltips */}
                   <div className="tru-why-feature-list">
                     {whyTruMoveFeatures.map((feature, index) => (
-                      <button
-                        key={feature.id}
-                        className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
-                        style={{ '--stagger-index': index } as React.CSSProperties}
-                        onClick={() => setActiveFeature(activeFeature === index ? null : index)}
-                      >
-                        <div className="tru-why-feature-row-icon">
-                          <feature.icon className="w-4 h-4" />
-                        </div>
-                        <div className="tru-why-feature-row-content">
-                          <span className="tru-why-feature-row-title">{feature.title}</span>
-                          <span className="tru-why-feature-row-desc">{feature.shortDesc}</span>
-                        </div>
-                        <ChevronRight className="w-4 h-4 tru-why-feature-arrow" />
-                      </button>
+                      <HoverCard key={feature.id} openDelay={150} closeDelay={100}>
+                        <HoverCardTrigger asChild>
+                          <button
+                            className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
+                            style={{ '--stagger-index': index } as React.CSSProperties}
+                            onClick={() => setActiveFeature(activeFeature === index ? null : index)}
+                          >
+                            <div className="tru-why-feature-row-icon">
+                              <feature.icon className="w-4 h-4" />
+                            </div>
+                            <div className="tru-why-feature-row-content">
+                              <span className="tru-why-feature-row-title">{feature.title}</span>
+                              <span className="tru-why-feature-row-desc">{feature.shortDesc}</span>
+                            </div>
+                            <ChevronRight className="w-4 h-4 tru-why-feature-arrow" />
+                          </button>
+                        </HoverCardTrigger>
+                        <HoverCardContent 
+                          side="left" 
+                          align="center" 
+                          className="tru-feature-hover-card"
+                          sideOffset={12}
+                        >
+                          <div className="tru-feature-hover-inner">
+                            <feature.icon className="w-5 h-5 tru-feature-hover-icon" />
+                            <p className="tru-feature-hover-tip">{feature.hoverTip}</p>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
                     ))}
                   </div>
                   

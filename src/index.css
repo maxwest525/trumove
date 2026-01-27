@@ -23734,17 +23734,20 @@
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  width: 100%;
 }
 
 .tru-qb-route-summary-permanent .tru-qb-route-summary-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 12px;
+  padding: 12px 16px;
   background: hsl(var(--muted) / 0.5);
   border: 1px solid hsl(var(--border));
-  border-radius: 10px;
+  border-radius: 12px;
+  flex: 1;
+  min-width: 0;
 }
 
 .tru-qb-route-summary-icon {
@@ -23781,13 +23784,9 @@
 }
 
 .tru-qb-route-summary-permanent .tru-qb-route-summary-value {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: hsl(var(--foreground));
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 140px;
 }
 
 .tru-qb-route-summary-permanent .tru-qb-route-summary-distance {
@@ -24156,6 +24155,39 @@
 .tru-why-feature-row:hover .tru-why-feature-arrow {
   color: hsl(var(--primary));
   transform: translateX(2px);
+}
+
+/* Feature Hover Card Tooltip */
+.tru-feature-hover-card {
+  width: 220px !important;
+  padding: 0 !important;
+  background: hsl(var(--tm-ink)) !important;
+  border: 1px solid hsl(var(--primary) / 0.3) !important;
+  border-radius: 14px !important;
+  box-shadow: 
+    0 8px 32px hsl(var(--tm-ink) / 0.4),
+    0 0 20px hsl(var(--primary) / 0.15) !important;
+}
+
+.tru-feature-hover-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+}
+
+.tru-feature-hover-icon {
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tru-feature-hover-tip {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: hsl(0 0% 100% / 0.9);
+  margin: 0;
 }
 
 /* Keep original feature grid for backwards compat */
