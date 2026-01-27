@@ -23443,18 +23443,19 @@
 .tracking-header-go-btn {
   height: 28px;
   padding: 0 14px;
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
+  background: hsl(var(--tm-ink));
+  color: white;
   font-weight: 600;
   font-size: 12px;
   border-radius: 6px;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.2s;
 }
 
 .tracking-header-go-btn:hover {
-  background: hsl(var(--primary) / 0.9);
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.5);
+  background: hsl(var(--tm-ink) / 0.85);
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.4);
 }
 
 .tracking-header-satellite-btn {

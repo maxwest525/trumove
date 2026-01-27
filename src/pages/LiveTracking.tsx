@@ -564,16 +564,15 @@ export default function LiveTracking() {
             isTracking={isTracking}
           />
 
+          {/* Route Weather - Sidebar Card */}
+          <RouteWeather
+            originCoords={originCoords}
+            destCoords={destCoords}
+            originName={originName}
+            destName={destName}
+          />
+
         </div>
-
-
-        {/* Weather Strip */}
-        <RouteWeather
-          originCoords={originCoords}
-          destCoords={destCoords}
-          originName={originName}
-          destName={destName}
-        />
       </div>
       
       {/* Check My Truck Modal */}

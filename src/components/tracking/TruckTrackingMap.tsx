@@ -366,7 +366,11 @@ export function TruckTrackingMap({
         setShowTruckPopup(prev => !prev);
       });
       
-      truckMarker.current = new mapboxgl.Marker({ element: truckEl, rotationAlignment: "map" })
+      truckMarker.current = new mapboxgl.Marker({ 
+        element: truckEl, 
+        rotationAlignment: "map",
+        anchor: 'center'
+      })
         .setLngLat(originCoords)
         .addTo(map.current);
 
