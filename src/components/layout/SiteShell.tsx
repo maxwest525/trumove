@@ -8,7 +8,8 @@ const DATA_SOURCES = [
   { icon: Activity, title: 'Real-Time Updates' },
   { icon: ClipboardCheck, title: 'CSA BASIC Scores' },
   { icon: Lock, title: 'Authority Verification' },
-  { icon: Shield, title: 'Insurance Coverage' }
+  { icon: Shield, title: 'Insurance Coverage' },
+  { icon: ExternalLink, title: 'Official FMCSA Source', isLink: true }
 ];
 
 interface SiteShellProps {
@@ -20,25 +21,34 @@ interface SiteShellProps {
 export default function SiteShell({ children, centered = false, hideTrustStrip = false }: SiteShellProps) {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
-      {/* SAFER Trust Strip - Above EVERYTHING */}
+      {/* SAFER Trust Strip - Infinite Scroll Ticker */}
       {!hideTrustStrip && (
-        <div className="tru-safer-trust-bar">
-          <div className="tru-safer-trust-bar-inner">
-            {DATA_SOURCES.map((source) => (
-              <div key={source.title} className="tru-safer-trust-item">
-                <source.icon className="w-3.5 h-3.5" />
-                <span>{source.title}</span>
+        <div className="tru-ticker-strip">
+          <div className="tru-ticker-track">
+            {/* Render items twice for seamless loop */}
+            {[...Array(2)].map((_, setIndex) => (
+              <div key={setIndex} className="tru-ticker-set">
+                {DATA_SOURCES.map((source, idx) => (
+                  source.isLink ? (
+                    <a 
+                      key={`${setIndex}-${idx}`}
+                      href="https://safer.fmcsa.dot.gov/CompanySnapshot.aspx"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="tru-ticker-item tru-ticker-link"
+                    >
+                      <source.icon className="w-3.5 h-3.5" />
+                      <span>{source.title}</span>
+                    </a>
+                  ) : (
+                    <div key={`${setIndex}-${idx}`} className="tru-ticker-item">
+                      <source.icon className="w-3.5 h-3.5" />
+                      <span>{source.title}</span>
+                    </div>
+                  )
+                ))}
               </div>
             ))}
-            <a 
-              href="https://safer.fmcsa.dot.gov/CompanySnapshot.aspx"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tru-safer-trust-link"
-            >
-              Official FMCSA Source
-              <ExternalLink className="w-3 h-3" />
-            </a>
           </div>
         </div>
       )}

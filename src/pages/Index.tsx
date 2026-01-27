@@ -918,7 +918,7 @@ export default function Index() {
             <div className="tru-hero-header-section tru-hero-header-refined">
               <h1 className="tru-hero-headline-main">
                 <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
-                A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
+                A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
               </h1>
               {/* Subheadline temporarily removed - to be repositioned */}
             </div>

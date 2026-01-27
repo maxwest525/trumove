@@ -24181,6 +24181,116 @@
   }
 }
 
+/* ==============================================
+   INFINITE SCROLL TICKER STRIP
+   ============================================== */
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.tru-ticker-strip {
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(180deg, hsl(220 15% 97%) 0%, hsl(220 15% 94%) 100%);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.1);
+  padding: 8px 0;
+}
+
+.tru-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll 30s linear infinite;
+}
+
+.tru-ticker-strip:hover .tru-ticker-track {
+  animation-play-state: paused;
+}
+
+.tru-ticker-set {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.tru-ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 24px;
+  color: hsl(var(--tm-ink) / 0.7);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  position: relative;
+}
+
+.tru-ticker-item::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background: hsl(var(--primary) / 0.4);
+  border-radius: 50%;
+}
+
+.tru-ticker-item:last-child::after {
+  display: none;
+}
+
+.tru-ticker-item svg {
+  color: hsl(var(--primary));
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.tru-ticker-link {
+  color: hsl(var(--primary));
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.tru-ticker-link:hover {
+  color: hsl(var(--primary) / 0.8);
+  text-decoration: underline;
+}
+
+.tru-ticker-link svg {
+  color: hsl(var(--primary));
+}
+
+@media (max-width: 768px) {
+  .tru-ticker-strip {
+    padding: 6px 0;
+  }
+  
+  .tru-ticker-item {
+    font-size: 9px;
+    padding: 0 16px;
+    gap: 4px;
+  }
+  
+  .tru-ticker-item svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .tru-ticker-track {
+    animation-duration: 20s;
+  }
+}
+
 /* =============================================
    HERO HEADER - REFINED PER PLAN
    ============================================= */
