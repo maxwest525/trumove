@@ -1,8 +1,17 @@
-import { useState, useEffect, useMemo } from "react";
-import { Truck, Loader2, Plane, MapPin, Eye, Globe } from "lucide-react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Truck, Loader2, Plane, MapPin, Eye, Globe, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
-type ViewMode = "aerial" | "satellite" | "street";
+type ViewMode = "aerial" | "satellite" | "street" | "video";
+
+interface AerialViewData {
+  type: "video" | "tile" | "fallback";
+  videoUrl?: string;
+  thumbnailUrl?: string;
+  tileUrl?: string;
+  session?: string;
+}
 
 interface TruckAerialViewProps {
   routeCoordinates: [number, number][];
@@ -22,6 +31,8 @@ export function TruckAerialView({
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<ViewMode>("aerial");
   const [hasStreetViewError, setHasStreetViewError] = useState(false);
+  const [aerialData, setAerialData] = useState<AerialViewData | null>(null);
+  const [hasAerialVideo, setHasAerialVideo] = useState(false);
 
   // Calculate current truck position based on progress
   const currentPosition = useMemo(() => {
@@ -36,12 +47,44 @@ export function TruckAerialView({
     return routeCoordinates[currentIndex];
   }, [routeCoordinates, progress]);
 
-  // Reset loading state when position changes significantly
+  // Fetch aerial view data from Google API
+  const fetchAerialView = useCallback(async (lat: number, lng: number) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('google-aerial-view', {
+        body: { lat, lng, zoom: 18 }
+      });
+
+      if (error) {
+        console.error('Aerial view API error:', error);
+        return null;
+      }
+
+      console.log('Aerial view response:', data);
+      return data as AerialViewData;
+    } catch (err) {
+      console.error('Failed to fetch aerial view:', err);
+      return null;
+    }
+  }, []);
+
+  // Fetch aerial data when position changes significantly
   useEffect(() => {
     if (isTracking && currentPosition) {
       setIsLoading(true);
+      
+      // Only fetch aerial data every 10% progress to avoid rate limiting
+      const [lng, lat] = currentPosition;
+      fetchAerialView(lat, lng).then(data => {
+        if (data) {
+          setAerialData(data);
+          setHasAerialVideo(data.type === 'video');
+          if (data.type === 'video') {
+            setViewMode('video');
+          }
+        }
+      });
     }
-  }, [Math.floor(progress / 10), isTracking]); // Only reload every 10%
+  }, [Math.floor(progress / 10), isTracking, currentPosition, fetchAerialView]);
 
   // Mapbox satellite token
   const mapboxToken = "pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g";
@@ -52,8 +95,14 @@ export function TruckAerialView({
     const [lng, lat] = currentPosition;
     
     switch (viewMode) {
+      case "video":
+        // Return thumbnail for video mode (video plays separately)
+        return aerialData?.thumbnailUrl || null;
       case "aerial":
-        // High zoom satellite for aerial effect
+        // Use Google tile if available, else Mapbox high zoom satellite
+        if (aerialData?.tileUrl) {
+          return aerialData.tileUrl;
+        }
         return `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lng},${lat},18,0/400x250@2x?access_token=${mapboxToken}`;
       case "satellite":
         // Standard satellite with labels
@@ -69,15 +118,19 @@ export function TruckAerialView({
   };
 
   const cycleViewMode = () => {
-    const modes: ViewMode[] = hasStreetViewError ? ["aerial", "satellite"] : ["aerial", "satellite", "street"];
-    const currentIndex = modes.indexOf(viewMode);
-    const nextIndex = (currentIndex + 1) % modes.length;
-    setViewMode(modes[nextIndex]);
+    const baseModes: ViewMode[] = ["aerial", "satellite"];
+    if (hasAerialVideo) baseModes.unshift("video");
+    if (!hasStreetViewError) baseModes.push("street");
+    
+    const currentIndex = baseModes.indexOf(viewMode);
+    const nextIndex = (currentIndex + 1) % baseModes.length;
+    setViewMode(baseModes[nextIndex]);
     setIsLoading(true);
   };
 
   const getViewIcon = () => {
     switch (viewMode) {
+      case "video": return <Video className="w-3 h-3" />;
       case "aerial": return <Plane className="w-3 h-3" />;
       case "satellite": return <Globe className="w-3 h-3" />;
       case "street": return <Eye className="w-3 h-3" />;
@@ -86,6 +139,7 @@ export function TruckAerialView({
 
   const getViewLabel = () => {
     switch (viewMode) {
+      case "video": return "Video";
       case "aerial": return "Aerial";
       case "satellite": return "Satellite";
       case "street": return "Street";
@@ -140,7 +194,7 @@ export function TruckAerialView({
         </button>
       </div>
 
-      {/* Image Container */}
+      {/* Image/Video Container */}
       <div className="relative w-full h-[180px] rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-10">
@@ -148,7 +202,22 @@ export function TruckAerialView({
           </div>
         )}
         
-        {imageUrl && (
+        {/* Video mode - show video player */}
+        {viewMode === "video" && aerialData?.videoUrl ? (
+          <video
+            src={aerialData.videoUrl}
+            className="w-full h-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+            onLoadedData={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false);
+              setViewMode("aerial");
+            }}
+          />
+        ) : imageUrl ? (
           <img
             src={imageUrl}
             alt={`${getViewLabel()} view of truck location`}
@@ -165,7 +234,7 @@ export function TruckAerialView({
               }
             }}
           />
-        )}
+        ) : null}
 
         {/* Truck marker overlay */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
