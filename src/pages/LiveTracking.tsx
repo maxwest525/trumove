@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar, FileText, Bell, Globe } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar, FileText, Bell, Globe, Search } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
@@ -253,6 +253,58 @@ export default function LiveTracking() {
       <div className="tracking-content">
         {/* Left: Address Inputs */}
         <div className="tracking-sidebar">
+          {/* Demo Booking Lookup */}
+          <div className="tracking-info-card mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Search className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
+                Booking Lookup
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Enter booking #..."
+                className="flex-1 h-9 px-3 bg-white/5 border border-white/10 rounded-md text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-primary/50"
+                onKeyDown={async (e) => {
+                  if (e.key === 'Enter') {
+                    const value = (e.target as HTMLInputElement).value.trim();
+                    if (value === '12345') {
+                      // Demo booking - auto-fill addresses
+                      await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
+                      await handleDestSelect('Miami', '33131', '100 Biscayne Blvd, Miami, FL 33131');
+                      setMoveDate(new Date());
+                      toast.success('📦 Booking #12345 loaded!', {
+                        description: 'Demo move: Jacksonville → Miami',
+                      });
+                    } else if (value) {
+                      toast.error('Booking not found', {
+                        description: 'Try demo booking #12345',
+                      });
+                    }
+                  }
+                }}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-white/20 text-white/60 hover:bg-white/10 hover:text-white px-3"
+                onClick={() => {
+                  // Auto-fill demo booking
+                  handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
+                  handleDestSelect('Miami', '33131', '100 Biscayne Blvd, Miami, FL 33131');
+                  setMoveDate(new Date());
+                  toast.success('📦 Demo booking loaded!', {
+                    description: 'Move: Jacksonville → Miami',
+                  });
+                }}
+              >
+                Demo
+              </Button>
+            </div>
+            <p className="text-[10px] text-white/40 mt-2">Try booking #12345</p>
+          </div>
+
           <div className="tracking-info-card">
             <h3 className="text-sm font-semibold text-white mb-4">Route Setup</h3>
             
@@ -375,7 +427,7 @@ export default function LiveTracking() {
                 <Button
                   onClick={startTracking}
                   disabled={!canTrack}
-                  className="flex-1 bg-primary hover:bg-primary/90 text-black font-semibold"
+                  className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-semibold"
                 >
                   <Play className="w-4 h-4 mr-2" />
                   {progress > 0 ? "Resume" : "Start"} Tracking
