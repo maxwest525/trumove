@@ -317,54 +317,8 @@ export default function LiveTracking() {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Booking Lookup - Prominent in header */}
-          <div className="hidden md:flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/30">
-            <Search className="w-4 h-4 text-white/80" />
-            <input
-              type="text"
-              placeholder="Enter Booking # (try 12345)"
-              className="h-7 w-48 lg:w-56 px-2 rounded text-sm bg-transparent border-none text-white placeholder:text-white/60 focus:outline-none"
-              onKeyDown={async (e) => {
-                if (e.key === 'Enter') {
-                  const value = (e.target as HTMLInputElement).value.trim();
-                  if (value === '12345' || value === '00000') {
-                    await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-                    await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
-                    setMoveDate(new Date());
-                    toast.success('📦 Booking loaded!', { description: 'Jacksonville → Miami' });
-                  } else if (value) {
-                    toast.error('Booking not found', { description: 'Try #12345 or #00000' });
-                  }
-                }
-              }}
-            />
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-7 px-2 text-white/70 hover:text-white hover:bg-white/10"
-              onClick={async () => {
-                await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-                await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
-                setMoveDate(new Date());
-                toast.success('📦 Demo booking loaded!');
-              }}
-            >
-              <span className="text-xs font-medium">Go</span>
-            </Button>
-          </div>
-
-          {/* Live Satellite View Button */}
-          <Button
-            onClick={() => setShowCheckMyTruck(true)}
-            size="sm"
-            className="bg-white/15 text-white hover:bg-white/25 gap-2 font-medium border border-white/20"
-          >
-            <Truck className="w-4 h-4" />
-            <span className="hidden sm:inline">Live Satellite View</span>
-          </Button>
-          
           <div className="text-right hidden lg:block">
-            <div className="text-[10px] text-white/70 uppercase tracking-wider">Shipment ID</div>
+            <div className="text-[11px] text-white/80 uppercase tracking-wider">Shipment ID</div>
             <div className="text-sm font-mono text-white">TM-2026-{String(Date.now()).slice(-8)}</div>
           </div>
         </div>
@@ -504,8 +458,8 @@ export default function LiveTracking() {
 
         </div>
 
-        {/* Center: Map */}
-        <div className="tracking-map-container">
+        {/* Center: Map with Floating Controls */}
+        <div className="tracking-map-container relative">
           <TruckTrackingMap
             originCoords={originCoords}
             destCoords={destCoords}
@@ -513,6 +467,51 @@ export default function LiveTracking() {
             isTracking={isTracking}
             onRouteCalculated={handleRouteCalculated}
           />
+          
+          {/* Floating Search & Satellite Button Over Map */}
+          <div className="tracking-map-overlay">
+            <div className="tracking-map-search-bar">
+              <Search className="w-4 h-4 text-white/70" />
+              <input
+                type="text"
+                placeholder="Enter Booking # (try 12345)"
+                className="tracking-map-input"
+                onKeyDown={async (e) => {
+                  if (e.key === 'Enter') {
+                    const value = (e.target as HTMLInputElement).value.trim();
+                    if (value === '12345' || value === '00000') {
+                      await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
+                      await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
+                      setMoveDate(new Date());
+                      toast.success('📦 Booking loaded!', { description: 'Jacksonville → Miami' });
+                    } else if (value) {
+                      toast.error('Booking not found', { description: 'Try #12345 or #00000' });
+                    }
+                  }
+                }}
+              />
+              <Button
+                size="sm"
+                className="tracking-map-go-btn"
+                onClick={async () => {
+                  await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
+                  await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
+                  setMoveDate(new Date());
+                  toast.success('📦 Demo booking loaded!');
+                }}
+              >
+                Go
+              </Button>
+            </div>
+            
+            <Button
+              onClick={() => setShowCheckMyTruck(true)}
+              className="tracking-satellite-btn"
+            >
+              <Eye className="w-4 h-4" />
+              <span>Locate via Satellite</span>
+            </Button>
+          </div>
         </div>
 
         {/* Right: Dashboard */}
