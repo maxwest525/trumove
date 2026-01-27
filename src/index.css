@@ -1163,13 +1163,26 @@
   height: 100%;
   grid-row: 2;
   grid-column: 2;
+  padding-left: 48px; /* Push content more to the right */
 }
 
 .tru-hero-content-inner {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-top: 8px;
+  gap: 20px;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, hsl(var(--tm-ink) / 0.02) 0%, hsl(var(--tm-ink) / 0.04) 100%);
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
+  border-radius: 16px;
+  max-width: 520px;
+}
+
+/* Visual divider between headline and description */
+.tru-content-divider {
+  width: 48px;
+  height: 3px;
+  background: linear-gradient(90deg, hsl(var(--tm-leaf)) 0%, hsl(var(--tm-leaf) / 0.3) 100%);
+  border-radius: 2px;
 }
 
 /* Right panel specific headline sizing - more compact */
@@ -1189,7 +1202,7 @@
   margin-left: 0;
   margin-right: 0;
   max-width: 480px;
-  color: hsl(var(--tm-ink) / 0.75);
+  color: hsl(var(--tm-ink) / 0.7);
 }
 
 .tru-hero-content-panel .tru-hero-subheadline strong {
