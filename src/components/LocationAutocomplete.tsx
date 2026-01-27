@@ -46,7 +46,7 @@ interface LocationAutocompleteProps {
   showGeolocation?: boolean; // Show "Use my location" button
 }
 
-// Generate a unique session token for Mapbox API (required for Search Box API)
+// Generate a unique session token for API billing optimization
 function generateSessionToken(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     const r = Math.random() * 16 | 0;
@@ -55,8 +55,9 @@ function generateSessionToken(): string {
   });
 }
 
-// Session token for Mapbox - persists for the component lifecycle
+// Session tokens for APIs - persists for the component lifecycle
 let mapboxSessionToken = generateSessionToken();
+let googleSessionToken = generateSessionToken();
 
 // Normalize address for comparison (remove punctuation, extra spaces, lowercase)
 function normalizeAddress(addr: string): string {
@@ -102,7 +103,52 @@ async function withRetry<T>(
   return { result: null, failed: true, retryCount: maxRetries + 1 };
 }
 
-// Mapbox Address Autofill API for verified street addresses
+// Google Places Autocomplete API - PRIMARY source for address suggestions
+async function searchGooglePlaces(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
+  try {
+    const { data, error } = await supabase.functions.invoke('google-places-autocomplete', {
+      body: { 
+        query,
+        sessionToken: googleSessionToken,
+        types: ['address']
+      }
+    });
+
+    if (error) {
+      console.error('Google Places error:', error);
+      return { suggestions: [], failed: true };
+    }
+
+    // Check if we should fallback
+    if (data?.fallback || data?.error) {
+      console.log('Google Places unavailable, will fallback to Mapbox');
+      return { suggestions: [], failed: true };
+    }
+
+    // Generate new session token after successful use
+    googleSessionToken = generateSessionToken();
+
+    const suggestions: LocationSuggestion[] = (data?.suggestions || []).map((s: any) => ({
+      streetAddress: s.streetAddress || s.mainText || '',
+      city: s.city || '',
+      state: s.state || '',
+      zip: s.zip || '',
+      display: s.description || s.mainText,
+      fullAddress: s.description,
+      isVerified: false, // Will be verified after selection
+      validationLevel: null,
+      mapboxId: undefined,
+      googlePlaceId: s.placeId,
+    }));
+
+    return { suggestions, failed: false };
+  } catch (err) {
+    console.error('Google Places exception:', err);
+    return { suggestions: [], failed: true };
+  }
+}
+
+// Mapbox Address Autofill API - FALLBACK source for address suggestions
 // Now includes 'place' and 'postcode' types for better ZIP/city coverage
 async function searchMapboxAddresses(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
   const { result, failed } = await withRetry(async () => {
@@ -442,41 +488,54 @@ export default function LocationAutocomplete({
     const normalizedQuery = normalizeAddress(query);
 
     if (mode === 'address') {
-      // For address mode, use Mapbox with expanded types (address, place, postcode)
-      const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapboxAddresses(query);
+      // For address mode, try Google Places first, fallback to Mapbox
+      const { suggestions: googleSuggestions, failed: googleFailed } = await searchGooglePlaces(query);
       
-      if (mapboxFailed) {
-        toast({
-          title: "Address lookup unavailable",
-          description: "We're having trouble searching for addresses. Please try again.",
-          variant: "destructive",
-        });
-        setSuggestions([]);
-      } else if (mapboxSuggestions.length > 0) {
-        // Filter out suggestions that are identical to what's already entered
-        const filtered = mapboxSuggestions.filter(s => {
+      if (!googleFailed && googleSuggestions.length > 0) {
+        // Use Google Places results
+        const filtered = googleSuggestions.filter(s => {
           const normalizedSuggestion = normalizeAddress(s.fullAddress || s.display);
           return normalizedSuggestion !== normalizedQuery;
         });
         setSuggestions(filtered);
-      } else if (isCompleteZip) {
-        // Fallback: if Mapbox returns nothing for a ZIP, show city-level with a prompt
-        const zipResult = await lookupZip(query.trim());
-        if (zipResult) {
-          // Mark as partial - needs street address
-          zipResult.validationLevel = 'partial';
-          // Only show if different from current input
-          const normalizedResult = normalizeAddress(zipResult.fullAddress || zipResult.display);
-          if (normalizedResult !== normalizedQuery) {
-            setSuggestions([zipResult]);
+      } else {
+        // Fallback to Mapbox
+        console.log('Using Mapbox fallback for address suggestions');
+        const { suggestions: mapboxSuggestions, failed: mapboxFailed } = await searchMapboxAddresses(query);
+        
+        if (mapboxFailed) {
+          toast({
+            title: "Address lookup unavailable",
+            description: "We're having trouble searching for addresses. Please try again.",
+            variant: "destructive",
+          });
+          setSuggestions([]);
+        } else if (mapboxSuggestions.length > 0) {
+          // Filter out suggestions that are identical to what's already entered
+          const filtered = mapboxSuggestions.filter(s => {
+            const normalizedSuggestion = normalizeAddress(s.fullAddress || s.display);
+            return normalizedSuggestion !== normalizedQuery;
+          });
+          setSuggestions(filtered);
+        } else if (isCompleteZip) {
+          // Fallback: if both return nothing for a ZIP, show city-level with a prompt
+          const zipResult = await lookupZip(query.trim());
+          if (zipResult) {
+            // Mark as partial - needs street address
+            zipResult.validationLevel = 'partial';
+            // Only show if different from current input
+            const normalizedResult = normalizeAddress(zipResult.fullAddress || zipResult.display);
+            if (normalizedResult !== normalizedQuery) {
+              setSuggestions([zipResult]);
+            } else {
+              setSuggestions([]);
+            }
           } else {
             setSuggestions([]);
           }
         } else {
           setSuggestions([]);
         }
-      } else {
-        setSuggestions([]);
       }
     } else {
       // City mode: use existing logic

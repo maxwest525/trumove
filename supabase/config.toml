@@ -26,3 +26,9 @@ verify_jwt = false
 
 [functions.google-roads]
 verify_jwt = false
+
+[functions.google-places-autocomplete]
+verify_jwt = false
+
+[functions.google-route-optimization]
+verify_jwt = false
