@@ -916,6 +916,7 @@ export default function Index() {
             {/* Hero Header with Headline + Short Subheadline - Refined per plan */}
             <div className="tru-hero-header-section tru-hero-header-refined">
               <h1 className="tru-hero-headline-main">
+                <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
                 A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
               <p className="tru-hero-subheadline-refined">

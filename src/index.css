@@ -24017,6 +24017,16 @@
 
 /* Removed ::before pseudo-element - no grey box behind headline */
 
+/* Logo inside the main headline */
+.tru-hero-headline-logo {
+  height: 42px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 12px;
+  margin-bottom: 4px;
+}
+
 /* Refined headline - smaller, cleaner */
 .tru-hero-header-refined .tru-hero-headline-main {
   font-size: clamp(32px, 5vw, 56px);
