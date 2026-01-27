@@ -44,33 +44,19 @@ const DEMO_TRUCKS: Record<string, TruckStatus> = {
     status: "in_transit",
     currentLocationName: "Near Melbourne, FL"
   },
-  "67890": {
-    bookingId: "67890",
+  "00000": {
+    bookingId: "00000",
     originName: "New York, NY",
-    destName: "Philadelphia, PA",
+    destName: "Boston, MA",
     originCoords: [-74.006, 40.7128],
-    destCoords: [-75.1652, 39.9526],
-    currentCoords: [-74.7429, 40.2171],
-    progress: 68,
-    distanceTraveled: 61,
-    totalDistance: 90,
-    eta: "2:15 PM",
+    destCoords: [-71.0589, 42.3601],
+    currentCoords: [-72.6734, 41.7658],
+    progress: 45,
+    distanceTraveled: 95,
+    totalDistance: 215,
+    eta: "3:45 PM",
     status: "in_transit",
-    currentLocationName: "Near Trenton, NJ"
-  },
-  "11111": {
-    bookingId: "11111",
-    originName: "Los Angeles, CA",
-    destName: "San Francisco, CA",
-    originCoords: [-118.2437, 34.0522],
-    destCoords: [-122.4194, 37.7749],
-    currentCoords: [-120.4358, 35.3733],
-    progress: 35,
-    distanceTraveled: 135,
-    totalDistance: 382,
-    eta: "8:00 PM",
-    status: "in_transit",
-    currentLocationName: "Near Bakersfield, CA"
+    currentLocationName: "Near Hartford, CT"
   }
 };
 
@@ -197,14 +183,14 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
                 value={bookingNumber}
                 onChange={(e) => setBookingNumber(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                placeholder="Enter booking # (try 12345, 67890, 11111)"
+                placeholder="Enter booking # (try 12345 or 00000)"
                 className="w-full h-11 pl-10 pr-4 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-primary/50"
               />
             </div>
             <Button 
               onClick={handleSearch}
               disabled={isSearching || !bookingNumber.trim()}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-6"
+              className="bg-foreground text-background hover:bg-foreground/90 px-5"
             >
               {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : "Find"}
             </Button>
@@ -217,15 +203,15 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
                 <Truck className="w-8 h-8 text-white/30" />
               </div>
               <p className="text-white/60 text-sm">No shipment found with that booking number</p>
-              <p className="text-white/40 text-xs mt-1">Try: 12345, 67890, or 11111</p>
+              <p className="text-white/40 text-xs mt-1">Try: 12345 or 00000</p>
             </div>
           )}
 
           {/* Truck Status */}
           {truckStatus && (
             <div className="space-y-4">
-              {/* Aerial/Satellite View */}
-              <div className="relative w-full h-[200px] rounded-xl overflow-hidden bg-slate-800 border border-white/10">
+              {/* Aerial/Satellite View - Enhanced */}
+              <div className="relative w-full h-[280px] rounded-xl overflow-hidden bg-slate-800 border border-white/10">
                 {isLoadingAerial && (
                   <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-10">
                     <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -364,7 +350,7 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
               </div>
               <p className="text-white/60 text-sm mb-2">Enter your booking number above</p>
               <p className="text-white/40 text-xs">
-                Demo bookings: 12345, 67890, 11111
+                Try: 12345 or 00000
               </p>
             </div>
           )}

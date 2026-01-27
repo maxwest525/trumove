@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar, FileText, Bell, Globe, Search, Eye } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
@@ -18,8 +18,6 @@ import SiteShell from "@/components/layout/SiteShell";
 import FloatingNav from "@/components/FloatingNav";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Textarea } from "@/components/ui/textarea";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -154,8 +152,6 @@ export default function LiveTracking() {
     etaFormatted: string | null;
   }>({ trafficInfo: null, tollInfo: null, etaFormatted: null });
   
-  // Shipment notes
-  const [shipmentNotes, setShipmentNotes] = useState("");
   
   // Check My Truck modal
   const [showCheckMyTruck, setShowCheckMyTruck] = useState(false);
@@ -350,12 +346,6 @@ export default function LiveTracking() {
             <span className="hidden sm:inline">Check My Truck</span>
           </Button>
           
-          {isTracking && (
-            <div className="flex items-center gap-2 text-sm text-white/60">
-              <Zap className="w-4 h-4 text-primary" />
-              <span>Demo Mode</span>
-            </div>
-          )}
           
           <div className="text-right">
             <div className="text-[10px] text-white/40 uppercase tracking-wider">Shipment ID</div>
@@ -402,7 +392,7 @@ export default function LiveTracking() {
               />
               <Button
                 size="sm"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 font-semibold"
+                className="bg-foreground text-background hover:bg-foreground/90 px-3 font-semibold h-9"
                 onClick={() => {
                   // Auto-fill demo booking
                   handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
@@ -413,8 +403,7 @@ export default function LiveTracking() {
                   });
                 }}
               >
-                <Search className="w-3.5 h-3.5 mr-1.5" />
-                Search
+                <Search className="w-3.5 h-3.5" />
               </Button>
             </div>
           </div>
@@ -492,48 +481,6 @@ export default function LiveTracking() {
               </Popover>
             </div>
 
-            {/* Shipment Notes */}
-            <div className="mb-4 pt-4 border-t border-white/10">
-              <div className="flex items-center gap-2 mb-2">
-                <FileText className="w-3.5 h-3.5 text-white/50" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
-                  Shipment Notes
-                </span>
-              </div>
-              <Textarea
-                value={shipmentNotes}
-                onChange={(e) => setShipmentNotes(e.target.value)}
-                placeholder="Special instructions, delivery notes, access codes..."
-                className="min-h-[80px] bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm resize-none"
-              />
-              {shipmentNotes && (
-                <div className="flex items-center gap-1.5 mt-2 text-[10px] text-primary">
-                  <Bell className="w-3 h-3" />
-                  <span>Notes saved to shipment</span>
-                </div>
-              )}
-            </div>
-
-            {/* Speed Control */}
-            {routeData && (
-              <div className="mb-4 pt-4 border-t border-white/10">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
-                    Demo Speed
-                  </span>
-                  <span className="text-xs text-white/60">{animationSpeed}s</span>
-                </div>
-                <Slider
-                  value={[animationSpeed]}
-                  onValueChange={([val]) => setAnimationSpeed(val)}
-                  min={15}
-                  max={120}
-                  step={5}
-                  className="tracking-slider"
-                  disabled={isTracking}
-                />
-              </div>
-            )}
 
             {/* Control Buttons */}
             <div className="flex gap-2">

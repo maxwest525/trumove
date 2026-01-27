@@ -20,3 +20,9 @@ verify_jwt = false
 
 [functions.google-aerial-view]
 verify_jwt = false
+
+[functions.google-distance-matrix]
+verify_jwt = false
+
+[functions.google-roads]
+verify_jwt = false
