@@ -12,11 +12,14 @@ serve(async (req) => {
   }
 
   try {
-    const { lat, lng, zoom = 18 } = await req.json();
+    const { lat, lng, address } = await req.json();
     
-    if (!lat || !lng) {
+    // Accept either lat/lng or a full address string
+    const lookupAddress = address || (lat && lng ? `${lat},${lng}` : null);
+    
+    if (!lookupAddress) {
       return new Response(
-        JSON.stringify({ error: 'lat and lng are required' }),
+        JSON.stringify({ error: 'lat/lng or address is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -26,116 +29,93 @@ serve(async (req) => {
     if (!apiKey) {
       console.error('GOOGLE_MAPS_API_KEY not configured');
       return new Response(
-        JSON.stringify({ error: 'API key not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'API key not configured', type: 'fallback' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log(`Fetching aerial view for coordinates: ${lat}, ${lng}`);
+    console.log(`Fetching aerial view for: ${lookupAddress}`);
 
-    // Try the Aerial View API - lookupVideo endpoint
-    // Docs: https://developers.google.com/maps/documentation/aerial-view
-    const aerialViewUrl = `https://aerialview.googleapis.com/v1/videos:lookupVideo?key=${apiKey}`;
+    // Build URL with query parameters (as per official sample)
+    const urlParams = new URLSearchParams();
     
-    let aerialResult = null;
+    // Check if it's a videoId or address
+    const videoIdRegex = /^[0-9a-zA-Z-_]{22}$/;
+    const parameterKey = lookupAddress.match(videoIdRegex) ? 'videoId' : 'address';
     
-    try {
-      const lookupResponse = await fetch(aerialViewUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          address: `${lat},${lng}`
-        })
-      });
+    urlParams.set(parameterKey, lookupAddress);
+    urlParams.set('key', apiKey);
+    
+    const aerialViewUrl = `https://aerialview.googleapis.com/v1/videos:lookupVideo?${urlParams.toString()}`;
+    console.log('Calling Aerial View API with:', parameterKey);
+    
+    const response = await fetch(aerialViewUrl);
+    const videoResult = await response.json();
+    
+    console.log('Aerial View API response:', JSON.stringify(videoResult));
 
-      // Check if response is JSON
-      const contentType = lookupResponse.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const lookupData = await lookupResponse.json();
-        console.log('Aerial View API response:', JSON.stringify(lookupData));
-
-        // Check if we have aerial video available
-        if (lookupData.state === 'ACTIVE' && lookupData.uris) {
-          aerialResult = {
-            type: 'video',
-            videoUrl: lookupData.uris.MP4_HIGH || lookupData.uris.MP4_MEDIUM,
-            thumbnailUrl: lookupData.uris.IMAGE,
-            metadata: lookupData.metadata
-          };
-        } else if (lookupData.error) {
-          console.log('Aerial View API error:', lookupData.error.message);
-        }
-      } else {
-        const text = await lookupResponse.text();
-        console.log('Aerial View API returned non-JSON:', text.substring(0, 200));
-      }
-    } catch (aerialError) {
-      console.log('Aerial View API not available:', aerialError);
-    }
-
-    // If we got aerial video, return it
-    if (aerialResult) {
+    // Handle different response states
+    if (videoResult.state === 'PROCESSING') {
+      console.log('Video still processing');
       return new Response(
-        JSON.stringify(aerialResult),
+        JSON.stringify({
+          type: 'processing',
+          message: 'Aerial video is still being generated for this location',
+          state: 'PROCESSING'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    if (videoResult.state === 'ACTIVE' && videoResult.uris) {
+      // Extract video URLs - prefer landscape orientation
+      const mp4High = videoResult.uris.MP4_HIGH;
+      const mp4Medium = videoResult.uris.MP4_MEDIUM;
+      const image = videoResult.uris.IMAGE;
+      
+      return new Response(
+        JSON.stringify({
+          type: 'video',
+          videoUrl: mp4High?.landscapeUri || mp4Medium?.landscapeUri || mp4High?.portraitUri || mp4Medium?.portraitUri,
+          thumbnailUrl: image?.landscapeUri || image?.portraitUri,
+          metadata: videoResult.metadata,
+          state: 'ACTIVE'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    if (videoResult.error) {
+      console.log('Aerial View API error:', videoResult.error.message);
+      
+      // 404 means no video exists - could trigger renderVideo to generate one
+      if (videoResult.error.code === 404) {
+        return new Response(
+          JSON.stringify({
+            type: 'not_found',
+            message: 'No aerial video available for this location',
+            canRender: true // Flag that we could call renderVideo
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      return new Response(
+        JSON.stringify({
+          type: 'error',
+          message: videoResult.error.message,
+          code: videoResult.error.code
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Try Map Tiles API for high-quality satellite tiles
-    try {
-      const sessionUrl = `https://tile.googleapis.com/v1/createSession?key=${apiKey}`;
-      const sessionResponse = await fetch(sessionUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mapType: 'satellite',
-          language: 'en-US',
-          region: 'US',
-          imageFormat: 'jpeg',
-          scale: 'scaleFactor2x',
-          highDpi: true
-        })
-      });
-
-      const contentType = sessionResponse.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const sessionData = await sessionResponse.json();
-        console.log('Session response:', JSON.stringify(sessionData));
-
-        if (sessionData.session) {
-          // Calculate tile coordinates from lat/lng
-          const tileCoords = latLngToTile(lat, lng, zoom);
-          
-          const tileUrl = `https://tile.googleapis.com/v1/2dtiles/${zoom}/${tileCoords.x}/${tileCoords.y}?session=${sessionData.session}&key=${apiKey}`;
-          
-          return new Response(
-            JSON.stringify({
-              type: 'tile',
-              tileUrl: tileUrl,
-              session: sessionData.session,
-              zoom: zoom,
-              tileCoords: tileCoords,
-              expiry: sessionData.expiry
-            }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-      } else {
-        const text = await sessionResponse.text();
-        console.log('Tile API returned non-JSON:', text.substring(0, 200));
-      }
-    } catch (tileError) {
-      console.log('Tile API error:', tileError);
-    }
-
-    // Fallback: Return info for client to use Mapbox satellite
-    console.log('Returning fallback for:', lat, lng);
+    // Fallback for unexpected response
     return new Response(
       JSON.stringify({
         type: 'fallback',
-        message: 'Aerial view not available for this location - using Mapbox satellite',
-        lat,
-        lng
+        message: 'Aerial view not available - using satellite imagery',
+        raw: videoResult
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -149,12 +129,3 @@ serve(async (req) => {
     );
   }
 });
-
-// Convert lat/lng to tile coordinates
-function latLngToTile(lat: number, lng: number, zoom: number): { x: number; y: number } {
-  const n = Math.pow(2, zoom);
-  const x = Math.floor((lng + 180) / 360 * n);
-  const latRad = lat * Math.PI / 180;
-  const y = Math.floor((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n);
-  return { x, y };
-}
