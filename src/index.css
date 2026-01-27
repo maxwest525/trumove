@@ -23934,9 +23934,9 @@
    ============================================= */
 .tru-safer-trust-bar {
   width: 100%;
-  background: linear-gradient(180deg, hsl(220 15% 97%) 0%, hsl(220 15% 95%) 100%);
-  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
-  padding: 5px 16px;
+  background: linear-gradient(180deg, hsl(220 15% 97%) 0%, hsl(220 15% 94%) 100%);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.1);
+  padding: 10px 24px;
 }
 
 .tru-safer-trust-bar-inner {
@@ -23952,27 +23952,27 @@
 .tru-safer-trust-item {
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: hsl(var(--tm-ink) / 0.6);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  gap: 6px;
+  color: hsl(var(--tm-ink) / 0.7);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
 .tru-safer-trust-item svg {
-  color: hsl(var(--tm-ink) / 0.4);
-  width: 13px;
-  height: 13px;
+  color: hsl(var(--tm-ink) / 0.5);
+  width: 16px;
+  height: 16px;
 }
 
 .tru-safer-trust-link {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   color: hsl(var(--primary));
   text-decoration: none;
@@ -23985,8 +23985,8 @@
 }
 
 .tru-safer-trust-link svg {
-  width: 11px;
-  height: 11px;
+  width: 14px;
+  height: 14px;
 }
 
 @media (max-width: 768px) {
@@ -24009,7 +24009,7 @@
    ============================================= */
 .tru-hero-header-section.tru-hero-header-refined {
   position: relative;
-  padding: 32px 48px;
+  padding: 16px 48px;
   text-align: center;
 }
 

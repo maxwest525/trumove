@@ -919,9 +919,7 @@ export default function Index() {
                 <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
                 A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
-              <p className="tru-hero-subheadline-refined">
-                Technology, transparency, and control - built for the most important move of your life.
-              </p>
+              {/* Subheadline temporarily removed - to be repositioned */}
             </div>
 
 
