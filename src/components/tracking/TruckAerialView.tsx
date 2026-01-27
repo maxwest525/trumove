@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Truck, Loader2, Plane, MapPin, Eye, Globe, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { getCachedAerialView, setCachedAerialView } from "@/lib/aerialViewCache";
 
 type ViewMode = "aerial" | "satellite" | "street" | "video";
 
@@ -47,9 +48,30 @@ export function TruckAerialView({
     return routeCoordinates[currentIndex];
   }, [routeCoordinates, progress]);
 
-  // Fetch aerial view data from Google API
+  // Track last fetched coordinates to prevent duplicate calls
+  const lastFetchedCoords = useRef<string | null>(null);
+  const fetchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Fetch aerial view data from Google API with caching
   const fetchAerialView = useCallback(async (lat: number, lng: number) => {
+    const coordKey = `${lat.toFixed(4)}_${lng.toFixed(4)}`;
+    
+    // Skip if we just fetched this location
+    if (lastFetchedCoords.current === coordKey) {
+      console.log('[TruckAerial] Skipping duplicate fetch for', coordKey);
+      return null;
+    }
+    
+    // Check cache first
+    const cached = getCachedAerialView(lat, lng);
+    if (cached) {
+      console.log('[TruckAerial] Using cached data for', coordKey);
+      return cached as AerialViewData;
+    }
+    
     try {
+      lastFetchedCoords.current = coordKey;
+      
       const { data, error } = await supabase.functions.invoke('google-aerial-view', {
         body: { lat, lng, zoom: 18 }
       });
@@ -60,6 +82,12 @@ export function TruckAerialView({
       }
 
       console.log('Aerial view response:', data);
+      
+      // Cache the response
+      if (data) {
+        setCachedAerialView(lat, lng, data);
+      }
+      
       return data as AerialViewData;
     } catch (err) {
       console.error('Failed to fetch aerial view:', err);
@@ -67,12 +95,21 @@ export function TruckAerialView({
     }
   }, []);
 
-  // Fetch aerial data when position changes significantly
+  // Fetch aerial data when position changes significantly (debounced)
   useEffect(() => {
-    if (isTracking && currentPosition) {
-      setIsLoading(true);
-      
-      // Only fetch aerial data every 10% progress to avoid rate limiting
+    if (!isTracking || !currentPosition) return;
+    
+    // Clear any pending fetch
+    if (fetchDebounceRef.current) {
+      clearTimeout(fetchDebounceRef.current);
+    }
+    
+    setIsLoading(true);
+    
+    // Debounce API calls - only fetch every 10% progress with 2s delay
+    const progressBucket = Math.floor(progress / 10);
+    
+    fetchDebounceRef.current = setTimeout(() => {
       const [lng, lat] = currentPosition;
       fetchAerialView(lat, lng).then(data => {
         if (data) {
@@ -82,8 +119,15 @@ export function TruckAerialView({
             setViewMode('video');
           }
         }
+        setIsLoading(false);
       });
-    }
+    }, 500); // Small delay to batch rapid progress changes
+    
+    return () => {
+      if (fetchDebounceRef.current) {
+        clearTimeout(fetchDebounceRef.current);
+      }
+    };
   }, [Math.floor(progress / 10), isTracking, currentPosition, fetchAerialView]);
 
   // Mapbox satellite token

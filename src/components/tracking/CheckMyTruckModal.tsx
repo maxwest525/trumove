@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Truck, MapPin, Navigation, Clock, Route, Video, Plane, Globe, Loader2, X, Search } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { getCachedAerialView, setCachedAerialView } from "@/lib/aerialViewCache";
 
 interface AerialViewData {
   type: "video" | "processing" | "not_found" | "fallback" | "error";
@@ -90,9 +91,19 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
   // Mapbox token for satellite fallback
   const mapboxToken = "pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g";
 
-  // Fetch aerial view for current truck position
+  // Fetch aerial view for current truck position (with caching)
   const fetchAerialView = useCallback(async (lat: number, lng: number, locationName: string) => {
     setIsLoadingAerial(true);
+    
+    // Check cache first
+    const cached = getCachedAerialView(lat, lng);
+    if (cached) {
+      console.log('[CheckMyTruck] Using cached aerial data');
+      setAerialData(cached as AerialViewData);
+      setIsLoadingAerial(false);
+      return;
+    }
+    
     try {
       const { data, error } = await supabase.functions.invoke('google-aerial-view', {
         body: { address: locationName, lat, lng }
@@ -104,6 +115,12 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
       }
 
       console.log('Check My Truck aerial view:', data);
+      
+      // Cache the response
+      if (data) {
+        setCachedAerialView(lat, lng, data);
+      }
+      
       setAerialData(data as AerialViewData);
     } catch (err) {
       console.error('Failed to fetch aerial view:', err);
