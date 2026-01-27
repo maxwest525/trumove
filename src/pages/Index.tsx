@@ -1468,33 +1468,30 @@ export default function Index() {
                   </div>
                   
                   {/* Title */}
-                  <h3 className="tru-why-title">Skip the Van Line Middleman</h3>
+                  <h3 className="tru-why-title">Why TruMove</h3>
                   
-                  {/* Main Paragraph - VERBATIM from spec */}
+                  {/* Main Paragraph - Our story/mission */}
                   <p className="tru-why-paragraph">
-                    Skip the complexity of large national van lines. We use AI inventory 
-                    scanning and live video consults to understand your move, then vet 
-                    carriers using verified FMCSA and DOT safety data, so we can 
-                    confidently match you with carriers that best meet your needs.
+                    We built TruMove to cut through the complexity of the moving industry. 
+                    Using AI-powered inventory scanning and live video consultations, we 
+                    understand your move better than anyone. Then we vet carriers through 
+                    verified FMCSA and DOT safety databases to match you with movers you 
+                    can actually trust.
                   </p>
                   
-                  {/* Feature Rows - All 6 features as clickable rows */}
-                  <div className="tru-why-feature-list">
+                  {/* Feature Grid - 2 rows x 3 columns */}
+                  <div className="tru-why-feature-grid">
                     {whyTruMoveFeatures.map((feature, index) => (
                       <button
                         key={feature.id}
-                        className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
+                        className={`tru-why-feature-cell ${activeFeature === index ? 'is-active' : ''}`}
                         style={{ '--stagger-index': index } as React.CSSProperties}
                         onClick={() => setActiveFeature(activeFeature === index ? null : index)}
                       >
-                        <div className="tru-why-feature-row-icon">
+                        <div className="tru-why-feature-cell-icon">
                           <feature.icon className="w-4 h-4" />
                         </div>
-                        <div className="tru-why-feature-row-content">
-                          <span className="tru-why-feature-row-title">{feature.title}</span>
-                          <span className="tru-why-feature-row-desc">{feature.shortDesc}</span>
-                        </div>
-                        <ChevronRight className="w-4 h-4 tru-why-feature-arrow" />
+                        <span className="tru-why-feature-cell-title">{feature.title}</span>
                       </button>
                     ))}
                   </div>
