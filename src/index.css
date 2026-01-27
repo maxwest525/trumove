@@ -23667,6 +23667,64 @@
 }
 
 /* ============================================
+   WEIGH STATION CHECKLIST STYLES
+   ============================================ */
+
+.weigh-station-checklist {
+  position: relative;
+}
+
+.weigh-station-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.3) transparent;
+}
+
+.weigh-station-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.weigh-station-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.weigh-station-scroll::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 4px;
+}
+
+.weigh-station-scroll::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+.weigh-station-item {
+  animation: weigh-station-fade-in 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-8px);
+}
+
+@keyframes weigh-station-fade-in {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes animate-pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 hsl(38, 92%, 50% / 0.4);
+  }
+  50% {
+    opacity: 0.9;
+    box-shadow: 0 0 12px 4px hsl(38, 92%, 50% / 0.15);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: animate-pulse-subtle 2s ease-in-out infinite;
+}
+
+/* ============================================
    TRACKING WEATHER STYLES
    ============================================ */
 

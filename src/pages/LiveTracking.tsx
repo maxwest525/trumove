@@ -6,6 +6,7 @@ import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
 import { TrackingTimeline } from "@/components/tracking/TrackingTimeline";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
+import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
 import FloatingNav from "@/components/FloatingNav";
@@ -84,6 +85,7 @@ export default function LiveTracking() {
 
   // Route and tracking state
   const [routeData, setRouteData] = useState<RouteData | null>(null);
+  const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>([]);
   const [progress, setProgress] = useState(0);
   const [isTracking, setIsTracking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -125,6 +127,7 @@ export default function LiveTracking() {
   // Handle route calculated
   const handleRouteCalculated = useCallback((route: RouteData) => {
     setRouteData(route);
+    setRouteCoordinates(route.coordinates);
   }, []);
 
   // Animation loop
@@ -508,6 +511,13 @@ export default function LiveTracking() {
               timeRemaining={formatDuration(remainingDuration)}
             />
           )}
+
+          {/* Weigh Station Checklist */}
+          <WeighStationChecklist
+            routeCoordinates={routeCoordinates}
+            progress={progress}
+            isTracking={isTracking}
+          />
 
           <StreetViewPreview
             coordinates={destCoords}
