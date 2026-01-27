@@ -1052,10 +1052,14 @@
   overflow: hidden;
 }
 
-/* Full-Width Hero Background Image with Parallax */
+/* Full-Width Hero Background Image with Parallax - Breaks out of container */
 .tru-hero-bg-image {
   position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  transform: translateX(-50%);
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
@@ -4340,6 +4344,7 @@
 }
 
 .tru-qb-route-bar-label {
+  display: block;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -4348,6 +4353,7 @@
 }
 
 .tru-qb-route-bar-value {
+  display: block;
   font-size: 12px;
   font-weight: 600;
   color: inherit;
