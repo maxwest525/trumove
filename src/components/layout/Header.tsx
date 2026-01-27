@@ -201,7 +201,11 @@ const NAV: NavItem[] = [
   { href: "/about", label: "About" },
 ];
 
-export default function Header() {
+interface HeaderProps {
+  whiteLogo?: boolean;
+}
+
+export default function Header({ whiteLogo = false }: HeaderProps) {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -222,7 +226,7 @@ export default function Header() {
         <div className="header-inner">
           {/* Logo */}
           <Link to="/" className="header-logo" aria-label="TruMove Home">
-            <img src={logo} alt="TruMove" />
+            <img src={logo} alt="TruMove" className={whiteLogo ? "brightness-0 invert" : ""} />
           </Link>
 
           {/* Desktop Nav with Mega-Menus */}
