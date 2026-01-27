@@ -311,18 +311,19 @@ export default function LiveTracking() {
             alt="TruMove" 
             className="h-6 brightness-0 invert"
           />
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/80">
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/70">
             Shipment Command Center
           </span>
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Booking Lookup - Inline in header */}
-          <div className="hidden md:flex items-center gap-2">
+          {/* Booking Lookup - Prominent in header */}
+          <div className="hidden md:flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/20">
+            <Search className="w-4 h-4 text-white/60" />
             <input
               type="text"
-              placeholder="Booking #..."
-              className="h-8 w-32 px-3 rounded-md text-sm bg-white/10 border border-white/20 text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+              placeholder="Enter Booking # (try 12345)"
+              className="h-7 w-48 lg:w-56 px-2 rounded text-sm bg-transparent border-none text-white placeholder:text-white/50 focus:outline-none"
               onKeyDown={async (e) => {
                 if (e.key === 'Enter') {
                   const value = (e.target as HTMLInputElement).value.trim();
@@ -340,7 +341,7 @@ export default function LiveTracking() {
             <Button
               size="sm"
               variant="ghost"
-              className="h-8 px-2 text-foreground/70 hover:text-foreground hover:bg-white/10"
+              className="h-7 px-2 text-white/70 hover:text-white hover:bg-white/10"
               onClick={async () => {
                 await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                 await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
@@ -348,23 +349,23 @@ export default function LiveTracking() {
                 toast.success('📦 Demo booking loaded!');
               }}
             >
-              <Search className="w-4 h-4" />
+              <span className="text-xs font-medium">Go</span>
             </Button>
           </div>
 
-          {/* Check My Truck Button */}
+          {/* Satellite Truck View Button */}
           <Button
             onClick={() => setShowCheckMyTruck(true)}
             size="sm"
-            className="bg-foreground text-background hover:bg-foreground/90 gap-2 font-semibold"
+            className="bg-white/15 text-white hover:bg-white/25 gap-2 font-medium border border-white/20"
           >
-            <Eye className="w-4 h-4" />
-            <span className="hidden sm:inline">Check My Truck</span>
+            <Truck className="w-4 h-4" />
+            <span className="hidden sm:inline">Satellite View</span>
           </Button>
           
           <div className="text-right hidden lg:block">
-            <div className="text-[10px] text-foreground/40 uppercase tracking-wider">Shipment ID</div>
-            <div className="text-sm font-mono text-foreground/80">TM-2026-{String(Date.now()).slice(-8)}</div>
+            <div className="text-[10px] text-white/40 uppercase tracking-wider">Shipment ID</div>
+            <div className="text-sm font-mono text-white/70">TM-2026-{String(Date.now()).slice(-8)}</div>
           </div>
         </div>
       </header>
@@ -591,6 +592,30 @@ export default function LiveTracking() {
         {/* Quick Stats Strip - Below Map */}
         {routeData && (
           <div className="tracking-stats-strip" style={{ gridColumn: '1 / -1' }}>
+            {/* Traffic Badge */}
+            <div className={cn(
+              "stats-strip-badge",
+              googleRouteData.trafficInfo?.severity === 'high' 
+                ? "bg-red-500/20 text-red-600 border-red-500/30"
+                : googleRouteData.trafficInfo?.severity === 'medium'
+                  ? "bg-amber-500/20 text-amber-600 border-amber-500/30"
+                  : "bg-emerald-500/20 text-emerald-600 border-emerald-500/30"
+            )}>
+              <span className="w-2 h-2 rounded-full bg-current" />
+              <span className="text-xs font-semibold uppercase tracking-wide">
+                {googleRouteData.trafficInfo?.severity === 'high' 
+                  ? 'Heavy Traffic' 
+                  : googleRouteData.trafficInfo?.severity === 'medium'
+                    ? 'Moderate Traffic'
+                    : 'Clear Roads'}
+              </span>
+              {googleRouteData.trafficInfo?.delayMinutes > 0 && (
+                <span className="text-xs opacity-80">+{googleRouteData.trafficInfo.delayMinutes}m</span>
+              )}
+            </div>
+            
+            <div className="stats-strip-divider" />
+            
             <div className="stats-strip-item">
               <span className="stats-strip-label">ETA</span>
               <span className="stats-strip-value">{adjustedETA || formatTime(etaTime)}</span>
