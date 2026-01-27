@@ -5,6 +5,7 @@ import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { Loader2 } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
+import { findWeighStationsOnRoute, type WeighStation } from "@/data/weighStations";
 
 interface RouteData {
   coordinates: [number, number][];
@@ -12,6 +13,14 @@ interface RouteData {
   duration: number;
   congestionLevels?: string[];
 }
+
+// Sample rest stops along major routes
+const REST_STOPS = [
+  { id: 'rest-1', name: 'Flying J Travel Center', lat: 30.1897, lon: -82.6392, type: 'rest' as const },
+  { id: 'rest-2', name: 'Pilot Travel Center', lat: 30.8508, lon: -83.2786, type: 'rest' as const },
+  { id: 'rest-3', name: 'Love\'s Travel Stop', lat: 29.5500, lon: -81.2100, type: 'rest' as const },
+  { id: 'rest-4', name: 'TA Travel Center', lat: 26.1200, lon: -80.1400, type: 'rest' as const },
+];
 
 interface TruckTrackingMapProps {
   originCoords: [number, number] | null;
@@ -42,6 +51,7 @@ export function TruckTrackingMap({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const truckMarker = useRef<mapboxgl.Marker | null>(null);
+  const waypointMarkers = useRef<mapboxgl.Marker[]>([]);
   const routeCoords = useRef<[number, number][]>([]);
   const congestionData = useRef<string[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -49,6 +59,7 @@ export function TruckTrackingMap({
   const [showTruckPopup, setShowTruckPopup] = useState(false);
   const [currentTruckPosition, setCurrentTruckPosition] = useState<[number, number] | null>(null);
   const [currentLocationName, setCurrentLocationName] = useState<string>("");
+  const [routeWaypoints, setRouteWaypoints] = useState<{ station: WeighStation; routeIndex: number }[]>([]);
 
   // Calculate bearing between two points
   const calculateBearing = useCallback((start: [number, number], end: [number, number]) => {
@@ -251,6 +262,66 @@ export function TruckTrackingMap({
 
       // Clear existing markers
       truckMarker.current?.remove();
+      waypointMarkers.current.forEach(m => m.remove());
+      waypointMarkers.current = [];
+
+      // Find weigh stations along the route
+      const weighStationsOnRoute = findWeighStationsOnRoute(coords, 8);
+      setRouteWaypoints(weighStationsOnRoute);
+
+      // Add weigh station waypoint markers
+      weighStationsOnRoute.forEach(({ station }) => {
+        const el = document.createElement("div");
+        el.className = "tracking-waypoint-marker weigh-station";
+        el.innerHTML = `
+          <div class="waypoint-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 3v18"/>
+              <path d="M18 3v18"/>
+              <path d="M3 12h18"/>
+              <path d="m6 8 6-5 6 5"/>
+            </svg>
+          </div>
+          <div class="waypoint-label">${station.name}</div>
+        `;
+        const marker = new mapboxgl.Marker({ element: el })
+          .setLngLat([station.lon, station.lat])
+          .addTo(map.current!);
+        waypointMarkers.current.push(marker);
+      });
+
+      // Add rest stop waypoint markers (filter those near route)
+      REST_STOPS.forEach(stop => {
+        // Check if rest stop is near route
+        let isNearRoute = false;
+        for (const coord of coords) {
+          const dist = Math.sqrt(Math.pow(coord[0] - stop.lon, 2) + Math.pow(coord[1] - stop.lat, 2));
+          if (dist < 0.15) { // ~10 miles
+            isNearRoute = true;
+            break;
+          }
+        }
+        if (!isNearRoute) return;
+
+        const el = document.createElement("div");
+        el.className = "tracking-waypoint-marker rest-stop";
+        el.innerHTML = `
+          <div class="waypoint-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+              <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+              <line x1="6" y1="1" x2="6" y2="4"/>
+              <line x1="10" y1="1" x2="10" y2="4"/>
+              <line x1="14" y1="1" x2="14" y2="4"/>
+            </svg>
+          </div>
+          <div class="waypoint-label">${stop.name}</div>
+        `;
+        const marker = new mapboxgl.Marker({ element: el })
+          .setLngLat([stop.lon, stop.lat])
+          .addTo(map.current!);
+        waypointMarkers.current.push(marker);
+      });
 
       // Add origin marker
       const originEl = document.createElement("div");
