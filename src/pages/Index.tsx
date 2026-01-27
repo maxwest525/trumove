@@ -1070,21 +1070,6 @@ export default function Index() {
 
               </div>
 
-              {/* RIGHT SIDE: Value Proposition Content */}
-              <div className="tru-hero-content-panel">
-                <div className="tru-hero-content-inner">
-                  <h2 className="tru-hero-headline-main">
-                    blagg is <span className="tru-hero-headline-accent">gay</span>
-                  </h2>
-                  <p className="tru-hero-subheadline">
-                    Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
-                  </p>
-                  <p className="tru-hero-subheadline" style={{ opacity: 0.6 }}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </p>
-                </div>
-              </div>
-
               {/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill
               <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
                 <TooltipProvider delayDuration={0}>
@@ -1128,19 +1113,16 @@ export default function Index() {
                             </div>
                             <div className="tru-summary-pill-row">
                               <span className="tru-summary-pill-label">Property</span>
-                              <span className="tru-summary-pill-value">{propertyType ? propertyType.charAt(0).toUpperCase() + propertyType.slice(1) : '—'}</span>
+                              <span className="tru-summary-pill-value">{selectedPropertyType ? selectedPropertyType.charAt(0).toUpperCase() + selectedPropertyType.slice(1) : '—'}</span>
                             </div>
-                          </div>
-                          <div className="tru-summary-pill-footer">
-                            Powered by <span className="tru-summary-pill-brand">TruMove</span>
                           </div>
                         </div>
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent side="left" className="tru-summary-tooltip-preview hidden group-hover:hidden">
-                      <div className="tru-summary-preview">
-                        <div className="tru-summary-preview-header">Move Summary</div>
-                        <div className="tru-summary-preview-rows">
+                    <TooltipContent side="left" className="tru-tooltip-summary-preview">
+                      <div className="tru-summary-preview-content">
+                        <div className="tru-summary-preview-header">Quick Summary</div>
+                        <div className="tru-summary-preview-body">
                           {fromCity && (
                             <div className="tru-summary-preview-row">
                               <span className="tru-summary-preview-label">From</span>
@@ -1171,6 +1153,21 @@ export default function Index() {
                 </TooltipProvider>
               </div>
               */}
+            </div>
+
+            {/* RIGHT SIDE: Value Proposition Content - NOW A GRID SIBLING */}
+            <div className="tru-hero-content-panel">
+              <div className="tru-hero-content-inner">
+                <h2 className="tru-hero-headline-main">
+                  blagg is <span className="tru-hero-headline-accent">gay</span>
+                </h2>
+                <p className="tru-hero-subheadline">
+                  Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
+                </p>
+                <p className="tru-hero-subheadline" style={{ opacity: 0.6 }}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+              </div>
             </div>
           </section>
 
