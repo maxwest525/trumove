@@ -1,463 +1,525 @@
 
-
-# Live Truck Tracking Page - Full Feature Implementation
+# Hero Section Refactoring Plan
 
 ## Overview
 
-Transform the existing Property Lookup page (`/property-lookup`) into a premium **Live Truck Tracking** experience with:
+This plan refactors ONLY the hero section of the homepage to create a premium, trust-first, technology-forward experience. The scope is limited to:
+- The headline area (top zone)
+- The left route form card
+- The right information cards ("Why TruMove" + "Live Truck Tracking" placeholder)
 
-- **Real road-path visualization** using Mapbox Directions API
-- **Animated truck following actual highways**
-- **Realistic ETA calculations** synced to simulated real-time progress
-- **Satellite/Street view thumbnails** of origin and destination
-- **Premium black + neon green TruMove styling**
-- **"Command Center" aesthetic** with real-time status updates
+No modifications will be made to global navigation, the SAFER trust strip, or any sections below the hero.
 
 ---
 
-## Page Route
+## Architecture
 
-**Current**: `/property-lookup` -> PropertyLookup.tsx  
-**Proposed**: `/track` or `/live-tracking` -> LiveTracking.tsx (new page)
-
-We can either:
-1. **Repurpose** PropertyLookup.tsx entirely (rename/redirect)
-2. **Create new** LiveTracking.tsx and keep PropertyLookup for its original purpose
-
-Recommendation: Create **new dedicated page** at `/track` to preserve route visualization as a standalone feature.
-
----
-
-## 1. Core Features
-
-### A) Real Driving Route (Not Arc Lines)
-
-Replace the current arc-based route visualization with actual road paths:
-
+### Current Structure
 ```text
-Current:  Origin ----arc---- Destination (visual only)
-Proposed: Origin ════highway══════ Destination (real roads)
++--------------------------------------------------+
+|  Hero Header (Full Width)                        |
+|  [H1 + Subheadline]                             |
++------------------------+-------------------------+
+|  LEFT: Form Card       |  RIGHT: Why TruMove     |
+|  (520px fixed width)   |  Card Only              |
++------------------------+-------------------------+
 ```
 
-**Implementation**: Use the existing `fetchDrivingRoute()` function from `MapboxMoveMap.tsx` which calls the Mapbox Directions API and returns actual road geometry.
-
-### B) Animated Truck Along Real Roads
-
-The truck marker will:
-- Follow the actual highway path (not a straight line)
-- Rotate to match road direction (bearing calculation)
-- Move at a speed proportional to the simulated ETA
-- Pulse/glow effect while in transit
-
-### C) Realistic ETA Simulation
-
-Since we can't legally track real trucks, we simulate a realistic journey:
-
+### Target Structure
 ```text
-User enters:
-- Origin address
-- Destination address
-- (Optional) "Pickup time" to simulate when truck departed
-
-System calculates:
-- Mapbox Directions API returns duration in seconds
-- We use this to animate the truck over a configurable timeframe
-- ETA countdown updates in real-time
-```
-
-**Speed Modes**:
-- **Demo mode**: 30-60 second animation for full journey
-- **Realistic mode**: Scaled to match 8-hour workday (speed multiplier)
-
----
-
-## 2. Visual Layout - "Command Center" Design
-
-### A) Header Zone (Dark Glass)
-
-```text
-+------------------------------------------------------------------+
-| [TruMove Logo]                          LIVE TRACKING            |
-| ──────────────────────────────────────────────────────────────── |
-| Shipment ID: TM-2026-0127-4829     Status: IN TRANSIT            |
-+------------------------------------------------------------------+
-```
-
-### B) Main Map Zone (Full Width, Dark Style)
-
-```text
-+------------------------------------------------------------------+
-|                                                                  |
-|  [DARK MAPBOX MAP - FULL WIDTH]                                  |
-|                                                                  |
-|    ● Origin                                                      |
-|      ║                                                           |
-|      ║══════════════════════════════════════════════╗            |
-|                                                     ║            |
-|                        🚚 (animated truck)          ║            |
-|                                                     ║            |
-|                                                     ● Dest       |
-|                                                                  |
-+------------------------------------------------------------------+
-```
-
-**Custom Dark Map Style**:
-- Base: Pure black (`#0a0a0a`)
-- Roads: Subtle gray with green highways
-- Route line: Neon green glow (`#22c55e`)
-- Labels: White/light gray
-
-### C) Bottom Dashboard Zone
-
-```text
-+------------------------------------------------------------------+
-|                                                                  |
-|  +---------------+  +-------------------+  +------------------+  |
-|  | ORIGIN        |  | PROGRESS          |  | DESTINATION      |  |
-|  | [Satellite]   |  |                   |  | [Satellite]      |  |
-|  | Denver, CO    |  | ████████░░░░ 67%  |  | Austin, TX       |  |
-|  | Departed 9:32a|  | 612 of 953 mi     |  | ETA: 6:45 PM     |  |
-|  +---------------+  +-------------------+  +------------------+  |
-|                                                                  |
-|  +--------------------------------------------------------------+|
-|  | TIMELINE                                                     ||
-|  | ● Pickup (9:32 AM) ═══ 🚚 Current ═══○ Delivery (6:45 PM)   ||
-|  +--------------------------------------------------------------+|
-|                                                                  |
-+------------------------------------------------------------------+
-```
-
-### D) Status Chips (Floating on Map)
-
-```text
-[● LIVE]  [IN TRANSIT]  [ON SCHEDULE]
++--------------------------------------------------+
+|  HEADLINE ZONE (Full Width, Centered)            |
+|  H1: "A Smarter Way To Move."                   |
+|  Sub: "Technology, transparency, and control..." |
+|  [Subtle dark gradient overlay behind text only] |
++------------------------+-------------------------+
+|  LEFT: Route Form      |  RIGHT: Stacked Cards   |
+|  - From input          |  CARD 1: Why TruMove    |
+|  - Satellite preview   |  - Badge + Title        |
+|  - To input            |  - Main paragraph       |
+|  - Satellite preview   |  - 6 Feature rows       |
+|  - Distance row (LOCK) |  - Trust indicators     |
+|  - Move date picker    |  +-----------------------+
+|  - Analyze button      |  CARD 2: Live Tracking  |
++------------------------+  - Coming Soon badge    |
+                         |  - Placeholder content  |
+                         +-------------------------+
 ```
 
 ---
 
-## 3. Technical Implementation
+## Detailed Implementation
 
-### A) New Page: `src/pages/LiveTracking.tsx`
+### 1. Headline Zone Refactoring
+
+**File: `src/pages/Index.tsx` (lines ~727-734)**
+
+Changes:
+- Update the H1 text to: "A Smarter Way To Move."
+- Update subheadline to: "Technology, transparency, and control - built for the most important move of your life."
+- Remove em-dashes and simplify typography
+- Add subtle dark gradient overlay class behind text zone only
 
 ```tsx
-// Key state
-const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
-const [destCoords, setDestCoords] = useState<[number, number] | null>(null);
-const [routeData, setRouteData] = useState<RouteData | null>(null);
-const [progress, setProgress] = useState(0); // 0-100
-const [isTracking, setIsTracking] = useState(false);
-const [departureTime, setDepartureTime] = useState<Date | null>(null);
-
-// RouteData from Mapbox Directions API
-interface RouteData {
-  coordinates: [number, number][];
-  distance: number; // meters
-  duration: number; // seconds
-  steps: RouteStep[];
-}
+{/* Hero Header with Headline + Short Subheadline */}
+<div className="tru-hero-header-section tru-hero-header-refined">
+  <h1 className="tru-hero-headline-main">
+    A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
+  </h1>
+  <p className="tru-hero-subheadline-refined">
+    Technology, transparency, and control - built for the most important move of your life.
+  </p>
+</div>
 ```
 
-### B) Dark Map Component: `TruckTrackingMap.tsx`
+**File: `src/index.css`**
 
-```tsx
-// Custom dark style using Mapbox Studio or inline style modifications
-const DARK_MAP_STYLE = 'mapbox://styles/mapbox/dark-v11';
-
-// Or create custom style programmatically:
-map.current.setStyle({
-  version: 8,
-  sources: { ... },
-  layers: [
-    // Dark base layer
-    { id: 'background', type: 'background', paint: { 'background-color': '#0a0a0a' } },
-    // Roads with green accent
-    { id: 'roads', paint: { 'line-color': '#1a1a1a', ... } },
-    // Highlight route in neon green
-    { id: 'route', paint: { 'line-color': '#22c55e', 'line-width': 5 } }
-  ]
-});
-
-// Animated truck with glow
-const truckEl = document.createElement('div');
-truckEl.className = 'tracking-truck-marker';
-truckEl.innerHTML = `
-  <div class="truck-glow"></div>
-  <div class="truck-icon">🚚</div>
-`;
-```
-
-### C) Animation Engine
-
-```tsx
-// Animate truck along route based on elapsed time
-useEffect(() => {
-  if (!isTracking || !routeData) return;
-  
-  const animationSpeed = 60; // seconds for full demo
-  const totalDuration = animationSpeed * 1000;
-  const startTime = Date.now();
-  
-  const animate = () => {
-    const elapsed = Date.now() - startTime;
-    const newProgress = Math.min((elapsed / totalDuration) * 100, 100);
-    setProgress(newProgress);
-    
-    if (newProgress < 100) {
-      requestAnimationFrame(animate);
-    }
-  };
-  
-  requestAnimationFrame(animate);
-}, [isTracking, routeData]);
-```
-
-### D) Satellite Thumbnails
-
-Reuse existing satellite view from PropertyLookup:
-
-```tsx
-// Origin satellite preview
-<img 
-  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${originCoords[0]},${originCoords[1]},16,0/300x200@2x?access_token=${MAPBOX_TOKEN}`}
-  alt="Origin location"
-  className="rounded-xl"
-/>
-```
+New/updated CSS:
+- `.tru-hero-header-refined`: Add subtle dark gradient overlay behind text only (not full hero)
+- Reduce H1 size from `clamp(40px, 6vw, 72px)` to `clamp(32px, 5vw, 56px)`
+- Reduce subheadline size to 45-55% of headline
+- Ensure high contrast over background
 
 ---
 
-## 4. CSS Styling - Premium Dark Theme
+### 2. Left Form Card - Lock Existing Structure
 
-### A) Page Container
+**File: `src/pages/Index.tsx` (lines ~769-900)**
 
+The form structure remains largely the same. Key confirmations:
+- Keep From/To location inputs with satellite thumbnails appearing below each after validation
+- Lock the permanent distance row exactly as specified
+- Keep move date picker and Analyze Route button
+- Form order: From -> From satellite -> To -> To satellite -> Distance row -> Move date -> Analyze button
+
+**Satellite Thumbnail Behavior:**
+- When user enters valid city/ZIP in From: Show satellite thumbnail directly under From input
+- Same for To field
+- Satellite view: Top-down, zoom level 13 (already implemented correctly)
+- Add subtle fade + zoom-in animation on load
+
+**File: `src/index.css`**
+
+Add animation for satellite thumbnails:
 ```css
-.live-tracking-page {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #0a0a0a 0%, #0d1117 100%);
-  color: #ffffff;
-}
-```
-
-### B) Neon Green Accents
-
-```css
-.tracking-accent {
-  color: hsl(145, 63%, 42%); /* TruMove green */
-  text-shadow: 0 0 20px hsl(145, 63%, 42% / 0.5);
+@keyframes thumb-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.tracking-route-line {
-  stroke: hsl(145, 63%, 42%);
-  filter: drop-shadow(0 0 8px hsl(145, 63%, 42% / 0.6));
-}
-```
-
-### C) Glass Cards
-
-```css
-.tracking-info-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  backdrop-filter: blur(12px);
-}
-```
-
-### D) Animated Truck Marker
-
-```css
-.tracking-truck-marker {
-  position: relative;
-  width: 40px;
-  height: 40px;
-}
-
-.tracking-truck-glow {
-  position: absolute;
-  inset: -8px;
-  background: radial-gradient(circle, hsl(145, 63%, 42% / 0.4) 0%, transparent 70%);
-  animation: pulse 2s ease-in-out infinite;
-  border-radius: 50%;
-}
-
-.tracking-truck-icon {
-  width: 40px;
-  height: 40px;
-  background: hsl(145, 63%, 42%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 
-    0 0 20px hsl(145, 63%, 42% / 0.5),
-    0 0 40px hsl(145, 63%, 42% / 0.3);
-}
-
-@keyframes truck-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.6; }
-}
-```
-
-### E) Progress Bar
-
-```css
-.tracking-progress-bar {
-  height: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.tracking-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, hsl(145, 63%, 42%), hsl(145, 80%, 50%));
-  box-shadow: 0 0 12px hsl(145, 63%, 42% / 0.6);
-  transition: width 0.3s ease-out;
+.tru-qb-satellite-thumb {
+  animation: thumb-zoom-in 0.4s ease-out;
 }
 ```
 
 ---
 
-## 5. Additional API Integrations
+### 3. Right Panel - Card 1: "Why TruMove" (Complete Redesign)
 
-### A) Google Street View Static API (Optional Enhancement)
+**File: `src/pages/Index.tsx` (lines ~1259-1308)**
 
-For ground-level imagery at origin/destination:
-
-```tsx
-// Street View thumbnail (requires Google API key)
-const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=400x300&location=${lat},${lng}&heading=151.78&pitch=-0.76&key=${GOOGLE_API_KEY}`;
-```
-
-This would require adding a Google Maps API key secret.
-
-### B) Weather Along Route (Optional)
-
-Add weather conditions for realism:
+Replace current 4-feature grid with full 6-feature clickable rows design:
 
 ```tsx
-// Display weather at current truck position
-const weather = await fetchWeather(currentTruckPosition);
-// Show: "Clear skies, 72°F at current location"
-```
-
----
-
-## 6. Status Timeline Component
-
-```text
-● Pickup Complete ────────────── 🚚 In Transit ─────────────○ Delivery
-
-  9:32 AM                         Now (2:15 PM)              ETA 6:45 PM
-  Denver, CO                      Kansas City, MO            Austin, TX
-```
-
-```tsx
-<div className="tracking-timeline">
-  <div className="timeline-node complete">
-    <div className="node-dot" />
-    <span className="node-label">Pickup</span>
-    <span className="node-time">9:32 AM</span>
+{/* RIGHT SIDE: Why TruMove Card - Premium Polished */}
+<div className="tru-hero-content-panel">
+  <div className="tru-why-card-premium">
+    <div className="tru-why-card-inner">
+      {/* Header */}
+      <div className="tru-why-header">
+        <span className="tru-why-badge">Why TruMove</span>
+      </div>
+      
+      {/* Title */}
+      <h3 className="tru-why-title">Skip the Van Line Middleman</h3>
+      
+      {/* Main Paragraph - VERBATIM from spec */}
+      <p className="tru-why-paragraph">
+        Skip the complexity of large national van lines. We use AI inventory 
+        scanning and live video consults to understand your move, then vet 
+        carriers using verified FMCSA and DOT safety data, so we can 
+        confidently match you with carriers that best meet your needs.
+      </p>
+      
+      {/* Feature Rows - All 6 features as clickable rows */}
+      <div className="tru-why-feature-list">
+        {whyTruMoveFeatures.map((feature, index) => (
+          <button
+            key={feature.id}
+            className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
+            onClick={() => setActiveFeature(activeFeature === index ? null : index)}
+          >
+            <div className="tru-why-feature-row-icon">
+              <feature.icon className="w-4 h-4" />
+            </div>
+            <div className="tru-why-feature-row-content">
+              <span className="tru-why-feature-row-title">{feature.title}</span>
+              <span className="tru-why-feature-row-desc">{feature.shortDesc}</span>
+            </div>
+            <ChevronRight className="w-4 h-4 tru-why-feature-arrow" />
+          </button>
+        ))}
+      </div>
+      
+      {/* Expanded Detail (if any feature selected) */}
+      {activeFeature !== null && (
+        <div className="tru-why-detail-box">
+          <p>{whyTruMoveFeatures[activeFeature].longDesc}</p>
+        </div>
+      )}
+      
+      {/* Bottom Trust Indicators */}
+      <div className="tru-why-trust-row">
+        <div className="tru-why-trust-item">
+          <Shield className="w-3.5 h-3.5" />
+          <span>FMCSA Verified</span>
+        </div>
+        <div className="tru-why-trust-item">
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>Licensed Broker</span>
+        </div>
+      </div>
+    </div>
   </div>
-  
-  <div className="timeline-line">
-    <div className="timeline-progress" style={{ width: `${progress}%` }} />
-  </div>
-  
-  <div className="timeline-truck" style={{ left: `${progress}%` }}>
-    <Truck className="w-5 h-5" />
-  </div>
-  
-  <div className="timeline-node pending">
-    <div className="node-dot" />
-    <span className="node-label">Delivery</span>
-    <span className="node-time">ETA 6:45 PM</span>
+
+  {/* CARD 2: Live Truck Tracking Placeholder */}
+  <div className="tru-tracking-placeholder-card">
+    <div className="tru-tracking-placeholder-inner">
+      <span className="tru-tracking-coming-badge">Coming Soon</span>
+      <h3 className="tru-tracking-placeholder-title">Live Truck Tracking</h3>
+      <p className="tru-tracking-placeholder-desc">
+        Track your truck in real time from pickup to delivery. View location, 
+        status updates, and arrival windows directly in your dashboard.
+      </p>
+      {/* Status Chips */}
+      <div className="tru-tracking-status-chips">
+        <span className="tru-tracking-chip">En Route</span>
+        <span className="tru-tracking-chip">At Pickup</span>
+        <span className="tru-tracking-chip">In Transit</span>
+        <span className="tru-tracking-chip">Arriving</span>
+      </div>
+      {/* Simple Route Illustration */}
+      <div className="tru-tracking-route-illustration">
+        <div className="tru-tracking-route-line" />
+        <Truck className="w-5 h-5 tru-tracking-truck-icon" />
+      </div>
+    </div>
   </div>
 </div>
 ```
 
----
+**File: `src/index.css`**
 
-## 7. Files to Create/Modify
+Add new CSS for Why TruMove card redesign:
 
-| File | Action | Purpose |
-|------|--------|---------|
-| `src/pages/LiveTracking.tsx` | Create | Main tracking page |
-| `src/components/tracking/TruckTrackingMap.tsx` | Create | Dark-themed animated map |
-| `src/components/tracking/TrackingDashboard.tsx` | Create | Bottom info panel |
-| `src/components/tracking/TrackingTimeline.tsx` | Create | Status timeline |
-| `src/components/tracking/SatellitePreview.tsx` | Create | Origin/destination thumbnails |
-| `src/index.css` | Modify | Add tracking page styles |
-| `src/App.tsx` | Modify | Add `/track` route |
+```css
+/* WHY TRUMOVE - Feature Rows Design */
+.tru-why-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: hsl(var(--tm-ink));
+  margin: 0;
+}
 
----
+.tru-why-paragraph {
+  font-size: 14px;
+  line-height: 1.7;
+  color: hsl(var(--tm-ink) / 0.7);
+  margin: 0;
+}
 
-## 8. User Flow
+.tru-why-feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
-1. **User enters origin address** → Satellite thumbnail appears, map zooms to origin
-2. **User enters destination address** → Route is calculated via Mapbox Directions API
-3. **User clicks "Start Tracking"** → Animation begins, truck follows real roads
-4. **Progress updates in real-time** → ETA countdown, distance remaining, status chips update
-5. **Truck arrives at destination** → Celebration animation, "Delivered" status
+.tru-why-feature-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
 
----
+.tru-why-feature-row:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  background: hsl(var(--primary) / 0.02);
+  transform: translateX(4px);
+}
 
-## 9. Demo Mode vs. Realistic Mode
+.tru-why-feature-row.is-active {
+  border-color: hsl(var(--primary) / 0.4);
+  background: hsl(var(--primary) / 0.05);
+}
 
-### Demo Mode (Default)
-- Full journey animation: 45-60 seconds
-- Perfect for showcasing the feature
-- Speed slider to control animation pace
+.tru-why-feature-row-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 10px;
+  color: hsl(var(--tm-ink));
+  flex-shrink: 0;
+}
 
-### Realistic Mode (Optional)
-- User enters "pickup time" (e.g., 9:00 AM today)
-- System calculates where truck "should be" based on elapsed time
-- Updates every few seconds to show "real-time" position
-- Uses actual Mapbox duration estimate for pacing
+.tru-why-feature-row:hover .tru-why-feature-row-icon,
+.tru-why-feature-row.is-active .tru-why-feature-row-icon {
+  background: hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary) / 0.2);
+  color: hsl(var(--tm-ink));
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.15);
+}
 
----
+.tru-why-feature-row-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-## Visual Preview
+.tru-why-feature-row-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+}
 
-```text
-┌──────────────────────────────────────────────────────────────────┐
-│ ⬛ TruMove Live Tracking                        [● LIVE] [DEMO] │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌────────────────────────────────────────────────────────────┐  │
-│  │                                                            │  │
-│  │            ██████  D A R K   M A P  ██████                │  │
-│  │                                                            │  │
-│  │     ◉ Denver ════════════════════════════════ 🚚           │  │
-│  │         ║                                      ║           │  │
-│  │         ╚══════════════════════════════════════╝  Austin   │  │
-│  │                                                            │  │
-│  │                   [IN TRANSIT - 67%]                       │  │
-│  │                                                            │  │
-│  └────────────────────────────────────────────────────────────┘  │
-│                                                                  │
-│  ┌─────────────┐  ┌──────────────────┐  ┌─────────────────────┐  │
-│  │ 📍 ORIGIN   │  │ 📊 PROGRESS      │  │ 🎯 DESTINATION      │  │
-│  │ [Satellite] │  │ ████████░░ 67%   │  │ [Satellite]         │  │
-│  │ Denver, CO  │  │ 612 / 953 mi     │  │ Austin, TX          │  │
-│  │ Departed 9a │  │ ~4 hrs remaining │  │ ETA: 6:45 PM        │  │
-│  └─────────────┘  └──────────────────┘  └─────────────────────┘  │
-│                                                                  │
-│  ┌────────────────────────────────────────────────────────────┐  │
-│  │ ● Pickup ═══════════════ 🚚 ═══════════════○ Delivery      │  │
-│  │   9:32 AM        Kansas City (now)           ETA 6:45 PM   │  │
-│  └────────────────────────────────────────────────────────────┘  │
-│                                                                  │
-└──────────────────────────────────────────────────────────────────┘
+.tru-why-feature-row-desc {
+  font-size: 11px;
+  color: hsl(var(--tm-ink) / 0.55);
+}
+
+.tru-why-feature-arrow {
+  color: hsl(var(--tm-ink) / 0.3);
+  transition: all 0.2s ease;
+}
+
+.tru-why-feature-row:hover .tru-why-feature-arrow {
+  color: hsl(var(--primary));
+  transform: translateX(2px);
+}
 ```
 
 ---
 
-## Technical Requirements
+### 4. Right Panel - Card 2: "Live Truck Tracking" Placeholder
 
-- **Mapbox Directions API**: Already available (MAPBOX_TOKEN configured)
-- **Mapbox Static Images API**: Already used for satellite thumbnails
-- **No additional API keys required** for core functionality
-- **Optional**: Google Street View API for ground-level imagery (would need key)
+**File: `src/index.css`**
 
+Add new CSS for tracking placeholder card:
+
+```css
+/* LIVE TRUCK TRACKING PLACEHOLDER */
+.tru-tracking-placeholder-card {
+  position: relative;
+  background: linear-gradient(135deg, 
+    hsl(var(--background)) 0%, 
+    hsl(var(--muted) / 0.6) 100%
+  );
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.tru-tracking-placeholder-inner {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tru-tracking-coming-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 10px;
+  background: hsl(var(--tm-ink) / 0.06);
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 100px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--tm-ink) / 0.5);
+}
+
+.tru-tracking-placeholder-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  margin: 0;
+}
+
+.tru-tracking-placeholder-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: hsl(var(--tm-ink) / 0.6);
+  margin: 0;
+}
+
+.tru-tracking-status-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.tru-tracking-chip {
+  padding: 4px 10px;
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.6);
+}
+
+.tru-tracking-route-illustration {
+  position: relative;
+  height: 40px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.tru-tracking-route-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    hsl(var(--muted)) 0%, 
+    hsl(var(--primary) / 0.3) 50%,
+    hsl(var(--muted)) 100%
+  );
+  border-radius: 2px;
+}
+
+.tru-tracking-truck-icon {
+  position: absolute;
+  left: 45%;
+  color: hsl(var(--tm-ink) / 0.4);
+  animation: truck-drift 3s ease-in-out infinite;
+}
+
+@keyframes truck-drift {
+  0%, 100% { left: 40%; }
+  50% { left: 55%; }
+}
+```
+
+---
+
+### 5. Hero Header Background Fix
+
+**File: `src/index.css`**
+
+Update the hero header section to have a subtle dark gradient overlay ONLY behind the text zone:
+
+```css
+.tru-hero-header-section.tru-hero-header-refined {
+  position: relative;
+  padding: 32px 48px;
+}
+
+.tru-hero-header-section.tru-hero-header-refined::before {
+  content: '';
+  position: absolute;
+  inset: -20px -40px;
+  background: linear-gradient(
+    180deg,
+    hsl(var(--tm-ink) / 0.02) 0%,
+    hsl(var(--tm-ink) / 0.06) 50%,
+    hsl(var(--tm-ink) / 0.02) 100%
+  );
+  border-radius: 24px;
+  z-index: -1;
+  backdrop-filter: blur(8px);
+}
+
+/* Refined headline - smaller, cleaner */
+.tru-hero-header-refined .tru-hero-headline-main {
+  font-size: clamp(32px, 5vw, 56px);
+  margin-bottom: 12px;
+}
+
+.tru-hero-subheadline-refined {
+  font-size: clamp(14px, 1.8vw, 20px);
+  line-height: 1.5;
+  color: hsl(var(--tm-ink) / 0.7);
+  max-width: 600px;
+  margin: 0 auto;
+  font-weight: 500;
+}
+```
+
+---
+
+### 6. Form Card Background Polish
+
+**File: `src/index.css`**
+
+Ensure form card and content panel cards have proper backdrop-blur and no visible edge cutoff:
+
+```css
+/* Already exists at line 24115-24121, verify and enhance */
+.tru-floating-form-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: hsl(var(--background) / 0.98);
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 
+    0 4px 20px hsl(var(--tm-ink) / 0.06),
+    0 1px 3px hsl(var(--tm-ink) / 0.04);
+}
+
+.tru-why-card-premium {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+```
+
+---
+
+## Technical Summary
+
+### Files Modified
+1. **`src/pages/Index.tsx`** - Hero section JSX restructuring
+2. **`src/index.css`** - CSS for all new card designs and refinements
+
+### Key Changes
+| Component | Change |
+|-----------|--------|
+| H1 Headline | Reduced size, text remains "A Smarter Way To Move." |
+| Subheadline | Simplified: "Technology, transparency, and control - built for the most important move of your life." |
+| Header backdrop | Subtle dark gradient overlay ONLY behind text zone |
+| Form Card | Lock existing structure, add satellite thumbnail animation |
+| Why TruMove | Complete redesign: Title + paragraph + 6 clickable feature rows + trust badges |
+| Live Tracking | New placeholder card with Coming Soon badge, description, status chips, route illustration |
+
+### Design Principles Applied
+- **Brand colors**: Black + white base with subtle neon green accents only
+- **Clean, modern, premium**: No cartoon styling, no heavy gradients
+- **Tech-forward but trustworthy**: Feature rows with hover states, subtle animations
+- **No gimmicks**: All elements serve a purpose
+
+### Interaction Details
+- Feature rows: Hover highlight + right arrow + pointer cursor
+- Satellite thumbnails: Fade + zoom-in animation on load (0.4s ease-out)
+- Distance row: Appears only after both inputs are valid (keep existing behavior)
+- Tracking card: Non-interactive placeholder with subtle truck animation
