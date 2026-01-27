@@ -1,29 +1,32 @@
-import { MapPin, Route, Radar, Truck, CheckCircle } from "lucide-react";
+import { MapPin, Route, Radar, Truck, CheckCircle, Globe } from "lucide-react";
 
 interface RouteAnalysisSectionProps {
   fromCity: string;
   toCity: string;
   distance: number;
   isAnalyzing?: boolean;
+  fromCoords?: [number, number] | null;
+  toCoords?: [number, number] | null;
 }
 
 export default function RouteAnalysisSection({ 
   fromCity, 
   toCity, 
   distance, 
-  isAnalyzing = false 
+  isAnalyzing = false,
+  fromCoords = null,
+  toCoords = null
 }: RouteAnalysisSectionProps) {
   const hasRoute = fromCity && toCity && distance > 0;
 
-  if (!hasRoute && !isAnalyzing) return null;
-
+  // Always visible - show placeholders when no data
   return (
-    <section className="tru-route-analysis-section">
+    <section className="tru-route-analysis-section tru-route-analysis-permanent">
       <div className="tru-route-analysis-inner">
         <div className="tru-route-analysis-header">
-          <Radar className={`w-5 h-5 ${isAnalyzing ? 'tru-analyzing-spin' : ''}`} />
+          <CheckCircle className={`w-5 h-5 ${hasRoute ? 'text-primary' : 'text-muted-foreground'}`} />
           <h3 className="tru-route-analysis-title">
-            {isAnalyzing ? "Analyzing your move in real time" : "Building your personalized move profile"}
+            {isAnalyzing ? "Analyzing your move..." : "Building your personalized move profile"}
           </h3>
         </div>
 
@@ -34,8 +37,18 @@ export default function RouteAnalysisSection({
         <div className="tru-route-analysis-grid">
           {/* Origin */}
           <div className={`tru-route-analysis-location ${fromCity ? 'is-validated' : ''}`}>
-            <div className="tru-route-location-icon">
-              <MapPin className="w-4 h-4" />
+            <div className="tru-route-location-thumb">
+              {fromCoords ? (
+                <img 
+                  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/100x100@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                  alt="Origin"
+                  className="tru-route-location-map"
+                />
+              ) : (
+                <div className="tru-route-location-icon-placeholder">
+                  <MapPin className="w-5 h-5" />
+                </div>
+              )}
             </div>
             <div className="tru-route-location-content">
               <span className="tru-route-location-label">Origin</span>
@@ -46,18 +59,28 @@ export default function RouteAnalysisSection({
             {fromCity && <CheckCircle className="w-4 h-4 tru-route-check" />}
           </div>
 
-          {/* Route Line */}
-          <div className="tru-route-analysis-connector">
-            <div className={`tru-route-line ${hasRoute ? 'is-active' : ''}`} />
-            {distance > 0 && (
-              <span className="tru-route-distance-badge">{distance.toLocaleString()} mi</span>
-            )}
+          {/* Distance Badge */}
+          <div className={`tru-route-analysis-distance-badge ${distance > 0 ? 'has-value' : ''}`}>
+            <Route className="w-4 h-4" />
+            <span className="tru-route-distance-value">
+              {distance > 0 ? `${distance.toLocaleString()} mi` : "— mi"}
+            </span>
           </div>
 
           {/* Destination */}
           <div className={`tru-route-analysis-location ${toCity ? 'is-validated' : ''}`}>
-            <div className="tru-route-location-icon">
-              <Truck className="w-4 h-4" />
+            <div className="tru-route-location-thumb">
+              {toCoords ? (
+                <img 
+                  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/100x100@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                  alt="Destination"
+                  className="tru-route-location-map"
+                />
+              ) : (
+                <div className="tru-route-location-icon-placeholder">
+                  <Truck className="w-5 h-5" />
+                </div>
+              )}
             </div>
             <div className="tru-route-location-content">
               <span className="tru-route-location-label">Destination</span>
@@ -69,22 +92,21 @@ export default function RouteAnalysisSection({
           </div>
         </div>
 
-        {hasRoute && (
-          <div className="tru-route-analysis-status">
-            <div className="tru-route-status-item">
-              <CheckCircle className="w-3.5 h-3.5" />
-              <span>Cities validated</span>
-            </div>
-            <div className="tru-route-status-item">
-              <CheckCircle className="w-3.5 h-3.5" />
-              <span>Distance calculated</span>
-            </div>
-            <div className="tru-route-status-item">
-              <CheckCircle className="w-3.5 h-3.5" />
-              <span>Carrier matching ready</span>
-            </div>
+        {/* Status indicators - always show */}
+        <div className="tru-route-analysis-status">
+          <div className={`tru-route-status-item ${fromCity && toCity ? 'is-complete' : ''}`}>
+            <CheckCircle className="w-3.5 h-3.5" />
+            <span>Cities validated</span>
           </div>
-        )}
+          <div className={`tru-route-status-item ${distance > 0 ? 'is-complete' : ''}`}>
+            <CheckCircle className="w-3.5 h-3.5" />
+            <span>Distance calculated</span>
+          </div>
+          <div className={`tru-route-status-item ${hasRoute ? 'is-complete' : ''}`}>
+            <CheckCircle className="w-3.5 h-3.5" />
+            <span>Carrier matching ready</span>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -42,7 +42,7 @@ import {
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera
+  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe
 } from "lucide-react";
 
 // ZIP lookup
@@ -726,11 +726,11 @@ export default function Index() {
             {/* Hero Header with Headline + Short Subheadline */}
             <div className="tru-hero-header-section">
               <div className="tru-hero-headline-backdrop" />
-              <h1 className="tru-hero-headline-main">
+              <h1 className="tru-hero-headline-main tru-hero-headline-compact">
                 A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
-              <p className="tru-hero-subheadline-short">
-                Technology, transparency, and control — built for the most important move of your life.
+              <p className="tru-hero-subheadline-short tru-hero-subheadline-compact">
+                Technology, transparency, and control for the most important move of your life.
               </p>
             </div>
 
@@ -851,32 +851,57 @@ export default function Index() {
                           </div>
                         </div>
 
-                        {/* Real-time Route Summary Strip */}
-                        {(fromCity || toCity || distance > 0) && (
-                          <div className="tru-qb-route-summary">
-                            <div className="tru-qb-route-summary-inner">
-                              {fromCity && (
-                                <div className={`tru-qb-route-summary-item ${updatedFields.has('from') ? 'is-pulsing' : ''}`}>
-                                  <span className="tru-qb-route-summary-label">Origin</span>
-                                  <span className="tru-qb-route-summary-value">{fromCity}</span>
-                                </div>
-                              )}
+                        {/* Permanent Route Summary Strip - Always visible */}
+                        <div className="tru-qb-route-summary tru-qb-route-summary-permanent">
+                          <div className="tru-qb-route-summary-inner">
+                            {/* Origin */}
+                            <div className={`tru-qb-route-summary-item ${updatedFields.has('from') ? 'is-pulsing' : ''}`}>
+                              <div className="tru-qb-route-summary-icon">
+                                {fromCoords ? (
+                                  <img 
+                                    src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/80x80@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                                    alt="Origin"
+                                    className="tru-qb-route-mini-map"
+                                  />
+                                ) : (
+                                  <Globe className="w-4 h-4 text-muted-foreground" />
+                                )}
+                              </div>
+                              <div className="tru-qb-route-summary-text">
+                                <span className="tru-qb-route-summary-label">Origin</span>
+                                <span className="tru-qb-route-summary-value">{fromCity || "Enter city"}</span>
+                              </div>
+                            </div>
+                            
+                            {/* Distance */}
+                            <div className={`tru-qb-route-summary-distance ${updatedFields.has('distance') ? 'is-pulsing' : ''} ${distance > 0 ? 'has-value' : ''}`}>
+                              <Route className="w-3.5 h-3.5" />
+                              <span>{distance > 0 ? `${distance.toLocaleString()} mi` : "— mi"}</span>
                               {distance > 0 && (
-                                <div className={`tru-qb-route-summary-distance ${updatedFields.has('distance') ? 'is-pulsing' : ''}`}>
-                                  <Route className="w-3.5 h-3.5" />
-                                  <span>{distance.toLocaleString()} mi</span>
-                                  <span className="tru-qb-route-summary-type">{moveType === 'long-distance' ? 'Long Distance' : 'Local'}</span>
-                                </div>
-                              )}
-                              {toCity && (
-                                <div className={`tru-qb-route-summary-item ${updatedFields.has('to') ? 'is-pulsing' : ''}`}>
-                                  <span className="tru-qb-route-summary-label">Destination</span>
-                                  <span className="tru-qb-route-summary-value">{toCity}</span>
-                                </div>
+                                <span className="tru-qb-route-summary-type">{moveType === 'long-distance' ? 'Long Distance' : 'Local'}</span>
                               )}
                             </div>
+                            
+                            {/* Destination */}
+                            <div className={`tru-qb-route-summary-item ${updatedFields.has('to') ? 'is-pulsing' : ''}`}>
+                              <div className="tru-qb-route-summary-icon">
+                                {toCoords ? (
+                                  <img 
+                                    src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/80x80@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                                    alt="Destination"
+                                    className="tru-qb-route-mini-map"
+                                  />
+                                ) : (
+                                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                                )}
+                              </div>
+                              <div className="tru-qb-route-summary-text">
+                                <span className="tru-qb-route-summary-label">Destination</span>
+                                <span className="tru-qb-route-summary-value">{toCity || "Enter city"}</span>
+                              </div>
+                            </div>
                           </div>
-                        )}
+                        </div>
 
                         {/* Move Date */}
                         <p className="tru-qb-section-label" style={{ marginTop: '1.25rem' }}>Move Date</p>
@@ -1235,14 +1260,14 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Why TruMove + Live Tracking Cards */}
+            {/* RIGHT SIDE: Why TruMove Card - Polished */}
             <div className="tru-hero-content-panel">
-              {/* Card 1: Why TruMove */}
-              <div className="tru-why-trumove-card">
+              {/* Card 1: Why TruMove - Refined */}
+              <div className="tru-why-trumove-card tru-why-polished">
                 <span className="tru-why-label">WHY TRUMOVE</span>
-                <h2 className="tru-why-title">Skip the Van Line Middleman</h2>
-                <p className="tru-why-desc">
-                  Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data, so we can confidently match you with carriers that best meet your needs.
+                
+                <p className="tru-why-desc tru-why-desc-lead">
+                  We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data to match you with carriers that best meet your needs.
                 </p>
                 
                 <div className="tru-why-divider" />
@@ -1262,7 +1287,6 @@ export default function Index() {
                         <span className="tru-why-feature-title">{feature.title}</span>
                         <span className="tru-why-feature-desc">{feature.shortDesc}</span>
                       </div>
-                      <ChevronRight className="tru-why-feature-arrow" />
                     </button>
                   ))}
                 </div>
@@ -1309,12 +1333,14 @@ export default function Index() {
             </div>
           </section>
 
-          {/* ROUTE ANALYSIS SECTION - Under Trust Strip */}
+          {/* ROUTE ANALYSIS SECTION - Always visible */}
           <RouteAnalysisSection 
             fromCity={fromCity}
             toCity={toCity}
             distance={distance}
             isAnalyzing={isSearchingCarriers}
+            fromCoords={fromCoords}
+            toCoords={toCoords}
           />
 
           {/* START YOUR AI INVENTORY ANALYSIS - 3 Step Section */}
