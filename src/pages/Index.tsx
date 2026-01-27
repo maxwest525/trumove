@@ -723,13 +723,13 @@ export default function Index() {
               </div>
             )}
             
-            {/* Hero Header with Headline + Short Subheadline */}
-            <div className="tru-hero-header-section">
-              <h1 className="tru-hero-headline-main tru-hero-headline-refined">
+            {/* Hero Header with Headline + Short Subheadline - Refined per plan */}
+            <div className="tru-hero-header-section tru-hero-header-refined">
+              <h1 className="tru-hero-headline-main">
                 A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
-              <p className="tru-hero-subheadline-short tru-hero-subheadline-refined">
-                Technology, transparency, and control for your most important move.
+              <p className="tru-hero-subheadline-refined">
+                Technology, transparency, and control - built for the most important move of your life.
               </p>
             </div>
 
@@ -1256,8 +1256,9 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Why TruMove Card - Premium Polished */}
-            <div className="tru-hero-content-panel">
+            {/* RIGHT SIDE: Why TruMove Card + Live Tracking Placeholder */}
+            <div className="tru-hero-content-panel tru-hero-stacked-cards">
+              {/* CARD 1: Why TruMove - Premium with 6 feature rows */}
               <div className="tru-why-card-premium">
                 <div className="tru-why-card-glow" />
                 <div className="tru-why-card-inner">
@@ -1265,28 +1266,39 @@ export default function Index() {
                     <span className="tru-why-badge">Why TruMove</span>
                   </div>
                   
-                  <p className="tru-why-lead">
-                    AI-powered inventory, verified carriers, and complete transparency.
+                  {/* Title */}
+                  <h3 className="tru-why-title">Skip the Van Line Middleman</h3>
+                  
+                  {/* Main Paragraph - VERBATIM from spec */}
+                  <p className="tru-why-paragraph">
+                    Skip the complexity of large national van lines. We use AI inventory 
+                    scanning and live video consults to understand your move, then vet 
+                    carriers using verified FMCSA and DOT safety data, so we can 
+                    confidently match you with carriers that best meet your needs.
                   </p>
                   
-                  {/* Feature Grid */}
-                  <div className="tru-why-features-grid">
-                    {whyTruMoveFeatures.slice(0, 4).map((feature, index) => (
+                  {/* Feature Rows - All 6 features as clickable rows */}
+                  <div className="tru-why-feature-list">
+                    {whyTruMoveFeatures.map((feature, index) => (
                       <button
                         key={feature.id}
-                        className={`tru-why-feature-card ${activeFeature === index ? 'is-active' : ''}`}
+                        className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
                         onClick={() => setActiveFeature(activeFeature === index ? null : index)}
                       >
-                        <div className="tru-why-feature-icon-wrap">
+                        <div className="tru-why-feature-row-icon">
                           <feature.icon className="w-4 h-4" />
                         </div>
-                        <span className="tru-why-feature-label">{feature.title}</span>
+                        <div className="tru-why-feature-row-content">
+                          <span className="tru-why-feature-row-title">{feature.title}</span>
+                          <span className="tru-why-feature-row-desc">{feature.shortDesc}</span>
+                        </div>
+                        <ChevronRight className="w-4 h-4 tru-why-feature-arrow" />
                       </button>
                     ))}
                   </div>
                   
-                  {/* Expandable Detail */}
-                  {activeFeature !== null && activeFeature < 4 && (
+                  {/* Expanded Detail (if any feature selected) */}
+                  {activeFeature !== null && (
                     <div className="tru-why-detail-box">
                       <p>{whyTruMoveFeatures[activeFeature].longDesc}</p>
                     </div>
@@ -1302,6 +1314,30 @@ export default function Index() {
                       <ShieldCheck className="w-3.5 h-3.5" />
                       <span>Licensed Broker</span>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD 2: Live Truck Tracking Placeholder */}
+              <div className="tru-tracking-placeholder-card">
+                <div className="tru-tracking-placeholder-inner">
+                  <span className="tru-tracking-coming-badge">Coming Soon</span>
+                  <h3 className="tru-tracking-placeholder-title">Live Truck Tracking</h3>
+                  <p className="tru-tracking-placeholder-desc">
+                    Track your truck in real time from pickup to delivery. View location, 
+                    status updates, and arrival windows directly in your dashboard.
+                  </p>
+                  {/* Status Chips */}
+                  <div className="tru-tracking-status-chips">
+                    <span className="tru-tracking-chip">En Route</span>
+                    <span className="tru-tracking-chip">At Pickup</span>
+                    <span className="tru-tracking-chip">In Transit</span>
+                    <span className="tru-tracking-chip">Arriving</span>
+                  </div>
+                  {/* Simple Route Illustration */}
+                  <div className="tru-tracking-route-illustration">
+                    <div className="tru-tracking-route-line" />
+                    <Truck className="w-5 h-5 tru-tracking-truck-icon" />
                   </div>
                 </div>
               </div>
