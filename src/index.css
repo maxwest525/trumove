@@ -24019,12 +24019,23 @@
 
 /* Logo inside the main headline */
 .tru-hero-headline-logo {
-  height: 42px;
+  height: 56px;
   width: auto;
   display: inline-block;
   vertical-align: middle;
-  margin-right: 12px;
-  margin-bottom: 4px;
+  margin-right: 14px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.5)) drop-shadow(0 0 24px hsl(var(--primary) / 0.25));
+  animation: logo-glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes logo-glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.5)) drop-shadow(0 0 24px hsl(var(--primary) / 0.25));
+  }
+  50% {
+    filter: drop-shadow(0 0 18px hsl(var(--primary) / 0.65)) drop-shadow(0 0 32px hsl(var(--primary) / 0.35));
+  }
 }
 
 /* Refined headline - smaller, cleaner */
