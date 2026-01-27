@@ -4,6 +4,7 @@ import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
 import { TrackingTimeline } from "@/components/tracking/TrackingTimeline";
 import { SatellitePreview } from "@/components/tracking/SatellitePreview";
+import { RouteWeather } from "@/components/tracking/RouteWeather";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { Button } from "@/components/ui/button";
@@ -360,6 +361,14 @@ export default function LiveTracking() {
             variant="destination"
           />
         </div>
+
+        {/* Weather Strip */}
+        <RouteWeather
+          originCoords={originCoords}
+          destCoords={destCoords}
+          originName={originName}
+          destName={destName}
+        />
       </div>
 
       {/* Bottom Timeline */}
