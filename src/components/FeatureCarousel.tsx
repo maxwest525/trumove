@@ -24,6 +24,12 @@ const features = [
     route: "/scan-room",
   },
   {
+    title: "Shipment Tracking",
+    desc: "Track your shipment in real-time with live updates and notifications.",
+    image: previewPropertyLookup,
+    route: "/track",
+  },
+  {
     title: "Smart Carrier Match",
     desc: "Our algorithm finds the best carrier for your route.",
     image: previewCarrierVetting,
@@ -38,14 +44,8 @@ const features = [
   {
     title: "FMCSA Verified",
     desc: "Real-time safety data checks from official databases.",
-    image: previewPropertyLookup,
-    route: "/vetting",
-  },
-  {
-    title: "Instant Pricing",
-    desc: "Get accurate quotes in minutes, not hours.",
     image: scanRoomPreview,
-    route: "/online-estimate",
+    route: "/vetting",
   },
 ];
 

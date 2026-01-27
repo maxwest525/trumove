@@ -1275,33 +1275,6 @@ export default function Index() {
                 )}
               </div>
               
-              {/* Card 2: Live Truck Tracking (Placeholder) */}
-              <div className="tru-tracking-preview-card">
-                <span className="tru-tracking-label">COMING SOON</span>
-                <h3 className="tru-tracking-title">Live Truck Tracking</h3>
-                <p className="tru-tracking-desc">
-                  Track your truck in real time from pickup to delivery. View location, status updates, and arrival windows directly in your dashboard.
-                </p>
-                
-                {/* Route illustration placeholder */}
-                <div className="tru-tracking-visual">
-                  <div className="tru-tracking-route-line">
-                    <div className="tru-tracking-dot tru-tracking-dot-origin" />
-                    <div className="tru-tracking-line-segment" />
-                    <Truck className="w-5 h-5 tru-tracking-truck-icon" />
-                    <div className="tru-tracking-line-segment tru-tracking-line-remaining" />
-                    <div className="tru-tracking-dot tru-tracking-dot-dest" />
-                  </div>
-                </div>
-                
-                {/* Status chips */}
-                <div className="tru-tracking-chips">
-                  <span className="tru-tracking-chip is-complete">At Pickup</span>
-                  <span className="tru-tracking-chip is-active">In Transit</span>
-                  <span className="tru-tracking-chip">En Route</span>
-                  <span className="tru-tracking-chip">Arriving</span>
-                </div>
-              </div>
             </div>
           </section>
         </div> {/* End tru-hero-wrapper */}
