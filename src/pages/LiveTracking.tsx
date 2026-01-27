@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar, FileText, Bell } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
@@ -10,9 +10,11 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import logoImg from "@/assets/logo.png";
 
 interface RouteData {
@@ -20,6 +22,15 @@ interface RouteData {
   distance: number;
   duration: number;
 }
+
+// Checkpoint thresholds for notifications (percentage)
+const CHECKPOINTS = [
+  { percent: 0, label: "Pickup Complete", icon: "🚚" },
+  { percent: 25, label: "25% Complete", icon: "📍" },
+  { percent: 50, label: "Halfway There!", icon: "🎯" },
+  { percent: 75, label: "Almost There!", icon: "🏁" },
+  { percent: 100, label: "Delivered!", icon: "✅" },
+];
 
 // Geocode address string to coordinates
 async function geocodeAddress(address: string): Promise<[number, number] | null> {
@@ -56,6 +67,7 @@ function formatDuration(seconds: number): string {
   return `${minutes}m`;
 }
 
+
 export default function LiveTracking() {
   // Location state
   const [originAddress, setOriginAddress] = useState("");
@@ -73,6 +85,12 @@ export default function LiveTracking() {
   const [animationSpeed, setAnimationSpeed] = useState(60); // seconds for full journey
   const [moveDate, setMoveDate] = useState<Date>(new Date()); // Auto-populate with today
   const [departureTime] = useState(new Date());
+  
+  // Shipment notes
+  const [shipmentNotes, setShipmentNotes] = useState("");
+  
+  // Checkpoint notifications tracking
+  const passedCheckpoints = useRef<Set<number>>(new Set());
 
   // Animation refs
   const animationRef = useRef<number | null>(null);
@@ -135,6 +153,25 @@ export default function LiveTracking() {
     };
   }, [isTracking, isPaused, animationSpeed, routeData]);
 
+  // Checkpoint notifications
+  useEffect(() => {
+    if (!isTracking) return;
+    
+    CHECKPOINTS.forEach((checkpoint) => {
+      if (progress >= checkpoint.percent && !passedCheckpoints.current.has(checkpoint.percent)) {
+        passedCheckpoints.current.add(checkpoint.percent);
+        
+        // Show toast notification
+        toast.success(`${checkpoint.icon} ${checkpoint.label}`, {
+          description: checkpoint.percent === 100 
+            ? `Your shipment has arrived at ${destName || 'destination'}!`
+            : `Shipment progress: ${Math.round(progress)}% of ${Math.round(routeData?.distance || 0)} miles`,
+          duration: 4000,
+        });
+      }
+    });
+  }, [progress, isTracking, destName, routeData]);
+
   // Start tracking
   const startTracking = () => {
     if (!routeData) return;
@@ -166,6 +203,7 @@ export default function LiveTracking() {
     setProgress(0);
     pausedProgressRef.current = 0;
     startTimeRef.current = null;
+    passedCheckpoints.current = new Set(); // Reset checkpoint notifications
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
@@ -281,6 +319,28 @@ export default function LiveTracking() {
                   />
                 </PopoverContent>
               </Popover>
+            </div>
+
+            {/* Shipment Notes */}
+            <div className="mb-4 pt-4 border-t border-white/10">
+              <div className="flex items-center gap-2 mb-2">
+                <FileText className="w-3.5 h-3.5 text-white/50" />
+                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
+                  Shipment Notes
+                </span>
+              </div>
+              <Textarea
+                value={shipmentNotes}
+                onChange={(e) => setShipmentNotes(e.target.value)}
+                placeholder="Special instructions, delivery notes, access codes..."
+                className="min-h-[80px] bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm resize-none"
+              />
+              {shipmentNotes && (
+                <div className="flex items-center gap-1.5 mt-2 text-[10px] text-primary">
+                  <Bell className="w-3 h-3" />
+                  <span>Notes saved to shipment</span>
+                </div>
+              )}
             </div>
 
             {/* Speed Control */}
