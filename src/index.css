@@ -24193,6 +24193,15 @@
   }
 }
 
+@keyframes ticker-scroll-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
 .tru-ticker-strip {
   width: 100%;
   overflow: hidden;
@@ -24201,10 +24210,32 @@
   padding: 8px 0;
 }
 
+/* Second ticker - darker theme for contrast */
+.tru-ticker-stats {
+  background: linear-gradient(180deg, hsl(var(--tm-ink)) 0%, hsl(var(--tm-ink) / 0.95) 100%);
+  border-bottom: 1px solid hsl(var(--primary) / 0.2);
+}
+
+.tru-ticker-stats .tru-ticker-item {
+  color: hsl(0 0% 100% / 0.7);
+}
+
+.tru-ticker-stats .tru-ticker-item svg {
+  color: hsl(var(--primary));
+}
+
+.tru-ticker-stats .tru-ticker-item::after {
+  background: hsl(var(--primary) / 0.5);
+}
+
 .tru-ticker-track {
   display: flex;
   width: max-content;
   animation: ticker-scroll 30s linear infinite;
+}
+
+.tru-ticker-track-reverse {
+  animation: ticker-scroll-reverse 35s linear infinite;
 }
 
 .tru-ticker-strip:hover .tru-ticker-track {
@@ -24288,6 +24319,10 @@
   
   .tru-ticker-track {
     animation-duration: 20s;
+  }
+  
+  .tru-ticker-track-reverse {
+    animation-duration: 25s;
   }
 }
 
