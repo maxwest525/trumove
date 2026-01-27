@@ -1,8 +1,16 @@
-import { useState } from "react";
-import { MapPin, Navigation, Loader2, Eye, Plane, Globe } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { MapPin, Navigation, Loader2, Eye, Plane, Globe, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
-type ViewMode = "street" | "satellite" | "aerial";
+type ViewMode = "street" | "satellite" | "aerial" | "video";
+
+interface AerialViewData {
+  type: "video" | "processing" | "not_found" | "fallback" | "error";
+  videoUrl?: string;
+  thumbnailUrl?: string;
+  message?: string;
+}
 
 interface StreetViewPreviewProps {
   coordinates: [number, number] | null;
@@ -26,6 +34,44 @@ export function StreetViewPreview({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("street");
+  const [aerialData, setAerialData] = useState<AerialViewData | null>(null);
+  const [hasAerialVideo, setHasAerialVideo] = useState(false);
+
+  // Fetch aerial view data from Google API
+  const fetchAerialView = useCallback(async (lat: number, lng: number) => {
+    try {
+      // Use full address for better aerial view matching
+      const address = locationName || `${lat},${lng}`;
+      
+      const { data, error } = await supabase.functions.invoke('google-aerial-view', {
+        body: { address, lat, lng }
+      });
+
+      if (error) {
+        console.error('Aerial view API error:', error);
+        return null;
+      }
+
+      console.log('Aerial view response for', label, ':', data);
+      return data as AerialViewData;
+    } catch (err) {
+      console.error('Failed to fetch aerial view:', err);
+      return null;
+    }
+  }, [locationName, label]);
+
+  // Fetch aerial data when coordinates are set
+  useEffect(() => {
+    if (coordinates) {
+      const [lng, lat] = coordinates;
+      fetchAerialView(lat, lng).then(data => {
+        if (data) {
+          setAerialData(data);
+          setHasAerialVideo(data.type === 'video' && !!data.videoUrl);
+        }
+      });
+    }
+  }, [coordinates, fetchAerialView]);
 
   // Google Street View Static API URL
   const streetViewUrl = coordinates && googleApiKey
@@ -52,6 +98,8 @@ export function StreetViewPreview({
 
   const getCurrentUrl = () => {
     switch (viewMode) {
+      case "video":
+        return aerialData?.thumbnailUrl || satelliteUrl;
       case "street":
         return hasError ? satelliteUrl : streetViewUrl;
       case "satellite":
@@ -64,20 +112,20 @@ export function StreetViewPreview({
   };
 
   const cycleViewMode = () => {
-    if (hasError) {
-      // If street view failed, only toggle between satellite and aerial
-      setViewMode(viewMode === "satellite" ? "aerial" : "satellite");
-    } else {
-      const modes: ViewMode[] = ["street", "satellite", "aerial"];
-      const currentIndex = modes.indexOf(viewMode);
-      const nextIndex = (currentIndex + 1) % modes.length;
-      setViewMode(modes[nextIndex]);
-    }
+    const modes: ViewMode[] = [];
+    if (hasAerialVideo) modes.push("video");
+    if (!hasError) modes.push("street");
+    modes.push("satellite", "aerial");
+    
+    const currentIndex = modes.indexOf(viewMode);
+    const nextIndex = (currentIndex + 1) % modes.length;
+    setViewMode(modes[nextIndex]);
     setIsLoading(true);
   };
 
   const getViewLabel = () => {
     switch (viewMode) {
+      case "video": return "Flyover";
       case "street": return "Street";
       case "satellite": return "Satellite";
       case "aerial": return "Aerial";
@@ -86,6 +134,7 @@ export function StreetViewPreview({
 
   const getViewIcon = () => {
     switch (viewMode) {
+      case "video": return <Video className="w-3 h-3" />;
       case "street": return <Eye className="w-3 h-3" />;
       case "satellite": return <Globe className="w-3 h-3" />;
       case "aerial": return <Plane className="w-3 h-3" />;
@@ -121,7 +170,7 @@ export function StreetViewPreview({
         )}
       </div>
 
-      {/* Image Container */}
+      {/* Image/Video Container */}
       <div className="relative w-full h-[140px] rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10">
         {coordinates ? (
           <>
@@ -131,16 +180,33 @@ export function StreetViewPreview({
               </div>
             )}
             
-            <img
-              src={getCurrentUrl() || ""}
-              alt={`${getViewLabel()} view of ${locationName}`}
-              className={cn(
-                "w-full h-full object-cover transition-opacity duration-300",
-                isLoading ? "opacity-0" : "opacity-100"
-              )}
-              onLoad={() => setIsLoading(false)}
-              onError={viewMode === "street" ? handleStreetViewError : () => setIsLoading(false)}
-            />
+            {/* Video mode - show video player */}
+            {viewMode === "video" && aerialData?.videoUrl ? (
+              <video
+                src={aerialData.videoUrl}
+                className="w-full h-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+                onLoadedData={() => setIsLoading(false)}
+                onError={() => {
+                  setIsLoading(false);
+                  setViewMode("street");
+                }}
+              />
+            ) : (
+              <img
+                src={getCurrentUrl() || ""}
+                alt={`${getViewLabel()} view of ${locationName}`}
+                className={cn(
+                  "w-full h-full object-cover transition-opacity duration-300",
+                  isLoading ? "opacity-0" : "opacity-100"
+                )}
+                onLoad={() => setIsLoading(false)}
+                onError={viewMode === "street" ? handleStreetViewError : () => setIsLoading(false)}
+              />
+            )}
 
             {/* View badge */}
             {!isLoading && (
@@ -149,6 +215,14 @@ export function StreetViewPreview({
                 <span className="text-[9px] font-semibold text-white/80 tracking-wider uppercase">
                   {getViewLabel()} VIEW
                 </span>
+              </div>
+            )}
+            
+            {/* Video indicator */}
+            {viewMode === "video" && hasAerialVideo && !isLoading && (
+              <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-red-500/80 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                <span className="text-[8px] font-bold text-white tracking-wider">LIVE</span>
               </div>
             )}
           </>
