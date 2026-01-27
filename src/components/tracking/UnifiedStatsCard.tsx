@@ -58,6 +58,9 @@ interface UnifiedStatsCardProps {
   lastUpdate: Date | null;
   isLoading: boolean;
   onRefresh: () => void;
+  
+  // Empty state
+  isEmpty?: boolean;
 }
 
 export function UnifiedStatsCard({
@@ -78,6 +81,7 @@ export function UnifiedStatsCard({
   lastUpdate,
   isLoading,
   onRefresh,
+  isEmpty = false,
 }: UnifiedStatsCardProps) {
   const [showAlternates, setShowAlternates] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(0);
@@ -133,7 +137,7 @@ export function UnifiedStatsCard({
           <div className="w-5 h-5 rounded-md flex items-center justify-center bg-primary/20 text-primary">
             <Zap className="w-3 h-3" />
           </div>
-          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+          <span className="text-xs font-bold tracking-wider uppercase text-foreground">
             Live Stats
           </span>
         </div>
@@ -143,114 +147,131 @@ export function UnifiedStatsCard({
           size="sm"
           className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
           onClick={onRefresh}
-          disabled={isLoading}
+          disabled={isLoading || isEmpty}
         >
           <RefreshCw className={cn("w-3 h-3", isLoading && "animate-spin")} />
         </Button>
       </div>
 
+      {/* Empty State Message */}
+      {isEmpty && (
+        <div className="text-center py-6 text-muted-foreground">
+          <Route className="w-8 h-8 mx-auto mb-2 opacity-40" />
+          <p className="text-sm font-medium text-foreground/70">Enter a Booking # or Route</p>
+          <p className="text-xs mt-1">Stats will appear once tracking begins</p>
+        </div>
+      )}
+
       {/* Primary Stats Row - ETA, Time, Distance */}
-      <div className="grid grid-cols-3 gap-2 mb-3">
-        <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-2.5 border border-primary/20">
-          <div className="text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">ETA</div>
-          <div className="text-lg font-bold text-primary leading-tight">
-            {adjustedETA || '--:--'}
+      {!isEmpty && (
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-2.5 border border-primary/20">
+            <div className="text-[9px] uppercase tracking-wider text-foreground/60 mb-0.5">ETA</div>
+            <div className="text-lg font-bold text-primary leading-tight">
+              {adjustedETA || '--:--'}
+            </div>
+          </div>
+          
+          <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-2.5 border border-border">
+            <div className="text-[9px] uppercase tracking-wider text-foreground/60 mb-0.5">Time Left</div>
+            <div className="text-lg font-bold text-foreground leading-tight">
+              {adjustedDuration || timeRemaining}
+            </div>
+          </div>
+          
+          <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-2.5 border border-border">
+            <div className="text-[9px] uppercase tracking-wider text-foreground/60 mb-0.5">Distance</div>
+            <div className="text-lg font-bold text-foreground leading-tight">
+              {remainingDistance || Math.round(totalDistance - distanceTraveled)} mi
+            </div>
           </div>
         </div>
-        
-        <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-2.5 border border-border">
-          <div className="text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">Time Left</div>
-          <div className="text-lg font-bold text-foreground leading-tight">
-            {adjustedDuration || timeRemaining}
-          </div>
-        </div>
-        
-        <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-2.5 border border-border">
-          <div className="text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">Distance</div>
-          <div className="text-lg font-bold text-foreground leading-tight">
-            {remainingDistance || Math.round(totalDistance - distanceTraveled)} mi
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Progress Bar */}
-      <div className="mb-3">
-        <div className="flex justify-between text-[10px] text-muted-foreground mb-1.5">
-          <span>{Math.round(progress)}% complete</span>
-          <span>{Math.round(distanceTraveled)}/{Math.round(totalDistance)} mi</span>
+      {!isEmpty && (
+        <div className="mb-3">
+          <div className="flex justify-between text-xs text-foreground/70 mb-1.5">
+            <span>{Math.round(progress)}% complete</span>
+            <span>{Math.round(distanceTraveled)}/{Math.round(totalDistance)} mi</span>
+          </div>
+          <div className="tracking-progress-bar h-2">
+            <div 
+              className="tracking-progress-fill"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
-        <div className="tracking-progress-bar h-2">
-          <div 
-            className="tracking-progress-fill"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
+      )}
 
       {/* Traffic, Tolls, Fuel Row */}
-      <div className="grid grid-cols-3 gap-2 mb-3">
-        {/* Traffic */}
-        <div className={cn("rounded-lg p-2 border", severity.bg)}>
-          <div className="flex items-center gap-1 mb-0.5">
-            <AlertTriangle className={cn("w-2.5 h-2.5", severity.color)} />
-            <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Traffic</span>
+      {!isEmpty && (
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          {/* Traffic */}
+          <div className={cn("rounded-lg p-2 border", severity.bg)}>
+            <div className="flex items-center gap-1 mb-0.5">
+              <AlertTriangle className={cn("w-2.5 h-2.5", severity.color)} />
+              <span className="text-[8px] uppercase tracking-wider text-foreground/60">Traffic</span>
+            </div>
+            <div className={cn("text-xs font-semibold", severity.color)}>
+              {severity.label}
+            </div>
+            {trafficDelay > 0 && (
+              <div className="text-[9px] text-foreground/60">+{trafficDelay}m delay</div>
+            )}
           </div>
-          <div className={cn("text-xs font-semibold", severity.color)}>
-            {severity.label}
-          </div>
-          {trafficDelay > 0 && (
-            <div className="text-[9px] text-muted-foreground">+{trafficDelay}m delay</div>
-          )}
-        </div>
 
-        {/* Tolls */}
-        <div className={cn(
-          "rounded-lg p-2 border",
-          tollInfo?.hasTolls ? "bg-muted/50 dark:bg-white/5 border-border" : "bg-emerald-500/10 border-emerald-500/20"
-        )}>
-          <div className="flex items-center gap-1 mb-0.5">
-            <DollarSign className={cn("w-2.5 h-2.5", tollInfo?.hasTolls ? "text-muted-foreground" : "text-emerald-500")} />
-            <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Tolls</span>
+          {/* Tolls */}
+          <div className={cn(
+            "rounded-lg p-2 border",
+            tollInfo?.hasTolls ? "bg-muted/50 dark:bg-white/5 border-border" : "bg-emerald-500/10 border-emerald-500/20"
+          )}>
+            <div className="flex items-center gap-1 mb-0.5">
+              <DollarSign className={cn("w-2.5 h-2.5", tollInfo?.hasTolls ? "text-foreground/60" : "text-emerald-500")} />
+              <span className="text-[8px] uppercase tracking-wider text-foreground/60">Tolls</span>
+            </div>
+            <div className={cn("text-xs font-semibold", tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500")}>
+              {tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
+            </div>
           </div>
-          <div className={cn("text-xs font-semibold", tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500")}>
-            {tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
-          </div>
-        </div>
 
-        {/* Fuel */}
-        <div className={cn(
-          "rounded-lg p-2 border",
-          isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/20" : "bg-muted/50 dark:bg-white/5 border-border"
-        )}>
-          <div className="flex items-center gap-1 mb-0.5">
-            <Fuel className={cn("w-2.5 h-2.5", isFuelEfficient ? "text-emerald-500" : "text-muted-foreground")} />
-            <span className="text-[8px] uppercase tracking-wider text-muted-foreground">Fuel</span>
-          </div>
-          <div className={cn("text-xs font-semibold", isFuelEfficient ? "text-emerald-500" : "text-foreground")}>
-            {isFuelEfficient ? 'Optimal' : 'Standard'}
+          {/* Fuel */}
+          <div className={cn(
+            "rounded-lg p-2 border",
+            isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/20" : "bg-muted/50 dark:bg-white/5 border-border"
+          )}>
+            <div className="flex items-center gap-1 mb-0.5">
+              <Fuel className={cn("w-2.5 h-2.5", isFuelEfficient ? "text-emerald-500" : "text-foreground/60")} />
+              <span className="text-[8px] uppercase tracking-wider text-foreground/60">Fuel</span>
+            </div>
+            <div className={cn("text-xs font-semibold", isFuelEfficient ? "text-emerald-500" : "text-foreground")}>
+              {isFuelEfficient ? 'Optimal' : 'Standard'}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Traffic Trend & Last Update */}
-      <div className="flex items-center justify-between py-2 border-t border-border">
-        {trend && (
-          <div className="flex items-center gap-1.5">
-            <span className={trend.color}>{trend.icon}</span>
-            <span className="text-[10px] text-muted-foreground">Traffic {trend.label}</span>
-          </div>
-        )}
-        {lastUpdate && (
-          <span className="text-[10px] text-muted-foreground">
-            Updated {formatTimeAgo(lastUpdate)}
-          </span>
-        )}
-      </div>
+      {!isEmpty && (
+        <div className="flex items-center justify-between py-2 border-t border-border">
+          {trend && (
+            <div className="flex items-center gap-1.5">
+              <span className={trend.color}>{trend.icon}</span>
+              <span className="text-xs text-foreground/70">Traffic {trend.label}</span>
+            </div>
+          )}
+          {lastUpdate && (
+            <span className="text-xs text-foreground/70">
+              Updated {formatTimeAgo(lastUpdate)}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Alternate Routes (Collapsible) */}
-      {alternateRoutes.length > 0 && (
+      {!isEmpty && alternateRoutes.length > 0 && (
         <Collapsible open={showAlternates} onOpenChange={setShowAlternates}>
-          <CollapsibleTrigger className="w-full flex items-center justify-between py-2 border-t border-border text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+          <CollapsibleTrigger className="w-full flex items-center justify-between py-2 border-t border-border text-xs text-foreground/70 hover:text-foreground transition-colors">
             <span className="uppercase tracking-wider font-medium">Alternate Routes</span>
             {showAlternates ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
           </CollapsibleTrigger>
@@ -268,12 +289,12 @@ export function UnifiedStatsCard({
                 )}
               >
                 <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-[10px] font-medium text-foreground truncate pr-2">
+                  <span className="text-xs font-medium text-foreground truncate pr-2">
                     {alt.description || `Via alternate ${alt.index}`}
                   </span>
-                  <ChevronRight className="w-2.5 h-2.5 text-muted-foreground flex-shrink-0" />
+                  <ChevronRight className="w-2.5 h-2.5 text-foreground/60 flex-shrink-0" />
                 </div>
-                <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
+                <div className="flex items-center gap-2 text-[10px] text-foreground/60">
                   <span>{alt.distanceMiles} mi</span>
                   <span>•</span>
                   <span>{alt.durationFormatted}</span>
