@@ -1089,6 +1089,16 @@ export default function Index() {
                           </div>
                         </div>
 
+                        {/* Compact Route Preview Map - shows when both locations entered */}
+                        {fromCoords && toCoords && (
+                          <div className="tru-qb-route-preview-map">
+                            <MapboxMoveMap 
+                              fromZip={fromZip}
+                              toZip={toZip}
+                            />
+                          </div>
+                        )}
+
                         {/* Move Date */}
                         <p className="tru-qb-section-label" style={{ marginTop: '1.25rem' }}>Move Date</p>
                         <div className="tru-qb-input-wrap">
