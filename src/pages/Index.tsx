@@ -1460,12 +1460,13 @@ export default function Index() {
                     confidently match you with carriers that best meet your needs.
                   </p>
                   
-                  {/* Feature Rows - All 6 features as clickable rows */}
+                  {/* Feature Rows - All 6 features as clickable rows with stagger animation */}
                   <div className="tru-why-feature-list">
                     {whyTruMoveFeatures.map((feature, index) => (
                       <button
                         key={feature.id}
                         className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
+                        style={{ '--stagger-index': index } as React.CSSProperties}
                         onClick={() => setActiveFeature(activeFeature === index ? null : index)}
                       >
                         <div className="tru-why-feature-row-icon">
@@ -1501,8 +1502,7 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* CARD 2: Live Truck Tracking - Interactive Demo */}
-              <TrackingDemoCard />
+              {/* CARD 2: Live Truck Tracking - Removed for now */}
             </div>
           </section>
         </div> {/* End tru-hero-wrapper */}
