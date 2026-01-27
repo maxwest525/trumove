@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.carrier-lookup]
 verify_jwt = false
+
+[functions.weather-route]
+verify_jwt = false
