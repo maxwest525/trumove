@@ -1,92 +1,91 @@
 
-# Plan: Fix Content Panel Grid Placement
+# Plan: Move Form Left & Add Subheadline
 
-## Problem
-The "blagg is gay" content panel is appearing **below** the form instead of **beside** it because it's **nested inside** the `.tru-hero-right-half` container instead of being a **sibling** of it in the grid.
+## Overview
+Two changes:
+1. Move the form significantly more to the left by adjusting grid and padding
+2. Add a subheadline "Designed to put you in control of your move." under the main headline
 
-**Current (wrong) structure:**
-```text
-.tru-hero.tru-hero-split (grid: 520px | 1fr)
-  ├── .tru-hero-header-section (spans both columns)
-  └── .tru-hero-right-half (column 1)
-        ├── .tru-hero-form-panel
-        └── .tru-hero-content-panel  ← NESTED INSIDE!
+## Changes
+
+### 1. Shift Form More to the Left
+**File:** `src/index.css`
+
+Adjust the grid layout and padding to push the form leftward without affecting the right content panel:
+
+```css
+/* Update around line 1041-1049 */
+.tru-hero.tru-hero-split {
+  display: grid;
+  grid-template-columns: 520px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 32px 64px;                    /* Increased column gap from 48px to 64px */
+  align-items: start;
+  padding: 4px 24px 16px 48px;       /* Increased left padding from 24px to 48px */
+  max-width: 1480px;
+  margin: 0 auto;
+}
 ```
 
-**Required (correct) structure:**
-```text
-.tru-hero.tru-hero-split (grid: 520px | 1fr)
-  ├── .tru-hero-header-section (spans both columns)
-  ├── .tru-hero-right-half (column 1) ← Form only
-  │     └── .tru-hero-form-panel
-  └── .tru-hero-content-panel (column 2) ← SIBLING, not nested!
-```
+This shifts the entire grid (including form) leftward while giving more breathing room between the form and right panel.
 
-## Solution
-
-### 1. Move Content Panel Outside Form Container
+### 2. Add Subheadline Under Main Headline
 **File:** `src/pages/Index.tsx`
 
-Move the `.tru-hero-content-panel` div from **inside** `.tru-hero-right-half` to be a **sibling** of it at the same level.
+Add a new paragraph right after the h1 headline inside `.tru-hero-header-section`:
 
-**Before (around lines 1071-1086):**
 ```tsx
-            </div>  {/* end .tru-hero-form-panel */}
-
-              {/* RIGHT SIDE: Value Proposition Content */}
-              <div className="tru-hero-content-panel">
-                ...
-              </div>
-
-              {/* SIDEBAR: Temporarily hidden ... */}
-            </div>  {/* end .tru-hero-right-half */}
+{/* Around lines 666-670 */}
+<div className="tru-hero-header-section">
+  <h1 className="tru-hero-headline-main">
+    <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
+  </h1>
+  {/* NEW: Subheadline */}
+  <p className="tru-hero-header-subheadline">
+    Designed to put you in control of your move.
+  </p>
+</div>
 ```
 
-**After:**
-```tsx
-            </div>  {/* end .tru-hero-form-panel */}
+### 3. Style the New Subheadline
+**File:** `src/index.css`
 
-            </div>  {/* end .tru-hero-right-half */}
+Add styling for the new subheadline element (after the headline styles around line 1070):
 
-            {/* RIGHT SIDE: Value Proposition Content - NOW A GRID SIBLING */}
-            <div className="tru-hero-content-panel">
-              <div className="tru-hero-content-inner">
-                <h2 className="tru-hero-headline-main">
-                  blagg is <span className="tru-hero-headline-accent">gay</span>
-                </h2>
-                <p className="tru-hero-subheadline">
-                  Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
-                </p>
-                <p className="tru-hero-subheadline" style={{ opacity: 0.6 }}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-              </div>
-            </div>
+```css
+.tru-hero-header-section .tru-hero-header-subheadline {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.7);
+  margin: 8px 0 0 0;
+  letter-spacing: 0.01em;
+  opacity: 0;
+  animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards;
+}
 ```
-
-The content panel must be closed **before** the `.tru-hero-right-half` closing tag, not inside it.
 
 ## Visual Result
 
 ```text
-+--------------------------------------------------+
-| Row 1: "Trumove. A Smarter Way To Move."         |
-+--------------------------------------------------+
-| Column 1 (520px)      |  Column 2 (1fr)          |
-|                       |                          |
-| [Form Card]           |  "blagg is gay"          |
-|  - Progress bar       |                          |
-|  - From/To inputs     |  Skip the complexity...  |
-|  - Continue btn       |                          |
-|  - Trust badges       |  Lorem ipsum...          |
-|                       |                          |
-+--------------------------------------------------+
++------------------------------------------------------------------+
+| [Logo] A Smarter Way To Move.                                    |
+| Designed to put you in control of your move.  ← NEW SUBHEADLINE  |
++------------------------------------------------------------------+
+| ← 48px padding                                                   |
+|                                                                  |
+| [Form Card 520px]          ← 64px gap →   "blagg is gay"         |
+|  - Progress bar                           Skip the complexity... |
+|  - From/To inputs                         Feature icons...       |
+|  - Continue btn                                                  |
+|                                                                  |
++------------------------------------------------------------------+
 ```
 
 ## Files Modified
-1. `src/pages/Index.tsx` - Move `.tru-hero-content-panel` to be a direct child of the grid container
+1. `src/index.css` - Adjust grid padding/gap and add subheadline styling
+2. `src/pages/Index.tsx` - Add subheadline paragraph element
 
-## Technical Note
-- The CSS is already correct (`grid-row: 2; grid-column: 2;`)
-- Only the JSX nesting structure needs to change
-- No CSS changes required
+## Technical Notes
+- The form stays at 520px width (unchanged)
+- Only positioning adjustments via padding and gap
+- Animation timing on subheadline is staggered to flow after the headline
