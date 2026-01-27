@@ -20,6 +20,7 @@ interface StreetViewPreviewProps {
   timeLabel?: string;
   variant?: "origin" | "destination";
   googleApiKey: string;
+  compact?: boolean;
 }
 
 export function StreetViewPreview({
@@ -29,7 +30,8 @@ export function StreetViewPreview({
   time,
   timeLabel,
   variant = "origin",
-  googleApiKey
+  googleApiKey,
+  compact = false,
 }: StreetViewPreviewProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -141,6 +143,71 @@ export function StreetViewPreview({
     }
   };
 
+  // Compact variant for sidebar integration
+  if (compact) {
+    return (
+      <div className="street-view-compact">
+        {/* Compact Image Container */}
+        <div className="relative w-full h-[100px] rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10">
+          {coordinates ? (
+            <>
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/5 z-10">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                </div>
+              )}
+              
+              {viewMode === "video" && aerialData?.videoUrl ? (
+                <video
+                  src={aerialData.videoUrl}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  onLoadedData={() => setIsLoading(false)}
+                  onError={() => {
+                    setIsLoading(false);
+                    setViewMode("street");
+                  }}
+                />
+              ) : (
+                <img
+                  src={getCurrentUrl() || ""}
+                  alt={`${getViewLabel()} view of ${locationName}`}
+                  className={cn(
+                    "w-full h-full object-cover transition-opacity duration-300",
+                    isLoading ? "opacity-0" : "opacity-100"
+                  )}
+                  onLoad={() => setIsLoading(false)}
+                  onError={viewMode === "street" ? handleStreetViewError : () => setIsLoading(false)}
+                />
+              )}
+
+              {/* View toggle button - compact */}
+              <button
+                onClick={cycleViewMode}
+                className="absolute top-1.5 right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60 hover:bg-black/80 transition-colors text-[8px] text-white/70"
+              >
+                {getViewIcon()}
+              </button>
+            </>
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-700/50 to-slate-800/50">
+              <Globe className="w-5 h-5 text-primary/40" />
+            </div>
+          )}
+        </div>
+
+        {/* Location Name - below image */}
+        <div className="text-[11px] font-medium text-white/70 truncate mt-1.5 px-0.5">
+          {locationName || `Awaiting ${variant}...`}
+        </div>
+      </div>
+    );
+  }
+
+  // Full variant (original)
   return (
     <div className="tracking-info-card tracking-street-view-card">
       <div className="flex items-center justify-between mb-3">
