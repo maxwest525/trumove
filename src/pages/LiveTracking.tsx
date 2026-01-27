@@ -9,6 +9,7 @@ import { TruckAerialView } from "@/components/tracking/TruckAerialView";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
 import { RouteInsights } from "@/components/tracking/RouteInsights";
+import { TrafficInsights } from "@/components/tracking/TrafficInsights";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
 import FloatingNav from "@/components/FloatingNav";
@@ -20,6 +21,7 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import logoImg from "@/assets/logo.png";
 
 // Google Maps API key from environment
@@ -95,6 +97,13 @@ export default function LiveTracking() {
   const [moveDate, setMoveDate] = useState<Date>(new Date()); // Auto-populate with today
   const [departureTime] = useState(new Date());
   
+  // Google Routes data
+  const [googleRouteData, setGoogleRouteData] = useState<{
+    trafficInfo: { delayMinutes: number; hasDelay: boolean; severity: 'low' | 'medium' | 'high' } | null;
+    tollInfo: { hasTolls: boolean; estimatedPrice: string | null } | null;
+    etaFormatted: string | null;
+  }>({ trafficInfo: null, tollInfo: null, etaFormatted: null });
+  
   // Shipment notes
   const [shipmentNotes, setShipmentNotes] = useState("");
   
@@ -131,6 +140,43 @@ export default function LiveTracking() {
     setRouteData(route);
     setRouteCoordinates(route.coordinates);
   }, []);
+
+  // Fetch Google Routes data for traffic & toll info
+  useEffect(() => {
+    if (!originCoords || !destCoords) {
+      setGoogleRouteData({ trafficInfo: null, tollInfo: null, etaFormatted: null });
+      return;
+    }
+
+    const fetchGoogleRoutes = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('google-routes', {
+          body: {
+            origin: { lat: originCoords[1], lng: originCoords[0] },
+            destination: { lat: destCoords[1], lng: destCoords[0] },
+            departureTime: new Date().toISOString(),
+          },
+        });
+
+        if (error || data?.fallback) {
+          console.log('Google Routes fallback mode');
+          return;
+        }
+
+        if (data?.success && data?.route) {
+          setGoogleRouteData({
+            trafficInfo: data.route.traffic,
+            tollInfo: data.route.tolls,
+            etaFormatted: data.route.etaFormatted,
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch Google Routes:', err);
+      }
+    };
+
+    fetchGoogleRoutes();
+  }, [originCoords, destCoords]);
 
   // Animation loop
   useEffect(() => {
@@ -510,8 +556,17 @@ export default function LiveTracking() {
               distanceTraveled={distanceTraveled}
               totalDistance={totalDistance}
               timeRemaining={formatDuration(remainingDuration)}
+              trafficInfo={googleRouteData.trafficInfo}
+              tollInfo={googleRouteData.tollInfo}
+              etaFormatted={googleRouteData.etaFormatted}
             />
           )}
+
+          {/* Traffic Insights - Google Routes */}
+          <TrafficInsights
+            originCoords={originCoords}
+            destCoords={destCoords}
+          />
 
           {/* Live Truck Aerial View */}
           {isTracking && routeCoordinates.length > 0 && (

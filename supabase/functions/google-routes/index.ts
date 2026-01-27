@@ -11,14 +11,7 @@ interface RouteRequest {
   departureTime?: string; // ISO 8601 format
   avoidTolls?: boolean;
   avoidHighways?: boolean;
-}
-
-interface RouteStep {
-  instruction: string;
-  distance: number; // meters
-  duration: number; // seconds
-  startLocation: { lat: number; lng: number };
-  endLocation: { lat: number; lng: number };
+  computeAlternatives?: boolean;
 }
 
 serve(async (req) => {
@@ -38,7 +31,7 @@ serve(async (req) => {
       );
     }
 
-    const { origin, destination, departureTime, avoidTolls, avoidHighways } = await req.json() as RouteRequest;
+    const { origin, destination, departureTime, avoidTolls, avoidHighways, computeAlternatives } = await req.json() as RouteRequest;
 
     if (!origin || !destination) {
       return new Response(
@@ -75,7 +68,7 @@ serve(async (req) => {
       destination: formatWaypoint(destination),
       travelMode: 'DRIVE',
       routingPreference: 'TRAFFIC_AWARE_OPTIMAL',
-      computeAlternativeRoutes: false,
+      computeAlternativeRoutes: computeAlternatives || false,
       routeModifiers: Object.keys(routeModifiers).length > 0 ? routeModifiers : undefined,
       departureTime: departureTime || new Date().toISOString(),
       languageCode: 'en-US',
@@ -89,7 +82,7 @@ serve(async (req) => {
         headers: {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
-          'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline,routes.legs,routes.travelAdvisory,routes.routeLabels',
+          'X-Goog-FieldMask': 'routes.duration,routes.staticDuration,routes.distanceMeters,routes.polyline,routes.legs,routes.travelAdvisory,routes.routeLabels,routes.description',
         },
         body: JSON.stringify(routeRequest),
       }
@@ -103,15 +96,16 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({ 
             error: 'Routes API not enabled', 
-            details: 'Please enable the Routes API in Google Cloud Console'
+            details: 'Please enable the Routes API in Google Cloud Console',
+            fallback: true
           }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       
       return new Response(
-        JSON.stringify({ error: 'Failed to calculate route' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Failed to calculate route', fallback: true }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -124,56 +118,89 @@ serve(async (req) => {
       );
     }
 
-    const route = data.routes[0];
-    const leg = route.legs?.[0];
+    // Process all routes (primary + alternates)
+    const processRoute = (route: any, index: number) => {
+      const leg = route.legs?.[0];
+      
+      // Parse durations (format: "XXXs" where XXX is seconds)
+      const durationSeconds = parseInt(route.duration?.replace('s', '') || '0');
+      const staticDurationSeconds = parseInt(route.staticDuration?.replace('s', '') || '0');
+      const distanceMeters = route.distanceMeters || 0;
+      const distanceMiles = distanceMeters / 1609.34;
 
-    // Parse duration (format: "XXXs" where XXX is seconds)
-    const durationSeconds = parseInt(route.duration?.replace('s', '') || '0');
-    const distanceMeters = route.distanceMeters || 0;
-    const distanceMiles = distanceMeters / 1609.34;
+      // Calculate traffic delay
+      const trafficDelaySeconds = durationSeconds - staticDurationSeconds;
+      const hasTrafficDelay = trafficDelaySeconds > 120; // More than 2 min delay
 
-    // Extract toll info if available
-    const travelAdvisory = route.travelAdvisory || {};
-    const tollInfo = travelAdvisory.tollInfo || null;
+      // Extract toll info if available
+      const travelAdvisory = route.travelAdvisory || {};
+      const tollInfo = travelAdvisory.tollInfo || null;
 
-    // Calculate ETA
-    const departureDate = departureTime ? new Date(departureTime) : new Date();
-    const etaDate = new Date(departureDate.getTime() + durationSeconds * 1000);
+      // Calculate ETA
+      const departureDate = departureTime ? new Date(departureTime) : new Date();
+      const etaDate = new Date(departureDate.getTime() + durationSeconds * 1000);
 
-    // Get route labels (e.g., "FUEL_EFFICIENT", "TOLL_FREE")
-    const routeLabels = route.routeLabels || [];
+      // Get route labels (e.g., "FUEL_EFFICIENT", "TOLL_FREE")
+      const routeLabels = route.routeLabels || [];
 
-    console.log(`Route calculated: ${distanceMiles.toFixed(1)} miles, ${Math.round(durationSeconds / 60)} minutes`);
+      return {
+        index,
+        description: route.description || `Route ${index + 1}`,
+        distanceMeters,
+        distanceMiles: Math.round(distanceMiles * 10) / 10,
+        durationSeconds,
+        staticDurationSeconds,
+        durationMinutes: Math.round(durationSeconds / 60),
+        durationFormatted: formatDuration(durationSeconds),
+        polyline: route.polyline?.encodedPolyline || null,
+        eta: etaDate.toISOString(),
+        etaFormatted: etaDate.toLocaleTimeString('en-US', { 
+          hour: 'numeric', 
+          minute: '2-digit',
+          hour12: true 
+        }),
+        labels: routeLabels,
+        traffic: {
+          delaySeconds: trafficDelaySeconds,
+          delayMinutes: Math.round(trafficDelaySeconds / 60),
+          delayFormatted: trafficDelaySeconds > 60 ? formatDuration(trafficDelaySeconds) : 'No delay',
+          hasDelay: hasTrafficDelay,
+          severity: trafficDelaySeconds > 1800 ? 'high' : trafficDelaySeconds > 600 ? 'medium' : 'low',
+        },
+        tolls: tollInfo ? {
+          hasTolls: true,
+          estimatedPrice: tollInfo.estimatedPrice?.[0]?.units 
+            ? `$${tollInfo.estimatedPrice[0].units}.${String(tollInfo.estimatedPrice[0].nanos || 0).padStart(2, '0').slice(0, 2)}`
+            : null,
+          currency: tollInfo.estimatedPrice?.[0]?.currencyCode || 'USD',
+        } : {
+          hasTolls: false,
+          estimatedPrice: null,
+          currency: 'USD',
+        },
+        isFuelEfficient: routeLabels.includes('FUEL_EFFICIENT'),
+        isTollFree: routeLabels.includes('TOLL_FREE') || !tollInfo,
+      };
+    };
+
+    const routes = data.routes.map((route: any, index: number) => processRoute(route, index));
+    const primaryRoute = routes[0];
+    const alternateRoutes = routes.slice(1);
+
+    console.log(`Route calculated: ${primaryRoute.distanceMiles} miles, ${primaryRoute.durationMinutes} min, traffic delay: ${primaryRoute.traffic.delayMinutes} min`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        route: {
-          distanceMeters,
-          distanceMiles: Math.round(distanceMiles * 10) / 10,
-          durationSeconds,
-          durationMinutes: Math.round(durationSeconds / 60),
-          durationFormatted: formatDuration(durationSeconds),
-          polyline: route.polyline?.encodedPolyline || null,
-          eta: etaDate.toISOString(),
-          etaFormatted: etaDate.toLocaleTimeString('en-US', { 
-            hour: 'numeric', 
-            minute: '2-digit',
-            hour12: true 
-          }),
-          labels: routeLabels,
-          hasTolls: tollInfo !== null,
-          tollInfo: tollInfo ? {
-            estimatedPrice: tollInfo.estimatedPrice,
-            currency: tollInfo.estimatedPrice?.[0]?.currencyCode || 'USD',
-          } : null,
+        route: primaryRoute,
+        alternateRoutes: alternateRoutes,
+        hasAlternates: alternateRoutes.length > 0,
+        summary: {
+          totalRoutes: routes.length,
+          fastestRoute: routes.reduce((min: any, r: any) => r.durationSeconds < min.durationSeconds ? r : min, routes[0]).index,
+          shortestRoute: routes.reduce((min: any, r: any) => r.distanceMeters < min.distanceMeters ? r : min, routes[0]).index,
+          cheapestRoute: routes.reduce((min: any, r: any) => !r.tolls.hasTolls ? r : min, routes[0]).index,
         },
-        leg: leg ? {
-          startAddress: leg.startLocation?.latLng ? 
-            `${leg.startLocation.latLng.latitude.toFixed(4)}, ${leg.startLocation.latLng.longitude.toFixed(4)}` : null,
-          endAddress: leg.endLocation?.latLng ?
-            `${leg.endLocation.latLng.latitude.toFixed(4)}, ${leg.endLocation.latLng.longitude.toFixed(4)}` : null,
-        } : null,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
