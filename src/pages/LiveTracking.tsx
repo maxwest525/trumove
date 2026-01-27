@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Sun, Moon } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye } from "lucide-react";
 import { format } from "date-fns";
-import { useTheme } from "next-themes";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
@@ -78,7 +77,6 @@ function formatDuration(seconds: number): string {
 }
 
 export default function LiveTracking() {
-  const { theme, setTheme } = useTheme();
   // Location state
   const [originAddress, setOriginAddress] = useState("");
   const [destAddress, setDestAddress] = useState("");
@@ -325,21 +323,6 @@ export default function LiveTracking() {
             <span className="hidden sm:inline">Check My Truck</span>
           </Button>
           
-          {/* Dark/Light Mode Toggle */}
-          <Button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            variant="outline"
-            size="sm"
-            className="tracking-theme-toggle gap-2"
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4" />
-            ) : (
-              <Moon className="w-4 h-4" />
-            )}
-            <span className="hidden sm:inline">{theme === 'dark' ? 'Light' : 'Dark'}</span>
-          </Button>
-          
           <div className="text-right hidden md:block">
             <div className="text-[10px] text-foreground/40 uppercase tracking-wider">Shipment ID</div>
             <div className="text-sm font-mono text-foreground/80">TM-2026-{String(Date.now()).slice(-8)}</div>
@@ -370,7 +353,7 @@ export default function LiveTracking() {
                     if (value === '12345') {
                       // Demo booking - auto-fill addresses
                       await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-                      await handleDestSelect('Miami', '33131', '100 Biscayne Blvd, Miami, FL 33131');
+                      await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
                       setMoveDate(new Date());
                       toast.success('📦 Booking #12345 loaded!', {
                         description: 'Demo move: Jacksonville → Miami',
@@ -389,7 +372,7 @@ export default function LiveTracking() {
                 onClick={() => {
                   // Auto-fill demo booking
                   handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-                  handleDestSelect('Miami', '33131', '100 Biscayne Blvd, Miami, FL 33131');
+                  handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
                   setMoveDate(new Date());
                   toast.success('📦 Demo booking loaded!', {
                     description: 'Move: Jacksonville → Miami',

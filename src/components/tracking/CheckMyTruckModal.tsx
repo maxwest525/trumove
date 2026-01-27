@@ -83,7 +83,7 @@ const DEMO_TRUCKS: Record<string, TruckStatus> = {
     stops: [
       { type: 'pickup', address: "4520 Atlantic Blvd, Jacksonville, FL", coords: [-81.65, 30.32], status: 'completed', completedAt: "9:15 AM" },
       { type: 'pickup', address: "1200 Ocean Dr, Jacksonville Beach, FL", coords: [-81.39, 30.29], status: 'current', eta: "10:30 AM" },
-      { type: 'dropoff', address: "100 Biscayne Blvd, Miami, FL", coords: [-80.19, 25.77], status: 'upcoming', eta: "4:45 PM" },
+      { type: 'dropoff', address: "1000 Ocean Dr, Miami Beach, FL", coords: [-80.13, 25.78], status: 'upcoming', eta: "4:45 PM" },
       { type: 'dropoff', address: "500 Collins Ave, Miami Beach, FL", coords: [-80.13, 25.78], status: 'upcoming', eta: "5:15 PM" },
     ],
     currentStopIndex: 1,
