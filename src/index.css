@@ -23820,75 +23820,333 @@
 }
 
 /* =============================================
-   SAFER TRUST STRIP - GLOBAL
+   SAFER TRUST BAR - TOP OF PAGE (Light Theme)
    ============================================= */
-.safer-trust-strip {
-  background: linear-gradient(180deg, hsl(var(--tm-ink)) 0%, hsl(var(--tm-ink) / 0.95) 100%);
-  border-bottom: 1px solid hsl(var(--primary) / 0.2);
-  padding: 6px 0;
+.tru-safer-trust-bar {
+  width: 100%;
+  background: linear-gradient(180deg, hsl(220 15% 97%) 0%, hsl(220 15% 95%) 100%);
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
+  padding: 5px 16px;
 }
 
-.safer-trust-strip-inner {
-  max-width: 1400px;
+.tru-safer-trust-bar-inner {
+  max-width: 1480px;
   margin: 0 auto;
-  padding: 0 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 20px;
+}
+
+.tru-safer-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: hsl(var(--tm-ink) / 0.6);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tru-safer-trust-item svg {
+  color: hsl(var(--tm-ink) / 0.4);
+  width: 13px;
+  height: 13px;
+}
+
+.tru-safer-trust-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: hsl(var(--primary));
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.tru-safer-trust-link:hover {
+  color: hsl(var(--primary) / 0.8);
+  text-decoration: underline;
+}
+
+.tru-safer-trust-link svg {
+  width: 11px;
+  height: 11px;
+}
+
+@media (max-width: 768px) {
+  .tru-safer-trust-bar {
+    padding: 4px 12px;
+  }
+  
+  .tru-safer-trust-bar-inner {
+    gap: 4px 10px;
+  }
+  
+  .tru-safer-trust-item span,
+  .tru-safer-trust-link {
+    font-size: 9px;
+  }
+}
+
+/* =============================================
+   HERO HEADLINE & SUBHEADLINE - REFINED
+   ============================================= */
+.tru-hero-headline-main.tru-hero-headline-refined {
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.tru-hero-subheadline-short.tru-hero-subheadline-refined {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  line-height: 1.5;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.65);
+  max-width: 480px;
+}
+
+/* =============================================
+   FORM HEADER - CLEAN BRAND STYLE
+   ============================================= */
+.tru-qb-form-header.tru-qb-form-header-clean {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  padding: 16px 20px;
+  background: transparent;
+  border-bottom: 1px solid hsl(var(--tm-ink) / 0.06);
 }
 
-.safer-trust-item {
+.tru-qb-form-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tru-qb-header-logo-clean {
+  height: 28px;
+  width: auto;
+}
+
+.tru-qb-header-tagline {
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink) / 0.7);
+  letter-spacing: 0.01em;
+}
+
+/* =============================================
+   WHY TRUMOVE CARD - PREMIUM POLISHED
+   ============================================= */
+.tru-why-card-premium {
+  position: relative;
+  background: linear-gradient(135deg, 
+    hsl(var(--background)) 0%, 
+    hsl(var(--muted) / 0.8) 50%,
+    hsl(var(--background)) 100%
+  );
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 24px hsl(var(--tm-ink) / 0.08),
+    0 1px 3px hsl(var(--tm-ink) / 0.04),
+    inset 0 1px 0 hsl(0 0% 100% / 0.8);
+}
+
+.tru-why-card-glow {
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.tru-why-card-inner {
+  position: relative;
+  z-index: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tru-why-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tru-why-badge {
   display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: hsl(var(--primary) / 0.1);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--primary));
+}
+
+.tru-why-lead {
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.75);
+}
+
+.tru-why-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.tru-why-feature-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.tru-why-feature-card:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  background: hsl(var(--primary) / 0.03);
+  transform: translateY(-1px);
+}
+
+.tru-why-feature-card.is-active {
+  border-color: hsl(var(--primary) / 0.5);
+  background: hsl(var(--primary) / 0.05);
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+}
+
+.tru-why-feature-icon-wrap {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--primary) / 0.1);
+  border-radius: 8px;
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.tru-why-feature-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--tm-ink));
+  line-height: 1.3;
+}
+
+.tru-why-detail-box {
+  padding: 14px 16px;
+  background: hsl(var(--muted) / 0.5);
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
+  border-radius: 10px;
+  animation: fade-in-up 0.3s ease;
+}
+
+.tru-why-detail-box p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: hsl(var(--tm-ink) / 0.7);
+  margin: 0;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tru-why-trust-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
+}
+
+.tru-why-trust-item {
+  display: flex;
   align-items: center;
   gap: 5px;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: hsl(var(--primary));
-  white-space: nowrap;
+  color: hsl(var(--tm-ink) / 0.5);
 }
 
-.safer-trust-item svg {
-  color: hsl(var(--primary) / 0.8);
-}
-
-.safer-trust-dot {
-  color: hsl(var(--primary) / 0.3);
-  margin: 0 8px;
+.tru-why-trust-item svg {
+  color: hsl(var(--primary) / 0.6);
 }
 
 /* =============================================
    CARD BACKGROUND FIXES - Smooth edges
    ============================================= */
-.tru-floating-form-card,
-.tru-why-trumove-card {
+.tru-floating-form-card {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  background: hsl(var(--background) / 0.98);
+  overflow: hidden;
+  border-radius: 24px;
 }
 
 .tru-hero-content-panel {
   position: relative;
 }
 
-/* Ensure cards have proper containment */
-.tru-floating-form-card {
-  background: hsl(var(--background) / 0.98);
-  overflow: hidden;
-}
-
-.tru-why-trumove-card {
-  overflow: hidden;
-}
-
-/* Remove any harsh edges */
 .tru-hero-form-panel {
   position: relative;
 }
 
+/* =============================================
+   STREET VIEW CARD ENHANCEMENTS
+   ============================================= */
+.tracking-street-view-card {
+  background: linear-gradient(180deg, 
+    hsl(var(--tm-ink) / 0.95) 0%, 
+    hsl(var(--tm-ink) / 0.9) 100%
+  );
+  border: 1px solid hsl(var(--primary) / 0.15);
+}
+
+/* =============================================
+   RESPONSIVE FIXES
+   ============================================= */
 @media (max-width: 768px) {
+  .tru-why-features-grid {
+    grid-template-columns: 1fr;
+  }
+  
   .tru-qb-route-summary-permanent .tru-qb-route-summary-inner {
     grid-template-columns: 1fr;
     gap: 8px;
