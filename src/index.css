@@ -4328,22 +4328,46 @@
 }
 
 .tru-qb-route-summary-item.is-pulsing {
-  animation: item-pulse 0.5s ease-out;
+  animation: item-pulse 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .tru-qb-route-summary-item.is-pulsing .tru-qb-route-summary-value {
   color: hsl(var(--primary));
+  transition: color 0.3s ease;
+}
+
+.tru-qb-route-summary-item.is-pulsing .tru-qb-route-summary-icon {
+  animation: icon-glow 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes item-pulse {
   0% {
-    background: transparent;
+    background: hsl(var(--muted) / 0.4);
+    transform: scale(1);
   }
-  50% {
-    background: hsl(var(--primary) / 0.12);
+  40% {
+    background: hsl(var(--primary) / 0.15);
+    transform: scale(1.02);
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
   }
   100% {
-    background: transparent;
+    background: hsl(var(--muted) / 0.4);
+    transform: scale(1);
+    box-shadow: none;
+  }
+}
+
+@keyframes icon-glow {
+  0% {
+    background: hsl(var(--muted));
+  }
+  40% {
+    background: hsl(var(--primary) / 0.2);
+    box-shadow: 0 0 8px hsl(var(--primary) / 0.3);
+  }
+  100% {
+    background: hsl(var(--muted));
+    box-shadow: none;
   }
 }
 
@@ -4411,9 +4435,9 @@
     transform: scale(1);
     box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.06);
   }
-  50% {
-    transform: scale(1.08);
-    box-shadow: 0 4px 16px hsl(var(--primary) / 0.25), 0 0 0 3px hsl(var(--primary) / 0.15);
+  35% {
+    transform: scale(1.06);
+    box-shadow: 0 4px 20px hsl(var(--primary) / 0.3), 0 0 0 3px hsl(var(--primary) / 0.15);
   }
   100% {
     transform: scale(1);
@@ -4422,11 +4446,25 @@
 }
 
 .tru-qb-route-summary-distance.is-pulsing {
-  animation: distance-pulse 0.5s ease-out;
+  animation: distance-pulse 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .tru-qb-route-summary-distance.is-pulsing span:first-of-type {
   color: hsl(var(--primary));
+  transition: color 0.3s ease;
+}
+
+.tru-qb-route-summary-distance.is-pulsing svg {
+  animation: distance-icon-bounce 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes distance-icon-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.15);
+  }
 }
 
 /* =============================================
@@ -23817,11 +23855,12 @@
 .tru-qb-route-summary-permanent {
   margin-top: 20px;
   margin-bottom: 12px;
-  margin-left: -32px;
-  margin-right: -32px;
-  padding: 8px 32px;
-  background: hsl(var(--muted) / 0.2);
-  border-radius: 12px;
+  margin-left: calc(-28px + 6px);
+  margin-right: calc(-28px + 6px);
+  padding: 10px 16px;
+  background: hsl(var(--muted) / 0.25);
+  border-radius: 14px;
+  border: 1px solid hsl(var(--border) / 0.5);
 }
 
 .tru-qb-route-summary-permanent .tru-qb-route-summary-inner {
