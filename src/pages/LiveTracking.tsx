@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Sun, Moon } from "lucide-react";
 import { format } from "date-fns";
+import { useTheme } from "next-themes";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
@@ -12,8 +13,8 @@ import { CheckMyTruckModal, isMultiStop, isSingleStop, type TruckStatus, type Mu
 import { MultiStopSummaryCard } from "@/components/tracking/MultiStopSummaryCard";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import SiteShell from "@/components/layout/SiteShell";
-import FloatingNav from "@/components/FloatingNav";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -77,6 +78,7 @@ function formatDuration(seconds: number): string {
 }
 
 export default function LiveTracking() {
+  const { theme, setTheme } = useTheme();
   // Location state
   const [originAddress, setOriginAddress] = useState("");
   const [destAddress, setDestAddress] = useState("");
@@ -300,32 +302,47 @@ export default function LiveTracking() {
 
   return (
     <div className="live-tracking-page">
-      {/* Header */}
+      {/* Site Header */}
+      <Header />
+      
+      {/* Dashboard Header */}
       <header className="tracking-header">
         <div className="flex items-center gap-3">
-          <img src={logoImg} alt="TruMove" className="h-8 w-auto brightness-0 invert" />
-          <span className="text-white/30">|</span>
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-primary">
-            Shipment Tracking
+          <Truck className="w-5 h-5 text-primary" />
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground/80">
+            Shipment Command Center
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Check My Truck Button */}
+        <div className="flex items-center gap-3">
+          {/* Check My Truck Button - High contrast */}
           <Button
             onClick={() => setShowCheckMyTruck(true)}
-            variant="outline"
             size="sm"
-            className="border-primary/50 text-primary hover:bg-primary/10 gap-2"
+            className="bg-foreground text-background hover:bg-foreground/90 gap-2 font-semibold"
           >
             <Eye className="w-4 h-4" />
             <span className="hidden sm:inline">Check My Truck</span>
           </Button>
           
+          {/* Dark/Light Mode Toggle */}
+          <Button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            variant="outline"
+            size="sm"
+            className="tracking-theme-toggle gap-2"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4" />
+            ) : (
+              <Moon className="w-4 h-4" />
+            )}
+            <span className="hidden sm:inline">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          </Button>
           
-          <div className="text-right">
-            <div className="text-[10px] text-white/40 uppercase tracking-wider">Shipment ID</div>
-            <div className="text-sm font-mono text-white/80">TM-2026-{String(Date.now()).slice(-8)}</div>
+          <div className="text-right hidden md:block">
+            <div className="text-[10px] text-foreground/40 uppercase tracking-wider">Shipment ID</div>
+            <div className="text-sm font-mono text-foreground/80">TM-2026-{String(Date.now()).slice(-8)}</div>
           </div>
         </div>
       </header>
@@ -338,7 +355,7 @@ export default function LiveTracking() {
           <div className="tracking-info-card mb-4">
             <div className="flex items-center gap-2 mb-3">
               <Search className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
+              <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
                 Booking Lookup
               </span>
             </div>
@@ -346,7 +363,7 @@ export default function LiveTracking() {
               <input
                 type="text"
                 placeholder="Enter booking #..."
-                className="flex-1 h-9 px-3 bg-white/5 border border-white/10 rounded-md text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-primary/50"
+                className="tracking-input flex-1 h-9 px-3 rounded-md text-sm"
                 onKeyDown={async (e) => {
                   if (e.key === 'Enter') {
                     const value = (e.target as HTMLInputElement).value.trim();
@@ -385,13 +402,13 @@ export default function LiveTracking() {
           </div>
 
           <div className="tracking-info-card">
-            <h3 className="text-sm font-semibold text-white mb-4">Route Setup</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-4">Route Setup</h3>
             
             {/* Origin Input */}
             <div className="mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <Navigation className="w-3.5 h-3.5 text-primary" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
+                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
                   Origin
                 </span>
               </div>
@@ -419,8 +436,8 @@ export default function LiveTracking() {
             {/* Destination Input */}
             <div className="mb-3">
               <div className="flex items-center gap-2 mb-2">
-                <MapPin className="w-3.5 h-3.5 text-white/50" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
+                <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
                   Destination
                 </span>
               </div>
@@ -446,10 +463,10 @@ export default function LiveTracking() {
             </div>
 
             {/* Move Date */}
-            <div className="mb-4 pt-3 border-t border-white/10">
+            <div className="mb-4 pt-3 border-t border-border">
               <div className="flex items-center gap-2 mb-2">
-                <Calendar className="w-3.5 h-3.5 text-white/50" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
+                <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
                   Move Date
                 </span>
               </div>
@@ -458,22 +475,22 @@ export default function LiveTracking() {
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal bg-white/5 border-white/10 text-white hover:bg-white/10",
-                      !moveDate && "text-white/50"
+                      "w-full justify-start text-left font-normal tracking-input",
+                      !moveDate && "text-muted-foreground"
                     )}
                   >
                     <Calendar className="mr-2 h-4 w-4" />
                     {moveDate ? format(moveDate, "PPP") : <span>Pick a date</span>}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-black/90 border-white/20" align="start">
+                <PopoverContent className="w-auto p-0" align="start">
                   <CalendarComponent
                     mode="single"
                     selected={moveDate}
                     onSelect={(date) => date && setMoveDate(date)}
                     disabled={(date) => date < new Date()}
                     initialFocus
-                    className={cn("p-3 pointer-events-auto text-white")}
+                    className={cn("p-3 pointer-events-auto")}
                   />
                 </PopoverContent>
               </Popover>
@@ -496,7 +513,7 @@ export default function LiveTracking() {
                   <Button
                     onClick={isPaused ? resumeTracking : pauseTracking}
                     variant="outline"
-                    className="flex-1 border-white/20 text-white hover:bg-white/10"
+                    className="flex-1"
                   >
                     {isPaused ? <Play className="w-4 h-4 mr-2" /> : <Pause className="w-4 h-4 mr-2" />}
                     {isPaused ? "Resume" : "Pause"}
@@ -504,7 +521,6 @@ export default function LiveTracking() {
                   <Button
                     onClick={resetTracking}
                     variant="outline"
-                    className="border-white/20 text-white hover:bg-white/10"
                   >
                     <RotateCcw className="w-4 h-4" />
                   </Button>
@@ -518,18 +534,18 @@ export default function LiveTracking() {
             <div className="tracking-info-card mt-4">
               <div className="flex items-center gap-2 mb-3">
                 <Truck className="w-4 h-4 text-primary" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
+                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
                   Route Info
                 </span>
               </div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-white/50">Distance</span>
-                  <span className="text-white font-medium">{Math.round(routeData.distance)} miles</span>
+                  <span className="text-muted-foreground">Distance</span>
+                  <span className="text-foreground font-medium">{Math.round(routeData.distance)} miles</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/50">Est. Duration</span>
-                  <span className="text-white font-medium">{formatDuration(routeData.duration)}</span>
+                  <span className="text-muted-foreground">Est. Duration</span>
+                  <span className="text-foreground font-medium">{formatDuration(routeData.duration)}</span>
                 </div>
               </div>
             </div>
@@ -651,6 +667,9 @@ export default function LiveTracking() {
           });
         }}
       />
+      
+      {/* Site Footer */}
+      <Footer />
     </div>
   );
 }
