@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { Truck, MapPin, Navigation, Clock, Route, Video, Plane, Globe, Loader2, X, Search } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Truck, MapPin, Navigation, Clock, Route, Video, Globe, Loader2, Search, Check, Circle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,8 +13,10 @@ interface AerialViewData {
   message?: string;
 }
 
-interface TruckStatus {
+// Single-stop truck status
+export interface SingleTruckStatus {
   bookingId: string;
+  isMultiStop: false;
   originName: string;
   destName: string;
   originCoords: [number, number];
@@ -28,10 +30,41 @@ interface TruckStatus {
   currentLocationName: string;
 }
 
+// Multi-stop truck status
+export interface MultiStopTruckStatus {
+  bookingId: string;
+  isMultiStop: true;
+  stops: Array<{
+    type: 'pickup' | 'dropoff';
+    address: string;
+    coords: [number, number];
+    status: 'completed' | 'current' | 'upcoming';
+    eta?: string;
+    completedAt?: string;
+  }>;
+  currentStopIndex: number;
+  totalDistance: number;
+  estimatedDuration: number;
+  progress: number;
+  currentLocationName: string;
+}
+
+export type TruckStatus = SingleTruckStatus | MultiStopTruckStatus;
+
+// Type guards
+export function isMultiStop(truck: TruckStatus): truck is MultiStopTruckStatus {
+  return 'isMultiStop' in truck && truck.isMultiStop === true;
+}
+
+export function isSingleStop(truck: TruckStatus): truck is SingleTruckStatus {
+  return !('isMultiStop' in truck) || truck.isMultiStop === false;
+}
+
 // Demo truck statuses
 const DEMO_TRUCKS: Record<string, TruckStatus> = {
   "12345": {
     bookingId: "12345",
+    isMultiStop: false,
     originName: "Jacksonville, FL",
     destName: "Miami, FL",
     originCoords: [-81.6557, 30.3322],
@@ -46,17 +79,18 @@ const DEMO_TRUCKS: Record<string, TruckStatus> = {
   },
   "00000": {
     bookingId: "00000",
-    originName: "New York, NY",
-    destName: "Boston, MA",
-    originCoords: [-74.006, 40.7128],
-    destCoords: [-71.0589, 42.3601],
-    currentCoords: [-72.6734, 41.7658],
-    progress: 45,
-    distanceTraveled: 95,
-    totalDistance: 215,
-    eta: "3:45 PM",
-    status: "in_transit",
-    currentLocationName: "Near Hartford, CT"
+    isMultiStop: true,
+    stops: [
+      { type: 'pickup', address: "4520 Atlantic Blvd, Jacksonville, FL", coords: [-81.65, 30.32], status: 'completed', completedAt: "9:15 AM" },
+      { type: 'pickup', address: "1200 Ocean Dr, Jacksonville Beach, FL", coords: [-81.39, 30.29], status: 'current', eta: "10:30 AM" },
+      { type: 'dropoff', address: "100 Biscayne Blvd, Miami, FL", coords: [-80.19, 25.77], status: 'upcoming', eta: "4:45 PM" },
+      { type: 'dropoff', address: "500 Collins Ave, Miami Beach, FL", coords: [-80.13, 25.78], status: 'upcoming', eta: "5:15 PM" },
+    ],
+    currentStopIndex: 1,
+    totalDistance: 352,
+    estimatedDuration: 20700,
+    progress: 25,
+    currentLocationName: "Near Jacksonville Beach, FL"
   }
 };
 
@@ -64,9 +98,10 @@ interface CheckMyTruckModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onLoadRoute?: (truck: TruckStatus) => void;
+  onLoadMultiStop?: (truck: MultiStopTruckStatus) => void;
 }
 
-export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTruckModalProps) {
+export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute, onLoadMultiStop }: CheckMyTruckModalProps) {
   const [bookingNumber, setBookingNumber] = useState("");
   const [truckStatus, setTruckStatus] = useState<TruckStatus | null>(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -76,6 +111,15 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
 
   // Mapbox token for satellite fallback
   const mapboxToken = "pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g";
+
+  // Get current coordinates based on truck type
+  const getCurrentCoords = (truck: TruckStatus): [number, number] => {
+    if (isMultiStop(truck)) {
+      const currentStop = truck.stops[truck.currentStopIndex];
+      return currentStop?.coords || [-80.19, 25.77];
+    }
+    return truck.currentCoords;
+  };
 
   // Fetch aerial view for current truck position (with caching)
   const fetchAerialView = useCallback(async (lat: number, lng: number, locationName: string) => {
@@ -131,8 +175,8 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
     if (truck) {
       setTruckStatus(truck);
       // Fetch aerial view for current position
-      const [lng, lat] = truck.currentCoords;
-      fetchAerialView(lat, lng, truck.currentLocationName);
+      const coords = getCurrentCoords(truck);
+      fetchAerialView(coords[1], coords[0], truck.currentLocationName);
     } else {
       setTruckStatus(null);
       setNotFound(true);
@@ -211,9 +255,9 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
           {truckStatus && (
             <div className="space-y-4">
               {/* Aerial/Satellite View - Enhanced */}
-              <div className="relative w-full h-[280px] rounded-xl overflow-hidden bg-slate-800 border border-white/10">
+              <div className="relative w-full h-[200px] rounded-xl overflow-hidden bg-background border border-border">
                 {isLoadingAerial && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-10">
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
                     <Loader2 className="w-8 h-8 animate-spin text-primary" />
                   </div>
                 )}
@@ -230,7 +274,7 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
                   />
                 ) : (
                   <img
-                    src={getSatelliteUrl(truckStatus.currentCoords)}
+                    src={getSatelliteUrl(getCurrentCoords(truckStatus))}
                     alt="Truck location"
                     className="w-full h-full object-cover"
                   />
@@ -261,11 +305,13 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
                   )}
                 </div>
 
-                {/* Live badge */}
-                <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-red-500/80 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                  <span className="text-[10px] font-bold text-white tracking-wider">LIVE</span>
-                </div>
+                {/* Multi-stop badge */}
+                {isMultiStop(truckStatus) && (
+                  <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-primary/80 flex items-center gap-1.5">
+                    <Route className="w-3 h-3 text-primary-foreground" />
+                    <span className="text-[10px] font-bold text-primary-foreground tracking-wider">MULTI-STOP</span>
+                  </div>
+                )}
 
                 {/* Location name */}
                 <div className="absolute bottom-3 left-3 right-3 px-3 py-2 rounded-lg bg-black/70 backdrop-blur-sm">
@@ -290,48 +336,125 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
                     style={{ width: `${truckStatus.progress}%` }}
                   />
                 </div>
-                <div className="flex justify-between mt-2 text-[10px] text-white/40">
-                  <span>{truckStatus.originName}</span>
-                  <span>{truckStatus.destName}</span>
-                </div>
+                {/* Show origin/dest for single-stop, stops for multi-stop */}
+                {isMultiStop(truckStatus) ? (
+                  <div className="flex justify-between mt-2 text-[10px] text-white/40">
+                    <span>{truckStatus.stops[0]?.address.split(',')[0]}</span>
+                    <span>{truckStatus.stops[truckStatus.stops.length - 1]?.address.split(',')[0]}</span>
+                  </div>
+                ) : (
+                  <div className="flex justify-between mt-2 text-[10px] text-white/40">
+                    <span>{truckStatus.originName}</span>
+                    <span>{truckStatus.destName}</span>
+                  </div>
+                )}
               </div>
 
-              {/* Stats Grid */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
-                  <Route className="w-4 h-4 text-primary mx-auto mb-1" />
-                  <div className="text-lg font-bold text-white">{truckStatus.distanceTraveled}</div>
-                  <div className="text-[10px] text-white/40">Miles Traveled</div>
-                </div>
-                <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
-                  <MapPin className="w-4 h-4 text-white/50 mx-auto mb-1" />
-                  <div className="text-lg font-bold text-white">{truckStatus.totalDistance - truckStatus.distanceTraveled}</div>
-                  <div className="text-[10px] text-white/40">Miles Left</div>
-                </div>
-                <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
-                  <Clock className="w-4 h-4 text-primary mx-auto mb-1" />
-                  <div className="text-lg font-bold text-white">{truckStatus.eta}</div>
-                  <div className="text-[10px] text-white/40">Est. Arrival</div>
-                </div>
-              </div>
+              {/* Multi-stop: Show stops list */}
+              {isMultiStop(truckStatus) && (
+                <div className="space-y-2 max-h-[160px] overflow-y-auto">
+                  {truckStatus.stops.map((stop, index) => (
+                    <div
+                      key={index}
+                      className={cn(
+                        "flex items-center gap-2 p-2 rounded-lg",
+                        stop.status === 'current' && "bg-primary/10 border border-primary/20",
+                        stop.status === 'completed' && "opacity-60",
+                      )}
+                    >
+                      {/* Status icon */}
+                      {stop.status === 'completed' ? (
+                        <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+                          <Check className="w-3 h-3 text-primary" />
+                        </div>
+                      ) : stop.status === 'current' ? (
+                        <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                          <Truck className="w-3 h-3 text-primary-foreground" />
+                        </div>
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center">
+                          <Circle className="w-2.5 h-2.5 text-white/40" />
+                        </div>
+                      )}
 
-              {/* Route Summary */}
-              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10">
-                <div className="flex items-center gap-2 flex-1">
-                  <Navigation className="w-4 h-4 text-primary" />
-                  <span className="text-xs text-white/70 truncate">{truckStatus.originName}</span>
+                      {/* Stop info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 text-[10px] text-white/50">
+                          <MapPin className={cn("w-3 h-3", stop.type === 'pickup' ? "text-green-400" : "text-red-400")} />
+                          <span className="uppercase tracking-wider">{stop.type}</span>
+                        </div>
+                        <p className="text-xs text-white truncate">{stop.address.split(',')[0]}</p>
+                      </div>
+
+                      {/* ETA */}
+                      <div className="text-[10px] text-white/50">
+                        {stop.completedAt || stop.eta}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="text-white/30">→</div>
-                <div className="flex items-center gap-2 flex-1 justify-end">
-                  <span className="text-xs text-white/70 truncate">{truckStatus.destName}</span>
-                  <MapPin className="w-4 h-4 text-white/50" />
+              )}
+
+              {/* Single-stop: Stats Grid */}
+              {!isMultiStop(truckStatus) && (
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
+                    <Route className="w-4 h-4 text-primary mx-auto mb-1" />
+                    <div className="text-lg font-bold text-white">{truckStatus.distanceTraveled}</div>
+                    <div className="text-[10px] text-white/40">Miles Traveled</div>
+                  </div>
+                  <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
+                    <MapPin className="w-4 h-4 text-white/50 mx-auto mb-1" />
+                    <div className="text-lg font-bold text-white">{truckStatus.totalDistance - truckStatus.distanceTraveled}</div>
+                    <div className="text-[10px] text-white/40">Miles Left</div>
+                  </div>
+                  <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
+                    <Clock className="w-4 h-4 text-primary mx-auto mb-1" />
+                    <div className="text-lg font-bold text-white">{truckStatus.eta}</div>
+                    <div className="text-[10px] text-white/40">Est. Arrival</div>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Multi-stop: Summary stats */}
+              {isMultiStop(truckStatus) && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
+                    <Route className="w-4 h-4 text-primary mx-auto mb-1" />
+                    <div className="text-lg font-bold text-white">{truckStatus.totalDistance}</div>
+                    <div className="text-[10px] text-white/40">Total Miles</div>
+                  </div>
+                  <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
+                    <MapPin className="w-4 h-4 text-primary mx-auto mb-1" />
+                    <div className="text-lg font-bold text-white">{truckStatus.stops.length}</div>
+                    <div className="text-[10px] text-white/40">Total Stops</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Route Summary - Single stop only */}
+              {!isMultiStop(truckStatus) && (
+                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10">
+                  <div className="flex items-center gap-2 flex-1">
+                    <Navigation className="w-4 h-4 text-primary" />
+                    <span className="text-xs text-white/70 truncate">{truckStatus.originName}</span>
+                  </div>
+                  <div className="text-white/30">→</div>
+                  <div className="flex items-center gap-2 flex-1 justify-end">
+                    <span className="text-xs text-white/70 truncate">{truckStatus.destName}</span>
+                    <MapPin className="w-4 h-4 text-white/50" />
+                  </div>
+                </div>
+              )}
 
               {/* Action Button */}
               <Button 
                 onClick={() => {
-                  onLoadRoute?.(truckStatus);
+                  if (isMultiStop(truckStatus)) {
+                    onLoadMultiStop?.(truckStatus);
+                  } else {
+                    onLoadRoute?.(truckStatus);
+                  }
                   onOpenChange(false);
                 }}
                 className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
@@ -350,7 +473,7 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute }: CheckMyTr
               </div>
               <p className="text-white/60 text-sm mb-2">Enter your booking number above</p>
               <p className="text-white/40 text-xs">
-                Try: 12345 or 00000
+                Try: 12345 (single) or 00000 (multi-stop)
               </p>
             </div>
           )}
