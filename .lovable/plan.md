@@ -1,236 +1,248 @@
 
-# Comprehensive Tracking Dashboard Enhancement Plan
+# Google-First Address & Multi-Feature Enhancement Plan
 
 ## Overview
-This plan addresses multiple enhancements to the Shipment Tracking page and integrates additional Google APIs throughout the site to create a more immersive, tech-forward experience while also cleaning up the UI to hide demo indicators.
+This plan prioritizes replacing Mapbox-based address autocomplete with Google Places Autocomplete for superior suggestion quality, implements route weather forecasting on the estimate page, adds route optimization capabilities for multi-stop moves, and further refines the tracking dashboard for a compact, all-in-one view.
 
 ---
 
-## Part 1: UI Cleanup - Hide Demo Indicators
+## Priority 1: Google Places Autocomplete (Replace Current Address System)
 
-### 1.1 Remove "Demo Mode" Label from Header
-**File:** `src/pages/LiveTracking.tsx`
-- Remove the "Demo Mode" badge that appears next to the header when tracking is active (lines 353-358)
-- Keep functionality intact, just remove the visual indicator
+### Problem Statement
+The current `LocationAutocomplete` component uses Mapbox Search Box API for suggestions with Google Address Validation as a secondary verification step. Users report the current system is "terrible" - suggestions are often incomplete, slow, or miss obvious addresses.
 
-### 1.2 Remove "Demo Speed" Slider
-**File:** `src/pages/LiveTracking.tsx`
-- Remove the entire "Demo Speed" section (lines 517-536)
-- The animation will still work at a default 60-second speed, but users won't see controls
-- Remove the Slider component and related state if no longer needed
+### Solution: Google Places Autocomplete API Integration
 
-### 1.3 Remove Shipment Notes Field
-**File:** `src/pages/LiveTracking.tsx`
-- Remove the Shipment Notes section (lines 495-515)
-- This simplifies the left sidebar
+**Create new edge function:** `supabase/functions/google-places-autocomplete/index.ts`
 
-### 1.4 Simplify Booking Lookup Codes
-**File:** `src/components/tracking/CheckMyTruckModal.tsx`
-- Keep only 2 easy-to-remember demo booking numbers: **"12345"** and **"00000"**
-- Update the placeholder text to show only these two
-- Remove the "67890" and "11111" demo entries
-- Update the "not found" message accordingly
+This edge function will:
+- Accept a query string and return address suggestions from Google Places Autocomplete (New)
+- Return structured data including place_id, formatted_address, and address components
+- Support session tokens for billing optimization
+- Restrict to US addresses
+
+```text
+┌─────────────────────┐       ┌────────────────────────────────┐
+│  LocationAutocomplete│ ────> │ google-places-autocomplete     │
+│  (React Component)   │       │ (Edge Function)                │
+└─────────────────────┘       └────────────────────────────────┘
+         │                              │
+         │ onSelect                     │ Google Places API
+         ▼                              ▼
+┌─────────────────────┐       ┌────────────────────────────────┐
+│ google-address-     │       │ Returns suggestions with       │
+│ validation          │       │ place_id, description,         │
+│ (Final Verification)│       │ structured_formatting          │
+└─────────────────────┘       └────────────────────────────────┘
+```
+
+**Update `src/components/LocationAutocomplete.tsx`:**
+- Replace `searchMapboxAddresses()` with new `searchGooglePlaces()` function
+- Call the new edge function for live suggestions
+- On selection, use existing `google-address-validation` for final verification
+- Keep Mapbox as fallback if Google API fails
+- Maintain current UX patterns (Enter/Tab/Blur to confirm)
+
+### Files to Create/Modify
+| File | Action |
+|------|--------|
+| `supabase/functions/google-places-autocomplete/index.ts` | Create |
+| `supabase/config.toml` | Add new function config |
+| `src/components/LocationAutocomplete.tsx` | Refactor to use Google as primary |
 
 ---
 
-## Part 2: Search Button Styling
+## Priority 2: Weather Forecasts on Online Estimate Page
 
-### 2.1 Restyle Search Button
-**File:** `src/pages/LiveTracking.tsx`
-- Change the search button from all-green (`bg-primary`) to a more subtle dark button with a green accent
-- Use: `bg-foreground hover:bg-foreground/90 text-background` (dark button with white text)
-- Reduce padding to make it smaller: `px-3` instead of `px-4`
-- Make it fit better in the compact booking lookup box
+### Implementation
+Add a weather forecast section to the estimate page that shows conditions along the route for the move date.
+
+**Create component:** `src/components/estimate/MoveWeatherForecast.tsx`
+- Uses existing `weather-route` edge function
+- Shows weather for origin, midpoint, and destination
+- Displays temperature, conditions, and weather icons
+- Only shows after wizard is complete and locations are set
+
+**Integrate into `src/pages/OnlineEstimate.tsx`:**
+- Add `MoveWeatherForecast` component in the right sidebar (QuoteSnapshotVertical area)
+- Pass origin/destination coordinates and move date
+
+### Files to Create/Modify
+| File | Action |
+|------|--------|
+| `src/components/estimate/MoveWeatherForecast.tsx` | Create |
+| `src/pages/OnlineEstimate.tsx` | Add weather section |
 
 ---
 
-## Part 3: Traffic Overlay on Map
+## Priority 3: Route Optimization API for Multi-Stop Moves
 
-### 3.1 Add Traffic Layer to TruckTrackingMap
-**File:** `src/components/tracking/TruckTrackingMap.tsx`
+### Implementation
+Create edge function to optimize routes when customers have multiple pickup/drop-off points.
 
-Add a visual traffic overlay by:
-1. **Requesting polyline data with traffic information** from Mapbox Directions API
-2. **Creating color-coded route segments** showing congestion levels:
-   - **Green** = Free-flowing traffic
-   - **Yellow/Orange** = Moderate congestion
-   - **Red** = Heavy congestion
+**Create edge function:** `supabase/functions/google-route-optimization/index.ts`
+- Accepts array of waypoints
+- Returns optimized order of stops
+- Includes distance/duration savings
+- Future use: booking flow for multi-stop moves
 
-Implementation approach:
+This is foundational infrastructure that will be used when the multi-stop booking feature is built.
+
+### Files to Create/Modify
+| File | Action |
+|------|--------|
+| `supabase/functions/google-route-optimization/index.ts` | Create |
+| `supabase/config.toml` | Add function config |
+
+---
+
+## Priority 4: Clickable Truck Marker with Aerial View (Already Implemented - Verify/Enhance)
+
+### Current State
+The `TruckTrackingMap` already has clickable truck functionality with `TruckLocationPopup`. Need to verify it's working and enhance if needed.
+
+**Verification points:**
+- Click handler on truck marker element ✓
+- `TruckLocationPopup` component with aerial video ✓
+- Fullscreen toggle ✓
+
+**Enhancement:**
+- Ensure the popup uses the aerial view caching system for performance
+- Add smoother animations
+
+### Files to Modify
+| File | Action |
+|------|--------|
+| `src/components/tracking/TruckLocationPopup.tsx` | Verify caching integration |
+
+---
+
+## Priority 5: Compact Tracking Dashboard Layout
+
+### Goal
+Users should see their entire dashboard without scrolling. The map can be smaller to give more room to stats/cards.
+
+**CSS Updates in `src/index.css`:**
+- Adjust grid: `300px minmax(400px, 1fr) 380px` → `280px minmax(350px, 1fr) 400px`
+- Reduce map min-height from 400px to 350px
+- Make dashboard cards more compact with tighter padding
+- Use CSS grid for dashboard stats to display 2-up
+
+**Dashboard Organization in `src/pages/LiveTracking.tsx`:**
+- Group related cards into compact sections
+- Reduce vertical spacing between cards
+- Combine smaller stat cards into unified views
+
+### Files to Modify
+| File | Action |
+|------|--------|
+| `src/index.css` | Adjust tracking grid layout |
+| `src/pages/LiveTracking.tsx` | Reorganize dashboard components |
+
+---
+
+## Technical Implementation Details
+
+### New Edge Function: google-places-autocomplete
+
 ```typescript
-// After route is fetched, add traffic-colored segments
-map.current?.addLayer({
-  id: "route-traffic",
-  type: "line",
-  source: "route",
-  paint: {
-    "line-color": [
-      "interpolate",
-      ["linear"],
-      ["get", "congestion"],
-      0, "#22c55e",  // Low
-      0.5, "#f59e0b", // Medium
-      1, "#ef4444"    // High
-    ],
-    "line-width": 6
-  }
-});
+// Request
+{
+  query: string;      // User's input
+  sessionToken: string; // For billing grouping
+  types?: string[];   // address, establishment, etc.
+}
+
+// Response
+{
+  suggestions: Array<{
+    placeId: string;
+    description: string;
+    mainText: string;
+    secondaryText: string;
+    types: string[];
+  }>;
+}
 ```
 
-### 3.2 Add Traffic Legend Overlay
-**File:** `src/components/tracking/TruckTrackingMap.tsx`
-- Add a small legend in the bottom-right corner showing traffic colors
-- Only visible when tracking is active
+### New Edge Function: google-route-optimization
+
+```typescript
+// Request
+{
+  waypoints: Array<{
+    lat: number;
+    lng: number;
+    label?: string;
+  }>;
+}
+
+// Response
+{
+  optimizedOrder: number[];  // Indices in optimal order
+  totalDistance: number;     // meters
+  totalDuration: number;     // seconds
+  savings: {
+    distancePercent: number;
+    durationPercent: number;
+  };
+}
+```
+
+### MoveWeatherForecast Component
+
+```typescript
+interface Props {
+  originCoords: [number, number] | null;
+  destCoords: [number, number] | null;
+  moveDate: Date | null;
+  originName: string;
+  destName: string;
+}
+```
 
 ---
 
-## Part 4: Aerial View Enhancement
+## Secrets Required
+All required Google APIs are already configured:
+- `GOOGLE_MAPS_API_KEY` ✓ (for Places, Distance Matrix, etc.)
+- `GOOGLE_ROUTES_API_KEY` ✓ (for Routes API)
+- `OPENWEATHER_API_KEY` ✓ (for weather - note: logs show 401 errors, may need verification)
 
-### 4.1 Clickable Truck Marker with Aerial Popup
-**File:** `src/components/tracking/TruckTrackingMap.tsx`
-
-When user clicks the truck marker on the map:
-1. Open a popup/modal showing the aerial view of that location
-2. Reuse the aerial view fetching logic from `TruckAerialView.tsx`
-3. Display video flyover if available, else satellite
-
-### 4.2 Enhanced Check My Truck Modal
-**File:** `src/components/tracking/CheckMyTruckModal.tsx`
-- Already shows aerial view - enhance with:
-  - Full-screen toggle for the aerial video
-  - Larger video container (300px height instead of 200px)
-  - Add "View Full Journey" as more prominent CTA
-
----
-
-## Part 5: Smaller Map with Compact Dashboard
-
-### 5.1 Adjust Grid Layout
-**File:** `src/index.css` (tracking styles)
-- Modify the grid template to give more space to the dashboard:
-  - Current: `320px 1fr 320px`
-  - New: `300px minmax(400px, 1fr) 380px` (wider dashboard, minimum map width)
-- Reduce map container min-height from 500px to 400px
-
-### 5.2 Create Compact Dashboard Layout
-**File:** `src/pages/LiveTracking.tsx`
-- Reorganize right sidebar into a denser, more "dashboard-like" layout
-- Group related cards into rows
-- Use CSS grid for stats to create a more compact view
-
----
-
-## Part 6: Google APIs Integration
-
-### 6.1 New Edge Functions to Create
-
-| API | Function Name | Use Case |
-|-----|---------------|----------|
-| Distance Matrix API | `google-distance-matrix` | Multi-point distance/duration calculations |
-| Roads API | `google-roads` | Snap GPS coordinates to nearest roads |
-| Route Optimization API | `google-route-optimization` | Optimize multi-stop routes |
-| Map Tiles API | `google-map-tiles` | Custom styled map tiles |
-
-### 6.2 Integration Points
-
-**a) Distance Matrix API** - `supabase/functions/google-distance-matrix/index.ts`
-- Use in: Inventory/estimate page to show distance from warehouses
-- Use in: Multi-stop planning if customer has multiple pickup points
-
-**b) Roads API (Snap to Roads)** - `supabase/functions/google-roads/index.ts`
-- Use in: `TruckTrackingMap.tsx` to ensure truck marker stays exactly on road
-- Smooth out GPS jitter during real-time tracking
-
-**c) Map Tiles API**
-- Already using Mapbox for tiles, but can offer Google-style tiles as an option
-- Add toggle in TruckAerialView for "Google Tiles" view mode
-
-**d) Street View Publish API**
-- Display user-contributed street-level imagery
-- Enhance StreetViewPreview to show multiple angle options
-
-**e) Maps Embed API**
-- Use for lightweight embedded maps in confirmation emails, booking confirmations
-- Create a `QuoteConfirmationMap` component for the estimate result page
-
-**f) Route Optimization API** - For future multi-stop moves
-- Would require new booking flow, noted for future enhancement
-
-### 6.3 Enhance Existing Pages with APIs
-
-**Homepage (`src/pages/Index.tsx`):**
-- Add Google Places Insights for route preview (already have edge function)
-- Show weather along route using existing `weather-route` function
-
-**Estimate Page (`src/pages/OnlineEstimate.tsx`):**
-- Use Distance Matrix to show nearest warehouse/hub
-- Show route weather forecast for move date
-
-**Carrier Vetting (`src/pages/CarrierVetting.tsx`):**
-- Use Roads API to show carrier's common routes
-- Display street view of carrier's headquarters
-
----
-
-## Part 7: Technical Implementation Details
-
-### 7.1 New Files to Create
-```
-supabase/functions/google-distance-matrix/index.ts
-supabase/functions/google-roads/index.ts
-src/components/tracking/TrafficOverlay.tsx
-src/components/tracking/TruckLocationPopup.tsx
-src/components/maps/EmbeddedRouteMap.tsx
-```
-
-### 7.2 Files to Modify
-```
-src/pages/LiveTracking.tsx          - Remove demo controls, resize layout
-src/components/tracking/TruckTrackingMap.tsx - Add traffic overlay, clickable truck
-src/components/tracking/CheckMyTruckModal.tsx - Simplify demo codes
-src/index.css                        - Adjust grid layout
-src/components/tracking/TruckAerialView.tsx - Add Google Tiles option
-src/components/tracking/StreetViewPreview.tsx - Multi-angle support
-```
-
-### 7.3 Required Secrets (Already Available)
-- `GOOGLE_MAPS_API_KEY` ✓
-- `GOOGLE_ROUTES_API_KEY` ✓
-- APIs may need to be enabled in Google Cloud Console:
-  - Distance Matrix API
-  - Roads API
-  - Map Tiles API (if not already)
+**APIs to enable in Google Cloud Console (if not already):**
+- Places API (New) - for autocomplete
+- Route Optimization API - for multi-stop optimization
 
 ---
 
 ## Implementation Order
 
-1. **Phase 1: UI Cleanup** (Quick wins)
-   - Remove Demo Mode label
-   - Remove Demo Speed slider
-   - Remove Shipment Notes
-   - Simplify booking codes
-   - Restyle search button
+### Phase 1: Google Places Autocomplete (Highest Priority)
+1. Create `google-places-autocomplete` edge function
+2. Refactor `LocationAutocomplete.tsx` to use Google as primary
+3. Test across all address inputs site-wide
 
-2. **Phase 2: Map Enhancements**
-   - Add traffic overlay to route
-   - Add clickable truck marker with aerial popup
-   - Adjust layout for compact dashboard
+### Phase 2: Weather on Estimate Page
+1. Create `MoveWeatherForecast` component
+2. Integrate into `OnlineEstimate.tsx`
+3. Fix potential OPENWEATHER_API_KEY issue (401 errors in logs)
 
-3. **Phase 3: New Edge Functions**
-   - Create Distance Matrix function
-   - Create Roads API function
+### Phase 3: Route Optimization Edge Function
+1. Create `google-route-optimization` edge function
+2. Add to config.toml
+3. Create basic test endpoint
 
-4. **Phase 4: Site-wide API Integration**
-   - Integrate APIs across other pages
-   - Add weather previews to estimate page
-   - Enhance carrier vetting with street view
+### Phase 4: Dashboard Compacting
+1. Update tracking CSS grid for tighter layout
+2. Reorganize dashboard cards
+3. Ensure aerial popup works smoothly
 
 ---
 
-## Expected Outcome
-- **Cleaner demo experience** - No visible "demo" indicators
-- **More polished tracking** - Traffic visualization, interactive truck marker
-- **Compact dashboard** - More information visible without scrolling
-- **Tech-forward appearance** - Multiple Google API integrations enhancing credibility
-- **Seamless aerial views** - Flyover videos prominently featured
+## Expected Outcomes
+
+1. **Superior Address Input** - Google Places provides faster, more accurate suggestions
+2. **Weather Intelligence** - Users see forecasted conditions for their move date
+3. **Multi-Stop Ready** - Infrastructure for future multi-pickup/drop-off moves
+4. **Compact Dashboard** - See all tracking info at a glance without scrolling
+5. **Consistent Aerial Views** - Cached and performant aerial video popups
