@@ -23819,14 +23819,16 @@
   margin-bottom: 12px;
   margin-left: -24px;
   margin-right: -24px;
-  padding: 0 24px;
+  padding: 8px 24px;
+  background: hsl(var(--muted) / 0.2);
+  border-radius: 12px;
 }
 
 .tru-qb-route-summary-permanent .tru-qb-route-summary-inner {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: stretch;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
@@ -24242,15 +24244,16 @@
 }
 
 .tru-why-feature-cell-icon {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--muted));
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  border-radius: 8px;
+  background: hsl(var(--primary) / 0.08);
+  border: 1.5px solid hsl(var(--primary) / 0.15);
+  border-radius: 10px;
   color: hsl(var(--tm-ink));
+  transition: all 0.2s ease;
 }
 
 .tru-why-feature-cell:hover .tru-why-feature-cell-icon,
