@@ -3,13 +3,15 @@ import { format } from "date-fns";
 import { 
   ArrowRight, ChevronLeft, MapPin, Home, Building2, 
   ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Sparkles,
-  Car, Package
+  Car, Package, Route
 } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import logoImg from "@/assets/logo.png";
 import ChatModal from "@/components/chat/ChatModal";
+import MultiStopWizard, { type MultiStopMoveDetails } from "./MultiStopWizard";
+import type { StopLocation } from "./MultiStopLocationList";
 
 export interface ExtendedMoveDetails {
   // Contact
@@ -37,6 +39,17 @@ export interface ExtendedMoveDetails {
   // Additional Services
   hasVehicleTransport: boolean;
   needsPackingService: boolean;
+  
+  // Multi-stop support
+  isMultiStop: boolean;
+  pickupLocations: StopLocation[];
+  dropoffLocations: StopLocation[];
+  optimizedRoute?: {
+    totalDistance: number;
+    totalDuration: number;
+    savings: { distancePercent: number; durationPercent: number };
+    optimizedOrder: number[];
+  } | null;
 }
 
 interface EstimateWizardProps {
@@ -65,6 +78,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
   const [step, setStep] = useState(1);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [showMultiStopWizard, setShowMultiStopWizard] = useState(false);
   const prevStep = useRef(1);
 
   useEffect(() => {
@@ -88,6 +102,10 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
     moveDate: null,
     hasVehicleTransport: false,
     needsPackingService: false,
+    isMultiStop: false,
+    pickupLocations: [],
+    dropoffLocations: [],
+    optimizedRoute: null,
   });
 
   // Auto-populate from homepage form data stored in localStorage
@@ -181,30 +199,56 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
     }
   };
 
+  // Handle multi-stop wizard completion
+  const handleMultiStopComplete = useCallback((multiStopDetails: MultiStopMoveDetails) => {
+    setDetails(prev => ({
+      ...prev,
+      isMultiStop: true,
+      pickupLocations: multiStopDetails.pickupLocations,
+      dropoffLocations: multiStopDetails.dropoffLocations,
+      optimizedRoute: multiStopDetails.optimizedRoute,
+      // Set fromLocation and toLocation from first pickup/dropoff for compatibility
+      fromLocation: multiStopDetails.pickupLocations[0]?.address || prev.fromLocation,
+      toLocation: multiStopDetails.dropoffLocations[0]?.address || prev.toLocation,
+    }));
+    setShowMultiStopWizard(false);
+    // Skip to step 2 or continue with property details
+  }, []);
+
   return (
     <>
-      <div className="tru-floating-form-card">
-        {/* Progress Bar - no accent stripe */}
-        
-        {/* Progress Bar */}
-        <div className="tru-form-progress-bar">
-          <div 
-            className="tru-form-progress-fill" 
-            style={{ width: `${(step / 3) * 100}%` }}
+      {showMultiStopWizard ? (
+        <div className="tru-floating-form-card p-4">
+          <MultiStopWizard
+            onComplete={handleMultiStopComplete}
+            onBack={() => setShowMultiStopWizard(false)}
+            initialPickups={details.pickupLocations.length > 0 ? details.pickupLocations : undefined}
+            initialDropoffs={details.dropoffLocations.length > 0 ? details.dropoffLocations : undefined}
           />
         </div>
-        
-        {/* Header - Matching homepage style */}
-        <div className="tru-qb-form-header tru-qb-form-header-pill">
-          <div className="tru-qb-form-title-group">
-            <span className="tru-qb-form-title tru-qb-form-title-large">Build your <span className="tru-qb-title-accent">move</span></span>
-            <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
+      ) : (
+        <div className="tru-floating-form-card">
+          {/* Progress Bar - no accent stripe */}
+          
+          {/* Progress Bar */}
+          <div className="tru-form-progress-bar">
+            <div 
+              className="tru-form-progress-fill" 
+              style={{ width: `${(step / 3) * 100}%` }}
+            />
           </div>
-        </div>
+          
+          {/* Header - Matching homepage style */}
+          <div className="tru-qb-form-header tru-qb-form-header-pill">
+            <div className="tru-qb-form-title-group">
+              <span className="tru-qb-form-title tru-qb-form-title-large">Build your <span className="tru-qb-title-accent">move</span></span>
+              <span className="tru-qb-form-subtitle-compact">Carriers vetted against FMCSA safety records</span>
+            </div>
+          </div>
 
-        <div className="tru-floating-form-content">
-          {/* Step 1: Moving FROM Details + Parking */}
-          {step === 1 && (
+          <div className="tru-floating-form-content">
+            {/* Step 1: Moving FROM Details + Parking */}
+            {step === 1 && (
             <div className="tru-qb-step-content" key="step-1">
               <h1 className="tru-qb-question">Where are you moving from?</h1>
               <p className="tru-qb-subtitle">Enter your move date and current address</p>
@@ -252,6 +296,16 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
                   showGeolocation
                 />
               </div>
+
+              {/* Multi-Stop Toggle */}
+              <button
+                type="button"
+                onClick={() => setShowMultiStopWizard(true)}
+                className="w-full py-2.5 mt-2 text-sm text-muted-foreground hover:text-primary border border-dashed border-border/50 hover:border-primary/50 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <Route className="w-4 h-4" />
+                <span>Multiple pickup or drop-off locations?</span>
+              </button>
 
               <p className="tru-qb-section-label">Property Type</p>
               <div className="tru-qb-toggles">
@@ -547,12 +601,13 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
           )}
         </div>
 
-        {/* Footer inside form card */}
-        <div className="tru-floating-form-footer">
-          <span>Powered by</span>
-          <img src={logoImg} alt="TruMove" className="tru-footer-mini-logo" />
+          {/* Footer inside form card */}
+          <div className="tru-floating-form-footer">
+            <span>Powered by</span>
+            <img src={logoImg} alt="TruMove" className="tru-footer-mini-logo" />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Chat Modal */}
       <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />

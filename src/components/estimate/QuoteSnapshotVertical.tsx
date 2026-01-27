@@ -1,7 +1,8 @@
-import { MapPin, Calendar, Ruler, Car, Package, Scale, Home, Truck, Building2, Bed } from "lucide-react";
+import { MapPin, Calendar, Ruler, Car, Package, Scale, Home, Truck, Building2, Bed, Route } from "lucide-react";
 import { type InventoryItem, type MoveDetails, calculateTotalWeight, calculateTotalCubicFeet } from "@/lib/priceCalculator";
 import { format } from "date-fns";
 import type { ExtendedMoveDetails } from "./EstimateWizard";
+import { formatDistance, formatDuration } from "@/hooks/useRouteOptimization";
 
 interface QuoteSnapshotVerticalProps {
   items: InventoryItem[];
@@ -99,11 +100,54 @@ export default function QuoteSnapshotVertical({ items, moveDetails, extendedDeta
           </div>
         )}
 
+        {/* Multi-Stop Summary */}
+        {extendedDetails?.isMultiStop && (
+          <>
+            {/* Pickup Locations */}
+            <div className="py-1.5 border-b border-border/30">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Route className="w-3 h-3 text-primary" />
+                <span className="text-xs font-medium text-primary uppercase">Multi-Stop Move</span>
+              </div>
+              <div className="space-y-0.5">
+                {extendedDetails.pickupLocations.filter(l => l.validated).map((loc, idx) => (
+                  <div key={loc.id} className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Pickup {idx + 1}</span>
+                    <span className="text-xs font-medium text-foreground truncate max-w-[140px]">
+                      {loc.address.split(',')[0]}
+                    </span>
+                  </div>
+                ))}
+                {extendedDetails.dropoffLocations.filter(l => l.validated).map((loc, idx) => (
+                  <div key={loc.id} className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Drop-off {idx + 1}</span>
+                    <span className="text-xs font-medium text-foreground truncate max-w-[140px]">
+                      {loc.address.split(',')[0]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Route Optimization Savings */}
+            {extendedDetails.optimizedRoute && (
+              <div className="flex items-center justify-between py-1.5 border-b border-border/30">
+                <span className="text-sm text-muted-foreground">Optimized route</span>
+                <span className="text-xs font-medium text-primary">
+                  {formatDistance(extendedDetails.optimizedRoute.totalDistance)} • {formatDuration(extendedDetails.optimizedRoute.totalDuration)}
+                </span>
+              </div>
+            )}
+          </>
+        )}
+
         {/* Distance */}
         <div className="flex items-center justify-between py-1.5 border-b border-border/30">
           <span className="text-sm text-muted-foreground">Distance</span>
           <span className="text-sm font-medium text-foreground">
-            {moveDetails.distance > 0 ? `${moveDetails.distance.toLocaleString()} miles` : 'Add miles'}
+            {extendedDetails?.optimizedRoute 
+              ? formatDistance(extendedDetails.optimizedRoute.totalDistance)
+              : moveDetails.distance > 0 ? `${moveDetails.distance.toLocaleString()} miles` : 'Add miles'}
           </span>
         </div>
 
