@@ -1156,14 +1156,16 @@ export default function Index() {
             </div>
 
             {/* RIGHT SIDE: Value Proposition Content - NOW A GRID SIBLING */}
+            {/* RIGHT SIDE: Value Proposition Content */}
             <div className="tru-hero-content-panel">
               <div className="tru-hero-content-inner">
                 <h2 className="tru-hero-headline-main">
                   blagg is <span className="tru-hero-headline-accent">gay</span>
                 </h2>
-                <p className="tru-hero-subheadline">
-                  Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
-                </p>
+                
+                {/* Visual divider */}
+                <div className="tru-content-divider" />
+                
                 <p className="tru-hero-subheadline" style={{ opacity: 0.6 }}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
