@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import { Database, Activity, ClipboardCheck, Lock, Shield, ExternalLink, MapPin, TrendingUp, Headphones, Star, Truck, Award } from "lucide-react";
+import { Database, Activity, ClipboardCheck, Lock, Shield, ExternalLink, MapPin, TrendingUp, Headphones, Star, Truck, Award, BadgeCheck, FileCheck, Scale, Users, Clock, ThumbsUp } from "lucide-react";
 
 const DATA_SOURCES = [
   { icon: Database, title: 'SAFER Web Services' },
@@ -9,6 +9,9 @@ const DATA_SOURCES = [
   { icon: ClipboardCheck, title: 'CSA BASIC Scores' },
   { icon: Lock, title: 'Authority Verification' },
   { icon: Shield, title: 'Insurance Coverage' },
+  { icon: BadgeCheck, title: 'FMCSA Registered' },
+  { icon: FileCheck, title: 'DOT Verified' },
+  { icon: Scale, title: 'Compliance Monitoring' },
   { icon: ExternalLink, title: 'Official FMCSA Source', isLink: true }
 ];
 
@@ -18,7 +21,11 @@ const STATS_CONTENT = [
   { icon: Headphones, title: '24/7 Support' },
   { icon: Star, title: '4.9★ Customer Rating' },
   { icon: Truck, title: 'Licensed & Insured' },
-  { icon: Award, title: 'A+ BBB Rating' }
+  { icon: Award, title: 'A+ BBB Rating' },
+  { icon: BadgeCheck, title: 'BBB Accredited' },
+  { icon: Users, title: 'Family Owned Since 2010' },
+  { icon: Clock, title: 'On-Time Guarantee' },
+  { icon: ThumbsUp, title: '98% Satisfaction Rate' }
 ];
 
 interface SiteShellProps {
