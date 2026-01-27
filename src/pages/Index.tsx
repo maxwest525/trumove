@@ -41,7 +41,7 @@ import {
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown
+  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera
 } from "lucide-react";
 
 // ZIP lookup
@@ -667,9 +667,6 @@ export default function Index() {
               <h1 className="tru-hero-headline-main">
                 <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
-              <p className="tru-hero-subheadline">
-                Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>, so we can confidently match you with carriers that best meet your needs.
-              </p>
             </div>
 
 
@@ -1166,9 +1163,31 @@ export default function Index() {
                 {/* Visual divider */}
                 <div className="tru-content-divider" />
                 
-                <p className="tru-hero-subheadline" style={{ opacity: 0.6 }}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                <p className="tru-hero-subheadline">
+                  Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>.
                 </p>
+
+                {/* Feature highlights */}
+                <div className="tru-hero-features">
+                  <div className="tru-hero-feature-item">
+                    <div className="tru-hero-feature-icon">
+                      <Camera className="w-4 h-4" />
+                    </div>
+                    <span>AI Room Scanner</span>
+                  </div>
+                  <div className="tru-hero-feature-item">
+                    <div className="tru-hero-feature-icon">
+                      <Video className="w-4 h-4" />
+                    </div>
+                    <span>Live Video Consults</span>
+                  </div>
+                  <div className="tru-hero-feature-item">
+                    <div className="tru-hero-feature-icon">
+                      <ShieldCheck className="w-4 h-4" />
+                    </div>
+                    <span>FMCSA Carrier Vetting</span>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

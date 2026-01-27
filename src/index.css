@@ -1210,6 +1210,39 @@
   font-weight: 600;
 }
 
+/* Feature highlights in content panel */
+.tru-hero-features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.tru-hero-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.85);
+}
+
+.tru-hero-feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: hsl(var(--tm-leaf) / 0.1);
+  border-radius: 8px;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-hero-feature-item:hover .tru-hero-feature-icon {
+  background: hsl(var(--tm-leaf) / 0.18);
+  box-shadow: 0 0 12px hsl(var(--tm-leaf) / 0.25);
+}
+
 .tru-hero-eyebrow {
   display: inline-flex;
   align-items: center;
