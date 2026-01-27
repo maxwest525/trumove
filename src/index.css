@@ -2932,8 +2932,14 @@
 }
 
 .tru-static-nav-item.is-active {
-  background: hsl(var(--primary) / 0.15);
+  background: hsl(var(--primary) / 0.12);
   color: hsl(var(--tm-ink));
+  border: 2px solid hsl(var(--tm-ink) / 0.6);
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.15);
+}
+
+.tru-static-nav-item.is-active svg {
+  color: hsl(var(--primary));
 }
 
 .tru-static-nav-item svg {
@@ -23903,20 +23909,7 @@
   text-align: center;
 }
 
-.tru-hero-header-section.tru-hero-header-refined::before {
-  content: '';
-  position: absolute;
-  inset: -20px -40px;
-  background: linear-gradient(
-    180deg,
-    hsl(var(--tm-ink) / 0.02) 0%,
-    hsl(var(--tm-ink) / 0.06) 50%,
-    hsl(var(--tm-ink) / 0.02) 100%
-  );
-  border-radius: 24px;
-  z-index: -1;
-  backdrop-filter: blur(8px);
-}
+/* Removed ::before pseudo-element - no grey box behind headline */
 
 /* Refined headline - smaller, cleaner */
 .tru-hero-header-refined .tru-hero-headline-main {
@@ -24091,6 +24084,18 @@
   transition: all 0.2s ease;
   text-align: left;
   width: 100%;
+  /* Stagger entrance animation */
+  opacity: 0;
+  transform: translateY(12px);
+  animation: feature-row-enter 0.4s ease forwards;
+  animation-delay: calc(var(--stagger-index, 0) * 0.08s);
+}
+
+@keyframes feature-row-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tru-why-feature-row:hover {
