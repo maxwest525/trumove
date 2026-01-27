@@ -22915,6 +22915,119 @@
   }
 }
 
+/* ========================================
+   CARRIER VETTING DARK THEME - Command Center
+   ======================================== */
+.carrier-vetting-dark {
+  --cv-bg: hsl(222 47% 5%);
+  --cv-card: hsl(222 40% 8%);
+  --cv-border: hsl(220 20% 18%);
+  --cv-text: hsl(0 0% 95%);
+  --cv-muted: hsl(220 10% 60%);
+}
+
+.carrier-vetting-dark .bg-muted\/95 {
+  background: hsl(222 40% 10% / 0.98) !important;
+  border-color: var(--cv-border) !important;
+}
+
+.carrier-vetting-dark .text-foreground {
+  color: var(--cv-text) !important;
+}
+
+.carrier-vetting-dark .text-muted-foreground {
+  color: var(--cv-muted) !important;
+}
+
+.carrier-vetting-dark .container {
+  color: var(--cv-text);
+}
+
+/* Cards in dark mode */
+.carrier-vetting-dark .fmcsa-feature-card,
+.carrier-vetting-dark [class*="bg-card"],
+.carrier-vetting-dark .rounded-lg.border {
+  background: var(--cv-card) !important;
+  border-color: var(--cv-border) !important;
+}
+
+/* Headers in dark mode */
+.carrier-vetting-dark h2,
+.carrier-vetting-dark h3,
+.carrier-vetting-dark h4 {
+  color: var(--cv-text);
+}
+
+/* Comparison cards */
+.carrier-vetting-dark .carrier-snapshot-card {
+  background: var(--cv-card);
+  border-color: var(--cv-border);
+}
+
+/* Empty state placeholders */
+.carrier-vetting-dark .border-dashed {
+  border-color: hsl(220 15% 25%) !important;
+  background: hsl(222 40% 7% / 0.5) !important;
+}
+
+/* Action buttons */
+.carrier-vetting-dark .border-border {
+  border-color: var(--cv-border) !important;
+}
+
+/* Text adjustments */
+.carrier-vetting-dark .text-slate-900 {
+  color: var(--cv-text) !important;
+}
+
+.carrier-vetting-dark .text-slate-800 {
+  color: hsl(220 10% 85%) !important;
+}
+
+.carrier-vetting-dark .bg-slate-50,
+.carrier-vetting-dark .bg-slate-100 {
+  background: hsl(222 30% 12%) !important;
+}
+
+/* Comparison summary table */
+.carrier-vetting-dark [class*="bg-muted"] {
+  background: hsl(222 30% 12%) !important;
+}
+
+/* Override standard table styles */
+.carrier-vetting-dark table {
+  background: var(--cv-card);
+}
+
+.carrier-vetting-dark th,
+.carrier-vetting-dark td {
+  border-color: var(--cv-border);
+  color: var(--cv-text);
+}
+
+.carrier-vetting-dark th {
+  background: hsl(222 30% 10%);
+}
+
+/* Demo mode dropdown */
+.carrier-vetting-dark .fixed.bottom-6.right-6 button {
+  background: hsl(222 40% 15%) !important;
+  border-color: var(--cv-border) !important;
+}
+
+/* Sections in dark theme */
+.carrier-vetting-dark .py-8,
+.carrier-vetting-dark .py-12,
+.carrier-vetting-dark .py-16 {
+  background: transparent;
+}
+
+/* Trust strip dark override */
+.carrier-vetting-dark .bg-muted\/95 .text-foreground,
+.carrier-vetting-dark .bg-muted\/95 p {
+  color: hsl(220 10% 80%) !important;
+}
+
 /* =============================================
    SIDEBAR SEARCH - Standard Theme (not terminal)
    ============================================= */
