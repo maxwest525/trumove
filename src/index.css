@@ -23400,33 +23400,11 @@
   border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
-/* Theme Toggle Button */
-.tracking-theme-toggle {
-  background: hsl(var(--muted));
-  border-color: hsl(var(--border));
-  color: hsl(var(--foreground));
-}
-
-.tracking-theme-toggle:hover {
-  background: hsl(var(--accent));
-  border-color: hsl(var(--foreground) / 0.3);
-}
-
-.dark .tracking-theme-toggle {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.dark .tracking-theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* Main Content Layout - Wider sidebars, more compact map */
+/* Main Content Layout - Responsive 480px base right column */
 .tracking-content {
   flex: 1;
   display: grid;
-  grid-template-columns: 320px minmax(200px, 1fr) 420px;
+  grid-template-columns: 320px minmax(180px, 1fr) 480px;
   gap: 12px;
   padding: 12px;
   overflow: auto;
@@ -23435,21 +23413,21 @@
 
 @media (max-width: 1600px) {
   .tracking-content {
-    grid-template-columns: 300px minmax(180px, 1fr) 400px;
+    grid-template-columns: 300px minmax(160px, 1fr) 440px;
     gap: 10px;
   }
 }
 
 @media (max-width: 1400px) {
   .tracking-content {
-    grid-template-columns: 280px minmax(160px, 1fr) 380px;
+    grid-template-columns: 280px minmax(140px, 1fr) 400px;
     gap: 8px;
   }
 }
 
 @media (max-width: 1280px) {
   .tracking-content {
-    grid-template-columns: 260px 1fr 340px;
+    grid-template-columns: 260px 1fr 360px;
     gap: 8px;
   }
 }
