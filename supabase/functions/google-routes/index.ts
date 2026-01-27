@@ -21,13 +21,14 @@ serve(async (req) => {
   }
 
   try {
-    const GOOGLE_MAPS_API_KEY = Deno.env.get('GOOGLE_MAPS_API_KEY');
+    // Use dedicated Routes API key if available, fallback to general Maps key
+    const GOOGLE_ROUTES_API_KEY = Deno.env.get('GOOGLE_ROUTES_API_KEY') || Deno.env.get('GOOGLE_MAPS_API_KEY');
     
-    if (!GOOGLE_MAPS_API_KEY) {
-      console.error('GOOGLE_MAPS_API_KEY not configured');
+    if (!GOOGLE_ROUTES_API_KEY) {
+      console.error('GOOGLE_ROUTES_API_KEY not configured');
       return new Response(
-        JSON.stringify({ error: 'Google Maps API not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Google Routes API not configured', fallback: true }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -63,6 +64,13 @@ serve(async (req) => {
     if (avoidHighways) routeModifiers.avoidHighways = true;
 
     // Call Google Routes API (v2)
+    // Note: departureTime must be in the future for traffic-aware routing
+    const now = new Date();
+    const futureTime = new Date(now.getTime() + 60000); // 1 minute in future
+    const routeDepartureTime = departureTime ? new Date(departureTime) : futureTime;
+    // Ensure it's in the future
+    const validDepartureTime = routeDepartureTime > now ? routeDepartureTime : futureTime;
+    
     const routeRequest = {
       origin: formatWaypoint(origin),
       destination: formatWaypoint(destination),
@@ -70,7 +78,7 @@ serve(async (req) => {
       routingPreference: 'TRAFFIC_AWARE_OPTIMAL',
       computeAlternativeRoutes: computeAlternatives || false,
       routeModifiers: Object.keys(routeModifiers).length > 0 ? routeModifiers : undefined,
-      departureTime: departureTime || new Date().toISOString(),
+      departureTime: validDepartureTime.toISOString(),
       languageCode: 'en-US',
       units: 'IMPERIAL',
     };
@@ -81,7 +89,7 @@ serve(async (req) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
+          'X-Goog-Api-Key': GOOGLE_ROUTES_API_KEY,
           'X-Goog-FieldMask': 'routes.duration,routes.staticDuration,routes.distanceMeters,routes.polyline,routes.legs,routes.travelAdvisory,routes.routeLabels,routes.description',
         },
         body: JSON.stringify(routeRequest),
