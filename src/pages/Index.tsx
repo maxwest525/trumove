@@ -286,6 +286,55 @@ export default function Index() {
   // Track which summary fields just updated (for animation)
   const [updatedFields, setUpdatedFields] = useState<Set<string>>(new Set());
   
+  // Why TruMove feature selection state
+  const [activeFeature, setActiveFeature] = useState<number | null>(null);
+  
+  // Why TruMove features data
+  const whyTruMoveFeatures = [
+    {
+      id: 'ai-scanner',
+      icon: Camera,
+      title: 'AI Inventory Scanner',
+      shortDesc: 'Photograph rooms for instant estimates',
+      longDesc: 'Upload photos of your rooms and our AI automatically identifies furniture, calculates weight and volume, and generates an accurate inventory list in seconds.'
+    },
+    {
+      id: 'video-consults',
+      icon: Video,
+      title: 'Live Video Consults',
+      shortDesc: 'Virtual walkthrough with a specialist',
+      longDesc: 'Schedule a live video call where a TruMove specialist walks through your home with you, providing personalized guidance and an accurate quote.'
+    },
+    {
+      id: 'fmcsa-vetting',
+      icon: ShieldCheck,
+      title: 'FMCSA + DOT Safety Vetting',
+      shortDesc: 'SAFER database verification',
+      longDesc: 'We query the federal SAFER Web Services database to verify operating authority, insurance coverage, and safety ratings for every carrier we recommend.'
+    },
+    {
+      id: 'authority-check',
+      icon: Shield,
+      title: 'Authority Verification',
+      shortDesc: 'Active license confirmation',
+      longDesc: 'Every carrier is checked for active operating authority status. We flag any revoked, suspended, or inactive licenses before you book.'
+    },
+    {
+      id: 'insurance-check',
+      icon: CreditCard,
+      title: 'Insurance Coverage Checks',
+      shortDesc: 'BIPD and cargo coverage verified',
+      longDesc: 'We verify that carriers maintain adequate bodily injury, property damage, and cargo insurance coverage that meets or exceeds federal minimums.'
+    },
+    {
+      id: 'transparency',
+      icon: BarChart3,
+      title: 'Real-Time Transparency',
+      shortDesc: 'Track your move every step',
+      longDesc: 'Get real-time updates on carrier matching, booking status, and move day coordination. No black box - you see everything we see.'
+    }
+  ];
+  
   // Calculate real distance
   const distance = useMemo(() => calculateDistance(fromZip, toZip), [fromZip, toZip]);
   const moveType = distance > 150 ? "long-distance" : "local";
@@ -583,7 +632,18 @@ export default function Index() {
     <SiteShell centered>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-        {/* HERO - Split Layout */}
+        {/* HERO - Full Width Background Wrapper */}
+        <div className="tru-hero-wrapper">
+          {/* Full-width background image with parallax */}
+          <div className="tru-hero-bg">
+            <img 
+              src={heroFamilyMove} 
+              alt="Happy family moving into their new home" 
+              className="tru-hero-bg-image"
+            />
+            <div className="tru-hero-bg-overlay" />
+          </div>
+          
           <section className="tru-hero tru-hero-split" ref={heroSectionRef}>
             {/* Particle Background Effect */}
             <HeroParticles />
@@ -665,11 +725,12 @@ export default function Index() {
             
             {/* Hero Header with Headline + Subheadline */}
             <div className="tru-hero-header-section">
+              <div className="tru-hero-headline-backdrop" />
               <h1 className="tru-hero-headline-main">
                 <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
-              <p className="tru-hero-header-subheadline">
-                Designed to put you in control of your move.
+              <p className="tru-hero-subheadline-long">
+                Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data, so we can confidently match you with carriers that best meet your needs.
               </p>
             </div>
 
@@ -715,7 +776,7 @@ export default function Index() {
                         
                         {/* FROM + TO Row - Side by Side with Route Connector */}
                         <div className="tru-qb-location-row">
-                          <div className="tru-qb-location-col">
+                        <div className="tru-qb-location-col">
                             <p className="tru-qb-section-label"><MapPin className="w-3 h-3" /> From</p>
                             <div className="tru-qb-input-wrap tru-qb-zip-wrap tru-qb-input-enhanced">
                               <LocationAutocomplete
@@ -738,6 +799,15 @@ export default function Index() {
                                 autoFocus
                               />
                             </div>
+                            {/* Satellite thumbnail after validation */}
+                            {fromCoords && (
+                              <div className="tru-qb-satellite-thumb">
+                                <img 
+                                  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},13,0/200x80@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                                  alt="Origin area"
+                                />
+                              </div>
+                            )}
                           </div>
 
                           {/* Route Connector */}
@@ -769,6 +839,15 @@ export default function Index() {
                                 placeholder="City or ZIP"
                               />
                             </div>
+                            {/* Satellite thumbnail after validation */}
+                            {toCoords && (
+                              <div className="tru-qb-satellite-thumb">
+                                <img 
+                                  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},13,0/200x80@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                                  alt="Destination area"
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -1156,49 +1235,51 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Hero Image with Content Overlay */}
-            <div className="tru-hero-content-panel tru-hero-content-panel-fullbleed">
-              <div className="tru-hero-image-container">
-                <img 
-                  src={heroFamilyMove} 
-                  alt="Happy family moving into their new home" 
-                  className="tru-hero-image"
-                />
-                <div className="tru-hero-image-overlay" />
-                <div className="tru-hero-content-inner tru-hero-content-over-image">
-                  <h2 className="tru-hero-headline-main">
-                    Skip the <span className="tru-hero-headline-accent">Van Line</span>
-                  </h2>
-                  
-                  <p className="tru-hero-subheadline">
-                    Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>.
-                  </p>
-
-                  {/* Feature highlights */}
-                  <div className="tru-hero-features">
-                    <div className="tru-hero-feature-item">
-                      <div className="tru-hero-feature-icon">
-                        <Camera className="w-4 h-4" />
+            {/* RIGHT SIDE: Why TruMove Card */}
+            <div className="tru-hero-content-panel">
+              <div className="tru-why-trumove-card">
+                {/* Header */}
+                <span className="tru-why-label">WHY TRUMOVE</span>
+                <h2 className="tru-why-title">Skip the Van Line Middleman</h2>
+                <p className="tru-why-desc">
+                  We analyze FMCSA and USDOT safety records to compare carriers, 
+                  then match you with movers that meet your specific needs. 
+                  Full transparency, no hidden fees.
+                </p>
+                
+                {/* Divider */}
+                <div className="tru-why-divider" />
+                
+                {/* Clickable Feature Highlights */}
+                <div className="tru-why-features">
+                  {whyTruMoveFeatures.map((feature, index) => (
+                    <button
+                      key={feature.id}
+                      className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
+                      onClick={() => setActiveFeature(activeFeature === index ? null : index)}
+                    >
+                      <div className="tru-why-feature-icon">
+                        <feature.icon className="w-4 h-4" />
                       </div>
-                      <span>AI Room Scanner</span>
-                    </div>
-                    <div className="tru-hero-feature-item">
-                      <div className="tru-hero-feature-icon">
-                        <Video className="w-4 h-4" />
+                      <div className="tru-why-feature-text">
+                        <span className="tru-why-feature-title">{feature.title}</span>
+                        <span className="tru-why-feature-desc">{feature.shortDesc}</span>
                       </div>
-                      <span>Live Video Consults</span>
-                    </div>
-                    <div className="tru-hero-feature-item">
-                      <div className="tru-hero-feature-icon">
-                        <ShieldCheck className="w-4 h-4" />
-                      </div>
-                      <span>FMCSA Carrier Vetting</span>
-                    </div>
-                  </div>
+                      <ChevronRight className="tru-why-feature-arrow" />
+                    </button>
+                  ))}
                 </div>
+                
+                {/* Expandable Detail Area */}
+                {activeFeature !== null && (
+                  <div className="tru-why-detail">
+                    <p>{whyTruMoveFeatures[activeFeature].longDesc}</p>
+                  </div>
+                )}
               </div>
             </div>
           </section>
+        </div> {/* End tru-hero-wrapper */}
 
           {/* FULL-WIDTH FEATURE CAROUSEL */}
           <section className="tru-feature-carousel-fullwidth tru-carousel-compact">

@@ -1034,37 +1034,87 @@
 }
 
 /* =============================================
+   HERO WRAPPER - Full Width Background
+   ============================================= */
+.tru-hero-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+/* Full-width hero background image */
+.tru-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.tru-hero-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+}
+
+/* Gradient overlay - lighter at top to show image, solid at bottom for text */
+.tru-hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    hsl(var(--background) / 0.35) 0%,
+    hsl(var(--background) / 0.6) 25%,
+    hsl(var(--background) / 0.85) 50%,
+    hsl(var(--background)) 75%
+  );
+  z-index: 1;
+}
+
+/* =============================================
    SPLIT HERO LAYOUT - Homepage
    ============================================= */
 /* 50/50 Two-column layout */
 /* Hero Split Layout - Compact with inline header */
 .tru-hero.tru-hero-split {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: 520px 1fr;
   grid-template-rows: auto 1fr;
   gap: 32px 64px;
   align-items: start;
-  padding: 4px 24px 16px 48px;
+  padding: 48px 24px 24px 48px;
   max-width: 1480px;
   margin: 0 auto;
 }
 
-/* Hero Header Section - Centered with Arrow */
+/* Hero Header Section - Centered with Backdrop */
 .tru-hero-header-section {
   grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 32px 0 24px 0;
+  padding: 32px 40px 24px 40px;
   gap: 12px;
   position: relative;
 }
 
+/* Backdrop blur for readability over hero image */
+.tru-hero-headline-backdrop {
+  position: absolute;
+  inset: -20px -40px;
+  background: hsl(var(--background) / 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+  z-index: -1;
+}
+
 .tru-hero-header-section .tru-hero-headline-main {
-  font-size: clamp(32px, 5vw, 56px);
+  font-size: clamp(36px, 5.5vw, 64px);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.1;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.02em;
   margin: 0;
@@ -1073,12 +1123,42 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
+  text-shadow: 0 2px 12px hsl(var(--background) / 0.6);
 }
 
 .tru-hero-header-section .tru-hero-inline-logo {
   height: 1em;
   display: inline-block;
   vertical-align: middle;
+}
+
+/* Hero Subheadline - Long version with proper hierarchy */
+.tru-hero-subheadline-long {
+  font-size: clamp(14px, 1.8vw, 18px);
+  line-height: 1.65;
+  max-width: 900px;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.75);
+  margin: 16px auto 0;
+  text-shadow: 0 1px 8px hsl(var(--background) / 0.5);
+}
+
+/* "Move" word - high contrast with green underline accent */
+.tru-hero-headline-accent {
+  color: hsl(var(--tm-ink));
+  position: relative;
+  display: inline-block;
+}
+
+.tru-hero-headline-accent::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: hsl(var(--primary));
+  border-radius: 2px;
 }
 
 .tru-hero-header-section .tru-hero-header-subheadline {
@@ -1165,15 +1245,16 @@
   grid-row: unset;
 }
 
-/* RIGHT PANEL: Value Proposition (swapped from left) */
+/* RIGHT PANEL: Why TruMove Card */
 .tru-hero-content-panel {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100%;
+  height: auto;
   grid-row: 2;
   grid-column: 2;
-  padding-left: 48px; /* Push content more to the right */
+  padding-left: 24px;
+  padding-top: 0;
 }
 
 .tru-hero-content-inner {
@@ -1185,12 +1266,6 @@
   border: none;
   border-radius: 0;
   max-width: 520px;
-}
-
-/* Full-bleed right panel */
-.tru-hero-content-panel.tru-hero-content-panel-fullbleed {
-  margin-right: -24px;
-  padding-right: 0;
 }
 
 /* Hero image container */
@@ -3136,6 +3211,10 @@
 
 /* Responsive: Stack on tablet and mobile */
 @media (max-width: 1024px) {
+  .tru-hero-wrapper {
+    min-height: auto;
+  }
+  
   .tru-hero.tru-hero-split {
     grid-template-columns: 1fr;
     gap: 40px;
@@ -3163,6 +3242,12 @@
     min-width: 0;
   }
   
+  .tru-hero-content-panel {
+    grid-row: auto;
+    grid-column: 1;
+    padding-left: 0;
+  }
+  
   .tru-hero-content-inner {
     max-width: 100%;
     text-align: center;
@@ -3178,6 +3263,14 @@
   
   .tru-hero-value-prop {
     padding: 12px 16px;
+  }
+  
+  .tru-why-trumove-card {
+    padding: 20px 24px;
+  }
+  
+  .tru-hero-headline-backdrop {
+    inset: -12px -20px;
   }
 }
 
@@ -4229,6 +4322,199 @@
 
 .tru-qb-route-summary-distance.is-pulsing span:first-of-type {
   color: hsl(var(--primary));
+}
+
+/* =============================================
+   SATELLITE THUMBNAILS
+   ============================================= */
+@keyframes thumb-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tru-qb-satellite-thumb {
+  margin-top: 8px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  opacity: 0;
+  animation: thumb-fade-in 0.4s ease-out forwards;
+}
+
+.tru-qb-satellite-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* =============================================
+   WHY TRUMOVE CARD
+   ============================================= */
+.tru-why-trumove-card {
+  background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted) / 0.5) 100%);
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.06),
+    0 8px 32px hsl(var(--tm-ink) / 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tru-why-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--primary));
+  padding: 4px 10px;
+  background: hsl(var(--primary) / 0.1);
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.tru-why-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: hsl(var(--tm-ink));
+  line-height: 1.2;
+  margin: 0;
+}
+
+.tru-why-desc {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: hsl(var(--tm-ink) / 0.7);
+  margin: 0;
+}
+
+.tru-why-divider {
+  height: 1px;
+  background: hsl(var(--tm-ink) / 0.08);
+  margin: 4px 0;
+}
+
+/* Why TruMove Feature Rows */
+.tru-why-features {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tru-why-feature-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.tru-why-feature-row:hover {
+  background: hsl(var(--tm-ink) / 0.04);
+  border-color: hsl(var(--tm-ink) / 0.1);
+}
+
+.tru-why-feature-row.is-active {
+  background: hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--primary) / 0.2);
+}
+
+.tru-why-feature-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--tm-ink) / 0.08);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.tru-why-feature-icon svg {
+  color: hsl(var(--tm-ink));
+}
+
+.tru-why-feature-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.tru-why-feature-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-why-feature-desc {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.6);
+}
+
+.tru-why-feature-arrow {
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  color: hsl(var(--tm-ink) / 0.3);
+  opacity: 0;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.tru-why-feature-row:hover .tru-why-feature-arrow,
+.tru-why-feature-row.is-active .tru-why-feature-arrow {
+  transform: translateX(4px);
+  opacity: 1;
+}
+
+.tru-why-feature-row.is-active .tru-why-feature-arrow {
+  color: hsl(var(--primary));
+  transform: rotate(90deg);
+}
+
+/* Expandable Detail Area */
+.tru-why-detail {
+  padding: 16px 18px;
+  background: hsl(var(--primary) / 0.05);
+  border: 1px solid hsl(var(--primary) / 0.1);
+  border-radius: 10px;
+  animation: detail-expand 0.3s ease-out;
+}
+
+@keyframes detail-expand {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tru-why-detail p {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: hsl(var(--tm-ink) / 0.8);
+  margin: 0;
 }
 
 /* =============================================
