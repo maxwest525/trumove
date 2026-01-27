@@ -11,7 +11,8 @@ import { WeighStationChecklist } from "@/components/tracking/WeighStationCheckli
 import { RouteInsights } from "@/components/tracking/RouteInsights";
 import { TrafficInsights } from "@/components/tracking/TrafficInsights";
 import { RealtimeETACard } from "@/components/tracking/RealtimeETACard";
-import { CheckMyTruckModal } from "@/components/tracking/CheckMyTruckModal";
+import { CheckMyTruckModal, isMultiStop, isSingleStop, type TruckStatus, type MultiStopTruckStatus } from "@/components/tracking/CheckMyTruckModal";
+import { MultiStopSummaryCard } from "@/components/tracking/MultiStopSummaryCard";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
@@ -155,6 +156,9 @@ export default function LiveTracking() {
   
   // Check My Truck modal
   const [showCheckMyTruck, setShowCheckMyTruck] = useState(false);
+  
+  // Multi-stop tracking state
+  const [multiStopData, setMultiStopData] = useState<MultiStopTruckStatus | null>(null);
   
   // Checkpoint notifications tracking
   const passedCheckpoints = useRef<Set<number>>(new Set());
@@ -551,15 +555,28 @@ export default function LiveTracking() {
 
         {/* Right: Dashboard */}
         <div className="tracking-dashboard">
-          <StreetViewPreview
-            coordinates={originCoords}
-            label="Origin"
-            locationName={originName}
-            time={formatTime(departureTime)}
-            timeLabel="Departed"
-            variant="origin"
-            googleApiKey={GOOGLE_MAPS_API_KEY}
-          />
+          {/* Multi-Stop Summary Card - Show when multi-stop data present */}
+          {multiStopData && (
+            <MultiStopSummaryCard
+              stops={multiStopData.stops}
+              currentStopIndex={multiStopData.currentStopIndex}
+              totalDistance={multiStopData.totalDistance}
+              remainingDuration={formatDuration(multiStopData.estimatedDuration * (1 - multiStopData.progress / 100))}
+            />
+          )}
+
+          {/* Single-stop: Show origin/dest street view */}
+          {!multiStopData && (
+            <StreetViewPreview
+              coordinates={originCoords}
+              label="Origin"
+              locationName={originName}
+              time={formatTime(departureTime)}
+              timeLabel="Departed"
+              variant="origin"
+              googleApiKey={GOOGLE_MAPS_API_KEY}
+            />
+          )}
 
           {routeData && (
             <TrackingDashboard
@@ -604,15 +621,18 @@ export default function LiveTracking() {
             isTracking={isTracking}
           />
 
-          <StreetViewPreview
-            coordinates={destCoords}
-            label="Destination"
-            locationName={destName}
-            time={formatTime(etaTime)}
-            timeLabel="ETA"
-            variant="destination"
-            googleApiKey={GOOGLE_MAPS_API_KEY}
-          />
+          {/* Single-stop: Show destination street view */}
+          {!multiStopData && (
+            <StreetViewPreview
+              coordinates={destCoords}
+              label="Destination"
+              locationName={destName}
+              time={formatTime(etaTime)}
+              timeLabel="ETA"
+              variant="destination"
+              googleApiKey={GOOGLE_MAPS_API_KEY}
+            />
+          )}
 
           {/* Route Insights - "Did You Know?" */}
           <RouteInsights
@@ -650,12 +670,33 @@ export default function LiveTracking() {
         open={showCheckMyTruck}
         onOpenChange={setShowCheckMyTruck}
         onLoadRoute={(truck) => {
-          // Load the truck's route into the main tracking view
-          handleOriginSelect(truck.originName, '', truck.originName);
-          handleDestSelect(truck.destName, '', truck.destName);
+          // Handle based on truck type
+          if (isSingleStop(truck)) {
+            // Load the single-stop truck's route into the main tracking view
+            handleOriginSelect(truck.originName, '', truck.originName);
+            handleDestSelect(truck.destName, '', truck.destName);
+            setMoveDate(new Date());
+            setMultiStopData(null);
+            toast.success(`📦 Booking #${truck.bookingId} loaded!`, {
+              description: `${truck.originName} → ${truck.destName}`,
+            });
+          }
+        }}
+        onLoadMultiStop={(truck) => {
+          // Load multi-stop data
+          setMultiStopData(truck);
+          // Set origin/dest from first pickup and last dropoff
+          const firstPickup = truck.stops.find(s => s.type === 'pickup');
+          const lastDropoff = [...truck.stops].reverse().find(s => s.type === 'dropoff');
+          if (firstPickup) {
+            handleOriginSelect(firstPickup.address.split(',')[0], '', firstPickup.address);
+          }
+          if (lastDropoff) {
+            handleDestSelect(lastDropoff.address.split(',')[0], '', lastDropoff.address);
+          }
           setMoveDate(new Date());
-          toast.success(`📦 Booking #${truck.bookingId} loaded!`, {
-            description: `${truck.originName} → ${truck.destName}`,
+          toast.success(`📦 Multi-Stop Booking #${truck.bookingId} loaded!`, {
+            description: `${truck.stops.length} stops • ${truck.totalDistance} miles`,
           });
         }}
       />

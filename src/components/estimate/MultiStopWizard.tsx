@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { MapPin, Truck, ArrowRight, ChevronLeft, Route, Sparkles } from "lucide-react";
 import MultiStopLocationList, { type StopLocation } from "./MultiStopLocationList";
 import RouteOptimizationCard from "./RouteOptimizationCard";
+import MultiStopRoutePreview from "./MultiStopRoutePreview";
 import { useRouteOptimization, type Waypoint } from "@/hooks/useRouteOptimization";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -165,6 +166,13 @@ export default function MultiStopWizard({
           minLocations={1}
         />
       </div>
+
+      {/* Route Preview Map */}
+      <MultiStopRoutePreview
+        pickupLocations={pickupLocations}
+        dropoffLocations={dropoffLocations}
+        optimizedOrder={result?.optimizedOrder}
+      />
 
       {/* Route Optimization */}
       <div className="space-y-3">
