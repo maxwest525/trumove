@@ -1034,6 +1034,50 @@
 }
 
 /* =============================================
+   HERO WRAPPER - Full Viewport Width Background
+   ============================================= */
+/* Hero wrapper spans full viewport width */
+.tru-hero-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Background image inside wrapper - spans full width */
+.tru-hero-wrapper > .tru-hero-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.tru-hero-wrapper > .tru-hero-bg-image img {
+  width: 100%;
+  height: 120%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+/* Improved gradient overlay - lighter at top to show more of the image */
+.tru-hero-wrapper > .tru-hero-bg-image .tru-hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    hsl(var(--background) / 0.25) 0%,
+    hsl(var(--background) / 0.5) 20%,
+    hsl(var(--background) / 0.75) 45%,
+    hsl(var(--background) / 0.92) 70%,
+    hsl(var(--background)) 100%
+  );
+  z-index: 1;
+}
+
+/* =============================================
    SPLIT HERO LAYOUT - Homepage
    ============================================= */
 /* 50/50 Two-column layout */
@@ -1045,14 +1089,15 @@
   grid-template-rows: auto 1fr;
   gap: 32px 64px;
   align-items: start;
-  padding: 4px 24px 16px 48px;
+  padding: 48px 24px 48px 48px;
   max-width: 1480px;
   margin: 0 auto;
   min-height: 600px;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 2;
 }
 
-/* Full-Width Hero Background Image with Parallax */
+/* Full-Width Hero Background Image with Parallax - for legacy (non-wrapper) */
 .tru-hero-bg-image {
   position: absolute;
   inset: 0;
@@ -1077,10 +1122,10 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    hsl(var(--background) / 0.35) 0%,
-    hsl(var(--background) / 0.6) 25%,
-    hsl(var(--background) / 0.85) 55%,
-    hsl(var(--background) / 0.95) 75%,
+    hsl(var(--background) / 0.25) 0%,
+    hsl(var(--background) / 0.5) 20%,
+    hsl(var(--background) / 0.75) 45%,
+    hsl(var(--background) / 0.92) 70%,
     hsl(var(--background)) 100%
   );
   z-index: 1;
@@ -1099,19 +1144,22 @@
   z-index: 2;
 }
 
+/* H1 - Large and dominant with enhanced text shadows for readability */
 .tru-hero-header-section .tru-hero-headline-main {
-  font-size: clamp(32px, 5vw, 56px);
+  font-size: clamp(36px, 6vw, 64px);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.1;
   color: hsl(var(--tm-ink));
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-  text-shadow: 0 2px 20px hsl(var(--background) / 0.8);
+  text-shadow: 
+    0 2px 8px hsl(var(--background) / 0.9),
+    0 4px 24px hsl(var(--background) / 0.6);
 }
 
 .tru-hero-header-section .tru-hero-inline-logo {
@@ -1120,45 +1168,17 @@
   vertical-align: middle;
 }
 
+/* Subheadline - 40-55% of H1 size */
 .tru-hero-header-section .tru-hero-header-subheadline {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.75);
-  margin: 8px 0 0 0;
-  letter-spacing: 0.01em;
-  opacity: 0;
-  animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards;
-  text-shadow: 0 1px 12px hsl(var(--background) / 0.6);
-}
-
-.tru-hero-header-section .tru-hero-headline-main {
-  font-size: clamp(32px, 5vw, 56px);
-  font-weight: 800;
-  line-height: 1.15;
-  color: hsl(var(--tm-ink));
-  letter-spacing: -0.02em;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tru-hero-header-section .tru-hero-inline-logo {
-  height: 1em;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.tru-hero-header-section .tru-hero-header-subheadline {
-  font-size: 1.125rem;
+  font-size: clamp(14px, 2vw, 18px);
   font-weight: 500;
   color: hsl(var(--tm-ink) / 0.7);
   margin: 8px 0 0 0;
   letter-spacing: 0.01em;
+  max-width: 600px;
   opacity: 0;
   animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards;
+  text-shadow: 0 1px 8px hsl(var(--background) / 0.8);
 }
 
 .tru-hero-header-section .tru-hero-subheadline {
@@ -4298,15 +4318,45 @@
 }
 
 /* =============================================
-   PERMANENT ROUTE SUMMARY BAR
+   MINI SATELLITE PREVIEWS (Replaces Route Bar)
    ============================================= */
 
+/* Mini satellite preview beneath inputs */
+.tru-qb-mini-satellite {
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  background: hsl(var(--muted) / 0.5);
+}
+
+.tru-qb-mini-satellite img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Route distance text only - displayed in connector */
+.tru-qb-route-distance-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+  background: hsl(var(--primary) / 0.1);
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid hsl(var(--primary) / 0.2);
+  white-space: nowrap;
+}
+
+/* =============================================
+   PERMANENT ROUTE SUMMARY BAR (Legacy - Hidden)
+   ============================================= */
+
+/* Remove permanent route bar - replaced with mini previews */
 .tru-qb-route-bar-permanent {
-  padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, hsl(var(--tm-ink) / 0.02) 0%, hsl(var(--tm-ink) / 0.05) 100%);
-  border: 1px solid hsl(var(--tm-ink) / 0.06);
-  border-radius: 12px;
-  margin-bottom: 1rem;
+  display: none;
 }
 
 .tru-qb-route-bar-inner {
@@ -4340,6 +4390,7 @@
 }
 
 .tru-qb-route-bar-label {
+  display: block;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -4348,6 +4399,7 @@
 }
 
 .tru-qb-route-bar-value {
+  display: block;
   font-size: 12px;
   font-weight: 600;
   color: inherit;
@@ -4398,6 +4450,161 @@
 
 .tru-qb-route-bar-distance.is-pulsing {
   color: hsl(var(--primary));
+}
+
+/* =============================================
+   HERO FEATURE CARD - Rebuilt (No Green-on-Green)
+   ============================================= */
+
+/* Feature card container - aligned with form */
+.tru-hero-feature-card {
+  background: hsl(var(--card) / 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 20px;
+  padding: 28px 24px;
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.06),
+    0 12px 32px hsl(var(--tm-ink) / 0.08);
+}
+
+.tru-feature-card-header {
+  margin-bottom: 24px;
+}
+
+.tru-feature-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: hsl(var(--tm-ink) / 0.5);
+  background: hsl(var(--tm-ink) / 0.06);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.tru-feature-card-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: hsl(var(--tm-ink));
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.tru-feature-card-subtitle {
+  font-size: 0.9rem;
+  color: hsl(var(--tm-ink) / 0.65);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Feature rows - consistent alignment */
+.tru-feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tru-feature-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: hsl(var(--tm-ink) / 0.02);
+  border: 1px solid hsl(var(--tm-ink) / 0.04);
+  transition: all 0.2s ease;
+}
+
+.tru-feature-row:hover {
+  background: hsl(var(--tm-ink) / 0.04);
+  border-color: hsl(var(--tm-ink) / 0.08);
+}
+
+/* Icons - NEUTRAL background, NOT green-on-green */
+.tru-feature-row-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: hsl(var(--tm-ink) / 0.08);
+  border-radius: 10px;
+  color: hsl(var(--tm-ink));
+  flex-shrink: 0;
+}
+
+.tru-feature-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tru-feature-row-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: hsl(var(--tm-ink));
+}
+
+.tru-feature-row-desc {
+  font-size: 0.8rem;
+  color: hsl(var(--tm-ink) / 0.6);
+  line-height: 1.4;
+}
+
+/* =============================================
+   HERO RESPONSIVE BREAKPOINTS
+   ============================================= */
+
+@media (max-width: 1024px) {
+  .tru-hero-wrapper .tru-hero.tru-hero-split {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 20px 48px;
+  }
+  
+  .tru-hero-right-half {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+  }
+  
+  .tru-hero-content-panel {
+    grid-column: 1;
+    grid-row: 3;
+    padding-left: 0;
+  }
+  
+  .tru-hero-right-half .tru-hero-form-panel {
+    min-width: 0;
+    max-width: 100%;
+  }
+  
+  .tru-hero-feature-card {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .tru-hero-header-section .tru-hero-headline-main {
+    font-size: 28px;
+  }
+  
+  .tru-qb-location-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .tru-qb-route-connector {
+    transform: rotate(90deg);
+    margin: 8px 0;
+  }
+  
+  .tru-qb-mini-satellite {
+    height: 40px;
+  }
 }
 
 /* =============================================
