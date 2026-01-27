@@ -10,7 +10,9 @@ import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
 import { RouteInsights } from "@/components/tracking/RouteInsights";
 import { TrafficInsights } from "@/components/tracking/TrafficInsights";
+import { RealtimeETACard } from "@/components/tracking/RealtimeETACard";
 import { CheckMyTruckModal } from "@/components/tracking/CheckMyTruckModal";
+import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
 import FloatingNav from "@/components/FloatingNav";
@@ -78,6 +80,53 @@ function formatDuration(seconds: number): string {
   return `${minutes}m`;
 }
 
+// Wrapper component to use the real-time ETA hook
+function RealtimeETACardWrapper({
+  originCoords,
+  destCoords,
+  progress,
+  isTracking,
+}: {
+  originCoords: [number, number] | null;
+  destCoords: [number, number] | null;
+  progress: number;
+  isTracking: boolean;
+}) {
+  const {
+    routeInfo,
+    isLoading,
+    lastUpdate,
+    etaHistory,
+    adjustedETA,
+    adjustedDuration,
+    trafficTrend,
+    remainingDistance,
+    refreshNow,
+  } = useRealtimeETA({
+    originCoords,
+    destCoords,
+    currentProgress: progress,
+    isTracking,
+    refreshIntervalMs: 60000, // Refresh every 60 seconds
+  });
+
+  if (!originCoords || !destCoords) return null;
+
+  return (
+    <RealtimeETACard
+      adjustedETA={adjustedETA}
+      adjustedDuration={adjustedDuration}
+      remainingDistance={remainingDistance}
+      trafficTrend={trafficTrend}
+      trafficSeverity={routeInfo?.traffic?.severity || 'low'}
+      trafficDelay={routeInfo?.traffic?.delayMinutes || 0}
+      etaHistory={etaHistory}
+      lastUpdate={lastUpdate}
+      isLoading={isLoading}
+      onRefresh={refreshNow}
+    />
+  );
+}
 
 export default function LiveTracking() {
   // Location state
@@ -576,6 +625,14 @@ export default function LiveTracking() {
               etaFormatted={googleRouteData.etaFormatted}
             />
           )}
+
+          {/* Real-Time ETA with Traffic Adjustments */}
+          <RealtimeETACardWrapper
+            originCoords={originCoords}
+            destCoords={destCoords}
+            progress={progress}
+            isTracking={isTracking}
+          />
 
           {/* Traffic Insights - Google Routes */}
           <TrafficInsights
