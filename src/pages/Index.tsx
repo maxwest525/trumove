@@ -289,48 +289,48 @@ export default function Index() {
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
   
-  // Why TruMove features data
+  // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
     {
       id: 'ai-scanner',
-      icon: Camera,
-      title: 'AI Inventory Scanner',
-      shortDesc: 'Photograph rooms for instant estimates',
+      icon: Scan,
+      title: 'AI Room Scanner',
+      shortDesc: 'Instant inventory from photos or video',
       longDesc: 'Upload photos of your rooms and our AI automatically identifies furniture, calculates weight and volume, and generates an accurate inventory list in seconds.'
     },
     {
       id: 'video-consults',
       icon: Video,
       title: 'Live Video Consults',
-      shortDesc: 'Virtual walkthrough with a specialist',
+      shortDesc: 'Walk your home with a moving specialist',
       longDesc: 'Schedule a live video call where a TruMove specialist walks through your home with you, providing personalized guidance and an accurate quote.'
     },
     {
       id: 'fmcsa-vetting',
       icon: ShieldCheck,
       title: 'FMCSA + DOT Safety Vetting',
-      shortDesc: 'SAFER database verification',
+      shortDesc: 'Verified federal safety and compliance data',
       longDesc: 'We query the federal SAFER Web Services database to verify operating authority, insurance coverage, and safety ratings for every carrier we recommend.'
     },
     {
       id: 'authority-check',
       icon: Shield,
       title: 'Authority Verification',
-      shortDesc: 'Active license confirmation',
+      shortDesc: 'Confirm licensing and operating authority',
       longDesc: 'Every carrier is checked for active operating authority status. We flag any revoked, suspended, or inactive licenses before you book.'
     },
     {
       id: 'insurance-check',
       icon: CreditCard,
       title: 'Insurance Coverage Checks',
-      shortDesc: 'BIPD and cargo coverage verified',
+      shortDesc: 'Validated cargo and liability coverage',
       longDesc: 'We verify that carriers maintain adequate bodily injury, property damage, and cargo insurance coverage that meets or exceeds federal minimums.'
     },
     {
       id: 'transparency',
-      icon: BarChart3,
-      title: 'Real-Time Transparency',
-      shortDesc: 'Track your move every step',
+      icon: Zap,
+      title: 'Real-Time Updates',
+      shortDesc: 'Know exactly where your move stands',
       longDesc: 'Get real-time updates on carrier matching, booking status, and move day coordination. No black box - you see everything we see.'
     }
   ];
@@ -723,14 +723,14 @@ export default function Index() {
               </div>
             )}
             
-            {/* Hero Header with Headline + Subheadline */}
+            {/* Hero Header with Headline + Short Subheadline */}
             <div className="tru-hero-header-section">
               <div className="tru-hero-headline-backdrop" />
               <h1 className="tru-hero-headline-main">
-                <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
+                A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
-              <p className="tru-hero-subheadline-long">
-                Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data, so we can confidently match you with carriers that best meet your needs.
+              <p className="tru-hero-subheadline-short">
+                Technology, transparency, and control — built for the most important move of your life.
               </p>
             </div>
 
@@ -1235,19 +1235,16 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Why TruMove Card */}
+            {/* RIGHT SIDE: Why TruMove + Live Tracking Cards */}
             <div className="tru-hero-content-panel">
+              {/* Card 1: Why TruMove */}
               <div className="tru-why-trumove-card">
-                {/* Header */}
                 <span className="tru-why-label">WHY TRUMOVE</span>
                 <h2 className="tru-why-title">Skip the Van Line Middleman</h2>
                 <p className="tru-why-desc">
-                  We analyze FMCSA and USDOT safety records to compare carriers, 
-                  then match you with movers that meet your specific needs. 
-                  Full transparency, no hidden fees.
+                  Skip the complexity of large national van lines. We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data, so we can confidently match you with carriers that best meet your needs.
                 </p>
                 
-                {/* Divider */}
                 <div className="tru-why-divider" />
                 
                 {/* Clickable Feature Highlights */}
@@ -1276,6 +1273,34 @@ export default function Index() {
                     <p>{whyTruMoveFeatures[activeFeature].longDesc}</p>
                   </div>
                 )}
+              </div>
+              
+              {/* Card 2: Live Truck Tracking (Placeholder) */}
+              <div className="tru-tracking-preview-card">
+                <span className="tru-tracking-label">COMING SOON</span>
+                <h3 className="tru-tracking-title">Live Truck Tracking</h3>
+                <p className="tru-tracking-desc">
+                  Track your truck in real time from pickup to delivery. View location, status updates, and arrival windows directly in your dashboard.
+                </p>
+                
+                {/* Route illustration placeholder */}
+                <div className="tru-tracking-visual">
+                  <div className="tru-tracking-route-line">
+                    <div className="tru-tracking-dot tru-tracking-dot-origin" />
+                    <div className="tru-tracking-line-segment" />
+                    <Truck className="w-5 h-5 tru-tracking-truck-icon" />
+                    <div className="tru-tracking-line-segment tru-tracking-line-remaining" />
+                    <div className="tru-tracking-dot tru-tracking-dot-dest" />
+                  </div>
+                </div>
+                
+                {/* Status chips */}
+                <div className="tru-tracking-chips">
+                  <span className="tru-tracking-chip is-complete">At Pickup</span>
+                  <span className="tru-tracking-chip is-active">In Transit</span>
+                  <span className="tru-tracking-chip">En Route</span>
+                  <span className="tru-tracking-chip">Arriving</span>
+                </div>
               </div>
             </div>
           </section>
