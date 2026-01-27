@@ -679,14 +679,16 @@ export default function Index() {
               </div>
             )}
             
-            {/* Hero Header with Headline + Subheadline */}
+            {/* Hero Header with Headline + Subheadline - Enhanced Readability */}
             <div className="tru-hero-header-section">
-              <h1 className="tru-hero-headline-main">
-                <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
-              </h1>
-              <p className="tru-hero-header-subheadline">
-                Designed to put you in control of your move.
-              </p>
+              <div className="tru-hero-headline-backdrop">
+                <h1 className="tru-hero-headline-main">
+                  <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
+                </h1>
+                <p className="tru-hero-header-subheadline">
+                  Designed to put you in control of your move.
+                </p>
+              </div>
             </div>
 
 
@@ -721,8 +723,40 @@ export default function Index() {
                     </div>
                   </div>
 
-                  {/* Form Content */}
-                  <div className="tru-floating-form-content">
+                  {/* Permanent Route Summary Bar - Sticky within form */}
+                  <div className="tru-qb-route-bar-permanent">
+                    <div className="tru-qb-route-bar-inner">
+                      <div className={`tru-qb-route-bar-endpoint ${fromCity ? 'has-value' : ''}`}>
+                        <MapPin className="w-4 h-4" />
+                        <div className="tru-qb-route-bar-endpoint-text">
+                          <span className="tru-qb-route-bar-label">Origin</span>
+                          <span className="tru-qb-route-bar-value">{fromCity || 'Enter origin'}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="tru-qb-route-bar-center">
+                        {distance > 0 ? (
+                          <>
+                            <span className="tru-qb-route-bar-distance">{distance.toLocaleString()} mi</span>
+                            <span className="tru-qb-route-bar-type">{moveType === 'long-distance' ? 'Long Distance' : 'Local'}</span>
+                          </>
+                        ) : (
+                          <Route className="w-4 h-4 tru-qb-route-bar-placeholder" />
+                        )}
+                      </div>
+                      
+                      <div className={`tru-qb-route-bar-endpoint ${toCity ? 'has-value' : ''}`}>
+                        <MapPin className="w-4 h-4" />
+                        <div className="tru-qb-route-bar-endpoint-text">
+                          <span className="tru-qb-route-bar-label">Destination</span>
+                          <span className="tru-qb-route-bar-value">{toCity || 'Enter destination'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Form Content - with padding for sticky bar */}
+                  <div className="tru-floating-form-content tru-floating-form-content-padded">
 
                     {/* Step 1: Route & Date */}
                     {step === 1 && (
@@ -1167,14 +1201,14 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Hero Feature Card - Rebuilt */}
+            {/* RIGHT SIDE: Hero Feature Card - Rebuilt with Full Value Proposition */}
             <div className="tru-hero-content-panel">
               <div className="tru-hero-feature-card">
                 <div className="tru-feature-card-header">
                   <span className="tru-feature-badge">Why TruMove</span>
-                  <h2 className="tru-feature-card-title">Skip the Van Line</h2>
+                  <h2 className="tru-feature-card-title">Skip the Van Line Middleman</h2>
                   <p className="tru-feature-card-subtitle">
-                    We use AI and verified data to find you the right mover.
+                    TruMove connects you directly with vetted, licensed interstate carriers — no brokers inflating prices, no surprises on move day. We use AI-powered inventory tools, federal SAFER data, and real-time carrier vetting to match you with the right mover at a fair price.
                   </p>
                 </div>
                 
@@ -1185,7 +1219,7 @@ export default function Index() {
                     </div>
                     <div className="tru-feature-row-text">
                       <span className="tru-feature-row-title">AI Room Scanner</span>
-                      <span className="tru-feature-row-desc">Snap photos, get instant inventory estimates</span>
+                      <span className="tru-feature-row-desc">Snap photos of each room — our AI detects and measures every item for accurate weight/volume estimates</span>
                     </div>
                   </div>
                   <div className="tru-feature-row">
@@ -1194,7 +1228,7 @@ export default function Index() {
                     </div>
                     <div className="tru-feature-row-text">
                       <span className="tru-feature-row-title">Live Video Consults</span>
-                      <span className="tru-feature-row-desc">Walkthrough your home with a move specialist</span>
+                      <span className="tru-feature-row-desc">Walk through your home with a move specialist who can see exactly what needs to move</span>
                     </div>
                   </div>
                   <div className="tru-feature-row">
@@ -1203,7 +1237,25 @@ export default function Index() {
                     </div>
                     <div className="tru-feature-row-text">
                       <span className="tru-feature-row-title">FMCSA Carrier Vetting</span>
-                      <span className="tru-feature-row-desc">Real safety data, not just reviews</span>
+                      <span className="tru-feature-row-desc">We verify operating authority, insurance minimums, and safety scores using federal SAFER data</span>
+                    </div>
+                  </div>
+                  <div className="tru-feature-row">
+                    <div className="tru-feature-row-icon">
+                      <BarChart3 className="w-5 h-5" />
+                    </div>
+                    <div className="tru-feature-row-text">
+                      <span className="tru-feature-row-title">Real-Time Rate Transparency</span>
+                      <span className="tru-feature-row-desc">No hidden fees or last-minute surprises — see exactly what you'll pay before you book</span>
+                    </div>
+                  </div>
+                  <div className="tru-feature-row">
+                    <div className="tru-feature-row-icon">
+                      <Database className="w-5 h-5" />
+                    </div>
+                    <div className="tru-feature-row-text">
+                      <span className="tru-feature-row-title">USDOT Authority Verification</span>
+                      <span className="tru-feature-row-desc">Every carrier is verified against federal databases for active authority and proper insurance coverage</span>
                     </div>
                   </div>
                 </div>
