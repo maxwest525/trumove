@@ -24292,102 +24292,483 @@
 }
 
 /* =============================================
-   LIVE TRUCK TRACKING PLACEHOLDER CARD
+   LIVE TRUCK TRACKING INTERACTIVE DEMO CARD
    ============================================= */
-.tru-tracking-placeholder-card {
+.tru-tracking-demo-card {
   position: relative;
-  background: linear-gradient(135deg, 
-    hsl(var(--background)) 0%, 
-    hsl(var(--muted) / 0.6) 100%
+  background: linear-gradient(145deg, 
+    hsl(220 15% 8%) 0%, 
+    hsl(220 18% 12%) 50%,
+    hsl(220 15% 8%) 100%
   );
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
+  border: 1px solid hsl(var(--primary) / 0.15);
   border-radius: 20px;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.tru-tracking-placeholder-inner {
-  padding: 20px 24px;
+.tru-tracking-demo-card.is-active {
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 
+    0 0 40px hsl(var(--primary) / 0.15),
+    0 4px 24px hsl(220 15% 5% / 0.6);
+}
+
+.tru-tracking-demo-glow {
+  position: absolute;
+  top: -30%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 60%);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.tru-tracking-demo-card.is-active .tru-tracking-demo-glow {
+  opacity: 1;
+  animation: glow-pulse-demo 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse-demo {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.tru-tracking-demo-inner {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
-.tru-tracking-coming-badge {
+.tru-tracking-demo-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tru-tracking-demo-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tru-tracking-demo-badge {
   display: inline-flex;
-  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
   padding: 4px 10px;
-  background: hsl(var(--tm-ink) / 0.06);
-  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  background: hsl(var(--primary) / 0.15);
+  border: 1px solid hsl(var(--primary) / 0.3);
   border-radius: 100px;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink) / 0.5);
+  color: hsl(var(--primary));
 }
 
-.tru-tracking-placeholder-title {
+.tru-tracking-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--primary) / 0.5);
+  transition: all 0.2s ease;
+}
+
+.tru-tracking-live-dot.is-live {
+  background: hsl(142 70% 50%);
+  box-shadow: 0 0 8px hsl(142 70% 50% / 0.8);
+  animation: live-pulse 1s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.tru-tracking-eta-badge {
+  display: inline-flex;
+  padding: 4px 10px;
+  background: hsl(0 0% 100% / 0.05);
+  border: 1px solid hsl(0 0% 100% / 0.1);
+  border-radius: 100px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 100% / 0.7);
+}
+
+.tru-tracking-demo-title {
   font-size: 18px;
   font-weight: 700;
-  color: hsl(var(--tm-ink));
+  color: hsl(0 0% 100%);
   margin: 0;
 }
 
-.tru-tracking-placeholder-desc {
-  font-size: 13px;
-  line-height: 1.6;
-  color: hsl(var(--tm-ink) / 0.6);
-  margin: 0;
-}
-
-.tru-tracking-status-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-}
-
-.tru-tracking-chip {
-  padding: 4px 10px;
-  background: hsl(var(--muted));
-  border: 1px solid hsl(var(--tm-ink) / 0.06);
-  border-radius: 100px;
-  font-size: 10px;
-  font-weight: 600;
-  color: hsl(var(--tm-ink) / 0.6);
-}
-
-.tru-tracking-route-illustration {
+/* Route Map Visualization */
+.tru-tracking-demo-map {
   position: relative;
-  height: 40px;
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
+  padding: 32px 12px 20px;
 }
 
-.tru-tracking-route-line {
+.tru-tracking-demo-route {
+  position: relative;
+  height: 4px;
+}
+
+.tru-tracking-demo-route-bg {
+  position: absolute;
+  inset: 0;
+  background: hsl(0 0% 100% / 0.1);
+  border-radius: 4px;
+}
+
+.tru-tracking-demo-route-progress {
   position: absolute;
   left: 0;
-  right: 0;
-  height: 3px;
+  top: 0;
+  bottom: 0;
   background: linear-gradient(90deg, 
-    hsl(var(--muted)) 0%, 
-    hsl(var(--primary) / 0.3) 50%,
-    hsl(var(--muted)) 100%
+    hsl(var(--primary)) 0%, 
+    hsl(142 70% 50%) 100%
   );
-  border-radius: 2px;
+  border-radius: 4px;
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.5);
+  transition: width 0.1s linear;
 }
 
-.tru-tracking-truck-icon {
+.tru-tracking-demo-checkpoint {
   position: absolute;
-  left: 45%;
-  color: hsl(var(--tm-ink) / 0.4);
-  animation: truck-drift 3s ease-in-out infinite;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
-@keyframes truck-drift {
-  0%, 100% { left: 40%; }
-  50% { left: 55%; }
+.tru-tracking-demo-checkpoint-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: hsl(220 15% 20%);
+  border: 2px solid hsl(0 0% 100% / 0.2);
+  transition: all 0.3s ease;
+}
+
+.tru-tracking-demo-checkpoint.is-passed .tru-tracking-demo-checkpoint-dot {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.5);
+}
+
+.tru-tracking-demo-checkpoint.is-current .tru-tracking-demo-checkpoint-dot {
+  background: hsl(142 70% 50%);
+  border-color: hsl(142 70% 50%);
+  box-shadow: 0 0 12px hsl(142 70% 50% / 0.7);
+  animation: checkpoint-pulse 1s ease-in-out infinite;
+}
+
+@keyframes checkpoint-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.tru-tracking-demo-checkpoint-label {
+  position: absolute;
+  top: 18px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: hsl(0 0% 100% / 0.5);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.tru-tracking-demo-checkpoint.is-passed .tru-tracking-demo-checkpoint-label,
+.tru-tracking-demo-checkpoint.is-current .tru-tracking-demo-checkpoint-label {
+  color: hsl(0 0% 100% / 0.9);
+}
+
+/* Animated Truck */
+.tru-tracking-demo-truck {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  color: hsl(220 15% 5%);
+  box-shadow: 
+    0 0 16px hsl(var(--primary) / 0.6),
+    0 2px 8px hsl(220 15% 5% / 0.4);
+  z-index: 10;
+  transition: left 0.1s linear;
+}
+
+/* Endpoints */
+.tru-tracking-demo-endpoints {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.tru-tracking-demo-endpoint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(0 0% 100% / 0.7);
+}
+
+.tru-tracking-demo-endpoint svg {
+  color: hsl(var(--primary) / 0.8);
+}
+
+.tru-tracking-demo-endpoint.dest svg {
+  color: hsl(142 70% 50%);
+}
+
+/* Timeline */
+.tru-tracking-demo-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 12px;
+  background: hsl(0 0% 100% / 0.03);
+  border: 1px solid hsl(0 0% 100% / 0.06);
+  border-radius: 12px;
+}
+
+.tru-tracking-demo-timeline-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: hsl(0 0% 100% / 0.02);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.tru-tracking-demo-timeline-item.is-complete {
+  background: hsl(var(--primary) / 0.1);
+}
+
+.tru-tracking-demo-timeline-item.is-active {
+  background: hsl(142 70% 50% / 0.15);
+  box-shadow: 0 0 8px hsl(142 70% 50% / 0.2);
+}
+
+.tru-tracking-demo-timeline-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(0 0% 100% / 0.4);
+  flex-shrink: 0;
+}
+
+.tru-tracking-demo-timeline-item.is-complete .tru-tracking-demo-timeline-icon {
+  color: hsl(var(--primary));
+}
+
+.tru-tracking-demo-timeline-item.is-active .tru-tracking-demo-timeline-icon {
+  color: hsl(142 70% 50%);
+}
+
+.tru-tracking-demo-timeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.tru-tracking-demo-timeline-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: hsl(0 0% 100% / 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tru-tracking-demo-timeline-time {
+  font-size: 9px;
+  color: hsl(0 0% 100% / 0.4);
+}
+
+/* Play Button */
+.tru-tracking-demo-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: hsl(var(--primary));
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(220 15% 5%);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tru-tracking-demo-play-btn:hover {
+  background: hsl(var(--primary) / 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.4);
+}
+
+.tru-tracking-demo-footer {
+  text-align: center;
+  font-size: 10px;
+  color: hsl(0 0% 100% / 0.35);
+  letter-spacing: 0.02em;
+}
+
+/* =============================================
+   DARK MODE STYLING FOR HERO CARDS
+   ============================================= */
+.dark .tru-why-card-premium,
+.dark .tru-floating-form-card {
+  background: linear-gradient(145deg, 
+    hsl(220 15% 10%) 0%, 
+    hsl(220 18% 14%) 50%,
+    hsl(220 15% 10%) 100%
+  );
+  border-color: hsl(0 0% 100% / 0.08);
+  box-shadow: 
+    0 4px 24px hsl(220 15% 5% / 0.5),
+    0 1px 3px hsl(220 15% 5% / 0.3),
+    inset 0 1px 0 hsl(0 0% 100% / 0.05);
+}
+
+.dark .tru-why-card-glow {
+  background: radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, transparent 60%);
+}
+
+.dark .tru-why-title {
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-why-paragraph {
+  color: hsl(0 0% 100% / 0.7);
+}
+
+.dark .tru-why-badge {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.dark .tru-why-feature-row {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.06);
+}
+
+.dark .tru-why-feature-row:hover {
+  background: hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--primary) / 0.25);
+}
+
+.dark .tru-why-feature-row.is-active {
+  background: hsl(var(--primary) / 0.12);
+  border-color: hsl(var(--primary) / 0.35);
+}
+
+.dark .tru-why-feature-row-icon {
+  background: hsl(220 15% 18%);
+  border-color: hsl(0 0% 100% / 0.08);
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-why-feature-row:hover .tru-why-feature-row-icon,
+.dark .tru-why-feature-row.is-active .tru-why-feature-row-icon {
+  background: hsl(var(--primary) / 0.2);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.3);
+}
+
+.dark .tru-why-feature-row-title {
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-why-feature-row-desc {
+  color: hsl(0 0% 100% / 0.55);
+}
+
+.dark .tru-why-feature-arrow {
+  color: hsl(0 0% 100% / 0.3);
+}
+
+.dark .tru-why-feature-row:hover .tru-why-feature-arrow {
+  color: hsl(var(--primary));
+}
+
+.dark .tru-why-detail-box {
+  background: hsl(220 15% 15%);
+  border-color: hsl(0 0% 100% / 0.06);
+}
+
+.dark .tru-why-detail-box p {
+  color: hsl(0 0% 100% / 0.7);
+}
+
+.dark .tru-why-trust-row {
+  border-color: hsl(0 0% 100% / 0.06);
+}
+
+.dark .tru-why-trust-item {
+  color: hsl(0 0% 100% / 0.5);
+}
+
+.dark .tru-why-trust-item svg {
+  color: hsl(var(--primary) / 0.7);
+}
+
+/* Form card dark mode enhancements */
+.dark .tru-qb-form-header-brand {
+  border-color: hsl(0 0% 100% / 0.08);
+}
+
+.dark .tru-qb-header-tagline {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+.dark .tru-floating-form-footer {
+  border-color: hsl(0 0% 100% / 0.06);
+}
+
+.dark .tru-form-trust-item {
+  color: hsl(0 0% 100% / 0.5);
+}
+
+.dark .tru-form-trust-item svg {
+  color: hsl(var(--primary) / 0.6);
+}
+
+/* Hero header dark mode */
+.dark .tru-hero-header-section.tru-hero-header-refined::before {
+  background: linear-gradient(
+    180deg,
+    hsl(0 0% 100% / 0.01) 0%,
+    hsl(0 0% 100% / 0.03) 50%,
+    hsl(0 0% 100% / 0.01) 100%
+  );
+}
+
+.dark .tru-hero-subheadline-refined {
+  color: hsl(0 0% 100% / 0.7);
 }
 
 /* =============================================
