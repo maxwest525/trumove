@@ -156,32 +156,32 @@ export function UnifiedStatsCard({
       {/* Empty State Message */}
       {isEmpty && (
         <div className="text-center py-6 text-muted-foreground">
-          <Route className="w-8 h-8 mx-auto mb-2 opacity-40" />
-          <p className="text-sm font-medium text-foreground/70">Enter a Booking # or Route</p>
-          <p className="text-xs mt-1">Stats will appear once tracking begins</p>
+          <Route className="w-10 h-10 mx-auto mb-3 opacity-50" />
+          <p className="text-base font-semibold text-foreground/80">Enter a Booking # or Route</p>
+          <p className="text-sm mt-1.5 text-foreground/60">Stats will appear once tracking begins</p>
         </div>
       )}
 
       {/* Primary Stats Row - ETA, Time, Distance */}
       {!isEmpty && (
         <div className="grid grid-cols-3 gap-2 mb-3">
-          <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-2.5 border border-primary/20">
-            <div className="text-[9px] uppercase tracking-wider text-foreground/60 mb-0.5">ETA</div>
-            <div className="text-lg font-bold text-primary leading-tight">
+          <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-3 border border-primary/20">
+            <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">ETA</div>
+            <div className="text-xl font-bold text-primary leading-tight">
               {adjustedETA || '--:--'}
             </div>
           </div>
           
-          <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-2.5 border border-border">
-            <div className="text-[9px] uppercase tracking-wider text-foreground/60 mb-0.5">Time Left</div>
-            <div className="text-lg font-bold text-foreground leading-tight">
+          <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
+            <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Time Left</div>
+            <div className="text-xl font-bold text-foreground leading-tight">
               {adjustedDuration || timeRemaining}
             </div>
           </div>
           
-          <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-2.5 border border-border">
-            <div className="text-[9px] uppercase tracking-wider text-foreground/60 mb-0.5">Distance</div>
-            <div className="text-lg font-bold text-foreground leading-tight">
+          <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
+            <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Distance</div>
+            <div className="text-xl font-bold text-foreground leading-tight">
               {remainingDistance || Math.round(totalDistance - distanceTraveled)} mi
             </div>
           </div>
@@ -191,11 +191,11 @@ export function UnifiedStatsCard({
       {/* Progress Bar */}
       {!isEmpty && (
         <div className="mb-3">
-          <div className="flex justify-between text-xs text-foreground/70 mb-1.5">
+          <div className="flex justify-between text-sm text-foreground/80 mb-2 font-medium">
             <span>{Math.round(progress)}% complete</span>
             <span>{Math.round(distanceTraveled)}/{Math.round(totalDistance)} mi</span>
           </div>
-          <div className="tracking-progress-bar h-2">
+          <div className="tracking-progress-bar h-2.5">
             <div 
               className="tracking-progress-fill"
               style={{ width: `${progress}%` }}
@@ -208,43 +208,43 @@ export function UnifiedStatsCard({
       {!isEmpty && (
         <div className="grid grid-cols-3 gap-2 mb-3">
           {/* Traffic */}
-          <div className={cn("rounded-lg p-2 border", severity.bg)}>
-            <div className="flex items-center gap-1 mb-0.5">
-              <AlertTriangle className={cn("w-2.5 h-2.5", severity.color)} />
-              <span className="text-[8px] uppercase tracking-wider text-foreground/60">Traffic</span>
+          <div className={cn("rounded-lg p-2.5 border", severity.bg)}>
+            <div className="flex items-center gap-1.5 mb-1">
+              <AlertTriangle className={cn("w-3.5 h-3.5", severity.color)} />
+              <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Traffic</span>
             </div>
-            <div className={cn("text-xs font-semibold", severity.color)}>
+            <div className={cn("text-sm font-bold", severity.color)}>
               {severity.label}
             </div>
             {trafficDelay > 0 && (
-              <div className="text-[9px] text-foreground/60">+{trafficDelay}m delay</div>
+              <div className="text-xs text-foreground/70 mt-0.5">+{trafficDelay}m delay</div>
             )}
           </div>
 
           {/* Tolls */}
           <div className={cn(
-            "rounded-lg p-2 border",
+            "rounded-lg p-2.5 border",
             tollInfo?.hasTolls ? "bg-muted/50 dark:bg-white/5 border-border" : "bg-emerald-500/10 border-emerald-500/20"
           )}>
-            <div className="flex items-center gap-1 mb-0.5">
-              <DollarSign className={cn("w-2.5 h-2.5", tollInfo?.hasTolls ? "text-foreground/60" : "text-emerald-500")} />
-              <span className="text-[8px] uppercase tracking-wider text-foreground/60">Tolls</span>
+            <div className="flex items-center gap-1.5 mb-1">
+              <DollarSign className={cn("w-3.5 h-3.5", tollInfo?.hasTolls ? "text-foreground/70" : "text-emerald-500")} />
+              <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Tolls</span>
             </div>
-            <div className={cn("text-xs font-semibold", tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500")}>
+            <div className={cn("text-sm font-bold", tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500")}>
               {tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
             </div>
           </div>
 
           {/* Fuel */}
           <div className={cn(
-            "rounded-lg p-2 border",
+            "rounded-lg p-2.5 border",
             isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/20" : "bg-muted/50 dark:bg-white/5 border-border"
           )}>
-            <div className="flex items-center gap-1 mb-0.5">
-              <Fuel className={cn("w-2.5 h-2.5", isFuelEfficient ? "text-emerald-500" : "text-foreground/60")} />
-              <span className="text-[8px] uppercase tracking-wider text-foreground/60">Fuel</span>
+            <div className="flex items-center gap-1.5 mb-1">
+              <Fuel className={cn("w-3.5 h-3.5", isFuelEfficient ? "text-emerald-500" : "text-foreground/70")} />
+              <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Fuel</span>
             </div>
-            <div className={cn("text-xs font-semibold", isFuelEfficient ? "text-emerald-500" : "text-foreground")}>
+            <div className={cn("text-sm font-bold", isFuelEfficient ? "text-emerald-500" : "text-foreground")}>
               {isFuelEfficient ? 'Optimal' : 'Standard'}
             </div>
           </div>
@@ -253,15 +253,15 @@ export function UnifiedStatsCard({
 
       {/* Traffic Trend & Last Update */}
       {!isEmpty && (
-        <div className="flex items-center justify-between py-2 border-t border-border">
+        <div className="flex items-center justify-between py-2.5 border-t border-border">
           {trend && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <span className={trend.color}>{trend.icon}</span>
-              <span className="text-xs text-foreground/70">Traffic {trend.label}</span>
+              <span className="text-sm text-foreground/80 font-medium">Traffic {trend.label}</span>
             </div>
           )}
           {lastUpdate && (
-            <span className="text-xs text-foreground/70">
+            <span className="text-sm text-foreground/70">
               Updated {formatTimeAgo(lastUpdate)}
             </span>
           )}
@@ -271,37 +271,37 @@ export function UnifiedStatsCard({
       {/* Alternate Routes (Collapsible) */}
       {!isEmpty && alternateRoutes.length > 0 && (
         <Collapsible open={showAlternates} onOpenChange={setShowAlternates}>
-          <CollapsibleTrigger className="w-full flex items-center justify-between py-2 border-t border-border text-xs text-foreground/70 hover:text-foreground transition-colors">
-            <span className="uppercase tracking-wider font-medium">Alternate Routes</span>
-            {showAlternates ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+          <CollapsibleTrigger className="w-full flex items-center justify-between py-2.5 border-t border-border text-sm text-foreground/70 hover:text-foreground transition-colors">
+            <span className="uppercase tracking-wider font-semibold">Alternate Routes</span>
+            {showAlternates ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </CollapsibleTrigger>
           
-          <CollapsibleContent className="space-y-1.5 pt-2">
+          <CollapsibleContent className="space-y-2 pt-2">
             {alternateRoutes.slice(0, 2).map((alt) => (
               <button
                 key={alt.index}
                 onClick={() => handleRouteSelect(alt.index)}
                 className={cn(
-                  "w-full text-left p-2 rounded-lg border transition-all",
+                  "w-full text-left p-3 rounded-lg border transition-all",
                   selectedRoute === alt.index
                     ? "bg-primary/20 border-primary/50"
                     : "bg-muted/50 dark:bg-white/5 border-border hover:bg-muted dark:hover:bg-white/10"
                 )}
               >
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-xs font-medium text-foreground truncate pr-2">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-semibold text-foreground truncate pr-2">
                     {alt.description || `Via alternate ${alt.index}`}
                   </span>
-                  <ChevronRight className="w-2.5 h-2.5 text-foreground/60 flex-shrink-0" />
+                  <ChevronRight className="w-3.5 h-3.5 text-foreground/60 flex-shrink-0" />
                 </div>
-                <div className="flex items-center gap-2 text-[10px] text-foreground/60">
+                <div className="flex items-center gap-2 text-xs text-foreground/70">
                   <span>{alt.distanceMiles} mi</span>
                   <span>•</span>
                   <span>{alt.durationFormatted}</span>
                   {alt.isTollFree && (
                     <>
                       <span>•</span>
-                      <span className="text-emerald-500">No tolls</span>
+                      <span className="text-emerald-500 font-medium">No tolls</span>
                     </>
                   )}
                 </div>
