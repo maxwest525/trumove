@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.google-places-insights]
 verify_jwt = false
+
+[functions.google-aerial-view]
+verify_jwt = false
