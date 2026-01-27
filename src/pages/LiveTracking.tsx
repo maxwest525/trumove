@@ -300,8 +300,8 @@ export default function LiveTracking() {
 
   return (
     <div className="live-tracking-page">
-      {/* Site Header */}
-      <Header />
+      {/* Site Header - White logo for tracking page */}
+      <Header whiteLogo />
       
       {/* Dashboard Header */}
       <header className="tracking-header">
@@ -316,8 +316,43 @@ export default function LiveTracking() {
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Check My Truck Button - High contrast */}
+        <div className="flex items-center gap-4">
+          {/* Booking Lookup - Inline in header */}
+          <div className="hidden md:flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="Booking #..."
+              className="h-8 w-32 px-3 rounded-md text-sm bg-white/10 border border-white/20 text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+              onKeyDown={async (e) => {
+                if (e.key === 'Enter') {
+                  const value = (e.target as HTMLInputElement).value.trim();
+                  if (value === '12345' || value === '00000') {
+                    await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
+                    await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
+                    setMoveDate(new Date());
+                    toast.success('📦 Booking loaded!', { description: 'Jacksonville → Miami' });
+                  } else if (value) {
+                    toast.error('Booking not found', { description: 'Try #12345 or #00000' });
+                  }
+                }
+              }}
+            />
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-8 px-2 text-foreground/70 hover:text-foreground hover:bg-white/10"
+              onClick={async () => {
+                await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
+                await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
+                setMoveDate(new Date());
+                toast.success('📦 Demo booking loaded!');
+              }}
+            >
+              <Search className="w-4 h-4" />
+            </Button>
+          </div>
+
+          {/* Check My Truck Button */}
           <Button
             onClick={() => setShowCheckMyTruck(true)}
             size="sm"
@@ -327,7 +362,7 @@ export default function LiveTracking() {
             <span className="hidden sm:inline">Check My Truck</span>
           </Button>
           
-          <div className="text-right hidden md:block">
+          <div className="text-right hidden lg:block">
             <div className="text-[10px] text-foreground/40 uppercase tracking-wider">Shipment ID</div>
             <div className="text-sm font-mono text-foreground/80">TM-2026-{String(Date.now()).slice(-8)}</div>
           </div>
@@ -338,56 +373,6 @@ export default function LiveTracking() {
       <div className="tracking-content">
         {/* Left: Address Inputs + Street Views */}
         <div className="tracking-sidebar">
-          {/* Demo Booking Lookup */}
-          <div className="tracking-info-card mb-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Search className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
-                Booking Lookup
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Enter booking #..."
-                className="tracking-input flex-1 h-9 px-3 rounded-md text-sm"
-                onKeyDown={async (e) => {
-                  if (e.key === 'Enter') {
-                    const value = (e.target as HTMLInputElement).value.trim();
-                    if (value === '12345') {
-                      // Demo booking - auto-fill addresses
-                      await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-                      await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
-                      setMoveDate(new Date());
-                      toast.success('📦 Booking #12345 loaded!', {
-                        description: 'Demo move: Jacksonville → Miami',
-                      });
-                    } else if (value) {
-                      toast.error('Booking not found', {
-                        description: 'Try demo booking #12345',
-                      });
-                    }
-                  }
-                }}
-              />
-              <Button
-                size="sm"
-                className="bg-foreground text-background hover:bg-foreground/90 px-3 font-semibold h-9"
-                onClick={() => {
-                  // Auto-fill demo booking
-                  handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-                  handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
-                  setMoveDate(new Date());
-                  toast.success('📦 Demo booking loaded!', {
-                    description: 'Move: Jacksonville → Miami',
-                  });
-                }}
-              >
-                <Search className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </div>
-
           <div className="tracking-info-card">
             <h3 className="text-sm font-semibold text-foreground mb-4">Route Setup</h3>
             
