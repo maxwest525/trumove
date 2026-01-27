@@ -1467,38 +1467,24 @@ export default function Index() {
                     confidently match you with carriers that best meet your needs.
                   </p>
                   
-                  {/* Feature Rows - All 6 features as clickable rows with hover tooltips */}
+                  {/* Feature Rows - All 6 features as clickable rows */}
                   <div className="tru-why-feature-list">
                     {whyTruMoveFeatures.map((feature, index) => (
-                      <HoverCard key={feature.id} openDelay={150} closeDelay={100}>
-                        <HoverCardTrigger asChild>
-                          <button
-                            className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
-                            style={{ '--stagger-index': index } as React.CSSProperties}
-                            onClick={() => setActiveFeature(activeFeature === index ? null : index)}
-                          >
-                            <div className="tru-why-feature-row-icon">
-                              <feature.icon className="w-4 h-4" />
-                            </div>
-                            <div className="tru-why-feature-row-content">
-                              <span className="tru-why-feature-row-title">{feature.title}</span>
-                              <span className="tru-why-feature-row-desc">{feature.shortDesc}</span>
-                            </div>
-                            <ChevronRight className="w-4 h-4 tru-why-feature-arrow" />
-                          </button>
-                        </HoverCardTrigger>
-                        <HoverCardContent 
-                          side="left" 
-                          align="center" 
-                          className="tru-feature-hover-card"
-                          sideOffset={12}
-                        >
-                          <div className="tru-feature-hover-inner">
-                            <feature.icon className="w-5 h-5 tru-feature-hover-icon" />
-                            <p className="tru-feature-hover-tip">{feature.hoverTip}</p>
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
+                      <button
+                        key={feature.id}
+                        className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
+                        style={{ '--stagger-index': index } as React.CSSProperties}
+                        onClick={() => setActiveFeature(activeFeature === index ? null : index)}
+                      >
+                        <div className="tru-why-feature-row-icon">
+                          <feature.icon className="w-4 h-4" />
+                        </div>
+                        <div className="tru-why-feature-row-content">
+                          <span className="tru-why-feature-row-title">{feature.title}</span>
+                          <span className="tru-why-feature-row-desc">{feature.shortDesc}</span>
+                        </div>
+                        <ChevronRight className="w-4 h-4 tru-why-feature-arrow" />
+                      </button>
                     ))}
                   </div>
                   
