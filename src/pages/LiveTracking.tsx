@@ -5,6 +5,7 @@ import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
 import { TrackingTimeline } from "@/components/tracking/TrackingTimeline";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
+import { TruckAerialView } from "@/components/tracking/TruckAerialView";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
 import { RouteInsights } from "@/components/tracking/RouteInsights";
@@ -290,9 +291,8 @@ export default function LiveTracking() {
                 }}
               />
               <Button
-                variant="outline"
                 size="sm"
-                className="border-white/20 text-white/60 hover:bg-white/10 hover:text-white px-3"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 font-semibold"
                 onClick={() => {
                   // Auto-fill demo booking
                   handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
@@ -303,10 +303,10 @@ export default function LiveTracking() {
                   });
                 }}
               >
-                Demo
+                <Search className="w-3.5 h-3.5 mr-1.5" />
+                Search
               </Button>
             </div>
-            <p className="text-[10px] text-white/40 mt-2">Try booking #12345</p>
           </div>
 
           <div className="tracking-info-card">
@@ -510,6 +510,16 @@ export default function LiveTracking() {
               distanceTraveled={distanceTraveled}
               totalDistance={totalDistance}
               timeRemaining={formatDuration(remainingDuration)}
+            />
+          )}
+
+          {/* Live Truck Aerial View */}
+          {isTracking && routeCoordinates.length > 0 && (
+            <TruckAerialView
+              routeCoordinates={routeCoordinates}
+              progress={progress}
+              isTracking={isTracking}
+              googleApiKey={GOOGLE_MAPS_API_KEY}
             />
           )}
 

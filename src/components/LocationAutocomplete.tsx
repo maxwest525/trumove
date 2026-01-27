@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 // Retry configuration
 const MAX_RETRIES = 2;
@@ -160,7 +161,67 @@ async function searchMapboxAddresses(query: string): Promise<{ suggestions: Loca
   return { suggestions, failed: false };
 }
 
-// Retrieve full verified address from Mapbox with retry
+// Google Address Validation API for verified street addresses
+async function validateWithGoogle(address: string): Promise<{ 
+  address: LocationSuggestion | null; 
+  failed: boolean;
+  errorCode?: string;
+  fallbackToMapbox?: boolean;
+}> {
+  try {
+    const { data, error } = await supabase.functions.invoke('google-address-validation', {
+      body: { address }
+    });
+
+    if (error) {
+      console.error('Google Address Validation error:', error);
+      return { address: null, failed: true, errorCode: 'INVOKE_ERROR', fallbackToMapbox: true };
+    }
+
+    // Check if we should fallback to Mapbox
+    if (data?.fallbackToMapbox || data?.code === 'API_ERROR') {
+      console.log('Google API not available, falling back to Mapbox');
+      return { address: null, failed: false, errorCode: data?.code, fallbackToMapbox: true };
+    }
+
+    if (data?.error || !data?.valid) {
+      console.warn('Google validation failed:', data?.error || 'Invalid address');
+      return { address: null, failed: false, errorCode: data?.code };
+    }
+
+    const { components, formattedAddress, validationLevel: googleLevel } = data;
+    
+    // Map Google validation levels to our system
+    let validationLevel: ValidationLevel;
+    if (googleLevel === 'verified') {
+      validationLevel = 'verified';
+    } else if (googleLevel === 'partial') {
+      validationLevel = 'partial';
+    } else {
+      validationLevel = 'unverifiable';
+    }
+
+    return {
+      address: {
+        streetAddress: components.streetAddress || '',
+        city: components.city || '',
+        state: components.state || '',
+        zip: components.zip || '',
+        display: formattedAddress?.replace(', USA', '').replace(', United States', '') || '',
+        fullAddress: formattedAddress || '',
+        isVerified: validationLevel === 'verified',
+        validationLevel,
+        mapboxId: undefined, // Not from Mapbox
+      },
+      failed: false
+    };
+  } catch (error) {
+    console.error('Google Address Validation exception:', error);
+    return { address: null, failed: true, errorCode: 'EXCEPTION', fallbackToMapbox: true };
+  }
+}
+
+// Retrieve full verified address from Mapbox with retry (fallback)
 async function retrieveMapboxAddress(mapboxId: string): Promise<{ address: LocationSuggestion | null; failed: boolean }> {
   const { result, failed } = await withRetry(async () => {
     const res = await fetch(
@@ -515,48 +576,64 @@ export default function LocationAutocomplete({
   const handleSelect = async (suggestion: LocationSuggestion) => {
     let finalSuggestion = suggestion;
     
-    // If this is a Mapbox suggestion with an ID, retrieve the full verified address
-    if (suggestion.mapboxId && mode === 'address') {
+    // For address mode, validate with Google Address Validation API first
+    if (mode === 'address') {
       setIsValidating(true); // Show loading overlay
-      const { address: verified, failed } = await retrieveMapboxAddress(suggestion.mapboxId);
-      setIsValidating(false); // Hide loading overlay
       
-      if (failed) {
-        toast({
-          title: "Verification failed",
-          description: "Couldn't verify this address. Using unverified selection.",
-          variant: "destructive",
-        });
-      } else if (verified) {
-        finalSuggestion = verified;
+      // Build address string for Google validation
+      const addressToValidate = suggestion.fullAddress || 
+        (suggestion.streetAddress 
+          ? `${suggestion.streetAddress}, ${suggestion.city}, ${suggestion.state} ${suggestion.zip}`
+          : suggestion.display);
+      
+      // Try Google Address Validation first
+      const googleResult = await validateWithGoogle(addressToValidate);
+      
+      if (!googleResult.failed && !googleResult.fallbackToMapbox && googleResult.address) {
+        // Google validation succeeded
+        finalSuggestion = googleResult.address;
         
-        // Compare user's current input with the standardized Mapbox result
+        // Compare user's input with the Google-standardized result
         const currentNormalized = normalizeAddress(value);
-        const verifiedNormalized = normalizeAddress(verified.fullAddress);
-        const displayNormalized = normalizeAddress(suggestion.display || suggestion.fullAddress || '');
+        const verifiedNormalized = normalizeAddress(googleResult.address.fullAddress);
         
-        // Only show correction if there's a meaningful difference
-        // AND the suggested correction is different from what's already in the input
-        // AND the corrected address is different from what user selected from dropdown
         if (verifiedNormalized && currentNormalized !== verifiedNormalized) {
-          // Check if the difference is significant (not just formatting)
           const currentStreetPart = currentNormalized.split(',')[0]?.trim();
           const verifiedStreetPart = verifiedNormalized.split(',')[0]?.trim();
-          const suggestionStreetPart = displayNormalized.split(',')[0]?.trim();
           
-          // Don't show correction if:
-          // 1. The street parts are essentially the same
-          // 2. The verified address matches what user clicked
-          // 3. The current input already contains the corrected text
-          const isSameStreet = currentStreetPart === verifiedStreetPart;
-          const matchesSuggestion = suggestionStreetPart === verifiedStreetPart;
-          const inputContainsCorrection = currentNormalized.includes(verifiedStreetPart);
+          if (currentStreetPart !== verifiedStreetPart) {
+            setCorrectionSuggestion(googleResult.address.fullAddress.replace(', USA', '').replace(', United States', ''));
+          }
+        }
+      } else if (suggestion.mapboxId) {
+        // Fallback to Mapbox retrieve if Google fails or is unavailable
+        console.log('Using Mapbox fallback for address validation');
+        const { address: mapboxVerified, failed: mapboxFailed } = await retrieveMapboxAddress(suggestion.mapboxId);
+        
+        if (!mapboxFailed && mapboxVerified) {
+          finalSuggestion = mapboxVerified;
           
-          if (!isSameStreet && !matchesSuggestion && !inputContainsCorrection) {
-            setCorrectionSuggestion(verified.fullAddress.replace(', United States', ''));
+          const currentNormalized = normalizeAddress(value);
+          const verifiedNormalized = normalizeAddress(mapboxVerified.fullAddress);
+          const displayNormalized = normalizeAddress(suggestion.display || suggestion.fullAddress || '');
+          
+          if (verifiedNormalized && currentNormalized !== verifiedNormalized) {
+            const currentStreetPart = currentNormalized.split(',')[0]?.trim();
+            const verifiedStreetPart = verifiedNormalized.split(',')[0]?.trim();
+            const suggestionStreetPart = displayNormalized.split(',')[0]?.trim();
+            
+            const isSameStreet = currentStreetPart === verifiedStreetPart;
+            const matchesSuggestion = suggestionStreetPart === verifiedStreetPart;
+            const inputContainsCorrection = currentNormalized.includes(verifiedStreetPart);
+            
+            if (!isSameStreet && !matchesSuggestion && !inputContainsCorrection) {
+              setCorrectionSuggestion(mapboxVerified.fullAddress.replace(', United States', ''));
+            }
           }
         }
       }
+      
+      setIsValidating(false); // Hide loading overlay
     }
     
     const displayText = finalSuggestion.fullAddress?.replace(', United States', '') || 
@@ -678,9 +755,9 @@ export default function LocationAutocomplete({
   const getTooltipContent = () => {
     switch (validationLevel) {
       case 'verified':
-        return "This address has been validated against USPS postal records";
+        return "Address verified via Google USPS CASS validation";
       case 'partial':
-        return "City/ZIP verified. Add a street address for full verification";
+        return "City/ZIP verified. Add a street address for full USPS verification";
       case 'unverifiable':
         return "Could not verify this address. Please check for errors";
       default:
