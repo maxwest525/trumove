@@ -585,6 +585,20 @@ export default function Index() {
         <div className="tru-page-inner">
         {/* HERO - Split Layout */}
           <section className="tru-hero tru-hero-split" ref={heroSectionRef}>
+            {/* Full-Width Hero Background Image with Parallax */}
+            <div 
+              className="tru-hero-bg-image"
+              style={{ 
+                transform: `translateY(${formParallax.y * 0.3}px) scale(1.05)`,
+              }}
+            >
+              <img 
+                src={heroFamilyMove} 
+                alt="Family moving into their new home" 
+              />
+              <div className="tru-hero-bg-overlay" />
+            </div>
+            
             {/* Particle Background Effect */}
             <HeroParticles />
             <div className="tru-hero-particles-overlay" />
@@ -772,32 +786,53 @@ export default function Index() {
                           </div>
                         </div>
 
-                        {/* Real-time Route Summary Strip */}
-                        {(fromCity || toCity || distance > 0) && (
-                          <div className="tru-qb-route-summary">
-                            <div className="tru-qb-route-summary-inner">
-                              {fromCity && (
-                                <div className={`tru-qb-route-summary-item ${updatedFields.has('from') ? 'is-pulsing' : ''}`}>
-                                  <span className="tru-qb-route-summary-label">Origin</span>
-                                  <span className="tru-qb-route-summary-value">{fromCity}</span>
-                                </div>
-                              )}
-                              {distance > 0 && (
-                                <div className={`tru-qb-route-summary-distance ${updatedFields.has('distance') ? 'is-pulsing' : ''}`}>
-                                  <Route className="w-3.5 h-3.5" />
-                                  <span>{distance.toLocaleString()} mi</span>
-                                  <span className="tru-qb-route-summary-type">{moveType === 'long-distance' ? 'Long Distance' : 'Local'}</span>
-                                </div>
-                              )}
-                              {toCity && (
-                                <div className={`tru-qb-route-summary-item ${updatedFields.has('to') ? 'is-pulsing' : ''}`}>
-                                  <span className="tru-qb-route-summary-label">Destination</span>
-                                  <span className="tru-qb-route-summary-value">{toCity}</span>
+                        {/* Permanent Route Summary Bar - Always Visible */}
+                        <div className="tru-qb-route-bar-permanent">
+                          <div className="tru-qb-route-bar-inner">
+                            {/* Origin */}
+                            <div className={`tru-qb-route-bar-endpoint ${fromCity ? 'has-value' : ''}`}>
+                              <MapPin className="w-3.5 h-3.5" />
+                              <div className="tru-qb-route-bar-endpoint-text">
+                                <span className="tru-qb-route-bar-label">Origin</span>
+                                <span className={`tru-qb-route-bar-value ${updatedFields.has('from') ? 'is-pulsing' : ''}`}>
+                                  {fromCity || "Enter origin"}
+                                </span>
+                              </div>
+                            </div>
+                            
+                            {/* Mini Map / Distance */}
+                            <div className="tru-qb-route-bar-center">
+                              {distance > 0 && fromCoords && toCoords ? (
+                                <>
+                                  <div className="tru-qb-route-bar-mini-map">
+                                    <img 
+                                      src={`https://api.mapbox.com/styles/v1/mapbox/light-v11/static/pin-s+22c55e(${fromCoords[0]},${fromCoords[1]}),pin-s+ef4444(${toCoords[0]},${toCoords[1]})/auto/120x60@2x?padding=20&access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                                      alt="Route preview"
+                                    />
+                                  </div>
+                                  <span className={`tru-qb-route-bar-distance ${updatedFields.has('distance') ? 'is-pulsing' : ''}`}>
+                                    {distance.toLocaleString()} mi
+                                  </span>
+                                </>
+                              ) : (
+                                <div className="tru-qb-route-bar-placeholder">
+                                  <Route className="w-4 h-4" />
                                 </div>
                               )}
                             </div>
+                            
+                            {/* Destination */}
+                            <div className={`tru-qb-route-bar-endpoint ${toCity ? 'has-value' : ''}`}>
+                              <MapPin className="w-3.5 h-3.5" />
+                              <div className="tru-qb-route-bar-endpoint-text">
+                                <span className="tru-qb-route-bar-label">Destination</span>
+                                <span className={`tru-qb-route-bar-value ${updatedFields.has('to') ? 'is-pulsing' : ''}`}>
+                                  {toCity || "Enter destination"}
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        )}
+                        </div>
 
                         {/* Move Date */}
                         <p className="tru-qb-section-label" style={{ marginTop: '1.25rem' }}>Move Date</p>
@@ -1156,44 +1191,36 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Hero Image with Content Overlay */}
-            <div className="tru-hero-content-panel tru-hero-content-panel-fullbleed">
-              <div className="tru-hero-image-container">
-                <img 
-                  src={heroFamilyMove} 
-                  alt="Happy family moving into their new home" 
-                  className="tru-hero-image"
-                />
-                <div className="tru-hero-image-overlay" />
-                <div className="tru-hero-content-inner tru-hero-content-over-image">
-                  <h2 className="tru-hero-headline-main">
-                    Skip the <span className="tru-hero-headline-accent">Van Line</span>
-                  </h2>
-                  
-                  <p className="tru-hero-subheadline">
-                    Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>.
-                  </p>
+            {/* RIGHT SIDE: Hero Content Panel (no image - it's now a background) */}
+            <div className="tru-hero-content-panel">
+              <div className="tru-hero-content-inner tru-hero-content-card">
+                <h2 className="tru-hero-content-headline">
+                  Skip the <span className="tru-hero-headline-accent">Van Line</span>
+                </h2>
+                
+                <p className="tru-hero-content-subheadline">
+                  We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>.
+                </p>
 
-                  {/* Feature highlights */}
-                  <div className="tru-hero-features">
-                    <div className="tru-hero-feature-item">
-                      <div className="tru-hero-feature-icon">
-                        <Camera className="w-4 h-4" />
-                      </div>
-                      <span>AI Room Scanner</span>
+                {/* Feature highlights */}
+                <div className="tru-hero-features">
+                  <div className="tru-hero-feature-item">
+                    <div className="tru-hero-feature-icon">
+                      <Camera className="w-4 h-4" />
                     </div>
-                    <div className="tru-hero-feature-item">
-                      <div className="tru-hero-feature-icon">
-                        <Video className="w-4 h-4" />
-                      </div>
-                      <span>Live Video Consults</span>
+                    <span>AI Room Scanner</span>
+                  </div>
+                  <div className="tru-hero-feature-item">
+                    <div className="tru-hero-feature-icon">
+                      <Video className="w-4 h-4" />
                     </div>
-                    <div className="tru-hero-feature-item">
-                      <div className="tru-hero-feature-icon">
-                        <ShieldCheck className="w-4 h-4" />
-                      </div>
-                      <span>FMCSA Carrier Vetting</span>
+                    <span>Live Video Consults</span>
+                  </div>
+                  <div className="tru-hero-feature-item">
+                    <div className="tru-hero-feature-icon">
+                      <ShieldCheck className="w-4 h-4" />
                     </div>
+                    <span>FMCSA Carrier Vetting</span>
                   </div>
                 </div>
               </div>
