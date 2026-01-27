@@ -1,303 +1,234 @@
 
-# Multi-Stop Booking Flow & Google APIs Enhancement Plan
+
+# Multi-Stop & Route Preview Enhancement Plan
 
 ## Overview
-This plan implements a multi-stop booking capability using Google Route Optimization, verifies Google Places autocomplete is working correctly, and prepares the infrastructure for route optimization. The key finding is that **Google Directions API needs to be enabled** in Google Cloud Console for route optimization to work.
+This plan implements three interconnected features:
+1. A compact multi-stop summary card for the tracking dashboard showing all stops with ETA for each
+2. A visual route preview map for the multi-stop wizard showing all locations with connecting lines
+3. Testing/verification of the multi-stop booking flow
+
+The goal is to ensure users can see their entire tracking dashboard at a glance while providing rich visual feedback during multi-stop move planning.
 
 ---
 
-## Current State Analysis
+## Part 1: Compact Multi-Stop Summary Card for Tracking Dashboard
 
-### Google Places Autocomplete - Working
-- Edge function `google-places-autocomplete` returns proper suggestions
-- Successfully returns structured data with city, state, street address
-- Already integrated into `LocationAutocomplete.tsx` as primary source with Mapbox fallback
+### Description
+A new dashboard card that displays all stops in a multi-stop move with individual ETAs, status indicators, and a compact timeline view. This replaces or supplements the current origin/destination view when a multi-stop booking is loaded.
 
-### Route Optimization - Needs API Enablement
-- Edge function `google-route-optimization` exists and is deployed
-- Currently returns `REQUEST_DENIED` error
-- This indicates the **Directions API is not enabled** in Google Cloud Console
-- Once enabled, will support up to 10 waypoints with optimization
-
----
-
-## Part 1: Enable Google Directions API
-
-### User Action Required
-The user needs to enable the Directions API in their Google Cloud Console:
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Select the project associated with `GOOGLE_MAPS_API_KEY`
-3. Navigate to **APIs & Services** > **Library**
-4. Search for **"Directions API"**
-5. Click **Enable**
-
-The same API key (`GOOGLE_MAPS_API_KEY`) is already configured in the project secrets, so no new secrets are needed.
-
----
-
-## Part 2: Multi-Stop Booking Flow
-
-### 2.1 Create Multi-Stop Estimate Wizard Component
-
-**New File:** `src/components/estimate/MultiStopWizard.tsx`
-
-A new wizard flow that allows customers to:
-- Add multiple pickup locations (up to 10 stops)
-- Add multiple drop-off locations
-- Reorder stops via drag-and-drop
-- See optimized route preview
-- View distance/time savings from optimization
+### New Component: `src/components/tracking/MultiStopSummaryCard.tsx`
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│  Multi-Stop Move Planner                                    │
+│  MULTI-STOP ROUTE                                    3 stops│
 ├─────────────────────────────────────────────────────────────┤
-│  PICKUP LOCATIONS                                [+ Add]    │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │ 1. 123 Main St, Jacksonville, FL              [✓] [×]  │ │
-│  │ 2. 456 Oak Ave, Jacksonville, FL              [✓] [×]  │ │
-│  └────────────────────────────────────────────────────────┘ │
+│  ⬤──────○──────○                                           │
 │                                                             │
-│  DROP-OFF LOCATIONS                              [+ Add]    │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │ 1. 789 Beach Blvd, Miami, FL                  [✓] [×]  │ │
-│  │ 2. 101 Palm Dr, Miami, FL                     [✓] [×]  │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                                                             │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │ ROUTE OPTIMIZATION                                     │ │
-│  │ Original: 485 mi, 7h 20m                               │ │
-│  │ Optimized: 412 mi, 6h 15m                              │ │
-│  │ Savings: 15% distance, 14% time saved                  │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                                                             │
-│  [Optimize Route]              [Continue to Inventory →]    │
+│  1. ✓ 4520 Atlantic Blvd, Jacksonville    Completed 9:15 AM │
+│  2. → 1200 Ocean Dr, Jacksonville Beach   ETA 10:30 AM      │
+│  3.   100 Biscayne Blvd, Miami            ETA 4:45 PM       │
+├─────────────────────────────────────────────────────────────┤
+│  Total: 352 mi • 5h 45m remaining                           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 2.2 Create Multi-Stop Location List Component
+### Features
+- Compact vertical list of all stops (pickups first, then drop-offs)
+- Status indicators: Completed (checkmark), In Progress (arrow), Upcoming (circle)
+- Individual ETA for each stop calculated from current progress
+- Progress dots showing which leg is active
+- Collapsible to show just the current + next stop
+- Dark theme matching tracking dashboard
 
-**New File:** `src/components/estimate/MultiStopLocationList.tsx`
+### Integration
+- Add to `src/pages/LiveTracking.tsx` in the right dashboard column
+- Display when multi-stop booking is detected (from CheckMyTruck modal or demo data)
+- Extend the demo booking data to include multi-stop examples
 
-Features:
-- Dynamic list of addresses with add/remove
-- Drag-and-drop reordering using existing `@dnd-kit` library
-- Validation status indicators per address
-- Geocoding on selection to get coordinates
+---
 
-### 2.3 Create Route Optimization Results Component
+## Part 2: Visual Route Preview Map for Multi-Stop Wizard
 
-**New File:** `src/components/estimate/RouteOptimizationCard.tsx`
+### Description
+An interactive Mapbox map embedded in the MultiStopWizard that shows all pickup and drop-off locations with color-coded markers and connecting route lines.
 
-Displays:
-- Original vs optimized route comparison
-- Visual savings indicators (distance %, time %)
-- Leg-by-leg breakdown showing order of stops
-- Interactive map preview of optimized route
+### New Component: `src/components/estimate/MultiStopRoutePreview.tsx`
 
-### 2.4 Create Multi-Stop Route Hook
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│           [Mapbox Map with Route Visualization]             │
+│                                                             │
+│     🟢 1 ─────────────── 🟢 2                               │
+│                 \                                           │
+│                  \                                          │
+│                   \─────── 🔴 3 ─────── 🔴 4                │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+ Legend: 🟢 Pickup  🔴 Drop-off  ─── Route
+```
 
-**New File:** `src/hooks/useRouteOptimization.ts`
+### Features
+- Auto-fit bounds to show all waypoints
+- Color-coded markers:
+  - Green markers for pickup locations
+  - Red markers for drop-off locations
+  - Numbered labels (1, 2, 3...)
+- Dashed connecting lines between sequential stops
+- Solid route lines when optimization is complete (showing actual road path)
+- Updates dynamically as locations are added/removed
+- Compact height (200-250px) to fit within wizard without scrolling
 
+### Integration
+- Insert between the location lists and the Route Optimization section in `MultiStopWizard.tsx`
+- Only render when at least 2 validated locations exist
+- Use Mapbox Directions API to fetch actual road geometry when optimized
+
+---
+
+## Part 3: Multi-Stop Demo Data & Flow Testing
+
+### Extend Demo Bookings
+Modify `src/components/tracking/CheckMyTruckModal.tsx` to include a multi-stop demo:
+
+| Booking # | Route Type | Description |
+|-----------|------------|-------------|
+| 12345 | Single | Jacksonville → Miami (existing) |
+| 00000 | Multi-stop | 3 pickups (JAX area) → 2 drop-offs (Miami) |
+
+### Multi-Stop Demo Data Structure
 ```typescript
-interface UseRouteOptimizationResult {
-  optimize: (waypoints: Waypoint[]) => Promise<void>;
-  isOptimizing: boolean;
-  result: OptimizationResult | null;
-  error: string | null;
+{
+  bookingId: "00000",
+  isMultiStop: true,
+  stops: [
+    { type: 'pickup', address: "4520 Atlantic Blvd, Jacksonville, FL", coords: [-81.65, 30.32], status: 'completed' },
+    { type: 'pickup', address: "1200 Ocean Dr, Jacksonville Beach, FL", coords: [-81.39, 30.29], status: 'current' },
+    { type: 'dropoff', address: "100 Biscayne Blvd, Miami, FL", coords: [-80.19, 25.77], status: 'upcoming' },
+    { type: 'dropoff', address: "500 Collins Ave, Miami Beach, FL", coords: [-80.13, 25.78], status: 'upcoming' },
+  ],
+  totalDistance: 352,
+  estimatedDuration: 20700, // seconds
 }
 ```
 
-Handles:
-- Calling `google-route-optimization` edge function
-- Caching results to avoid repeated API calls
-- Error handling with user-friendly messages
-- Fallback behavior when API unavailable
+---
 
-### 2.5 Integrate Into Existing Estimate Flow
+## Part 4: Dashboard Compaction Improvements
 
-**Modify:** `src/components/estimate/EstimateWizard.tsx`
+### CSS Updates to `src/index.css`
+Further optimize the tracking dashboard grid to ensure everything is visible:
 
-Add a toggle or option in Step 1 to switch between:
-- **Single Move** (current flow) - one origin, one destination
-- **Multi-Stop Move** (new flow) - multiple pickups/drop-offs
+- Reduce card padding from 10px to 8px
+- Tighten vertical gap between cards from 10px to 6px
+- Make section headers more compact (smaller font, less margin)
+- Ensure multi-stop card uses efficient vertical space
 
-### 2.6 Update Extended Move Details Type
-
-**Modify:** Type in `src/components/estimate/EstimateWizard.tsx`
-
-```typescript
-export interface ExtendedMoveDetails {
-  // ... existing fields
-  
-  // Multi-stop support
-  isMultiStop: boolean;
-  pickupLocations: Array<{
-    address: string;
-    coords: [number, number] | null;
-    order: number;
-  }>;
-  dropoffLocations: Array<{
-    address: string;
-    coords: [number, number] | null;
-    order: number;
-  }>;
-  optimizedRoute?: {
-    totalDistance: number;
-    totalDuration: number;
-    savings: { distancePercent: number; durationPercent: number };
-    legOrder: number[];
-  };
-}
-```
+### LiveTracking.tsx Reorganization
+When multi-stop is active:
+1. Replace separate Origin/Destination StreetViewPreviews with compact inline indicators
+2. Show MultiStopSummaryCard as the primary route view
+3. Collapse less critical sections (Route Insights, Weigh Stations) by default
 
 ---
 
-## Part 3: Verify Google Places Autocomplete
+## Technical Implementation Details
 
-### Current Status - Working
-The edge function test shows Google Places is returning proper results:
-- Returns 5 suggestions per query
-- Includes structured data (city, state, street address, place ID)
-- Session token support for billing optimization
-
-### Visual Testing Verification
-To test in the UI:
-1. Navigate to `/estimate` (Online Estimate page)
-2. Type an address in the "From" field
-3. Verify dropdown shows Google-sourced suggestions
-4. Select an address and verify it validates
-
-### Fallback Behavior
-If Google Places fails, the system falls back to Mapbox:
-- `LocationAutocomplete.tsx` lines 490-510 handle this
-- Mapbox suggestions are used as backup
-- User experience remains seamless
-
----
-
-## Part 4: Compact Dashboard Integration
-
-### Update Estimate Page for Multi-Stop Summary
-
-**Modify:** `src/pages/OnlineEstimate.tsx`
-
-When multi-stop is enabled:
-- Show compact list of all pickup/dropoff locations
-- Display route optimization savings
-- Show optimized route preview map
-
-### Update Quote Summary for Multi-Stop
-
-**Modify:** `src/components/estimate/QuoteSnapshotVertical.tsx`
-
-Add section for:
-- Multiple origin/destination display
-- Total optimized distance
-- Savings badge
-
----
-
-## Part 5: Files to Create
+### Files to Create
 
 | File | Purpose |
 |------|---------|
-| `src/components/estimate/MultiStopWizard.tsx` | Main multi-stop booking wizard |
-| `src/components/estimate/MultiStopLocationList.tsx` | Drag-and-drop location list |
-| `src/components/estimate/RouteOptimizationCard.tsx` | Optimization results display |
-| `src/hooks/useRouteOptimization.ts` | Route optimization API hook |
+| `src/components/tracking/MultiStopSummaryCard.tsx` | Compact multi-stop timeline for tracking dashboard |
+| `src/components/estimate/MultiStopRoutePreview.tsx` | Mapbox route visualization for wizard |
 
-## Part 6: Files to Modify
+### Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/components/estimate/EstimateWizard.tsx` | Add multi-stop toggle option |
-| `src/pages/OnlineEstimate.tsx` | Integrate multi-stop flow |
-| `src/components/estimate/QuoteSnapshotVertical.tsx` | Multi-stop summary section |
-| `supabase/functions/google-route-optimization/index.ts` | Add better error messages for REQUEST_DENIED |
+| `src/components/estimate/MultiStopWizard.tsx` | Add route preview map component |
+| `src/components/tracking/CheckMyTruckModal.tsx` | Add multi-stop demo booking (00000) |
+| `src/pages/LiveTracking.tsx` | Integrate MultiStopSummaryCard, handle multi-stop state |
+| `src/index.css` | Further compact tracking dashboard styles |
 
----
+### New State for LiveTracking
 
-## Part 7: Technical Details
-
-### Route Optimization API Request Format
 ```typescript
-{
-  waypoints: [
-    { lat: 30.326472, lng: -81.65535, label: "Jacksonville Pickup 1" },
-    { lat: 30.329012, lng: -81.66234, label: "Jacksonville Pickup 2" },
-    { lat: 25.773357, lng: -80.1919, label: "Miami Dropoff 1" },
-    { lat: 25.761681, lng: -80.191788, label: "Miami Dropoff 2" }
-  ]
+// Multi-stop tracking state
+const [isMultiStopMove, setIsMultiStopMove] = useState(false);
+const [multiStopData, setMultiStopData] = useState<{
+  stops: Array<{
+    type: 'pickup' | 'dropoff';
+    address: string;
+    coords: [number, number];
+    status: 'completed' | 'current' | 'upcoming';
+    eta?: Date;
+  }>;
+  currentStopIndex: number;
+  totalDistance: number;
+  totalDuration: number;
+} | null>(null);
+```
+
+### ETA Calculation Logic
+
+For each stop, calculate ETA based on:
+1. Current truck position (from progress %)
+2. Leg-by-leg distances from route optimization
+3. Apply traffic adjustments from Google Routes data
+
+```typescript
+function calculateStopETAs(stops, currentProgress, routeLegs, trafficFactor) {
+  let cumulativeTime = 0;
+  const now = new Date();
+  
+  return stops.map((stop, index) => {
+    if (index < currentStopIndex) {
+      return { ...stop, status: 'completed', eta: null };
+    }
+    
+    const legDuration = routeLegs[index]?.duration || 0;
+    cumulativeTime += legDuration * trafficFactor;
+    
+    return {
+      ...stop,
+      status: index === currentStopIndex ? 'current' : 'upcoming',
+      eta: new Date(now.getTime() + cumulativeTime * 1000),
+    };
+  });
 }
 ```
 
-### Route Optimization API Response Format
-```typescript
-{
-  optimizedOrder: [0, 1, 3, 2],  // Reordered indices
-  totalDistance: 352000,         // meters
-  totalDuration: 22500,          // seconds
-  savings: {
-    distancePercent: 15.2,
-    durationPercent: 14.8
-  },
-  legs: [
-    { from: 0, to: 1, distance: 2400, duration: 180 },
-    { from: 1, to: 3, distance: 348000, duration: 22000 },
-    { from: 3, to: 2, distance: 1600, duration: 320 }
-  ]
-}
-```
-
-### Drag and Drop Integration
-Using existing `@dnd-kit` packages:
-- `@dnd-kit/core` - DnD context and sensors
-- `@dnd-kit/sortable` - Sortable list functionality
-- `@dnd-kit/utilities` - CSS transform utilities
-
 ---
 
-## Part 8: Implementation Order
+## Implementation Order
 
-1. **User Action**: Enable Google Directions API in Cloud Console
+### Phase 1: Route Preview Map (Wizard Enhancement)
+1. Create `MultiStopRoutePreview.tsx` component
+2. Integrate into `MultiStopWizard.tsx`
+3. Test with manual address entry
 
-2. **Phase 1**: Create core components
-   - `MultiStopLocationList.tsx` - reusable location list
-   - `useRouteOptimization.ts` - API hook
-   - `RouteOptimizationCard.tsx` - results display
+### Phase 2: Multi-Stop Summary Card (Dashboard)
+1. Create `MultiStopSummaryCard.tsx` component
+2. Add multi-stop demo data to `CheckMyTruckModal.tsx`
+3. Integrate into `LiveTracking.tsx`
 
-3. **Phase 2**: Create multi-stop wizard
-   - `MultiStopWizard.tsx` - full booking flow
-   - Integrate with existing estimate wizard
+### Phase 3: Dashboard Compaction
+1. Update CSS for tighter spacing
+2. Add conditional rendering for multi-stop vs single-stop views
+3. Test full dashboard visibility without scrolling
 
-4. **Phase 3**: Update estimate page
-   - Add multi-stop option
-   - Integrate route preview
-   - Update quote summary
-
-5. **Phase 4**: Polish and testing
-   - Error handling for API unavailable
-   - Mobile responsiveness
-   - Loading states and animations
+### Phase 4: Testing & Polish
+1. Test booking #00000 for multi-stop demo
+2. Verify ETA calculations update with progress
+3. Ensure route lines update when optimization runs
 
 ---
 
 ## Expected Outcomes
 
-1. **Route Optimization Ready** - Once Directions API is enabled, multi-stop optimization works
-2. **Google Places Verified** - Autocomplete working with proper fallback
-3. **Multi-Stop Booking** - Customers can plan complex moves with multiple stops
-4. **Cost Savings Visibility** - Users see how route optimization saves time and distance
-5. **Seamless UX** - Multi-stop integrates naturally into existing estimate flow
+1. **Multi-Stop Visibility** - Users see all stops at a glance with individual ETAs
+2. **Visual Route Planning** - Interactive map shows route during booking
+3. **Compact Dashboard** - All tracking info visible without scrolling on desktop
+4. **Seamless Demo Flow** - Both single (12345) and multi-stop (00000) demos work
 
----
-
-## Prerequisites Checklist
-
-- [ ] **Enable Google Directions API** in Google Cloud Console (user action required)
-- [x] Google Places API working
-- [x] `@dnd-kit` libraries installed
-- [x] `GOOGLE_MAPS_API_KEY` secret configured
-- [x] Edge function deployed and accessible
