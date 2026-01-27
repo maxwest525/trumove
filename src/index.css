@@ -1143,17 +1143,7 @@
   display: inline-block;
 }
 
-.tru-hero-headline-accent::after {
-  content: '';
-  position: absolute;
-  bottom: 4px;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: hsl(var(--primary));
-  border-radius: 3px;
-  opacity: 0.9;
-}
+/* Underline removed per user request */
 
 .tru-hero-header-section .tru-hero-header-subheadline {
   font-size: 1.125rem;
@@ -24019,12 +24009,12 @@
 
 /* Logo inside the main headline */
 .tru-hero-headline-logo {
-  height: 56px;
+  height: 72px;
   width: auto;
   display: inline-block;
   vertical-align: middle;
-  margin-right: 14px;
-  margin-bottom: 6px;
+  margin-right: 16px;
+  margin-bottom: 8px;
   filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.5)) drop-shadow(0 0 24px hsl(var(--primary) / 0.25));
   animation: logo-glow-pulse 3s ease-in-out infinite;
 }
