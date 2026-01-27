@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Navigation, Loader2, Eye, EyeOff } from "lucide-react";
+import { MapPin, Navigation, Loader2, Eye, EyeOff, Globe } from "lucide-react";
 
 interface StreetViewPreviewProps {
   coordinates: [number, number] | null;
@@ -43,7 +43,7 @@ export function StreetViewPreview({
   };
 
   return (
-    <div className="tracking-info-card">
+    <div className="tracking-info-card tracking-street-view-card">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className={`w-6 h-6 rounded-md flex items-center justify-center ${
@@ -80,7 +80,7 @@ export function StreetViewPreview({
       </div>
 
       {/* Image Container */}
-      <div className="relative w-full h-[140px] rounded-lg overflow-hidden mb-3 bg-white/5 border border-white/5">
+      <div className="relative w-full h-[140px] rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10">
         {coordinates ? (
           <>
             {isLoading && (
@@ -122,16 +122,21 @@ export function StreetViewPreview({
             )}
           </>
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-            <MapPin className="w-6 h-6 text-white/20" />
-            <span className="text-xs text-white/30">Enter address to preview</span>
+          /* Placeholder - Globe/US Map view before address entered */
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-700/50 to-slate-800/50">
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <Globe className="w-6 h-6 text-primary/60" />
+            </div>
+            <span className="text-xs text-white/40 text-center px-4">
+              Enter {variant} address to preview
+            </span>
           </div>
         )}
       </div>
 
       {/* Location Name */}
-      <div className="text-sm font-semibold text-white truncate">
-        {locationName || "Awaiting address..."}
+      <div className="text-sm font-semibold text-white truncate mt-3">
+        {locationName || `Awaiting ${variant}...`}
       </div>
 
       {/* Time */}

@@ -725,12 +725,11 @@ export default function Index() {
             
             {/* Hero Header with Headline + Short Subheadline */}
             <div className="tru-hero-header-section">
-              <div className="tru-hero-headline-backdrop" />
-              <h1 className="tru-hero-headline-main tru-hero-headline-compact">
+              <h1 className="tru-hero-headline-main tru-hero-headline-refined">
                 A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
-              <p className="tru-hero-subheadline-short tru-hero-subheadline-compact">
-                Technology, transparency, and control for the most important move of your life.
+              <p className="tru-hero-subheadline-short tru-hero-subheadline-refined">
+                Technology, transparency, and control for your most important move.
               </p>
             </div>
 
@@ -756,13 +755,10 @@ export default function Index() {
                     />
                   </div>
                   
-                  <div className="tru-qb-form-header tru-qb-form-header-pill">
-                    <div className="tru-qb-form-title-group">
-                      <span className="tru-qb-form-title tru-qb-form-title-large tru-qb-form-title-inline">
-                        <span className="tru-qb-title-line">Let <img src={logoImg} alt="TruMove" className="tru-qb-inline-logo" /> find the</span>
-                        <span className="tru-qb-title-line">right carrier for you</span>
-                      </span>
-                      
+                  <div className="tru-qb-form-header tru-qb-form-header-clean">
+                    <div className="tru-qb-form-header-brand">
+                      <img src={logoImg} alt="TruMove" className="tru-qb-header-logo-clean" />
+                      <span className="tru-qb-header-tagline">A Smarter Way to Move</span>
                     </div>
                   </div>
 
@@ -1260,45 +1256,55 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Why TruMove Card - Polished */}
+            {/* RIGHT SIDE: Why TruMove Card - Premium Polished */}
             <div className="tru-hero-content-panel">
-              {/* Card 1: Why TruMove - Refined */}
-              <div className="tru-why-trumove-card tru-why-polished">
-                <span className="tru-why-label">WHY TRUMOVE</span>
-                
-                <p className="tru-why-desc tru-why-desc-lead">
-                  We use AI inventory scanning and live video consults to understand your move, then vet carriers using verified FMCSA and DOT safety data to match you with carriers that best meet your needs.
-                </p>
-                
-                <div className="tru-why-divider" />
-                
-                {/* Clickable Feature Highlights */}
-                <div className="tru-why-features">
-                  {whyTruMoveFeatures.map((feature, index) => (
-                    <button
-                      key={feature.id}
-                      className={`tru-why-feature-row ${activeFeature === index ? 'is-active' : ''}`}
-                      onClick={() => setActiveFeature(activeFeature === index ? null : index)}
-                    >
-                      <div className="tru-why-feature-icon">
-                        <feature.icon className="w-4 h-4" />
-                      </div>
-                      <div className="tru-why-feature-text">
-                        <span className="tru-why-feature-title">{feature.title}</span>
-                        <span className="tru-why-feature-desc">{feature.shortDesc}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                
-                {/* Expandable Detail Area */}
-                {activeFeature !== null && (
-                  <div className="tru-why-detail">
-                    <p>{whyTruMoveFeatures[activeFeature].longDesc}</p>
+              <div className="tru-why-card-premium">
+                <div className="tru-why-card-glow" />
+                <div className="tru-why-card-inner">
+                  <div className="tru-why-header">
+                    <span className="tru-why-badge">Why TruMove</span>
                   </div>
-                )}
+                  
+                  <p className="tru-why-lead">
+                    AI-powered inventory, verified carriers, and complete transparency.
+                  </p>
+                  
+                  {/* Feature Grid */}
+                  <div className="tru-why-features-grid">
+                    {whyTruMoveFeatures.slice(0, 4).map((feature, index) => (
+                      <button
+                        key={feature.id}
+                        className={`tru-why-feature-card ${activeFeature === index ? 'is-active' : ''}`}
+                        onClick={() => setActiveFeature(activeFeature === index ? null : index)}
+                      >
+                        <div className="tru-why-feature-icon-wrap">
+                          <feature.icon className="w-4 h-4" />
+                        </div>
+                        <span className="tru-why-feature-label">{feature.title}</span>
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Expandable Detail */}
+                  {activeFeature !== null && activeFeature < 4 && (
+                    <div className="tru-why-detail-box">
+                      <p>{whyTruMoveFeatures[activeFeature].longDesc}</p>
+                    </div>
+                  )}
+                  
+                  {/* Bottom Trust Indicators */}
+                  <div className="tru-why-trust-row">
+                    <div className="tru-why-trust-item">
+                      <Shield className="w-3.5 h-3.5" />
+                      <span>FMCSA Verified</span>
+                    </div>
+                    <div className="tru-why-trust-item">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Licensed Broker</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              
             </div>
           </section>
         </div> {/* End tru-hero-wrapper */}

@@ -7,6 +7,8 @@ import { TrackingTimeline } from "@/components/tracking/TrackingTimeline";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
+import SiteShell from "@/components/layout/SiteShell";
+import FloatingNav from "@/components/FloatingNav";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
