@@ -3,11 +3,14 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { Loader2 } from "lucide-react";
+import { TruckLocationPopup } from "./TruckLocationPopup";
+import { TrafficLegend } from "./TrafficLegend";
 
 interface RouteData {
   coordinates: [number, number][];
   distance: number;
   duration: number;
+  congestionLevels?: string[];
 }
 
 interface TruckTrackingMapProps {
@@ -16,6 +19,17 @@ interface TruckTrackingMapProps {
   progress: number;
   isTracking: boolean;
   onRouteCalculated?: (route: RouteData) => void;
+}
+
+// Map congestion string to numeric value for styling
+function getCongestionValue(congestion: string): number {
+  switch (congestion) {
+    case 'low': return 0;
+    case 'moderate': return 0.5;
+    case 'heavy': return 0.8;
+    case 'severe': return 1;
+    default: return 0;
+  }
 }
 
 export function TruckTrackingMap({
@@ -29,8 +43,12 @@ export function TruckTrackingMap({
   const map = useRef<mapboxgl.Map | null>(null);
   const truckMarker = useRef<mapboxgl.Marker | null>(null);
   const routeCoords = useRef<[number, number][]>([]);
+  const congestionData = useRef<string[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [showTruckPopup, setShowTruckPopup] = useState(false);
+  const [currentTruckPosition, setCurrentTruckPosition] = useState<[number, number] | null>(null);
+  const [currentLocationName, setCurrentLocationName] = useState<string>("");
 
   // Calculate bearing between two points
   const calculateBearing = useCallback((start: [number, number], end: [number, number]) => {
@@ -46,11 +64,12 @@ export function TruckTrackingMap({
     return (Math.atan2(x, y) * 180 / Math.PI + 360) % 360;
   }, []);
 
-  // Fetch driving route from Mapbox Directions API
+  // Fetch driving route from Mapbox Directions API with traffic/congestion data
   const fetchRoute = useCallback(async (origin: [number, number], dest: [number, number]) => {
     try {
+      // Include annotations=congestion to get traffic data
       const response = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
+        `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full&annotations=congestion&access_token=${MAPBOX_TOKEN}`
       );
       const data = await response.json();
       
@@ -59,13 +78,18 @@ export function TruckTrackingMap({
         const coords = route.geometry.coordinates as [number, number][];
         routeCoords.current = coords;
         
+        // Store congestion data if available
+        const congestion = route.legs?.[0]?.annotation?.congestion || [];
+        congestionData.current = congestion;
+        
         onRouteCalculated?.({
           coordinates: coords,
           distance: route.distance / 1609.34, // Convert to miles
-          duration: route.duration
+          duration: route.duration,
+          congestionLevels: congestion
         });
         
-        return coords;
+        return { coords, congestion };
       }
       return null;
     } catch (error) {
@@ -150,6 +174,35 @@ export function TruckTrackingMap({
           "line-opacity": 0.8
         }
       });
+
+      // Traffic segments source for congestion overlay
+      map.current?.addSource("traffic-segments", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: []
+        }
+      });
+
+      // Traffic overlay layer - color by congestion
+      map.current?.addLayer({
+        id: "traffic-overlay",
+        type: "line",
+        source: "traffic-segments",
+        paint: {
+          "line-color": [
+            "interpolate",
+            ["linear"],
+            ["get", "congestion"],
+            0, "#22c55e",    // Green - free flow
+            0.5, "#f59e0b",  // Yellow/Orange - moderate
+            0.8, "#ef4444",  // Red - heavy
+            1, "#dc2626"     // Dark red - severe
+          ],
+          "line-width": 6,
+          "line-opacity": 0.85
+        }
+      });
     });
 
     return () => {
@@ -163,8 +216,10 @@ export function TruckTrackingMap({
     if (!map.current || !isLoaded || !originCoords || !destCoords) return;
 
     const setupRoute = async () => {
-      const coords = await fetchRoute(originCoords, destCoords);
-      if (!coords || !map.current) return;
+      const result = await fetchRoute(originCoords, destCoords);
+      if (!result || !map.current) return;
+
+      const { coords, congestion } = result;
 
       // Update route line
       const source = map.current.getSource("route") as mapboxgl.GeoJSONSource;
@@ -173,6 +228,26 @@ export function TruckTrackingMap({
         properties: {},
         geometry: { type: "LineString", coordinates: coords }
       });
+
+      // Add traffic-colored segments if congestion data available
+      if (congestion && congestion.length > 0 && map.current.getSource("traffic-segments")) {
+        const features = coords.slice(0, -1).map((coord: [number, number], i: number) => ({
+          type: "Feature" as const,
+          properties: {
+            congestion: getCongestionValue(congestion[i] || 'low')
+          },
+          geometry: {
+            type: "LineString" as const,
+            coordinates: [coord, coords[i + 1]]
+          }
+        }));
+
+        const trafficSource = map.current.getSource("traffic-segments") as mapboxgl.GeoJSONSource;
+        trafficSource?.setData({
+          type: "FeatureCollection",
+          features
+        });
+      }
 
       // Clear existing markers
       truckMarker.current?.remove();
@@ -198,9 +273,9 @@ export function TruckTrackingMap({
         .setLngLat(destCoords)
         .addTo(map.current);
 
-      // Add truck marker
+      // Add truck marker (clickable)
       const truckEl = document.createElement("div");
-      truckEl.className = "tracking-truck-marker";
+      truckEl.className = "tracking-truck-marker cursor-pointer";
       truckEl.innerHTML = `
         <div class="tracking-truck-glow"></div>
         <div class="tracking-truck-icon">
@@ -213,13 +288,20 @@ export function TruckTrackingMap({
           </svg>
         </div>
       `;
+      
+      // Add click handler to truck marker
+      truckEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setShowTruckPopup(prev => !prev);
+      });
+      
       truckMarker.current = new mapboxgl.Marker({ element: truckEl, rotationAlignment: "map" })
         .setLngLat(originCoords)
         .addTo(map.current);
 
       // Fit bounds
       const bounds = new mapboxgl.LngLatBounds();
-      coords.forEach(coord => bounds.extend(coord));
+      coords.forEach((coord: [number, number]) => bounds.extend(coord));
       map.current.fitBounds(bounds, { padding: 80, maxZoom: 8 });
     };
 
@@ -242,6 +324,10 @@ export function TruckTrackingMap({
 
     // Update truck position
     truckMarker.current.setLngLat(currentPos);
+    
+    // Track current position for popup
+    setCurrentTruckPosition(currentPos);
+    setCurrentLocationName(`${currentPos[1].toFixed(4)}°N, ${Math.abs(currentPos[0]).toFixed(4)}°W`);
 
     // Calculate and set bearing
     if (currentIndex < totalPoints - 1) {
@@ -269,7 +355,7 @@ export function TruckTrackingMap({
       )}
       
       {mapError && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-destructive/20 border border-destructive/30 rounded-lg text-destructive text-sm">
           {mapError}
         </div>
       )}
@@ -278,7 +364,7 @@ export function TruckTrackingMap({
       {isTracking && (
         <div className="absolute top-4 left-4 z-20 flex gap-2">
           <span className="tracking-status-chip live">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
             LIVE
           </span>
           <span className="tracking-status-chip">
@@ -290,6 +376,9 @@ export function TruckTrackingMap({
         </div>
       )}
 
+      {/* Traffic Legend */}
+      <TrafficLegend isVisible={isTracking} />
+
       {/* Progress overlay */}
       {isTracking && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
@@ -297,6 +386,20 @@ export function TruckTrackingMap({
             <span className="text-sm font-semibold text-white">
               {Math.round(progress)}% Complete
             </span>
+          </div>
+        </div>
+      )}
+
+      {/* Truck Location Popup */}
+      {currentTruckPosition && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
+          <div className="pointer-events-auto">
+            <TruckLocationPopup
+              coordinates={currentTruckPosition}
+              locationName={currentLocationName}
+              isOpen={showTruckPopup}
+              onClose={() => setShowTruckPopup(false)}
+            />
           </div>
         </div>
       )}

@@ -23390,26 +23390,28 @@
   backdrop-filter: blur(12px);
 }
 
-/* Main Content Layout */
+/* Main Content Layout - Compact dashboard, smaller map */
 .tracking-content {
   flex: 1;
   display: grid;
-  grid-template-columns: 320px 1fr 320px;
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: 280px minmax(380px, 1fr) 360px;
+  gap: 16px;
+  padding: 16px;
   overflow: auto;
   min-height: 0;
 }
 
 @media (max-width: 1280px) {
   .tracking-content {
-    grid-template-columns: 280px 1fr 280px;
+    grid-template-columns: 260px 1fr 320px;
+    gap: 12px;
   }
 }
 
 @media (max-width: 1024px) {
   .tracking-content {
     grid-template-columns: 1fr;
+    padding: 12px;
   }
   
   .tracking-sidebar {
@@ -23418,13 +23420,13 @@
   
   .tracking-map-container {
     order: 2;
-    min-height: 400px;
+    min-height: 350px;
   }
   
   .tracking-dashboard {
     order: 3;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 }
@@ -23435,26 +23437,26 @@
   }
 }
 
-/* Sidebar */
+/* Sidebar - More compact */
 .tracking-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   overflow-y: auto;
 }
 
-/* Map Container */
+/* Map Container - Slightly smaller min-height */
 .tracking-map-container {
-  min-height: 500px;
+  min-height: 420px;
   border-radius: 16px;
   overflow: hidden;
 }
 
-/* Dashboard (Right Side) */
+/* Dashboard (Right Side) - More compact */
 .tracking-dashboard {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   overflow-y: auto;
 }
 
