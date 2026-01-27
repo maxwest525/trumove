@@ -23390,28 +23390,28 @@
   backdrop-filter: blur(12px);
 }
 
-/* Main Content Layout - Ultra-compact dashboard, smaller map for full visibility */
+/* Main Content Layout - Compact dashboard, smaller map for full visibility */
 .tracking-content {
   flex: 1;
   display: grid;
-  grid-template-columns: 260px minmax(320px, 1fr) 400px;
-  gap: 12px;
-  padding: 12px;
+  grid-template-columns: 280px minmax(240px, 1fr) 380px;
+  gap: 10px;
+  padding: 10px;
   overflow: auto;
   min-height: 0;
 }
 
 @media (max-width: 1400px) {
   .tracking-content {
-    grid-template-columns: 240px minmax(300px, 1fr) 360px;
-    gap: 10px;
+    grid-template-columns: 260px minmax(220px, 1fr) 340px;
+    gap: 8px;
   }
 }
 
 @media (max-width: 1280px) {
   .tracking-content {
-    grid-template-columns: 220px 1fr 320px;
-    gap: 10px;
+    grid-template-columns: 240px 1fr 300px;
+    gap: 8px;
   }
 }
 
@@ -23427,14 +23427,14 @@
   
   .tracking-map-container {
     order: 2;
-    min-height: 300px;
+    min-height: 280px;
   }
   
   .tracking-dashboard {
     order: 3;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 8px;
   }
 }
 
@@ -23448,13 +23448,14 @@
 .tracking-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   overflow-y: auto;
 }
 
-/* Map Container - Smaller min-height for compact dashboard view */
+/* Map Container - Shrunk for more dashboard space */
 .tracking-map-container {
-  min-height: 340px;
+  min-height: 240px;
+  max-height: 280px;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -23463,13 +23464,13 @@
 .tracking-dashboard {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   overflow-y: auto;
 }
 
 /* Compact cards in dashboard */
 .tracking-dashboard > div {
-  padding: 10px !important;
+  padding: 8px !important;
 }
 
 .tracking-dashboard .text-sm {
@@ -23480,13 +23481,27 @@
   font-size: 10px;
 }
 
-/* Timeline Container - Fixed at bottom, not overlapping */
-.tracking-timeline-container {
-  flex-shrink: 0;
-  padding: 12px 20px;
-  background: rgba(0, 0, 0, 0.6);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
+/* Unified Stats Card - Compact styling */
+.unified-stats-card {
+  padding: 10px !important;
+}
+
+.unified-stats-card .tracking-progress-bar {
+  height: 6px;
+}
+
+/* Collapsible Card Styling */
+.collapsible-card {
+  padding: 10px !important;
+}
+
+.collapsible-card [data-state="closed"] + div {
+  display: none;
+}
+
+/* Street View Compact Variant */
+.street-view-compact {
+  margin-top: 4px;
 }
 
 /* Glass Card Style */

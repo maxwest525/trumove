@@ -2,15 +2,12 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
-import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
-import { TrackingTimeline } from "@/components/tracking/TrackingTimeline";
+import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { TruckAerialView } from "@/components/tracking/TruckAerialView";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
 import { RouteInsights } from "@/components/tracking/RouteInsights";
-import { TrafficInsights } from "@/components/tracking/TrafficInsights";
-import { RealtimeETACard } from "@/components/tracking/RealtimeETACard";
 import { CheckMyTruckModal, isMultiStop, isSingleStop, type TruckStatus, type MultiStopTruckStatus } from "@/components/tracking/CheckMyTruckModal";
 import { MultiStopSummaryCard } from "@/components/tracking/MultiStopSummaryCard";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
@@ -79,54 +76,6 @@ function formatDuration(seconds: number): string {
   return `${minutes}m`;
 }
 
-// Wrapper component to use the real-time ETA hook
-function RealtimeETACardWrapper({
-  originCoords,
-  destCoords,
-  progress,
-  isTracking,
-}: {
-  originCoords: [number, number] | null;
-  destCoords: [number, number] | null;
-  progress: number;
-  isTracking: boolean;
-}) {
-  const {
-    routeInfo,
-    isLoading,
-    lastUpdate,
-    etaHistory,
-    adjustedETA,
-    adjustedDuration,
-    trafficTrend,
-    remainingDistance,
-    refreshNow,
-  } = useRealtimeETA({
-    originCoords,
-    destCoords,
-    currentProgress: progress,
-    isTracking,
-    refreshIntervalMs: 60000, // Refresh every 60 seconds
-  });
-
-  if (!originCoords || !destCoords) return null;
-
-  return (
-    <RealtimeETACard
-      adjustedETA={adjustedETA}
-      adjustedDuration={adjustedDuration}
-      remainingDistance={remainingDistance}
-      trafficTrend={trafficTrend}
-      trafficSeverity={routeInfo?.traffic?.severity || 'low'}
-      trafficDelay={routeInfo?.traffic?.delayMinutes || 0}
-      etaHistory={etaHistory}
-      lastUpdate={lastUpdate}
-      isLoading={isLoading}
-      onRefresh={refreshNow}
-    />
-  );
-}
-
 export default function LiveTracking() {
   // Location state
   const [originAddress, setOriginAddress] = useState("");
@@ -151,8 +100,9 @@ export default function LiveTracking() {
     trafficInfo: { delayMinutes: number; hasDelay: boolean; severity: 'low' | 'medium' | 'high' } | null;
     tollInfo: { hasTolls: boolean; estimatedPrice: string | null } | null;
     etaFormatted: string | null;
+    alternateRoutes?: any[];
+    isFuelEfficient?: boolean;
   }>({ trafficInfo: null, tollInfo: null, etaFormatted: null });
-  
   
   // Check My Truck modal
   const [showCheckMyTruck, setShowCheckMyTruck] = useState(false);
@@ -167,6 +117,25 @@ export default function LiveTracking() {
   const animationRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const pausedProgressRef = useRef<number>(0);
+
+  // Real-time ETA hook
+  const {
+    routeInfo,
+    isLoading: etaLoading,
+    lastUpdate,
+    etaHistory,
+    adjustedETA,
+    adjustedDuration,
+    trafficTrend,
+    remainingDistance,
+    refreshNow,
+  } = useRealtimeETA({
+    originCoords,
+    destCoords,
+    currentProgress: progress,
+    isTracking,
+    refreshIntervalMs: 60000,
+  });
 
   // Handle origin location selection
   const handleOriginSelect = useCallback(async (city: string, zip: string, fullAddress?: string) => {
@@ -208,6 +177,7 @@ export default function LiveTracking() {
             origin: { lat: originCoords[1], lng: originCoords[0] },
             destination: { lat: destCoords[1], lng: destCoords[0] },
             departureTime: new Date().toISOString(),
+            computeAlternatives: true,
           },
         });
 
@@ -221,6 +191,8 @@ export default function LiveTracking() {
             trafficInfo: data.route.traffic,
             tollInfo: data.route.tolls,
             etaFormatted: data.route.etaFormatted,
+            alternateRoutes: data.alternateRoutes || [],
+            isFuelEfficient: data.route.isFuelEfficient || false,
           });
         }
       } catch (err) {
@@ -360,7 +332,7 @@ export default function LiveTracking() {
 
       {/* Main Content */}
       <div className="tracking-content">
-        {/* Left: Address Inputs */}
+        {/* Left: Address Inputs + Street Views */}
         <div className="tracking-sidebar">
           {/* Demo Booking Lookup */}
           <div className="tracking-info-card mb-4">
@@ -416,7 +388,7 @@ export default function LiveTracking() {
             <h3 className="text-sm font-semibold text-white mb-4">Route Setup</h3>
             
             {/* Origin Input */}
-            <div className="mb-4">
+            <div className="mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <Navigation className="w-3.5 h-3.5 text-primary" />
                 <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
@@ -431,10 +403,21 @@ export default function LiveTracking() {
                 mode="address"
                 className="tracking-input"
               />
+              {/* Compact Street View Preview - Origin */}
+              <div className="mt-2">
+                <StreetViewPreview
+                  coordinates={originCoords}
+                  label="Origin"
+                  locationName={originName}
+                  variant="origin"
+                  googleApiKey={GOOGLE_MAPS_API_KEY}
+                  compact
+                />
+              </div>
             </div>
 
             {/* Destination Input */}
-            <div className="mb-4">
+            <div className="mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="w-3.5 h-3.5 text-white/50" />
                 <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
@@ -449,10 +432,21 @@ export default function LiveTracking() {
                 mode="address"
                 className="tracking-input"
               />
+              {/* Compact Street View Preview - Destination */}
+              <div className="mt-2">
+                <StreetViewPreview
+                  coordinates={destCoords}
+                  label="Destination"
+                  locationName={destName}
+                  variant="destination"
+                  googleApiKey={GOOGLE_MAPS_API_KEY}
+                  compact
+                />
+              </div>
             </div>
 
             {/* Move Date */}
-            <div className="mb-4 pt-4 border-t border-white/10">
+            <div className="mb-4 pt-3 border-t border-white/10">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-3.5 h-3.5 text-white/50" />
                 <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
@@ -565,44 +559,27 @@ export default function LiveTracking() {
             />
           )}
 
-          {/* Single-stop: Show origin/dest street view */}
-          {!multiStopData && (
-            <StreetViewPreview
-              coordinates={originCoords}
-              label="Origin"
-              locationName={originName}
-              time={formatTime(departureTime)}
-              timeLabel="Departed"
-              variant="origin"
-              googleApiKey={GOOGLE_MAPS_API_KEY}
-            />
-          )}
-
+          {/* Unified Stats Card - Single source of truth for all metrics */}
           {routeData && (
-            <TrackingDashboard
+            <UnifiedStatsCard
               progress={progress}
               distanceTraveled={distanceTraveled}
               totalDistance={totalDistance}
               timeRemaining={formatDuration(remainingDuration)}
-              trafficInfo={googleRouteData.trafficInfo}
+              adjustedETA={adjustedETA}
+              adjustedDuration={adjustedDuration}
+              remainingDistance={remainingDistance}
+              trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
+              trafficDelay={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
+              trafficTrend={trafficTrend}
               tollInfo={googleRouteData.tollInfo}
-              etaFormatted={googleRouteData.etaFormatted}
+              isFuelEfficient={googleRouteData.isFuelEfficient}
+              alternateRoutes={googleRouteData.alternateRoutes}
+              lastUpdate={lastUpdate}
+              isLoading={etaLoading}
+              onRefresh={refreshNow}
             />
           )}
-
-          {/* Real-Time ETA with Traffic Adjustments */}
-          <RealtimeETACardWrapper
-            originCoords={originCoords}
-            destCoords={destCoords}
-            progress={progress}
-            isTracking={isTracking}
-          />
-
-          {/* Traffic Insights - Google Routes */}
-          <TrafficInsights
-            originCoords={originCoords}
-            destCoords={destCoords}
-          />
 
           {/* Live Truck Aerial View */}
           {isTracking && routeCoordinates.length > 0 && (
@@ -621,19 +598,6 @@ export default function LiveTracking() {
             isTracking={isTracking}
           />
 
-          {/* Single-stop: Show destination street view */}
-          {!multiStopData && (
-            <StreetViewPreview
-              coordinates={destCoords}
-              label="Destination"
-              locationName={destName}
-              time={formatTime(etaTime)}
-              timeLabel="ETA"
-              variant="destination"
-              googleApiKey={GOOGLE_MAPS_API_KEY}
-            />
-          )}
-
           {/* Route Insights - "Did You Know?" */}
           <RouteInsights
             originCoords={originCoords}
@@ -651,19 +615,6 @@ export default function LiveTracking() {
           destName={destName}
         />
       </div>
-
-      {/* Bottom Timeline */}
-      {routeData && (
-        <div className="tracking-timeline-container">
-          <TrackingTimeline
-            progress={progress}
-            originName={originName}
-            destName={destName}
-            departureTime={formatTime(departureTime)}
-            etaTime={formatTime(etaTime)}
-          />
-        </div>
-      )}
       
       {/* Check My Truck Modal */}
       <CheckMyTruckModal
