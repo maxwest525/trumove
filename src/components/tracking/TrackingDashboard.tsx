@@ -1,4 +1,16 @@
-import { Clock, Route, TrendingUp } from "lucide-react";
+import { Clock, Route, TrendingUp, DollarSign, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface TrafficInfo {
+  delayMinutes: number;
+  hasDelay: boolean;
+  severity: 'low' | 'medium' | 'high';
+}
+
+interface TollInfo {
+  hasTolls: boolean;
+  estimatedPrice: string | null;
+}
 
 interface TrackingDashboardProps {
   progress: number;
@@ -6,6 +18,9 @@ interface TrackingDashboardProps {
   totalDistance: number;
   timeRemaining: string;
   averageSpeed?: number;
+  trafficInfo?: TrafficInfo | null;
+  tollInfo?: TollInfo | null;
+  etaFormatted?: string | null;
 }
 
 export function TrackingDashboard({
@@ -13,7 +28,10 @@ export function TrackingDashboard({
   distanceTraveled,
   totalDistance,
   timeRemaining,
-  averageSpeed = 55
+  averageSpeed = 55,
+  trafficInfo,
+  tollInfo,
+  etaFormatted
 }: TrackingDashboardProps) {
   return (
     <div className="tracking-info-card">
@@ -65,11 +83,76 @@ export function TrackingDashboard({
         </div>
       </div>
 
+      {/* Traffic & Toll Info (Google Routes) */}
+      {(trafficInfo || tollInfo) && (
+        <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
+          {trafficInfo && (
+            <div className={cn(
+              "rounded-lg p-2 border",
+              trafficInfo.severity === 'high' 
+                ? "bg-red-500/10 border-red-500/20" 
+                : trafficInfo.severity === 'medium'
+                  ? "bg-yellow-500/10 border-yellow-500/20"
+                  : "bg-emerald-500/10 border-emerald-500/20"
+            )}>
+              <div className="flex items-center gap-1 mb-1">
+                <AlertTriangle className={cn(
+                  "w-3 h-3",
+                  trafficInfo.severity === 'high' ? "text-red-400" 
+                    : trafficInfo.severity === 'medium' ? "text-yellow-400" 
+                    : "text-emerald-400"
+                )} />
+                <span className="text-[10px] uppercase tracking-wider text-white/50">Traffic</span>
+              </div>
+              <div className={cn(
+                "text-sm font-semibold",
+                trafficInfo.severity === 'high' ? "text-red-300" 
+                  : trafficInfo.severity === 'medium' ? "text-yellow-300" 
+                  : "text-emerald-300"
+              )}>
+                {trafficInfo.hasDelay ? `+${trafficInfo.delayMinutes}m` : 'Clear'}
+              </div>
+            </div>
+          )}
+
+          {tollInfo && (
+            <div className={cn(
+              "rounded-lg p-2 border",
+              tollInfo.hasTolls 
+                ? "bg-white/5 border-white/10" 
+                : "bg-emerald-500/10 border-emerald-500/20"
+            )}>
+              <div className="flex items-center gap-1 mb-1">
+                <DollarSign className={cn(
+                  "w-3 h-3",
+                  tollInfo.hasTolls ? "text-white/40" : "text-emerald-400"
+                )} />
+                <span className="text-[10px] uppercase tracking-wider text-white/50">Tolls</span>
+              </div>
+              <div className={cn(
+                "text-sm font-semibold",
+                tollInfo.hasTolls ? "text-white" : "text-emerald-300"
+              )}>
+                {tollInfo.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Speed indicator */}
       <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
         <span className="text-[10px] text-white/40 uppercase tracking-wider">Avg Speed</span>
         <span className="text-sm font-semibold text-white">{averageSpeed} mph</span>
       </div>
+
+      {/* Live ETA from Google */}
+      {etaFormatted && (
+        <div className="mt-2 flex items-center justify-between">
+          <span className="text-[10px] text-white/40 uppercase tracking-wider">Live ETA</span>
+          <span className="text-sm font-semibold text-primary">{etaFormatted}</span>
+        </div>
+      )}
     </div>
   );
 }
