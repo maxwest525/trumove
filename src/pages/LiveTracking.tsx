@@ -502,27 +502,6 @@ export default function LiveTracking() {
             </div>
           </div>
 
-          {/* Route Info */}
-          {routeData && (
-            <div className="tracking-info-card mt-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Truck className="w-4 h-4 text-primary" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
-                  Route Info
-                </span>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Distance</span>
-                  <span className="text-foreground font-medium">{Math.round(routeData.distance)} miles</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Est. Duration</span>
-                  <span className="text-foreground font-medium">{formatDuration(routeData.duration)}</span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Center: Map */}
