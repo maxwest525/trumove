@@ -173,15 +173,15 @@ const NAV: NavItem[] = [
     }
   },
   { 
-    href: "/property-lookup", 
-    label: "Property Lookup",
+    href: "/track", 
+    label: "Shipment Tracking",
     hasDropdown: true,
     dropdownContent: {
       icon: Home,
-      title: "Property Lookup",
-      description: "Instant data on any US address",
-      features: ["Bed/bath counts", "Square footage", "Property photos"],
-      cta: "Look Up Property",
+      title: "Shipment Tracking",
+      description: "Track your moving truck in real-time",
+      features: ["Live GPS tracking", "Route visualization", "Weather conditions"],
+      cta: "Track Shipment",
       PreviewComponent: PropertyPreview
     }
   },
