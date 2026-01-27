@@ -34,6 +34,7 @@ import FloatingTruckChat from "@/components/FloatingTruckChat";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import FeatureCarousel from "@/components/FeatureCarousel";
 import { calculateDistance } from "@/lib/distanceCalculator";
@@ -1481,17 +1482,23 @@ export default function Index() {
                   {/* Feature Grid - 2 rows x 3 columns */}
                   <div className="tru-why-feature-grid">
                     {whyTruMoveFeatures.map((feature, index) => (
-                      <button
-                        key={feature.id}
-                        className={`tru-why-feature-cell ${activeFeature === index ? 'is-active' : ''}`}
-                        style={{ '--stagger-index': index } as React.CSSProperties}
-                        onClick={() => setActiveFeature(activeFeature === index ? null : index)}
-                      >
-                        <div className="tru-why-feature-cell-icon">
-                          <feature.icon className="w-4 h-4" />
-                        </div>
-                        <span className="tru-why-feature-cell-title">{feature.title}</span>
-                      </button>
+                      <Tooltip key={feature.id}>
+                        <TooltipTrigger asChild>
+                          <button
+                            className={`tru-why-feature-cell ${activeFeature === index ? 'is-active' : ''}`}
+                            style={{ '--stagger-index': index } as React.CSSProperties}
+                            onClick={() => setActiveFeature(activeFeature === index ? null : index)}
+                          >
+                            <div className="tru-why-feature-cell-icon">
+                              <feature.icon className="w-5 h-5" />
+                            </div>
+                            <span className="tru-why-feature-cell-title">{feature.title}</span>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-[200px] text-center">
+                          {feature.hoverTip}
+                        </TooltipContent>
+                      </Tooltip>
                     ))}
                   </div>
                   
