@@ -667,6 +667,9 @@ export default function Index() {
               <h1 className="tru-hero-headline-main">
                 <img src={logoImg} alt="TruMove" className="tru-hero-inline-logo" /> A Smarter Way To <span className="tru-hero-headline-accent">Move</span>.
               </h1>
+              <p className="tru-hero-header-subheadline">
+                Designed to put you in control of your move.
+              </p>
             </div>
 
 

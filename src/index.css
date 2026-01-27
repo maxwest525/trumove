@@ -1042,9 +1042,9 @@
   display: grid;
   grid-template-columns: 520px 1fr;
   grid-template-rows: auto 1fr;
-  gap: 32px 48px;
+  gap: 32px 64px;
   align-items: start;
-  padding: 4px 24px 16px 24px;
+  padding: 4px 24px 16px 48px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -1079,6 +1079,16 @@
   height: 1em;
   display: inline-block;
   vertical-align: middle;
+}
+
+.tru-hero-header-section .tru-hero-header-subheadline {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: hsl(var(--tm-ink) / 0.7);
+  margin: 8px 0 0 0;
+  letter-spacing: 0.01em;
+  opacity: 0;
+  animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards;
 }
 
 .tru-hero-header-section .tru-hero-subheadline {
