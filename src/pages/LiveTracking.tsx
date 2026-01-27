@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar } from "lucide-react";
+import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
 import { TrackingTimeline } from "@/components/tracking/TrackingTimeline";
@@ -9,6 +10,9 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
 
 interface RouteData {
@@ -67,6 +71,7 @@ export default function LiveTracking() {
   const [isTracking, setIsTracking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(60); // seconds for full journey
+  const [moveDate, setMoveDate] = useState<Date>(new Date()); // Auto-populate with today
   const [departureTime] = useState(new Date());
 
   // Animation refs
@@ -179,10 +184,10 @@ export default function LiveTracking() {
       {/* Header */}
       <header className="tracking-header">
         <div className="flex items-center gap-3">
-          <img src={logoImg} alt="TruMove" className="h-8 w-auto" />
+          <img src={logoImg} alt="TruMove" className="h-8 w-auto brightness-0 invert" />
           <span className="text-white/30">|</span>
           <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-primary">
-            Live Tracking
+            Shipment Tracking
           </span>
         </div>
 
@@ -242,6 +247,40 @@ export default function LiveTracking() {
                 mode="address"
                 className="tracking-input"
               />
+            </div>
+
+            {/* Move Date */}
+            <div className="mb-4 pt-4 border-t border-white/10">
+              <div className="flex items-center gap-2 mb-2">
+                <Calendar className="w-3.5 h-3.5 text-white/50" />
+                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
+                  Move Date
+                </span>
+              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal bg-white/5 border-white/10 text-white hover:bg-white/10",
+                      !moveDate && "text-white/50"
+                    )}
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {moveDate ? format(moveDate, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-black/90 border-white/20" align="start">
+                  <CalendarComponent
+                    mode="single"
+                    selected={moveDate}
+                    onSelect={(date) => date && setMoveDate(date)}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto text-white")}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             {/* Speed Control */}
