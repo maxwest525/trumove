@@ -23817,9 +23817,9 @@
 .tru-qb-route-summary-permanent {
   margin-top: 20px;
   margin-bottom: 12px;
-  margin-left: -24px;
-  margin-right: -24px;
-  padding: 8px 24px;
+  margin-left: -32px;
+  margin-right: -32px;
+  padding: 8px 32px;
   background: hsl(var(--muted) / 0.2);
   border-radius: 12px;
 }
