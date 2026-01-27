@@ -23218,3 +23218,303 @@
 .tru-parallax-slow {
   --parallax-speed: 0.1;
 }
+
+/* =============================================
+   LIVE TRUCK TRACKING PAGE
+   ============================================= */
+
+/* Page Container - Dark Theme */
+.live-tracking-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a0a0a 0%, #0d1117 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.tracking-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+}
+
+/* Main Content Layout */
+.tracking-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr 320px;
+  gap: 20px;
+  padding: 20px;
+  max-height: calc(100vh - 180px);
+}
+
+@media (max-width: 1280px) {
+  .tracking-content {
+    grid-template-columns: 280px 1fr 280px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .tracking-content {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+  
+  .tracking-sidebar {
+    order: 1;
+  }
+  
+  .tracking-map-container {
+    order: 2;
+    min-height: 400px;
+  }
+  
+  .tracking-dashboard {
+    order: 3;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .tracking-dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sidebar */
+.tracking-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* Map Container */
+.tracking-map-container {
+  min-height: 500px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Dashboard (Right Side) */
+.tracking-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* Timeline Container */
+.tracking-timeline-container {
+  padding: 16px 20px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Glass Card Style */
+.tracking-info-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(12px);
+}
+
+/* Input Styling for Dark Theme */
+.tracking-input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.tracking-input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.tracking-input:focus {
+  border-color: hsl(145, 63%, 42%) !important;
+  box-shadow: 0 0 0 2px hsl(145, 63%, 42% / 0.2) !important;
+}
+
+/* Slider Styling */
+.tracking-slider [data-radix-slider-track] {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tracking-slider [data-radix-slider-range] {
+  background: hsl(145, 63%, 42%);
+}
+
+.tracking-slider [data-radix-slider-thumb] {
+  background: hsl(145, 63%, 42%);
+  border-color: hsl(145, 63%, 42%);
+}
+
+/* Progress Bar */
+.tracking-progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tracking-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, hsl(145, 63%, 42%), hsl(145, 80%, 50%));
+  box-shadow: 0 0 12px hsl(145, 63%, 42% / 0.6);
+  border-radius: 4px;
+  transition: width 0.3s ease-out;
+}
+
+/* Status Chips */
+.tracking-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+}
+
+.tracking-status-chip.live {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.tracking-status-chip.success {
+  color: hsl(145, 63%, 50%);
+  border-color: hsl(145, 63%, 42% / 0.3);
+}
+
+/* Truck Marker - Main */
+.tracking-truck-marker {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tracking-truck-glow {
+  position: absolute;
+  inset: -10px;
+  background: radial-gradient(circle, hsl(145, 63%, 42% / 0.5) 0%, transparent 70%);
+  animation: truck-pulse 2s ease-in-out infinite;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.tracking-truck-icon {
+  width: 44px;
+  height: 44px;
+  background: hsl(145, 63%, 42%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  box-shadow: 
+    0 0 20px hsl(145, 63%, 42% / 0.6),
+    0 0 40px hsl(145, 63%, 42% / 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes truck-pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.8; 
+  }
+  50% { 
+    transform: scale(1.3); 
+    opacity: 0.4; 
+  }
+}
+
+/* Small Truck Marker (for timeline) */
+.tracking-truck-marker-small {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tracking-truck-glow-small {
+  position: absolute;
+  inset: -6px;
+  background: radial-gradient(circle, hsl(145, 63%, 42% / 0.4) 0%, transparent 70%);
+  animation: truck-pulse 2s ease-in-out infinite;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Origin/Destination Markers */
+.tracking-origin-marker,
+.tracking-dest-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tracking-marker-pulse {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: hsl(145, 63%, 42% / 0.3);
+  animation: marker-pulse 2s ease-out infinite;
+}
+
+.tracking-marker-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+}
+
+.tracking-marker-dot.origin {
+  background: hsl(145, 63%, 42%);
+  box-shadow: 
+    0 0 12px hsl(145, 63%, 42% / 0.6),
+    0 0 0 4px hsl(145, 63%, 42% / 0.2);
+}
+
+.tracking-marker-dot.destination {
+  background: rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes marker-pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Accent Color */
+.tracking-accent {
+  color: hsl(145, 63%, 50%);
+  text-shadow: 0 0 20px hsl(145, 63%, 42% / 0.5);
+}

@@ -20,6 +20,7 @@ import Auth from "./pages/Auth";
 import AgentLogin from "./pages/AgentLogin";
 import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
+import LiveTracking from "./pages/LiveTracking";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/agent-login" element={<AgentLogin />} />
             <Route path="/scan-room" element={<ScanRoom />} />
             <Route path="/classic" element={<Classic />} />
+            <Route path="/track" element={<LiveTracking />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
