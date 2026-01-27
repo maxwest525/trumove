@@ -23444,12 +23444,12 @@
 .tracking-header-go-btn {
   height: 28px;
   padding: 0 14px;
-  background: hsl(var(--tm-ink));
-  color: white;
+  background: hsl(var(--tm-ink)) !important;
+  color: white !important;
   font-weight: 600;
   font-size: 12px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
   transition: all 0.2s;
 }
 
