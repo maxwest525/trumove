@@ -27,7 +27,7 @@ import previewVideoConsult from "@/assets/preview-video-consult.jpg";
 import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
-import heroTrumove from "@/assets/hero-trumove.jpg";
+import heroFamilyMove from "@/assets/hero-family-move.jpg";
 
 import ChatModal from "@/components/chat/ChatModal";
 import FloatingTruckChat from "@/components/FloatingTruckChat";
@@ -1156,14 +1156,46 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Hero Image */}
-            <div className="tru-hero-content-panel">
+            {/* RIGHT SIDE: Hero Image with Content Overlay */}
+            <div className="tru-hero-content-panel tru-hero-content-panel-fullbleed">
               <div className="tru-hero-image-container">
                 <img 
-                  src={heroTrumove} 
-                  alt="Modern moving concept with geometric house shapes" 
+                  src={heroFamilyMove} 
+                  alt="Happy family moving into their new home" 
                   className="tru-hero-image"
                 />
+                <div className="tru-hero-image-overlay" />
+                <div className="tru-hero-content-inner tru-hero-content-over-image">
+                  <h2 className="tru-hero-headline-main">
+                    Skip the <span className="tru-hero-headline-accent">Van Line</span>
+                  </h2>
+                  
+                  <p className="tru-hero-subheadline">
+                    Skip the complexity of large national van lines. We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>.
+                  </p>
+
+                  {/* Feature highlights */}
+                  <div className="tru-hero-features">
+                    <div className="tru-hero-feature-item">
+                      <div className="tru-hero-feature-icon">
+                        <Camera className="w-4 h-4" />
+                      </div>
+                      <span>AI Room Scanner</span>
+                    </div>
+                    <div className="tru-hero-feature-item">
+                      <div className="tru-hero-feature-icon">
+                        <Video className="w-4 h-4" />
+                      </div>
+                      <span>Live Video Consults</span>
+                    </div>
+                    <div className="tru-hero-feature-item">
+                      <div className="tru-hero-feature-icon">
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                      <span>FMCSA Carrier Vetting</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
