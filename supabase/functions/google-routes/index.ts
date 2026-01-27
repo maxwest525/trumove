@@ -120,9 +120,10 @@ serve(async (req) => {
     const data = await response.json();
     
     if (!data.routes || data.routes.length === 0) {
+      console.log('No routes returned from Google Routes API');
       return new Response(
-        JSON.stringify({ error: 'No route found between locations' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ success: false, noRoute: true, error: 'No route found between locations' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 

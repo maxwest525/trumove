@@ -134,7 +134,14 @@ export function useRealtimeETA({
       }
 
       if (data?.fallback) {
-        setError('Google Routes API not available');
+        console.log('Google Routes API fallback mode');
+        // Don't set error, just silently continue without live traffic data
+        return;
+      }
+
+      if (data?.noRoute) {
+        console.log('No route found - truck may have arrived or coordinates invalid');
+        // Don't set error for no route - this is expected at journey end
         return;
       }
 
