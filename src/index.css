@@ -23384,19 +23384,19 @@
   background: linear-gradient(180deg, #0a0a0a 0%, #0d1117 100%);
 }
 
-/* Dashboard Header */
+/* Dashboard Header - Darker for white logo visibility */
 .tracking-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
-  background: hsl(var(--muted) / 0.5);
-  border-bottom: 1px solid hsl(var(--border));
+  padding: 14px 24px;
+  background: hsl(var(--foreground) / 0.95);
+  border-bottom: 1px solid hsl(var(--border) / 0.3);
   backdrop-filter: blur(12px);
 }
 
 .dark .tracking-header {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 15, 15, 0.95);
   border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
@@ -23487,11 +23487,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 32px;
-  padding: 14px 24px;
-  background: hsl(var(--muted) / 0.5);
-  border-top: 1px solid hsl(var(--border));
-  border-bottom: 1px solid hsl(var(--border));
+  gap: 28px;
+  padding: 14px 28px;
+  background: hsl(var(--muted) / 0.35);
+  border-top: 1px solid hsl(var(--border) / 0.5);
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
 }
 
 .dark .tracking-stats-strip {
@@ -23510,7 +23510,7 @@
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: hsl(var(--muted-foreground));
+  color: hsl(var(--muted-foreground) / 0.8);
 }
 
 .stats-strip-value {
@@ -23521,12 +23521,23 @@
 
 .stats-strip-divider {
   width: 1px;
-  height: 36px;
-  background: hsl(var(--border));
+  height: 32px;
+  background: hsl(var(--border) / 0.5);
 }
 
 .dark .stats-strip-divider {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Traffic Badge in Stats Strip */
+.stats-strip-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid;
+  font-weight: 600;
 }
 
 /* Dashboard (Right Side) - Larger cards */
@@ -23581,13 +23592,14 @@
   margin-top: 4px;
 }
 
-/* Glass Card Style - Themed */
+/* Glass Card Style - Themed, lighter for readability */
 .tracking-info-card {
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 16px;
+  border: 1px solid hsl(var(--border) / 0.6);
+  border-radius: 14px;
   padding: 16px;
   backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.03);
 }
 
 .dark .tracking-info-card {
@@ -23595,10 +23607,10 @@
   border-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Input Styling - Themed */
+/* Input Styling - Themed, lighter */
 .tracking-input {
-  background: hsl(var(--muted)) !important;
-  border: 1px solid hsl(var(--border)) !important;
+  background: hsl(var(--muted) / 0.5) !important;
+  border: 1px solid hsl(var(--border) / 0.7) !important;
   color: hsl(var(--foreground)) !important;
 }
 
@@ -23609,7 +23621,7 @@
 }
 
 .tracking-input::placeholder {
-  color: hsl(var(--muted-foreground)) !important;
+  color: hsl(var(--muted-foreground) / 0.7) !important;
 }
 
 .dark .tracking-input::placeholder {
