@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar, FileText, Bell } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar, FileText, Bell, Globe } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
 import { TrackingTimeline } from "@/components/tracking/TrackingTimeline";
-import { SatellitePreview } from "@/components/tracking/SatellitePreview";
+import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
@@ -16,6 +16,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import logoImg from "@/assets/logo.png";
+
+// Google Maps API key from environment
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
 
 interface RouteData {
   coordinates: [number, number][];
@@ -433,13 +436,14 @@ export default function LiveTracking() {
 
         {/* Right: Dashboard */}
         <div className="tracking-dashboard">
-          <SatellitePreview
+          <StreetViewPreview
             coordinates={originCoords}
             label="Origin"
             locationName={originName}
             time={formatTime(departureTime)}
             timeLabel="Departed"
             variant="origin"
+            googleApiKey={GOOGLE_MAPS_API_KEY}
           />
 
           {routeData && (
@@ -451,13 +455,14 @@ export default function LiveTracking() {
             />
           )}
 
-          <SatellitePreview
+          <StreetViewPreview
             coordinates={destCoords}
             label="Destination"
             locationName={destName}
             time={formatTime(etaTime)}
             timeLabel="ETA"
             variant="destination"
+            googleApiKey={GOOGLE_MAPS_API_KEY}
           />
         </div>
 
