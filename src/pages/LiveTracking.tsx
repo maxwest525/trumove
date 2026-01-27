@@ -339,6 +339,7 @@ export default function LiveTracking() {
               }}
             />
             <Button
+              variant="ghost"
               size="sm"
               className="tracking-header-go-btn"
               onClick={async () => {
