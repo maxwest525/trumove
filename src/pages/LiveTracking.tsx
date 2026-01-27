@@ -311,19 +311,19 @@ export default function LiveTracking() {
             alt="TruMove" 
             className="h-6 brightness-0 invert"
           />
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/70">
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
             Shipment Command Center
           </span>
         </div>
 
         <div className="flex items-center gap-4">
           {/* Booking Lookup - Prominent in header */}
-          <div className="hidden md:flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/20">
-            <Search className="w-4 h-4 text-white/60" />
+          <div className="hidden md:flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/30">
+            <Search className="w-4 h-4 text-white/80" />
             <input
               type="text"
               placeholder="Enter Booking # (try 12345)"
-              className="h-7 w-48 lg:w-56 px-2 rounded text-sm bg-transparent border-none text-white placeholder:text-white/50 focus:outline-none"
+              className="h-7 w-48 lg:w-56 px-2 rounded text-sm bg-transparent border-none text-white placeholder:text-white/60 focus:outline-none"
               onKeyDown={async (e) => {
                 if (e.key === 'Enter') {
                   const value = (e.target as HTMLInputElement).value.trim();
@@ -353,19 +353,19 @@ export default function LiveTracking() {
             </Button>
           </div>
 
-          {/* Satellite Truck View Button */}
+          {/* Live Satellite View Button */}
           <Button
             onClick={() => setShowCheckMyTruck(true)}
             size="sm"
             className="bg-white/15 text-white hover:bg-white/25 gap-2 font-medium border border-white/20"
           >
             <Truck className="w-4 h-4" />
-            <span className="hidden sm:inline">Satellite View</span>
+            <span className="hidden sm:inline">Live Satellite View</span>
           </Button>
           
           <div className="text-right hidden lg:block">
-            <div className="text-[10px] text-white/40 uppercase tracking-wider">Shipment ID</div>
-            <div className="text-sm font-mono text-white/70">TM-2026-{String(Date.now()).slice(-8)}</div>
+            <div className="text-[10px] text-white/70 uppercase tracking-wider">Shipment ID</div>
+            <div className="text-sm font-mono text-white">TM-2026-{String(Date.now()).slice(-8)}</div>
           </div>
         </div>
       </header>
@@ -381,7 +381,7 @@ export default function LiveTracking() {
             <div className="mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <Navigation className="w-3.5 h-3.5 text-primary" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/70">
                   Origin
                 </span>
               </div>
@@ -409,8 +409,8 @@ export default function LiveTracking() {
             {/* Destination Input */}
             <div className="mb-3">
               <div className="flex items-center gap-2 mb-2">
-                <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+                <MapPin className="w-3.5 h-3.5 text-foreground/60" />
+                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/70">
                   Destination
                 </span>
               </div>
@@ -438,8 +438,8 @@ export default function LiveTracking() {
             {/* Move Date */}
             <div className="mb-4 pt-3 border-t border-border">
               <div className="flex items-center gap-2 mb-2">
-                <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+                <Calendar className="w-3.5 h-3.5 text-foreground/60" />
+                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/70">
                   Move Date
                 </span>
               </div>
@@ -527,27 +527,26 @@ export default function LiveTracking() {
             />
           )}
 
-          {/* Unified Stats Card - Single source of truth for all metrics */}
-          {routeData && (
-            <UnifiedStatsCard
-              progress={progress}
-              distanceTraveled={distanceTraveled}
-              totalDistance={totalDistance}
-              timeRemaining={formatDuration(remainingDuration)}
-              adjustedETA={adjustedETA}
-              adjustedDuration={adjustedDuration}
-              remainingDistance={remainingDistance}
-              trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
-              trafficDelay={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
-              trafficTrend={trafficTrend}
-              tollInfo={googleRouteData.tollInfo}
-              isFuelEfficient={googleRouteData.isFuelEfficient}
-              alternateRoutes={googleRouteData.alternateRoutes}
-              lastUpdate={lastUpdate}
-              isLoading={etaLoading}
-              onRefresh={refreshNow}
-            />
-          )}
+          {/* Unified Stats Card - Always visible, shows empty state before route */}
+          <UnifiedStatsCard
+            progress={routeData ? progress : 0}
+            distanceTraveled={routeData ? distanceTraveled : 0}
+            totalDistance={routeData ? totalDistance : 0}
+            timeRemaining={routeData ? formatDuration(remainingDuration) : '--'}
+            adjustedETA={routeData ? adjustedETA : null}
+            adjustedDuration={routeData ? adjustedDuration : null}
+            remainingDistance={routeData ? remainingDistance : 0}
+            trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
+            trafficDelay={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
+            trafficTrend={trafficTrend}
+            tollInfo={googleRouteData.tollInfo}
+            isFuelEfficient={googleRouteData.isFuelEfficient}
+            alternateRoutes={googleRouteData.alternateRoutes}
+            lastUpdate={lastUpdate}
+            isLoading={etaLoading}
+            onRefresh={refreshNow}
+            isEmpty={!routeData}
+          />
 
           {/* Live Truck Aerial View */}
           {isTracking && routeCoordinates.length > 0 && (
@@ -568,54 +567,6 @@ export default function LiveTracking() {
 
         </div>
 
-        {/* Quick Stats Strip - Below Map */}
-        {routeData && (
-          <div className="tracking-stats-strip" style={{ gridColumn: '1 / -1' }}>
-            {/* Traffic Badge */}
-            <div className={cn(
-              "stats-strip-badge",
-              googleRouteData.trafficInfo?.severity === 'high' 
-                ? "bg-red-500/20 text-red-600 border-red-500/30"
-                : googleRouteData.trafficInfo?.severity === 'medium'
-                  ? "bg-amber-500/20 text-amber-600 border-amber-500/30"
-                  : "bg-emerald-500/20 text-emerald-600 border-emerald-500/30"
-            )}>
-              <span className="w-2 h-2 rounded-full bg-current" />
-              <span className="text-xs font-semibold uppercase tracking-wide">
-                {googleRouteData.trafficInfo?.severity === 'high' 
-                  ? 'Heavy Traffic' 
-                  : googleRouteData.trafficInfo?.severity === 'medium'
-                    ? 'Moderate Traffic'
-                    : 'Clear Roads'}
-              </span>
-              {googleRouteData.trafficInfo?.delayMinutes > 0 && (
-                <span className="text-xs opacity-80">+{googleRouteData.trafficInfo.delayMinutes}m</span>
-              )}
-            </div>
-            
-            <div className="stats-strip-divider" />
-            
-            <div className="stats-strip-item">
-              <span className="stats-strip-label">ETA</span>
-              <span className="stats-strip-value">{adjustedETA || formatTime(etaTime)}</span>
-            </div>
-            <div className="stats-strip-divider" />
-            <div className="stats-strip-item">
-              <span className="stats-strip-label">Time Left</span>
-              <span className="stats-strip-value">{adjustedDuration || formatDuration(remainingDuration)}</span>
-            </div>
-            <div className="stats-strip-divider" />
-            <div className="stats-strip-item">
-              <span className="stats-strip-label">Distance</span>
-              <span className="stats-strip-value">{Math.round(totalDistance - distanceTraveled)} mi</span>
-            </div>
-            <div className="stats-strip-divider" />
-            <div className="stats-strip-item">
-              <span className="stats-strip-label">Progress</span>
-              <span className="stats-strip-value">{Math.round(progress)}%</span>
-            </div>
-          </div>
-        )}
 
         {/* Weather Strip */}
         <RouteWeather
