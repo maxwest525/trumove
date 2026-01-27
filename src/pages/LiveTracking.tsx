@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar, FileText, Bell, Globe, Search } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Zap, Calendar, FileText, Bell, Globe, Search, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { TrackingDashboard } from "@/components/tracking/TrackingDashboard";
@@ -10,6 +10,7 @@ import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
 import { RouteInsights } from "@/components/tracking/RouteInsights";
 import { TrafficInsights } from "@/components/tracking/TrafficInsights";
+import { CheckMyTruckModal } from "@/components/tracking/CheckMyTruckModal";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import SiteShell from "@/components/layout/SiteShell";
 import FloatingNav from "@/components/FloatingNav";
@@ -106,6 +107,9 @@ export default function LiveTracking() {
   
   // Shipment notes
   const [shipmentNotes, setShipmentNotes] = useState("");
+  
+  // Check My Truck modal
+  const [showCheckMyTruck, setShowCheckMyTruck] = useState(false);
   
   // Checkpoint notifications tracking
   const passedCheckpoints = useRef<Set<number>>(new Set());
@@ -286,6 +290,17 @@ export default function LiveTracking() {
         </div>
 
         <div className="flex items-center gap-4">
+          {/* Check My Truck Button */}
+          <Button
+            onClick={() => setShowCheckMyTruck(true)}
+            variant="outline"
+            size="sm"
+            className="border-primary/50 text-primary hover:bg-primary/10 gap-2"
+          >
+            <Eye className="w-4 h-4" />
+            <span className="hidden sm:inline">Check My Truck</span>
+          </Button>
+          
           {isTracking && (
             <div className="flex items-center gap-2 text-sm text-white/60">
               <Zap className="w-4 h-4 text-primary" />
@@ -625,6 +640,21 @@ export default function LiveTracking() {
           />
         </div>
       )}
+      
+      {/* Check My Truck Modal */}
+      <CheckMyTruckModal
+        open={showCheckMyTruck}
+        onOpenChange={setShowCheckMyTruck}
+        onLoadRoute={(truck) => {
+          // Load the truck's route into the main tracking view
+          handleOriginSelect(truck.originName, '', truck.originName);
+          handleDestSelect(truck.destName, '', truck.destName);
+          setMoveDate(new Date());
+          toast.success(`📦 Booking #${truck.bookingId} loaded!`, {
+            description: `${truck.originName} → ${truck.destName}`,
+          });
+        }}
+      />
     </div>
   );
 }
