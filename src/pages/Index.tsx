@@ -583,8 +583,8 @@ export default function Index() {
     <SiteShell centered>
       <div className="tru-page-frame">
         <div className="tru-page-inner">
-        {/* HERO - Split Layout */}
-          <section className="tru-hero tru-hero-split" ref={heroSectionRef}>
+        {/* HERO - Full Width Wrapper for edge-to-edge background */}
+          <section className="tru-hero-wrapper" ref={heroSectionRef}>
             {/* Full-Width Hero Background Image with Parallax */}
             <div 
               className="tru-hero-bg-image"
@@ -599,6 +599,8 @@ export default function Index() {
               <div className="tru-hero-bg-overlay" />
             </div>
             
+            {/* Hero Content Container - Centered */}
+            <div className="tru-hero tru-hero-split">
             {/* Particle Background Effect */}
             <HeroParticles />
             <div className="tru-hero-particles-overlay" />
@@ -727,7 +729,7 @@ export default function Index() {
                       <div className="tru-qb-step-content" key="step-1">
                         <h1 className="tru-qb-question tru-qb-question-decorated">Enter your route to begin matching</h1>
                         
-                        {/* FROM + TO Row - Side by Side with Route Connector */}
+                        {/* FROM + TO Row with Mini Satellite Previews */}
                         <div className="tru-qb-location-row">
                           <div className="tru-qb-location-col">
                             <p className="tru-qb-section-label"><MapPin className="w-3 h-3" /> From</p>
@@ -752,11 +754,24 @@ export default function Index() {
                                 autoFocus
                               />
                             </div>
+                            {/* Mini satellite preview */}
+                            {fromCoords && (
+                              <div className="tru-qb-mini-satellite">
+                                <img 
+                                  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${fromCoords[0]},${fromCoords[1]},14,0/200x96@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                                  alt="Origin preview"
+                                />
+                              </div>
+                            )}
                           </div>
 
-                          {/* Route Connector */}
+                          {/* Route Connector with Distance Text */}
                           <div className="tru-qb-route-connector">
-                            <ArrowRight className="w-4 h-4" />
+                            {distance > 0 ? (
+                              <span className="tru-qb-route-distance-text">{distance.toLocaleString()} mi</span>
+                            ) : (
+                              <ArrowRight className="w-4 h-4" />
+                            )}
                           </div>
 
                           <div className="tru-qb-location-col">
@@ -783,54 +798,15 @@ export default function Index() {
                                 placeholder="City or ZIP"
                               />
                             </div>
-                          </div>
-                        </div>
-
-                        {/* Permanent Route Summary Bar - Always Visible */}
-                        <div className="tru-qb-route-bar-permanent">
-                          <div className="tru-qb-route-bar-inner">
-                            {/* Origin */}
-                            <div className={`tru-qb-route-bar-endpoint ${fromCity ? 'has-value' : ''}`}>
-                              <MapPin className="w-3.5 h-3.5" />
-                              <div className="tru-qb-route-bar-endpoint-text">
-                                <span className="tru-qb-route-bar-label">Origin</span>
-                                <span className={`tru-qb-route-bar-value ${updatedFields.has('from') ? 'is-pulsing' : ''}`}>
-                                  {fromCity || "Enter origin"}
-                                </span>
+                            {/* Mini satellite preview */}
+                            {toCoords && (
+                              <div className="tru-qb-mini-satellite">
+                                <img 
+                                  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${toCoords[0]},${toCoords[1]},14,0/200x96@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
+                                  alt="Destination preview"
+                                />
                               </div>
-                            </div>
-                            
-                            {/* Mini Map / Distance */}
-                            <div className="tru-qb-route-bar-center">
-                              {distance > 0 && fromCoords && toCoords ? (
-                                <>
-                                  <div className="tru-qb-route-bar-mini-map">
-                                    <img 
-                                      src={`https://api.mapbox.com/styles/v1/mapbox/light-v11/static/pin-s+22c55e(${fromCoords[0]},${fromCoords[1]}),pin-s+ef4444(${toCoords[0]},${toCoords[1]})/auto/120x60@2x?padding=20&access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
-                                      alt="Route preview"
-                                    />
-                                  </div>
-                                  <span className={`tru-qb-route-bar-distance ${updatedFields.has('distance') ? 'is-pulsing' : ''}`}>
-                                    {distance.toLocaleString()} mi
-                                  </span>
-                                </>
-                              ) : (
-                                <div className="tru-qb-route-bar-placeholder">
-                                  <Route className="w-4 h-4" />
-                                </div>
-                              )}
-                            </div>
-                            
-                            {/* Destination */}
-                            <div className={`tru-qb-route-bar-endpoint ${toCity ? 'has-value' : ''}`}>
-                              <MapPin className="w-3.5 h-3.5" />
-                              <div className="tru-qb-route-bar-endpoint-text">
-                                <span className="tru-qb-route-bar-label">Destination</span>
-                                <span className={`tru-qb-route-bar-value ${updatedFields.has('to') ? 'is-pulsing' : ''}`}>
-                                  {toCity || "Enter destination"}
-                                </span>
-                              </div>
-                            </div>
+                            )}
                           </div>
                         </div>
 
@@ -1191,39 +1167,48 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Hero Content Panel (no image - it's now a background) */}
+            {/* RIGHT SIDE: Hero Feature Card - Rebuilt */}
             <div className="tru-hero-content-panel">
-              <div className="tru-hero-content-inner tru-hero-content-card">
-                <h2 className="tru-hero-content-headline">
-                  Skip the <span className="tru-hero-headline-accent">Van Line</span>
-                </h2>
+              <div className="tru-hero-feature-card">
+                <div className="tru-feature-card-header">
+                  <span className="tru-feature-badge">Why TruMove</span>
+                  <h2 className="tru-feature-card-title">Skip the Van Line</h2>
+                  <p className="tru-feature-card-subtitle">
+                    We use AI and verified data to find you the right mover.
+                  </p>
+                </div>
                 
-                <p className="tru-hero-content-subheadline">
-                  We use <strong>AI inventory scanning</strong> and <strong>live video consults</strong> to understand your move, then vet carriers using verified <strong>FMCSA and DOT safety data</strong>.
-                </p>
-
-                {/* Feature highlights */}
-                <div className="tru-hero-features">
-                  <div className="tru-hero-feature-item">
-                    <div className="tru-hero-feature-icon">
-                      <Camera className="w-4 h-4" />
+                <div className="tru-feature-list">
+                  <div className="tru-feature-row">
+                    <div className="tru-feature-row-icon">
+                      <Camera className="w-5 h-5" />
                     </div>
-                    <span>AI Room Scanner</span>
+                    <div className="tru-feature-row-text">
+                      <span className="tru-feature-row-title">AI Room Scanner</span>
+                      <span className="tru-feature-row-desc">Snap photos, get instant inventory estimates</span>
+                    </div>
                   </div>
-                  <div className="tru-hero-feature-item">
-                    <div className="tru-hero-feature-icon">
-                      <Video className="w-4 h-4" />
+                  <div className="tru-feature-row">
+                    <div className="tru-feature-row-icon">
+                      <Video className="w-5 h-5" />
                     </div>
-                    <span>Live Video Consults</span>
+                    <div className="tru-feature-row-text">
+                      <span className="tru-feature-row-title">Live Video Consults</span>
+                      <span className="tru-feature-row-desc">Walkthrough your home with a move specialist</span>
+                    </div>
                   </div>
-                  <div className="tru-hero-feature-item">
-                    <div className="tru-hero-feature-icon">
-                      <ShieldCheck className="w-4 h-4" />
+                  <div className="tru-feature-row">
+                    <div className="tru-feature-row-icon">
+                      <ShieldCheck className="w-5 h-5" />
                     </div>
-                    <span>FMCSA Carrier Vetting</span>
+                    <div className="tru-feature-row-text">
+                      <span className="tru-feature-row-title">FMCSA Carrier Vetting</span>
+                      <span className="tru-feature-row-desc">Real safety data, not just reviews</span>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           </section>
 
