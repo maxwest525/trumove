@@ -353,6 +353,7 @@ export default function LiveTracking() {
           </div>
           
           <Button
+            variant="ghost"
             onClick={() => setShowCheckMyTruck(true)}
             className="tracking-header-satellite-btn"
           >

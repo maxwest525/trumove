@@ -2,32 +2,32 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border/40 bg-white relative z-[60]">
+    <footer className="border-t border-border/40 bg-[hsl(var(--tm-ink))] relative z-[60]">
       <div className="max-w-[1480px] mx-auto px-[22px] py-[24px] flex items-start justify-between gap-[16px] flex-wrap">
         <div className="flex flex-col gap-[6px]">
-          <div className="font-extrabold text-foreground">TruMove</div>
-          <div className="text-muted-foreground text-[13px] max-w-[420px]">
+          <div className="font-extrabold text-white">TruMove</div>
+          <div className="text-white/60 text-[13px] max-w-[420px]">
             AI-powered moving quotes and carrier coordination.
           </div>
         </div>
 
         <div className="flex gap-[14px] flex-wrap items-center">
-          <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/carrier-vetting">
+          <Link className="no-underline text-white/80 text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-white/10 hover:text-white transition-colors" to="/carrier-vetting">
             Carrier Vetting
           </Link>
-          <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/book">
+          <Link className="no-underline text-white/80 text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-white/10 hover:text-white transition-colors" to="/book">
             Book a consult
           </Link>
-          <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/faq">
+          <Link className="no-underline text-white/80 text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-white/10 hover:text-white transition-colors" to="/faq">
             FAQ
           </Link>
-          <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/privacy">
+          <Link className="no-underline text-white/80 text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-white/10 hover:text-white transition-colors" to="/privacy">
             Privacy
           </Link>
-          <Link className="no-underline text-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/terms">
+          <Link className="no-underline text-white/80 text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-white/10 hover:text-white transition-colors" to="/terms">
             Terms
           </Link>
-          <Link className="no-underline text-muted-foreground text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-muted" to="/classic">
+          <Link className="no-underline text-white/50 text-[13px] py-[8px] px-[10px] rounded-[10px] hover:bg-white/10 hover:text-white/70 transition-colors" to="/classic">
             Classic
           </Link>
         </div>

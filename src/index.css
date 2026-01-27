@@ -23437,7 +23437,8 @@
 }
 
 .tracking-header-input:focus {
-  text-shadow: 0 0 12px hsl(var(--primary) / 0.6);
+  border-color: hsl(var(--primary) / 0.6);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3);
 }
 
 .tracking-header-go-btn {
@@ -23464,19 +23465,19 @@
   gap: 8px;
   height: 40px;
   padding: 0 16px;
-  background: rgba(255, 255, 255, 0.12);
+  background: hsl(var(--tm-ink)) !important;
   backdrop-filter: blur(12px);
-  color: white;
+  color: white !important;
   font-weight: 600;
   font-size: 13px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
   transition: all 0.2s;
 }
 
 .tracking-header-satellite-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: hsl(var(--primary) / 0.5);
+  background: hsl(var(--tm-ink) / 0.85) !important;
+  border-color: hsl(var(--primary) / 0.5) !important;
   box-shadow: 0 0 16px hsl(var(--primary) / 0.3);
 }
 
