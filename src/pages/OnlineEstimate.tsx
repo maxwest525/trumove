@@ -86,6 +86,10 @@ export default function OnlineEstimate() {
           toHasElevator: false,
           hasVehicleTransport: false,
           needsPackingService: false,
+          isMultiStop: false,
+          pickupLocations: [],
+          dropoffLocations: [],
+          optimizedRoute: null,
         });
       } catch (e) {
         console.error("Failed to parse stored lead data:", e);
