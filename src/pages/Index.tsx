@@ -42,8 +42,191 @@ import {
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
-  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe
+  Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
+  Play, Pause, MapPinned
 } from "lucide-react";
+
+// Interactive Tracking Demo Card Component
+function TrackingDemoCard() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [activeCheckpoint, setActiveCheckpoint] = useState(0);
+  const animationRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+
+  const checkpoints = [
+    { id: 0, label: "Pickup", time: "8:00 AM", status: "complete" },
+    { id: 1, label: "En Route", time: "10:30 AM", status: "active" },
+    { id: 2, label: "Rest Stop", time: "1:00 PM", status: "pending" },
+    { id: 3, label: "Delivery", time: "4:30 PM", status: "pending" },
+  ];
+
+  const DEMO_DURATION = 8000; // 8 seconds for full demo
+
+  const animate = useCallback((timestamp: number) => {
+    if (!startTimeRef.current) startTimeRef.current = timestamp;
+    const elapsed = timestamp - startTimeRef.current;
+    const newProgress = Math.min((elapsed / DEMO_DURATION) * 100, 100);
+    
+    setProgress(newProgress);
+    
+    // Update checkpoint based on progress
+    if (newProgress < 20) setActiveCheckpoint(0);
+    else if (newProgress < 50) setActiveCheckpoint(1);
+    else if (newProgress < 80) setActiveCheckpoint(2);
+    else setActiveCheckpoint(3);
+
+    if (newProgress < 100) {
+      animationRef.current = requestAnimationFrame(animate);
+    } else {
+      // Reset after completion
+      setTimeout(() => {
+        setProgress(0);
+        setActiveCheckpoint(0);
+        startTimeRef.current = null;
+        if (isPlaying) {
+          animationRef.current = requestAnimationFrame(animate);
+        }
+      }, 1500);
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      startTimeRef.current = null;
+      animationRef.current = requestAnimationFrame(animate);
+    } else {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    }
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isPlaying, animate]);
+
+  const togglePlay = () => {
+    if (!isPlaying) {
+      setProgress(0);
+      setActiveCheckpoint(0);
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  return (
+    <div className={`tru-tracking-demo-card ${isPlaying ? 'is-active' : ''}`}>
+      <div className="tru-tracking-demo-glow" />
+      <div className="tru-tracking-demo-inner">
+        {/* Header */}
+        <div className="tru-tracking-demo-header">
+          <div className="tru-tracking-demo-badge-row">
+            <span className="tru-tracking-demo-badge">
+              <span className={`tru-tracking-live-dot ${isPlaying ? 'is-live' : ''}`} />
+              {isPlaying ? 'LIVE' : 'PREVIEW'}
+            </span>
+            <span className="tru-tracking-eta-badge">ETA: 4:30 PM</span>
+          </div>
+          <h3 className="tru-tracking-demo-title">Live Truck Tracking</h3>
+        </div>
+
+        {/* Mini Route Map Visualization */}
+        <div className="tru-tracking-demo-map">
+          <div className="tru-tracking-demo-route">
+            {/* Route line with progress */}
+            <div className="tru-tracking-demo-route-bg" />
+            <div 
+              className="tru-tracking-demo-route-progress" 
+              style={{ width: `${progress}%` }}
+            />
+            
+            {/* Checkpoint markers */}
+            {checkpoints.map((cp, idx) => (
+              <div
+                key={cp.id}
+                className={`tru-tracking-demo-checkpoint ${
+                  idx <= activeCheckpoint ? 'is-passed' : ''
+                } ${idx === activeCheckpoint ? 'is-current' : ''}`}
+                style={{ left: `${(idx / (checkpoints.length - 1)) * 100}%` }}
+              >
+                <div className="tru-tracking-demo-checkpoint-dot" />
+                <span className="tru-tracking-demo-checkpoint-label">{cp.label}</span>
+              </div>
+            ))}
+
+            {/* Animated truck */}
+            <div 
+              className="tru-tracking-demo-truck"
+              style={{ left: `${progress}%` }}
+            >
+              <Truck className="w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Origin and Destination labels */}
+          <div className="tru-tracking-demo-endpoints">
+            <div className="tru-tracking-demo-endpoint origin">
+              <MapPinned className="w-3.5 h-3.5" />
+              <span>Austin, TX</span>
+            </div>
+            <div className="tru-tracking-demo-endpoint dest">
+              <MapPin className="w-3.5 h-3.5" />
+              <span>Denver, CO</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Status Timeline */}
+        <div className="tru-tracking-demo-timeline">
+          {checkpoints.map((cp, idx) => (
+            <div
+              key={cp.id}
+              className={`tru-tracking-demo-timeline-item ${
+                idx < activeCheckpoint ? 'is-complete' : ''
+              } ${idx === activeCheckpoint ? 'is-active' : ''}`}
+            >
+              <div className="tru-tracking-demo-timeline-icon">
+                {idx < activeCheckpoint ? (
+                  <CheckCircle className="w-3.5 h-3.5" />
+                ) : (
+                  <Clock className="w-3.5 h-3.5" />
+                )}
+              </div>
+              <div className="tru-tracking-demo-timeline-content">
+                <span className="tru-tracking-demo-timeline-label">{cp.label}</span>
+                <span className="tru-tracking-demo-timeline-time">{cp.time}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Play Button */}
+        <button 
+          onClick={togglePlay}
+          className="tru-tracking-demo-play-btn"
+        >
+          {isPlaying ? (
+            <>
+              <Pause className="w-4 h-4" />
+              <span>Pause Demo</span>
+            </>
+          ) : (
+            <>
+              <Play className="w-4 h-4" />
+              <span>Watch Demo</span>
+            </>
+          )}
+        </button>
+
+        {/* Footer */}
+        <div className="tru-tracking-demo-footer">
+          <span>Real-time GPS tracking for every shipment</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ZIP lookup
 const ZIP_LOOKUP: Record<string, string> = {
@@ -1318,29 +1501,8 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* CARD 2: Live Truck Tracking Placeholder */}
-              <div className="tru-tracking-placeholder-card">
-                <div className="tru-tracking-placeholder-inner">
-                  <span className="tru-tracking-coming-badge">Coming Soon</span>
-                  <h3 className="tru-tracking-placeholder-title">Live Truck Tracking</h3>
-                  <p className="tru-tracking-placeholder-desc">
-                    Track your truck in real time from pickup to delivery. View location, 
-                    status updates, and arrival windows directly in your dashboard.
-                  </p>
-                  {/* Status Chips */}
-                  <div className="tru-tracking-status-chips">
-                    <span className="tru-tracking-chip">En Route</span>
-                    <span className="tru-tracking-chip">At Pickup</span>
-                    <span className="tru-tracking-chip">In Transit</span>
-                    <span className="tru-tracking-chip">Arriving</span>
-                  </div>
-                  {/* Simple Route Illustration */}
-                  <div className="tru-tracking-route-illustration">
-                    <div className="tru-tracking-route-line" />
-                    <Truck className="w-5 h-5 tru-tracking-truck-icon" />
-                  </div>
-                </div>
-              </div>
+              {/* CARD 2: Live Truck Tracking - Interactive Demo */}
+              <TrackingDemoCard />
             </div>
           </section>
         </div> {/* End tru-hero-wrapper */}
