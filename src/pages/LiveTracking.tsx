@@ -656,17 +656,20 @@ export default function LiveTracking() {
             </Button>
           )}
           
-          {/* Follow Mode Toggle - Header version */}
+          {/* Follow Mode Toggle - Header version with distinct active/inactive states */}
           {routeData && (
             <Button
               variant="ghost"
               onClick={() => setFollowMode(!followMode)}
               className={cn(
                 "tracking-header-satellite-btn",
-                followMode && "bg-white/20"
+                followMode ? "tracking-follow-active" : "tracking-follow-inactive"
               )}
             >
-              <Navigation2 className={cn("w-4 h-4", followMode && "animate-pulse")} />
+              <Navigation2 className={cn(
+                "w-4 h-4 transition-all",
+                followMode && "text-primary animate-pulse"
+              )} />
               <span className="hidden sm:inline">
                 {followMode ? "Following" : "Follow"}
               </span>
