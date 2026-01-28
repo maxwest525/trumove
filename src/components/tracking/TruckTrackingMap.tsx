@@ -526,7 +526,7 @@ export function TruckTrackingMap({
         className={cn(
           "absolute top-4 right-16 z-20 flex items-center gap-2 px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300",
           internalFollowMode
-            ? "bg-primary/90 border-primary text-primary-foreground shadow-lg shadow-primary/30"
+            ? "bg-black/60 border-primary text-primary shadow-lg shadow-primary/30"
             : "bg-black/60 border-white/20 text-white/80 hover:bg-black/80"
         )}
       >

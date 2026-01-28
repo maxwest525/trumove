@@ -37,6 +37,7 @@ export function TruckAerialView({
   const [aerialData, setAerialData] = useState<AerialViewData | null>(null);
   const [hasAerialVideo, setHasAerialVideo] = useState(false);
   const [imageTransition, setImageTransition] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
 
   // Track last fetched coordinates to prevent duplicate calls
   const lastFetchedCoords = useRef<string | null>(null);
@@ -343,6 +344,16 @@ export function TruckAerialView({
               setViewMode("aerial");
             }}
           />
+        ) : imageFailed ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900">
+            <div className="text-center">
+              <MapPin className="w-8 h-8 text-primary/40 mx-auto mb-2" />
+              <span className="text-xs text-white/60">{locationName || 'Location preview'}</span>
+              <span className="block text-[9px] text-white/40 mt-1 font-mono">
+                {currentPosition ? `${currentPosition[1].toFixed(3)}°, ${currentPosition[0].toFixed(3)}°` : ''}
+              </span>
+            </div>
+          </div>
         ) : imageUrl ? (
           <img
             src={imageUrl}
@@ -352,12 +363,17 @@ export function TruckAerialView({
               isLoading ? "opacity-0 scale-105" : "opacity-100 scale-100",
               imageTransition && "opacity-50"
             )}
-            onLoad={() => setIsLoading(false)}
+            onLoad={() => {
+              setIsLoading(false);
+              setImageFailed(false);
+            }}
             onError={() => {
               setIsLoading(false);
               if (viewMode === "street") {
                 setHasStreetViewError(true);
                 setViewMode("aerial");
+              } else {
+                setImageFailed(true);
               }
             }}
           />
