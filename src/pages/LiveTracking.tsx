@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, AlertTriangle, ChevronDown, Map, Layers, Globe } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { Google3DTrackingView } from "@/components/tracking/Google3DTrackingView";
 import { Google2DTrackingMap } from "@/components/tracking/Google2DTrackingMap";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
 import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
@@ -494,6 +495,30 @@ export default function LiveTracking() {
             >
               Go
             </Button>
+            
+            {/* Demo Button */}
+            <Button
+              variant="ghost"
+              onClick={async () => {
+                await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
+                await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
+                setMoveDate(new Date());
+                setShow3DView(false);
+                setFollowMode(true);
+                setCurrentBookingNumber('12345');
+                // Auto-start tracking after a brief delay
+                setTimeout(() => {
+                  if (canTrack) startTracking();
+                }, 1500);
+                toast.success('🚚 Demo mode started!', {
+                  description: 'Jacksonville → Miami Beach • Full feature demo'
+                });
+              }}
+              className="tracking-header-demo-btn"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="hidden sm:inline">Demo</span>
+            </Button>
           </div>
           
           {/* Map View Dropdown */}
@@ -558,6 +583,23 @@ export default function LiveTracking() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          
+          {/* Follow Mode Toggle - Header version */}
+          {routeData && (
+            <Button
+              variant="ghost"
+              onClick={() => setFollowMode(!followMode)}
+              className={cn(
+                "tracking-header-satellite-btn",
+                followMode && "bg-white/20"
+              )}
+            >
+              <Navigation2 className={cn("w-4 h-4", followMode && "animate-pulse")} />
+              <span className="hidden sm:inline">
+                {followMode ? "Following" : "Follow"}
+              </span>
+            </Button>
+          )}
           
           <Button
             variant="ghost"
@@ -760,64 +802,132 @@ export default function LiveTracking() {
           )}
         </div>
 
-        {/* Right: Dashboard */}
-        <div className="tracking-dashboard">
-          {/* Multi-Stop Summary Card - Show when multi-stop data present */}
-          {multiStopData && (
-            <MultiStopSummaryCard
-              stops={multiStopData.stops}
-              currentStopIndex={multiStopData.currentStopIndex}
-              totalDistance={multiStopData.totalDistance}
-              remainingDuration={formatDuration(multiStopData.estimatedDuration * (1 - multiStopData.progress / 100))}
-            />
+        {/* Right: Dashboard - Collapsible until route is active */}
+        <div className={cn(
+          "tracking-dashboard transition-all duration-300",
+          !routeData && "tracking-dashboard-collapsed"
+        )}>
+          {!routeData ? (
+            /* Collapsed State - Before route is entered */
+            <div className="tracking-sidebar-collapsed">
+              <ChevronLeft className="w-5 h-5 text-foreground/40" />
+              <span className="text-[10px] font-bold tracking-wider uppercase text-foreground/40 [writing-mode:vertical-lr] rotate-180">
+                Stats
+              </span>
+            </div>
+          ) : (
+            /* Expanded State - Route is active */
+            <>
+              {/* Multi-Stop Summary Card - Show when multi-stop data present */}
+              {multiStopData && (
+                <MultiStopSummaryCard
+                  stops={multiStopData.stops}
+                  currentStopIndex={multiStopData.currentStopIndex}
+                  totalDistance={multiStopData.totalDistance}
+                  remainingDuration={formatDuration(multiStopData.estimatedDuration * (1 - multiStopData.progress / 100))}
+                />
+              )}
+
+              {/* Unified Stats Card - Shows live data */}
+              <UnifiedStatsCard
+                progress={progress}
+                distanceTraveled={distanceTraveled}
+                totalDistance={totalDistance}
+                timeRemaining={formatDuration(remainingDuration)}
+                adjustedETA={adjustedETA}
+                adjustedDuration={adjustedDuration}
+                remainingDistance={remainingDistance}
+                trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
+                trafficDelay={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
+                trafficTrend={trafficTrend}
+                tollInfo={googleRouteData.tollInfo}
+                isFuelEfficient={googleRouteData.isFuelEfficient}
+                fuelCostEstimate={getQuickFuelEstimate(totalDistance)}
+                lastUpdate={lastUpdate}
+                isLoading={etaLoading}
+                onRefresh={refreshNow}
+                isEmpty={false}
+              />
+
+              {/* Route Info - Collapsible Sections */}
+              <div className="tracking-info-card space-y-2">
+                {/* Alternate Routes - Collapsible */}
+                {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
+                  <Collapsible defaultOpen={false}>
+                    <CollapsibleTrigger className="w-full flex items-center justify-between py-2 text-sm hover:text-foreground transition-colors group">
+                      <div className="flex items-center gap-2">
+                        <Route className="w-4 h-4 text-primary" />
+                        <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/60">
+                          Alternate Routes ({googleRouteData.alternateRoutes.length})
+                        </span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-2 pt-2">
+                      {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
+                        <div
+                          key={i}
+                          className="p-3 rounded-lg bg-muted/50 border border-border"
+                        >
+                          <div className="text-sm font-semibold text-foreground mb-1">
+                            {alt.description || `Via alternate ${i + 1}`}
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-foreground/70">
+                            <span>{alt.distanceMiles} mi</span>
+                            <span>•</span>
+                            <span>{alt.durationFormatted}</span>
+                            {alt.isTollFree && (
+                              <>
+                                <span>•</span>
+                                <span className="text-emerald-500 font-medium">No tolls</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </CollapsibleContent>
+                  </Collapsible>
+                )}
+
+                {/* Weigh Stations - Collapsible */}
+                <Collapsible defaultOpen={false}>
+                  <CollapsibleTrigger className="w-full flex items-center justify-between py-2 text-sm hover:text-foreground transition-colors group border-t border-border pt-3">
+                    <div className="flex items-center gap-2">
+                      <Scale className="w-4 h-4 text-amber-400" />
+                      <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/60">
+                        Weigh Stations
+                      </span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-2">
+                    <WeighStationChecklist
+                      routeCoordinates={routeCoordinates}
+                      progress={progress}
+                      isTracking={isTracking}
+                    />
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+
+              {/* Live Truck Aerial View */}
+              <TruckAerialView
+                routeCoordinates={routeCoordinates}
+                progress={progress}
+                isTracking={isTracking}
+                originCoords={originCoords}
+                googleApiKey={GOOGLE_MAPS_API_KEY}
+              />
+
+              {/* Route Weather - Sidebar Card */}
+              <RouteWeather
+                originCoords={originCoords}
+                destCoords={destCoords}
+                originName={originName}
+                destName={destName}
+              />
+            </>
           )}
-
-          {/* Unified Stats Card - Always visible, shows empty state before route */}
-          <UnifiedStatsCard
-            progress={routeData ? progress : 0}
-            distanceTraveled={routeData ? distanceTraveled : 0}
-            totalDistance={routeData ? totalDistance : 0}
-            timeRemaining={routeData ? formatDuration(remainingDuration) : '--'}
-            adjustedETA={routeData ? adjustedETA : null}
-            adjustedDuration={routeData ? adjustedDuration : null}
-            remainingDistance={routeData ? remainingDistance : 0}
-            trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
-            trafficDelay={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
-            trafficTrend={trafficTrend}
-            tollInfo={googleRouteData.tollInfo}
-            isFuelEfficient={googleRouteData.isFuelEfficient}
-            fuelCostEstimate={routeData ? getQuickFuelEstimate(totalDistance) : null}
-            alternateRoutes={googleRouteData.alternateRoutes}
-            lastUpdate={lastUpdate}
-            isLoading={etaLoading}
-            onRefresh={refreshNow}
-            isEmpty={!routeData}
-          />
-
-          {/* Live Truck Aerial View - Shows origin before tracking, then live updates */}
-          <TruckAerialView
-            routeCoordinates={routeCoordinates}
-            progress={progress}
-            isTracking={isTracking}
-            originCoords={originCoords}
-            googleApiKey={GOOGLE_MAPS_API_KEY}
-          />
-
-          {/* Weigh Station Checklist */}
-          <WeighStationChecklist
-            routeCoordinates={routeCoordinates}
-            progress={progress}
-            isTracking={isTracking}
-          />
-
-          {/* Route Weather - Sidebar Card */}
-          <RouteWeather
-            originCoords={originCoords}
-            destCoords={destCoords}
-            originName={originName}
-            destName={destName}
-          />
-
         </div>
       </div>
       
