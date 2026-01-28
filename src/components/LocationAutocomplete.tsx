@@ -104,8 +104,9 @@ async function withRetry<T>(
 }
 
 // Google Places Autocomplete API - PRIMARY source for address suggestions
+// Uses retry logic to handle transient 503 boot errors gracefully
 async function searchGooglePlaces(query: string): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> {
-  try {
+  const makeRequest = async (): Promise<{ suggestions: LocationSuggestion[]; failed: boolean }> => {
     const { data, error } = await supabase.functions.invoke('google-places-autocomplete', {
       body: { 
         query,
@@ -114,13 +115,22 @@ async function searchGooglePlaces(query: string): Promise<{ suggestions: Locatio
       }
     });
 
+    // Throw on transient errors (503, etc.) to trigger retry
     if (error) {
+      const errorMessage = error.message || String(error);
+      if (errorMessage.includes('503') || errorMessage.includes('BOOT_ERROR')) {
+        throw new Error(`Transient error: ${errorMessage}`);
+      }
       console.error('Google Places error:', error);
       return { suggestions: [], failed: true };
     }
 
     // Check if we should fallback
     if (data?.fallback || data?.error) {
+      // If it's a transient error, throw to retry
+      if (data?.code === 'BOOT_ERROR' || data?.code === 'EXCEPTION') {
+        throw new Error(`Transient API error: ${data.code}`);
+      }
       console.log('Google Places unavailable, will fallback to Mapbox');
       return { suggestions: [], failed: true };
     }
@@ -142,10 +152,17 @@ async function searchGooglePlaces(query: string): Promise<{ suggestions: Locatio
     }));
 
     return { suggestions, failed: false };
-  } catch (err) {
-    console.error('Google Places exception:', err);
+  };
+
+  // Use retry logic for transient 503/boot errors
+  const { result, failed } = await withRetry(makeRequest, MAX_RETRIES, RETRY_DELAY);
+  
+  if (failed || !result) {
+    console.log('Google Places failed after retries, falling back to Mapbox');
     return { suggestions: [], failed: true };
   }
+  
+  return result;
 }
 
 // Mapbox Address Autofill API - FALLBACK source for address suggestions
