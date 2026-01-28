@@ -99,6 +99,7 @@ export default function LiveTracking() {
   const [isTracking, setIsTracking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(60); // seconds for full journey
+  const [isDemoMode, setIsDemoMode] = useState(false); // Demo mode uses fast playback, regular mode is real-time
   const [moveDate, setMoveDate] = useState<Date>(new Date()); // Auto-populate with today
   const [departureTime] = useState(new Date());
   
@@ -319,6 +320,20 @@ export default function LiveTracking() {
     fetchGoogleRoutes();
   }, [originCoords, destCoords]);
 
+  // Set animation speed based on demo mode vs real-time
+  useEffect(() => {
+    if (routeData) {
+      if (isDemoMode) {
+        // Demo mode: Fast 60-second playback
+        setAnimationSpeed(60);
+      } else {
+        // Real-time mode: Animation matches actual route duration
+        // Route duration is in seconds, so truck moves at real-world speed
+        setAnimationSpeed(routeData.duration);
+      }
+    }
+  }, [routeData, isDemoMode]);
+
   // Animation loop
   useEffect(() => {
     if (!isTracking || isPaused || !routeData) return;
@@ -496,9 +511,10 @@ export default function LiveTracking() {
               Go
             </Button>
             
-            {/* Demo Button */}
+            {/* Demo Button - Smaller, subtle outline style */}
             <Button
               variant="ghost"
+              size="sm"
               onClick={async () => {
                 await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                 await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
@@ -506,6 +522,8 @@ export default function LiveTracking() {
                 setShow3DView(false);
                 setFollowMode(true);
                 setCurrentBookingNumber('12345');
+                setIsDemoMode(true); // Enable demo mode for fast playback
+                setAnimationSpeed(60); // Fast 60-second journey for demo
                 // Auto-start tracking after a brief delay
                 setTimeout(() => {
                   if (canTrack) startTracking();
@@ -516,8 +534,8 @@ export default function LiveTracking() {
               }}
               className="tracking-header-demo-btn"
             >
-              <Sparkles className="w-4 h-4" />
-              <span className="hidden sm:inline">Demo</span>
+              <Sparkles className="w-3 h-3" />
+              <span className="hidden sm:inline text-[11px]">Demo</span>
             </Button>
           </div>
           
@@ -607,7 +625,7 @@ export default function LiveTracking() {
             className="tracking-header-satellite-btn"
           >
             <Eye className="w-4 h-4" />
-            <span className="hidden sm:inline">Locate via Satellite</span>
+            <span className="hidden sm:inline">Pause to View Live Truck</span>
           </Button>
         </div>
 
@@ -849,7 +867,24 @@ export default function LiveTracking() {
                 isEmpty={false}
               />
 
-              {/* Route Info - Collapsible Sections */}
+              {/* Live Truck Aerial View */}
+              <TruckAerialView
+                routeCoordinates={routeCoordinates}
+                progress={progress}
+                isTracking={isTracking}
+                originCoords={originCoords}
+                googleApiKey={GOOGLE_MAPS_API_KEY}
+              />
+
+              {/* Route Weather - Sidebar Card */}
+              <RouteWeather
+                originCoords={originCoords}
+                destCoords={destCoords}
+                originName={originName}
+                destName={destName}
+              />
+
+              {/* Route Info - Collapsible Sections (Bottom of sidebar) */}
               <div className="tracking-info-card space-y-2">
                 {/* Alternate Routes - Collapsible */}
                 {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
@@ -909,23 +944,6 @@ export default function LiveTracking() {
                   </CollapsibleContent>
                 </Collapsible>
               </div>
-
-              {/* Live Truck Aerial View */}
-              <TruckAerialView
-                routeCoordinates={routeCoordinates}
-                progress={progress}
-                isTracking={isTracking}
-                originCoords={originCoords}
-                googleApiKey={GOOGLE_MAPS_API_KEY}
-              />
-
-              {/* Route Weather - Sidebar Card */}
-              <RouteWeather
-                originCoords={originCoords}
-                destCoords={destCoords}
-                originName={originName}
-                destName={destName}
-              />
             </>
           )}
         </div>
@@ -936,6 +954,8 @@ export default function LiveTracking() {
         open={showCheckMyTruck}
         onOpenChange={setShowCheckMyTruck}
         defaultBookingNumber={currentBookingNumber}
+        liveProgress={isTracking ? progress : undefined}
+        liveRouteCoordinates={isTracking ? routeCoordinates : undefined}
         onLoadRoute={(truck) => {
           // Handle based on truck type
           if (isSingleStop(truck)) {
@@ -944,6 +964,7 @@ export default function LiveTracking() {
             handleDestSelect(truck.destName, '', truck.destName);
             setMoveDate(new Date());
             setMultiStopData(null);
+            setIsDemoMode(false); // Non-demo mode uses realistic speed
             toast.success(`📦 Booking #${truck.bookingId} loaded!`, {
               description: `${truck.originName} → ${truck.destName}`,
             });
@@ -962,6 +983,7 @@ export default function LiveTracking() {
             handleDestSelect(lastDropoff.address.split(',')[0], '', lastDropoff.address);
           }
           setMoveDate(new Date());
+          setIsDemoMode(false); // Non-demo mode uses realistic speed
           toast.success(`📦 Multi-Stop Booking #${truck.bookingId} loaded!`, {
             description: `${truck.stops.length} stops • ${truck.totalDistance} miles`,
           });

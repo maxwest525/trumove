@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
-import { Truck, MapPin, Navigation, Clock, Route, Video, Globe, Loader2, Search, Check, Circle } from "lucide-react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { Truck, MapPin, Navigation, Clock, Route, Video, Globe, Loader2, Search, Check, Circle, Map, Layers, Pause, Play } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { getCachedAerialView, setCachedAerialView } from "@/lib/aerialViewCache";
@@ -100,18 +101,56 @@ interface CheckMyTruckModalProps {
   onLoadRoute?: (truck: TruckStatus) => void;
   onLoadMultiStop?: (truck: MultiStopTruckStatus) => void;
   defaultBookingNumber?: string;
+  // Live tracking data from parent
+  liveProgress?: number;
+  liveRouteCoordinates?: [number, number][];
 }
 
-export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute, onLoadMultiStop, defaultBookingNumber }: CheckMyTruckModalProps) {
+// Google API key
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
+
+export function CheckMyTruckModal({ 
+  open, 
+  onOpenChange, 
+  onLoadRoute, 
+  onLoadMultiStop, 
+  defaultBookingNumber,
+  liveProgress,
+  liveRouteCoordinates
+}: CheckMyTruckModalProps) {
   const [bookingNumber, setBookingNumber] = useState("");
   const [truckStatus, setTruckStatus] = useState<TruckStatus | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [aerialData, setAerialData] = useState<AerialViewData | null>(null);
   const [isLoadingAerial, setIsLoadingAerial] = useState(false);
+  
+  // View mode: 'street' (default) or 'hybrid'
+  const [viewMode, setViewMode] = useState<'street' | 'hybrid'>('street');
 
   // Mapbox token for satellite fallback
   const mapboxToken = "pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g";
+  
+  // Calculate live truck position from parent's route coordinates and progress
+  const livePosition = useMemo(() => {
+    if (!liveRouteCoordinates?.length || liveProgress === undefined) return null;
+    
+    const totalPoints = liveRouteCoordinates.length;
+    const exactIndex = (liveProgress / 100) * (totalPoints - 1);
+    const lowerIndex = Math.floor(exactIndex);
+    const upperIndex = Math.min(lowerIndex + 1, totalPoints - 1);
+    const fraction = exactIndex - lowerIndex;
+    
+    const lowerPoint = liveRouteCoordinates[lowerIndex];
+    const upperPoint = liveRouteCoordinates[upperIndex];
+    
+    if (!lowerPoint || !upperPoint) return null;
+    
+    const lng = lowerPoint[0] + (upperPoint[0] - lowerPoint[0]) * fraction;
+    const lat = lowerPoint[1] + (upperPoint[1] - lowerPoint[1]) * fraction;
+    
+    return [lng, lat] as [number, number];
+  }, [liveProgress, liveRouteCoordinates]);
 
   // Get current coordinates based on truck type
   const getCurrentCoords = (truck: TruckStatus): [number, number] => {
@@ -199,10 +238,18 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute, onLoadMulti
     }
   }, [open, defaultBookingNumber]);
 
-  // Get satellite fallback URL
-  const getSatelliteUrl = (coords: [number, number]) => {
-    return `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${coords[0]},${coords[1]},14,0/400x250@2x?access_token=${mapboxToken}`;
+  // Get satellite/hybrid fallback URL (using Google Maps Static API)
+  const getHybridUrl = (coords: [number, number]) => {
+    return `https://maps.googleapis.com/maps/api/staticmap?center=${coords[1]},${coords[0]}&zoom=14&size=400x250&scale=2&maptype=hybrid&key=${GOOGLE_MAPS_API_KEY}`;
   };
+  
+  // Get Street View URL
+  const getStreetViewUrl = (coords: [number, number]) => {
+    return `https://maps.googleapis.com/maps/api/streetview?size=400x250&location=${coords[1]},${coords[0]}&fov=90&heading=90&pitch=0&key=${GOOGLE_MAPS_API_KEY}`;
+  };
+  
+  // Determine which coordinates to use - prefer live position if available
+  const displayCoords = livePosition || (truckStatus ? getCurrentCoords(truckStatus) : null);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -258,7 +305,26 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute, onLoadMulti
           {/* Truck Status */}
           {truckStatus && (
             <div className="space-y-4">
-              {/* Aerial/Satellite View - Enhanced */}
+              {/* View Toggle - Street View / Hybrid */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Map className="w-4 h-4 text-white/50" />
+                  <span className="text-xs text-white/70">Street View</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={viewMode === 'hybrid'}
+                    onCheckedChange={(checked) => setViewMode(checked ? 'hybrid' : 'street')}
+                    className="data-[state=checked]:bg-primary"
+                  />
+                  <div className="flex items-center gap-1">
+                    <Layers className="w-4 h-4 text-white/50" />
+                    <span className="text-xs text-white/70">Hybrid</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Street View / Hybrid View - Enhanced */}
               <div className="relative w-full h-[200px] rounded-xl overflow-hidden bg-background border border-border">
                 {isLoadingAerial && (
                   <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
@@ -266,51 +332,55 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute, onLoadMulti
                   </div>
                 )}
 
-                {/* Video or Satellite Image */}
-                {aerialData?.type === 'video' && aerialData.videoUrl ? (
-                  <video
-                    src={aerialData.videoUrl}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                  />
-                ) : (
+                {/* Street View (default) or Hybrid View */}
+                {displayCoords && (
                   <img
-                    src={getSatelliteUrl(getCurrentCoords(truckStatus))}
+                    src={viewMode === 'street' 
+                      ? getStreetViewUrl(displayCoords)
+                      : getHybridUrl(displayCoords)
+                    }
                     alt="Truck location"
                     className="w-full h-full object-cover"
                   />
                 )}
 
-                {/* Truck marker overlay */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="relative">
-                    <div className="absolute inset-0 -m-3 rounded-full bg-primary/30 animate-ping" />
-                    <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white">
-                      <Truck className="w-6 h-6 text-primary-foreground" />
+                {/* Truck marker overlay (only in hybrid mode) */}
+                {viewMode === 'hybrid' && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="relative">
+                      <div className="absolute inset-0 -m-3 rounded-full bg-primary/30 animate-ping" />
+                      <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white">
+                        <Truck className="w-6 h-6 text-primary-foreground" />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* View type badge */}
                 <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1.5">
-                  {aerialData?.type === 'video' ? (
+                  {viewMode === 'street' ? (
                     <>
-                      <Video className="w-3 h-3 text-primary" />
-                      <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">Flyover</span>
+                      <Map className="w-3 h-3 text-primary" />
+                      <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">Street View</span>
                     </>
                   ) : (
                     <>
-                      <Globe className="w-3 h-3 text-primary" />
-                      <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">Satellite</span>
+                      <Layers className="w-3 h-3 text-primary" />
+                      <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">Hybrid</span>
                     </>
                   )}
                 </div>
+                
+                {/* Live indicator when tracking */}
+                {liveProgress !== undefined && liveProgress > 0 && liveProgress < 100 && (
+                  <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-red-500/80 flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                    <span className="text-[9px] font-bold text-white tracking-wider">LIVE</span>
+                  </div>
+                )}
 
                 {/* Multi-stop badge */}
-                {isMultiStop(truckStatus) && (
+                {isMultiStop(truckStatus) && !liveProgress && (
                   <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-primary/80 flex items-center gap-1.5">
                     <Route className="w-3 h-3 text-primary-foreground" />
                     <span className="text-[10px] font-bold text-primary-foreground tracking-wider">MULTI-STOP</span>
