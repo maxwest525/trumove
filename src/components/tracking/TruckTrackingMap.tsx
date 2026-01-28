@@ -2,10 +2,11 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
-import { Loader2 } from "lucide-react";
+import { Loader2, Navigation, Box } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
 import { findWeighStationsOnRoute, type WeighStation } from "@/data/weighStations";
+import { cn } from "@/lib/utils";
 
 interface RouteData {
   coordinates: [number, number][];
@@ -28,6 +29,8 @@ interface TruckTrackingMapProps {
   progress: number;
   isTracking: boolean;
   onRouteCalculated?: (route: RouteData) => void;
+  followMode?: boolean;
+  onFollowModeChange?: (enabled: boolean) => void;
 }
 
 // Map congestion string to numeric value for styling
@@ -46,7 +49,9 @@ export function TruckTrackingMap({
   destCoords,
   progress,
   isTracking,
-  onRouteCalculated
+  onRouteCalculated,
+  followMode = false,
+  onFollowModeChange
 }: TruckTrackingMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -60,6 +65,21 @@ export function TruckTrackingMap({
   const [currentTruckPosition, setCurrentTruckPosition] = useState<[number, number] | null>(null);
   const [currentLocationName, setCurrentLocationName] = useState<string>("");
   const [routeWaypoints, setRouteWaypoints] = useState<{ station: WeighStation; routeIndex: number }[]>([]);
+  const [internalFollowMode, setInternalFollowMode] = useState(followMode);
+  const [currentBearing, setCurrentBearing] = useState(0);
+  const userInteractingRef = useRef(false);
+
+  // Sync internal follow mode with prop
+  useEffect(() => {
+    setInternalFollowMode(followMode);
+  }, [followMode]);
+
+  // Toggle follow mode
+  const toggleFollowMode = useCallback(() => {
+    const newMode = !internalFollowMode;
+    setInternalFollowMode(newMode);
+    onFollowModeChange?.(newMode);
+  }, [internalFollowMode, onFollowModeChange]);
 
   // Calculate bearing between two points
   const calculateBearing = useCallback((start: [number, number], end: [number, number]) => {
@@ -126,6 +146,30 @@ export function TruckTrackingMap({
     });
 
     map.current.addControl(new mapboxgl.NavigationControl({ showCompass: true }), "top-right");
+
+    // Detect user interaction to disable follow mode
+    map.current.on('dragstart', () => {
+      userInteractingRef.current = true;
+      if (internalFollowMode) {
+        setInternalFollowMode(false);
+        onFollowModeChange?.(false);
+      }
+    });
+
+    map.current.on('zoomstart', () => {
+      // Assume any zoom during tracking might be user-initiated
+      if (isTracking && internalFollowMode) {
+        userInteractingRef.current = true;
+      }
+    });
+
+    map.current.on('dragend', () => {
+      setTimeout(() => { userInteractingRef.current = false; }, 500);
+    });
+
+    map.current.on('zoomend', () => {
+      setTimeout(() => { userInteractingRef.current = false; }, 500);
+    });
 
     map.current.on("load", () => {
       setIsLoaded(true);
@@ -220,7 +264,7 @@ export function TruckTrackingMap({
       truckMarker.current?.remove();
       map.current?.remove();
     };
-  }, []);
+  }, [onFollowModeChange]);
 
   // Add route and markers when coordinates change
   useEffect(() => {
@@ -412,9 +456,23 @@ export function TruckTrackingMap({
     setCurrentLocationName(`${currentLat.toFixed(4)}°N, ${Math.abs(currentLng).toFixed(4)}°W`);
 
     // Calculate and set bearing using interpolated positions
+    let bearing = currentBearing;
     if (lowerIndex < totalPoints - 1) {
-      const bearing = calculateBearing(lowerPoint, upperPoint);
+      bearing = calculateBearing(lowerPoint, upperPoint);
       truckMarker.current.setRotation(bearing);
+      setCurrentBearing(bearing);
+    }
+
+    // Follow mode: Smooth camera transition to truck position
+    if (internalFollowMode && isTracking && !userInteractingRef.current) {
+      map.current.easeTo({
+        center: currentPos,
+        bearing: bearing,
+        zoom: 14,
+        pitch: 45, // Tilted view for 3D feel
+        duration: 500,
+        easing: (t) => t * (2 - t) // Ease out quad
+      });
     }
 
     // Update traveled portion - use the floor index for traveled path
@@ -430,7 +488,7 @@ export function TruckTrackingMap({
       geometry: { type: "LineString", coordinates: traveledCoords }
     });
 
-  }, [progress, isLoaded, calculateBearing]);
+  }, [progress, isLoaded, calculateBearing, internalFollowMode, isTracking, currentBearing]);
 
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/10">
@@ -462,13 +520,32 @@ export function TruckTrackingMap({
         </div>
       )}
 
+      {/* Follow Mode Toggle Button */}
+      <button
+        onClick={toggleFollowMode}
+        className={cn(
+          "absolute top-4 right-16 z-20 flex items-center gap-2 px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300",
+          internalFollowMode
+            ? "bg-primary/90 border-primary text-primary-foreground shadow-lg shadow-primary/30"
+            : "bg-black/60 border-white/20 text-white/80 hover:bg-black/80"
+        )}
+      >
+        <Navigation className={cn("w-4 h-4", internalFollowMode && "animate-pulse")} />
+        <span className="text-xs font-semibold uppercase tracking-wider">
+          {internalFollowMode ? "Following" : "Follow"}
+        </span>
+      </button>
+
       {/* Traffic Legend */}
       <TrafficLegend isVisible={isTracking} />
 
       {/* Progress overlay */}
       {isTracking && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-          <div className="px-6 py-3 bg-black/80 backdrop-blur-md border border-white/10 rounded-full">
+          <div className="px-6 py-3 bg-black/80 backdrop-blur-md border border-white/10 rounded-full flex items-center gap-3">
+            {internalFollowMode && (
+              <Navigation className="w-4 h-4 text-primary animate-pulse" />
+            )}
             <span className="text-sm font-semibold text-white">
               {Math.round(progress)}% Complete
             </span>

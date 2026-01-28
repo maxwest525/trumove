@@ -80,14 +80,14 @@ export function StreetViewPreview({
     ? `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${coordinates[1]},${coordinates[0]}&fov=90&heading=0&pitch=10&key=${googleApiKey}`
     : null;
 
-  // Mapbox satellite view
-  const satelliteUrl = coordinates
-    ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${coordinates[0]},${coordinates[1]},17,0/300x200@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`
+  // Google Static Maps satellite view (replacing Mapbox)
+  const satelliteUrl = coordinates && googleApiKey
+    ? `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates[1]},${coordinates[0]}&zoom=17&size=600x400&maptype=hybrid&key=${googleApiKey}`
     : null;
 
-  // Aerial view (high zoom satellite for bird's eye effect)
-  const aerialUrl = coordinates
-    ? `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${coordinates[0]},${coordinates[1]},19,0/300x200@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`
+  // Google Aerial view (high zoom satellite for bird's eye effect)
+  const aerialUrl = coordinates && googleApiKey
+    ? `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates[1]},${coordinates[0]}&zoom=19&size=600x400&maptype=satellite&key=${googleApiKey}`
     : null;
 
   const Icon = variant === "origin" ? Navigation : MapPin;
