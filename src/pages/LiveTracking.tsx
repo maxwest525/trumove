@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
+import { Google3DTrackingView } from "@/components/tracking/Google3DTrackingView";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { TruckAerialView } from "@/components/tracking/TruckAerialView";
@@ -109,6 +110,15 @@ export default function LiveTracking() {
   
   // Multi-stop tracking state
   const [multiStopData, setMultiStopData] = useState<MultiStopTruckStatus | null>(null);
+  
+  // Follow mode state
+  const [followMode, setFollowMode] = useState(false);
+  
+  // 3D view mode toggle
+  const [show3DView, setShow3DView] = useState(false);
+  
+  // Current truck bearing for 3D view
+  const [truckBearing, setTruckBearing] = useState(0);
   
   // Checkpoint notifications tracking
   const passedCheckpoints = useRef<Set<number>>(new Set());
@@ -296,6 +306,24 @@ export default function LiveTracking() {
   const remainingDuration = routeData ? routeData.duration * (1 - progress / 100) : 0;
   const etaTime = new Date(departureTime.getTime() + (routeData?.duration || 0) * 1000);
 
+  // Calculate current truck position for 3D view
+  const currentTruckPosition = (() => {
+    if (routeCoordinates.length < 2) return originCoords;
+    const totalPoints = routeCoordinates.length;
+    const exactIndex = (progress / 100) * (totalPoints - 1);
+    const lowerIndex = Math.floor(exactIndex);
+    const upperIndex = Math.min(lowerIndex + 1, totalPoints - 1);
+    const fraction = exactIndex - lowerIndex;
+    
+    const lowerPoint = routeCoordinates[lowerIndex];
+    const upperPoint = routeCoordinates[upperIndex];
+    
+    const lng = lowerPoint[0] + (upperPoint[0] - lowerPoint[0]) * fraction;
+    const lat = lowerPoint[1] + (upperPoint[1] - lowerPoint[1]) * fraction;
+    
+    return [lng, lat] as [number, number];
+  })();
+
   const canTrack = !!originCoords && !!destCoords && !!routeData;
 
   return (
@@ -352,6 +380,18 @@ export default function LiveTracking() {
               Go
             </Button>
           </div>
+          
+          <Button
+            variant="ghost"
+            onClick={() => setShow3DView(!show3DView)}
+            className={cn(
+              "tracking-header-satellite-btn",
+              show3DView && "bg-primary/20 border-primary"
+            )}
+          >
+            <Box className="w-4 h-4" />
+            <span className="hidden sm:inline">{show3DView ? "2D Map" : "3D View"}</span>
+          </Button>
           
           <Button
             variant="ghost"
@@ -505,15 +545,27 @@ export default function LiveTracking() {
 
         </div>
 
-        {/* Center: Map */}
+        {/* Center: Map - Toggle between 2D Mapbox and 3D Google */}
         <div className="tracking-map-container">
-          <TruckTrackingMap
-            originCoords={originCoords}
-            destCoords={destCoords}
-            progress={progress}
-            isTracking={isTracking}
-            onRouteCalculated={handleRouteCalculated}
-          />
+          {show3DView ? (
+            <Google3DTrackingView
+              coordinates={currentTruckPosition}
+              bearing={truckBearing}
+              isTracking={isTracking}
+              followMode={followMode}
+              googleApiKey={GOOGLE_MAPS_API_KEY}
+            />
+          ) : (
+            <TruckTrackingMap
+              originCoords={originCoords}
+              destCoords={destCoords}
+              progress={progress}
+              isTracking={isTracking}
+              onRouteCalculated={handleRouteCalculated}
+              followMode={followMode}
+              onFollowModeChange={setFollowMode}
+            />
+          )}
         </div>
 
         {/* Right: Dashboard */}
