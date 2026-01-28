@@ -5,6 +5,7 @@ import {
   Calculator, Calendar, Home, Shield, Bed, Bath, Square, CheckCircle2, Clock, Scan
 } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Mega-menu preview components
 const EstimatorPreview = () => (
@@ -323,6 +324,9 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
               <span>Call</span>
             </a>
             
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            
             {/* Spacer to push Agent Login to the right */}
             <div className="flex-1" />
             
@@ -385,6 +389,10 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
                 <User className="w-4 h-4" />
                 <span>Agent Login</span>
               </Link>
+              {/* Theme Toggle (Mobile) */}
+              <div className="flex justify-center pt-4 border-t border-border/40 mt-4">
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         )}
