@@ -940,36 +940,14 @@ export default function LocationAutocomplete({
           </p>
         )}
         
-        {/* Address correction suggestion - enhanced with dismiss button and animation */}
-        {correctionSuggestion && (
-          <div className="absolute top-full left-0 right-0 mt-1 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg text-sm z-[100] animate-in slide-in-from-top-2 duration-200 shadow-md">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1">
-                <span className="text-amber-700 dark:text-amber-400">Did you mean: </span>
-                <button 
-                  className="font-medium text-amber-900 dark:text-amber-200 underline hover:no-underline"
-                  onClick={() => acceptCorrection(correctionSuggestion)}
-                >
-                  {correctionSuggestion}
-                </button>
-              </div>
-              <button
-                onClick={dismissCorrection}
-                className="p-1 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 rounded transition-colors"
-                aria-label="Dismiss suggestion"
-              >
-                <X className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Address correction suggestion removed - was causing UI clutter */}
         
         {showDropdown && (suggestions.length > 0 || isLoading) && (
           <div 
             ref={dropdownRef}
             className={cn(
               "absolute left-0 z-[100] rounded-lg border border-border/60 bg-card shadow-lg overflow-hidden min-w-full w-max max-w-md max-h-[300px] overflow-y-auto",
-              correctionSuggestion ? "top-[calc(100%+60px)]" : showHelperText && mode === 'address' && !isValid ? "top-[calc(100%+28px)]" : "top-full mt-1"
+              showHelperText && mode === 'address' && !isValid ? "top-[calc(100%+28px)]" : "top-full mt-1"
             )}
           >
             {isLoading ? (
@@ -979,12 +957,7 @@ export default function LocationAutocomplete({
               </div>
             ) : (
               <>
-                {/* Hint for partial results in address mode */}
-                {mode === 'address' && suggestions.length > 0 && suggestions.every(s => !s.streetAddress || s.validationLevel === 'partial') && (
-                  <div className="px-4 py-2 bg-amber-50/50 dark:bg-amber-950/30 border-b border-amber-100 dark:border-amber-900 text-xs text-amber-700 dark:text-amber-400">
-                    💡 Type a street address for full verification
-                  </div>
-                )}
+                {/* Hint banner removed for cleaner UI */}
                 {suggestions.map((suggestion, idx) => (
                   <div
                     key={`${suggestion.mapboxId || suggestion.zip}-${idx}`}
@@ -1001,11 +974,7 @@ export default function LocationAutocomplete({
                     }}
                     onMouseEnter={() => setSelectedIndex(idx)}
                   >
-                    <MapPin className={cn(
-                      "w-4 h-4 flex-shrink-0 mt-0.5",
-                      suggestion.validationLevel === 'verified' ? "text-emerald-500" : 
-                      suggestion.validationLevel === 'partial' ? "text-amber-500" : "text-primary"
-                    )} />
+                    <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5 text-primary" />
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-foreground">
                         {suggestion.streetAddress
@@ -1013,23 +982,7 @@ export default function LocationAutocomplete({
                           : `${suggestion.display}${suggestion.zip && !suggestion.display.includes(suggestion.zip) ? ` ${suggestion.zip}` : ''}`
                         }
                       </span>
-                      {suggestion.streetAddress && mode === 'address' && (
-                        <span className={cn(
-                          "text-xs flex items-center gap-1 mt-0.5",
-                          suggestion.validationLevel === 'verified' ? "text-emerald-600" : "text-amber-600"
-                        )}>
-                          {suggestion.validationLevel === 'verified' ? (
-                            <><CheckCircle className="w-3 h-3" /> Verified address</>
-                          ) : (
-                            <><AlertCircle className="w-3 h-3" /> Partial match</>
-                          )}
-                        </span>
-                      )}
-                      {!suggestion.streetAddress && mode === 'address' && (
-                        <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-0.5">
-                          <AlertCircle className="w-3 h-3" /> City/ZIP only - add street for verification
-                        </span>
-                      )}
+                      {/* Verification badges removed for cleaner UI */}
                     </div>
                   </div>
                 ))}
