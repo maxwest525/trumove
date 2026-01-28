@@ -130,7 +130,7 @@ export function TruckTrackingMap({
     }
   }, [onRouteCalculated]);
 
-  // Initialize map with WebGL error handling
+  // Initialize map with simplified WebGL handling
   useEffect(() => {
     if (!mapContainer.current) return;
     
@@ -139,28 +139,17 @@ export function TruckTrackingMap({
       return;
     }
 
-    // Check WebGL support before initializing
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    if (!gl) {
-      console.error('WebGL not supported');
-      setMapError('WebGL is not supported in your browser. Please enable hardware acceleration or try a different browser.');
-      return;
-    }
-
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
     try {
+      // Simplified initialization - let Mapbox handle WebGL internally
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/dark-v11",
         center: [-98.5, 39.8],
         zoom: 4,
         pitch: 0,
-        interactive: true,
-        failIfMajorPerformanceCaveat: false, // Allow software rendering fallback
-        preserveDrawingBuffer: true,
-        antialias: false, // Reduce WebGL resource usage
+        interactive: true
       });
 
       map.current.addControl(new mapboxgl.NavigationControl({ showCompass: true }), "top-right");
