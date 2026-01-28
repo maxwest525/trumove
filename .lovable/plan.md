@@ -1,8 +1,8 @@
 
 
-## Plan: Tracking Dashboard UI Improvements
+## Plan: Tracking Dashboard UI & Functionality Improvements
 
-This plan addresses six key improvements to the shipment tracking dashboard:
+This plan addresses multiple user requests to refine the tracking dashboard's UI, button styling, playback speed, and feature behaviors.
 
 ---
 
@@ -10,12 +10,13 @@ This plan addresses six key improvements to the shipment tracking dashboard:
 
 | Change | Description |
 |--------|-------------|
-| **1. Move Alternate Routes** | Move from UnifiedStatsCard to be next to WeighStations, both collapsible |
-| **2. Real-Time Distance/Time** | Show remaining distance and time based on live ETA calculations |
-| **3. Collapse Right Sidebar** | Hide dashboard cards until a route is entered/started |
-| **4. Move Follow Button** | Relocate from map to header next to "Locate via Satellite" |
-| **5. Add Demo Button** | Visible button that loads a demo with all features active |
-| **6. Verify Satellite Auto-Population** | Ensure booking number pre-fills in satellite modal |
+| **1. Move Alternate Routes & Weigh Stations** | Move these collapsible sections to the very bottom of the right sidebar |
+| **2. Verify Satellite Auto-Population** | Confirm booking number pre-fills in "Locate via Satellite" modal |
+| **3. Locate via Satellite Modal Changes** | Default to Street View, add Hybrid switch, change button text |
+| **4. Add Route Animation to Satellite View** | Show truck moving in the satellite/street view modal |
+| **5. Real-Time Truck Speed** | Non-demo mode must move at realistic real-time speed based on ETA |
+| **6. Demo Button Styling** | Make smaller, remove green color, match other buttons |
+| **7. Main Map Default to Hybrid View** | Change default mapViewType to 'hybrid' |
 
 ---
 
@@ -23,273 +24,287 @@ This plan addresses six key improvements to the shipment tracking dashboard:
 
 | File | Action | Purpose |
 |------|--------|---------|
-| `src/pages/LiveTracking.tsx` | Modify | Add demo button, move follow button to header, collapse right sidebar |
-| `src/components/tracking/UnifiedStatsCard.tsx` | Modify | Remove Alternate Routes section (moved elsewhere) |
-| `src/components/tracking/RouteComparisonPanel.tsx` | Modify | Make collapsible by default |
-| `src/components/tracking/WeighStationChecklist.tsx` | Modify | Add collapsible behavior |
-| `src/components/tracking/Google2DTrackingMap.tsx` | Modify | Remove follow button from map |
+| `src/pages/LiveTracking.tsx` | Modify | Reorder sidebar, fix animation speed, smaller demo button |
+| `src/components/tracking/CheckMyTruckModal.tsx` | Modify | Add Street View default, view toggle, route animation |
+| `src/index.css` | Modify | Update demo button styling to be smaller and non-green |
 
 ---
 
-## 1. Move Alternate Routes Near Weigh Stations
+## 1. Move Alternate Routes & Weigh Stations to Bottom
 
-### Current State
-- Alternate Routes is inside `UnifiedStatsCard.tsx` as a collapsible section at the bottom
-- It's separated from route-related cards like Weigh Stations
+### Current Order in Right Sidebar:
+```text
+1. Multi-Stop Summary (conditional)
+2. Unified Stats Card
+3. Route Info Card (Alternate Routes + Weigh Stations)
+4. Live Truck Aerial View
+5. Route Weather
+```
 
-### Changes
-- Remove the Alternate Routes `Collapsible` from `UnifiedStatsCard.tsx`
-- Create a new `RouteInfoSection` in `LiveTracking.tsx` that groups:
-  - `RouteComparisonPanel` (alternate routes) - collapsed by default
-  - `WeighStationChecklist` - collapsed by default
-- Both sections will have a consistent collapsible header with chevron arrows
+### New Order:
+```text
+1. Multi-Stop Summary (conditional)
+2. Unified Stats Card
+3. Live Truck Aerial View
+4. Route Weather
+5. Route Info Card (Alternate Routes + Weigh Stations) ← Moved to bottom
+```
+
+### Changes in LiveTracking.tsx (lines 851-930):
+Move the Route Info card block (lines 852-911) to after the RouteWeather component.
+
+---
+
+## 2. Verify Satellite Auto-Population
+
+The code already passes `defaultBookingNumber={currentBookingNumber}` to the modal, and the modal has logic to pre-fill:
 
 ```typescript
-// New grouped section in right sidebar
-<div className="tracking-info-card">
-  <Collapsible>
-    <CollapsibleTrigger>Alternate Routes ({alternateRoutes.length})</CollapsibleTrigger>
-    <CollapsibleContent>
-      {/* Route options */}
-    </CollapsibleContent>
-  </Collapsible>
-</div>
+// CheckMyTruckModal.tsx line 196-198
+} else if (defaultBookingNumber && !bookingNumber) {
+  setBookingNumber(defaultBookingNumber);
+}
+```
 
-<div className="tracking-info-card">
-  <Collapsible>
-    <CollapsibleTrigger>Weigh Stations ({count})</CollapsibleTrigger>
-    <CollapsibleContent>
-      {/* Station list */}
-    </CollapsibleContent>
-  </Collapsible>
-</div>
+**Status**: Already implemented. Testing will confirm functionality.
+
+---
+
+## 3. Locate via Satellite Modal Changes
+
+### Current Behavior:
+- Shows satellite/aerial view by default
+- No view toggle options
+- Button says "Locate via Satellite"
+
+### New Behavior:
+- Default to Street View
+- Add toggle to switch between Street View and Hybrid
+- Button text changes to "Pause to View Live Truck"
+
+### Changes in CheckMyTruckModal.tsx:
+
+Add a view mode state and Street View component:
+
+```typescript
+const [viewMode, setViewMode] = useState<'street' | 'hybrid'>('street');
+```
+
+Replace the aerial/satellite view section with:
+- Street View (default) using Google Street View Static API
+- Hybrid satellite map (toggle option)
+- View toggle buttons in the header
+
+Update button text:
+```typescript
+<span className="hidden sm:inline">Pause to View Live Truck</span>
 ```
 
 ---
 
-## 2. Real-Time Distance & Time Remaining
+## 4. Add Route Animation to Satellite Modal
 
-### Current Implementation
-- Already using `useRealtimeETA` hook which provides:
-  - `adjustedETA` - live ETA based on traffic
-  - `adjustedDuration` - remaining time
-  - `remainingDistance` - distance left
+### Current Behavior:
+- Shows static truck position based on demo data
 
-### Verification
-The `UnifiedStatsCard` already displays these values from the real-time hook:
+### New Behavior:
+- When tracking is active, update truck position in the modal
+- Pass `progress` and `routeCoordinates` from parent to modal
+- Animate truck marker position based on progress
+
+### Changes:
+Add props to CheckMyTruckModal:
 ```typescript
-adjustedETA={routeData ? adjustedETA : null}
-adjustedDuration={routeData ? adjustedDuration : null}
-remainingDistance={routeData ? remainingDistance : 0}
+interface CheckMyTruckModalProps {
+  // ... existing props
+  liveProgress?: number;
+  liveRouteCoordinates?: [number, number][];
+}
 ```
 
-**No changes needed** - the real-time data is already being passed and displayed correctly.
+Calculate interpolated position in modal:
+```typescript
+const livePosition = useMemo(() => {
+  if (!liveRouteCoordinates?.length || liveProgress === undefined) return null;
+  // Interpolate position based on progress
+  const exactIndex = (liveProgress / 100) * (liveRouteCoordinates.length - 1);
+  // ... interpolation logic
+}, [liveProgress, liveRouteCoordinates]);
+```
 
 ---
 
-## 3. Collapse Right Sidebar Until Route Entered
+## 5. Real-Time Truck Speed (Non-Demo Mode)
 
-### Current State
-- Right sidebar (`tracking-dashboard`) is always visible
-- Shows empty state message when no route
+### Current Issue:
+Animation speed is fixed at 60 seconds regardless of actual route duration.
 
-### Changes
-Add a collapsed state that hides all cards until a booking/route is loaded:
+### Solution:
+For non-demo bookings, calculate animation speed based on actual ETA:
+- If route duration is 6 hours (21600 seconds), animation should take 6 hours
+- Demo mode keeps the fast 60-second playback
+
+### Changes in LiveTracking.tsx:
 
 ```typescript
-// In LiveTracking.tsx
-const hasActiveRoute = !!(originCoords && destCoords);
+// State to track if current tracking is demo mode
+const [isDemoMode, setIsDemoMode] = useState(false);
 
-// Conditionally render sidebar or collapsed state
-<div className={cn(
-  "tracking-dashboard transition-all duration-300",
-  !hasActiveRoute && "tracking-dashboard-collapsed"
-)}>
-  {hasActiveRoute ? (
-    // Render all dashboard cards
-  ) : (
-    // Collapsed mini-state with "Enter route to view stats" message
-    <div className="tracking-sidebar-collapsed">
-      <ChevronLeft className="w-5 h-5" />
-      <span>Stats</span>
-    </div>
-  )}
-</div>
+// Demo button sets isDemoMode = true
+onClick={async () => {
+  // ... existing demo setup
+  setIsDemoMode(true);
+}}
+
+// Calculate animation speed based on mode
+useEffect(() => {
+  if (routeData) {
+    if (isDemoMode) {
+      setAnimationSpeed(60); // Fast for demo
+    } else {
+      // Real-time: animation matches actual route duration
+      setAnimationSpeed(routeData.duration); // Duration in seconds
+    }
+  }
+}, [routeData, isDemoMode]);
 ```
 
-Add CSS for collapsed state:
+---
+
+## 6. Demo Button Styling
+
+### Current:
+- Full green gradient background
+- Same size as other buttons
+- Prominent styling
+
+### New:
+- Smaller size (32px height vs 40px)
+- Ghost/outline style (not green fill)
+- Subtle border accent
+
+### CSS Changes in index.css:
+
 ```css
-.tracking-dashboard-collapsed {
-  width: 48px;
-  padding: 0;
-  overflow: hidden;
+.tracking-header-demo-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;              /* Smaller */
+  padding: 0 10px;           /* Reduced padding */
+  background: transparent !important;
+  backdrop-filter: blur(12px);
+  color: hsl(var(--primary)) !important;  /* Text color, not fill */
+  font-weight: 600;
+  font-size: 11px;           /* Smaller text */
+  border-radius: 8px;
+  border: 1px solid hsl(var(--primary) / 0.4) !important;
+  transition: all 0.2s;
+}
+
+.tracking-header-demo-btn:hover {
+  background: hsl(var(--primary) / 0.1) !important;
+  border-color: hsl(var(--primary) / 0.6) !important;
+}
+```
+
+Also add smaller sizing for map/satellite toggle:
+
+```css
+.tracking-header-satellite-btn {
+  height: 34px;
+  padding: 0 10px;
+  font-size: 11px;
 }
 ```
 
 ---
 
-## 4. Move Follow Button to Header
+## 7. Main Map Default to Hybrid View
 
-### Current Location
-- Bottom-left corner of `Google2DTrackingMap.tsx`
+### Current:
+`mapViewType` already defaults to `'hybrid'` (line 143).
 
-### New Location
-- In header next to "Locate via Satellite" button
-
-### Changes
-
-**Google2DTrackingMap.tsx:**
-- Remove the follow mode toggle button (lines 368-382)
-
-**LiveTracking.tsx:**
-- Add follow toggle button in header after "Locate via Satellite":
-
-```typescript
-<div className="tracking-header-controls">
-  {/* ... existing controls ... */}
-  
-  <Button
-    variant="ghost"
-    onClick={() => setFollowMode(!followMode)}
-    className="tracking-header-satellite-btn"
-  >
-    <Navigation2 className="w-4 h-4" />
-    <span className="hidden sm:inline">
-      {followMode ? "Following" : "Follow"}
-    </span>
-  </Button>
-  
-  <Button onClick={() => setShowCheckMyTruck(true)}>
-    <Eye className="w-4 h-4" />
-    <span>Locate via Satellite</span>
-  </Button>
-</div>
-```
+**Status**: Already implemented. No changes needed.
 
 ---
 
-## 5. Add Demo Button
+## Implementation Summary
 
-### Location
-- Visible in header, styled distinctly from other buttons
+### LiveTracking.tsx Changes:
+1. Add `isDemoMode` state
+2. Set `isDemoMode = true` in demo button handler
+3. Calculate `animationSpeed` based on `isDemoMode` and `routeData.duration`
+4. Reorder sidebar components (move Route Info card to bottom)
+5. Update button text for satellite modal
+6. Pass progress/coordinates to CheckMyTruckModal
 
-### Implementation
+### CheckMyTruckModal.tsx Changes:
+1. Add `viewMode` state ('street' | 'hybrid')
+2. Add Street View component as default
+3. Add view toggle buttons
+4. Accept `liveProgress` and `liveRouteCoordinates` props
+5. Animate truck position based on live data
 
-```typescript
-// In header controls section
-<Button
-  variant="outline"
-  onClick={async () => {
-    // Load demo booking #12345
-    await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-    await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
-    setMoveDate(new Date());
-    setShow3DView(false);
-    setFollowMode(true);
-    setCurrentBookingNumber('12345');
-    // Auto-start tracking after short delay for route calculation
-    setTimeout(() => {
-      if (routeData) startTracking();
-    }, 1500);
-    toast.success('🚚 Demo mode started!', {
-      description: 'Jacksonville → Miami • Full feature demo'
-    });
-  }}
-  className="border-primary/50 text-primary hover:bg-primary/10"
->
-  <Play className="w-4 h-4 mr-1" />
-  <span>Demo</span>
-</Button>
-```
-
-### Features Activated in Demo
-- Route from Jacksonville to Miami Beach
-- Real-time ETA with traffic
-- Weigh station checklist
-- Weather conditions
-- Street View previews
-- Aerial view
-- Fuel cost estimate
-- All stats visible
+### index.css Changes:
+1. Reduce demo button size and remove green fill
+2. Reduce map toggle button size
 
 ---
 
-## 6. Satellite Modal Auto-Population (Verification)
+## Visual Before/After
 
-### Current Implementation
-The `CheckMyTruckModal` already receives `defaultBookingNumber` prop:
-
-```typescript
-<CheckMyTruckModal
-  open={showCheckMyTruck}
-  onOpenChange={setShowCheckMyTruck}
-  defaultBookingNumber={currentBookingNumber}  // ← Already passed
-  ...
-/>
-```
-
-And `currentBookingNumber` is set when a demo booking loads:
-```typescript
-setCurrentBookingNumber('12345');
-```
-
-**No changes needed** - this should already work. Testing will verify.
-
----
-
-## Updated Right Sidebar Layout
-
+### Demo Button:
 ```text
-┌─────────────────────────────────────┐
-│ Live Stats Card                     │
-│ (ETA, Time Left, Distance, Traffic, │
-│  Tolls, Fuel)                       │
-├─────────────────────────────────────┤
-│ ► Alternate Routes (2) ▼            │  ← Collapsed by default
-├─────────────────────────────────────┤
-│ ► Weigh Stations (4) ▼              │  ← Collapsed by default
-├─────────────────────────────────────┤
-│ Live Aerial View                    │
-├─────────────────────────────────────┤
-│ Weather Conditions                  │
-└─────────────────────────────────────┘
+BEFORE: [✨ Demo] (40px, green gradient fill, prominent)
+AFTER:  [✨ Demo] (32px, outline only, subtle)
 ```
 
----
-
-## Updated Header Layout
-
+### Header Button Sizing:
 ```text
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ [Logo] Shipment Command Center                                               │
-│                                                                              │
-│ [Search: Enter Booking #] [Go]  [Demo]  [View ▼]  [Follow]  [Satellite]     │
-│                                                                              │
-│                                                      Shipment ID: TM-2026-XX│
-└──────────────────────────────────────────────────────────────────────────────┘
+BEFORE: All buttons same size (40px)
+AFTER:  Demo (32px), View toggle (34px), Follow (34px), Satellite (40px)
+```
+
+### Right Sidebar Order:
+```text
+BEFORE:                    AFTER:
+┌─────────────────┐       ┌─────────────────┐
+│ Stats Card      │       │ Stats Card      │
+├─────────────────┤       ├─────────────────┤
+│ Alternate Routes│       │ Aerial View     │
+│ Weigh Stations  │       ├─────────────────┤
+├─────────────────┤       │ Weather         │
+│ Aerial View     │       ├─────────────────┤
+├─────────────────┤       │ Alternate Routes│ ← Moved
+│ Weather         │       │ Weigh Stations  │
+└─────────────────┘       └─────────────────┘
+```
+
+### Satellite Modal:
+```text
+BEFORE: Satellite/Aerial view only
+AFTER:  Street View (default) with Hybrid toggle
+        + Live truck animation when tracking active
 ```
 
 ---
 
 ## Technical Details
 
-### Follow Button Styling (In Header)
-- Use same styling as other header buttons (`tracking-header-satellite-btn`)
-- Toggle state with visual indicator (icon animation when active)
-- No longer needs dark high-contrast style since it's in dark header
+### Real-Time Speed Calculation:
+```typescript
+// If route is 350 miles at 60mph average = ~5.8 hours = 21000 seconds
+// Animation will take 21000 seconds (5.8 hours) to complete
+// Progress updates every frame for smooth movement
 
-### Demo Button Styling
-- Outlined style with primary accent
-- Play icon to indicate action
-- Positioned visibly before view controls
+// Demo mode override:
+// Animation takes 60 seconds regardless of route distance
+```
 
-### Collapsible Components
-- Use existing `Collapsible` from Radix UI
-- Consistent chevron behavior: `▶` collapsed, `▼` expanded
-- Smooth animation via CollapsibleContent
-
-### Sidebar Collapse Animation
-- CSS transition for width change
-- Cards slide out horizontally
-- Collapsed state shows minimal icon strip
+### Street View Integration:
+```typescript
+// Google Street View Static API URL
+const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=400x250&location=${lat},${lng}&key=${googleApiKey}&fov=90&heading=90`;
+```
 
