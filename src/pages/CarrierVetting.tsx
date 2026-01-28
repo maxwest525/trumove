@@ -10,7 +10,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle, Printer, Lock, Activity, ClipboardCheck, Share2, FileDown, Copy, Check } from 'lucide-react';
 
 import SiteShell from '@/components/layout/SiteShell';
-import Footer from '@/components/layout/Footer';
+
 import { Button } from '@/components/ui/button';
 import { ComparisonGrid } from '@/components/vetting/ComparisonGrid';
 import { ComparisonSummaryTable } from '@/components/vetting/ComparisonSummaryTable';
@@ -881,9 +881,6 @@ export default function CarrierVetting() {
           </DropdownMenu>
         </div>
       </div>
-      
-      {/* Footer */}
-      <Footer />
     </SiteShell>
   );
 }
