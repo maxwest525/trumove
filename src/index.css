@@ -23481,28 +23481,27 @@
   box-shadow: 0 0 16px hsl(var(--primary) / 0.3);
 }
 
-/* Demo Button - Distinctive styling */
+/* Demo Button - Smaller, subtle outline styling */
 .tracking-header-demo-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  height: 40px;
-  padding: 0 14px;
-  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8)) !important;
+  gap: 4px;
+  height: 30px;
+  padding: 0 10px;
+  background: transparent !important;
   backdrop-filter: blur(12px);
-  color: hsl(var(--primary-foreground)) !important;
+  color: hsl(var(--foreground) / 0.7) !important;
   font-weight: 600;
-  font-size: 13px;
-  border-radius: 10px;
-  border: 1px solid hsl(var(--primary) / 0.5) !important;
+  font-size: 11px;
+  border-radius: 8px;
+  border: 1px solid hsl(var(--foreground) / 0.25) !important;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
 }
 
 .tracking-header-demo-btn:hover {
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.9), hsl(var(--primary) / 0.7)) !important;
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.4);
-  transform: translateY(-1px);
+  background: hsl(var(--foreground) / 0.1) !important;
+  border-color: hsl(var(--foreground) / 0.4) !important;
+  color: hsl(var(--foreground) / 0.9) !important;
 }
 
 @media (max-width: 1200px) {
