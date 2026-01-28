@@ -3,6 +3,7 @@ import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Ey
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { Google3DTrackingView } from "@/components/tracking/Google3DTrackingView";
+import { Google2DTrackingMap } from "@/components/tracking/Google2DTrackingMap";
 import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
 import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
@@ -127,10 +128,10 @@ export default function LiveTracking() {
   // Multi-stop tracking state
   const [multiStopData, setMultiStopData] = useState<MultiStopTruckStatus | null>(null);
   
-  // Follow mode state
-  const [followMode, setFollowMode] = useState(false);
+  // Follow mode state - default to true for better UX
+  const [followMode, setFollowMode] = useState(true);
   
-  // 3D view mode toggle
+  // 3D view mode toggle - default to false (2D satellite is primary)
   const [show3DView, setShow3DView] = useState(false);
   
   // WebGL diagnostics and fallback state
@@ -207,10 +208,11 @@ export default function LiveTracking() {
       setUseStaticMap(true);
       setShow3DView(false);
       console.log('WebGL diagnostics: Using static map fallback', diagnostics);
-    } else if (diagnostics.supported && diagnostics.warnings.length === 0) {
-      // WebGL fully supported - enable 3D view by default
-      setShow3DView(true);
-      console.log('WebGL diagnostics: 3D view enabled', diagnostics);
+    } else {
+      // WebGL supported - default to 2D satellite view (not 3D)
+      setShow3DView(false);
+      setFollowMode(true);
+      console.log('WebGL diagnostics: 2D satellite view enabled by default', diagnostics);
     }
   }, []);
 
@@ -451,14 +453,13 @@ export default function LiveTracking() {
               onKeyDown={async (e) => {
                 if (e.key === 'Enter') {
                   const value = (e.target as HTMLInputElement).value.trim();
-                  if (value === '12345' || value === '00000') {
+                if (value === '12345' || value === '00000') {
                     await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                     await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
                     setMoveDate(new Date());
-                    // Auto-enable 3D view for demos if WebGL is supported
-                    if (!useStaticMap) {
-                      setShow3DView(true);
-                    }
+                    // Default to 2D satellite view with follow mode for demos
+                    setShow3DView(false);
+                    setFollowMode(true);
                     toast.success('📦 Booking loaded!', { description: 'Jacksonville → Miami' });
                   } else if (value) {
                     toast.error('Booking not found', { description: 'Try #12345 or #00000' });
@@ -474,10 +475,9 @@ export default function LiveTracking() {
                 await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                 await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
                 setMoveDate(new Date());
-                // Auto-enable 3D view for demos if WebGL is supported
-                if (!useStaticMap) {
-                  setShow3DView(true);
-                }
+                // Default to 2D satellite view with follow mode for demos
+                setShow3DView(false);
+                setFollowMode(true);
                 toast.success('📦 Demo booking loaded!');
               }}
             >
@@ -734,7 +734,7 @@ export default function LiveTracking() {
               trafficDelayMinutes={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
             />
           ) : (
-            <TruckTrackingMap
+            <Google2DTrackingMap
               originCoords={originCoords}
               destCoords={destCoords}
               progress={progress}
@@ -742,6 +742,8 @@ export default function LiveTracking() {
               onRouteCalculated={handleRouteCalculated}
               followMode={followMode}
               onFollowModeChange={setFollowMode}
+              mapType="hybrid"
+              googleApiKey={GOOGLE_MAPS_API_KEY}
             />
           )}
         </div>
