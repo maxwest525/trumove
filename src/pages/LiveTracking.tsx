@@ -103,6 +103,9 @@ export default function LiveTracking() {
   const [moveDate, setMoveDate] = useState<Date>(new Date()); // Auto-populate with today
   const [departureTime] = useState(new Date());
   
+  // Booking number input state (controlled)
+  const [bookingInput, setBookingInput] = useState("");
+  
   // Resume booking state
   const [savedBooking, setSavedBooking] = useState<{
     originAddress: string;
@@ -300,6 +303,21 @@ export default function LiveTracking() {
 
         if (error || data?.fallback) {
           console.log('Google Routes fallback mode');
+          // Still set basic routeData for static map fallback
+          if (useStaticMap && !routeData) {
+            // Calculate approximate distance and duration
+            const latDiff = destCoords[1] - originCoords[1];
+            const lngDiff = destCoords[0] - originCoords[0];
+            const approxDistanceMiles = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 69;
+            const approxDurationSeconds = approxDistanceMiles * 60; // ~1 min per mile
+            
+            setRouteData({
+              coordinates: [originCoords, destCoords],
+              distance: approxDistanceMiles,
+              duration: approxDurationSeconds,
+            });
+            setRouteCoordinates([originCoords, destCoords]);
+          }
           return;
         }
 
@@ -311,14 +329,39 @@ export default function LiveTracking() {
             alternateRoutes: data.alternateRoutes || [],
             isFuelEfficient: data.route.isFuelEfficient || false,
           });
+          
+          // Also set routeData for static map mode
+          if (useStaticMap && !routeData && data.route.distanceMeters && data.route.durationSeconds) {
+            setRouteData({
+              coordinates: [originCoords, destCoords],
+              distance: data.route.distanceMeters / 1609.34, // meters to miles
+              duration: data.route.durationSeconds,
+            });
+            setRouteCoordinates([originCoords, destCoords]);
+          }
         }
       } catch (err) {
         console.error('Failed to fetch Google Routes:', err);
+        
+        // Fallback for static map mode
+        if (useStaticMap && !routeData) {
+          const latDiff = destCoords[1] - originCoords[1];
+          const lngDiff = destCoords[0] - originCoords[0];
+          const approxDistanceMiles = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) * 69;
+          const approxDurationSeconds = approxDistanceMiles * 60;
+          
+          setRouteData({
+            coordinates: [originCoords, destCoords],
+            distance: approxDistanceMiles,
+            duration: approxDurationSeconds,
+          });
+          setRouteCoordinates([originCoords, destCoords]);
+        }
       }
     };
 
     fetchGoogleRoutes();
-  }, [originCoords, destCoords]);
+  }, [originCoords, destCoords, useStaticMap, routeData]);
 
   // Set animation speed based on demo mode vs real-time
   useEffect(() => {
@@ -473,9 +516,11 @@ export default function LiveTracking() {
               type="text"
               placeholder="Enter Booking # (try 12345)"
               className="tracking-header-input"
+              value={bookingInput}
+              onChange={(e) => setBookingInput(e.target.value)}
               onKeyDown={async (e) => {
                 if (e.key === 'Enter') {
-                  const value = (e.target as HTMLInputElement).value.trim();
+                  const value = bookingInput.trim();
                 if (value === '12345' || value === '00000') {
                     await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                     await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
@@ -497,6 +542,7 @@ export default function LiveTracking() {
               size="sm"
               className="tracking-header-go-btn"
               onClick={async () => {
+                const value = bookingInput.trim() || '12345';
                 await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                 await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
                 setMoveDate(new Date());
@@ -504,8 +550,9 @@ export default function LiveTracking() {
                 setShow3DView(false);
                 setFollowMode(true);
                 // Store booking number for satellite modal
-                setCurrentBookingNumber('12345');
-                toast.success('📦 Demo booking loaded!');
+                setCurrentBookingNumber(value);
+                setBookingInput(value);
+                toast.success('📦 Booking loaded!');
               }}
             >
               Go
@@ -516,6 +563,8 @@ export default function LiveTracking() {
               variant="ghost"
               size="sm"
               onClick={async () => {
+                // Set booking input to 12345
+                setBookingInput('12345');
                 await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                 await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
                 setMoveDate(new Date());
