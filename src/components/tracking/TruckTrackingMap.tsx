@@ -130,141 +130,157 @@ export function TruckTrackingMap({
     }
   }, [onRouteCalculated]);
 
-  // Initialize map
+  // Initialize map with WebGL error handling
   useEffect(() => {
     if (!mapContainer.current) return;
+    
+    // Check if map already exists to avoid duplicate initialization
+    if (map.current) {
+      return;
+    }
+
+    // Check WebGL support before initializing
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) {
+      console.error('WebGL not supported');
+      setMapError('WebGL is not supported in your browser. Please enable hardware acceleration or try a different browser.');
+      return;
+    }
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/dark-v11",
-      center: [-98.5, 39.8],
-      zoom: 4,
-      pitch: 0,
-      interactive: true,
-    });
+    try {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/dark-v11",
+        center: [-98.5, 39.8],
+        zoom: 4,
+        pitch: 0,
+        interactive: true,
+        failIfMajorPerformanceCaveat: false, // Allow software rendering fallback
+        preserveDrawingBuffer: true,
+        antialias: false, // Reduce WebGL resource usage
+      });
 
-    map.current.addControl(new mapboxgl.NavigationControl({ showCompass: true }), "top-right");
+      map.current.addControl(new mapboxgl.NavigationControl({ showCompass: true }), "top-right");
 
-    // Detect user interaction to disable follow mode
-    map.current.on('dragstart', () => {
-      userInteractingRef.current = true;
-      if (internalFollowMode) {
-        setInternalFollowMode(false);
-        onFollowModeChange?.(false);
-      }
-    });
+      // Handle map errors
+      map.current.on('error', (e) => {
+        console.error('Mapbox error:', e);
+        if (e.error?.message?.includes('WebGL')) {
+          setMapError('Map rendering error. Please refresh the page.');
+        }
+      });
 
-    map.current.on('zoomstart', () => {
-      // Assume any zoom during tracking might be user-initiated
-      if (isTracking && internalFollowMode) {
+      // Detect user interaction to disable follow mode
+      map.current.on('dragstart', () => {
         userInteractingRef.current = true;
-      }
-    });
-
-    map.current.on('dragend', () => {
-      setTimeout(() => { userInteractingRef.current = false; }, 500);
-    });
-
-    map.current.on('zoomend', () => {
-      setTimeout(() => { userInteractingRef.current = false; }, 500);
-    });
-
-    map.current.on("load", () => {
-      setIsLoaded(true);
-
-      // Add route source (empty initially)
-      map.current?.addSource("route", {
-        type: "geojson",
-        data: {
-          type: "Feature",
-          properties: {},
-          geometry: { type: "LineString", coordinates: [] }
+        if (internalFollowMode) {
+          setInternalFollowMode(false);
+          onFollowModeChange?.(false);
         }
       });
 
-      // Route glow layer
-      map.current?.addLayer({
-        id: "route-glow",
-        type: "line",
-        source: "route",
-        paint: {
-          "line-color": "#22c55e",
-          "line-width": 12,
-          "line-opacity": 0.3,
-          "line-blur": 8
+      map.current.on('zoomstart', () => {
+        // Assume any zoom during tracking might be user-initiated
+        if (isTracking && internalFollowMode) {
+          userInteractingRef.current = true;
         }
       });
 
-      // Main route line
-      map.current?.addLayer({
-        id: "route-line",
-        type: "line",
-        source: "route",
-        paint: {
-          "line-color": "#22c55e",
-          "line-width": 4,
-          "line-opacity": 1
-        }
+      map.current.on('dragend', () => {
+        setTimeout(() => { userInteractingRef.current = false; }, 500);
       });
 
-      // Traveled portion (darker)
-      map.current?.addSource("route-traveled", {
-        type: "geojson",
-        data: {
-          type: "Feature",
-          properties: {},
-          geometry: { type: "LineString", coordinates: [] }
-        }
+      map.current.on('zoomend', () => {
+        setTimeout(() => { userInteractingRef.current = false; }, 500);
       });
 
-      map.current?.addLayer({
-        id: "route-traveled-line",
-        type: "line",
-        source: "route-traveled",
-        paint: {
-          "line-color": "#16a34a",
-          "line-width": 5,
-          "line-opacity": 0.8
-        }
-      });
+      map.current.on("load", () => {
+        setIsLoaded(true);
 
-      // Traffic segments source for congestion overlay
-      map.current?.addSource("traffic-segments", {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: []
-        }
-      });
+        // Add route source (empty initially)
+        map.current?.addSource("route", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            properties: {},
+            geometry: { type: "LineString", coordinates: [] }
+          }
+        });
 
-      // Traffic overlay layer - color by congestion
-      map.current?.addLayer({
-        id: "traffic-overlay",
-        type: "line",
-        source: "traffic-segments",
-        paint: {
-          "line-color": [
-            "interpolate",
-            ["linear"],
-            ["get", "congestion"],
-            0, "#22c55e",    // Green - free flow
-            0.5, "#f59e0b",  // Yellow/Orange - moderate
-            0.8, "#ef4444",  // Red - heavy
-            1, "#dc2626"     // Dark red - severe
-          ],
-          "line-width": 6,
-          "line-opacity": 0.85
-        }
+        // Route glow layer
+        map.current?.addLayer({
+          id: "route-glow",
+          type: "line",
+          source: "route",
+          paint: {
+            "line-color": "#22c55e",
+            "line-width": 12,
+            "line-opacity": 0.3,
+            "line-blur": 8
+          }
+        });
+
+        // Main route line
+        map.current?.addLayer({
+          id: "route-line",
+          type: "line",
+          source: "route",
+          layout: {
+            "line-join": "round",
+            "line-cap": "round"
+          },
+          paint: {
+            "line-color": "#22c55e",
+            "line-width": 4,
+            "line-opacity": 0.9
+          }
+        });
+
+        // Add traffic segments source
+        map.current?.addSource("traffic-segments", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: []
+          }
+        });
+
+        // Traffic overlay layer - color by congestion
+        map.current?.addLayer({
+          id: "traffic-overlay",
+          type: "line",
+          source: "traffic-segments",
+          paint: {
+            "line-color": [
+              "interpolate",
+              ["linear"],
+              ["get", "congestion"],
+              0, "#22c55e",    // Green - free flow
+              0.5, "#f59e0b",  // Yellow/Orange - moderate
+              0.8, "#ef4444",  // Red - heavy
+              1, "#dc2626"     // Dark red - severe
+            ],
+            "line-width": 6,
+            "line-opacity": 0.85
+          }
+        });
       });
-    });
+    } catch (error) {
+      console.error('Failed to initialize map:', error);
+      setMapError('Failed to initialize map. Please refresh the page or try a different browser.');
+    }
 
     return () => {
       truckMarker.current?.remove();
-      map.current?.remove();
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
-  }, [onFollowModeChange]);
+  }, []);
 
   // Add route and markers when coordinates change
   useEffect(() => {
@@ -499,8 +515,20 @@ export function TruckTrackingMap({
       )}
       
       {mapError && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-destructive/20 border border-destructive/30 rounded-lg text-destructive text-sm">
-          {mapError}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center z-20">
+          <div className="text-center p-6 max-w-md">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/20 flex items-center justify-center">
+              <Box className="w-8 h-8 text-destructive" />
+            </div>
+            <h3 className="text-lg font-semibold text-white mb-2">Map Unavailable</h3>
+            <p className="text-sm text-white/60 mb-4">{mapError}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              Refresh Page
+            </button>
+          </div>
         </div>
       )}
 
