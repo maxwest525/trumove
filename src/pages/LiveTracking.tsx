@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { Google3DTrackingView } from "@/components/tracking/Google3DTrackingView";
@@ -12,7 +12,7 @@ import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { TruckAerialView } from "@/components/tracking/TruckAerialView";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
-import { CheckMyTruckModal, isMultiStop, isSingleStop, type TruckStatus, type MultiStopTruckStatus } from "@/components/tracking/CheckMyTruckModal";
+import { type MultiStopTruckStatus } from "@/components/tracking/CheckMyTruckModal";
 import { MultiStopSummaryCard } from "@/components/tracking/MultiStopSummaryCard";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
@@ -128,11 +128,8 @@ export default function LiveTracking() {
     polyline?: string;
   }>({ trafficInfo: null, tollInfo: null, etaFormatted: null });
   
-  // Check My Truck modal
-  const [showCheckMyTruck, setShowCheckMyTruck] = useState(false);
-  
-  // Current booking number for auto-populating satellite modal
-  const [currentBookingNumber, setCurrentBookingNumber] = useState<string>("");
+  // Street View expanded state (replaces Check My Truck modal)
+  const [streetViewExpanded, setStreetViewExpanded] = useState(false);
   
   // Multi-stop tracking state
   const [multiStopData, setMultiStopData] = useState<MultiStopTruckStatus | null>(null);
@@ -528,8 +525,6 @@ export default function LiveTracking() {
                     // Default to 2D satellite view with follow mode for demos
                     setShow3DView(false);
                     setFollowMode(true);
-                    // Store booking number for satellite modal
-                    setCurrentBookingNumber(value);
                     toast.success('📦 Booking loaded!', { description: 'Jacksonville → Miami' });
                   } else if (value) {
                     toast.error('Booking not found', { description: 'Try #12345 or #00000' });
@@ -549,8 +544,6 @@ export default function LiveTracking() {
                 // Default to 2D satellite view with follow mode for demos
                 setShow3DView(false);
                 setFollowMode(true);
-                // Store booking number for satellite modal
-                setCurrentBookingNumber(value);
                 setBookingInput(value);
                 toast.success('📦 Booking loaded!');
               }}
@@ -570,7 +563,6 @@ export default function LiveTracking() {
                 setMoveDate(new Date());
                 setShow3DView(false);
                 setFollowMode(true);
-                setCurrentBookingNumber('12345');
                 setIsDemoMode(true); // Enable demo mode for fast playback
                 setAnimationSpeed(60); // Fast 60-second journey for demo
                 // Auto-start tracking after a brief delay
@@ -675,15 +667,6 @@ export default function LiveTracking() {
               </span>
             </Button>
           )}
-          
-          <Button
-            variant="ghost"
-            onClick={() => setShowCheckMyTruck(true)}
-            className="tracking-header-satellite-btn"
-          >
-            <Eye className="w-4 h-4" />
-            <span className="hidden sm:inline">Pause to View Live Truck</span>
-          </Button>
         </div>
 
         <div className="flex items-center gap-4">
@@ -924,13 +907,15 @@ export default function LiveTracking() {
                 isEmpty={false}
               />
 
-              {/* Live Truck Aerial View */}
+              {/* Live Truck Street View */}
               <TruckAerialView
                 routeCoordinates={routeCoordinates}
                 progress={progress}
                 isTracking={isTracking}
                 originCoords={originCoords}
                 googleApiKey={GOOGLE_MAPS_API_KEY}
+                expanded={streetViewExpanded}
+                onToggleExpand={() => setStreetViewExpanded(!streetViewExpanded)}
               />
 
               {/* Route Weather - Sidebar Card */}
@@ -1006,46 +991,6 @@ export default function LiveTracking() {
         </div>
       </div>
       
-      {/* Check My Truck Modal */}
-      <CheckMyTruckModal
-        open={showCheckMyTruck}
-        onOpenChange={setShowCheckMyTruck}
-        defaultBookingNumber={currentBookingNumber}
-        liveProgress={isTracking ? progress : undefined}
-        liveRouteCoordinates={isTracking ? routeCoordinates : undefined}
-        onLoadRoute={(truck) => {
-          // Handle based on truck type
-          if (isSingleStop(truck)) {
-            // Load the single-stop truck's route into the main tracking view
-            handleOriginSelect(truck.originName, '', truck.originName);
-            handleDestSelect(truck.destName, '', truck.destName);
-            setMoveDate(new Date());
-            setMultiStopData(null);
-            setIsDemoMode(false); // Non-demo mode uses realistic speed
-            toast.success(`📦 Booking #${truck.bookingId} loaded!`, {
-              description: `${truck.originName} → ${truck.destName}`,
-            });
-          }
-        }}
-        onLoadMultiStop={(truck) => {
-          // Load multi-stop data
-          setMultiStopData(truck);
-          // Set origin/dest from first pickup and last dropoff
-          const firstPickup = truck.stops.find(s => s.type === 'pickup');
-          const lastDropoff = [...truck.stops].reverse().find(s => s.type === 'dropoff');
-          if (firstPickup) {
-            handleOriginSelect(firstPickup.address.split(',')[0], '', firstPickup.address);
-          }
-          if (lastDropoff) {
-            handleDestSelect(lastDropoff.address.split(',')[0], '', lastDropoff.address);
-          }
-          setMoveDate(new Date());
-          setIsDemoMode(false); // Non-demo mode uses realistic speed
-          toast.success(`📦 Multi-Stop Booking #${truck.bookingId} loaded!`, {
-            description: `${truck.stops.length} stops • ${truck.totalDistance} miles`,
-          });
-        }}
-      />
       
       {/* Site Footer */}
       <Footer />
