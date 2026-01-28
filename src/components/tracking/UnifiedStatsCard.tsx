@@ -78,15 +78,11 @@ export function UnifiedStatsCard({
   tollInfo,
   isFuelEfficient = false,
   fuelCostEstimate,
-  alternateRoutes = [],
-  onRouteSelect,
   lastUpdate,
   isLoading,
   onRefresh,
   isEmpty = false,
 }: UnifiedStatsCardProps) {
-  const [showAlternates, setShowAlternates] = useState(false);
-  const [selectedRoute, setSelectedRoute] = useState(0);
 
   // Format time ago
   const formatTimeAgo = (date: Date): string => {
@@ -125,11 +121,6 @@ export function UnifiedStatsCard({
 
   const severity = getSeverityDisplay();
   const trend = getTrendDisplay();
-
-  const handleRouteSelect = (index: number) => {
-    setSelectedRoute(index);
-    onRouteSelect?.(index);
-  };
 
   return (
     <div className="tracking-info-card unified-stats-card">
@@ -271,49 +262,6 @@ export function UnifiedStatsCard({
             </span>
           )}
         </div>
-      )}
-
-      {/* Alternate Routes (Collapsible) */}
-      {!isEmpty && alternateRoutes.length > 0 && (
-        <Collapsible open={showAlternates} onOpenChange={setShowAlternates}>
-          <CollapsibleTrigger className="w-full flex items-center justify-between py-2.5 border-t border-border text-sm text-foreground/70 hover:text-foreground transition-colors">
-            <span className="uppercase tracking-wider font-semibold">Alternate Routes</span>
-            {showAlternates ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="space-y-2 pt-2">
-            {alternateRoutes.slice(0, 2).map((alt) => (
-              <button
-                key={alt.index}
-                onClick={() => handleRouteSelect(alt.index)}
-                className={cn(
-                  "w-full text-left p-3 rounded-lg border transition-all",
-                  selectedRoute === alt.index
-                    ? "bg-primary/20 border-primary/50"
-                    : "bg-muted/50 dark:bg-white/5 border-border hover:bg-muted dark:hover:bg-white/10"
-                )}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-semibold text-foreground truncate pr-2">
-                    {alt.description || `Via alternate ${alt.index}`}
-                  </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-foreground/60 flex-shrink-0" />
-                </div>
-                <div className="flex items-center gap-2 text-xs text-foreground/70">
-                  <span>{alt.distanceMiles} mi</span>
-                  <span>•</span>
-                  <span>{alt.durationFormatted}</span>
-                  {alt.isTollFree && (
-                    <>
-                      <span>•</span>
-                      <span className="text-emerald-500 font-medium">No tolls</span>
-                    </>
-                  )}
-                </div>
-              </button>
-            ))}
-          </CollapsibleContent>
-        </Collapsible>
       )}
     </div>
   );

@@ -365,24 +365,8 @@ export function Google2DTrackingMap({
         )}
       </div>
 
-      {/* Follow mode toggle - positioned bottom-left to avoid conflicts */}
-      <button
-        onClick={toggleFollowMode}
-        className={cn(
-          "absolute bottom-3 left-3 z-20 flex items-center gap-2 px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300",
-          internalFollowMode
-            ? "bg-foreground border-foreground text-background"
-            : "bg-background/80 border-border text-foreground/80 hover:bg-background"
-        )}
-      >
-        <Navigation2 className={cn("w-4 h-4", internalFollowMode && "animate-pulse")} />
-        <span className="text-xs font-semibold uppercase tracking-wider">
-          {internalFollowMode ? "Following" : "Follow"}
-        </span>
-      </button>
-
-      {/* Google attribution - positioned bottom-right */}
-      <div className="absolute bottom-3 right-3 z-20 px-2 py-1 rounded bg-background/70 backdrop-blur-sm border border-border">
+      {/* Google attribution - positioned bottom-left */}
+      <div className="absolute bottom-3 left-3 z-20 px-2 py-1 rounded bg-background/70 backdrop-blur-sm border border-border">
         <span className="text-[8px] text-muted-foreground">Google Maps</span>
       </div>
 
