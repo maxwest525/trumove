@@ -527,44 +527,6 @@ export default function LiveTracking() {
         </div>
       </header>
 
-      {/* Resume Booking Prompt Banner */}
-      {showResumePrompt && savedBooking && (
-        <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-primary/20 px-4 py-3">
-          <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                <Truck className="w-4 h-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-foreground">
-                  Continue tracking your shipment?
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {savedBooking.originName} → {savedBooking.destName}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleDismissResume}
-                className="text-muted-foreground"
-              >
-                No thanks
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleResumeBooking}
-                className="bg-foreground text-background hover:bg-foreground/90"
-              >
-                Yes, continue
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
       <div className="tracking-content">
         {/* Left: Address Inputs + Street Views */}
