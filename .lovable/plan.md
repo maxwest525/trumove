@@ -1,171 +1,191 @@
 
 
-## Plan: Tracking Dashboard Fixes & Improvements
+## Plan: Add Visual Follow Mode Indicator & Verification
 
-This plan addresses multiple issues identified during testing of the tracking dashboard.
-
----
-
-## Summary of Issues & Fixes
-
-| Issue | Current State | Fix |
-|-------|---------------|-----|
-| **1. Live Truck View - Remove 3D/Aerial** | Modal has Street/Hybrid toggle only | Already correct - no changes needed |
-| **2. Demo mode real-time ETA** | Uses fast 60-second playback | Keep demo fast, but clarify distinction |
-| **3. Main map dropdown cleanup** | Has Satellite, Street, 3D options | Remove broken Satellite; Street doesn't work; Add recenter button |
-| **4. Remove satellite button on map** | Google Maps has mapTypeControl | Disable native map type controls |
-| **5. Street View not working on main map** | Shows roadmap, not Street View | "Street" in dropdown = roadmap (this is correct naming for maps) |
-| **6. 3D view looks same as 2D** | Uses maps3d library | 3D requires WebGL + specific area coverage |
-| **7. Add recenter/locate truck button** | Missing | Add "Recenter" button to bring view back to truck |
-| **8. Booking number pre-fill verification** | Already passes `defaultBookingNumber` | Verify working |
+This plan adds a more prominent visual indicator showing when the truck is being followed vs when the user has panned away.
 
 ---
 
-## Detailed Changes
+## Summary of Changes
 
-### 1. Main Map Dropdown Cleanup (LiveTracking.tsx)
-
-**Current dropdown options:**
-- Hybrid (works)
-- Satellite (broken/redundant)
-- Street (shows roadmap with dark theme)
-- 3D Flyover (limited availability)
-
-**New dropdown options:**
-```text
-┌─────────────────────┐
-│ 2D Views            │
-├─────────────────────┤
-│ ✓ Hybrid            │ ← Satellite + labels (default)
-│   Roadmap           │ ← Renamed from "Street" 
-├─────────────────────┤
-│ 3D View             │
-├─────────────────────┤
-│   3D Flyover        │ ← Keep but with availability warning
-└─────────────────────┘
-```
-
-**Changes:**
-- Remove "Satellite" option (redundant with Hybrid)
-- Rename "Street" to "Roadmap" for clarity
-- Keep 3D Flyover as optional
-
-### 2. Remove Native Map Type Controls (Google2DTrackingMap.tsx)
-
-The Google Maps component has built-in satellite/map toggle buttons. Remove them to avoid redundancy:
-
-```typescript
-const map = new window.google.maps.Map(containerRef.current, {
-  // ... existing options
-  mapTypeControl: false,  // ← Disable built-in controls
-});
-```
-
-### 3. Add Recenter Button (LiveTracking.tsx)
-
-Add a "Recenter" button in the header that pans the map back to the truck's current position:
-
-```typescript
-{/* Recenter Button - Shows when route exists and user has panned away */}
-{routeData && (
-  <Button
-    variant="ghost"
-    onClick={() => {
-      setFollowMode(true);
-      // The follow mode change will trigger the map to pan back to truck
-    }}
-    className="tracking-header-satellite-btn"
-    title="Center map on truck"
-  >
-    <Crosshair className="w-4 h-4" />
-    <span className="hidden sm:inline">Recenter</span>
-  </Button>
-)}
-```
-
-### 4. Fix Demo Mode Speed Clarification
-
-The demo mode already uses fast 60-second playback per the code:
-
-```typescript
-if (isDemoMode) {
-  setAnimationSpeed(60); // Fast for demo
-} else {
-  setAnimationSpeed(routeData.duration); // Real-time
-}
-```
-
-**No code changes needed** - this is already correct. The Demo button sets `isDemoMode = true`.
-
-### 5. Verify Booking Number Pre-fill (CheckMyTruckModal.tsx)
-
-The modal already has logic to pre-fill:
-```typescript
-} else if (defaultBookingNumber && !bookingNumber) {
-  setBookingNumber(defaultBookingNumber);
-}
-```
-
-And `LiveTracking.tsx` passes:
-```typescript
-defaultBookingNumber={currentBookingNumber}
-```
-
-**Testing needed to confirm** - code looks correct but may have timing issue. The `useEffect` dependency array should also include `bookingNumber` change detection.
+| Change | Description |
+|--------|-------------|
+| **1. Enhanced Follow Button Indicator** | Add distinct styling when following vs not following |
+| **2. On-Map Status Badge** | Add a floating badge on the map showing current follow status |
+| **3. Update plan.md** | Mark completed items and add any remaining fixes |
 
 ---
 
 ## File Changes Summary
 
-| File | Action | Changes |
+| File | Action | Purpose |
 |------|--------|---------|
-| `src/pages/LiveTracking.tsx` | Modify | Simplify dropdown (remove Satellite, rename Street to Roadmap), add Recenter button, add Crosshair import |
-| `src/components/tracking/Google2DTrackingMap.tsx` | Modify | Disable `mapTypeControl` to remove redundant buttons |
+| `src/pages/LiveTracking.tsx` | Modify | Add on-map follow status badge, improve Follow button visual states |
+| `src/index.css` | Modify | Add CSS for follow mode indicator states and on-map badge |
+| `.lovable/plan.md` | Modify | Update completion status |
 
 ---
 
-## Updated Header Control Layout
+## 1. Enhanced Follow Button Styling
 
-```text
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│ [Search] [Go] [Demo] │ [View ▼] │ [Recenter] [Follow] │ [Pause to View Live Truck]│
-└──────────────────────────────────────────────────────────────────────────────────┘
+### Current Implementation
+```typescript
+<Button
+  className={cn(
+    "tracking-header-satellite-btn",
+    followMode && "bg-white/20"  // Subtle highlight when active
+  )}
+>
+  <Navigation2 className={cn("w-4 h-4", followMode && "animate-pulse")} />
+  <span>{followMode ? "Following" : "Follow"}</span>
+</Button>
 ```
 
-**Button order (left to right):**
-1. Search input + Go button
-2. Demo button (small, outline style)
-3. View dropdown (Hybrid, Roadmap, 3D)
-4. Recenter button (new)
-5. Follow button
-6. Pause to View Live Truck button
+### Enhanced Implementation
+Add distinct CSS classes for active/inactive states:
+
+```typescript
+<Button
+  className={cn(
+    "tracking-header-satellite-btn",
+    followMode ? "tracking-follow-active" : "tracking-follow-inactive"
+  )}
+>
+  <Navigation2 className={cn(
+    "w-4 h-4 transition-all",
+    followMode && "text-primary animate-pulse"
+  )} />
+  <span>{followMode ? "Following" : "Follow"}</span>
+</Button>
+```
+
+### CSS for Active/Inactive States:
+```css
+/* Following active - primary color accent */
+.tracking-follow-active {
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.25), hsl(var(--primary) / 0.15)) !important;
+  border-color: hsl(var(--primary) / 0.6) !important;
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.3), inset 0 0 8px hsl(var(--primary) / 0.1);
+}
+
+/* Following inactive - warning/muted state */
+.tracking-follow-inactive {
+  background: hsl(var(--tm-ink)) !important;
+  border-color: hsl(var(--foreground) / 0.15) !important;
+  color: hsl(var(--foreground) / 0.6) !important;
+}
+
+.tracking-follow-inactive:hover {
+  border-color: hsl(var(--primary) / 0.4) !important;
+}
+```
+
+---
+
+## 2. On-Map Follow Status Badge
+
+Add a floating badge on the map that shows the current follow status:
+
+### Location
+Bottom-left corner of the map, near the Google attribution
+
+### Implementation
+```typescript
+{/* Follow Mode Status Badge on Map */}
+<div className={cn(
+  "absolute bottom-16 left-3 z-20 px-3 py-1.5 rounded-lg backdrop-blur-sm border transition-all duration-300",
+  followMode 
+    ? "bg-primary/20 border-primary/40 text-primary" 
+    : "bg-amber-500/15 border-amber-500/30 text-amber-400"
+)}>
+  <div className="flex items-center gap-2">
+    {followMode ? (
+      <>
+        <Navigation2 className="w-3.5 h-3.5 animate-pulse" />
+        <span className="text-[10px] font-bold tracking-wider uppercase">Following Truck</span>
+      </>
+    ) : (
+      <>
+        <Crosshair className="w-3.5 h-3.5" />
+        <span className="text-[10px] font-bold tracking-wider uppercase">Manual View</span>
+      </>
+    )}
+  </div>
+</div>
+```
+
+### Visual States
+```text
+FOLLOWING:
+┌─────────────────────────┐
+│ 🧭 FOLLOWING TRUCK      │ ← Green/primary color, pulsing icon
+└─────────────────────────┘
+
+MANUAL VIEW:
+┌─────────────────────────┐
+│ ⊕ MANUAL VIEW           │ ← Amber/warning color, static icon
+└─────────────────────────┘
+```
+
+---
+
+## 3. Update plan.md
+
+Mark completed items from the previous plan:
+
+### Completed Items (mark with ✅):
+- Main map dropdown cleanup (Hybrid/Roadmap/3D only)
+- Remove native map type controls
+- Add Recenter button
+- Demo mode speed distinction
+- Booking number pre-fill verification
+
+### Add New Items:
+- Visual follow mode indicator (header button + on-map badge)
+
+---
+
+## Visual Summary
+
+### Header Button States
+```text
+FOLLOWING:                      NOT FOLLOWING:
+┌──────────────────┐            ┌──────────────────┐
+│ 🧭 Following     │            │ 🧭 Follow        │
+│ (green glow)     │            │ (muted/dim)      │
+└──────────────────┘            └──────────────────┘
+```
+
+### On-Map Badge (bottom-left of map)
+```text
+┌───────────────────────────────────────────────────────────────────┐
+│                          MAP AREA                                 │
+│                                                                   │
+│                                                                   │
+│                                                                   │
+│                                                                   │
+│  ┌─────────────────────┐                                          │
+│  │ 🧭 FOLLOWING TRUCK  │ ← Status badge                           │
+│  └─────────────────────┘                                          │
+│  ┌─────────────────────┐                                          │
+│  │    Google Maps      │ ← Attribution                            │
+│  └─────────────────────┘                                          │
+└───────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ## Technical Details
 
-### Why 3D View Looks Same as 2D
-Google's 3D Photorealistic Tiles (maps3d library) requires:
-- WebGL 2.0 support
-- Specific geographic coverage (major cities/landmarks)
-- Sometimes slow to render high-detail 3D
+### Badge Placement
+The badge will be positioned `absolute bottom-16 left-3` to sit above the Google attribution (which is at `bottom-3 left-3`).
 
-If the location doesn't have 3D building data, it falls back to a flat satellite view. This is expected behavior.
+### Animation
+- Following mode: Navigation2 icon has `animate-pulse` for attention
+- Manual mode: Static Crosshair icon indicates user-controlled view
 
-### Why "Street" Shows Roadmap
-The dropdown option "Street" sets `mapViewType: 'roadmap'` which is Google Maps' 2D roadmap view (roads, labels, points of interest). This is correct - "Street View" is a different Google product (360° photography).
-
-The satellite modal's "Street View" correctly uses Google Street View Static API for 360° imagery.
-
----
-
-## Verification Steps After Implementation
-
-1. Navigate to /track
-2. Enter booking #12345
-3. Verify map shows in Hybrid view by default
-4. Open View dropdown - should show: Hybrid, Roadmap, 3D Flyover (no Satellite)
-5. Verify no satellite/map buttons on map itself
-6. Pan map away from truck, click Recenter - should pan back
-7. Click "Pause to View Live Truck" - should show Street View with booking # pre-filled
+### Transition
+Both states use `transition-all duration-300` for smooth state changes when:
+1. User clicks Follow/Following button
+2. User pans/drags the map (auto-disables follow mode)
 
