@@ -360,19 +360,15 @@ export default function LiveTracking() {
     fetchGoogleRoutes();
   }, [originCoords, destCoords, useStaticMap, routeData]);
 
-  // Set animation speed based on demo mode vs real-time
+  // Set animation speed - ALWAYS real-time based on actual route duration
   useEffect(() => {
     if (routeData) {
-      if (isDemoMode) {
-        // Demo mode: Fast 60-second playback
-        setAnimationSpeed(60);
-      } else {
-        // Real-time mode: Animation matches actual route duration
-        // Route duration is in seconds, so truck moves at real-world speed
-        setAnimationSpeed(routeData.duration);
-      }
+      // Real-time mode: Animation matches actual route duration
+      // Route duration is in seconds, so truck moves at real-world speed
+      // Both demo and production use the same real-time speed
+      setAnimationSpeed(routeData.duration);
     }
-  }, [routeData, isDemoMode]);
+  }, [routeData]);
 
   // Animation loop
   useEffect(() => {
@@ -563,14 +559,14 @@ export default function LiveTracking() {
                 setMoveDate(new Date());
                 setShow3DView(false);
                 setFollowMode(true);
-                setIsDemoMode(true); // Enable demo mode for fast playback
-                setAnimationSpeed(60); // Fast 60-second journey for demo
+                setIsDemoMode(true);
+                // Real-time speed will be set automatically when routeData loads
                 // Auto-start tracking after a brief delay
                 setTimeout(() => {
                   if (canTrack) startTracking();
                 }, 1500);
                 toast.success('🚚 Demo mode started!', {
-                  description: 'Jacksonville → Miami Beach • Full feature demo'
+                  description: 'Jacksonville → Miami Beach • Real-time tracking'
                 });
               }}
               className="tracking-header-demo-btn"
