@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { Google3DTrackingView } from "@/components/tracking/Google3DTrackingView";
@@ -539,7 +539,7 @@ export default function LiveTracking() {
             </Button>
           </div>
           
-          {/* Map View Dropdown */}
+          {/* Map View Dropdown - Simplified: Hybrid, Roadmap, 3D only */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -552,8 +552,6 @@ export default function LiveTracking() {
               >
                 {show3DView ? (
                   <Box className="w-4 h-4" />
-                ) : mapViewType === 'satellite' ? (
-                  <Globe className="w-4 h-4" />
                 ) : mapViewType === 'hybrid' ? (
                   <Layers className="w-4 h-4" />
                 ) : (
@@ -561,13 +559,12 @@ export default function LiveTracking() {
                 )}
                 <span className="hidden sm:inline">
                   {useStaticMap ? "Static" : show3DView ? "3D View" : 
-                    mapViewType === 'satellite' ? "Satellite" : 
-                    mapViewType === 'hybrid' ? "Hybrid" : "Street"}
+                    mapViewType === 'hybrid' ? "Hybrid" : "Roadmap"}
                 </span>
                 <ChevronDown className="w-3 h-3 ml-1 opacity-60" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuContent align="end" className="w-44 bg-background border border-border z-50">
               <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">2D Views</DropdownMenuLabel>
               <DropdownMenuItem 
                 onClick={() => { setShow3DView(false); setMapViewType('hybrid'); }}
@@ -575,20 +572,14 @@ export default function LiveTracking() {
               >
                 <Layers className="w-4 h-4 mr-2" />
                 Hybrid
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => { setShow3DView(false); setMapViewType('satellite'); }}
-                className={cn(!show3DView && mapViewType === 'satellite' && "bg-accent")}
-              >
-                <Globe className="w-4 h-4 mr-2" />
-                Satellite
+                <span className="ml-auto text-[9px] text-muted-foreground">Satellite + Labels</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => { setShow3DView(false); setMapViewType('roadmap'); }}
                 className={cn(!show3DView && mapViewType === 'roadmap' && "bg-accent")}
               >
                 <Map className="w-4 h-4 mr-2" />
-                Street
+                Roadmap
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">3D View</DropdownMenuLabel>
@@ -598,9 +589,23 @@ export default function LiveTracking() {
               >
                 <Box className="w-4 h-4 mr-2" />
                 3D Flyover
+                <span className="ml-auto text-[9px] text-muted-foreground">Limited areas</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          
+          {/* Recenter Button - Centers map back on truck */}
+          {routeData && (
+            <Button
+              variant="ghost"
+              onClick={() => setFollowMode(true)}
+              className="tracking-header-satellite-btn"
+              title="Center map on truck"
+            >
+              <Crosshair className="w-4 h-4" />
+              <span className="hidden sm:inline">Recenter</span>
+            </Button>
+          )}
           
           {/* Follow Mode Toggle - Header version */}
           {routeData && (
