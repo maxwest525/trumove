@@ -96,6 +96,18 @@ export default function LiveTracking() {
   const [moveDate, setMoveDate] = useState<Date>(new Date()); // Auto-populate with today
   const [departureTime] = useState(new Date());
   
+  // Resume booking state
+  const [savedBooking, setSavedBooking] = useState<{
+    originAddress: string;
+    destAddress: string;
+    originCoords: [number, number];
+    destCoords: [number, number];
+    originName: string;
+    destName: string;
+    timestamp: number;
+  } | null>(null);
+  const [showResumePrompt, setShowResumePrompt] = useState(false);
+  
   // Google Routes data
   const [googleRouteData, setGoogleRouteData] = useState<{
     trafficInfo: { delayMinutes: number; hasDelay: boolean; severity: 'low' | 'medium' | 'high' } | null;
@@ -172,6 +184,61 @@ export default function LiveTracking() {
     setRouteData(route);
     setRouteCoordinates(route.coordinates);
   }, []);
+
+  // Check for saved booking on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('trumove_last_tracking');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Only show prompt if booking is less than 24 hours old
+        const isRecent = Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000;
+        if (isRecent) {
+          setSavedBooking(parsed);
+          setShowResumePrompt(true);
+        } else {
+          localStorage.removeItem('trumove_last_tracking');
+        }
+      } catch (e) {
+        localStorage.removeItem('trumove_last_tracking');
+      }
+    }
+  }, []);
+
+  // Save booking when tracking starts
+  useEffect(() => {
+    if (isTracking && originCoords && destCoords && originName && destName) {
+      const bookingData = {
+        originAddress,
+        destAddress,
+        originCoords,
+        destCoords,
+        originName,
+        destName,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem('trumove_last_tracking', JSON.stringify(bookingData));
+    }
+  }, [isTracking, originCoords, destCoords, originAddress, destAddress, originName, destName]);
+
+  // Handle resume booking
+  const handleResumeBooking = () => {
+    if (savedBooking) {
+      setOriginAddress(savedBooking.originAddress);
+      setDestAddress(savedBooking.destAddress);
+      setOriginCoords(savedBooking.originCoords);
+      setDestCoords(savedBooking.destCoords);
+      setOriginName(savedBooking.originName);
+      setDestName(savedBooking.destName);
+      setShowResumePrompt(false);
+      toast.success('📍 Previous route restored!');
+    }
+  };
+
+  const handleDismissResume = () => {
+    setShowResumePrompt(false);
+    localStorage.removeItem('trumove_last_tracking');
+  };
 
   // Fetch Google Routes data for traffic & toll info
   useEffect(() => {
@@ -410,6 +477,44 @@ export default function LiveTracking() {
           </div>
         </div>
       </header>
+
+      {/* Resume Booking Prompt Banner */}
+      {showResumePrompt && savedBooking && (
+        <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-primary/20 px-4 py-3">
+          <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                <Truck className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Continue tracking your shipment?
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {savedBooking.originName} → {savedBooking.destName}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDismissResume}
+                className="text-muted-foreground"
+              >
+                No thanks
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleResumeBooking}
+                className="bg-foreground text-background hover:bg-foreground/90"
+              >
+                Yes, continue
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="tracking-content">

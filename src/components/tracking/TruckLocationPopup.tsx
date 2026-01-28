@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Truck, Video, Globe, MapPin, Loader2, X, Maximize2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getCachedAerialView, setCachedAerialView } from "@/lib/aerialViewCache";
+import { cn } from "@/lib/utils";
 
 interface AerialViewData {
   type: "video" | "processing" | "not_found" | "fallback" | "error";
@@ -17,12 +18,29 @@ interface TruckLocationPopupProps {
   isOpen: boolean;
 }
 
-const mapboxToken = "pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g";
+const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
 
 export function TruckLocationPopup({ coordinates, locationName, onClose, isOpen }: TruckLocationPopupProps) {
   const [aerialData, setAerialData] = useState<AerialViewData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [imageReady, setImageReady] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
+  const fetchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Reset state when popup opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      setIsInitializing(true);
+      setImageReady(false);
+      setImageFailed(false);
+    } else {
+      // Clear state when closed
+      setAerialData(null);
+      setIsFullscreen(false);
+    }
+  }, [isOpen]);
 
   const fetchAerialView = useCallback(async () => {
     if (!coordinates) return;
@@ -65,14 +83,41 @@ export function TruckLocationPopup({ coordinates, locationName, onClose, isOpen 
 
   useEffect(() => {
     if (isOpen && coordinates) {
-      fetchAerialView();
+      // Debounce the fetch to prevent rapid-fire calls
+      if (fetchDebounceRef.current) {
+        clearTimeout(fetchDebounceRef.current);
+      }
+      fetchDebounceRef.current = setTimeout(() => {
+        fetchAerialView();
+      }, 200);
     }
+    
+    return () => {
+      if (fetchDebounceRef.current) {
+        clearTimeout(fetchDebounceRef.current);
+      }
+    };
   }, [isOpen, coordinates, fetchAerialView]);
 
   if (!isOpen) return null;
 
+  // Use Google Static Maps instead of Mapbox
   const getSatelliteUrl = () => {
-    return `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${coordinates[0]},${coordinates[1]},15,0/${isFullscreen ? '800x500' : '320x200'}@2x?access_token=${mapboxToken}`;
+    const size = isFullscreen ? '800x500' : '640x400';
+    return `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates[1]},${coordinates[0]}&zoom=15&size=${size}&maptype=satellite&key=${GOOGLE_API_KEY}`;
+  };
+
+  const handleImageLoad = () => {
+    setIsLoading(false);
+    setIsInitializing(false);
+    setImageReady(true);
+    setImageFailed(false);
+  };
+
+  const handleImageError = () => {
+    setIsLoading(false);
+    setIsInitializing(false);
+    setImageFailed(true);
   };
 
   return (
@@ -86,14 +131,13 @@ export function TruckLocationPopup({ coordinates, locationName, onClose, isOpen 
       )}
       
       <div 
-        className={`
-          ${isFullscreen 
+        className={cn(
+          "bg-slate-900/95 border border-white/20 rounded-xl overflow-hidden shadow-2xl backdrop-blur-md transition-opacity duration-300",
+          isFullscreen 
             ? 'fixed inset-4 z-[70] max-w-4xl mx-auto my-auto h-fit' 
-            : 'absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-50'
-          }
-          bg-slate-900/95 border border-white/20 rounded-xl overflow-hidden shadow-2xl
-          backdrop-blur-md
-        `}
+            : 'absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-50',
+          isInitializing && !imageFailed ? "opacity-0" : "opacity-100"
+        )}
         style={!isFullscreen ? { width: '340px' } : undefined}
       >
         {/* Header */}
@@ -127,64 +171,98 @@ export function TruckLocationPopup({ coordinates, locationName, onClose, isOpen 
 
         {/* Content */}
         <div className={`relative ${isFullscreen ? 'h-[500px]' : 'h-[200px]'}`}>
-          {isLoading && (
+          {isLoading && !imageReady && (
             <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-10">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
             </div>
           )}
 
-          {/* Video or Satellite Image */}
-          {aerialData?.type === 'video' && aerialData.videoUrl ? (
-            <video
-              src={aerialData.videoUrl}
-              className="w-full h-full object-cover"
-              autoPlay
-              loop
-              muted
-              playsInline
-            />
-          ) : (
-            <img
-              src={getSatelliteUrl()}
-              alt="Truck location"
-              className="w-full h-full object-cover"
-            />
-          )}
-
-          {/* Truck marker overlay */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="relative">
-              <div className="absolute inset-0 -m-2 rounded-full bg-primary/30 animate-ping" />
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white">
-                <Truck className="w-5 h-5 text-primary-foreground" />
+          {/* Fallback placeholder when image fails */}
+          {imageFailed ? (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
+              <div className="text-center">
+                <Globe className="w-10 h-10 text-primary/30 mx-auto mb-2" />
+                <span className="text-xs text-white/50">Satellite imagery unavailable</span>
+                {locationName && (
+                  <span className="block text-[9px] text-white/30 mt-1">Location: {locationName}</span>
+                )}
+                <span className="block text-[9px] text-white/30 mt-1 font-mono">
+                  {coordinates[1].toFixed(4)}°N, {Math.abs(coordinates[0]).toFixed(4)}°W
+                </span>
               </div>
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Video or Satellite Image */}
+              {aerialData?.type === 'video' && aerialData.videoUrl ? (
+                <video
+                  src={aerialData.videoUrl}
+                  className={cn(
+                    "w-full h-full object-cover transition-opacity duration-300",
+                    imageReady ? "opacity-100" : "opacity-0"
+                  )}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  onLoadedData={handleImageLoad}
+                  onError={handleImageError}
+                />
+              ) : (
+                <img
+                  src={getSatelliteUrl()}
+                  alt="Truck location"
+                  className={cn(
+                    "w-full h-full object-cover transition-opacity duration-300",
+                    imageReady ? "opacity-100" : "opacity-0"
+                  )}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                />
+              )}
+            </>
+          )}
 
-          {/* View type badge */}
-          <div className="absolute top-2 left-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1.5">
-            {aerialData?.type === 'video' ? (
-              <>
-                <Video className="w-3 h-3 text-primary" />
-                <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">Flyover</span>
-              </>
-            ) : (
-              <>
-                <Globe className="w-3 h-3 text-primary" />
-                <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">Satellite</span>
-              </>
-            )}
-          </div>
-
-          {/* Coordinates */}
-          <div className="absolute bottom-2 left-2 right-2 px-2 py-1.5 rounded-md bg-black/70 backdrop-blur-sm">
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-3 h-3 text-primary flex-shrink-0" />
-              <span className="text-[10px] text-white/80 font-mono">
-                {coordinates[1].toFixed(4)}°N, {Math.abs(coordinates[0]).toFixed(4)}°W
-              </span>
+          {/* Truck marker overlay - only show when image is ready */}
+          {imageReady && !imageFailed && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="relative">
+                <div className="absolute inset-0 -m-2 rounded-full bg-primary/30 animate-ping" />
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white">
+                  <Truck className="w-5 h-5 text-primary-foreground" />
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* View type badge - only show when image is ready */}
+          {imageReady && !imageFailed && (
+            <div className="absolute top-2 left-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1.5">
+              {aerialData?.type === 'video' ? (
+                <>
+                  <Video className="w-3 h-3 text-primary" />
+                  <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">Flyover</span>
+                </>
+              ) : (
+                <>
+                  <Globe className="w-3 h-3 text-primary" />
+                  <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">Satellite</span>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Coordinates - only show when image is ready */}
+          {imageReady && !imageFailed && (
+            <div className="absolute bottom-2 left-2 right-2 px-2 py-1.5 rounded-md bg-black/70 backdrop-blur-sm">
+              <div className="flex items-center gap-1.5">
+                <MapPin className="w-3 h-3 text-primary flex-shrink-0" />
+                <span className="text-[10px] text-white/80 font-mono">
+                  {coordinates[1].toFixed(4)}°N, {Math.abs(coordinates[0]).toFixed(4)}°W
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

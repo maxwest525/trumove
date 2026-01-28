@@ -3,6 +3,23 @@ import { MapPin, Navigation, Loader2, Eye, Plane, Globe, Video } from "lucide-re
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 
+// Image fallback placeholder component
+function ImageFallbackPlaceholder({ locationName, variant }: { locationName: string; variant: string }) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900">
+      <div className="text-center">
+        <Globe className="w-8 h-8 text-primary/40 mx-auto mb-2" />
+        <span className="text-[10px] text-white/50">Imagery unavailable</span>
+        {locationName && (
+          <span className="block text-[9px] text-white/30 mt-1 truncate max-w-[150px] mx-auto">
+            {locationName}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 type ViewMode = "street" | "satellite" | "aerial" | "video";
 
 interface AerialViewData {
@@ -38,6 +55,7 @@ export function StreetViewPreview({
   const [viewMode, setViewMode] = useState<ViewMode>("street");
   const [aerialData, setAerialData] = useState<AerialViewData | null>(null);
   const [hasAerialVideo, setHasAerialVideo] = useState(false);
+  const [allImagesFailed, setAllImagesFailed] = useState(false);
 
   // Fetch aerial view data from Google API
   const fetchAerialView = useCallback(async (lat: number, lng: number) => {
@@ -96,6 +114,11 @@ export function StreetViewPreview({
     setIsLoading(false);
     setHasError(true);
     setViewMode("satellite");
+  };
+
+  const handleFinalImageError = () => {
+    setIsLoading(false);
+    setAllImagesFailed(true);
   };
 
   const getCurrentUrl = () => {
@@ -171,6 +194,8 @@ export function StreetViewPreview({
                     setViewMode("street");
                   }}
                 />
+              ) : allImagesFailed ? (
+                <ImageFallbackPlaceholder locationName={locationName} variant={variant} />
               ) : (
                 <img
                   src={getCurrentUrl() || ""}
@@ -180,7 +205,7 @@ export function StreetViewPreview({
                     isLoading ? "opacity-0" : "opacity-100"
                   )}
                   onLoad={() => setIsLoading(false)}
-                  onError={viewMode === "street" ? handleStreetViewError : () => setIsLoading(false)}
+                  onError={viewMode === "street" ? handleStreetViewError : handleFinalImageError}
                 />
               )}
 
@@ -262,6 +287,8 @@ export function StreetViewPreview({
                   setViewMode("street");
                 }}
               />
+            ) : allImagesFailed ? (
+              <ImageFallbackPlaceholder locationName={locationName} variant={variant} />
             ) : (
               <img
                 src={getCurrentUrl() || ""}
@@ -271,7 +298,7 @@ export function StreetViewPreview({
                   isLoading ? "opacity-0" : "opacity-100"
                 )}
                 onLoad={() => setIsLoading(false)}
-                onError={viewMode === "street" ? handleStreetViewError : () => setIsLoading(false)}
+                onError={viewMode === "street" ? handleStreetViewError : handleFinalImageError}
               />
             )}
 
