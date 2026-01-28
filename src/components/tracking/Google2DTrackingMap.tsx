@@ -114,12 +114,7 @@ export function Google2DTrackingMap({
         center: initialCenter,
         zoom: originCoords ? 12 : 6,
         mapTypeId: mapType,
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-          style: window.google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-          position: window.google.maps.ControlPosition.TOP_RIGHT,
-          mapTypeIds: ['roadmap', 'satellite', 'hybrid']
-        },
+        mapTypeControl: false, // Disabled - using custom dropdown instead
         fullscreenControl: false,
         streetViewControl: false,
         zoomControl: true,
