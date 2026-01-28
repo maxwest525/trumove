@@ -99,9 +99,10 @@ interface CheckMyTruckModalProps {
   onOpenChange: (open: boolean) => void;
   onLoadRoute?: (truck: TruckStatus) => void;
   onLoadMultiStop?: (truck: MultiStopTruckStatus) => void;
+  defaultBookingNumber?: string;
 }
 
-export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute, onLoadMultiStop }: CheckMyTruckModalProps) {
+export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute, onLoadMultiStop, defaultBookingNumber }: CheckMyTruckModalProps) {
   const [bookingNumber, setBookingNumber] = useState("");
   const [truckStatus, setTruckStatus] = useState<TruckStatus | null>(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -185,15 +186,18 @@ export function CheckMyTruckModal({ open, onOpenChange, onLoadRoute, onLoadMulti
     setIsSearching(false);
   };
 
-  // Reset when modal closes
+  // Reset when modal closes, or pre-fill with default booking number when opening
   useEffect(() => {
     if (!open) {
       setBookingNumber("");
       setTruckStatus(null);
       setNotFound(false);
       setAerialData(null);
+    } else if (defaultBookingNumber && !bookingNumber) {
+      // Auto-populate with current booking when modal opens
+      setBookingNumber(defaultBookingNumber);
     }
-  }, [open]);
+  }, [open, defaultBookingNumber]);
 
   // Get satellite fallback URL
   const getSatelliteUrl = (coords: [number, number]) => {
