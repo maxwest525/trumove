@@ -23507,6 +23507,7 @@
   padding: 12px;
   overflow: auto;
   min-height: 0;
+  height: 100%;
 }
 
 @media (max-width: 1600px) {
@@ -23530,7 +23531,7 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .tracking-content {
     grid-template-columns: 1fr;
     padding: 12px;
@@ -23565,11 +23566,13 @@
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
+  min-width: 280px;
 }
 
 /* Map Container - Expands to fill vertical space */
 .tracking-map-container {
-  min-height: 300px;
+  min-height: 400px;
+  height: 100%;
   flex: 1;
   border-radius: 12px;
   overflow: hidden;
@@ -23644,6 +23647,7 @@
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
+  min-width: 280px;
 }
 
 /* Dashboard cards - themed */
