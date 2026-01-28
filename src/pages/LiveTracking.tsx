@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { getQuickFuelEstimate } from "@/lib/fuelCostCalculator";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import logoImg from "@/assets/logo.png";
@@ -771,6 +772,7 @@ export default function LiveTracking() {
             trafficTrend={trafficTrend}
             tollInfo={googleRouteData.tollInfo}
             isFuelEfficient={googleRouteData.isFuelEfficient}
+            fuelCostEstimate={routeData ? getQuickFuelEstimate(totalDistance) : null}
             alternateRoutes={googleRouteData.alternateRoutes}
             lastUpdate={lastUpdate}
             isLoading={etaLoading}
