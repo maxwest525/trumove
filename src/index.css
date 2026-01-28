@@ -928,6 +928,11 @@
   }
 
   .dark {
+    /* TruMove Brand Colors - Inverted for dark mode */
+    --tm-green: 120 100% 54%;
+    --tm-ink: 210 40% 98%;
+    --tm-line: 210 40% 98% / 0.1;
+    
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
