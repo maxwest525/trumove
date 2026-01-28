@@ -49,6 +49,7 @@ interface UnifiedStatsCardProps {
   // Toll & fuel
   tollInfo: TollData | null;
   isFuelEfficient?: boolean;
+  fuelCostEstimate?: number | null; // Estimated fuel cost in dollars
   
   // Alternates
   alternateRoutes?: AlternateRoute[];
@@ -76,6 +77,7 @@ export function UnifiedStatsCard({
   trafficTrend,
   tollInfo,
   isFuelEfficient = false,
+  fuelCostEstimate,
   alternateRoutes = [],
   onRouteSelect,
   lastUpdate,
@@ -235,18 +237,21 @@ export function UnifiedStatsCard({
             </div>
           </div>
 
-          {/* Fuel */}
+          {/* Fuel Cost */}
           <div className={cn(
             "rounded-lg p-2.5 border",
-            isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/20" : "bg-muted/50 dark:bg-white/5 border-border"
+            isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/20" : "bg-amber-500/10 border-amber-500/20"
           )}>
             <div className="flex items-center gap-1.5 mb-1">
-              <Fuel className={cn("w-3.5 h-3.5", isFuelEfficient ? "text-emerald-500" : "text-foreground/70")} />
+              <Fuel className={cn("w-3.5 h-3.5", isFuelEfficient ? "text-emerald-500" : "text-amber-500")} />
               <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Fuel</span>
             </div>
-            <div className={cn("text-sm font-bold", isFuelEfficient ? "text-emerald-500" : "text-foreground")}>
-              {isFuelEfficient ? 'Optimal' : 'Standard'}
+            <div className={cn("text-sm font-bold", isFuelEfficient ? "text-emerald-500" : "text-amber-500")}>
+              {fuelCostEstimate ? `$${fuelCostEstimate.toFixed(0)}` : '--'}
             </div>
+            {isFuelEfficient && (
+              <div className="text-[10px] text-emerald-500/80 mt-0.5">Eco route</div>
+            )}
           </div>
         </div>
       )}
