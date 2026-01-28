@@ -1,113 +1,131 @@
 
+## Plan: Fix Tracking Page Layout Issues
 
-## Plan: Fix Button Styling, Add Weather to Sidebar, and Fix Truck Positioning
+### Problem Identified
 
-This plan addresses three issues on the Shipment Command Center tracking page:
+Based on your screenshot, the tracking page is displaying incorrectly:
+1. **Left sidebar missing** - The "Route Setup" form with Origin/Destination inputs is not visible
+2. **Map height reduced** - The map appears squished/shorter than expected
+3. The booking input field IS visible (in the Command Center header), so that's working
 
----
+### Root Cause Analysis
 
-### 1. Remove All-Green Buttons - Apply High-Contrast Styling
+After investigating the code, I found the issue is related to the **responsive CSS breakpoint**:
 
-**Problem:** The "Go" button in the header is fully green, which conflicts with the brand guidelines of using green only as subtle accents.
-
-**Solution:** Update button styling to use high-contrast dark backgrounds with white text instead of green fills.
-
-**Changes:**
-- Modify `.tracking-header-go-btn` in `src/index.css`:
-  - Change from green background to dark/tm-ink background
-  - Use white text
-  - Keep green only as hover glow accent
-- Ensure the satellite button maintains its current glass-morphism style (already correct)
-
-**Before:**
 ```css
-.tracking-header-go-btn {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
+@media (max-width: 1024px) {
+  .tracking-content {
+    grid-template-columns: 1fr;  /* Collapses to single column */
+  }
 }
 ```
 
-**After:**
+When your browser viewport is narrower than 1024px, the three-column layout collapses to a single column. In this mode:
+- The left sidebar gets `order: 1`
+- The map gets `order: 2` 
+- The right dashboard gets `order: 3`
+
+So everything stacks vertically, requiring you to scroll down to see the left sidebar content.
+
+### Solution
+
+I recommend two fixes:
+
+---
+
+#### Fix 1: Adjust Mobile Breakpoint for Better Small-Screen Experience
+
+Lower the single-column breakpoint from 1024px to 900px or 860px, so the three-column layout persists on more screen sizes:
+
+**File: `src/index.css` (line ~23533)**
+
+| Before | After |
+|--------|-------|
+| `@media (max-width: 1024px)` | `@media (max-width: 900px)` |
+
+This allows screens between 900-1024px to keep the full three-column layout.
+
+---
+
+#### Fix 2: Ensure Map Container Uses Full Available Height
+
+Add explicit height constraints to ensure the map fills the available vertical space:
+
+**File: `src/index.css` (around tracking-content and tracking-map-container)**
+
 ```css
-.tracking-header-go-btn {
-  background: hsl(var(--tm-ink));
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.tracking-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 480px minmax(180px, 1fr) 480px;
+  gap: 12px;
+  padding: 12px;
+  overflow: auto;
+  min-height: 0;
+  height: 100%;  /* ADD THIS */
+}
+
+.tracking-map-container {
+  min-height: 400px;  /* Increase from 300px */
+  height: 100%;       /* ADD THIS */
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
 }
 ```
 
 ---
 
-### 2. Move Weather Component to Right Sidebar (Under Weigh Stations)
+#### Fix 3: Add Sidebar Width Constraints for Edge Cases
 
-**Problem:** The weather strip is currently at the bottom of the main grid layout. User wants it in the right sidebar under the weigh stations checklist.
+Ensure sidebars don't get squeezed out on edge-case viewport widths:
 
-**Solution:** Move the `<RouteWeather>` component from the bottom of `tracking-content` into the `tracking-dashboard` (right sidebar), placed after `<WeighStationChecklist>`.
+**File: `src/index.css`**
 
-**Changes in `src/pages/LiveTracking.tsx`:**
-- Remove `<RouteWeather>` from its current position (after `tracking-content` grid)
-- Add it inside `tracking-dashboard` div after the `WeighStationChecklist` component
-- Create a card wrapper to match sidebar styling
+```css
+.tracking-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  min-width: 280px;  /* ADD - prevents sidebar from collapsing */
+}
 
-**New sidebar structure:**
-```text
-Right Sidebar (tracking-dashboard):
-├── Multi-Stop Summary Card (conditional)
-├── UnifiedStatsCard
-├── TruckAerialView (when tracking)
-├── WeighStationChecklist
-└── RouteWeather (NEW POSITION - card format)
-```
-
-**CSS Updates:**
-- Create new `.tracking-weather-card-sidebar` class for vertical card layout
-- Style weather cards to stack vertically and match sidebar card aesthetics
-- Ensure proper contrast with white text on dark cards
-
----
-
-### 3. Fix Truck Animation Alignment with Route Line
-
-**Problem:** The truck marker appears offset from the route line during animation. This is caused by the marker's anchor point not being centered properly.
-
-**Solution:** Add explicit anchor configuration to the Mapbox marker so it centers on the route coordinates.
-
-**Changes in `src/components/tracking/TruckTrackingMap.tsx`:**
-- When creating the truck marker, specify `anchor: 'center'` in the marker options
-- This ensures the truck icon's center point aligns exactly with the route coordinates
-
-**Code change:**
-```typescript
-// Before
-truckMarker.current = new mapboxgl.Marker({ 
-  element: truckEl, 
-  rotationAlignment: "map" 
-})
-
-// After
-truckMarker.current = new mapboxgl.Marker({ 
-  element: truckEl, 
-  rotationAlignment: "map",
-  anchor: 'center'
-})
+.tracking-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  min-width: 280px;  /* ADD - prevents dashboard from collapsing */
+}
 ```
 
 ---
 
-### Summary of Files to Modify
+### Summary of Changes
 
-| File | Changes |
-|------|---------|
-| `src/index.css` | Update `.tracking-header-go-btn` to dark background, add sidebar weather styles |
-| `src/pages/LiveTracking.tsx` | Move `<RouteWeather>` into right sidebar after weigh stations |
-| `src/components/tracking/TruckTrackingMap.tsx` | Add `anchor: 'center'` to truck marker configuration |
+| File | Line(s) | Change |
+|------|---------|--------|
+| `src/index.css` | ~23533 | Change breakpoint from `1024px` to `900px` |
+| `src/index.css` | ~23502-23510 | Add `height: 100%` to `.tracking-content` |
+| `src/index.css` | ~23571-23577 | Increase `min-height` to `400px` and add `height: 100%` to `.tracking-map-container` |
+| `src/index.css` | ~23563-23568 | Add `min-width: 280px` to `.tracking-sidebar` |
+| `src/index.css` | ~23642-23647 | Add `min-width: 280px` to `.tracking-dashboard` |
 
 ---
 
-### Visual Result
+### Expected Result
 
-After implementation:
-- **Header buttons**: Dark "Go" button with white text (green glow on hover only)
-- **Right sidebar**: Weather cards appear below weigh station checklist in a vertical format
-- **Map animation**: Truck icon travels exactly along the route line without offset
+After these changes:
+- **Wider viewport support**: Three-column layout will persist until screens are narrower than 900px
+- **Consistent map height**: Map will properly fill available vertical space
+- **Sidebar protection**: Left and right sidebars won't get squeezed out unexpectedly
 
+---
+
+### Quick Workaround (If You Want to Test Now)
+
+If you'd like to immediately test if this is the issue:
+1. Widen your browser window to be at least 1024px wide
+2. The three-column layout should appear with the left sidebar visible
