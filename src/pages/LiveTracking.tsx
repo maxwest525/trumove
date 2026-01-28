@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, Gauge } from "lucide-react";
 import { format } from "date-fns";
+import { Slider } from "@/components/ui/slider";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { Google3DTrackingView } from "@/components/tracking/Google3DTrackingView";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
@@ -646,6 +647,33 @@ export default function LiveTracking() {
                 </>
               )}
             </div>
+
+            {/* Playback Speed Control */}
+            <div className="mt-4 pt-3 border-t border-border">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Gauge className="w-3.5 h-3.5 text-foreground/60" />
+                  <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/70">
+                    Playback Speed
+                  </span>
+                </div>
+                <span className="text-xs font-mono text-primary">
+                  {animationSpeed <= 30 ? 'Fast' : animationSpeed <= 90 ? 'Normal' : 'Slow'}
+                </span>
+              </div>
+              <Slider
+                value={[animationSpeed]}
+                onValueChange={(value) => setAnimationSpeed(value[0])}
+                min={15}
+                max={180}
+                step={15}
+                className="w-full"
+              />
+              <div className="flex justify-between mt-1.5">
+                <span className="text-[9px] text-muted-foreground">15s (Fast)</span>
+                <span className="text-[9px] text-muted-foreground">180s (Slow)</span>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -659,6 +687,8 @@ export default function LiveTracking() {
               isTracking={isTracking}
               followMode={followMode}
               googleApiKey={GOOGLE_MAPS_API_KEY}
+              trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
+              trafficDelayMinutes={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
             />
           ) : (
             <TruckTrackingMap

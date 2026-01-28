@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Loader2, Box, Navigation, RotateCw } from "lucide-react";
+import { Loader2, Box, Navigation, RotateCw, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Google3DTrackingViewProps {
@@ -9,6 +9,8 @@ interface Google3DTrackingViewProps {
   followMode?: boolean;
   onClose?: () => void;
   googleApiKey: string;
+  trafficSeverity?: 'low' | 'medium' | 'high';
+  trafficDelayMinutes?: number;
 }
 
 declare global {
@@ -27,7 +29,9 @@ export function Google3DTrackingView({
   isTracking = false,
   followMode = false,
   onClose,
-  googleApiKey
+  googleApiKey,
+  trafficSeverity = 'low',
+  trafficDelayMinutes = 0
 }: Google3DTrackingViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const map3DRef = useRef<any>(null);
@@ -91,8 +95,7 @@ export function Google3DTrackingView({
           center: { lat, lng, altitude: 200 },
           range: 800,
           tilt: 65,
-          heading: bearing,
-          defaultLabelsDisabled: false
+          heading: bearing
         });
         
         // Clear container and add map
@@ -231,6 +234,23 @@ export function Google3DTrackingView({
           <div className="px-2 py-1.5 rounded-lg bg-red-500/80 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
             <span className="text-[9px] font-bold text-white tracking-wider">LIVE</span>
+          </div>
+        )}
+        
+        {/* Traffic delay badge */}
+        {isTracking && trafficDelayMinutes > 0 && (
+          <div className={cn(
+            "px-3 py-1.5 rounded-lg flex items-center gap-2",
+            trafficSeverity === 'high' 
+              ? "bg-red-500/80" 
+              : trafficSeverity === 'medium' 
+                ? "bg-amber-500/80" 
+                : "bg-emerald-500/80"
+          )}>
+            <Clock className="w-3 h-3 text-white" />
+            <span className="text-[9px] font-bold text-white tracking-wider">
+              +{trafficDelayMinutes}m delay
+            </span>
           </div>
         )}
       </div>
