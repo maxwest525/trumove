@@ -1,15 +1,16 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, Gauge } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, Gauge, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
 import { Slider } from "@/components/ui/slider";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { Google3DTrackingView } from "@/components/tracking/Google3DTrackingView";
+import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
+import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { TruckAerialView } from "@/components/tracking/TruckAerialView";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
-// RouteInsights removed - "Did You Know" section eliminated
 import { CheckMyTruckModal, isMultiStop, isSingleStop, type TruckStatus, type MultiStopTruckStatus } from "@/components/tracking/CheckMyTruckModal";
 import { MultiStopSummaryCard } from "@/components/tracking/MultiStopSummaryCard";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
@@ -17,6 +18,7 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+import { getWebGLDiagnostics, type WebGLDiagnostics } from "@/lib/webglDiagnostics";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -116,6 +118,7 @@ export default function LiveTracking() {
     etaFormatted: string | null;
     alternateRoutes?: any[];
     isFuelEfficient?: boolean;
+    polyline?: string;
   }>({ trafficInfo: null, tollInfo: null, etaFormatted: null });
   
   // Check My Truck modal
@@ -129,6 +132,14 @@ export default function LiveTracking() {
   
   // 3D view mode toggle
   const [show3DView, setShow3DView] = useState(false);
+  
+  // WebGL diagnostics and fallback state
+  const [webglDiagnostics, setWebglDiagnostics] = useState<WebGLDiagnostics | null>(null);
+  const [useStaticMap, setUseStaticMap] = useState(false);
+  
+  // Route comparison state
+  const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
+  const [routeComparisonExpanded, setRouteComparisonExpanded] = useState(true);
   
   // Current truck bearing for 3D view
   const [truckBearing, setTruckBearing] = useState(0);
@@ -184,6 +195,23 @@ export default function LiveTracking() {
   const handleRouteCalculated = useCallback((route: RouteData) => {
     setRouteData(route);
     setRouteCoordinates(route.coordinates);
+  }, []);
+
+  // Check WebGL capabilities on mount and set appropriate view mode
+  useEffect(() => {
+    const diagnostics = getWebGLDiagnostics();
+    setWebglDiagnostics(diagnostics);
+    
+    if (!diagnostics.supported || diagnostics.recommendation === 'static') {
+      // WebGL not available or software rendering - use static map
+      setUseStaticMap(true);
+      setShow3DView(false);
+      console.log('WebGL diagnostics: Using static map fallback', diagnostics);
+    } else if (diagnostics.supported && diagnostics.warnings.length === 0) {
+      // WebGL fully supported - enable 3D view by default
+      setShow3DView(true);
+      console.log('WebGL diagnostics: 3D view enabled', diagnostics);
+    }
   }, []);
 
   // Check for saved booking on mount
@@ -451,14 +479,26 @@ export default function LiveTracking() {
           
           <Button
             variant="ghost"
-            onClick={() => setShow3DView(!show3DView)}
+            onClick={() => {
+              if (useStaticMap) {
+                toast.info('Static map mode active', { 
+                  description: 'WebGL not available - using simplified map view' 
+                });
+                return;
+              }
+              setShow3DView(!show3DView);
+            }}
             className={cn(
               "tracking-header-satellite-btn",
-              show3DView && "bg-primary/20 border-primary"
+              show3DView && "bg-primary/20 border-primary",
+              useStaticMap && "opacity-50 cursor-not-allowed"
             )}
+            disabled={useStaticMap}
           >
             <Box className="w-4 h-4" />
-            <span className="hidden sm:inline">{show3DView ? "2D Map" : "3D View"}</span>
+            <span className="hidden sm:inline">
+              {useStaticMap ? "Static Mode" : show3DView ? "2D Map" : "3D View"}
+            </span>
           </Button>
           
           <Button
@@ -678,9 +718,29 @@ export default function LiveTracking() {
 
         </div>
 
-        {/* Center: Map - Toggle between 2D Mapbox and 3D Google */}
+        {/* Center: Map - Auto-select based on WebGL capabilities */}
         <div className="tracking-map-container">
-          {show3DView ? (
+          {/* WebGL warning banner when using static fallback */}
+          {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
+            <div className="absolute top-0 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              <span>{webglDiagnostics.warnings[0]}</span>
+            </div>
+          )}
+          
+          {useStaticMap ? (
+            <GoogleStaticRouteMap
+              originCoords={originCoords}
+              destCoords={destCoords}
+              progress={progress}
+              isTracking={isTracking}
+              googleApiKey={GOOGLE_MAPS_API_KEY}
+              routePolyline={googleRouteData.polyline}
+              truckPosition={currentTruckPosition}
+              originName={originName}
+              destName={destName}
+            />
+          ) : show3DView ? (
             <Google3DTrackingView
               coordinates={currentTruckPosition}
               bearing={truckBearing}
