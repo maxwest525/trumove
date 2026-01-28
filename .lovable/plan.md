@@ -1,310 +1,171 @@
 
 
-## Plan: Tracking Dashboard UI & Functionality Improvements
+## Plan: Tracking Dashboard Fixes & Improvements
 
-This plan addresses multiple user requests to refine the tracking dashboard's UI, button styling, playback speed, and feature behaviors.
-
----
-
-## Summary of Changes
-
-| Change | Description |
-|--------|-------------|
-| **1. Move Alternate Routes & Weigh Stations** | Move these collapsible sections to the very bottom of the right sidebar |
-| **2. Verify Satellite Auto-Population** | Confirm booking number pre-fills in "Locate via Satellite" modal |
-| **3. Locate via Satellite Modal Changes** | Default to Street View, add Hybrid switch, change button text |
-| **4. Add Route Animation to Satellite View** | Show truck moving in the satellite/street view modal |
-| **5. Real-Time Truck Speed** | Non-demo mode must move at realistic real-time speed based on ETA |
-| **6. Demo Button Styling** | Make smaller, remove green color, match other buttons |
-| **7. Main Map Default to Hybrid View** | Change default mapViewType to 'hybrid' |
+This plan addresses multiple issues identified during testing of the tracking dashboard.
 
 ---
 
-## File Changes Summary
+## Summary of Issues & Fixes
 
-| File | Action | Purpose |
-|------|--------|---------|
-| `src/pages/LiveTracking.tsx` | Modify | Reorder sidebar, fix animation speed, smaller demo button |
-| `src/components/tracking/CheckMyTruckModal.tsx` | Modify | Add Street View default, view toggle, route animation |
-| `src/index.css` | Modify | Update demo button styling to be smaller and non-green |
+| Issue | Current State | Fix |
+|-------|---------------|-----|
+| **1. Live Truck View - Remove 3D/Aerial** | Modal has Street/Hybrid toggle only | Already correct - no changes needed |
+| **2. Demo mode real-time ETA** | Uses fast 60-second playback | Keep demo fast, but clarify distinction |
+| **3. Main map dropdown cleanup** | Has Satellite, Street, 3D options | Remove broken Satellite; Street doesn't work; Add recenter button |
+| **4. Remove satellite button on map** | Google Maps has mapTypeControl | Disable native map type controls |
+| **5. Street View not working on main map** | Shows roadmap, not Street View | "Street" in dropdown = roadmap (this is correct naming for maps) |
+| **6. 3D view looks same as 2D** | Uses maps3d library | 3D requires WebGL + specific area coverage |
+| **7. Add recenter/locate truck button** | Missing | Add "Recenter" button to bring view back to truck |
+| **8. Booking number pre-fill verification** | Already passes `defaultBookingNumber` | Verify working |
 
 ---
 
-## 1. Move Alternate Routes & Weigh Stations to Bottom
+## Detailed Changes
 
-### Current Order in Right Sidebar:
+### 1. Main Map Dropdown Cleanup (LiveTracking.tsx)
+
+**Current dropdown options:**
+- Hybrid (works)
+- Satellite (broken/redundant)
+- Street (shows roadmap with dark theme)
+- 3D Flyover (limited availability)
+
+**New dropdown options:**
 ```text
-1. Multi-Stop Summary (conditional)
-2. Unified Stats Card
-3. Route Info Card (Alternate Routes + Weigh Stations)
-4. Live Truck Aerial View
-5. Route Weather
+┌─────────────────────┐
+│ 2D Views            │
+├─────────────────────┤
+│ ✓ Hybrid            │ ← Satellite + labels (default)
+│   Roadmap           │ ← Renamed from "Street" 
+├─────────────────────┤
+│ 3D View             │
+├─────────────────────┤
+│   3D Flyover        │ ← Keep but with availability warning
+└─────────────────────┘
 ```
 
-### New Order:
-```text
-1. Multi-Stop Summary (conditional)
-2. Unified Stats Card
-3. Live Truck Aerial View
-4. Route Weather
-5. Route Info Card (Alternate Routes + Weigh Stations) ← Moved to bottom
-```
+**Changes:**
+- Remove "Satellite" option (redundant with Hybrid)
+- Rename "Street" to "Roadmap" for clarity
+- Keep 3D Flyover as optional
 
-### Changes in LiveTracking.tsx (lines 851-930):
-Move the Route Info card block (lines 852-911) to after the RouteWeather component.
+### 2. Remove Native Map Type Controls (Google2DTrackingMap.tsx)
 
----
-
-## 2. Verify Satellite Auto-Population
-
-The code already passes `defaultBookingNumber={currentBookingNumber}` to the modal, and the modal has logic to pre-fill:
+The Google Maps component has built-in satellite/map toggle buttons. Remove them to avoid redundancy:
 
 ```typescript
-// CheckMyTruckModal.tsx line 196-198
+const map = new window.google.maps.Map(containerRef.current, {
+  // ... existing options
+  mapTypeControl: false,  // ← Disable built-in controls
+});
+```
+
+### 3. Add Recenter Button (LiveTracking.tsx)
+
+Add a "Recenter" button in the header that pans the map back to the truck's current position:
+
+```typescript
+{/* Recenter Button - Shows when route exists and user has panned away */}
+{routeData && (
+  <Button
+    variant="ghost"
+    onClick={() => {
+      setFollowMode(true);
+      // The follow mode change will trigger the map to pan back to truck
+    }}
+    className="tracking-header-satellite-btn"
+    title="Center map on truck"
+  >
+    <Crosshair className="w-4 h-4" />
+    <span className="hidden sm:inline">Recenter</span>
+  </Button>
+)}
+```
+
+### 4. Fix Demo Mode Speed Clarification
+
+The demo mode already uses fast 60-second playback per the code:
+
+```typescript
+if (isDemoMode) {
+  setAnimationSpeed(60); // Fast for demo
+} else {
+  setAnimationSpeed(routeData.duration); // Real-time
+}
+```
+
+**No code changes needed** - this is already correct. The Demo button sets `isDemoMode = true`.
+
+### 5. Verify Booking Number Pre-fill (CheckMyTruckModal.tsx)
+
+The modal already has logic to pre-fill:
+```typescript
 } else if (defaultBookingNumber && !bookingNumber) {
   setBookingNumber(defaultBookingNumber);
 }
 ```
 
-**Status**: Already implemented. Testing will confirm functionality.
-
----
-
-## 3. Locate via Satellite Modal Changes
-
-### Current Behavior:
-- Shows satellite/aerial view by default
-- No view toggle options
-- Button says "Locate via Satellite"
-
-### New Behavior:
-- Default to Street View
-- Add toggle to switch between Street View and Hybrid
-- Button text changes to "Pause to View Live Truck"
-
-### Changes in CheckMyTruckModal.tsx:
-
-Add a view mode state and Street View component:
-
+And `LiveTracking.tsx` passes:
 ```typescript
-const [viewMode, setViewMode] = useState<'street' | 'hybrid'>('street');
+defaultBookingNumber={currentBookingNumber}
 ```
 
-Replace the aerial/satellite view section with:
-- Street View (default) using Google Street View Static API
-- Hybrid satellite map (toggle option)
-- View toggle buttons in the header
-
-Update button text:
-```typescript
-<span className="hidden sm:inline">Pause to View Live Truck</span>
-```
+**Testing needed to confirm** - code looks correct but may have timing issue. The `useEffect` dependency array should also include `bookingNumber` change detection.
 
 ---
 
-## 4. Add Route Animation to Satellite Modal
+## File Changes Summary
 
-### Current Behavior:
-- Shows static truck position based on demo data
-
-### New Behavior:
-- When tracking is active, update truck position in the modal
-- Pass `progress` and `routeCoordinates` from parent to modal
-- Animate truck marker position based on progress
-
-### Changes:
-Add props to CheckMyTruckModal:
-```typescript
-interface CheckMyTruckModalProps {
-  // ... existing props
-  liveProgress?: number;
-  liveRouteCoordinates?: [number, number][];
-}
-```
-
-Calculate interpolated position in modal:
-```typescript
-const livePosition = useMemo(() => {
-  if (!liveRouteCoordinates?.length || liveProgress === undefined) return null;
-  // Interpolate position based on progress
-  const exactIndex = (liveProgress / 100) * (liveRouteCoordinates.length - 1);
-  // ... interpolation logic
-}, [liveProgress, liveRouteCoordinates]);
-```
+| File | Action | Changes |
+|------|--------|---------|
+| `src/pages/LiveTracking.tsx` | Modify | Simplify dropdown (remove Satellite, rename Street to Roadmap), add Recenter button, add Crosshair import |
+| `src/components/tracking/Google2DTrackingMap.tsx` | Modify | Disable `mapTypeControl` to remove redundant buttons |
 
 ---
 
-## 5. Real-Time Truck Speed (Non-Demo Mode)
+## Updated Header Control Layout
 
-### Current Issue:
-Animation speed is fixed at 60 seconds regardless of actual route duration.
-
-### Solution:
-For non-demo bookings, calculate animation speed based on actual ETA:
-- If route duration is 6 hours (21600 seconds), animation should take 6 hours
-- Demo mode keeps the fast 60-second playback
-
-### Changes in LiveTracking.tsx:
-
-```typescript
-// State to track if current tracking is demo mode
-const [isDemoMode, setIsDemoMode] = useState(false);
-
-// Demo button sets isDemoMode = true
-onClick={async () => {
-  // ... existing demo setup
-  setIsDemoMode(true);
-}}
-
-// Calculate animation speed based on mode
-useEffect(() => {
-  if (routeData) {
-    if (isDemoMode) {
-      setAnimationSpeed(60); // Fast for demo
-    } else {
-      // Real-time: animation matches actual route duration
-      setAnimationSpeed(routeData.duration); // Duration in seconds
-    }
-  }
-}, [routeData, isDemoMode]);
-```
-
----
-
-## 6. Demo Button Styling
-
-### Current:
-- Full green gradient background
-- Same size as other buttons
-- Prominent styling
-
-### New:
-- Smaller size (32px height vs 40px)
-- Ghost/outline style (not green fill)
-- Subtle border accent
-
-### CSS Changes in index.css:
-
-```css
-.tracking-header-demo-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  height: 32px;              /* Smaller */
-  padding: 0 10px;           /* Reduced padding */
-  background: transparent !important;
-  backdrop-filter: blur(12px);
-  color: hsl(var(--primary)) !important;  /* Text color, not fill */
-  font-weight: 600;
-  font-size: 11px;           /* Smaller text */
-  border-radius: 8px;
-  border: 1px solid hsl(var(--primary) / 0.4) !important;
-  transition: all 0.2s;
-}
-
-.tracking-header-demo-btn:hover {
-  background: hsl(var(--primary) / 0.1) !important;
-  border-color: hsl(var(--primary) / 0.6) !important;
-}
-```
-
-Also add smaller sizing for map/satellite toggle:
-
-```css
-.tracking-header-satellite-btn {
-  height: 34px;
-  padding: 0 10px;
-  font-size: 11px;
-}
-```
-
----
-
-## 7. Main Map Default to Hybrid View
-
-### Current:
-`mapViewType` already defaults to `'hybrid'` (line 143).
-
-**Status**: Already implemented. No changes needed.
-
----
-
-## Implementation Summary
-
-### LiveTracking.tsx Changes:
-1. Add `isDemoMode` state
-2. Set `isDemoMode = true` in demo button handler
-3. Calculate `animationSpeed` based on `isDemoMode` and `routeData.duration`
-4. Reorder sidebar components (move Route Info card to bottom)
-5. Update button text for satellite modal
-6. Pass progress/coordinates to CheckMyTruckModal
-
-### CheckMyTruckModal.tsx Changes:
-1. Add `viewMode` state ('street' | 'hybrid')
-2. Add Street View component as default
-3. Add view toggle buttons
-4. Accept `liveProgress` and `liveRouteCoordinates` props
-5. Animate truck position based on live data
-
-### index.css Changes:
-1. Reduce demo button size and remove green fill
-2. Reduce map toggle button size
-
----
-
-## Visual Before/After
-
-### Demo Button:
 ```text
-BEFORE: [✨ Demo] (40px, green gradient fill, prominent)
-AFTER:  [✨ Demo] (32px, outline only, subtle)
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│ [Search] [Go] [Demo] │ [View ▼] │ [Recenter] [Follow] │ [Pause to View Live Truck]│
+└──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Header Button Sizing:
-```text
-BEFORE: All buttons same size (40px)
-AFTER:  Demo (32px), View toggle (34px), Follow (34px), Satellite (40px)
-```
-
-### Right Sidebar Order:
-```text
-BEFORE:                    AFTER:
-┌─────────────────┐       ┌─────────────────┐
-│ Stats Card      │       │ Stats Card      │
-├─────────────────┤       ├─────────────────┤
-│ Alternate Routes│       │ Aerial View     │
-│ Weigh Stations  │       ├─────────────────┤
-├─────────────────┤       │ Weather         │
-│ Aerial View     │       ├─────────────────┤
-├─────────────────┤       │ Alternate Routes│ ← Moved
-│ Weather         │       │ Weigh Stations  │
-└─────────────────┘       └─────────────────┘
-```
-
-### Satellite Modal:
-```text
-BEFORE: Satellite/Aerial view only
-AFTER:  Street View (default) with Hybrid toggle
-        + Live truck animation when tracking active
-```
+**Button order (left to right):**
+1. Search input + Go button
+2. Demo button (small, outline style)
+3. View dropdown (Hybrid, Roadmap, 3D)
+4. Recenter button (new)
+5. Follow button
+6. Pause to View Live Truck button
 
 ---
 
 ## Technical Details
 
-### Real-Time Speed Calculation:
-```typescript
-// If route is 350 miles at 60mph average = ~5.8 hours = 21000 seconds
-// Animation will take 21000 seconds (5.8 hours) to complete
-// Progress updates every frame for smooth movement
+### Why 3D View Looks Same as 2D
+Google's 3D Photorealistic Tiles (maps3d library) requires:
+- WebGL 2.0 support
+- Specific geographic coverage (major cities/landmarks)
+- Sometimes slow to render high-detail 3D
 
-// Demo mode override:
-// Animation takes 60 seconds regardless of route distance
-```
+If the location doesn't have 3D building data, it falls back to a flat satellite view. This is expected behavior.
 
-### Street View Integration:
-```typescript
-// Google Street View Static API URL
-const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=400x250&location=${lat},${lng}&key=${googleApiKey}&fov=90&heading=90`;
-```
+### Why "Street" Shows Roadmap
+The dropdown option "Street" sets `mapViewType: 'roadmap'` which is Google Maps' 2D roadmap view (roads, labels, points of interest). This is correct - "Street View" is a different Google product (360° photography).
+
+The satellite modal's "Street View" correctly uses Google Street View Static API for 360° imagery.
+
+---
+
+## Verification Steps After Implementation
+
+1. Navigate to /track
+2. Enter booking #12345
+3. Verify map shows in Hybrid view by default
+4. Open View dropdown - should show: Hybrid, Roadmap, 3D Flyover (no Satellite)
+5. Verify no satellite/map buttons on map itself
+6. Pan map away from truck, click Recenter - should pan back
+7. Click "Pause to View Live Truck" - should show Street View with booking # pre-filled
 
