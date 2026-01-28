@@ -1,27 +1,21 @@
 
 
-## Plan: Default to 2D Mode with Satellite View & Replace Mapbox with Google Maps
+## Plan: Tracking Dashboard UI Improvements
 
-This plan addresses three key improvements:
-
-1. **Default to 2D mode** (not 3D) with follow mode enabled
-2. **Use satellite/hybrid view** as the default map style
-3. **Replace Mapbox with Google Maps** for the main 2D tracking map
-4. **Ensure real-time playback speed** is maintained
+This plan addresses six key improvements to the shipment tracking dashboard:
 
 ---
 
-## Why Replace Mapbox with Google Maps
+## Summary of Changes
 
-| Feature | Mapbox | Google Maps |
-|---------|--------|-------------|
-| Traffic Layer | Manual congestion styling | Native `TrafficLayer` overlay |
-| Satellite View | Separate style URL | `mapTypeId: 'satellite'` or `'hybrid'` |
-| Route Rendering | Manual polyline | Native `DirectionsRenderer` |
-| API Key | Separate token needed | Same key as 3D/StreetView |
-| Integration | Disconnected from Google data | Seamless with Routes API |
-
-**Recommendation:** Replace `TruckTrackingMap.tsx` (Mapbox) with a new `Google2DTrackingMap.tsx` component.
+| Change | Description |
+|--------|-------------|
+| **1. Move Alternate Routes** | Move from UnifiedStatsCard to be next to WeighStations, both collapsible |
+| **2. Real-Time Distance/Time** | Show remaining distance and time based on live ETA calculations |
+| **3. Collapse Right Sidebar** | Hide dashboard cards until a route is entered/started |
+| **4. Move Follow Button** | Relocate from map to header next to "Locate via Satellite" |
+| **5. Add Demo Button** | Visible button that loads a demo with all features active |
+| **6. Verify Satellite Auto-Population** | Ensure booking number pre-fills in satellite modal |
 
 ---
 
@@ -29,248 +23,273 @@ This plan addresses three key improvements:
 
 | File | Action | Purpose |
 |------|--------|---------|
-| `src/components/tracking/Google2DTrackingMap.tsx` | **Create** | New Google Maps 2D component with satellite/hybrid view |
-| `src/pages/LiveTracking.tsx` | **Modify** | Default to 2D mode, follow mode, use Google2DTrackingMap |
-| `src/components/tracking/TruckTrackingMap.tsx` | **Keep** | Fallback if Google Maps fails |
+| `src/pages/LiveTracking.tsx` | Modify | Add demo button, move follow button to header, collapse right sidebar |
+| `src/components/tracking/UnifiedStatsCard.tsx` | Modify | Remove Alternate Routes section (moved elsewhere) |
+| `src/components/tracking/RouteComparisonPanel.tsx` | Modify | Make collapsible by default |
+| `src/components/tracking/WeighStationChecklist.tsx` | Modify | Add collapsible behavior |
+| `src/components/tracking/Google2DTrackingMap.tsx` | Modify | Remove follow button from map |
 
 ---
 
-## New Component: Google2DTrackingMap.tsx
+## 1. Move Alternate Routes Near Weigh Stations
 
-### Features
-- **mapTypeId: 'hybrid'** - Satellite imagery with road labels (default)
-- **TrafficLayer** - Native Google traffic visualization
-- **DirectionsRenderer** - Render route with traffic-aware styling
-- **Follow mode** - Camera follows truck with smooth panning
-- **Truck marker** - Animated truck icon that rotates with bearing
+### Current State
+- Alternate Routes is inside `UnifiedStatsCard.tsx` as a collapsible section at the bottom
+- It's separated from route-related cards like Weigh Stations
 
-### Key Implementation
+### Changes
+- Remove the Alternate Routes `Collapsible` from `UnifiedStatsCard.tsx`
+- Create a new `RouteInfoSection` in `LiveTracking.tsx` that groups:
+  - `RouteComparisonPanel` (alternate routes) - collapsed by default
+  - `WeighStationChecklist` - collapsed by default
+- Both sections will have a consistent collapsible header with chevron arrows
 
 ```typescript
-interface Google2DTrackingMapProps {
-  originCoords: [number, number] | null;
-  destCoords: [number, number] | null;
-  progress: number;
-  isTracking: boolean;
-  onRouteCalculated?: (route: RouteData) => void;
-  followMode?: boolean;
-  onFollowModeChange?: (enabled: boolean) => void;
-  mapType?: 'roadmap' | 'satellite' | 'hybrid' | 'terrain';
-  googleApiKey: string;
+// New grouped section in right sidebar
+<div className="tracking-info-card">
+  <Collapsible>
+    <CollapsibleTrigger>Alternate Routes ({alternateRoutes.length})</CollapsibleTrigger>
+    <CollapsibleContent>
+      {/* Route options */}
+    </CollapsibleContent>
+  </Collapsible>
+</div>
+
+<div className="tracking-info-card">
+  <Collapsible>
+    <CollapsibleTrigger>Weigh Stations ({count})</CollapsibleTrigger>
+    <CollapsibleContent>
+      {/* Station list */}
+    </CollapsibleContent>
+  </Collapsible>
+</div>
+```
+
+---
+
+## 2. Real-Time Distance & Time Remaining
+
+### Current Implementation
+- Already using `useRealtimeETA` hook which provides:
+  - `adjustedETA` - live ETA based on traffic
+  - `adjustedDuration` - remaining time
+  - `remainingDistance` - distance left
+
+### Verification
+The `UnifiedStatsCard` already displays these values from the real-time hook:
+```typescript
+adjustedETA={routeData ? adjustedETA : null}
+adjustedDuration={routeData ? adjustedDuration : null}
+remainingDistance={routeData ? remainingDistance : 0}
+```
+
+**No changes needed** - the real-time data is already being passed and displayed correctly.
+
+---
+
+## 3. Collapse Right Sidebar Until Route Entered
+
+### Current State
+- Right sidebar (`tracking-dashboard`) is always visible
+- Shows empty state message when no route
+
+### Changes
+Add a collapsed state that hides all cards until a booking/route is loaded:
+
+```typescript
+// In LiveTracking.tsx
+const hasActiveRoute = !!(originCoords && destCoords);
+
+// Conditionally render sidebar or collapsed state
+<div className={cn(
+  "tracking-dashboard transition-all duration-300",
+  !hasActiveRoute && "tracking-dashboard-collapsed"
+)}>
+  {hasActiveRoute ? (
+    // Render all dashboard cards
+  ) : (
+    // Collapsed mini-state with "Enter route to view stats" message
+    <div className="tracking-sidebar-collapsed">
+      <ChevronLeft className="w-5 h-5" />
+      <span>Stats</span>
+    </div>
+  )}
+</div>
+```
+
+Add CSS for collapsed state:
+```css
+.tracking-dashboard-collapsed {
+  width: 48px;
+  padding: 0;
+  overflow: hidden;
 }
-
-// Map initialization
-const map = new google.maps.Map(container, {
-  center: originCoords,
-  zoom: 12,
-  mapTypeId: 'hybrid',  // Satellite + labels
-  mapTypeControl: true,
-  mapTypeControlOptions: {
-    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-    mapTypeIds: ['roadmap', 'satellite', 'hybrid']
-  },
-  tilt: 0  // 2D view
-});
-
-// Add traffic layer
-const trafficLayer = new google.maps.TrafficLayer();
-trafficLayer.setMap(map);
-
-// Directions service for routing
-const directionsService = new google.maps.DirectionsService();
-const directionsRenderer = new google.maps.DirectionsRenderer({
-  map,
-  suppressMarkers: true,  // Custom markers
-  polylineOptions: {
-    strokeColor: '#22c55e',
-    strokeWeight: 5
-  }
-});
-```
-
-### Follow Mode Implementation
-
-```typescript
-// When followMode is true, camera follows truck
-if (followMode && truckPosition) {
-  map.panTo(truckPosition);
-  map.setZoom(15);  // Closer zoom for following
-}
 ```
 
 ---
 
-## LiveTracking.tsx Modifications
+## 4. Move Follow Button to Header
 
-### 1. Default View Mode Changes
+### Current Location
+- Bottom-left corner of `Google2DTrackingMap.tsx`
 
-```typescript
-// OLD: Default to 3D when WebGL is supported
-setShow3DView(true);
+### New Location
+- In header next to "Locate via Satellite" button
 
-// NEW: Default to 2D with satellite view
-setShow3DView(false);
-setFollowMode(true);  // Enable follow mode by default
-```
+### Changes
 
-### 2. Demo Booking Logic Update
+**Google2DTrackingMap.tsx:**
+- Remove the follow mode toggle button (lines 368-382)
 
-```typescript
-// When demo #12345 or #00000 is loaded:
-if (value === '12345' || value === '00000') {
-  // ... load booking
-  setShow3DView(false);     // Default to 2D
-  setFollowMode(true);       // Enable follow mode
-  // 3D is still available via button toggle
-}
-```
-
-### 3. Map Component Hierarchy
-
-Priority order (top to bottom):
-1. **GoogleStaticRouteMap** - If WebGL unavailable (fallback)
-2. **Google3DTrackingView** - If user explicitly toggles 3D
-3. **Google2DTrackingMap** - Default view (NEW)
-4. **TruckTrackingMap (Mapbox)** - Ultimate fallback if Google fails
+**LiveTracking.tsx:**
+- Add follow toggle button in header after "Locate via Satellite":
 
 ```typescript
-{useStaticMap ? (
-  <GoogleStaticRouteMap ... />
-) : show3DView ? (
-  <Google3DTrackingView ... />
-) : (
-  <Google2DTrackingMap
-    originCoords={originCoords}
-    destCoords={destCoords}
-    progress={progress}
-    isTracking={isTracking}
-    onRouteCalculated={handleRouteCalculated}
-    followMode={followMode}
-    onFollowModeChange={setFollowMode}
-    mapType="hybrid"
-    googleApiKey={GOOGLE_MAPS_API_KEY}
-  />
-)}
-```
-
-### 4. Real-Time Speed (Already Implemented)
-
-The `animationSpeed` is already set to 60 seconds and the speed slider has been removed. No changes needed.
-
----
-
-## View Hierarchy Logic
-
-```text
-User loads /track
-    │
-    ├─► WebGL Check
-    │       │
-    │       ├─► Not Supported → Static Map (GoogleStaticRouteMap)
-    │       │
-    │       └─► Supported
-    │               │
-    │               ├─► Default: 2D Satellite + Follow Mode (Google2DTrackingMap)
-    │               │
-    │               └─► User clicks "3D View" → Google3DTrackingView
-    │
-    └─► If Google Maps fails → Fallback to Mapbox (TruckTrackingMap)
+<div className="tracking-header-controls">
+  {/* ... existing controls ... */}
+  
+  <Button
+    variant="ghost"
+    onClick={() => setFollowMode(!followMode)}
+    className="tracking-header-satellite-btn"
+  >
+    <Navigation2 className="w-4 h-4" />
+    <span className="hidden sm:inline">
+      {followMode ? "Following" : "Follow"}
+    </span>
+  </Button>
+  
+  <Button onClick={() => setShowCheckMyTruck(true)}>
+    <Eye className="w-4 h-4" />
+    <span>Locate via Satellite</span>
+  </Button>
+</div>
 ```
 
 ---
 
-## UI Button Updates
+## 5. Add Demo Button
 
-### 3D/2D Toggle Button
+### Location
+- Visible in header, styled distinctly from other buttons
+
+### Implementation
 
 ```typescript
-<Button onClick={() => setShow3DView(!show3DView)}>
-  <Box className="w-4 h-4" />
-  <span>{show3DView ? "2D Map" : "3D View"}</span>
+// In header controls section
+<Button
+  variant="outline"
+  onClick={async () => {
+    // Load demo booking #12345
+    await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
+    await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
+    setMoveDate(new Date());
+    setShow3DView(false);
+    setFollowMode(true);
+    setCurrentBookingNumber('12345');
+    // Auto-start tracking after short delay for route calculation
+    setTimeout(() => {
+      if (routeData) startTracking();
+    }, 1500);
+    toast.success('🚚 Demo mode started!', {
+      description: 'Jacksonville → Miami • Full feature demo'
+    });
+  }}
+  className="border-primary/50 text-primary hover:bg-primary/10"
+>
+  <Play className="w-4 h-4 mr-1" />
+  <span>Demo</span>
 </Button>
 ```
 
-### Follow Mode Toggle (Already Exists)
-
-The map component already handles follow mode internally with a toggle button.
-
----
-
-## Visual Comparison
-
-### Before (Mapbox Dark)
-```text
-┌────────────────────────────────────┐
-│         Dark road map              │
-│         (mapbox/dark-v11)          │
-│         No satellite imagery       │
-│         Manual traffic colors      │
-└────────────────────────────────────┘
-```
-
-### After (Google Hybrid + Traffic)
-```text
-┌────────────────────────────────────┐
-│         Satellite imagery          │
-│         + Road labels              │
-│         + Traffic layer (live)     │
-│         + Following truck          │
-└────────────────────────────────────┘
-```
+### Features Activated in Demo
+- Route from Jacksonville to Miami Beach
+- Real-time ETA with traffic
+- Weigh station checklist
+- Weather conditions
+- Street View previews
+- Aerial view
+- Fuel cost estimate
+- All stats visible
 
 ---
 
-## Implementation Order
+## 6. Satellite Modal Auto-Population (Verification)
 
-1. **Create `Google2DTrackingMap.tsx`** - New Google Maps 2D component
-2. **Update `LiveTracking.tsx`** - Change defaults and integrate new component
-3. **Test fallback chain** - Ensure Mapbox still works if Google fails
+### Current Implementation
+The `CheckMyTruckModal` already receives `defaultBookingNumber` prop:
+
+```typescript
+<CheckMyTruckModal
+  open={showCheckMyTruck}
+  onOpenChange={setShowCheckMyTruck}
+  defaultBookingNumber={currentBookingNumber}  // ← Already passed
+  ...
+/>
+```
+
+And `currentBookingNumber` is set when a demo booking loads:
+```typescript
+setCurrentBookingNumber('12345');
+```
+
+**No changes needed** - this should already work. Testing will verify.
+
+---
+
+## Updated Right Sidebar Layout
+
+```text
+┌─────────────────────────────────────┐
+│ Live Stats Card                     │
+│ (ETA, Time Left, Distance, Traffic, │
+│  Tolls, Fuel)                       │
+├─────────────────────────────────────┤
+│ ► Alternate Routes (2) ▼            │  ← Collapsed by default
+├─────────────────────────────────────┤
+│ ► Weigh Stations (4) ▼              │  ← Collapsed by default
+├─────────────────────────────────────┤
+│ Live Aerial View                    │
+├─────────────────────────────────────┤
+│ Weather Conditions                  │
+└─────────────────────────────────────┘
+```
+
+---
+
+## Updated Header Layout
+
+```text
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ [Logo] Shipment Command Center                                               │
+│                                                                              │
+│ [Search: Enter Booking #] [Go]  [Demo]  [View ▼]  [Follow]  [Satellite]     │
+│                                                                              │
+│                                                      Shipment ID: TM-2026-XX│
+└──────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ## Technical Details
 
-### Google Maps Script Loading
+### Follow Button Styling (In Header)
+- Use same styling as other header buttons (`tracking-header-satellite-btn`)
+- Toggle state with visual indicator (icon animation when active)
+- No longer needs dark high-contrast style since it's in dark header
 
-Reuse the script loading logic from `Google3DTrackingView`:
+### Demo Button Styling
+- Outlined style with primary accent
+- Play icon to indicate action
+- Positioned visibly before view controls
 
-```typescript
-// Check if Google Maps is already loaded (from 3D view)
-if (window.google?.maps) {
-  initMap();
-  return;
-}
+### Collapsible Components
+- Use existing `Collapsible` from Radix UI
+- Consistent chevron behavior: `▶` collapsed, `▼` expanded
+- Smooth animation via CollapsibleContent
 
-// Load script with required libraries
-const script = document.createElement('script');
-script.src = `https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places,geometry`;
-```
-
-### Truck Marker Animation
-
-```typescript
-// Create custom truck marker
-const truckIcon = {
-  url: 'data:image/svg+xml,...',  // SVG truck icon
-  scaledSize: new google.maps.Size(40, 40),
-  anchor: new google.maps.Point(20, 20),
-  rotation: bearing  // Rotate based on direction
-};
-
-const truckMarker = new google.maps.Marker({
-  position: currentPosition,
-  map,
-  icon: truckIcon,
-  zIndex: 100
-});
-```
-
-### Route Coordinates Extraction
-
-```typescript
-// Extract coordinates from DirectionsResult for progress tracking
-const route = result.routes[0];
-const path = route.overview_path;  // Array of LatLng objects
-const coordinates = path.map(p => [p.lng(), p.lat()] as [number, number]);
-```
+### Sidebar Collapse Animation
+- CSS transition for width change
+- Cards slide out horizontally
+- Collapsed state shows minimal icon strip
 
