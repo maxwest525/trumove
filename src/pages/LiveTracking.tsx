@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, AlertTriangle } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Eye, Box, AlertTriangle, ChevronDown, Map, Layers, Globe } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 import { Google3DTrackingView } from "@/components/tracking/Google3DTrackingView";
@@ -22,6 +22,7 @@ import { getWebGLDiagnostics, type WebGLDiagnostics } from "@/lib/webglDiagnosti
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { getQuickFuelEstimate } from "@/lib/fuelCostCalculator";
 import { toast } from "sonner";
@@ -125,6 +126,9 @@ export default function LiveTracking() {
   // Check My Truck modal
   const [showCheckMyTruck, setShowCheckMyTruck] = useState(false);
   
+  // Current booking number for auto-populating satellite modal
+  const [currentBookingNumber, setCurrentBookingNumber] = useState<string>("");
+  
   // Multi-stop tracking state
   const [multiStopData, setMultiStopData] = useState<MultiStopTruckStatus | null>(null);
   
@@ -133,6 +137,9 @@ export default function LiveTracking() {
   
   // 3D view mode toggle - default to false (2D satellite is primary)
   const [show3DView, setShow3DView] = useState(false);
+  
+  // Map view type for 2D maps (satellite, hybrid, roadmap)
+  const [mapViewType, setMapViewType] = useState<'satellite' | 'hybrid' | 'roadmap'>('hybrid');
   
   // WebGL diagnostics and fallback state
   const [webglDiagnostics, setWebglDiagnostics] = useState<WebGLDiagnostics | null>(null);
@@ -460,6 +467,8 @@ export default function LiveTracking() {
                     // Default to 2D satellite view with follow mode for demos
                     setShow3DView(false);
                     setFollowMode(true);
+                    // Store booking number for satellite modal
+                    setCurrentBookingNumber(value);
                     toast.success('📦 Booking loaded!', { description: 'Jacksonville → Miami' });
                   } else if (value) {
                     toast.error('Booking not found', { description: 'Try #12345 or #00000' });
@@ -478,6 +487,8 @@ export default function LiveTracking() {
                 // Default to 2D satellite view with follow mode for demos
                 setShow3DView(false);
                 setFollowMode(true);
+                // Store booking number for satellite modal
+                setCurrentBookingNumber('12345');
                 toast.success('📦 Demo booking loaded!');
               }}
             >
@@ -485,29 +496,68 @@ export default function LiveTracking() {
             </Button>
           </div>
           
-          <Button
-            variant="ghost"
-            onClick={() => {
-              if (useStaticMap) {
-                toast.info('Static map mode active', { 
-                  description: 'WebGL not available - using simplified map view' 
-                });
-                return;
-              }
-              setShow3DView(!show3DView);
-            }}
-            className={cn(
-              "tracking-header-satellite-btn",
-              show3DView && "bg-primary/20 border-primary",
-              useStaticMap && "opacity-50 cursor-not-allowed"
-            )}
-            disabled={useStaticMap}
-          >
-            <Box className="w-4 h-4" />
-            <span className="hidden sm:inline">
-              {useStaticMap ? "Static Mode" : show3DView ? "2D Map" : "3D View"}
-            </span>
-          </Button>
+          {/* Map View Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className={cn(
+                  "tracking-header-satellite-btn",
+                  useStaticMap && "opacity-50 cursor-not-allowed"
+                )}
+                disabled={useStaticMap}
+              >
+                {show3DView ? (
+                  <Box className="w-4 h-4" />
+                ) : mapViewType === 'satellite' ? (
+                  <Globe className="w-4 h-4" />
+                ) : mapViewType === 'hybrid' ? (
+                  <Layers className="w-4 h-4" />
+                ) : (
+                  <Map className="w-4 h-4" />
+                )}
+                <span className="hidden sm:inline">
+                  {useStaticMap ? "Static" : show3DView ? "3D View" : 
+                    mapViewType === 'satellite' ? "Satellite" : 
+                    mapViewType === 'hybrid' ? "Hybrid" : "Street"}
+                </span>
+                <ChevronDown className="w-3 h-3 ml-1 opacity-60" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">2D Views</DropdownMenuLabel>
+              <DropdownMenuItem 
+                onClick={() => { setShow3DView(false); setMapViewType('hybrid'); }}
+                className={cn(!show3DView && mapViewType === 'hybrid' && "bg-accent")}
+              >
+                <Layers className="w-4 h-4 mr-2" />
+                Hybrid
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => { setShow3DView(false); setMapViewType('satellite'); }}
+                className={cn(!show3DView && mapViewType === 'satellite' && "bg-accent")}
+              >
+                <Globe className="w-4 h-4 mr-2" />
+                Satellite
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => { setShow3DView(false); setMapViewType('roadmap'); }}
+                className={cn(!show3DView && mapViewType === 'roadmap' && "bg-accent")}
+              >
+                <Map className="w-4 h-4 mr-2" />
+                Street
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">3D View</DropdownMenuLabel>
+              <DropdownMenuItem 
+                onClick={() => setShow3DView(true)}
+                className={cn(show3DView && "bg-accent")}
+              >
+                <Box className="w-4 h-4 mr-2" />
+                3D Flyover
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <Button
             variant="ghost"
@@ -704,7 +754,7 @@ export default function LiveTracking() {
               onRouteCalculated={handleRouteCalculated}
               followMode={followMode}
               onFollowModeChange={setFollowMode}
-              mapType="hybrid"
+              mapType={mapViewType}
               googleApiKey={GOOGLE_MAPS_API_KEY}
             />
           )}
@@ -775,6 +825,7 @@ export default function LiveTracking() {
       <CheckMyTruckModal
         open={showCheckMyTruck}
         onOpenChange={setShowCheckMyTruck}
+        defaultBookingNumber={currentBookingNumber}
         onLoadRoute={(truck) => {
           // Handle based on truck type
           if (isSingleStop(truck)) {
