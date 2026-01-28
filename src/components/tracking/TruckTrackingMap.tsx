@@ -383,35 +383,46 @@ export function TruckTrackingMap({
     setupRoute();
   }, [originCoords, destCoords, isLoaded, fetchRoute]);
 
-  // Update truck position based on progress
+  // Update truck position based on progress - use interpolation for smooth movement
   useEffect(() => {
     if (!map.current || !isLoaded || !routeCoords.current.length || !truckMarker.current) return;
 
     const coords = routeCoords.current;
     const totalPoints = coords.length;
-    const currentIndex = Math.min(
-      Math.floor((progress / 100) * (totalPoints - 1)),
-      totalPoints - 1
-    );
-
-    const currentPos = coords[currentIndex];
-    const nextPos = coords[Math.min(currentIndex + 1, totalPoints - 1)];
+    
+    // Interpolate between points for smoother position
+    const exactIndex = (progress / 100) * (totalPoints - 1);
+    const lowerIndex = Math.floor(exactIndex);
+    const upperIndex = Math.min(lowerIndex + 1, totalPoints - 1);
+    const fraction = exactIndex - lowerIndex;
+    
+    const lowerPoint = coords[lowerIndex];
+    const upperPoint = coords[upperIndex];
+    
+    // Linear interpolation between points
+    const currentLng = lowerPoint[0] + (upperPoint[0] - lowerPoint[0]) * fraction;
+    const currentLat = lowerPoint[1] + (upperPoint[1] - lowerPoint[1]) * fraction;
+    const currentPos: [number, number] = [currentLng, currentLat];
 
     // Update truck position
     truckMarker.current.setLngLat(currentPos);
     
     // Track current position for popup
     setCurrentTruckPosition(currentPos);
-    setCurrentLocationName(`${currentPos[1].toFixed(4)}°N, ${Math.abs(currentPos[0]).toFixed(4)}°W`);
+    setCurrentLocationName(`${currentLat.toFixed(4)}°N, ${Math.abs(currentLng).toFixed(4)}°W`);
 
-    // Calculate and set bearing
-    if (currentIndex < totalPoints - 1) {
-      const bearing = calculateBearing(currentPos, nextPos);
+    // Calculate and set bearing using interpolated positions
+    if (lowerIndex < totalPoints - 1) {
+      const bearing = calculateBearing(lowerPoint, upperPoint);
       truckMarker.current.setRotation(bearing);
     }
 
-    // Update traveled portion
-    const traveledCoords = coords.slice(0, currentIndex + 1);
+    // Update traveled portion - use the floor index for traveled path
+    const traveledCoords = coords.slice(0, lowerIndex + 1);
+    // Add the current interpolated position as the last point
+    if (traveledCoords.length > 0) {
+      traveledCoords.push(currentPos);
+    }
     const traveledSource = map.current.getSource("route-traveled") as mapboxgl.GeoJSONSource;
     traveledSource?.setData({
       type: "Feature",

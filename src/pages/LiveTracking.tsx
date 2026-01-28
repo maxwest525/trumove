@@ -549,15 +549,14 @@ export default function LiveTracking() {
             isEmpty={!routeData}
           />
 
-          {/* Live Truck Aerial View */}
-          {isTracking && routeCoordinates.length > 0 && (
-            <TruckAerialView
-              routeCoordinates={routeCoordinates}
-              progress={progress}
-              isTracking={isTracking}
-              googleApiKey={GOOGLE_MAPS_API_KEY}
-            />
-          )}
+          {/* Live Truck Aerial View - Shows origin before tracking, then live updates */}
+          <TruckAerialView
+            routeCoordinates={routeCoordinates}
+            progress={progress}
+            isTracking={isTracking}
+            originCoords={originCoords}
+            googleApiKey={GOOGLE_MAPS_API_KEY}
+          />
 
           {/* Weigh Station Checklist */}
           <WeighStationChecklist

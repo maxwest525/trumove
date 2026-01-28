@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { Truck, Loader2, Plane, MapPin, Eye, Globe, Video } from "lucide-react";
+import { Truck, Loader2, Plane, MapPin, Eye, Globe, Video, Navigation } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { getCachedAerialView, setCachedAerialView } from "@/lib/aerialViewCache";
@@ -18,6 +18,7 @@ interface TruckAerialViewProps {
   routeCoordinates: [number, number][];
   progress: number;
   isTracking: boolean;
+  originCoords?: [number, number] | null;
   locationName?: string;
   googleApiKey?: string;
 }
@@ -26,6 +27,7 @@ export function TruckAerialView({
   routeCoordinates,
   progress,
   isTracking,
+  originCoords,
   locationName,
   googleApiKey
 }: TruckAerialViewProps) {
@@ -35,21 +37,43 @@ export function TruckAerialView({
   const [aerialData, setAerialData] = useState<AerialViewData | null>(null);
   const [hasAerialVideo, setHasAerialVideo] = useState(false);
 
-  // Calculate current truck position based on progress
+  // Calculate current position - use route progress when tracking, origin when idle
   const currentPosition = useMemo(() => {
-    if (!routeCoordinates.length) return null;
+    // If tracking and we have route coordinates, interpolate along route
+    if (isTracking && routeCoordinates.length > 0) {
+      const totalPoints = routeCoordinates.length;
+      // Interpolate between points for smoother position
+      const exactIndex = (progress / 100) * (totalPoints - 1);
+      const lowerIndex = Math.floor(exactIndex);
+      const upperIndex = Math.min(lowerIndex + 1, totalPoints - 1);
+      const fraction = exactIndex - lowerIndex;
+      
+      const lowerPoint = routeCoordinates[lowerIndex];
+      const upperPoint = routeCoordinates[upperIndex];
+      
+      // Linear interpolation between points
+      const lng = lowerPoint[0] + (upperPoint[0] - lowerPoint[0]) * fraction;
+      const lat = lowerPoint[1] + (upperPoint[1] - lowerPoint[1]) * fraction;
+      
+      return [lng, lat] as [number, number];
+    }
     
-    const totalPoints = routeCoordinates.length;
-    const currentIndex = Math.min(
-      Math.floor((progress / 100) * (totalPoints - 1)),
-      totalPoints - 1
-    );
+    // If we have route coordinates but not tracking, show the first point (origin on route)
+    if (routeCoordinates.length > 0) {
+      return routeCoordinates[0];
+    }
     
-    return routeCoordinates[currentIndex];
-  }, [routeCoordinates, progress]);
+    // Fallback to origin coords if provided
+    if (originCoords) {
+      return originCoords;
+    }
+    
+    return null;
+  }, [routeCoordinates, progress, isTracking, originCoords]);
 
   // Track last fetched coordinates to prevent duplicate calls
   const lastFetchedCoords = useRef<string | null>(null);
+  const lastProgressBucket = useRef<number>(-1);
   const fetchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Fetch aerial view data from Google API with caching
@@ -95,9 +119,20 @@ export function TruckAerialView({
     }
   }, []);
 
-  // Fetch aerial data when position changes significantly (debounced)
+  // Fetch aerial data - for origin immediately, for tracking every 10% progress
   useEffect(() => {
-    if (!isTracking || !currentPosition) return;
+    if (!currentPosition) return;
+    
+    const [lng, lat] = currentPosition;
+    const progressBucket = Math.floor(progress / 10);
+    
+    // If tracking, only update every 10% progress
+    if (isTracking) {
+      if (progressBucket === lastProgressBucket.current) {
+        return; // Skip - same bucket
+      }
+      lastProgressBucket.current = progressBucket;
+    }
     
     // Clear any pending fetch
     if (fetchDebounceRef.current) {
@@ -106,11 +141,8 @@ export function TruckAerialView({
     
     setIsLoading(true);
     
-    // Debounce API calls - only fetch every 10% progress with 2s delay
-    const progressBucket = Math.floor(progress / 10);
-    
+    // Debounce the fetch
     fetchDebounceRef.current = setTimeout(() => {
-      const [lng, lat] = currentPosition;
       fetchAerialView(lat, lng).then(data => {
         if (data) {
           setAerialData(data);
@@ -121,14 +153,14 @@ export function TruckAerialView({
         }
         setIsLoading(false);
       });
-    }, 500); // Small delay to batch rapid progress changes
+    }, isTracking ? 300 : 100); // Faster for initial load
     
     return () => {
       if (fetchDebounceRef.current) {
         clearTimeout(fetchDebounceRef.current);
       }
     };
-  }, [Math.floor(progress / 10), isTracking, currentPosition, fetchAerialView]);
+  }, [currentPosition, isTracking, progress, fetchAerialView]);
 
   // Mapbox satellite token
   const mapboxToken = "pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g";
@@ -192,36 +224,43 @@ export function TruckAerialView({
 
   const imageUrl = getImageUrl();
 
+  // Show placeholder when no position available
   if (!currentPosition) {
     return (
       <div className="tracking-info-card">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
-            <Plane className="w-3.5 h-3.5 text-primary" />
+          <div className="w-6 h-6 rounded-md bg-muted flex items-center justify-center">
+            <Navigation className="w-3.5 h-3.5 text-muted-foreground" />
           </div>
-          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
-            Truck Location
+          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+            Location Preview
           </span>
         </div>
-        <div className="h-[180px] rounded-lg bg-slate-800/50 border border-white/10 flex items-center justify-center">
-          <span className="text-xs text-white/40">Start tracking to see truck location</span>
+        <div className="h-[180px] rounded-lg bg-muted/50 border border-border flex items-center justify-center">
+          <span className="text-xs text-muted-foreground">Enter origin to see location</span>
         </div>
       </div>
     );
   }
+
+  // Determine display state
+  const isShowingOrigin = !isTracking || progress === 0;
+  const headerLabel = isShowingOrigin ? "Origin Location" : "Live Truck View";
+  const headerIcon = isShowingOrigin ? Navigation : Truck;
+  const HeaderIcon = headerIcon;
 
   return (
     <div className="tracking-info-card">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
-            <Truck className="w-3.5 h-3.5 text-primary" />
+            <HeaderIcon className="w-3.5 h-3.5 text-primary" />
           </div>
-          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
-            Live Truck View
+          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+            {headerLabel}
           </span>
-          {isTracking && (
-            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-bold">
+          {isTracking && progress > 0 && (
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-500/20 text-red-600 text-[9px] font-bold">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
               LIVE
             </span>
@@ -231,7 +270,7 @@ export function TruckAerialView({
         {/* View toggle */}
         <button
           onClick={cycleViewMode}
-          className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 transition-colors text-[10px] text-white/60"
+          className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted hover:bg-muted/80 transition-colors text-[10px] text-muted-foreground"
         >
           {getViewIcon()}
           <span>{getViewLabel()}</span>
@@ -239,9 +278,9 @@ export function TruckAerialView({
       </div>
 
       {/* Image/Video Container */}
-      <div className="relative w-full h-[180px] rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10">
+      <div className="relative w-full h-[180px] rounded-lg overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border">
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-10">
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
           </div>
         )}
@@ -264,7 +303,7 @@ export function TruckAerialView({
         ) : imageUrl ? (
           <img
             src={imageUrl}
-            alt={`${getViewLabel()} view of truck location`}
+            alt={`${getViewLabel()} view of ${isShowingOrigin ? 'origin' : 'truck'} location`}
             className={cn(
               "w-full h-full object-cover transition-all duration-500",
               isLoading ? "opacity-0 scale-105" : "opacity-100 scale-100"
@@ -280,13 +319,24 @@ export function TruckAerialView({
           />
         ) : null}
 
-        {/* Truck marker overlay */}
+        {/* Marker overlay - different for origin vs tracking */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="relative">
-            <div className="absolute inset-0 -m-2 rounded-full bg-primary/20 animate-ping" />
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white">
-              <Truck className="w-5 h-5 text-primary-foreground" />
-            </div>
+            {isTracking && progress > 0 ? (
+              <>
+                <div className="absolute inset-0 -m-2 rounded-full bg-primary/20 animate-ping" />
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white">
+                  <Truck className="w-5 h-5 text-primary-foreground" />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="absolute inset-0 -m-1 rounded-full bg-green-500/30 animate-pulse" />
+                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center shadow-lg border-2 border-white">
+                  <MapPin className="w-4 h-4 text-white" />
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -305,18 +355,30 @@ export function TruckAerialView({
           </span>
         </div>
 
-        {/* Progress indicator */}
-        <div className="absolute bottom-2 left-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-2">
-          <MapPin className="w-3 h-3 text-primary" />
-          <span className="text-[10px] font-semibold text-white/90">
-            {Math.round(progress)}% Complete
-          </span>
-        </div>
+        {/* Progress indicator - only when tracking */}
+        {isTracking && progress > 0 && (
+          <div className="absolute bottom-2 left-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-2">
+            <MapPin className="w-3 h-3 text-primary" />
+            <span className="text-[10px] font-semibold text-white/90">
+              {Math.round(progress)}% Complete
+            </span>
+          </div>
+        )}
+        
+        {/* Origin label when not tracking */}
+        {isShowingOrigin && (
+          <div className="absolute bottom-2 left-2 px-2 py-1 rounded-md bg-green-500/90 backdrop-blur-sm flex items-center gap-2">
+            <Navigation className="w-3 h-3 text-white" />
+            <span className="text-[10px] font-semibold text-white">
+              Pickup Location
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Location description */}
       {locationName && (
-        <div className="mt-3 text-sm font-medium text-white/80 truncate">
+        <div className="mt-3 text-sm font-medium text-foreground/80 truncate">
           Near: {locationName}
         </div>
       )}
