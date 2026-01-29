@@ -26443,3 +26443,198 @@ footer {
 .dark .tru-header-logo {
   filter: brightness(0) invert(1);
 }
+
+/* =============================================
+   COMPREHENSIVE DARK MODE VISIBILITY FIXES
+   ============================================= */
+
+/* Inventory Builder - AI Estimate & Scan Room buttons dark mode */
+.dark .tru-ai-estimate-btn,
+.dark [class*="border-slate"],
+.dark [class*="bg-slate"] {
+  border-color: hsl(var(--border)) !important;
+  background-color: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Form inputs and buttons in dark mode */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark input::placeholder,
+.dark select::placeholder,
+.dark textarea::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* All buttons text visibility in dark mode */
+.dark button:not([class*="bg-primary"]):not([class*="bg-destructive"]) {
+  color: hsl(var(--foreground));
+}
+
+/* Cards and containers in dark mode */
+.dark .bg-card,
+.dark [class*="bg-card"] {
+  background-color: hsl(var(--card)) !important;
+}
+
+/* Muted backgrounds in dark mode */
+.dark .bg-muted,
+.dark [class*="bg-muted"] {
+  background-color: hsl(var(--muted)) !important;
+}
+
+/* Text visibility overrides for dark mode */
+.dark .text-foreground,
+.dark [class*="text-foreground"] {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .text-muted-foreground,
+.dark [class*="text-muted-foreground"] {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Room sidebar buttons in dark mode */
+.dark .tru-inventory-locked-overlay {
+  background: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(6px);
+}
+
+.dark .tru-inventory-locked-content {
+  color: hsl(var(--foreground));
+}
+
+/* Video consult page demo mode - improved visibility */
+.dark .tru-video-demo-badge {
+  background: hsl(var(--primary)) !important;
+  color: hsl(0 0% 0%) !important;
+}
+
+/* Form headers - ensure matching between Build Your Move and Move Summary */
+.dark .tru-floating-form-card,
+.dark .tru-floating-form-compact {
+  background: hsl(var(--card)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+/* Special handling toggle in dark mode */
+.dark [class*="border-amber"] {
+  border-color: hsl(45 93% 47% / 0.5) !important;
+}
+
+.dark [class*="bg-amber"] {
+  background-color: hsl(45 93% 47% / 0.15) !important;
+}
+
+.dark [class*="text-amber"] {
+  color: hsl(45 93% 58%) !important;
+}
+
+/* Popover and dropdown menus in dark mode */
+.dark [data-radix-popper-content-wrapper] [class*="bg-popover"],
+.dark .popover-content {
+  background: hsl(var(--popover)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+/* Command palette / autocomplete in dark mode */
+.dark [cmdk-root] {
+  background: hsl(var(--popover)) !important;
+}
+
+.dark [cmdk-item] {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark [cmdk-item]:hover,
+.dark [cmdk-item][data-selected="true"] {
+  background: hsl(var(--accent)) !important;
+}
+
+/* Quick tools collapsible in dark mode */
+.dark .quick-tools-trigger,
+.dark [class*="CollapsibleTrigger"] {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Badges and pills in dark mode */
+.dark .badge,
+.dark [class*="rounded-full"][class*="bg-muted"] {
+  background-color: hsl(var(--muted)) !important;
+  color: hsl(var(--muted-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+/* Room count badges in dark mode */
+.dark [class*="bg-foreground"][class*="text-background"] {
+  background-color: hsl(var(--foreground)) !important;
+  color: hsl(var(--background)) !important;
+}
+
+/* Pagination buttons in dark mode */
+.dark .pagination-btn,
+.dark [class*="rounded-lg"][class*="font-semibold"] {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Search input clear button */
+.dark button[class*="bg-muted"][class*="rounded-full"] {
+  background-color: hsl(var(--muted)) !important;
+}
+
+/* Switch component in dark mode */
+.dark [data-state="checked"][class*="bg-primary"] {
+  background-color: hsl(var(--primary)) !important;
+}
+
+/* Item cards in inventory builder */
+.dark .item-card,
+.dark [class*="rounded-xl"][class*="border"][class*="bg-card"] {
+  background-color: hsl(var(--card)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+/* Add custom item button */
+.dark [class*="border-dashed"] {
+  border-color: hsl(var(--border)) !important;
+}
+
+/* Quantity indicator badges */
+.dark [class*="bg-primary/10"] {
+  background-color: hsl(var(--primary) / 0.15) !important;
+}
+
+/* Ensure all text is readable in dark mode forms */
+.dark label,
+.dark .label {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Screenshare preview in video consult */
+.dark .fake-screenshare-preview {
+  background: hsl(220 15% 10%);
+  border-color: hsl(var(--border));
+}
+
+/* Video consult action cards - ensure thumbnails are prominent */
+.dark .video-consult-action-card {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+/* Recent button fix - ensure visibility */
+.dark .recent-btn,
+.dark [class*="text-primary"][class*="hover:text-primary"] {
+  color: hsl(var(--primary)) !important;
+}
+
+/* Form card gradient stripe visibility in dark mode */
+.dark .tru-floating-form-card::before {
+  opacity: 0.8;
+}
