@@ -8,6 +8,7 @@ import ChatInput from "./ChatInput";
 import TypingIndicator from "./TypingIndicator";
 import { PageContext, QuickAction } from "./pageContextConfig";
 import { cn } from "@/lib/utils";
+import trudyAvatar from "@/assets/trudy-avatar.png";
 
 interface Message {
   id: string;
@@ -221,9 +222,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
       <div className="chat-header">
         <div className="chat-header-left">
           <div className="chat-avatar-small bg-primary/10">
-            <svg viewBox="0 0 24 24" fill="none" className="chat-avatar-icon text-primary">
-              <path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z" strokeWidth="1.5" strokeLinejoin="round" />
-            </svg>
+            <img src={trudyAvatar} alt="TruDy" className="w-6 h-6 rounded-full object-cover" />
           </div>
           <div className="chat-header-info">
             <span className="chat-header-name">TruDy with TruMove</span>
@@ -268,9 +267,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
           >
             {msg.role === "assistant" && (
               <div className="chat-avatar">
-                <svg viewBox="0 0 24 24" fill="none" className="chat-avatar-icon">
-                  <path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z" strokeWidth="1.5" strokeLinejoin="round" />
-                </svg>
+                <img src={trudyAvatar} alt="TruDy" className="w-8 h-8 rounded-full object-cover" />
               </div>
             )}
             <div className="chat-bubble">
