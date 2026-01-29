@@ -17592,9 +17592,7 @@
   background: hsl(220 15% 96%);
 }
 
-.dark .tru-summary-header-large {
-  background: hsl(220 20% 14%);
-}
+/* Dark mode header styles consolidated in the Build Your Move section below */
 
 /* ============================================
    PRINT STYLES - Only show inventory table
@@ -26421,8 +26419,12 @@ footer {
   color: hsl(0 0% 100%) !important;
 }
 
-/* Force very dark background in dark mode to match Move Summary */
-.dark .tru-summary-header-large {
+/* Build Your Move header - match Move Summary styling EXACTLY in dark mode */
+.dark .tru-summary-header-large,
+.dark .rounded-2xl .tru-summary-header-large,
+.dark .bg-card .tru-summary-header-large,
+.dark section .tru-summary-header-large,
+html.dark .tru-summary-header-large {
   background: hsl(220 15% 8%) !important;
   border-color: hsl(0 0% 100% / 0.1) !important;
 }
