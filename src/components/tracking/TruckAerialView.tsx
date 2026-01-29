@@ -153,24 +153,24 @@ export function TruckAerialView({
           )}
         </div>
         
-        {/* Expand/Remote View Button */}
+        {/* Expand/Remote View Button - neutral styling */}
         <button
           onClick={onToggleExpand}
           className={cn(
-            "flex items-center gap-1.5 px-2 py-1 rounded-md transition-colors text-[10px] font-semibold",
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-all text-[10px] font-semibold border",
             expanded 
-              ? "bg-destructive/10 hover:bg-destructive/20 text-destructive" 
-              : "bg-primary/10 hover:bg-primary/20 text-primary"
+              ? "bg-destructive/10 hover:bg-destructive/20 text-destructive border-destructive/30" 
+              : "bg-background/80 hover:bg-muted text-foreground border-border"
           )}
         >
           {expanded ? (
             <>
-              <X className="w-3 h-3" />
-              <span>Close</span>
+              <X className="w-3.5 h-3.5" />
+              <span>Exit View</span>
             </>
           ) : (
             <>
-              <Eye className="w-3 h-3" />
+              <Eye className="w-3.5 h-3.5" />
               <span>Remote View</span>
             </>
           )}
@@ -180,6 +180,15 @@ export function TruckAerialView({
       {/* Expanded Interactive Street View */}
       {expanded ? (
         <div className="flex flex-col h-[calc(100%-3rem)]">
+          {/* Floating close button - always visible */}
+          <button
+            onClick={onToggleExpand}
+            className="absolute top-4 right-4 z-30 flex items-center gap-2 px-4 py-2 rounded-full bg-background/90 hover:bg-destructive/10 border border-border hover:border-destructive/40 text-foreground hover:text-destructive transition-all shadow-lg backdrop-blur-sm"
+          >
+            <X className="w-4 h-4" />
+            <span className="text-sm font-semibold">Exit View</span>
+          </button>
+          
           <div className="relative flex-1 rounded-lg overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border">
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
@@ -200,14 +209,14 @@ export function TruckAerialView({
 
             {/* Live badge */}
             {isTracking && progress > 0 && (
-              <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-red-500/80 flex items-center gap-1.5 z-20">
+              <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-red-500/80 flex items-center gap-1.5 z-20">
                 <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
                 <span className="text-[9px] font-bold text-white tracking-wider">LIVE</span>
               </div>
             )}
 
             {/* View badge */}
-            <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1.5 z-20">
+            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1.5 z-20">
               <Eye className="w-3 h-3 text-primary" />
               <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">
                 Interactive Street View
@@ -223,7 +232,7 @@ export function TruckAerialView({
 
             {/* Progress indicator */}
             {isTracking && progress > 0 && (
-              <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-2 z-20">
+              <div className="absolute top-3 left-[120px] px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-2 z-20">
                 <MapPin className="w-3 h-3 text-primary" />
                 <span className="text-[10px] font-semibold text-white/90">
                   {Math.round(progress)}% Complete

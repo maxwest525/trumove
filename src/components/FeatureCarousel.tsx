@@ -100,7 +100,7 @@ export default function FeatureCarousel() {
       >
         <CarouselContent className="features-carousel-content">
           {features.map((feature, index) => (
-            <CarouselItem key={index} className="features-carousel-item">
+            <CarouselItem key={index} className="features-carousel-item basis-1/2 md:basis-1/2">
               <div 
                 className="features-carousel-card"
                 onClick={() => navigate(feature.route)}

@@ -1446,80 +1446,43 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Why TruMove Card + Live Tracking Placeholder */}
+            {/* RIGHT SIDE: Compact Why TruMove Card */}
             <div className="tru-hero-content-panel tru-hero-stacked-cards">
-              {/* CARD 1: Why TruMove - Premium with 6 feature rows */}
-              <div className="tru-why-card-premium">
-                <div className="tru-why-card-glow" />
-                <div className="tru-why-card-inner">
-                  {/* Title */}
-                  <h3 className="tru-why-title">Your Move. Your Terms.</h3>
-                  
-                  {/* Subheadline repositioned here */}
-                  <p className="tru-why-subheadline">
+              {/* CARD 1: Why TruMove - Compact Horizontal */}
+              <div className="tru-why-card-compact">
+                <div className="tru-why-card-compact-header">
+                  <h3 className="tru-why-title-compact">Your Move. Your Terms.</h3>
+                  <p className="tru-why-subtitle-compact">
                     Skip the van line middleman. Get matched with vetted carriers who compete for your business.
                   </p>
-                  
-                  {/* Main Paragraph - Our story/mission */}
-                  <p className="tru-why-paragraph">
-                    We built TruMove to cut through the complexity of the moving industry. 
-                    Using AI-powered inventory scanning and live video consultations, we 
-                    understand your move better than anyone. Then we vet carriers through 
-                    verified FMCSA and DOT safety databases to match you with movers you 
-                    can actually trust.
-                  </p>
-                  
-                  {/* Feature Grid - 2 rows x 3 columns */}
-                  <div className="tru-why-feature-grid">
-                    {whyTruMoveFeatures.map((feature, index) => (
-                      <Tooltip key={feature.id}>
-                        <TooltipTrigger asChild>
-                          <button
-                            className={`tru-why-feature-cell ${activeFeature === index ? 'is-active' : ''}`}
-                            style={{ '--stagger-index': index } as React.CSSProperties}
-                            onClick={() => setActiveFeature(activeFeature === index ? null : index)}
-                          >
-                            <div className="tru-why-feature-cell-icon">
-                              <feature.icon className="w-5 h-5" />
-                            </div>
-                            <span className="tru-why-feature-cell-title">{feature.title}</span>
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="max-w-[200px] text-center">
-                          {feature.hoverTip}
-                        </TooltipContent>
-                      </Tooltip>
-                    ))}
-                  </div>
-                  
-                  {/* Expanded Detail (if any feature selected) */}
-                  {activeFeature !== null && (
-                    <div className="tru-why-detail-box">
-                      <p>{whyTruMoveFeatures[activeFeature].longDesc}</p>
-                    </div>
-                  )}
-                  
-                  {/* Bottom Trust Indicators */}
-                  <div className="tru-why-trust-row">
-                    <div className="tru-why-trust-item">
-                      <Shield className="w-3.5 h-3.5" />
-                      <span>FMCSA Verified</span>
-                    </div>
-                    <div className="tru-why-trust-item">
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                      <span>Licensed Broker</span>
-                    </div>
-                  </div>
+                </div>
+                
+                {/* 6 Feature Icons in a Row */}
+                <div className="tru-why-feature-row-compact">
+                  {whyTruMoveFeatures.map((feature, index) => (
+                    <Tooltip key={feature.id}>
+                      <TooltipTrigger asChild>
+                        <button
+                          className="tru-why-feature-icon-compact"
+                          style={{ '--stagger-index': index } as React.CSSProperties}
+                        >
+                          <feature.icon className="w-4 h-4" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="max-w-[180px] text-center text-xs">
+                        <div className="font-semibold mb-1">{feature.title}</div>
+                        {feature.hoverTip}
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
                 </div>
               </div>
-
-              {/* CARD 2: Live Truck Tracking - Removed for now */}
             </div>
           </section>
         </div> {/* End tru-hero-wrapper */}
 
-          {/* FULL-WIDTH FEATURE CAROUSEL */}
-          <section className="tru-feature-carousel-fullwidth tru-carousel-compact">
+          {/* FULL-WIDTH FEATURE CAROUSEL - Directly under Why TruMove */}
+          <section className="tru-feature-carousel-fullwidth tru-carousel-tight">
             <FeatureCarousel />
           </section>
 

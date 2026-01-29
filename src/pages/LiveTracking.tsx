@@ -576,60 +576,7 @@ export default function LiveTracking() {
             </Button>
           </div>
           
-          {/* Map View Dropdown - Simplified: Hybrid, Roadmap, 3D only */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className={cn(
-                  "tracking-header-satellite-btn",
-                  useStaticMap && "opacity-50 cursor-not-allowed"
-                )}
-                disabled={useStaticMap}
-              >
-                {show3DView ? (
-                  <Box className="w-4 h-4" />
-                ) : mapViewType === 'hybrid' ? (
-                  <Layers className="w-4 h-4" />
-                ) : (
-                  <Map className="w-4 h-4" />
-                )}
-                <span className="hidden sm:inline">
-                  {useStaticMap ? "Static" : show3DView ? "3D View" : 
-                    mapViewType === 'hybrid' ? "Hybrid" : "Roadmap"}
-                </span>
-                <ChevronDown className="w-3 h-3 ml-1 opacity-60" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 bg-background border border-border z-50">
-              <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">2D Views</DropdownMenuLabel>
-              <DropdownMenuItem 
-                onClick={() => { setShow3DView(false); setMapViewType('hybrid'); }}
-                className={cn(!show3DView && mapViewType === 'hybrid' && "bg-accent")}
-              >
-                <Layers className="w-4 h-4 mr-2" />
-                Hybrid
-                <span className="ml-auto text-[9px] text-muted-foreground">Satellite + Labels</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => { setShow3DView(false); setMapViewType('roadmap'); }}
-                className={cn(!show3DView && mapViewType === 'roadmap' && "bg-accent")}
-              >
-                <Map className="w-4 h-4 mr-2" />
-                Roadmap
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">3D View</DropdownMenuLabel>
-              <DropdownMenuItem 
-                onClick={() => setShow3DView(true)}
-                className={cn(show3DView && "bg-accent")}
-              >
-                <Box className="w-4 h-4 mr-2" />
-                3D Flyover
-                <span className="ml-auto text-[9px] text-muted-foreground">Limited areas</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Map view is fixed to hybrid - no user toggle */}
           
           {/* Recenter Button - Centers map back on truck */}
           {routeData && (

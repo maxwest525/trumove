@@ -25747,3 +25747,301 @@
     height: 32px;
   }
 }
+
+/* =============================================
+   COMPACT WHY TRUMOVE CARD - Horizontal Layout
+   ============================================= */
+.tru-why-card-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, 
+    hsl(var(--background)) 0%, 
+    hsl(var(--muted) / 0.6) 100%
+  );
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
+  border-radius: 16px;
+  box-shadow: 
+    0 2px 12px hsl(var(--tm-ink) / 0.06),
+    inset 0 1px 0 hsl(0 0% 100% / 0.6);
+}
+
+.tru-why-card-compact-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tru-why-title-compact {
+  font-size: 16px;
+  font-weight: 800;
+  color: hsl(var(--tm-ink));
+  margin: 0;
+}
+
+.tru-why-subtitle-compact {
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.4;
+  margin: 0;
+}
+
+.tru-why-feature-row-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tru-why-feature-icon-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px solid hsl(var(--primary) / 0.15);
+  border-radius: 10px;
+  color: hsl(var(--tm-ink));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: feature-icon-enter 0.3s ease forwards;
+  animation-delay: calc(var(--stagger-index, 0) * 0.05s);
+}
+
+@keyframes feature-icon-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tru-why-feature-icon-compact:hover {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.15);
+}
+
+/* Dark mode for compact card */
+.dark .tru-why-card-compact {
+  background: linear-gradient(135deg, 
+    hsl(220 15% 10%) 0%, 
+    hsl(220 18% 14%) 100%
+  );
+  border-color: hsl(0 0% 100% / 0.08);
+  box-shadow: 
+    0 2px 12px hsl(220 15% 5% / 0.4),
+    inset 0 1px 0 hsl(0 0% 100% / 0.04);
+}
+
+.dark .tru-why-title-compact {
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-why-subtitle-compact {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+.dark .tru-why-feature-icon-compact {
+  background: hsl(220 15% 18%);
+  border-color: hsl(0 0% 100% / 0.1);
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-why-feature-icon-compact:hover {
+  background: hsl(var(--primary) / 0.2);
+  border-color: hsl(var(--primary) / 0.4);
+  color: hsl(var(--primary));
+}
+
+/* Carousel Tight Spacing */
+.tru-carousel-tight {
+  margin-top: 16px !important;
+  padding-top: 0 !important;
+}
+
+/* =============================================
+   DARK MODE - ADDITIONAL VISIBILITY FIXES
+   ============================================= */
+
+/* Form inputs in dark mode */
+.dark .tru-qb-input,
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="tel"],
+.dark textarea {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.12);
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-qb-input::placeholder,
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: hsl(0 0% 100% / 0.4);
+}
+
+.dark .tru-qb-input:focus,
+.dark input:focus,
+.dark textarea:focus {
+  border-color: hsl(var(--primary) / 0.5);
+  background: hsl(220 15% 14%);
+}
+
+/* Card backgrounds in dark mode */
+.dark .tru-qb-size-card,
+.dark .tru-qb-toggle-card,
+.dark .tru-qb-property-card,
+.dark .tru-qb-option-card {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.08);
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-qb-size-card:hover,
+.dark .tru-qb-toggle-card:hover,
+.dark .tru-qb-property-card:hover,
+.dark .tru-qb-option-card:hover {
+  background: hsl(220 15% 16%);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.dark .tru-qb-size-card.is-active,
+.dark .tru-qb-toggle-card.is-active,
+.dark .tru-qb-property-card.is-active,
+.dark .tru-qb-option-card.is-active {
+  background: hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary) / 0.5);
+}
+
+/* Steps section dark mode */
+.dark .tru-steps-compact-card {
+  background: hsl(220 15% 10%);
+  border-color: hsl(0 0% 100% / 0.08);
+}
+
+.dark .tru-steps-compact-card h3,
+.dark .tru-steps-compact-card p {
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-steps-compact-num {
+  background: hsl(var(--primary) / 0.15);
+  color: hsl(var(--primary));
+}
+
+/* Trust strip dark mode */
+.dark .tru-trust-strip {
+  background: hsl(220 15% 8%);
+  border-color: hsl(0 0% 100% / 0.06);
+}
+
+.dark .tru-trust-strip-item {
+  color: hsl(0 0% 100% / 0.7);
+}
+
+.dark .tru-trust-strip-item svg {
+  color: hsl(var(--primary) / 0.8);
+}
+
+/* AI Steps section dark mode */
+.dark .tru-ai-steps-section {
+  background: hsl(220 15% 8%);
+}
+
+.dark .tru-ai-steps-title {
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-ai-step {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.08);
+}
+
+.dark .tru-ai-step-title {
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-ai-step-desc {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+/* Consult section dark mode */
+.dark .tru-consult-compact {
+  background: hsl(220 15% 10%);
+  border-color: hsl(0 0% 100% / 0.08);
+}
+
+.dark .tru-consult-compact-title {
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-consult-compact-text {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+/* Feature carousel dark mode */
+.dark .features-carousel-card {
+  background: hsl(220 15% 10%);
+  border-color: hsl(0 0% 100% / 0.08);
+}
+
+.dark .features-carousel-card-title {
+  color: hsl(0 0% 100%);
+}
+
+.dark .features-carousel-card-desc {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+/* Buttons in dark mode */
+.dark .tru-inventory-action-btn {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.1);
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-inventory-action-btn:hover {
+  background: hsl(220 15% 18%);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+/* Route Analysis section dark mode */
+.dark .tru-route-analysis-section {
+  background: hsl(220 15% 8%);
+}
+
+.dark .tru-route-analysis-title {
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-route-analysis-card {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.08);
+}
+
+/* Feature grid dark mode fixes */
+.dark .tru-why-feature-cell {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.06);
+}
+
+.dark .tru-why-feature-cell:hover {
+  background: hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--primary) / 0.25);
+}
+
+.dark .tru-why-feature-cell-icon {
+  background: hsl(220 15% 18%);
+  border-color: hsl(0 0% 100% / 0.1);
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-why-feature-cell-title {
+  color: hsl(0 0% 100%);
+}
