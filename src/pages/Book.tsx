@@ -19,12 +19,28 @@ const useScrollToTop = () => {
   }, []);
 };
 
-// Fake Screen Share Preview - Visual placeholder
+// Fake Screen Share Preview - Shows simulated inventory builder
 function FakeScreenSharePreview() {
+  const [progress, setProgress] = useState(0);
+  
+  // Simulate loading progress
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 200);
+    return () => clearInterval(timer);
+  }, []);
+  
   return (
-    <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center">
-      {/* Fake loading screen share UI */}
-      <div className="relative w-full max-w-[480px] mx-auto">
+    <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center p-4">
+      {/* Fake inventory builder window */}
+      <div className="relative w-full max-w-[560px] mx-auto">
         {/* Fake window chrome */}
         <div className="bg-slate-700 rounded-t-lg px-3 py-2 flex items-center gap-2">
           <div className="flex gap-1.5">
@@ -33,32 +49,68 @@ function FakeScreenSharePreview() {
             <div className="w-3 h-3 rounded-full bg-green-500/70" />
           </div>
           <div className="flex-1 flex justify-center">
-            <div className="bg-slate-600 rounded px-3 py-0.5 text-[10px] text-white/50 font-mono">
+            <div className="bg-slate-600 rounded px-3 py-0.5 text-[10px] text-white/60 font-mono">
               Inventory Builder — trumove.lovable.app
             </div>
           </div>
         </div>
-        {/* Fake content area */}
-        <div className="bg-slate-800 rounded-b-lg p-4 border border-slate-600/50 min-h-[200px]">
-          <div className="animate-pulse space-y-3">
-            <div className="h-4 bg-slate-600/50 rounded w-3/4" />
-            <div className="h-4 bg-slate-600/50 rounded w-1/2" />
-            <div className="grid grid-cols-3 gap-2 mt-4">
-              <div className="h-12 bg-slate-600/40 rounded" />
-              <div className="h-12 bg-slate-600/40 rounded" />
-              <div className="h-12 bg-slate-600/40 rounded" />
+        {/* Fake inventory content */}
+        <div className="bg-slate-800 rounded-b-lg p-4 border border-slate-600/50 min-h-[220px]">
+          {progress < 100 ? (
+            <div className="animate-pulse space-y-3">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-6 w-6 bg-primary/30 rounded" />
+                <div className="h-4 bg-slate-600/50 rounded w-2/3" />
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="h-14 bg-slate-600/40 rounded" />
+                ))}
+              </div>
+              <div className="flex gap-2 mt-4">
+                <div className="h-8 bg-primary/20 rounded flex-1" />
+                <div className="h-8 bg-slate-600/30 rounded w-20" />
+              </div>
             </div>
-            <div className="h-8 bg-primary/20 rounded w-full mt-4" />
-          </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-6 w-6 bg-primary/40 rounded flex items-center justify-center">
+                  <Boxes className="w-4 h-4 text-primary" />
+                </div>
+                <span className="text-white/80 text-sm font-semibold">Living Room Items</span>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {['Sofa', 'TV', 'Table', 'Chair', 'Lamp', 'Rug', 'Shelf', 'More...'].map((item, i) => (
+                  <div 
+                    key={i} 
+                    className="h-14 bg-slate-700/60 rounded flex items-center justify-center border border-slate-600/50 hover:border-primary/40 transition-colors cursor-pointer"
+                  >
+                    <span className="text-[10px] text-white/60">{item}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2 mt-4">
+                <div className="h-8 bg-primary/30 rounded flex-1 flex items-center justify-center border border-primary/40">
+                  <span className="text-[10px] text-primary font-semibold">Add Selected Items</span>
+                </div>
+                <div className="h-8 bg-slate-700/50 rounded w-20 flex items-center justify-center">
+                  <span className="text-[10px] text-white/50">8 items</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       {/* Status text */}
       <div className="mt-6 text-center">
         <div className="flex items-center justify-center gap-2 text-white/70 text-sm">
-          <Monitor className="w-4 h-4 text-primary animate-pulse" />
-          <span>Preparing screen share...</span>
+          <Monitor className="w-4 h-4 text-primary" />
+          <span>{progress < 100 ? 'Loading inventory...' : 'Screen sharing active'}</span>
         </div>
-        <p className="text-white/40 text-xs mt-1">Click "Share Screen" to start collaborating</p>
+        <p className="text-white/40 text-xs mt-1">
+          {progress < 100 ? `${progress}% complete` : 'Both parties can now collaborate'}
+        </p>
       </div>
     </div>
   );
@@ -363,7 +415,7 @@ export default function Book() {
               onClick={() => navigate("/online-estimate")}
               className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
             >
-              <div className="w-20 h-20 rounded-xl overflow-hidden border border-border/60">
+              <div className="w-28 h-28 rounded-xl overflow-hidden border border-border/60">
                 <img 
                   src={sampleRoomLiving} 
                   alt="Manual inventory" 
@@ -381,7 +433,7 @@ export default function Book() {
               onClick={() => navigate("/scan-room")}
               className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
             >
-              <div className="w-20 h-20 rounded-xl overflow-hidden border border-border/60">
+              <div className="w-28 h-28 rounded-xl overflow-hidden border border-border/60">
                 <img 
                   src={previewAiScanner} 
                   alt="AI scanner" 

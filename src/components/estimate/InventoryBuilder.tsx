@@ -531,30 +531,30 @@ export default function InventoryBuilder({
       <div className="flex-1 space-y-3">
       {/* AI Features Row - AI Estimate + Scan Room */}
         <div className="grid grid-cols-2 gap-3">
-          {/* AI Estimate Button - slate colors with loading skeleton */}
+          {/* AI Estimate Button - themed for dark mode */}
           <button 
             type="button"
             onClick={onAIEstimate}
             disabled={isEstimating || !homeSize}
-            className="flex items-center gap-3 p-3 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-3 p-3 rounded-xl border border-border bg-muted/50 hover:bg-muted transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <div className={cn("p-2 rounded-lg", isEstimating ? "bg-slate-100" : "bg-slate-200")}>
+            <div className={cn("p-2 rounded-lg", isEstimating ? "bg-muted" : "bg-muted")}>
               {isEstimating ? (
-                <div className="w-4 h-4 border-2 border-slate-400 border-t-slate-700 rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-muted-foreground border-t-foreground rounded-full animate-spin" />
               ) : (
-                <Wand2 className="w-4 h-4 text-slate-700" />
+                <Wand2 className="w-4 h-4 text-foreground" />
               )}
             </div>
             <div className="flex-1 min-w-0">
               {isEstimating ? (
                 <>
-                  <div className="h-3 w-20 bg-slate-200 rounded animate-pulse mb-1" />
-                  <div className="h-2 w-28 bg-slate-100 rounded animate-pulse" />
+                  <div className="h-3 w-20 bg-muted rounded animate-pulse mb-1" />
+                  <div className="h-2 w-28 bg-muted/50 rounded animate-pulse" />
                 </>
               ) : (
                 <>
-                  <span className="text-xs font-semibold text-slate-700 block">AI Estimate</span>
-                  <span className="text-[10px] text-slate-500">Suggest items based on home size</span>
+                  <span className="text-xs font-semibold text-foreground block">AI Estimate</span>
+                  <span className="text-[10px] text-muted-foreground">Suggest items based on home size</span>
                 </>
               )}
             </div>
