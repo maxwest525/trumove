@@ -26638,3 +26638,211 @@ footer {
 .dark .tru-floating-form-card::before {
   opacity: 0.8;
 }
+
+/* =================================================================
+   DARK MODE: CONTINUE BUTTON VISIBILITY FIX
+   The Continue/Next Step button uses tm-ink text on white background.
+   In dark mode, tm-ink inverts to white, making text invisible.
+   ================================================================= */
+.dark .tru-qb-continue,
+.dark .tru-qb-submit {
+  background: hsl(0 0% 100% / 0.9);
+  color: hsl(220 15% 10%);
+  border-color: hsl(0 0% 100% / 0.3);
+}
+
+.dark .tru-qb-continue:hover:not(:disabled),
+.dark .tru-qb-submit:hover:not(:disabled) {
+  background: hsl(var(--primary));
+  color: hsl(220 15% 8%);
+  border-color: hsl(var(--primary));
+}
+
+.dark .tru-qb-continue:disabled,
+.dark .tru-qb-submit:disabled {
+  background: hsl(0 0% 100% / 0.15);
+  color: hsl(0 0% 100% / 0.4);
+  border-color: hsl(0 0% 100% / 0.1);
+}
+
+/* =================================================================
+   DARK MODE: INVENTORY BUILDER VISIBILITY FIXES
+   Ensure all inventory builder buttons, text, and controls are readable.
+   ================================================================= */
+
+/* Room sidebar buttons */
+.dark .tru-room-btn {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.1);
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-room-btn:hover {
+  background: hsl(220 15% 18%);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+.dark .tru-room-btn.is-active {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.6);
+  color: hsl(var(--primary));
+}
+
+/* Inventory item cards and buttons */
+.dark .tru-inventory-item,
+.dark .tru-item-card {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.08);
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-inventory-item:hover,
+.dark .tru-item-card:hover {
+  background: hsl(220 15% 16%);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+/* AI Estimate and Scan Room buttons in dark mode */
+.dark .tru-ai-estimate-btn,
+.dark .tru-scan-room-btn {
+  background: hsl(220 15% 14%);
+  border-color: hsl(0 0% 100% / 0.12);
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-ai-estimate-btn:hover,
+.dark .tru-scan-room-btn:hover {
+  background: hsl(220 15% 20%);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+/* Quick Tools section in dark mode */
+.dark .tru-quick-tools-header {
+  background: hsl(220 15% 12%);
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-quick-tools-content {
+  background: hsl(220 15% 10%);
+}
+
+/* Inventory grid items */
+.dark .tru-inventory-grid-item {
+  background: hsl(0 0% 100%);
+  border-color: hsl(0 0% 100% / 0.1);
+}
+
+.dark .tru-inventory-grid-item span {
+  color: hsl(220 15% 10%);
+}
+
+/* Form section labels in dark mode */
+.dark .tru-qb-section-label {
+  color: hsl(0 0% 100% / 0.7);
+}
+
+/* Form question and subtitle */
+.dark .tru-qb-question {
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-qb-subtitle {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+/* Back button in dark mode */
+.dark .tru-qb-back {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.15);
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-qb-back:hover {
+  background: hsl(220 15% 18%);
+  border-color: hsl(0 0% 100% / 0.25);
+}
+
+/* Location autocomplete suggestions in dark mode */
+.dark .location-suggestion-item {
+  background: hsl(220 15% 12%);
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .location-suggestion-item:hover {
+  background: hsl(220 15% 18%);
+}
+
+/* Inventory table row text in dark mode */
+.dark .tru-inventory-table td {
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-inventory-table th {
+  color: hsl(0 0% 100% / 0.7);
+  background: hsl(220 15% 10%);
+}
+
+/* Clear All and action buttons in dark mode */
+.dark .tru-clear-all-btn {
+  color: hsl(0 100% 70%);
+}
+
+.dark .tru-action-btn {
+  background: hsl(220 15% 14%);
+  border-color: hsl(0 0% 100% / 0.1);
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-action-btn:hover {
+  background: hsl(220 15% 20%);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+/* Category pills in dark mode */
+.dark .category-pill {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.08);
+  color: hsl(0 0% 100% / 0.8);
+}
+
+.dark .category-pill:hover {
+  background: hsl(220 15% 18%);
+}
+
+.dark .category-pill.is-active {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.5);
+  color: hsl(var(--primary));
+}
+
+/* Preset buttons in dark mode */
+.dark .tru-preset-btn {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.1);
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-preset-btn:hover {
+  background: hsl(220 15% 18%);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+/* Input fields in estimate wizard */
+.dark .tru-floating-form-content input,
+.dark .tru-floating-form-content select,
+.dark .tru-floating-form-content textarea {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.12);
+  color: hsl(0 0% 100%);
+}
+
+.dark .tru-floating-form-content input::placeholder,
+.dark .tru-floating-form-content textarea::placeholder {
+  color: hsl(0 0% 100% / 0.4);
+}
+
+.dark .tru-floating-form-content input:focus,
+.dark .tru-floating-form-content textarea:focus {
+  border-color: hsl(var(--primary) / 0.6);
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
+}
