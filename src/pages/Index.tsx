@@ -47,35 +47,6 @@ import {
   Play, Pause, MapPinned
 } from "lucide-react";
 
-// Static Tracking Screenshot Card - Simple preview of actual tracker
-function TrackingPreviewCard() {
-  const navigate = useNavigate();
-  
-  return (
-    <div 
-      className="tru-tracking-preview-card"
-      onClick={() => navigate('/track')}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && navigate('/track')}
-    >
-      <div className="tru-tracking-preview-header">
-        <div className="tru-tracking-preview-badge">
-          <span className="tru-tracking-live-dot" />
-          <span>LIVE TRACKING</span>
-        </div>
-        <h3 className="tru-tracking-preview-title">Real-Time Shipment Tracking</h3>
-        <p className="tru-tracking-preview-desc">Track your move with GPS precision and live ETA updates</p>
-      </div>
-      
-      {/* Blank placeholder instead of screenshot */}
-      <div className="tru-tracking-preview-placeholder">
-        <ArrowRight className="w-5 h-5 text-primary" />
-        <span className="text-sm font-medium text-muted-foreground">Try Demo</span>
-      </div>
-    </div>
-  );
-}
 
 // ZIP lookup
 const ZIP_LOOKUP: Record<string, string> = {
@@ -1359,8 +1330,6 @@ export default function Index() {
                 </div>
               </div>
               
-              {/* CARD 2: Tracking Preview Screenshot */}
-              <TrackingPreviewCard />
             </div>
           </section>
         </div> {/* End tru-hero-wrapper */}
