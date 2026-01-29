@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Truck, Sparkles, Hand, ChevronRight, ChevronLeft } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 
@@ -7,6 +8,7 @@ interface FloatingTruckChatProps {
 }
 
 export default function FloatingTruckChat({ className = '' }: FloatingTruckChatProps) {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [showButton] = useState(true);
   
@@ -51,7 +53,7 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
             <Hand className="w-5 h-5 text-background animate-wave" />
           </div>
         </button>
-        <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} pagePath={location.pathname} />
       </>
     );
   }
@@ -105,7 +107,7 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
       </button>
 
       {/* Chat Modal */}
-      <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} pagePath={location.pathname} />
     </>
   );
 }

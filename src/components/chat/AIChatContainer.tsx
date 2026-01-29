@@ -2,10 +2,11 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useConversation } from "@elevenlabs/react";
 import ReactMarkdown from "react-markdown";
-import { Phone, Video, ArrowRight, Zap, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import ChatInput from "./ChatInput";
 import TypingIndicator from "./TypingIndicator";
+import { PageContext, QuickAction } from "./pageContextConfig";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -18,9 +19,18 @@ interface Message {
 interface AIChatContainerProps {
   agentId?: string;
   onSwitchToQuickQuote?: () => void;
+  pageContext?: PageContext;
 }
 
-export default function AIChatContainer({ agentId, onSwitchToQuickQuote }: AIChatContainerProps) {
+// Default context fallback
+const defaultContext: PageContext = {
+  key: 'general',
+  firstMessage: "Hi! I'm your TruMove AI assistant. I can help you with moving quotes, answer questions about our services, or connect you with a specialist. What can I help you with today?",
+  quickActions: [],
+  agentContext: "General moving assistance.",
+};
+
+export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageContext = defaultContext }: AIChatContainerProps) {
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -29,6 +39,12 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote }: AICha
   const [error, setError] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const hasConnected = useRef(false);
+  const pageContextRef = useRef(pageContext);
+
+  // Store pageContext in ref to use in callbacks
+  useEffect(() => {
+    pageContextRef.current = pageContext;
+  }, [pageContext]);
 
   // ElevenLabs Conversational AI hook
   const conversation = useConversation({
@@ -38,8 +54,12 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote }: AICha
       setIsConnected(true);
       setIsConnecting(false);
       setError(null);
-      // Add welcome message
-      addAssistantMessage("Hi! I'm your TruMove AI assistant. I can help you with moving quotes, answer questions about our services, or connect you with a specialist. What can I help you with today?");
+      // Add page-specific welcome message
+      addAssistantMessage(pageContextRef.current.firstMessage);
+      // Send contextual update to agent about which page user is on
+      if (pageContextRef.current.agentContext) {
+        conversation.sendContextualUpdate?.(pageContextRef.current.agentContext);
+      }
     },
     onDisconnect: () => {
       console.log("Disconnected from ElevenLabs agent");
@@ -160,15 +180,26 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote }: AICha
     conversation.sendUserMessage(text);
   }, [isConnected, conversation]);
 
-  const handleQuickAction = (action: string) => {
-    if (action === "quote") {
-      onSwitchToQuickQuote?.();
-    } else if (action === "video") {
-      navigate("/book");
-    } else if (action === "call") {
-      window.location.href = "tel:+18001234567";
+  const handleQuickAction = useCallback((quickAction: QuickAction) => {
+    switch (quickAction.action) {
+      case 'quote':
+        onSwitchToQuickQuote?.();
+        break;
+      case 'navigate':
+        if (quickAction.target) {
+          navigate(quickAction.target);
+        }
+        break;
+      case 'call':
+        window.location.href = "tel:+18001234567";
+        break;
+      case 'message':
+        if (quickAction.message) {
+          handleSend(quickAction.message);
+        }
+        break;
     }
-  };
+  }, [navigate, onSwitchToQuickQuote, handleSend]);
 
   return (
     <div className="chat-container">
@@ -183,7 +214,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote }: AICha
           <div className="chat-header-info">
             <span className="chat-header-name">TruMove AI</span>
             <span className="chat-header-status">
-              <span className={cn("chat-status-dot", isConnected && "bg-green-500")}></span>
+              <span className={cn("chat-status-dot", isConnected && "bg-primary")}></span>
               {isConnecting ? "Connecting..." : isConnected ? "Online" : "Offline"}
             </span>
           </div>
@@ -240,29 +271,26 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote }: AICha
         {isThinking && <TypingIndicator />}
 
         {/* Quick Actions - shown after initial connection */}
-        {isConnected && messages.length === 1 && !isThinking && (
+        {isConnected && messages.length === 1 && !isThinking && pageContext.quickActions.length > 0 && (
           <div className="flex flex-wrap gap-2 px-4 py-3">
-            <button
-              onClick={() => handleQuickAction("quote")}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-            >
-              <Zap className="w-3 h-3" />
-              Quick Quote
-            </button>
-            <button
-              onClick={() => handleQuickAction("video")}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full bg-muted text-muted-foreground hover:bg-accent transition-colors"
-            >
-              <Video className="w-3 h-3" />
-              Video Consult
-            </button>
-            <button
-              onClick={() => handleQuickAction("call")}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full bg-muted text-muted-foreground hover:bg-accent transition-colors"
-            >
-              <Phone className="w-3 h-3" />
-              Call Us
-            </button>
+            {pageContext.quickActions.map((action, index) => {
+              const Icon = action.icon;
+              return (
+                <button
+                  key={action.id}
+                  onClick={() => handleQuickAction(action)}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
+                    index === 0 
+                      ? "bg-primary/10 text-primary hover:bg-primary/20" 
+                      : "bg-muted text-muted-foreground hover:bg-accent"
+                  )}
+                >
+                  <Icon className="w-3 h-3" />
+                  {action.label}
+                </button>
+              );
+            })}
           </div>
         )}
 
