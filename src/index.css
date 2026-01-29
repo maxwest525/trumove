@@ -5175,6 +5175,21 @@
   }
 }
 
+/* Dark mode - match Move Summary header styling exactly */
+.dark .tru-qb-form-header.tru-qb-form-header-pill {
+  background: hsl(220 15% 8%) !important;
+  border-bottom-color: hsl(0 0% 100% / 0.1) !important;
+}
+
+.dark .tru-qb-form-header-pill .tru-qb-form-title,
+.dark .tru-qb-form-header-pill .tru-qb-form-title.tru-qb-form-title-large {
+  color: hsl(0 0% 100%) !important;
+}
+
+.dark .tru-qb-form-header-pill .tru-qb-form-subtitle-compact {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
 
 /* Responsive: Stack on mobile */
 @media (max-width: 900px) {
