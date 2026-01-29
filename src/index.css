@@ -1076,6 +1076,17 @@
   z-index: 1;
 }
 
+/* Dark mode hero background - increase overlay darkness */
+.dark .tru-hero-bg-overlay {
+  background: linear-gradient(
+    180deg,
+    hsl(var(--background) / 0.55) 0%,
+    hsl(var(--background) / 0.75) 25%,
+    hsl(var(--background) / 0.92) 50%,
+    hsl(var(--background)) 75%
+  );
+}
+
 /* =============================================
    SPLIT HERO LAYOUT - Homepage
    ============================================= */
@@ -23532,12 +23543,18 @@
   padding: 0 16px;
   background: hsl(var(--tm-ink)) !important;
   backdrop-filter: blur(12px);
-  color: white !important;
+  color: hsl(0 0% 100%) !important;
   font-weight: 600;
   font-size: 13px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.25) !important;
   transition: all 0.2s;
+}
+
+/* Force white icons in tracking header buttons */
+.tracking-header-satellite-btn svg {
+  color: hsl(0 0% 100%) !important;
+  stroke: hsl(0 0% 100%) !important;
 }
 
 .tracking-header-satellite-btn:hover {
@@ -26845,4 +26862,98 @@ footer {
 .dark .tru-floating-form-content textarea:focus {
   border-color: hsl(var(--primary) / 0.6);
   box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
+}
+
+/* ========================================
+   DARK MODE CHAT FIXES
+   ======================================== */
+
+/* Chat container dark mode */
+.dark .chat-container {
+  background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+  border-color: hsl(var(--border));
+}
+
+/* Chat header dark mode */
+.dark .chat-header {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+.dark .chat-header-name {
+  color: hsl(var(--foreground));
+}
+
+.dark .chat-header-status {
+  color: hsl(var(--muted-foreground));
+}
+
+/* Chat messages dark mode */
+.dark .chat-message.is-bot .chat-bubble {
+  background: hsl(var(--muted));
+}
+
+.dark .chat-message.is-bot .chat-bubble-text {
+  color: hsl(var(--foreground));
+}
+
+.dark .chat-message.is-user .chat-bubble {
+  background: hsl(var(--primary));
+}
+
+.dark .chat-message.is-user .chat-bubble-text {
+  color: hsl(var(--foreground));
+}
+
+/* Chat input area dark mode */
+.dark .chat-input-area {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+.dark .chat-input {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.dark .chat-input::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .chat-send-btn {
+  background: hsl(var(--muted));
+}
+
+.dark .chat-send-icon {
+  color: hsl(var(--muted-foreground));
+}
+
+/* Chat footer dark mode */
+.dark .chat-footer {
+  background: hsl(var(--muted) / 0.5);
+  border-color: hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+}
+
+/* Chat quick buttons dark mode */
+.dark .chat-quick-btn {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--border));
+}
+
+/* Chat typing indicator dark mode */
+.dark .chat-typing-dot {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Chat CTA buttons dark mode */
+.dark .chat-cta-btn:not(.is-primary):not(.is-secondary) {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--border));
+}
+
+.dark .chat-form-link {
+  color: hsl(var(--primary));
 }
