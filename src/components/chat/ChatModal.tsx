@@ -56,7 +56,7 @@ export default function ChatModal({
               )}
             >
               <Sparkles className="w-3 h-3" />
-              Ask AI
+              Ask TruDy
             </button>
             <button
               type="button"

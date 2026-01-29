@@ -1,4 +1,4 @@
-import { LucideIcon, Zap, Video, Phone, ScanLine, Lightbulb, Truck, Search, Scale, HelpCircle, Calendar, MessageSquare, MapPin, CloudSun, Headphones } from 'lucide-react';
+import { LucideIcon, Video, Phone, ScanLine, Lightbulb, Truck, Scale, HelpCircle, CloudSun, Headphones } from 'lucide-react';
 
 export interface QuickAction {
   id: string;
@@ -19,83 +19,83 @@ export interface PageContext {
 const pageContexts: Record<string, PageContext> = {
   home: {
     key: 'home',
-    firstMessage: "Hi! Ready to get your instant moving quote? I can help you estimate costs, find vetted movers, or answer any questions about your upcoming move.",
+    firstMessage: "Hi! I'm TruDy, your TruMove moving assistant. I can help you understand our services, answer moving questions, or connect you with a specialist for pricing. What can I help with today?",
     quickActions: [
-      { id: 'quote', label: 'Quick Quote', icon: Zap, action: 'quote' },
+      { id: 'services', label: 'Our Services', icon: Truck, action: 'message', message: 'What moving services does TruMove offer?' },
       { id: 'video', label: 'Video Consult', icon: Video, action: 'navigate', target: '/book' },
-      { id: 'call', label: 'Call Now', icon: Phone, action: 'call' },
+      { id: 'call', label: 'Speak to Agent', icon: Phone, action: 'call' },
     ],
-    agentContext: "User is on the home page and may be starting their moving journey. They might want a quote, information about services, or general moving advice.",
+    agentContext: "User is on the home page. Help them learn about TruMove services. Do NOT provide pricing - direct them to speak with an agent for quotes.",
   },
   estimate: {
     key: 'estimate',
-    firstMessage: "Need help building your inventory? I can suggest items based on your home size, explain how our AI estimation works, or help you find specific furniture to add.",
+    firstMessage: "Need help building your inventory? I can explain how our AI scanning works, suggest what to include, or answer any questions about the moving process.",
     quickActions: [
       { id: 'scan', label: 'Scan Room', icon: ScanLine, action: 'navigate', target: '/scan-room' },
       { id: 'tips', label: 'Inventory Tips', icon: Lightbulb, action: 'message', message: 'What are some tips for building an accurate moving inventory?' },
-      { id: 'estimate', label: 'Get AI Estimate', icon: Zap, action: 'message', message: 'How does the AI estimation work?' },
+      { id: 'agent', label: 'Talk to Agent', icon: Phone, action: 'call' },
     ],
-    agentContext: "User is on the inventory builder page and may need help adding items, understanding item categories, or getting an accurate estimate for their move.",
+    agentContext: "User is building their inventory. Help with item selection and process questions. For pricing, suggest speaking with an agent.",
   },
   'video-consult': {
     key: 'video-consult',
-    firstMessage: "Looking to book a video consultation? I can help you understand what to expect, find the best time slot, or answer questions about our virtual survey process.",
+    firstMessage: "Looking to book a consultation? I can explain what to expect, help you prepare, or answer questions about our virtual survey process. For scheduling, I'd recommend speaking with an agent.",
     quickActions: [
-      { id: 'schedule', label: 'Schedule Call', icon: Calendar, action: 'message', message: 'Help me schedule a video consultation' },
       { id: 'what-expect', label: 'What to Expect', icon: HelpCircle, action: 'message', message: 'What happens during a video consultation?' },
-      { id: 'call', label: 'Phone Support', icon: Phone, action: 'call' },
+      { id: 'prepare', label: 'How to Prepare', icon: Lightbulb, action: 'message', message: 'How should I prepare for a video consultation?' },
+      { id: 'schedule', label: 'Schedule with Agent', icon: Phone, action: 'call' },
     ],
-    agentContext: "User is on the video consultation booking page. They may want to schedule a call, understand the process, or have questions about virtual moving surveys.",
+    agentContext: "User wants to book a video consultation. Help with preparation and process info. For scheduling, connect them to an agent.",
   },
   tracking: {
     key: 'tracking',
-    firstMessage: "Tracking your shipment? I can help you understand your delivery timeline, check weather conditions along the route, or connect you with your driver coordinator.",
+    firstMessage: "Tracking your shipment? I can explain the tracking features, check weather conditions, or connect you with your move coordinator for specific updates.",
     quickActions: [
-      { id: 'booking', label: 'Enter Booking #', icon: Truck, action: 'message', message: 'I need to enter my booking number to track my shipment' },
-      { id: 'weather', label: 'Check Weather', icon: CloudSun, action: 'message', message: 'What is the weather like along my moving route?' },
-      { id: 'support', label: 'Contact Support', icon: Headphones, action: 'call' },
+      { id: 'how-tracking', label: 'How Tracking Works', icon: Truck, action: 'message', message: 'How does the live tracking feature work?' },
+      { id: 'weather', label: 'Route Weather', icon: CloudSun, action: 'message', message: 'What is the weather like along typical moving routes?' },
+      { id: 'coordinator', label: 'Call Coordinator', icon: Headphones, action: 'call' },
     ],
-    agentContext: "User is on the live tracking page. They may want to track a shipment, understand ETAs, check route conditions, or contact their driver.",
+    agentContext: "User is tracking their move. Help with feature explanations. For specific shipment status, connect to their coordinator.",
   },
   vetting: {
     key: 'vetting',
-    firstMessage: "Looking to verify a moving company? I can explain what the safety scores mean, help you compare carriers, or guide you through the vetting process.",
+    firstMessage: "Looking to verify a moving company? I can explain what safety scores mean, share red flags to watch for, or help you understand carrier ratings.",
     quickActions: [
-      { id: 'search', label: 'How to Search', icon: Search, action: 'message', message: 'How do I search for and verify a moving company?' },
-      { id: 'compare', label: 'Compare Tips', icon: Scale, action: 'message', message: 'What should I compare when choosing between movers?' },
+      { id: 'scores', label: 'Safety Scores', icon: Scale, action: 'message', message: 'What do the carrier safety scores mean?' },
       { id: 'flags', label: 'Red Flags', icon: HelpCircle, action: 'message', message: 'What are red flags to watch for when hiring movers?' },
+      { id: 'agent', label: 'Get Agent Help', icon: Phone, action: 'call' },
     ],
-    agentContext: "User is on the carrier vetting page. They may want to verify a moving company, understand safety ratings, or learn how to avoid moving scams.",
+    agentContext: "User is vetting movers. Explain ratings and red flags. For carrier recommendations, connect to an agent.",
   },
   'scan-room': {
     key: 'scan-room',
-    firstMessage: "Ready to scan your room? I can guide you through the AI scanning process, explain how to get the best results, or help troubleshoot any issues.",
+    firstMessage: "Ready to scan your room? I can guide you through the AI scanning process or share tips for best results.",
     quickActions: [
       { id: 'how-scan', label: 'How It Works', icon: ScanLine, action: 'message', message: 'How does the room scanning feature work?' },
       { id: 'tips', label: 'Scanning Tips', icon: Lightbulb, action: 'message', message: 'What are tips for getting accurate room scans?' },
-      { id: 'manual', label: 'Add Manually', icon: Zap, action: 'navigate', target: '/online-estimate' },
+      { id: 'help', label: 'Get Help', icon: Phone, action: 'call' },
     ],
-    agentContext: "User is on the room scanning page. They may need help with the AI scanning process, camera permissions, or understanding how items are detected.",
+    agentContext: "User is scanning rooms for inventory. Help with the scanning process. For pricing questions, connect to an agent.",
   },
   info: {
     key: 'info',
-    firstMessage: "Have questions about TruMove? I'm here to help! Ask me about our services, pricing, or anything else you'd like to know.",
+    firstMessage: "Have questions about TruMove? I'm TruDy, here to help! Ask me about our services or anything you'd like to know.",
     quickActions: [
-      { id: 'quote', label: 'Get Quote', icon: Zap, action: 'quote' },
       { id: 'services', label: 'Our Services', icon: Truck, action: 'message', message: 'What moving services does TruMove offer?' },
-      { id: 'contact', label: 'Contact Us', icon: MessageSquare, action: 'call' },
+      { id: 'video', label: 'Video Consult', icon: Video, action: 'navigate', target: '/book' },
+      { id: 'agent', label: 'Speak to Agent', icon: Phone, action: 'call' },
     ],
-    agentContext: "User is on an informational page (About, FAQ, Terms, etc). They may have general questions about the company, services, or policies.",
+    agentContext: "User is on an informational page. Help with questions but direct to agents for pricing and scheduling.",
   },
   general: {
     key: 'general',
-    firstMessage: "Hi! I'm your TruMove AI assistant. I can help you with moving quotes, answer questions about our services, or connect you with a specialist. What can I help you with today?",
+    firstMessage: "Hi! I'm TruDy, your TruMove moving assistant. I can answer questions about our services, help you understand the moving process, or connect you with a specialist. How can I help?",
     quickActions: [
-      { id: 'quote', label: 'Quick Quote', icon: Zap, action: 'quote' },
+      { id: 'services', label: 'Our Services', icon: Truck, action: 'message', message: 'What moving services does TruMove offer?' },
       { id: 'video', label: 'Video Consult', icon: Video, action: 'navigate', target: '/book' },
-      { id: 'call', label: 'Call Us', icon: Phone, action: 'call' },
+      { id: 'agent', label: 'Speak to Agent', icon: Phone, action: 'call' },
     ],
-    agentContext: "User opened the AI assistant from a page without specific context. Provide general moving assistance.",
+    agentContext: "General moving assistance. Help with questions but direct to agents for pricing and scheduling.",
   },
 };
 
