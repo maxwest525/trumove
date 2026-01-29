@@ -1,16 +1,29 @@
-import { X, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { X, Sparkles, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ChatContainer from "./ChatContainer";
+import AIChatContainer from "./AIChatContainer";
+import { cn } from "@/lib/utils";
+
+type ChatMode = "ai" | "quick-quote";
 
 interface ChatModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialFromLocation?: string;
   initialToLocation?: string;
+  defaultMode?: ChatMode;
 }
 
-export default function ChatModal({ isOpen, onClose, initialFromLocation, initialToLocation }: ChatModalProps) {
+export default function ChatModal({ 
+  isOpen, 
+  onClose, 
+  initialFromLocation, 
+  initialToLocation,
+  defaultMode = "ai"
+}: ChatModalProps) {
   const navigate = useNavigate();
+  const [mode, setMode] = useState<ChatMode>(defaultMode);
 
   if (!isOpen) return null;
 
@@ -26,10 +39,36 @@ export default function ChatModal({ isOpen, onClose, initialFromLocation, initia
       {/* Modal Panel */}
       <div className="chat-modal-panel" role="dialog" aria-modal="true" aria-label="AI Chat Assistant">
         <div className="chat-modal-header">
-          <div className="chat-modal-title">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span>TruMove AI Assistant</span>
+          {/* Mode Toggle */}
+          <div className="flex items-center gap-1 p-0.5 bg-muted rounded-lg">
+            <button
+              type="button"
+              onClick={() => setMode("ai")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                mode === "ai" 
+                  ? "bg-background text-foreground shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Sparkles className="w-3 h-3" />
+              Ask AI
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("quick-quote")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                mode === "quick-quote" 
+                  ? "bg-background text-foreground shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Zap className="w-3 h-3" />
+              Quick Quote
+            </button>
           </div>
+          
           <button 
             type="button" 
             className="chat-modal-close"
@@ -41,10 +80,16 @@ export default function ChatModal({ isOpen, onClose, initialFromLocation, initia
         </div>
         
         <div className="chat-modal-body">
-          <ChatContainer 
-            initialFromLocation={initialFromLocation}
-            initialToLocation={initialToLocation}
-          />
+          {mode === "ai" ? (
+            <AIChatContainer 
+              onSwitchToQuickQuote={() => setMode("quick-quote")}
+            />
+          ) : (
+            <ChatContainer 
+              initialFromLocation={initialFromLocation}
+              initialToLocation={initialToLocation}
+            />
+          )}
         </div>
         
         <div className="chat-modal-footer">

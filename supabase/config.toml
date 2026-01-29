@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.google-route-optimization]
 verify_jwt = false
+
+[functions.elevenlabs-conversation-token]
+verify_jwt = false
