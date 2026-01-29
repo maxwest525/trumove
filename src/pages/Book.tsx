@@ -363,7 +363,7 @@ export default function Book() {
               onClick={() => navigate("/online-estimate")}
               className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
             >
-              <div className="w-16 h-16 rounded-xl overflow-hidden border border-border/60">
+              <div className="w-20 h-20 rounded-xl overflow-hidden border border-border/60">
                 <img 
                   src={sampleRoomLiving} 
                   alt="Manual inventory" 
@@ -381,7 +381,7 @@ export default function Book() {
               onClick={() => navigate("/scan-room")}
               className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
             >
-              <div className="w-16 h-16 rounded-xl overflow-hidden border border-border/60">
+              <div className="w-20 h-20 rounded-xl overflow-hidden border border-border/60">
                 <img 
                   src={previewAiScanner} 
                   alt="AI scanner" 
