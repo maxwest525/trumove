@@ -138,13 +138,13 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
         throw new Error(fetchError.message || "Failed to get conversation token");
       }
 
-      if (!data?.token) {
-        throw new Error("No token received from server");
+      if (!data?.signed_url) {
+        throw new Error("No signed URL received from server");
       }
 
-      // Start the conversation session
+      // Start the conversation session with WebSocket (for text-only agents)
       await conversation.startSession({
-        conversationToken: data.token,
+        signedUrl: data.signed_url,
       });
     } catch (err) {
       console.error("Connection error:", err);
