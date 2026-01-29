@@ -30,7 +30,6 @@ import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 import heroFamilyMove from "@/assets/hero-family-move.jpg";
 
 import ChatModal from "@/components/chat/ChatModal";
-import FloatingTruckChat from "@/components/FloatingTruckChat";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -1487,9 +1486,6 @@ export default function Index() {
 
 
 
-      {/* Floating Truck AI Chat Button */}
-      <FloatingTruckChat />
-      
       {/* Lead Capture Modal */}
       <LeadCaptureModal
         isOpen={leadCaptureOpen}

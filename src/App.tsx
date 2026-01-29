@@ -21,6 +21,7 @@ import AgentLogin from "./pages/AgentLogin";
 import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
+import FloatingTruckChat from "./components/FloatingTruckChat";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <FloatingTruckChat />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
