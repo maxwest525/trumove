@@ -1336,52 +1336,67 @@ export default function Index() {
         </div> {/* End tru-hero-wrapper */}
 
           {/* FULL-WIDTH FEATURE CAROUSEL - Directly under Why TruMove */}
-          <section className="tru-feature-carousel-fullwidth tru-carousel-tight">
+          <section className="tru-feature-carousel-fullwidth tru-carousel-compact">
             <FeatureCarousel />
           </section>
 
-          {/* BLACK STATS STRIP - Section Divider */}
-          <StatsStrip />
-
-          {/* ROUTE ANALYSIS SECTION - Always visible */}
-          <RouteAnalysisSection 
-            fromCity={fromCity}
-            toCity={toCity}
-            distance={distance}
-            isAnalyzing={isSearchingCarriers}
-            fromCoords={fromCoords}
-            toCoords={toCoords}
-          />
-
-          {/* START YOUR AI INVENTORY ANALYSIS - 3 Step Section */}
+          {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="tru-ai-steps-section">
             <div className="tru-ai-steps-inner">
               <h2 className="tru-ai-steps-title">Start Your AI Inventory Analysis</h2>
+              
+              {/* Preview Video/Image Block */}
+              <div className="tru-ai-preview-block">
+                <div className="tru-ai-preview-video">
+                  <img src={sampleRoomLiving} alt="AI scanning a room" />
+                  <div className="tru-ai-preview-overlay">
+                    <Camera className="w-8 h-8" />
+                    <span>See how it works</span>
+                  </div>
+                </div>
+                <div className="tru-ai-preview-content">
+                  <p className="tru-ai-preview-tagline">
+                    <strong>Walk through your home with your phone camera</strong> or snap photos of each room.
+                    Our neural network identifies furniture, boxes, and appliances automatically—calculating 
+                    weight, volume, and cubic footage in seconds.
+                  </p>
+                  <p className="tru-ai-preview-trust">
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Every inventory is confirmed with a live TruMove specialist before your quote is finalized—so there are no surprises on move day.</span>
+                  </p>
+                  <p className="tru-ai-preview-privacy">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>No strangers walking through your home. You control the camera, you control the process.</span>
+                  </p>
+                </div>
+              </div>
+              
+              {/* 3-step grid */}
               <div className="tru-ai-steps-grid">
                 <div className="tru-ai-step">
                   <div className="tru-ai-step-number">1</div>
                   <div className="tru-ai-step-content">
-                    <h3 className="tru-ai-step-title">Upload Room Photos</h3>
-                    <p className="tru-ai-step-desc">Take photos showing all furniture and items in each room.</p>
+                    <h3 className="tru-ai-step-title">Video or Photos</h3>
+                    <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
                   </div>
                 </div>
                 <div className="tru-ai-step">
                   <div className="tru-ai-step-number">2</div>
                   <div className="tru-ai-step-content">
-                    <h3 className="tru-ai-step-title">AI Detects & Measures</h3>
-                    <p className="tru-ai-step-desc">Our AI identifies items and calculates weight and volume.</p>
+                    <h3 className="tru-ai-step-title">AI Detection</h3>
+                    <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
                   </div>
                 </div>
                 <div className="tru-ai-step">
                   <div className="tru-ai-step-number">3</div>
                   <div className="tru-ai-step-content">
-                    <h3 className="tru-ai-step-title">Review & Get Quote</h3>
-                    <p className="tru-ai-step-desc">Verify your inventory and receive an accurate estimate.</p>
+                    <h3 className="tru-ai-step-title">Agent Confirmation</h3>
+                    <p className="tru-ai-step-desc">A live specialist reviews to ensure accuracy.</p>
                   </div>
                 </div>
               </div>
               
-              {/* Inventory Action Buttons - Same Visual Style */}
+              {/* Inventory Action Buttons */}
               <div className="tru-inventory-actions">
                 <button 
                   type="button" 
@@ -1402,6 +1417,19 @@ export default function Index() {
               </div>
             </div>
           </section>
+
+          {/* BLACK STATS STRIP - Section Divider */}
+          <StatsStrip />
+
+          {/* ROUTE ANALYSIS SECTION - Always visible */}
+          <RouteAnalysisSection 
+            fromCity={fromCity}
+            toCity={toCity}
+            distance={distance}
+            isAnalyzing={isSearchingCarriers}
+            fromCoords={fromCoords}
+            toCoords={toCoords}
+          />
 
           {/* CONSULT SECTION - Compact */}
           <section className="tru-consult-compact">
