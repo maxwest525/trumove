@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
 
@@ -7,6 +8,7 @@ interface FloatingChatButtonProps {
 }
 
 export default function FloatingChatButton({ className = '' }: FloatingChatButtonProps) {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [showButton, setShowButton] = useState(false);
@@ -61,7 +63,7 @@ export default function FloatingChatButton({ className = '' }: FloatingChatButto
       </button>
 
       {/* Chat Modal */}
-      <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <ChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} pagePath={location.pathname} />
     </>
   );
 }

@@ -3,6 +3,7 @@ import { X, Sparkles, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ChatContainer from "./ChatContainer";
 import AIChatContainer from "./AIChatContainer";
+import { getPageContext, PageContext } from "./pageContextConfig";
 import { cn } from "@/lib/utils";
 
 type ChatMode = "ai" | "quick-quote";
@@ -13,6 +14,7 @@ interface ChatModalProps {
   initialFromLocation?: string;
   initialToLocation?: string;
   defaultMode?: ChatMode;
+  pagePath?: string;
 }
 
 export default function ChatModal({ 
@@ -20,10 +22,12 @@ export default function ChatModal({
   onClose, 
   initialFromLocation, 
   initialToLocation,
-  defaultMode = "ai"
+  defaultMode = "ai",
+  pagePath = "/"
 }: ChatModalProps) {
   const navigate = useNavigate();
   const [mode, setMode] = useState<ChatMode>(defaultMode);
+  const pageContext = getPageContext(pagePath);
 
   if (!isOpen) return null;
 
@@ -82,6 +86,7 @@ export default function ChatModal({
         <div className="chat-modal-body">
           {mode === "ai" ? (
             <AIChatContainer 
+              pageContext={pageContext}
               onSwitchToQuickQuote={() => setMode("quick-quote")}
             />
           ) : (
