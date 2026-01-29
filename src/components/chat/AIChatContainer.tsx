@@ -68,10 +68,24 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
     onMessage: (message: unknown) => {
       console.log("Message received:", message);
       
-      // Type guard for message object
-      const msg = message as { type?: string; agent_response_event?: { agent_response?: string }; agent_response_correction_event?: { corrected_agent_response?: string } };
+      // Type guard for message object - supports both text-only and WebRTC formats
+      const msg = message as { 
+        type?: string; 
+        source?: string;
+        role?: string;
+        message?: string;
+        agent_response_event?: { agent_response?: string }; 
+        agent_response_correction_event?: { corrected_agent_response?: string } 
+      };
       
-      // Handle agent responses
+      // Handle text-only agent messages (simpler format)
+      if (msg.source === "ai" && msg.role === "agent" && msg.message) {
+        setIsThinking(false);
+        addAssistantMessage(msg.message);
+        return;
+      }
+      
+      // Handle WebRTC agent responses (original format)
       if (msg.type === "agent_response") {
         setIsThinking(false);
         const agentText = msg.agent_response_event?.agent_response;
