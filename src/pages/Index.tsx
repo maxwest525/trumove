@@ -16,6 +16,7 @@ import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import RouteAnalysisSection from "@/components/RouteAnalysisSection";
+import StatsStrip from "@/components/StatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallax } from "@/hooks/useParallax";
 import logoImg from "@/assets/logo.png";
@@ -1339,30 +1340,8 @@ export default function Index() {
             <FeatureCarousel />
           </section>
 
-          {/* TRUST STRIP - Without "Save 30+ Minutes" */}
-          <section className="tru-trust-strip">
-            <div className="tru-trust-strip-inner">
-              <div className="tru-trust-strip-item">
-                <Shield className="w-4 h-4" />
-                <span>USDOT Compliant</span>
-              </div>
-              <span className="tru-trust-strip-dot">•</span>
-              <div className="tru-trust-strip-item">
-                <CheckCircle className="w-4 h-4" />
-                <span>Bonded & Insured</span>
-              </div>
-              <span className="tru-trust-strip-dot">•</span>
-              <div className="tru-trust-strip-item">
-                <Truck className="w-4 h-4" />
-                <span>FMCSA Authorized</span>
-              </div>
-              <span className="tru-trust-strip-dot">•</span>
-              <div className="tru-trust-strip-item">
-                <Star className="w-4 h-4" />
-                <span>Licensed Broker</span>
-              </div>
-            </div>
-          </section>
+          {/* BLACK STATS STRIP - Section Divider */}
+          <StatsStrip />
 
           {/* ROUTE ANALYSIS SECTION - Always visible */}
           <RouteAnalysisSection 

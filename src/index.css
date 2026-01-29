@@ -27046,3 +27046,106 @@ html.dark .tru-summary-header-large {
 .dark .chat-form-link {
   color: hsl(var(--primary));
 }
+
+/* ========================================
+   GREY SAFER TRUST STRIP - Always under header
+   ======================================== */
+.safer-trust-strip {
+  background: linear-gradient(to bottom, hsl(220 10% 94%), hsl(220 10% 96%));
+  border-bottom: 1px solid hsl(220 10% 88%);
+  padding: 8px 24px;
+}
+
+.safer-trust-strip-inner {
+  max-width: 1480px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.safer-trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(220 15% 35%);
+}
+
+.safer-trust-item svg {
+  width: 16px;
+  height: 16px;
+  color: hsl(142 70% 40%);
+}
+
+/* "Official FMCSA Source" gets special emphasis */
+.safer-trust-item:last-child {
+  font-weight: 800;
+  color: hsl(142 70% 35%);
+}
+
+.safer-trust-dot {
+  color: hsl(220 10% 70%);
+  margin: 0 4px;
+}
+
+/* Dark mode - SAFER trust strip */
+.dark .safer-trust-strip {
+  background: linear-gradient(to bottom, hsl(220 15% 12%), hsl(220 15% 10%));
+  border-bottom-color: hsl(0 0% 100% / 0.1);
+}
+
+.dark .safer-trust-item {
+  color: hsl(0 0% 100% / 0.8);
+}
+
+.dark .safer-trust-item svg {
+  color: hsl(142 70% 55%);
+}
+
+/* ========================================
+   BLACK STATS SECTION DIVIDER
+   ======================================== */
+.stats-strip {
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-top: 1px solid hsl(0 0% 100% / 0.08);
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  padding: 12px 24px;
+}
+
+.stats-strip-inner {
+  max-width: 1480px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stats-strip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: hsl(0 0% 100% / 0.85);
+}
+
+.stats-strip-item svg {
+  width: 14px;
+  height: 14px;
+  color: hsl(142 70% 50%);
+}
+
+.stats-strip-dot {
+  color: hsl(0 0% 100% / 0.3);
+  margin: 0 8px;
+}
