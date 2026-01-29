@@ -1,32 +1,77 @@
 
+# Plan: Fix ElevenLabs Text-Only Chat Connection
 
-# Plan: Update ElevenLabs Agent Credentials
+## Problem Identified
 
-## Overview
+Your ElevenLabs agent is configured for **text-only mode** (as shown in your screenshot), but the current code is requesting a **WebRTC conversation token** which requires audio/video room capabilities. Text-only agents don't have LiveKit rooms, causing the 404 error.
 
-Update the project secrets with the new ElevenLabs agent configuration to enable the AI chat functionality.
+## Solution
 
-## Secrets to Update
+Switch from WebRTC tokens to WebSocket signed URLs for text-only connections.
 
-| Secret Name | New Value | Purpose |
-|-------------|-----------|---------|
-| `ELEVENLABS_AGENT_ID` | `agent_2901kg5kcs7neyvsfbgs775g47j5` | Identifies your configured ElevenLabs conversational agent |
-| `ELEVENLABS_API_KEY` | `5c339a47...` (provided) | Authenticates API requests to ElevenLabs |
+## Changes Required
 
-## Implementation
+### 1. Update Edge Function: Get Signed URL Instead of Token
 
-1. Update `ELEVENLABS_AGENT_ID` secret with the new agent ID
-2. Update `ELEVENLABS_API_KEY` secret with the new API key
-3. The edge function `elevenlabs-conversation-token` will automatically use these new values
+**File:** `supabase/functions/elevenlabs-conversation-token/index.ts`
 
-## Expected Result
+Change the API endpoint from:
+```
+/v1/convai/conversation/token
+```
+To:
+```
+/v1/convai/conversation/get-signed-url
+```
 
-After updating the secrets:
-- The chat widget will connect to your newly configured agent
-- Maya (your TruMove AI assistant) will respond to user messages
-- The infinite loading/typing indicator issue will be resolved
+And return `signed_url` instead of `token`.
 
-## No Code Changes Required
+### 2. Update Client: Use WebSocket Connection
 
-The existing code already references these secrets correctly in the edge function. Only the secret values need to be updated.
+**File:** `src/components/chat/AIChatContainer.tsx`
 
+Change the session start from:
+```javascript
+await conversation.startSession({
+  conversationToken: data.token,
+});
+```
+To:
+```javascript
+await conversation.startSession({
+  signedUrl: data.signed_url,
+  connectionType: "websocket",
+});
+```
+
+## Technical Flow
+
+```text
++-------------------+     +----------------------+     +------------------+
+|  AIChatContainer  | --> | Edge Function        | --> | ElevenLabs API   |
+|                   |     | (get-signed-url)     |     | /get-signed-url  |
++-------------------+     +----------------------+     +------------------+
+         |                         |                           |
+         |    { signed_url }       |<--------------------------|
+         |<------------------------|                           
+         |                                                     
+         v                                                     
++-------------------+     +------------------+
+|  startSession({   | --> | ElevenLabs       |
+|    signedUrl,     |     | WebSocket Server |
+|    connectionType:|     | (api.elevenlabs) |
+|    "websocket"    |     |                  |
+|  })               |     +------------------+
++-------------------+
+```
+
+## Why This Fixes the Issue
+
+- **WebRTC tokens** create LiveKit rooms (for audio/video) → 404 because text-only agents don't have rooms
+- **WebSocket signed URLs** connect directly to ElevenLabs text API → Works for text-only agents
+
+## No Other Changes Needed
+
+- Agent configuration is correct (Voice, LLM, Published, Text-only)
+- The existing message handling code will continue to work
+- No changes to the Maya persona or UI components
