@@ -1,77 +1,79 @@
 
-# Plan: Fix ElevenLabs Text-Only Chat Connection
+# Plan: Fix Message Parsing for ElevenLabs Text-Only Agent
 
-## Problem Identified
+## Great News - Connection is Working!
 
-Your ElevenLabs agent is configured for **text-only mode** (as shown in your screenshot), but the current code is requesting a **WebRTC conversation token** which requires audio/video room capabilities. Text-only agents don't have LiveKit rooms, causing the 404 error.
+The ElevenLabs integration is actually connected and responding! Your agent "TruDy" is sending messages back. The issue is that the message format from text-only agents is different from what the code expects.
 
-## Solution
+## The Problem
 
-Switch from WebRTC tokens to WebSocket signed URLs for text-only connections.
-
-## Changes Required
-
-### 1. Update Edge Function: Get Signed URL Instead of Token
-
-**File:** `supabase/functions/elevenlabs-conversation-token/index.ts`
-
-Change the API endpoint from:
-```
-/v1/convai/conversation/token
-```
-To:
-```
-/v1/convai/conversation/get-signed-url
+**What the code expects:**
+```json
+{
+  "type": "agent_response",
+  "agent_response_event": {
+    "agent_response": "Hello!"
+  }
+}
 ```
 
-And return `signed_url` instead of `token`.
+**What ElevenLabs text-only agent actually sends:**
+```json
+{
+  "source": "ai",
+  "role": "agent",
+  "message": "Hi, thanks for contacting TruDy at TruMove!"
+}
+```
 
-### 2. Update Client: Use WebSocket Connection
+## The Fix
+
+Update the `onMessage` handler in `AIChatContainer.tsx` to recognize both message formats:
 
 **File:** `src/components/chat/AIChatContainer.tsx`
 
-Change the session start from:
-```javascript
-await conversation.startSession({
-  conversationToken: data.token,
-});
-```
-To:
-```javascript
-await conversation.startSession({
-  signedUrl: data.signed_url,
-  connectionType: "websocket",
-});
-```
-
-## Technical Flow
-
-```text
-+-------------------+     +----------------------+     +------------------+
-|  AIChatContainer  | --> | Edge Function        | --> | ElevenLabs API   |
-|                   |     | (get-signed-url)     |     | /get-signed-url  |
-+-------------------+     +----------------------+     +------------------+
-         |                         |                           |
-         |    { signed_url }       |<--------------------------|
-         |<------------------------|                           
-         |                                                     
-         v                                                     
-+-------------------+     +------------------+
-|  startSession({   | --> | ElevenLabs       |
-|    signedUrl,     |     | WebSocket Server |
-|    connectionType:|     | (api.elevenlabs) |
-|    "websocket"    |     |                  |
-|  })               |     +------------------+
-+-------------------+
+```typescript
+onMessage: (message: unknown) => {
+  console.log("Message received:", message);
+  
+  const msg = message as { 
+    type?: string; 
+    source?: string;
+    role?: string;
+    message?: string;
+    agent_response_event?: { agent_response?: string }; 
+    agent_response_correction_event?: { corrected_agent_response?: string } 
+  };
+  
+  // Handle text-only agent messages (simpler format)
+  if (msg.source === "ai" && msg.role === "agent" && msg.message) {
+    setIsThinking(false);
+    addAssistantMessage(msg.message);
+    return;
+  }
+  
+  // Handle WebRTC agent responses (original format)
+  if (msg.type === "agent_response") {
+    setIsThinking(false);
+    const agentText = msg.agent_response_event?.agent_response;
+    if (agentText) {
+      addAssistantMessage(agentText);
+    }
+  }
+  
+  // ... rest of existing code
+}
 ```
 
-## Why This Fixes the Issue
+## What This Changes
 
-- **WebRTC tokens** create LiveKit rooms (for audio/video) → 404 because text-only agents don't have rooms
-- **WebSocket signed URLs** connect directly to ElevenLabs text API → Works for text-only agents
+- Adds detection for the simpler `{ source, role, message }` format used by text-only agents
+- Keeps existing WebRTC message handling for future voice agent support
+- No other files need changes
 
-## No Other Changes Needed
+## Expected Result
 
-- Agent configuration is correct (Voice, LLM, Published, Text-only)
-- The existing message handling code will continue to work
-- No changes to the Maya persona or UI components
+After this fix:
+- TruDy's messages will appear in the chat UI
+- Users can have a conversation with your AI assistant
+- Quick actions will work as designed
