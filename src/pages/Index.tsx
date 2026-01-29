@@ -69,18 +69,10 @@ function TrackingPreviewCard() {
         <p className="tru-tracking-preview-desc">Track your move with GPS precision and live ETA updates</p>
       </div>
       
-      {/* Screenshot of actual tracker */}
-      <div className="tru-tracking-preview-image">
-        <img 
-          src={previewPropertyLookup} 
-          alt="Live shipment tracking dashboard"
-        />
-        <div className="tru-tracking-preview-overlay">
-          <span className="tru-tracking-preview-cta">
-            <ArrowRight className="w-4 h-4" />
-            Try Demo
-          </span>
-        </div>
+      {/* Blank placeholder instead of screenshot */}
+      <div className="tru-tracking-preview-placeholder">
+        <ArrowRight className="w-5 h-5 text-primary" />
+        <span className="text-sm font-medium text-muted-foreground">Try Demo</span>
       </div>
     </div>
   );

@@ -14088,6 +14088,24 @@
   box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.15);
 }
 
+/* Dark mode: size buttons (HOME SIZE grid) */
+.dark .tru-qb-size-btn {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.12);
+  color: hsl(0 0% 100% / 0.85);
+}
+
+.dark .tru-qb-size-btn:hover {
+  background: hsl(220 15% 18%);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+.dark .tru-qb-size-btn.is-active {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.6);
+  color: hsl(0 0% 100%);
+}
+
 /* Toggle Cards */
 .tru-qb-toggles {
   display: flex;
@@ -14177,6 +14195,48 @@
 .tru-qb-toggle-card.is-active .tru-qb-toggle-indicator {
   background: hsl(var(--tm-ink) / 0.1);
   color: hsl(var(--tm-ink));
+}
+
+/* Dark mode: toggle cards (House/Apartment, Stairs/Elevator) */
+.dark .tru-qb-toggle-card {
+  background: hsl(220 15% 12%);
+  border-color: hsl(0 0% 100% / 0.12);
+}
+
+.dark .tru-qb-toggle-card:hover {
+  background: hsl(220 15% 18%);
+  border-color: hsl(0 0% 100% / 0.2);
+}
+
+.dark .tru-qb-toggle-card.is-active {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.6);
+}
+
+.dark .tru-qb-toggle-icon {
+  color: hsl(0 0% 100% / 0.5);
+}
+
+.dark .tru-qb-toggle-card.is-active .tru-qb-toggle-icon {
+  color: hsl(var(--primary));
+}
+
+.dark .tru-qb-toggle-title {
+  color: hsl(0 0% 100% / 0.9);
+}
+
+.dark .tru-qb-toggle-desc {
+  color: hsl(0 0% 100% / 0.5);
+}
+
+.dark .tru-qb-toggle-indicator {
+  background: hsl(0 0% 100% / 0.08);
+  color: hsl(0 0% 100% / 0.6);
+}
+
+.dark .tru-qb-toggle-card.is-active .tru-qb-toggle-indicator {
+  background: hsl(var(--primary) / 0.15);
+  color: hsl(var(--primary));
 }
 
 /* Contact Fields */
@@ -25446,6 +25506,23 @@
   font-size: 12px;
   font-weight: 600;
   border-radius: 20px;
+}
+
+/* Tracking preview placeholder - blank container with CTA */
+.tru-tracking-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 120px;
+  background: hsl(var(--muted) / 0.3);
+  border-top: 1px solid hsl(var(--border));
+  transition: background 0.25s ease;
+}
+
+.tru-tracking-preview-card:hover .tru-tracking-preview-placeholder {
+  background: hsl(var(--muted) / 0.5);
 }
 
 /* Legacy tracking demo card (keeping for reference) */
