@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
+import trudyAvatar from "@/assets/trudy-avatar.png";
 
 // Scroll to top on mount
 const useScrollToTop = () => {
@@ -19,98 +20,82 @@ const useScrollToTop = () => {
   }, []);
 };
 
-// Fake Screen Share Preview - Shows simulated inventory builder
-function FakeScreenSharePreview() {
-  const [progress, setProgress] = useState(0);
-  
-  // Simulate loading progress
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          return 100;
-        }
-        return prev + 5;
-      });
-    }, 200);
-    return () => clearInterval(timer);
-  }, []);
+// Fake Agent View - Shows Trudy with speaking indicator
+function FakeAgentView() {
+  return (
+    <div className="text-center">
+      {/* Trudy Avatar */}
+      <div className="relative inline-block mb-4">
+        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary/30 shadow-xl">
+          <img src={trudyAvatar} alt="Trudy" className="w-full h-full object-cover" />
+        </div>
+        {/* Speaking indicator ring */}
+        <div className="absolute inset-0 rounded-full border-4 border-primary animate-ping opacity-20" />
+      </div>
+      <p className="text-white font-bold text-lg">Trudy</p>
+      <p className="text-white/60 text-sm">Moving Specialist</p>
+      <div className="flex items-center justify-center gap-1.5 mt-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+        <span className="text-green-400 text-xs font-medium">Speaking...</span>
+      </div>
+    </div>
+  );
+}
+
+// Inventory Share Modal - Floating window showing customer's inventory
+function InventoryShareModal({ onClose }: { onClose: () => void }) {
+  const mockItems = [
+    { name: "3-Seat Sofa", room: "Living Room", qty: 1, icon: "🛋" },
+    { name: "55\" Smart TV", room: "Living Room", qty: 1, icon: "📺" },
+    { name: "Armchair", room: "Living Room", qty: 2, icon: "🪑" },
+    { name: "Coffee Table", room: "Living Room", qty: 1, icon: "☕" },
+    { name: "Medium Box", room: "Bedroom", qty: 4, icon: "📦" },
+    { name: "Queen Bed Frame", room: "Bedroom", qty: 1, icon: "🛏" },
+  ];
   
   return (
-    <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center p-4">
-      {/* Fake inventory builder window */}
-      <div className="relative w-full max-w-[560px] mx-auto">
-        {/* Fake window chrome */}
-        <div className="bg-slate-700 rounded-t-lg px-3 py-2 flex items-center gap-2">
+    <div className="absolute inset-4 flex items-center justify-center z-10">
+      {/* Modal */}
+      <div className="w-full max-w-lg bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-600">
+        {/* Window Chrome */}
+        <div className="px-4 py-3 bg-slate-100 dark:bg-slate-700 flex items-center gap-2 border-b border-slate-200 dark:border-slate-600">
           <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500/70" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-            <div className="w-3 h-3 rounded-full bg-green-500/70" />
+            <button onClick={onClose} className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500" />
+            <div className="w-3 h-3 rounded-full bg-green-500" />
           </div>
-          <div className="flex-1 flex justify-center">
-            <div className="bg-slate-600 rounded px-3 py-0.5 text-[10px] text-white/60 font-mono">
-              Inventory Builder — trumove.lovable.app
-            </div>
+          <div className="flex-1 text-center">
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              Customer's Screen - My Move Inventory
+            </span>
           </div>
-        </div>
-        {/* Fake inventory content */}
-        <div className="bg-slate-800 rounded-b-lg p-4 border border-slate-600/50 min-h-[220px]">
-          {progress < 100 ? (
-            <div className="animate-pulse space-y-3">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-6 w-6 bg-primary/30 rounded" />
-                <div className="h-4 bg-slate-600/50 rounded w-2/3" />
-              </div>
-              <div className="grid grid-cols-4 gap-2">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="h-14 bg-slate-600/40 rounded" />
-                ))}
-              </div>
-              <div className="flex gap-2 mt-4">
-                <div className="h-8 bg-primary/20 rounded flex-1" />
-                <div className="h-8 bg-slate-600/30 rounded w-20" />
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-6 w-6 bg-primary/40 rounded flex items-center justify-center">
-                  <Boxes className="w-4 h-4 text-primary" />
-                </div>
-                <span className="text-white/80 text-sm font-semibold">Living Room Items</span>
-              </div>
-              <div className="grid grid-cols-4 gap-2">
-                {['Sofa', 'TV', 'Table', 'Chair', 'Lamp', 'Rug', 'Shelf', 'More...'].map((item, i) => (
-                  <div 
-                    key={i} 
-                    className="h-14 bg-slate-700/60 rounded flex items-center justify-center border border-slate-600/50 hover:border-primary/40 transition-colors cursor-pointer"
-                  >
-                    <span className="text-[10px] text-white/60">{item}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex gap-2 mt-4">
-                <div className="h-8 bg-primary/30 rounded flex-1 flex items-center justify-center border border-primary/40">
-                  <span className="text-[10px] text-primary font-semibold">Add Selected Items</span>
-                </div>
-                <div className="h-8 bg-slate-700/50 rounded w-20 flex items-center justify-center">
-                  <span className="text-[10px] text-white/50">8 items</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      {/* Status text */}
-      <div className="mt-6 text-center">
-        <div className="flex items-center justify-center gap-2 text-white/70 text-sm">
           <Monitor className="w-4 h-4 text-primary" />
-          <span>{progress < 100 ? 'Loading inventory...' : 'Screen sharing active'}</span>
         </div>
-        <p className="text-white/40 text-xs mt-1">
-          {progress < 100 ? `${progress}% complete` : 'Both parties can now collaborate'}
-        </p>
+        
+        {/* Inventory Content */}
+        <div className="p-4 max-h-[300px] overflow-y-auto">
+          <div className="space-y-2">
+            {mockItems.map((item, i) => (
+              <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                <span className="text-xl">{item.icon}</span>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-slate-800 dark:text-white">{item.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{item.room}</p>
+                </div>
+                <span className="text-sm font-bold text-slate-600 dark:text-slate-300">×{item.qty}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-600 flex items-center justify-between">
+          <span className="text-xs text-slate-500 dark:text-slate-400">10 items • Est. 1,850 lbs</span>
+          <span className="text-xs text-primary font-medium flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            Live sharing
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -150,20 +135,15 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
     <div className="relative w-full h-full flex flex-col">
       {/* Main video area */}
       <div className="flex-1 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        {/* Simulated remote video or screen share */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          {isScreenSharing ? (
-            <FakeScreenSharePreview />
-          ) : (
-            <div className="text-center">
-              <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3 animate-pulse">
-                <Users className="w-10 h-10 text-primary" />
-              </div>
-              <p className="text-white/80 font-medium">TruMove Support</p>
-              <p className="text-white/50 text-sm">Connected</p>
-            </div>
-          )}
+        {/* Agent always visible (dimmed when screen sharing) */}
+        <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${isScreenSharing ? 'opacity-30' : 'opacity-100'}`}>
+          <FakeAgentView />
         </div>
+        
+        {/* Screen share modal overlay */}
+        {isScreenSharing && (
+          <InventoryShareModal onClose={() => setIsScreenSharing(false)} />
+        )}
 
         {/* Self view (picture-in-picture) */}
         <div className="absolute bottom-4 right-4 w-32 h-24 rounded-lg overflow-hidden border-2 border-white/20 bg-slate-700">
