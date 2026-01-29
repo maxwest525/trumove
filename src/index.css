@@ -26366,3 +26366,64 @@
 .dark .tru-why-feature-cell-title {
   color: hsl(0 0% 100%);
 }
+
+/* =============================================
+   UI FIXES - Footer, Headers, Buttons, Spacing
+   ============================================= */
+
+/* Footer dark mode visibility - always dark with green accents */
+footer {
+  background: hsl(220 15% 8%) !important;
+  border-top: 1px solid hsl(var(--primary) / 0.2) !important;
+}
+
+/* Go button on shipment tracker - ensure contrast */
+.tracking-header-go-btn {
+  background: hsl(var(--primary)) !important;
+  color: hsl(0 0% 0%) !important;
+  border: 1px solid hsl(var(--primary)) !important;
+  font-weight: 700;
+}
+
+.tracking-header-go-btn:hover {
+  background: hsl(var(--primary) / 0.85) !important;
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.5);
+}
+
+/* Build Your Move header - match Move Summary styling */
+.tru-summary-header-large h3,
+.tru-summary-header-large .text-lg {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .tru-summary-header-large h3,
+.dark .tru-summary-header-large .text-lg {
+  color: hsl(0 0% 100%) !important;
+}
+
+.dark .tru-summary-header-large {
+  background: hsl(220 15% 10%) !important;
+  border-color: hsl(0 0% 100% / 0.1) !important;
+}
+
+/* Route analysis section - increased spacing */
+.tru-route-analysis-section {
+  padding: 48px 24px !important;
+  margin-top: 24px;
+}
+
+/* Hero image - slightly reduce opacity for text readability */
+.tru-hero-bg-image {
+  opacity: 0.88;
+}
+
+/* Dark mode logo visibility - invert black portions on dark backgrounds */
+.dark .tru-hero-inline-logo {
+  filter: brightness(0) invert(1);
+}
+
+.dark .tru-qb-form-header-logo {
+  filter: brightness(0) invert(1);
+}

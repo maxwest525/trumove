@@ -19,6 +19,51 @@ const useScrollToTop = () => {
   }, []);
 };
 
+// Fake Screen Share Preview - Visual placeholder
+function FakeScreenSharePreview() {
+  return (
+    <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center">
+      {/* Fake loading screen share UI */}
+      <div className="relative w-full max-w-[480px] mx-auto">
+        {/* Fake window chrome */}
+        <div className="bg-slate-700 rounded-t-lg px-3 py-2 flex items-center gap-2">
+          <div className="flex gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-red-500/70" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
+            <div className="w-3 h-3 rounded-full bg-green-500/70" />
+          </div>
+          <div className="flex-1 flex justify-center">
+            <div className="bg-slate-600 rounded px-3 py-0.5 text-[10px] text-white/50 font-mono">
+              Inventory Builder — trumove.lovable.app
+            </div>
+          </div>
+        </div>
+        {/* Fake content area */}
+        <div className="bg-slate-800 rounded-b-lg p-4 border border-slate-600/50 min-h-[200px]">
+          <div className="animate-pulse space-y-3">
+            <div className="h-4 bg-slate-600/50 rounded w-3/4" />
+            <div className="h-4 bg-slate-600/50 rounded w-1/2" />
+            <div className="grid grid-cols-3 gap-2 mt-4">
+              <div className="h-12 bg-slate-600/40 rounded" />
+              <div className="h-12 bg-slate-600/40 rounded" />
+              <div className="h-12 bg-slate-600/40 rounded" />
+            </div>
+            <div className="h-8 bg-primary/20 rounded w-full mt-4" />
+          </div>
+        </div>
+      </div>
+      {/* Status text */}
+      <div className="mt-6 text-center">
+        <div className="flex items-center justify-center gap-2 text-white/70 text-sm">
+          <Monitor className="w-4 h-4 text-primary animate-pulse" />
+          <span>Preparing screen share...</span>
+        </div>
+        <p className="text-white/40 text-xs mt-1">Click "Share Screen" to start collaborating</p>
+      </div>
+    </div>
+  );
+}
+
 // Demo Video Placeholder Component - shows fake video call experience
 function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
   const [isMuted, setIsMuted] = useState(false);
@@ -53,17 +98,10 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
     <div className="relative w-full h-full flex flex-col">
       {/* Main video area */}
       <div className="flex-1 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        {/* Simulated remote video */}
+        {/* Simulated remote video or screen share */}
         <div className="absolute inset-0 flex items-center justify-center">
           {isScreenSharing ? (
-            <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-              <div className="text-center">
-                <Monitor className="w-16 h-16 text-primary mx-auto mb-4 animate-pulse" />
-                <p className="text-white/80 font-medium">Screen Sharing Active</p>
-                <p className="text-white/50 text-sm mt-1">Both you and support can see your screen</p>
-                <p className="text-primary/80 text-xs mt-3">Collaborate on inventory, documents, and profiles</p>
-              </div>
-            </div>
+            <FakeScreenSharePreview />
           ) : (
             <div className="text-center">
               <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3 animate-pulse">
@@ -325,7 +363,7 @@ export default function Book() {
               onClick={() => navigate("/online-estimate")}
               className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
             >
-              <div className="w-12 h-12 rounded-xl overflow-hidden border border-border/60">
+              <div className="w-16 h-16 rounded-xl overflow-hidden border border-border/60">
                 <img 
                   src={sampleRoomLiving} 
                   alt="Manual inventory" 
@@ -343,7 +381,7 @@ export default function Book() {
               onClick={() => navigate("/scan-room")}
               className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
             >
-              <div className="w-12 h-12 rounded-xl overflow-hidden border border-border/60">
+              <div className="w-16 h-16 rounded-xl overflow-hidden border border-border/60">
                 <img 
                   src={previewAiScanner} 
                   alt="AI scanner" 
