@@ -24421,6 +24421,7 @@
   margin-bottom: 12px;
   margin-left: -28px;
   margin-right: -28px;
+  width: calc(100% + 56px);
   padding: 12px 20px;
   background: hsl(var(--muted) / 0.25);
   border-radius: 14px;
@@ -26406,6 +26407,14 @@ footer {
 .dark .tru-summary-header-large {
   background: hsl(220 15% 10%) !important;
   border-color: hsl(0 0% 100% / 0.1) !important;
+}
+
+/* Ensure accent gradient is visible in both modes */
+.tru-summary-header-large .tru-qb-title-accent {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(160 80% 45%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Route analysis section - increased spacing */
