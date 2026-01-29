@@ -1446,37 +1446,62 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Compact Why TruMove Card */}
+            {/* RIGHT SIDE: Why TruMove Card + Tracking Demo */}
             <div className="tru-hero-content-panel tru-hero-stacked-cards">
-              {/* CARD 1: Why TruMove - Compact Horizontal */}
-              <div className="tru-why-card-compact">
-                <div className="tru-why-card-compact-header">
-                  <h3 className="tru-why-title-compact">Your Move. Your Terms.</h3>
-                  <p className="tru-why-subtitle-compact">
+              {/* CARD 1: Why TruMove - Premium Card */}
+              <div className="tru-why-card-premium" ref={parallaxCardsRef}
+                style={{ transform: `translateY(${cardsParallax.y}px)` }}
+              >
+                <div className="tru-why-card-premium-glow" />
+                <div className="tru-why-card-premium-content">
+                  <h3 className="tru-why-title-premium">
+                    Your Move. Your Terms.
+                  </h3>
+                  <p className="tru-why-subtitle-premium">
                     Skip the van line middleman. Get matched with vetted carriers who compete for your business.
                   </p>
-                </div>
-                
-                {/* 6 Feature Icons in a Row */}
-                <div className="tru-why-feature-row-compact">
-                  {whyTruMoveFeatures.map((feature, index) => (
-                    <Tooltip key={feature.id}>
-                      <TooltipTrigger asChild>
-                        <button
-                          className="tru-why-feature-icon-compact"
-                          style={{ '--stagger-index': index } as React.CSSProperties}
+                  
+                  {/* Feature Grid - 2x3 */}
+                  <div className="tru-why-feature-grid-premium">
+                    {whyTruMoveFeatures.map((feature, index) => (
+                      <HoverCard key={feature.id} openDelay={100} closeDelay={100}>
+                        <HoverCardTrigger asChild>
+                          <div 
+                            className="tru-why-feature-cell-premium feature-row-enter"
+                            style={{ '--stagger-index': index } as React.CSSProperties}
+                          >
+                            <div className="tru-why-feature-icon-premium">
+                              <feature.icon className="w-5 h-5" />
+                            </div>
+                            <span className="tru-why-feature-label-premium">{feature.title}</span>
+                          </div>
+                        </HoverCardTrigger>
+                        <HoverCardContent 
+                          side="top" 
+                          className="tru-why-feature-hover-card w-64 p-4"
+                          sideOffset={8}
                         >
-                          <feature.icon className="w-4 h-4" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="max-w-[180px] text-center text-xs">
-                        <div className="font-semibold mb-1">{feature.title}</div>
-                        {feature.hoverTip}
-                      </TooltipContent>
-                    </Tooltip>
-                  ))}
+                          <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                              <feature.icon className="w-4 h-4 text-primary" />
+                              <span className="font-semibold text-sm">{feature.title}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{feature.hoverTip}</p>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    ))}
+                  </div>
+                  
+                  {/* Mission Statement */}
+                  <p className="tru-why-mission-statement">
+                    Technology, transparency, and control — built for the most important move of your life.
+                  </p>
                 </div>
               </div>
+              
+              {/* CARD 2: Live Tracking Demo */}
+              <TrackingDemoCard />
             </div>
           </section>
         </div> {/* End tru-hero-wrapper */}
