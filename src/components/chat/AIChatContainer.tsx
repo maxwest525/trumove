@@ -226,7 +226,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
             </svg>
           </div>
           <div className="chat-header-info">
-            <span className="chat-header-name">TruMove AI</span>
+            <span className="chat-header-name">TruDy with TruMove</span>
             <span className="chat-header-status">
               <span className={cn("chat-status-dot", isConnected && "bg-primary")}></span>
               {isConnecting ? "Connecting..." : isConnected ? "Online" : "Offline"}
@@ -318,13 +318,6 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
         disabled={!isConnected || isThinking}
       />
 
-      {/* Footer */}
-      <div className="chat-footer">
-        <span>Need a structured quote?</span>
-        <button type="button" className="chat-form-link" onClick={onSwitchToQuickQuote}>
-          Use Quick Quote →
-        </button>
-      </div>
     </div>
   );
 }

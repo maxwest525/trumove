@@ -463,13 +463,6 @@ export default function ChatContainer({ initialFromLocation, initialToLocation }
         />
       )}
 
-      {/* Footer */}
-      <div className="chat-footer">
-        <span>Prefer a traditional form?</span>
-        <button type="button" className="chat-form-link" onClick={() => navigate("/online-estimate")}>
-          Click here
-        </button>
-      </div>
     </div>
   );
 }

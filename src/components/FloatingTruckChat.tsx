@@ -77,7 +77,7 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
           ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
         `}
-        aria-label="AI Moving Helper"
+        aria-label="TruDy AI Moving Helper"
       >
         {/* Truck Icon Container */}
         <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-background/20 border border-background/30">
@@ -88,8 +88,8 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         
         {/* Text Label */}
         <div className="flex flex-col items-start">
-          <span className="text-sm font-bold leading-tight text-background">AI Moving Helper</span>
-          <span className="text-xs leading-tight text-background/70">Ask me anything</span>
+          <span className="text-sm font-bold leading-tight text-background">TruDy</span>
+          <span className="text-xs leading-tight text-background/70">Your AI Moving Helper</span>
         </div>
         
         {/* Status indicator - smaller and more subtle */}
