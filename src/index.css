@@ -1062,29 +1062,17 @@
   object-position: center 25%;
 }
 
-/* Gradient overlay - lighter at top to show image, solid at bottom for text */
+/* Hero background overlay - no opacity, fully transparent */
 .tru-hero-bg-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    hsl(var(--background) / 0.35) 0%,
-    hsl(var(--background) / 0.6) 25%,
-    hsl(var(--background) / 0.85) 50%,
-    hsl(var(--background)) 75%
-  );
+  background: transparent;
   z-index: 1;
 }
 
-/* Dark mode hero background - reduced overlay for more visible background image */
+/* Dark mode hero background - no overlay */
 .dark .tru-hero-bg-overlay {
-  background: linear-gradient(
-    180deg,
-    hsl(var(--background) / 0.25) 0%,
-    hsl(var(--background) / 0.45) 25%,
-    hsl(var(--background) / 0.75) 50%,
-    hsl(var(--background) / 0.95) 75%
-  );
+  background: transparent;
 }
 
 /* =============================================
@@ -26547,9 +26535,9 @@ html.dark .tru-summary-header-large,
   margin-top: 24px;
 }
 
-/* Hero image - slightly reduce opacity for text readability */
+/* Hero image - full opacity */
 .tru-hero-bg-image {
-  opacity: 0.88;
+  opacity: 1;
 }
 
 /* Dark mode logo visibility - invert black portions on dark backgrounds */
