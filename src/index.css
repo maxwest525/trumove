@@ -27133,7 +27133,8 @@ html.dark .tru-summary-header-large,
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-top: 1px solid hsl(0 0% 100% / 0.08);
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
-  padding: 12px 24px;
+  padding: 6px 16px;
+  overflow: hidden;
 }
 
 .stats-strip-inner {
@@ -27142,28 +27143,32 @@ html.dark .tru-summary-header-large,
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-wrap: nowrap;
+  gap: 4px;
+  overflow: hidden;
 }
 
 .stats-strip-item {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
+  gap: 4px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: hsl(0 0% 100% / 0.85);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .stats-strip-item svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   color: hsl(142 70% 50%);
+  flex-shrink: 0;
 }
 
 .stats-strip-dot {
   color: hsl(0 0% 100% / 0.3);
-  margin: 0 8px;
+  margin: 0 4px;
 }
