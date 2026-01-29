@@ -26423,8 +26423,11 @@ footer {
 .dark .tru-summary-header-large,
 .dark .rounded-2xl .tru-summary-header-large,
 .dark .bg-card .tru-summary-header-large,
+.dark .tru-move-summary-card .tru-summary-header-large,
 .dark section .tru-summary-header-large,
-html.dark .tru-summary-header-large {
+html.dark .tru-summary-header-large,
+.dark .overflow-hidden > .tru-summary-header-large,
+.dark [class*="bg-card"] .tru-summary-header-large {
   background: hsl(220 15% 8%) !important;
   border-color: hsl(0 0% 100% / 0.1) !important;
 }
