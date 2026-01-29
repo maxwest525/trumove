@@ -27069,7 +27069,7 @@ html.dark .tru-summary-header-large,
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 16px;
 }
 
 .safer-trust-item {
@@ -27097,7 +27097,7 @@ html.dark .tru-summary-header-large,
 
 .safer-trust-dot {
   color: hsl(220 10% 70%);
-  margin: 0 4px;
+  margin: 0 8px;
 }
 
 /* Dark mode - SAFER trust strip */
