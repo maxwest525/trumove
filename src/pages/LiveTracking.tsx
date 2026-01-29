@@ -803,133 +803,119 @@ export default function LiveTracking() {
           )}
         </div>
 
-        {/* Right: Dashboard - Collapsible until route is active */}
-        <div className={cn(
-          "tracking-dashboard transition-all duration-300",
-          !routeData && "tracking-dashboard-collapsed"
-        )}>
-          {!routeData ? (
-            /* Collapsed State - Before route is entered */
-            <div className="tracking-sidebar-collapsed">
-              <ChevronLeft className="w-5 h-5 text-foreground/40" />
-              <span className="text-[10px] font-bold tracking-wider uppercase text-foreground/40 [writing-mode:vertical-lr] rotate-180">
-                Stats
-              </span>
-            </div>
-          ) : (
-            /* Expanded State - Route is active */
-            <>
-              {/* Multi-Stop Summary Card - Show when multi-stop data present */}
-              {multiStopData && (
-                <MultiStopSummaryCard
-                  stops={multiStopData.stops}
-                  currentStopIndex={multiStopData.currentStopIndex}
-                  totalDistance={multiStopData.totalDistance}
-                  remainingDuration={formatDuration(multiStopData.estimatedDuration * (1 - multiStopData.progress / 100))}
-                />
-              )}
+        {/* Right: Dashboard - Always Expanded */}
+        <div className="tracking-dashboard transition-all duration-300">
+          {/* Multi-Stop Summary Card - Show when multi-stop data present */}
+          {routeData && multiStopData && (
+            <MultiStopSummaryCard
+              stops={multiStopData.stops}
+              currentStopIndex={multiStopData.currentStopIndex}
+              totalDistance={multiStopData.totalDistance}
+              remainingDuration={formatDuration(multiStopData.estimatedDuration * (1 - multiStopData.progress / 100))}
+            />
+          )}
 
-              {/* Unified Stats Card - Shows live data */}
-              <UnifiedStatsCard
-                progress={progress}
-                distanceTraveled={distanceTraveled}
-                totalDistance={totalDistance}
-                timeRemaining={formatDuration(remainingDuration)}
-                adjustedETA={adjustedETA}
-                adjustedDuration={adjustedDuration}
-                remainingDistance={remainingDistance}
-                trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
-                trafficDelay={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
-                trafficTrend={trafficTrend}
-                tollInfo={googleRouteData.tollInfo}
-                isFuelEfficient={googleRouteData.isFuelEfficient}
-                fuelCostEstimate={getQuickFuelEstimate(totalDistance)}
-                lastUpdate={lastUpdate}
-                isLoading={etaLoading}
-                onRefresh={refreshNow}
-                isEmpty={false}
-              />
+          {/* Unified Stats Card - Always visible */}
+          <UnifiedStatsCard
+            progress={progress}
+            distanceTraveled={distanceTraveled}
+            totalDistance={totalDistance}
+            timeRemaining={formatDuration(remainingDuration)}
+            adjustedETA={adjustedETA}
+            adjustedDuration={adjustedDuration}
+            remainingDistance={remainingDistance}
+            trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
+            trafficDelay={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
+            trafficTrend={trafficTrend}
+            tollInfo={googleRouteData.tollInfo}
+            isFuelEfficient={googleRouteData.isFuelEfficient}
+            fuelCostEstimate={getQuickFuelEstimate(totalDistance)}
+            lastUpdate={lastUpdate}
+            isLoading={etaLoading}
+            onRefresh={refreshNow}
+            isEmpty={!routeData}
+          />
 
-              {/* Live Truck Street View */}
-              <TruckAerialView
-                routeCoordinates={routeCoordinates}
-                progress={progress}
-                isTracking={isTracking}
-                originCoords={originCoords}
-                googleApiKey={GOOGLE_MAPS_API_KEY}
-                expanded={streetViewExpanded}
-                onToggleExpand={() => setStreetViewExpanded(!streetViewExpanded)}
-              />
+          {/* Live Truck Street View */}
+          <TruckAerialView
+            routeCoordinates={routeCoordinates}
+            progress={progress}
+            isTracking={isTracking}
+            originCoords={originCoords}
+            googleApiKey={GOOGLE_MAPS_API_KEY}
+            expanded={streetViewExpanded}
+            onToggleExpand={() => setStreetViewExpanded(!streetViewExpanded)}
+          />
 
-              {/* Route Weather - Sidebar Card */}
-              <RouteWeather
-                originCoords={originCoords}
-                destCoords={destCoords}
-                originName={originName}
-                destName={destName}
-              />
+          {/* Route Weather - Sidebar Card */}
+          <RouteWeather
+            originCoords={originCoords}
+            destCoords={destCoords}
+            originName={originName}
+            destName={destName}
+          />
 
-              {/* Route Info - Collapsible Sections (Bottom of sidebar) */}
-              <div className="tracking-info-card space-y-2">
-                {/* Alternate Routes - Collapsible */}
-                {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
-                  <Collapsible defaultOpen={false}>
-                    <CollapsibleTrigger className="w-full flex items-center justify-between py-2 text-sm hover:text-foreground transition-colors group">
-                      <div className="flex items-center gap-2">
-                        <Route className="w-4 h-4 text-primary" />
-                        <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/60">
-                          Alternate Routes ({googleRouteData.alternateRoutes.length})
-                        </span>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="space-y-2 pt-2">
-                      {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
-                        <div
-                          key={i}
-                          className="p-3 rounded-lg bg-muted/50 border border-border"
-                        >
-                          <div className="text-sm font-semibold text-foreground mb-1">
-                            {alt.description || `Via alternate ${i + 1}`}
-                          </div>
-                          <div className="flex items-center gap-2 text-xs text-foreground/70">
-                            <span>{alt.distanceMiles} mi</span>
-                            <span>•</span>
-                            <span>{alt.durationFormatted}</span>
-                            {alt.isTollFree && (
-                              <>
-                                <span>•</span>
-                                <span className="text-emerald-500 font-medium">No tolls</span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </CollapsibleContent>
-                  </Collapsible>
-                )}
-
-                {/* Weigh Stations - Collapsible */}
+          {/* Route Info - Collapsible Sections (Bottom of sidebar) - Only when route active */}
+          {routeData && (
+            <div className="tracking-info-card space-y-2">
+              {/* Alternate Routes - Collapsible */}
+              {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
                 <Collapsible defaultOpen={false}>
-                  <CollapsibleTrigger className="w-full flex items-center justify-between py-2 text-sm hover:text-foreground transition-colors group border-t border-border pt-3">
+                  <CollapsibleTrigger className="w-full flex items-center justify-between py-2 text-sm hover:text-foreground transition-colors group">
                     <div className="flex items-center gap-2">
-                      <Scale className="w-4 h-4 text-amber-400" />
+                      <Route className="w-4 h-4 text-primary" />
                       <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/60">
-                        Weigh Stations
+                        Alternate Routes ({googleRouteData.alternateRoutes.length})
                       </span>
                     </div>
                     <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-2">
-                    <WeighStationChecklist
-                      routeCoordinates={routeCoordinates}
-                      progress={progress}
-                      isTracking={isTracking}
-                    />
+                  <CollapsibleContent className="space-y-2 pt-2">
+                    {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
+                      <div
+                        key={i}
+                        className="p-3 rounded-lg bg-muted/50 border border-border"
+                      >
+                        <div className="text-sm font-semibold text-foreground mb-1">
+                          {alt.description || `Via alternate ${i + 1}`}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-foreground/70">
+                          <span>{alt.distanceMiles} mi</span>
+                          <span>•</span>
+                          <span>{alt.durationFormatted}</span>
+                          {alt.isTollFree && (
+                            <>
+                              <span>•</span>
+                              <span className="text-primary font-medium">No tolls</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </CollapsibleContent>
                 </Collapsible>
-              </div>
-            </>
+              )}
+
+              {/* Weigh Stations - Collapsible */}
+              <Collapsible defaultOpen={false}>
+                <CollapsibleTrigger className="w-full flex items-center justify-between py-2 text-sm hover:text-foreground transition-colors group border-t border-border pt-3">
+                  <div className="flex items-center gap-2">
+                    <Scale className="w-4 h-4 text-primary" />
+                    <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/60">
+                      Weigh Stations
+                    </span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pt-2">
+                  <WeighStationChecklist
+                    routeCoordinates={routeCoordinates}
+                    progress={progress}
+                    isTracking={isTracking}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
           )}
         </div>
       </div>
