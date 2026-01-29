@@ -24888,6 +24888,46 @@
   margin: 0;
 }
 
+.tru-why-subtitle-premium.tru-why-subtitle-bold-italic {
+  font-weight: 700;
+  font-style: italic;
+  color: hsl(var(--foreground) / 0.85);
+}
+
+/* Mission paragraph - full description */
+.tru-why-mission-paragraph {
+  font-size: 13px;
+  font-weight: 400;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.65;
+  margin: 4px 0 8px 0;
+}
+
+/* Trust badges row */
+.tru-why-trust-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
+}
+
+.tru-why-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--primary));
+  letter-spacing: 0.02em;
+}
+
+.tru-why-trust-badge svg {
+  color: hsl(var(--primary));
+}
+
 /* Feature Grid - 2x3 Premium Layout */
 .tru-why-feature-grid-premium {
   display: grid;

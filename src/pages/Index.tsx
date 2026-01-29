@@ -1457,8 +1457,13 @@ export default function Index() {
                   <h3 className="tru-why-title-premium">
                     Your Move. Your Terms.
                   </h3>
-                  <p className="tru-why-subtitle-premium">
+                  <p className="tru-why-subtitle-premium tru-why-subtitle-bold-italic">
                     Skip the van line middleman. Get matched with vetted carriers who compete for your business.
+                  </p>
+                  
+                  {/* Mission Paragraph */}
+                  <p className="tru-why-mission-paragraph">
+                    We built TruMove to cut through the complexity of the moving industry. Using AI-powered inventory scanning and live video consultations, we understand your move better than anyone. Then we vet carriers through verified FMCSA and DOT safety databases to match you with movers you can actually trust.
                   </p>
                   
                   {/* Feature Grid - 2x3 */}
@@ -1493,10 +1498,17 @@ export default function Index() {
                     ))}
                   </div>
                   
-                  {/* Mission Statement */}
-                  <p className="tru-why-mission-statement">
-                    Technology, transparency, and control — built for the most important move of your life.
-                  </p>
+                  {/* Trust Badges */}
+                  <div className="tru-why-trust-badges">
+                    <div className="tru-why-trust-badge">
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      <span>FMCSA VERIFIED</span>
+                    </div>
+                    <div className="tru-why-trust-badge">
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      <span>LICENSED BROKER</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               
