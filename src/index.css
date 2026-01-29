@@ -24421,6 +24421,7 @@
   margin-bottom: 12px;
   margin-left: -28px;
   margin-right: -28px;
+  width: calc(100% + 56px);
   padding: 12px 20px;
   background: hsl(var(--muted) / 0.25);
   border-radius: 14px;
