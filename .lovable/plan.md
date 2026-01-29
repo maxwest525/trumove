@@ -1,112 +1,113 @@
 
-# Fix Route Summary Box Width + Match Build Your Move Header Colors
+
+# Remaining UI Fixes - Verification & Adjustments
 
 ## Summary
-Two targeted fixes:
-1. Add missing `width: calc(100% + 56px)` to make the Origin/Mileage/Destination box span full form width
-2. Ensure "Build Your Virtual Inventory" header matches "Move Summary" header colors exactly in both light and dark modes
+
+After thorough testing, most fixes from the previous implementation are working correctly. However, a few issues need additional attention:
+
+| Issue | Current State | Required Action |
+|-------|---------------|-----------------|
+| Dark mode logo (header) | "MOVE" invisible | Add filter to header logo |
+| Video consult pill thumbnails | w-16 h-16 (64px) | Increase to w-20 h-20 (80px) or larger |
+| Build Your Move form width | Standard width | Expand leftward as requested |
 
 ---
 
-## Fix 1: Route Summary Box Width
+## Fix 1: Header Logo Dark Mode Visibility
 
-**Problem:** The route summary box has negative margins but no explicit width, so it stays at 464px instead of expanding to the full 520px form width.
+**Problem:** The TruMove logo in the site header shows "TRU" in green but "MOVE" in black is invisible on dark backgrounds.
 
 **File:** `src/index.css`  
-**Location:** Lines 24419-24429
+**Action:** Add dark mode filter for the main header logo
 
-| Property | Current Value | New Value |
-|----------|---------------|-----------|
-| `width` | Not set | `calc(100% + 56px)` |
-
-**Change:**
 ```css
-.tru-qb-route-summary-permanent {
-  margin-top: 20px;
-  margin-bottom: 12px;
-  margin-left: -28px;
-  margin-right: -28px;
-  width: calc(100% + 56px);  /* ADD THIS LINE */
-  padding: 12px 20px;
-  background: hsl(var(--muted) / 0.25);
-  border-radius: 14px;
-  border: 1px solid hsl(var(--border) / 0.5);
-  animation: route-summary-entrance 0.5s ease-out;
+/* Header logo - invert black portions in dark mode */
+.dark header .tru-logo-image,
+.dark .tru-header-logo {
+  filter: brightness(0) invert(1);
 }
 ```
 
 ---
 
-## Fix 2: Match Header Colors
+## Fix 2: Video Consult Pill Thumbnails
 
-**Current State:** Both headers use `.tru-summary-header-large` class and `.tru-qb-title-accent` for accent text. CSS already exists at lines 26393-26408 but may need reinforcement.
+**Problem:** User requests larger preview thumbnails inside video consult action pills on /book page to make intent clearer.
 
-**File:** `src/index.css`  
-**Location:** Lines 26393-26409
+**Current:** `w-16 h-16` (64x64px)  
+**New:** `w-20 h-20` (80x80px) or `w-24 h-24` (96x96px)
 
-**Ensure these styles are applied with proper specificity:**
+**File:** `src/pages/Book.tsx`  
+**Location:** Lines ~193-223 (action buttons grid)
 
-```css
-/* Build Your Move header - match Move Summary styling exactly */
-.tru-summary-header-large h3,
-.tru-summary-header-large .text-lg {
-  font-size: 18px !important;
-  font-weight: 800 !important;
-  color: hsl(var(--foreground)) !important;
-}
-
-/* Dark mode: White text for header */
-.dark .tru-summary-header-large h3,
-.dark .tru-summary-header-large .text-lg {
-  color: hsl(0 0% 100%) !important;
-}
-
-/* Dark mode: Consistent dark background */
-.dark .tru-summary-header-large {
-  background: hsl(220 15% 10%) !important;
-  border-color: hsl(0 0% 100% / 0.1) !important;
-}
-
-/* Ensure accent gradient is visible in both modes */
-.tru-summary-header-large .tru-qb-title-accent {
-  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(160 80% 45%) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-```
+**Changes:**
+- Build Inventory thumbnail: `w-16 h-16` → `w-20 h-20`
+- AI Scanner thumbnail: `w-16 h-16` → `w-20 h-20`
 
 ---
 
-## Files to Modify
+## Fix 3: Build Your Move Form Width Expansion
+
+**Problem:** User wants the Build Your Move form (left column) to expand leftward while staying in same position.
+
+**File:** `src/pages/OnlineEstimate.tsx`  
+**Current:** `grid-cols-[480px_1fr_240px]`  
+**Option 1:** Increase left column: `grid-cols-[540px_1fr_240px]`  
+**Option 2:** Use percentage: `grid-cols-[35%_1fr_240px]`
+
+This expands the form leftward into available space while keeping right sidebar fixed.
+
+---
+
+## Technical Details
+
+### Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/index.css` | Add `width: calc(100% + 56px)` to `.tru-qb-route-summary-permanent` at line ~24424 |
-| `src/index.css` | Add `.tru-summary-header-large .tru-qb-title-accent` rule to ensure gradient accent is consistent |
+| `src/index.css` | Add dark mode header logo filter |
+| `src/pages/Book.tsx` | Increase thumbnail sizes from w-16 h-16 to w-20 h-20 |
+| `src/pages/OnlineEstimate.tsx` | Increase left column width in grid |
+
+### CSS Additions (src/index.css)
+
+```css
+/* Header logo dark mode visibility */
+.dark header img[alt="TruMove"] {
+  filter: brightness(0) invert(1);
+}
+```
+
+### Component Changes (src/pages/Book.tsx)
+
+```tsx
+{/* Build Inventory - INCREASE THUMBNAIL SIZE */}
+<div className="w-20 h-20 rounded-xl overflow-hidden border border-border/60">
+  <img src={sampleRoomLiving} ... />
+</div>
+
+{/* AI Scanner - INCREASE THUMBNAIL SIZE */}
+<div className="w-20 h-20 rounded-xl overflow-hidden border border-border/60">
+  <img src={previewAiScanner} ... />
+</div>
+```
+
+### Layout Changes (src/pages/OnlineEstimate.tsx)
+
+```tsx
+{/* LOCKED STATE: Expand left column from 480px to 540px */}
+<div className="grid grid-cols-1 lg:grid-cols-[540px_1fr_240px] gap-4 items-start">
+```
 
 ---
 
-## Visual Comparison After Fix
+## Verification Checklist
 
-| Element | Light Mode | Dark Mode |
-|---------|------------|-----------|
-| Header background | Light gray `hsl(220 15% 96%)` | Dark `hsl(220 15% 10%)` |
-| Header text | Black `hsl(var(--foreground))` | White `hsl(0 0% 100%)` |
-| Accent word | Green gradient | Green gradient (same) |
-| Route box width | Full 520px form width | Full 520px form width |
+After implementation:
 
----
+1. Navigate to homepage in dark mode - verify header logo is fully visible
+2. Navigate to /book - verify thumbnail images are larger and clearer
+3. Navigate to /online-estimate - verify left form column is wider
+4. Toggle between light/dark mode to ensure all changes work in both themes
 
-## Verification Steps
-
-1. Navigate to homepage, enter origin/destination to trigger route summary box
-2. Verify box spans edge-to-edge within the form (full 520px width)
-3. Navigate to `/online-estimate`
-4. Toggle dark mode
-5. Verify "Build Your Virtual Inventory" header matches "Move Summary" header:
-   - Same font size (18px)
-   - Same font weight (800/extra-bold)
-   - Same text color (white in dark mode)
-   - Same background color (dark in dark mode)
-   - Same green gradient on accent word
