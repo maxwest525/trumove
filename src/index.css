@@ -26436,3 +26436,10 @@ footer {
 .dark .tru-qb-form-header-logo {
   filter: brightness(0) invert(1);
 }
+
+/* Header logo dark mode visibility - ensure "MOVE" text is visible */
+.dark header img[alt="TruMove"],
+.dark header .tru-logo-image,
+.dark .tru-header-logo {
+  filter: brightness(0) invert(1);
+}
