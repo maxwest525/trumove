@@ -1,146 +1,135 @@
 
-# Enhance Analyzing Route Modal - Prominent Style & Bigger Maps
+# Add Prominent Shadows and Strokes to Hero Cards
 
-## Changes Overview
+## Cards to Enhance
 
-### 1. Remove Green Accent from Header
-The pulsing Radar icon uses green color. We'll change it to a neutral dark color (--tm-ink) so it blends with the header text instead of standing out as a green accent.
+Based on my exploration, here are the main cards on the hero page that need enhanced shadows and strokes:
 
-### 2. Add Prominent Black Border
-Replace the subtle 1px border with a bold 3px black stroke to make the modal pop:
-
-```css
-.tru-analyze-popup-modal {
-  border: 3px solid hsl(var(--tm-ink));
-}
-```
-
-### 3. Make Maps Bigger
-Increase the map panel sizes significantly:
-- Origin/Destination frames: 280x160px → 360x220px
-- Route (center) frame: 360x160px → 440x220px
-
-### 4. Use Street View for Origin & Destination
-Switch from satellite imagery (zoom 14) to Google Street View Static API for a closer, more personal perspective of the addresses. Fall back to satellite if Street View is unavailable.
-
-Street View URL format:
-```
-https://maps.googleapis.com/maps/api/streetview?size=720x440&location={lat},{lng}&key={API_KEY}
-```
+1. **Feature Cards** (`.tru-value-card-open`) - The 3 feature cards with preview images
+2. **Form Card** (`.tru-form-card`) - The main quote/estimation form
+3. **Why TruMove Card** (`.tru-why-card-premium`) - The feature carousel card
 
 ---
 
-## Implementation Details
+## Design Approach
+
+### Shadow Strategy
+Add a layered shadow system with:
+- **Grounded ink shadow** - Deep, anchoring shadow for depth
+- **Primary glow** - Subtle green tint for brand consistency
+- **Outer stroke glow** - Visible border definition
+
+### Stroke Strategy
+Add visible 2px borders using either:
+- Solid dark border (`--tm-ink`) for contrast
+- Semi-transparent primary border for subtle definition
+
+---
+
+## Implementation
 
 ### File: `src/index.css`
 
-**Lines 13892-13894: Change icon color from green to neutral**
+**Change 1: Feature Cards (Lines 1851-1865)**
 ```css
-/* Before */
-.tru-analyzing-icon {
-  color: hsl(var(--primary));
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-/* After */
-.tru-analyzing-icon {
-  color: hsl(var(--tm-ink));
-  animation: pulse 1.5s ease-in-out infinite;
-}
-```
-
-**Lines 14033-14047: Add prominent black border to modal**
-```css
-.tru-analyze-popup-modal {
+.tru-hero-value-cards-open .tru-value-card-open {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 36px 32px;
-  max-width: 1200px; /* Wider to fit larger maps */
-  width: 96%;
-  background: hsl(var(--background));
-  border-radius: 24px;
-  border: 3px solid hsl(var(--tm-ink)); /* Bold black border */
-  box-shadow: 
-    0 30px 60px -15px hsl(var(--tm-ink) / 0.4),
-    0 15px 30px -10px hsl(var(--tm-ink) / 0.25);
-  animation: popupEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-```
-
-**Lines 14111-14130: Increase map frame sizes**
-```css
-.tru-analyze-strip-frame {
+  height: 260px;
+  padding: 14px;
+  padding-bottom: 14px;
   position: relative;
-  width: 360px;  /* Was 280px */
-  height: 220px; /* Was 160px */
-  /* ... rest unchanged */
-}
-
-.tru-analyze-strip-route .tru-analyze-strip-frame {
-  width: 440px; /* Was 360px */
-}
-
-.tru-analyze-strip-route-frame {
-  width: 440px !important; /* Was 360px */
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid hsl(var(--tm-ink) / 0.15);
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.10),
+    0 16px 48px hsl(var(--primary) / 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 ```
 
----
+**Change 2: Feature Cards Hover (Lines 1891-1900)**
+```css
+.tru-hero-value-cards-open .tru-value-card-open:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 
+    0 12px 32px hsl(var(--primary) / 0.2),
+    0 24px 64px hsl(var(--tm-ink) / 0.15),
+    0 0 0 2px hsl(var(--primary) / 0.25);
+  z-index: 10;
+}
+```
 
-### File: `src/pages/Index.tsx`
+**Change 3: Form Card (Lines 7299-7314)**
+```css
+.tru-form-card {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  max-width: 600px;
+  min-height: 480px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid hsl(var(--tm-ink) / 0.12);
+  box-shadow:
+    0 4px 12px hsl(var(--tm-ink) / 0.08),
+    0 16px 48px hsl(var(--tm-ink) / 0.16),
+    0 32px 80px hsl(var(--tm-ink) / 0.12),
+    0 0 0 1px hsl(var(--primary) / 0.08);
+  padding: 36px 36px;
+  overflow: hidden;
+}
+```
 
-**Lines 949-959 and 986-996: Use Street View for Origin & Destination**
+**Change 4: Why TruMove Card (Lines 26379-26391)**
+```css
+.tru-why-card-premium {
+  position: relative;
+  background: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid hsl(var(--tm-ink) / 0.12);
+  border-radius: 20px;
+  overflow: visible;
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.08),
+    0 12px 40px hsl(var(--tm-ink) / 0.14),
+    0 24px 64px hsl(var(--primary) / 0.12);
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+```
 
-Replace the Mapbox satellite static images with Google Street View for a closer view:
-
-```tsx
-{/* Origin - Street View */}
-<img 
-  src={fromCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${fromCoords[1]},${fromCoords[0]}&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
-  alt="Origin location"
-  className="tru-analyze-strip-img"
-  onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
-  onError={(e) => {
-    // Fallback to satellite if Street View unavailable
-    e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords?.[0]},${fromCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
-  }}
-/>
-
-{/* Destination - Street View */}
-<img 
-  src={toCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${toCoords[1]},${toCoords[0]}&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
-  alt="Destination location"
-  className="tru-analyze-strip-img"
-  onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
-  onError={(e) => {
-    // Fallback to satellite if Street View unavailable
-    e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords?.[0]},${toCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
-  }}
-/>
+**Change 5: Why TruMove Card Hover (Lines 26395-26401)**
+```css
+.tru-why-card-premium:hover {
+  transform: translateY(-4px);
+  border-color: hsl(var(--primary) / 0.35);
+  box-shadow: 
+    0 8px 24px hsl(var(--primary) / 0.18),
+    0 20px 56px hsl(var(--tm-ink) / 0.18),
+    0 32px 80px hsl(var(--primary) / 0.12);
+}
 ```
 
 ---
 
 ## Technical Summary
 
-| File | Lines | Change |
-|------|-------|--------|
-| `src/index.css` | 13892-13894 | Change `.tru-analyzing-icon` color from `--primary` (green) to `--tm-ink` (black) |
-| `src/index.css` | 14043 | Change border from `1px solid hsl(var(--border))` to `3px solid hsl(var(--tm-ink))` |
-| `src/index.css` | 14039 | Increase max-width from `1100px` to `1200px` |
-| `src/index.css` | 14113-14114 | Increase origin/dest frame size to 360x220px |
-| `src/index.css` | 14125-14130 | Increase route frame size to 440x220px |
-| `src/pages/Index.tsx` | 951-956 | Switch Origin image to Google Street View with satellite fallback |
-| `src/pages/Index.tsx` | 988-993 | Switch Destination image to Google Street View with satellite fallback |
+| Card | Border Change | Shadow Enhancement |
+|------|---------------|-------------------|
+| Feature Cards | `1px solid hsl(--border)` → `2px solid hsl(--tm-ink / 0.15)` | Add deeper 3-layer shadow with primary glow |
+| Form Card | `1px solid hsl(--tm-ink / 0.08)` → `2px solid hsl(--tm-ink / 0.12)` | Add 4-layer shadow with extra depth |
+| Why TruMove | `1px solid transparent` → `2px solid hsl(--tm-ink / 0.12)` | Add 3-layer shadow with primary glow |
 
 ---
 
 ## Expected Result
 
-- No green strip/accent at top - icon blends with header text
-- Bold 3px black border makes the modal very prominent
-- Maps are 30-40% larger for better visibility
-- Street View shows a more personal, street-level perspective of origin/destination
-- Satellite fallback ensures imagery is always shown even if Street View unavailable
+- All hero cards have visible 2px borders creating clear definition
+- Deep, layered shadows give cards prominent "floating" appearance
+- Subtle primary (green) glow in shadows maintains brand consistency
+- Hover states enhance both border and shadow intensity
+- Cards feel more substantial and premium
