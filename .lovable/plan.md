@@ -1,109 +1,96 @@
 
-# Unify Black Stats Strip to Match Grey SAFER Trust Strip
+
+# Add Empty State to InventoryShareModal Search
 
 ## Overview
-Update the black stats strip CSS to match the grey SAFER trust strip dimensions and styling, creating visual consistency between the two horizontal trust indicators.
+Add a friendly empty state message when searching for items in the InventoryShareModal returns no results. This provides clear feedback to users instead of showing a blank grid.
 
 ---
 
-## Current vs Target Values
+## Current State
 
-| Property | Current (Black Strip) | Target (Match Grey Strip) |
-|----------|----------------------|---------------------------|
-| Padding | `6px 16px` | `8px 24px` |
-| Font Size | `10px` | `12px` |
-| Font Weight | `600` | `700` |
-| Icon Size | `12px` | `16px` |
-| Gap (inner) | `4px` | `16px` |
-| Gap (item) | `4px` | `6px` (icon-to-text) |
-| Dot Margin | `0 4px` | `0 8px` |
+The search filters items but shows nothing when no matches are found:
+
+```tsx
+// Lines 183-188
+const filteredItems = searchQuery.trim() 
+  ? roomItems.filter(item => 
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  : roomItems;
+```
+
+The grid/list views (lines 304-383) directly map over `filteredItems` without checking if the array is empty.
 
 ---
 
 ## Changes Required
 
-### File: `src/index.css`
+### File: `src/pages/Book.tsx`
 
-#### 1. Update `.stats-strip` padding (line 28618)
-```css
-/* Before */
-padding: 6px 16px;
+**Lines 302-384** - Wrap the grid/list views with an empty state check:
 
-/* After */
-padding: 8px 24px;
-```
-
-#### 2. Update `.stats-strip-inner` gap (line 28629)
-```css
-/* Before */
-gap: 4px;
-
-/* After */
-gap: 16px;
-```
-
-#### 3. Update `.stats-strip-item` styles (lines 28636-28638)
-```css
-/* Before */
-gap: 4px;
-font-size: 10px;
-font-weight: 600;
-
-/* After */
-gap: 6px;
-font-size: 12px;
-font-weight: 700;
-```
-
-#### 4. Update `.stats-strip-item svg` size (lines 28647-28648)
-```css
-/* Before */
-width: 12px;
-height: 12px;
-
-/* After */
-width: 16px;
-height: 16px;
-```
-
-#### 5. Update `.stats-strip-dot` margin (line 28655)
-```css
-/* Before */
-margin: 0 4px;
-
-/* After */
-margin: 0 8px;
+```tsx
+{/* Item Grid */}
+<div className="flex-1 p-3 overflow-y-auto">
+  {filteredItems.length === 0 ? (
+    // Empty State
+    <div className="flex flex-col items-center justify-center h-full text-center py-8">
+      <Search className="w-8 h-8 text-slate-300 dark:text-slate-500 mb-3" />
+      <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+        No items found
+      </p>
+      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+        Try a different search term
+      </p>
+    </div>
+  ) : viewMode === 'grid' ? (
+    <div className="grid grid-cols-4 gap-2">
+      {/* ... existing grid items ... */}
+    </div>
+  ) : (
+    <div className="space-y-2">
+      {/* ... existing list items ... */}
+    </div>
+  )}
+</div>
 ```
 
 ---
 
 ## Visual Result
 
-**Before:**
+**Before (empty search):**
 ```
-[Small] SERVING 48 STATES • 50,000+ MOVES • 24/7 SUPPORT
-        (compact, tight spacing)
+┌─────────────────────────────┐
+│ 🔍 Search: "piano"          │
+├─────────────────────────────┤
+│                             │
+│         (blank)             │
+│                             │
+└─────────────────────────────┘
 ```
 
-**After:**
+**After (empty search):**
 ```
-[Matched] SERVING 48 STATES  •  50,000+ MOVES  •  24/7 SUPPORT
-          (same height/weight as grey SAFER strip)
+┌─────────────────────────────┐
+│ 🔍 Search: "piano"          │
+├─────────────────────────────┤
+│                             │
+│           🔍                │
+│     No items found          │
+│  Try a different search     │
+│                             │
+└─────────────────────────────┘
 ```
 
 ---
 
 ## Summary
 
-| Line | Property | Change |
-|------|----------|--------|
-| 28618 | `.stats-strip` padding | `6px 16px` → `8px 24px` |
-| 28629 | `.stats-strip-inner` gap | `4px` → `16px` |
-| 28636 | `.stats-strip-item` gap | `4px` → `6px` |
-| 28637 | `.stats-strip-item` font-size | `10px` → `12px` |
-| 28638 | `.stats-strip-item` font-weight | `600` → `700` |
-| 28647-28648 | `.stats-strip-item svg` size | `12px` → `16px` |
-| 28655 | `.stats-strip-dot` margin | `0 4px` → `0 8px` |
+| File | Change |
+|------|--------|
+| `src/pages/Book.tsx` | Add empty state conditional before grid/list views (around line 303) |
 
-### File Modified
-- `src/index.css` - 5 property updates across the stats-strip rules
+The empty state uses existing icons (`Search` from lucide-react) and matches the modal's styling conventions with appropriate dark mode support.
+
