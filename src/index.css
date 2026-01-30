@@ -27298,3 +27298,279 @@ html.dark .tru-summary-header-large,
   color: hsl(0 0% 100% / 0.3);
   margin: 0 4px;
 }
+
+/* =============================================
+   DARK MODE: INVENTORY BUILDER COMPLETE FIX
+   Comprehensive overrides for all inventory elements
+   ============================================= */
+
+/* Main inventory container - preserve the gradient they like */
+.dark .rounded-2xl.border.bg-card {
+  background: linear-gradient(180deg, hsl(220 15% 10%), hsl(220 15% 8%)) !important;
+  border-color: hsl(0 0% 100% / 0.1) !important;
+}
+
+/* Room sidebar navigation */
+.dark .w-44 button {
+  color: hsl(0 0% 100% / 0.8) !important;
+}
+
+.dark .w-44 button:hover {
+  background: hsl(220 15% 16%) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+.dark .w-44 button[class*="border-primary"] {
+  background: hsl(var(--primary) / 0.12) !important;
+  color: hsl(var(--primary)) !important;
+}
+
+/* Room sidebar label */
+.dark .w-44 .text-muted-foreground {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
+/* AI Estimate and Scan Room buttons */
+.dark .grid-cols-2 > button,
+.dark .grid-cols-2 > .flex {
+  background: hsl(220 15% 12%) !important;
+  border-color: hsl(0 0% 100% / 0.1) !important;
+}
+
+.dark .grid-cols-2 > button:hover,
+.dark .grid-cols-2 > .flex:hover {
+  background: hsl(220 15% 18%) !important;
+}
+
+.dark .grid-cols-2 span.text-foreground,
+.dark .grid-cols-2 span.text-xs.font-semibold {
+  color: hsl(0 0% 100%) !important;
+}
+
+.dark .grid-cols-2 span.text-muted-foreground {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
+/* Search input in inventory */
+.dark input[placeholder="Search all items..."] {
+  background: hsl(220 15% 12%) !important;
+  border-color: hsl(0 0% 100% / 0.15) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+.dark input[placeholder="Search all items..."]::placeholder {
+  color: hsl(0 0% 100% / 0.4) !important;
+}
+
+/* Special handling toggle container */
+.dark .flex.items-center.gap-2.px-3.py-2.rounded-lg.border {
+  background: hsl(220 15% 12%) !important;
+  border-color: hsl(0 0% 100% / 0.1) !important;
+}
+
+.dark .flex.items-center.gap-2.px-3.py-2.rounded-lg.border label {
+  color: hsl(0 0% 100% / 0.7) !important;
+}
+
+/* View mode toggle buttons */
+.dark .rounded-lg.border.bg-muted\/30 {
+  background: hsl(220 15% 12%) !important;
+  border-color: hsl(0 0% 100% / 0.1) !important;
+}
+
+.dark .rounded-lg.border.bg-muted\/30 button {
+  color: hsl(0 0% 100% / 0.6) !important;
+}
+
+.dark .rounded-lg.border.bg-muted\/30 button[class*="border-primary"] {
+  background: hsl(220 15% 18%) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Items per page select */
+.dark select.h-7 {
+  background: hsl(220 15% 12%) !important;
+  border-color: hsl(0 0% 100% / 0.1) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+.dark select.h-7 option {
+  background: hsl(220 15% 12%) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Item cards in grid view */
+.dark .grid-cols-4 > div.group {
+  background: hsl(220 15% 12%) !important;
+  border-color: hsl(0 0% 100% / 0.08) !important;
+}
+
+.dark .grid-cols-4 > div.group:hover {
+  border-color: hsl(var(--primary) / 0.3) !important;
+}
+
+.dark .grid-cols-4 > div.group[class*="border-primary"] {
+  background: hsl(var(--primary) / 0.08) !important;
+  border-color: hsl(var(--primary) / 0.4) !important;
+}
+
+/* Item name text */
+.dark .grid-cols-4 p.text-foreground {
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Item cubic feet text */
+.dark .grid-cols-4 p.text-muted-foreground {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
+/* Quantity controls */
+.dark .grid-cols-4 button.rounded-full {
+  background: hsl(220 15% 18%) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+.dark .grid-cols-4 button.rounded-full[class*="border-primary"] {
+  background: hsl(220 15% 12%) !important;
+  border-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary)) !important;
+}
+
+.dark .grid-cols-4 button.rounded-full[class*="border-primary"]:hover {
+  background: hsl(var(--primary)) !important;
+  color: hsl(220 15% 8%) !important;
+}
+
+/* Quantity number */
+.dark .grid-cols-4 span.font-bold.tabular-nums {
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Add custom item card */
+.dark .grid-cols-4 button.border-dashed {
+  background: hsl(220 15% 10%) !important;
+  border-color: hsl(0 0% 100% / 0.15) !important;
+  color: hsl(0 0% 100% / 0.6) !important;
+}
+
+.dark .grid-cols-4 button.border-dashed:hover {
+  background: hsl(220 15% 15%) !important;
+  border-color: hsl(var(--primary) / 0.4) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Pagination controls */
+.dark .flex.items-center.justify-center.gap-2 button {
+  color: hsl(0 0% 100% / 0.7) !important;
+}
+
+.dark .flex.items-center.justify-center.gap-2 button:hover {
+  background: hsl(220 15% 16%) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+.dark .flex.items-center.justify-center.gap-2 button[class*="bg-muted"] {
+  background: hsl(220 15% 18%) !important;
+  border-color: hsl(0 0% 100% / 0.15) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Quick Tools collapsible trigger */
+.dark .CollapsibleTrigger,
+.dark button[class*="bg-muted/40"] {
+  background: hsl(220 15% 12%) !important;
+  color: hsl(0 0% 100% / 0.7) !important;
+}
+
+.dark button[class*="bg-muted/40"]:hover {
+  background: hsl(220 15% 16%) !important;
+}
+
+/* Quick Tools content */
+.dark .CollapsibleContent {
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Quick add pills */
+.dark .flex.flex-wrap.gap-1\.5 button {
+  background: hsl(220 15% 14%) !important;
+  border-color: hsl(0 0% 100% / 0.1) !important;
+  color: hsl(0 0% 100% / 0.8) !important;
+}
+
+.dark .flex.flex-wrap.gap-1\.5 button:hover {
+  background: hsl(220 15% 20%) !important;
+  border-color: hsl(0 0% 100% / 0.2) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Preset buttons */
+.dark .flex.gap-1\.5 button {
+  background: hsl(220 15% 14%) !important;
+  border-color: hsl(0 0% 100% / 0.1) !important;
+  color: hsl(0 0% 100% / 0.7) !important;
+}
+
+.dark .flex.gap-1\.5 button:hover {
+  background: hsl(220 15% 20%) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+/* Room divider lines */
+.dark .h-px.bg-border\/40 {
+  background: hsl(0 0% 100% / 0.1) !important;
+}
+
+/* Room label in center divider */
+.dark span.text-muted-foreground.tracking-\[0\.2em\] {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
+/* List view items */
+.dark .space-y-2 > div.group.flex.items-center {
+  background: hsl(220 15% 12%) !important;
+  border-color: hsl(0 0% 100% / 0.08) !important;
+}
+
+.dark .space-y-2 > div.group.flex.items-center:hover {
+  border-color: hsl(var(--primary) / 0.3) !important;
+}
+
+.dark .space-y-2 > div.group.flex.items-center p.text-foreground {
+  color: hsl(0 0% 100%) !important;
+}
+
+.dark .space-y-2 > div.group.flex.items-center p.text-muted-foreground {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
+/* Clear button in sidebar */
+.dark button.text-destructive {
+  color: hsl(0 70% 60%) !important;
+}
+
+.dark button.text-destructive:hover {
+  background: hsl(0 70% 50% / 0.15) !important;
+}
+
+/* Section labels */
+.dark .text-\[10px\].font-black.tracking-\[0\.2em\].uppercase {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
+.dark .text-\[10px\].font-black.tracking-\[0\.15em\].uppercase {
+  color: hsl(0 0% 100% / 0.5) !important;
+}
+
+/* Room count badges */
+.dark span.bg-muted.text-muted-foreground.rounded-full {
+  background: hsl(220 15% 18%) !important;
+  color: hsl(0 0% 100% / 0.6) !important;
+}
+
+/* "Soon" badge on Scan Room */
+.dark span.bg-muted.border.text-muted-foreground {
+  background: hsl(220 15% 16%) !important;
+  border-color: hsl(0 0% 100% / 0.15) !important;
+  color: hsl(0 0% 100% / 0.6) !important;
+}
