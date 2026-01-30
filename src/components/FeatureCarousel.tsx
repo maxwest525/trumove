@@ -157,8 +157,6 @@ export default function FeatureCarousel() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="features-carousel-prev" />
-        <CarouselNext className="features-carousel-next" />
       </Carousel>
 
       {/* Feature Preview Modal */}
