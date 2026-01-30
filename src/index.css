@@ -25412,8 +25412,8 @@
 }
 
 .tru-why-carousel-item {
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 6px;
+  padding-right: 6px;
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
@@ -25440,27 +25440,27 @@
 }
 
 .tru-why-carousel-card-text {
-  padding: 14px 14px 10px;
+  padding: 10px 10px 8px;
 }
 
 .tru-why-carousel-card-title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   color: hsl(var(--foreground));
-  margin: 0 0 4px 0;
+  margin: 0 0 3px 0;
 }
 
 .tru-why-carousel-card-desc {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 400;
   color: hsl(var(--muted-foreground));
-  line-height: 1.4;
+  line-height: 1.35;
   margin: 0;
 }
 
 .tru-why-carousel-card-image {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   background: hsl(var(--muted));
 }
@@ -25520,21 +25520,24 @@
 .tru-why-trust-badges {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 8px;
-  padding-top: 12px;
-  border-top: 1px solid hsl(var(--tm-ink) / 0.08);
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid hsl(var(--tm-ink) / 0.06);
 }
 
 .tru-why-trust-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
   color: hsl(var(--primary));
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
+  background: hsl(var(--primary) / 0.06);
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 .tru-why-trust-badge svg {
