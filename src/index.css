@@ -2186,14 +2186,25 @@
   z-index: 5;
 }
 
-/* Start AI Analysis Button */
+/* AI Inventory Analysis Subtitle */
+.tru-ai-steps-subtitle {
+  font-size: 16px;
+  color: hsl(var(--muted-foreground));
+  text-align: center;
+  margin-bottom: 24px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Start AI Analysis Button - Premium Dark Style */
 .tru-ai-start-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   padding: 14px 28px;
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
   font-size: 15px;
   font-weight: 700;
   border-radius: 12px;
@@ -2205,8 +2216,10 @@
 }
 
 .tru-ai-start-btn:hover {
+  background: hsl(var(--primary));
+  color: hsl(var(--foreground));
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px hsl(var(--primary) / 0.4);
+  box-shadow: 0 8px 24px hsl(var(--primary) / 0.5);
 }
 
 /* Live Scan Preview */
