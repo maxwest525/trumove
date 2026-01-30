@@ -2271,7 +2271,7 @@
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
-  max-height: 350px;
+  max-height: 550px;
   overflow: hidden;
 }
 
@@ -2575,10 +2575,10 @@
 
 /* Two-column layout for AI section */
 .tru-ai-two-column {
-  display: grid;
-  grid-template-columns: 0.6fr 1.4fr;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
-  align-items: start;
+  align-items: stretch;
   margin-bottom: 0;
   text-align: left;
 }
@@ -2602,12 +2602,12 @@
 }
 
 .tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 180px;
+  height: 280px;
 }
 
 .tru-ai-preview-vertical .tru-ai-live-inventory {
   min-height: 0;
-  max-height: 100px;
+  max-height: 150px;
 }
 
 /* Centered demo button */
@@ -2637,14 +2637,17 @@
 /* Step with preview thumbnail */
 .tru-ai-step-with-preview {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  text-align: center;
 }
 
 .tru-ai-step-preview {
-  width: 80px;
-  height: 60px;
-  border-radius: 8px;
+  width: 120px;
+  height: 90px;
+  border-radius: 10px;
   overflow: hidden;
   flex-shrink: 0;
   border: 2px solid hsl(var(--tm-ink) / 0.12);
@@ -2660,8 +2663,9 @@
 /* Vertical steps layout */
 .tru-ai-steps-vertical {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: center;
 }
 
 /* Override for left-aligned button */
