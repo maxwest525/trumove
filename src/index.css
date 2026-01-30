@@ -26238,37 +26238,17 @@
 .tru-hero-header-section.tru-hero-header-refined::before {
   content: '';
   position: absolute;
-  /* REDUCED: Stay within container bounds to avoid overflow clipping */
-  inset: -100px -80px;
+  inset: -80px -60px;
   background: radial-gradient(
-    /* Tighter ellipse centered on headline */
-    ellipse 80% 80% at 50% 50%,
-    hsl(0 0% 0% / 0.50) 0%,
-    hsl(0 0% 0% / 0.38) 20%,
-    hsl(0 0% 0% / 0.18) 40%,
-    hsl(0 0% 0% / 0.06) 60%,
-    transparent 75%
+    ellipse 90% 90% at 50% 50%,
+    hsl(0 0% 0% / 0.35) 0%,
+    hsl(0 0% 0% / 0.25) 30%,
+    hsl(0 0% 0% / 0.10) 55%,
+    transparent 80%
   );
   z-index: -1;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  /* Tighter mask to fade completely before hitting container edges */
-  -webkit-mask-image: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    black 0%,
-    black 15%,
-    rgba(0,0,0,0.6) 35%,
-    rgba(0,0,0,0.2) 55%,
-    transparent 70%
-  );
-  mask-image: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    black 0%,
-    black 15%,
-    rgba(0,0,0,0.6) 35%,
-    rgba(0,0,0,0.2) 55%,
-    transparent 70%
-  );
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   pointer-events: none;
 }
 
