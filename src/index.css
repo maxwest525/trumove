@@ -25904,10 +25904,13 @@
    ============================================= */
 .tru-hero-header-section.tru-hero-header-refined {
   position: relative;
-  padding: 12px 28px 14px;
+  padding: 12px 20px 12px;
   text-align: center;
   z-index: 10;
   margin-bottom: 12px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .tru-hero-header-section.tru-hero-header-refined::before {
@@ -25953,7 +25956,7 @@
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: -0.02em;
-  margin-bottom: 16px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25966,7 +25969,7 @@
   line-height: 1.5;
   color: hsl(0 0% 100%);
   max-width: 600px;
-  margin: 12px auto 0;
+  margin: 4px auto 0;
   font-weight: 600;
   text-shadow: 0 2px 16px hsl(0 0% 0% / 0.7), 0 4px 24px hsl(0 0% 0% / 0.5);
   letter-spacing: 0.02em;
