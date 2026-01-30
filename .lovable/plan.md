@@ -1,97 +1,66 @@
 
 
-# Fix Why TruMove Card Cutoff - Widen Hero Bounds
+# Fix Carousel Preview Card Sizing - Show Only 4 Cards
 
 ## Problem Analysis
 
-The "Why TruMove" card is being cut off on the right side because:
+The carousel currently has conflicting sizing rules:
 
-1. **Hero container max-width**: `.tru-hero.tru-hero-split` has `max-width: 1480px`
-2. **Grid layout**: `grid-template-columns: 520px 1fr` - form column is 520px, content panel takes remainder
-3. **Overflow hidden**: The parent container clips all overflow content
-4. **Padding**: Right padding of `48px` further reduces available width for the content panel
+1. **In JSX (`FeatureCarousel.tsx` line 153)**: `basis-1/2 md:basis-1/4` - shows 2 cards by default, 4 on md+
+2. **In CSS (`index.css` line 16708)**: `flex: 0 0 25% !important` - forces 25% width (4 cards)
 
-On larger screens, the right content panel has limited space, causing the Why TruMove card and its hover/shadow effects to be clipped.
+The CSS `!important` rule should override the Tailwind classes, but there may be specificity issues or the Tailwind classes are being applied after. Additionally, the padding on items (`padding: 0 8px`) affects the visible card width.
 
 ---
 
 ## Solution
 
-Widen the hero container bounds to give more space for the right panel:
-
-1. Increase `max-width` from `1480px` to `1680px` (or remove it entirely)
-2. Increase right padding from `48px` to `64px` to maintain visual breathing room
-3. Optionally reduce left column width slightly to give more space to the content panel
+Ensure consistent 4-card display by:
+1. Updating the JSX to use `basis-1/4` only (remove `basis-1/2`)
+2. Confirming the CSS properly enforces 25% width for 4 visible cards
 
 ---
 
 ## Implementation
 
-### File: `src/index.css`
+### File: `src/components/FeatureCarousel.tsx`
 
-**Lines 1390-1401 - Widen hero container:**
+**Line 153 - Remove the mobile-first 2-card sizing:**
 
-```css
-.tru-hero.tru-hero-split {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 500px 1fr;  /* Reduced from 520px */
-  grid-template-rows: auto 1fr;
-  gap: 32px 48px;                     /* Reduced column gap from 64px */
-  align-items: start;
-  padding: 48px 64px 24px 48px;       /* Increased right padding */
-  max-width: 1720px;                   /* Widened from 1480px */
-  margin: 0 auto;
-}
+```tsx
+// Before:
+<CarouselItem key={index} className="features-carousel-item basis-1/2 md:basis-1/4">
+
+// After:
+<CarouselItem key={index} className="features-carousel-item">
 ```
 
-**Lines 1551-1562 - Give content panel more breathing room:**
-
-```css
-.tru-hero-content-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  justify-content: flex-start;
-  height: auto;
-  grid-row: 2;
-  grid-column: 2;
-  padding-left: 16px;    /* Reduced from 24px */
-  padding-right: 32px;   /* Increased from 24px */
-  padding-top: 0;
-}
-```
+The CSS class `.features-carousel-item` already handles the sizing with `flex: 0 0 25% !important`, and the responsive breakpoints in CSS handle tablet/mobile sizing correctly. Removing the Tailwind basis classes eliminates any potential conflict.
 
 ---
 
 ## Technical Summary
 
-| File | Lines | Change |
-|------|-------|--------|
-| `src/index.css` | 1394 | `grid-template-columns: 500px 1fr` (from 520px) |
-| `src/index.css` | 1396 | `gap: 32px 48px` (from 32px 64px) |
-| `src/index.css` | 1398 | `padding: 48px 64px 24px 48px` (increased right) |
-| `src/index.css` | 1399 | `max-width: 1720px` (from 1480px) |
-| `src/index.css` | 1559 | `padding-left: 16px` (from 24px) |
-| `src/index.css` | 1560 | `padding-right: 32px` (from 24px) |
+| File | Line | Change |
+|------|------|--------|
+| `src/components/FeatureCarousel.tsx` | 153 | Remove `basis-1/2 md:basis-1/4` from className |
 
 ---
 
 ## Design Notes
 
-- **max-width: 1720px**: Gives an additional 240px of total width for the content
-- **grid-template-columns: 500px 1fr**: Slightly narrower form column frees up more space for the Why TruMove card
-- **gap: 32px 48px**: Reduced column gap from 64px to 48px, allowing more content space
-- **padding adjustments**: Balanced padding that maintains visual hierarchy while maximizing content area
-- The right panel now has more room for the card's shadows and hover effects without clipping
+- **Desktop (1280px+)**: 4 cards visible (25% each via CSS)
+- **Large tablet (1024-1279px)**: 3 cards visible (33.333% via CSS media query)
+- **Tablet (641-1024px)**: 2 cards visible (50% via CSS media query)
+- **Mobile (≤640px)**: 1 card visible (100% via CSS media query)
+
+The CSS already has proper responsive breakpoints at lines 16890-16930. By removing the conflicting Tailwind classes, the CSS rules will apply cleanly without any specificity battles.
 
 ---
 
 ## Expected Result
 
-- Why TruMove card displays fully without being cut off
-- Card hover effects and shadows render completely
-- Form card maintains proper proportions
-- Layout remains balanced and visually appealing on wide screens
+- Exactly 4 cards visible at a time on desktop screens
+- Smooth responsive behavior as screen size decreases
+- No conflicting sizing rules between Tailwind and custom CSS
 
