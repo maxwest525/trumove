@@ -4317,17 +4317,6 @@
   position: relative;
 }
 
-.tru-qb-form-header.tru-qb-form-header-pill::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, hsl(142 76% 50%) 0%, hsl(160 80% 45%) 100%);
-  border-radius: 16px 16px 0 0;
-}
-
 .tru-qb-form-header-pill .tru-qb-header-logo {
   position: absolute;
   left: 16px;
