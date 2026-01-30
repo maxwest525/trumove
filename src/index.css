@@ -1540,8 +1540,7 @@
 
 /* Non-layout elements should not affect grid */
 .tru-hero.tru-hero-split > .tru-hero-particles,
-.tru-hero.tru-hero-split > .tru-hero-particles-overlay,
-.tru-hero.tru-hero-split > .tru-analyze-fullpage-overlay {
+.tru-hero.tru-hero-split > .tru-hero-particles-overlay {
   position: absolute;
   grid-column: unset;
   grid-row: unset;
@@ -13958,7 +13957,7 @@
 .tru-analyze-fullpage-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
