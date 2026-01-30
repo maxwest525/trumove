@@ -16679,6 +16679,9 @@
   margin-left: 0 !important;
   margin-right: 0 !important;
   padding: 8px 24px 8px 8px;  /* Extra right padding for scaled cards */
+  /* Smooth scroll snap enhancement */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* 4 cards visible - 25% each, padding creates gaps */
@@ -16691,6 +16694,9 @@
   overflow: visible !important;
   box-sizing: border-box;
   z-index: 1;
+  /* Scroll snap point */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .features-carousel-item:has(.features-carousel-card:hover) {
