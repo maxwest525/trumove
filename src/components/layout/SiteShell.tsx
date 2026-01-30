@@ -13,11 +13,9 @@ export default function SiteShell({ children, centered = false, hideTrustStrip =
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
       {/* Sticky Header + Trust Strip Together */}
-      <div className="sticky top-0 z-[90] pointer-events-none">
-        <div className="pointer-events-auto">
-          <Header />
-        </div>
-        {!hideTrustStrip && <div className="pointer-events-auto"><SaferTrustStrip /></div>}
+      <div className="sticky top-0 z-[90]">
+        <Header />
+        {!hideTrustStrip && <SaferTrustStrip />}
       </div>
       <main className={`flex-1 w-full ${centered ? 'flex flex-col justify-center' : ''}`}>{children}</main>
       <Footer />
