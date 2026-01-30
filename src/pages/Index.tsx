@@ -1500,7 +1500,8 @@ export default function Index() {
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="tru-ai-steps-section">
             <div className="tru-ai-steps-inner">
-              <h2 className="tru-ai-steps-title">Start Your AI Inventory Analysis</h2>
+              <h2 className="tru-ai-steps-title">AI Inventory Analysis</h2>
+              <p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
               
               {/* Primary CTA Button */}
               <button 
@@ -1509,7 +1510,7 @@ export default function Index() {
                 className="tru-ai-start-btn"
               >
                 <Scan className="w-5 h-5" />
-                Start AI Analysis
+                Demo AI Analysis
                 <ArrowRight className="w-4 h-4" />
               </button>
 
