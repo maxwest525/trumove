@@ -1,55 +1,64 @@
 
 
-# Move Header and Subheader Closer Together
+# Vertically Center TruMove Logo with Headline Text
 
 ## Overview
-Reduce the vertical gap between the headline and subtitle while keeping the backdrop the same size by adjusting margins and compensating with padding.
+Adjust the TruMove logo positioning so it's vertically centered specifically with the words "A Smarter Way To Move", not just the container.
 
 ---
 
 ## Current State
 
-| Property | Current Value |
-|----------|--------------|
-| Backdrop padding | `12px 20px 12px` (top/horizontal/bottom) |
-| Headline margin-bottom | `6px` |
-| Subtitle margin-top | `4px` |
-| **Total gap** | **10px** |
+The headline structure is:
+```tsx
+<h1 className="tru-hero-headline-main tru-headline-animated">
+  <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
+  A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
+</h1>
+```
+
+Current logo CSS (line 25933-25942):
+```css
+.tru-hero-headline-logo {
+  height: 72px;
+  margin-right: 16px;
+  margin-bottom: 8px;  /* This pushes the logo UP relative to text */
+  vertical-align: middle;
+}
+```
+
+The `margin-bottom: 8px` is causing the logo to sit higher than the text baseline.
 
 ---
 
-## Proposed Changes
+## Proposed Change
 
 ### File: `src/index.css`
 
-**1. Remove headline bottom margin (line 25959):**
+Remove the `margin-bottom` from the logo so it aligns properly with the text via flexbox:
 
 ```css
 /* From */
-margin-bottom: 6px;
+.tru-hero-headline-logo {
+  height: 72px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 16px;
+  margin-bottom: 8px;  /* Remove this */
+  ...
+}
 
 /* To */
-margin-bottom: 0;
-```
-
-**2. Remove subtitle top margin (line 25972):**
-
-```css
-/* From */
-margin: 4px auto 0;
-
-/* To */
-margin: 0 auto 0;
-```
-
-**3. Increase backdrop padding to maintain same overall size (line 25907):**
-
-```css
-/* From */
-padding: 12px 20px 12px;
-
-/* To */
-padding: 16px 20px 16px;
+.tru-hero-headline-logo {
+  height: 72px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 16px;
+  margin-bottom: 0;    /* Changed to 0 */
+  ...
+}
 ```
 
 ---
@@ -58,9 +67,7 @@ padding: 16px 20px 16px;
 
 | Change | Before | After |
 |--------|--------|-------|
-| Gap between headline & subtitle | 10px | 0px |
-| Backdrop padding (top/bottom) | 12px | 16px |
-| **Total backdrop size** | Same | Same |
+| Logo vertical position | 8px higher than text center | Centered with text |
 
-The headline and subtitle will be flush against each other (or nearly touching), while the extra padding on the backdrop compensates to maintain its current visual size.
+The logo will now sit at the same vertical center as the words "A Smarter Way To Move".
 
