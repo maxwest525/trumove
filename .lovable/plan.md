@@ -1,59 +1,100 @@
 
 
-# Replace Icon Components with Actual Page Preview Images
+# Fix Move Profile Modal Clipping Issue
 
-## Problem
+## Problem Analysis
 
-The "Smart Carrier Match" and "FMCSA Verified" feature cards currently display custom icon components instead of actual preview images from the pages they link to. The user wants these to show real page previews for visual consistency with the other feature cards.
+The "Building your personalized move profile" modal and other content is being cut off on the left and right sides of the page. This is caused by multiple containers with `overflow: hidden` that restrict content from extending beyond their boundaries.
+
+### Containers Causing Clipping
+
+| Container | Line | Current Value | Issue |
+|-----------|------|---------------|-------|
+| `.tru-hero-wrapper` | 1353 | `overflow-x: hidden` | Clips all horizontal overflow |
+| `.tru-hero.tru-hero-split` | 24576 | `overflow: hidden` | Clips content in hero section |
+| `.tru-move-summary-modal` | 98 | `overflow: hidden` | Clips the modal's own content |
+
+---
 
 ## Solution
 
-Replace the `customIcon` properties with actual image previews:
-- **Smart Carrier Match** → Use `previewCarrierVetting` (shows carrier vetting dashboard)
-- **FMCSA Verified** → Use `previewCarrierVetting` (both link to `/vetting` page)
-
-Keep the **Trudy AI Assistant** using the custom `TruckChatIcon` since it opens a chat modal, not a page.
+Remove `overflow: hidden` from these key layout containers to allow content (including hover effects, modals, and expanded elements) to extend beyond their boundaries.
 
 ---
 
 ## Implementation
 
-### File: `src/components/FeatureCarousel.tsx`
+### Change 1: Remove overflow-x from hero wrapper
 
-**Step 1: Remove unused icon imports**
+**File: `src/index.css`** (line 1353)
 
-Remove `GitCompare`, `Star`, `ShieldCheck`, `BadgeCheck` from imports since the custom icon components will be removed.
+```css
+/* Before */
+.tru-hero-wrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
+  min-height: 100vh;
+}
 
-**Step 2: Remove unused icon components**
+/* After */
+.tru-hero-wrapper {
+  position: relative;
+  width: 100%;
+  /* overflow-x removed to allow content to extend beyond edges */
+  min-height: 100vh;
+}
+```
 
-Delete the `SmartMatchIcon` and `FMCSAVerifiedIcon` component definitions.
+### Change 2: Remove overflow from hero split section
 
-**Step 3: Update features array**
+**File: `src/index.css`** (line 24574-24577)
 
-Replace `customIcon` with `image` for both Smart Carrier Match and FMCSA Verified:
+This was already addressed in a previous fix but needs confirmation.
 
-| Feature | Current | Updated |
-|---------|---------|---------|
-| Smart Carrier Match | `customIcon: <SmartMatchIcon />` | `image: previewCarrierVetting` |
-| FMCSA Verified | `customIcon: <FMCSAVerifiedIcon />` | `image: previewCarrierVetting` |
-| Trudy AI Assistant | `customIcon: <TruckChatIcon />` | Keep as-is (opens chat, not a page) |
+```css
+/* Before */
+.tru-hero.tru-hero-split {
+  position: relative;
+  overflow: hidden;
+}
+
+/* After */
+.tru-hero.tru-hero-split {
+  position: relative;
+  /* overflow: hidden removed */
+}
+```
+
+### Change 3: Remove overflow from move summary modal
+
+**File: `src/index.css`** (line 98)
+
+```css
+/* Before - line 98 */
+overflow: hidden;
+
+/* After */
+/* Line removed - no overflow restriction on modal */
+```
 
 ---
 
 ## Summary of Changes
 
-| Line Range | Change |
-|------------|--------|
-| Line 5 | Remove `GitCompare`, `Star`, `ShieldCheck`, `BadgeCheck` from imports |
-| Lines 38-57 | Delete `SmartMatchIcon` and `FMCSAVerifiedIcon` components |
-| Lines 79-83 | Change Smart Carrier Match from `customIcon` to `image: previewCarrierVetting` |
-| Lines 91-94 | Change FMCSA Verified from `customIcon` to `image: previewCarrierVetting` |
+| File | Line | Change |
+|------|------|--------|
+| `src/index.css` | 1353-1354 | Remove `overflow-x: hidden` and `overflow-y: visible` from `.tru-hero-wrapper` |
+| `src/index.css` | 24576 | Verify `overflow: hidden` is removed from `.tru-hero.tru-hero-split` |
+| `src/index.css` | 98 | Remove `overflow: hidden` from `.tru-move-summary-modal` |
 
 ---
 
-## Result
+## Expected Result
 
-- All feature cards that link to pages will display actual page preview images
-- Only Trudy AI Assistant retains a custom icon (appropriate since it opens chat, not a page)
-- Visual consistency across the feature carousel
+- The "Building your personalized move profile" modal will display fully without being clipped on any side
+- Feature carousel hover effects will expand beyond card boundaries without clipping
+- All page content will be allowed to extend naturally without artificial horizontal constraints
+- The page will still maintain proper visual bounds through normal layout flow
 
