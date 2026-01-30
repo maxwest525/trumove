@@ -2266,7 +2266,7 @@
    AI STEPS SECTION
    ============================================= */
 .tru-ai-steps-section {
-  padding: 24px 24px 48px;
+  padding: 20px 24px 32px;
   margin-top: 0;
   background: hsl(var(--background));
   position: relative;
@@ -2441,10 +2441,10 @@
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  height: 260px;
+  height: 200px;
 }
 
 .tru-ai-live-header {
@@ -2605,12 +2605,52 @@
   align-self: flex-start;
 }
 
-/* When inside the two-column layout, stack scanner and inventory vertically */
-.tru-ai-right-column .tru-ai-preview-live {
-  grid-template-columns: 1fr;
+/* Horizontal layout for scanner + detection side by side */
+.tru-ai-preview-horizontal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   max-width: none;
   margin: 0;
-  gap: 16px;
+  opacity: 0.6;
+  transform: scale(0.98);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tru-ai-preview-horizontal.is-running {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Demo pill overlay on room image */
+.tru-ai-demo-pill {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.3);
+  transition: all 0.2s ease;
+}
+
+.tru-ai-demo-pill:hover {
+  background: hsl(var(--primary));
+  color: hsl(var(--foreground));
+  transform: scale(1.05);
+}
+
+.tru-ai-demo-pill svg {
+  color: currentColor;
 }
 
 .tru-ai-right-column .tru-ai-live-inventory {
@@ -2674,11 +2714,7 @@
     gap: 24px;
   }
   
-  .tru-ai-start-btn.tru-ai-start-btn-left {
-    align-self: center;
-  }
-  
-  .tru-ai-right-column .tru-ai-preview-live {
+  .tru-ai-preview-horizontal {
     grid-template-columns: 1fr;
   }
 }
