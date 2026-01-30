@@ -1,287 +1,192 @@
 
-# Plan: Enhanced Demo Mode with Trudy Chat & Realistic Inventory
+
+# Plan: Enhanced Demo Mode - Professional Employee Image & Interactive Inventory Modal
 
 ## Overview
 
-Enhance the `/book` video consult demo mode with:
-1. **Simulated typing/chat messages from Trudy** - Realistic conversation flow with typing indicators
-2. **Realistic inventory items** - Replace emoji icons with actual 3D-rendered images from `/public/inventory/`
-
----
-
-## Current State Analysis
-
-**File:** `src/pages/Book.tsx`
-
-The demo mode currently has:
-- Basic chat with a single initial message from "Support"
-- Simple user message handling with one generic response
-- Inventory items using emoji icons (🛋, 📺, 🪑, etc.)
-- No typing indicators or conversation flow
+Update the `/book` video consult demo mode with:
+1. **Professional woman employee image for Trudy** - Replace the current avatar with a realistic professional headshot
+2. **Interactive inventory modal** - Make items clickable with +/- quantity controls, similar to the actual inventory builder
 
 ---
 
 ## Implementation Details
 
-### 1. Simulated Trudy Chat with Typing Indicator
+### 1. Professional Trudy Image
 
-**New conversation flow:**
-```text
-[0s]   Trudy: "Hi! I'm Trudy, your TruMove specialist. I can see you've joined! 👋"
-[3s]   Trudy: (typing indicator)
-[5s]   Trudy: "I notice you're exploring our inventory builder. Would you like me to walk you through how screen sharing works?"
-[10s]  Trudy: (typing indicator)
-[12s]  Trudy: "Click 'Share Screen' below and I'll show you how we can review your inventory together in real-time."
-[20s]  Trudy: "Take your time - I'm here whenever you're ready! 😊"
-```
+**Current State:** Uses `trudyAvatar.png` - a stylized/avatar image
 
-**New TypingIndicator component:**
+**Solution:** Use a professional stock photo of a woman in a customer service/office setting. Since we don't have one in assets, we'll use a high-quality placeholder service like `randomuser.me` or similar for a professional female headshot.
+
+**Update `FakeAgentView` component:**
 ```tsx
-function ChatTypingIndicator() {
+function FakeAgentView() {
   return (
-    <div className="flex items-center gap-1 text-xs text-white/50 py-1">
-      <span className="font-bold">Trudy</span>
-      <span className="flex gap-0.5">
-        <span className="w-1 h-1 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }} />
-        <span className="w-1 h-1 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
-        <span className="w-1 h-1 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
-      </span>
+    <div className="text-center">
+      <div className="relative inline-block mb-4">
+        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/30 shadow-xl">
+          {/* Professional woman employee photo */}
+          <img 
+            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face" 
+            alt="Trudy - Moving Specialist" 
+            className="w-full h-full object-cover" 
+          />
+        </div>
+        <div className="absolute inset-0 rounded-full border-4 border-primary animate-ping opacity-20" />
+      </div>
+      <p className="text-white font-bold text-lg">Trudy Martinez</p>
+      <p className="text-white/60 text-sm">Senior Moving Specialist</p>
+      <div className="flex items-center justify-center gap-1.5 mt-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+        <span className="text-green-400 text-xs font-medium">Speaking...</span>
+      </div>
     </div>
   );
 }
 ```
 
-**Chat state management:**
-```tsx
-const [chatMessages, setChatMessages] = useState<{ from: string; text: string }[]>([]);
-const [isTyping, setIsTyping] = useState(false);
+---
 
-useEffect(() => {
-  // Simulated conversation timeline
-  const timeline = [
-    { delay: 500, text: "Hi! I'm Trudy, your TruMove specialist. I can see you've joined! 👋" },
-    { delay: 4000, typing: true },
-    { delay: 6000, text: "I notice you're exploring our inventory tools. Would you like me to show you how screen sharing works?" },
-    { delay: 12000, typing: true },
-    { delay: 14000, text: "Click 'Share Screen' below and I can help you review your inventory in real-time!" },
-    { delay: 22000, text: "Take your time - I'm here whenever you're ready! 😊" },
-  ];
-  
-  // Run timeline
-}, []);
+### 2. Interactive Inventory Modal
+
+**Current State:** Static list of items with no click interaction
+
+**New Features:**
+- +/- buttons on each item to adjust quantity
+- Visual feedback when quantity changes (highlight animation)
+- Dynamic total recalculation
+- Delete button to remove items entirely
+- More realistic "active editing" feel
+
+**Update `InventoryShareModal` component:**
+
+```tsx
+function InventoryShareModal({ onClose }: { onClose: () => void }) {
+  const [items, setItems] = useState(inventoryItems.map(item => ({ ...item })));
+
+  const updateQuantity = (index: number, delta: number) => {
+    setItems(prev => prev.map((item, i) => 
+      i === index ? { ...item, qty: Math.max(0, item.qty + delta) } : item
+    ).filter(item => item.qty > 0));
+  };
+
+  const removeItem = (index: number) => {
+    setItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const totalItems = items.reduce((sum, item) => sum + item.qty, 0);
+  const totalWeight = items.reduce((sum, item) => sum + (item.weight * item.qty), 0);
+
+  return (
+    <div className="absolute inset-4 flex items-center justify-center z-10">
+      <div className="w-full max-w-lg bg-white dark:bg-slate-800 rounded-xl shadow-2xl ...">
+        {/* Window Chrome - unchanged */}
+        
+        {/* Inventory Content - Now Interactive */}
+        <div className="p-4 max-h-[300px] overflow-y-auto">
+          <div className="space-y-2">
+            {items.map((item, i) => (
+              <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 group hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                {/* Image thumbnail */}
+                <div className="w-10 h-10 rounded-md bg-white ...">
+                  <img src={item.image} alt={item.name} className="..." />
+                </div>
+                
+                {/* Item info */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium ...">{item.name}</p>
+                  <p className="text-xs ...">{item.room}</p>
+                </div>
+                
+                {/* Quantity controls - NEW */}
+                <div className="flex items-center gap-1">
+                  <button 
+                    onClick={() => updateQuantity(i, -1)}
+                    className="w-6 h-6 rounded bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span className="w-8 text-center text-sm font-bold">{item.qty}</span>
+                  <button 
+                    onClick={() => updateQuantity(i, 1)}
+                    className="w-6 h-6 rounded bg-primary/20 hover:bg-primary/30 flex items-center justify-center text-primary transition-colors"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
+                
+                {/* Delete button - visible on hover */}
+                <button 
+                  onClick={() => removeItem(i)}
+                  className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 flex items-center justify-center text-red-500 transition-all"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+          
+          {/* Empty state */}
+          {items.length === 0 && (
+            <div className="text-center py-8 text-slate-400">
+              <Package className="w-10 h-10 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">No items in inventory</p>
+            </div>
+          )}
+        </div>
+        
+        {/* Footer with dynamic totals */}
+        <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t ...">
+          <span className="text-xs ...">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
+          <span className="text-xs text-primary font-medium ...">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            Live sharing
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
 ```
 
 ---
 
-### 2. Realistic Inventory Items with Images
+## Visual Preview
 
-**Replace mockItems with real images:**
-
-```tsx
-const inventoryItems = [
-  { 
-    name: "3-Cushion Sofa", 
-    room: "Living Room", 
-    qty: 1, 
-    image: "/inventory/living-room/sofa-3-cushion.png",
-    weight: 180,
-    volume: 45
-  },
-  { 
-    name: "55\" Plasma TV", 
-    room: "Living Room", 
-    qty: 1, 
-    image: "/inventory/living-room/tv-plasma.png",
-    weight: 65,
-    volume: 8
-  },
-  { 
-    name: "Armchair", 
-    room: "Living Room", 
-    qty: 2, 
-    image: "/inventory/living-room/armchair.png",
-    weight: 85,
-    volume: 24
-  },
-  { 
-    name: "Coffee Table", 
-    room: "Living Room", 
-    qty: 1, 
-    image: "/inventory/living-room/coffee-table.png",
-    weight: 45,
-    volume: 12
-  },
-  { 
-    name: "Queen Bed", 
-    room: "Bedroom", 
-    qty: 1, 
-    image: "/inventory/bedroom/bed-queen.png",
-    weight: 150,
-    volume: 60
-  },
-  { 
-    name: "Dresser", 
-    room: "Bedroom", 
-    qty: 1, 
-    image: "/inventory/bedroom/dresser.png",
-    weight: 120,
-    volume: 28
-  },
-  { 
-    name: "Nightstand", 
-    room: "Bedroom", 
-    qty: 2, 
-    image: "/inventory/bedroom/nightstand.png",
-    weight: 35,
-    volume: 6
-  },
-  { 
-    name: "Medium Box", 
-    room: "General", 
-    qty: 8, 
-    image: "/inventory/boxes/medium-box.png",
-    weight: 25,
-    volume: 3
-  },
-  { 
-    name: "Refrigerator", 
-    room: "Kitchen", 
-    qty: 1, 
-    image: "/inventory/appliances/refrigerator.png",
-    weight: 250,
-    volume: 40
-  },
-  { 
-    name: "Washer", 
-    room: "Laundry", 
-    qty: 1, 
-    image: "/inventory/appliances/washer.png",
-    weight: 170,
-    volume: 18
-  },
-];
-```
-
-**Updated inventory item UI:**
-
-```tsx
-<div className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-  <div className="w-10 h-10 rounded-md bg-white dark:bg-slate-600 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-500">
-    <img 
-      src={item.image} 
-      alt={item.name} 
-      className="w-8 h-8 object-contain mix-blend-multiply dark:mix-blend-normal"
-    />
-  </div>
-  <div className="flex-1 min-w-0">
-    <p className="text-sm font-medium text-slate-800 dark:text-white truncate">{item.name}</p>
-    <p className="text-xs text-slate-500 dark:text-slate-400">{item.room}</p>
-  </div>
-  <div className="text-right">
-    <span className="text-sm font-bold text-slate-600 dark:text-slate-300">×{item.qty}</span>
-    <p className="text-[10px] text-slate-400">{item.weight} lbs</p>
-  </div>
-</div>
-```
-
-**Updated footer with calculated totals:**
-
-```tsx
-// Calculate totals from inventory
-const totalItems = inventoryItems.reduce((sum, item) => sum + item.qty, 0);
-const totalWeight = inventoryItems.reduce((sum, item) => sum + (item.weight * item.qty), 0);
-
-// Footer
-<div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t">
-  <span className="text-xs text-slate-500">
-    {totalItems} items • Est. {totalWeight.toLocaleString()} lbs
-  </span>
-</div>
-```
-
----
-
-### 3. Additional Context-Aware Messages
-
-**When screen sharing starts, add Trudy response:**
-
-```tsx
-const handleShareScreen = () => {
-  setIsScreenSharing(!isScreenSharing);
-  if (!isScreenSharing) {
-    toast.success("Screen sharing started");
-    // Trudy responds to screen share
-    setTimeout(() => {
-      setChatMessages(prev => [...prev, { 
-        from: "Trudy", 
-        text: "Perfect! I can see your inventory now. Let me walk you through each item..." 
-      }]);
-    }, 1500);
-  } else {
-    toast("Screen sharing stopped");
-  }
-};
-```
-
-**When user sends a message, Trudy responds contextually:**
-
-```tsx
-const trudyResponses = [
-  "Great question! I'm checking that for you now.",
-  "That's a common concern - let me explain how we handle that.",
-  "Absolutely! I'll make a note of that in your profile.",
-  "I see that on my end. Let's walk through it together.",
-];
-
-const handleSendMessage = () => {
-  if (newMessage.trim()) {
-    setChatMessages([...chatMessages, { from: "You", text: newMessage }]);
-    setNewMessage("");
-    // Show typing then respond
-    setTimeout(() => setIsTyping(true), 500);
-    setTimeout(() => {
-      setIsTyping(false);
-      const response = trudyResponses[Math.floor(Math.random() * trudyResponses.length)];
-      setChatMessages(prev => [...prev, { from: "Trudy", text: response }]);
-    }, 2000);
-  }
-};
-```
-
----
-
-## Visual Layout
-
-**Chat Panel (enhanced):**
+**Trudy Video Feed:**
 ```text
-┌────────────────────────────────┐
-│ 💬 Chat                        │
-├────────────────────────────────┤
-│ Trudy: Hi! I'm Trudy... 👋     │
-│ Trudy: Would you like me to... │
-│ Trudy ●●● (typing)             │ <- Animated dots
-│ You: How does this work?       │
-│ Trudy: Great question! I'm...  │
-├────────────────────────────────┤
-│ [Type a message...         ]   │
-└────────────────────────────────┘
+┌─────────────────────────────────────┐
+│                                     │
+│      ┌───────────────────┐          │
+│      │                   │          │
+│      │  [Professional    │          │
+│      │   woman photo     │          │
+│      │   with headset]   │          │
+│      │                   │          │
+│      └───────────────────┘          │
+│                                     │
+│      Trudy Martinez                 │
+│   Senior Moving Specialist          │
+│      ● Speaking...                  │
+│                                     │
+└─────────────────────────────────────┘
 ```
 
-**Inventory Modal (enhanced):**
+**Interactive Inventory Modal:**
 ```text
-┌────────────────────────────────────────────────┐
-│ ● ● ●   Customer's Screen - My Move Inventory  │
-├────────────────────────────────────────────────┤
-│ [🛋️ img] 3-Cushion Sofa    Living Room    ×1  │
-│ [📺 img] 55" Plasma TV     Living Room    ×1  │
-│ [🪑 img] Armchair          Living Room    ×2  │
-│ [☕ img] Coffee Table       Living Room    ×1  │
-│ [🛏️ img] Queen Bed         Bedroom        ×1  │
-│ [📦 img] Medium Box         General        ×8  │
-│ [❄️ img] Refrigerator       Kitchen        ×1  │
-├────────────────────────────────────────────────┤
-│ 16 items • Est. 1,890 lbs    🟢 Live sharing   │
-└────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│ ● ● ●    Customer's Screen - My Move Inventory         │
+├────────────────────────────────────────────────────────┤
+│                                                        │
+│ [img] 3-Cushion Sofa     Living Room   [-] 1 [+]  [×] │
+│ [img] 55" Plasma TV      Living Room   [-] 1 [+]  [×] │
+│ [img] Armchair           Living Room   [-] 2 [+]  [×] │
+│ [img] Queen Bed          Bedroom       [-] 1 [+]  [×] │
+│ [img] Medium Box         General       [-] 8 [+]  [×] │
+│                                                        │
+├────────────────────────────────────────────────────────┤
+│ 19 items • Est. 1,890 lbs           🟢 Live sharing    │
+└────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -290,18 +195,19 @@ const handleSendMessage = () => {
 
 | File | Change |
 |------|--------|
-| `src/pages/Book.tsx` | Add typing indicator, conversation timeline, realistic inventory items with images, context-aware chat responses |
+| `src/pages/Book.tsx` | Update `FakeAgentView` with professional photo, make `InventoryShareModal` interactive with quantity controls |
 
 ---
 
 ## Testing Checklist
 
-1. Navigate to /book and enter "demo" to join demo room
-2. Verify Trudy's welcome messages appear with realistic timing
-3. Verify typing indicator (●●●) appears between messages
-4. Click "Share Screen" and verify Trudy responds contextually
-5. Verify inventory modal shows actual 3D-rendered images (not emojis)
-6. Verify item images render correctly on both light and dark mode
-7. Send a chat message and verify Trudy responds with typing indicator
-8. Verify calculated totals (items + weight) are accurate in footer
-9. Test "Stop Sharing" and verify modal closes properly
+1. Navigate to /book and enter "demo"
+2. Verify Trudy shows as a professional woman employee (realistic photo)
+3. Click "Share Screen" to open inventory modal
+4. Click +/- buttons on items and verify quantities update
+5. Verify totals recalculate dynamically
+6. Hover over items and verify delete button appears
+7. Delete an item and verify it disappears
+8. Delete all items and verify empty state appears
+9. Test in both light and dark mode
+
