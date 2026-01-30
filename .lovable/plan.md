@@ -1,88 +1,90 @@
 
 
-# Fix Stats Strip Layout
+# Auto-Minimize Trudy Pill on Scroll
 
 ## Overview
-Update the black stats strip to remove the dot separators between items and ensure icons appear to the left of their corresponding text (not above).
+Modify the FloatingTruckChat component to automatically minimize when the user scrolls, while keeping the full expanded pill visible on initial page load (before any scroll).
 
 ---
 
-## Current Issue
-Looking at the screenshot, the icons appear stacked above the text, and there are dot separators between items. The user wants:
-1. Remove the dots (`•`) between items
-2. Icons positioned to the left of the text in a horizontal layout
+## Current Behavior
+- Pill starts expanded (unless localStorage says minimized)
+- User must manually click the minimize button to collapse it
+- Minimized state persists via localStorage
+
+## New Behavior
+- Pill starts expanded on page load
+- When user scrolls down, automatically minimize to compact truck + hide button
+- User can click to re-expand (returns to full pill)
+- Scroll-triggered minimization is temporary (not persisted to localStorage)
+- Manual minimize button still persists to localStorage as before
 
 ---
 
 ## Changes Required
 
-### File: `src/components/StatsStrip.tsx`
+### File: `src/components/FloatingTruckChat.tsx`
 
-Remove the dot separator spans from the component:
+**Add scroll detection logic:**
 
-**Before (lines 16-23):**
 ```tsx
-{STATS.map((stat, idx) => (
-  <div key={stat.text} className="stats-strip-item">
-    <stat.icon className="w-4 h-4" />
-    <span>{stat.text}</span>
-    {idx < STATS.length - 1 && (
-      <span className="stats-strip-dot">•</span>
-    )}
-  </div>
-))}
+import { useState, useEffect } from 'react';
+
+// New state to track scroll-based minimization (separate from manual)
+const [isScrollMinimized, setIsScrollMinimized] = useState(false);
+
+// Combined minimized state
+const isCurrentlyMinimized = isMinimized || isScrollMinimized;
+
+// Scroll listener effect
+useEffect(() => {
+  let lastScrollY = window.scrollY;
+  
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+    
+    // Minimize when scrolling down past 100px threshold
+    if (currentScrollY > 100 && !isScrollMinimized) {
+      setIsScrollMinimized(true);
+    }
+  };
+  
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  return () => window.removeEventListener('scroll', handleScroll);
+}, [isScrollMinimized]);
 ```
 
-**After:**
+**Update handleReopen to clear scroll minimization:**
+
 ```tsx
-{STATS.map((stat) => (
-  <div key={stat.text} className="stats-strip-item">
-    <stat.icon className="w-4 h-4" />
-    <span>{stat.text}</span>
-  </div>
-))}
+const handleReopen = () => {
+  setIsMinimized(false);
+  setIsScrollMinimized(false); // Also clear scroll-triggered state
+  localStorage.removeItem('tm_ai_helper_minimized');
+};
 ```
 
----
+**Update conditional rendering:**
 
-### File: `src/index.css`
-
-Ensure the `.stats-strip-item` uses horizontal flex layout (icons left of text):
-
-**Lines 28633-28644 - Confirm/update flex direction:**
-```css
-.stats-strip-item {
-  display: inline-flex;
-  flex-direction: row;  /* Explicit row direction */
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: hsl(0 0% 100% / 0.85);
-  white-space: nowrap;
-  flex-shrink: 0;
+```tsx
+// Change from: if (isMinimized)
+// To: if (isCurrentlyMinimized)
+if (isCurrentlyMinimized) {
+  return (
+    // ... minimized compact view
+  );
 }
 ```
 
-Optionally remove the `.stats-strip-dot` class (lines 28653-28656) since it will no longer be used.
-
 ---
 
-## Visual Result
+## Compact Minimized Design
 
-**Before:**
-```
-   📍            📈            🎧
-SERVING    50,000+ MOVES  •  24/7 SUPPORT  •  ...
-48 STATES     COMPLETED
-```
+The minimized state shows:
+- Truck icon (clickable to expand/open chat)
+- Hide/minimize button
 
-**After:**
-```
-📍 SERVING 48 STATES   📈 50,000+ MOVES COMPLETED   🎧 24/7 SUPPORT   ...
-```
+Current minimized view already has this structure - just ensure it's clear and functional.
 
 ---
 
@@ -90,7 +92,10 @@ SERVING    50,000+ MOVES  •  24/7 SUPPORT  •  ...
 
 | File | Change |
 |------|--------|
-| `src/components/StatsStrip.tsx` | Remove dot separator spans (`{idx < STATS.length - 1 && ...}`) |
-| `src/index.css` | Add explicit `flex-direction: row` to `.stats-strip-item` |
-| `src/index.css` | Optionally remove unused `.stats-strip-dot` styles |
+| `src/components/FloatingTruckChat.tsx` | Add `useEffect` for scroll detection |
+| `src/components/FloatingTruckChat.tsx` | Add `isScrollMinimized` state |
+| `src/components/FloatingTruckChat.tsx` | Use combined minimized state for rendering |
+| `src/components/FloatingTruckChat.tsx` | Update `handleReopen` to clear both states |
+
+The pill will now auto-collapse on scroll for a cleaner browsing experience, while remaining expandable when the user wants to interact with Trudy.
 
