@@ -1,53 +1,44 @@
 
-# Remove Green Accent Bar from Preview Card Summaries
+# Remove Green Accent from "Building your personalized move profile" Section
 
 ## Summary
 
-The preview card summaries use a green accent bar (`.tru-move-summary-accent`) at the top. This bar will be removed to give the cards a cleaner look.
+The "Building your personalized move profile" section header displays a green CheckCircle icon next to the title. This green accent will be removed by changing the icon color to a neutral color.
 
 ---
 
 ## Current State
 
-The green accent bar is:
-1. Defined in `src/index.css` (lines 111-124) as `.tru-move-summary-accent`
-2. Used in `src/pages/Index.tsx` line 182 within the `MoveSummaryModal` component
+The CheckCircle icon in the header is styled green via:
+- CSS rule at line 2035-2037: `.tru-route-analysis-header svg { color: hsl(var(--primary)); }`
+- Component has conditional class but CSS overrides it
 
 ---
 
 ## Implementation
 
-### File: `src/pages/Index.tsx` (Line 181-182)
+### File: `src/index.css` (Lines 2035-2037)
 
-**Remove the accent stripe element:**
+**Change the header icon from green to neutral:**
 
-```tsx
-{/* Before */}
-<div className="tru-move-summary-modal" ref={ref}>
-  {/* Top Accent Stripe */}
-  <div className="tru-move-summary-accent" />
-  
-{/* After */}
-<div className="tru-move-summary-modal" ref={ref}>
+```css
+/* Before */
+.tru-route-analysis-header svg {
+  color: hsl(var(--primary));
+}
+
+/* After */
+.tru-route-analysis-header svg {
+  color: hsl(var(--tm-ink) / 0.7);
+}
 ```
-
-Simply delete the comment and the `<div className="tru-move-summary-accent" />` element.
-
----
-
-## Optional Cleanup
-
-### File: `src/index.css` (Lines 111-124)
-
-The CSS class `.tru-move-summary-accent` can also be removed if it's no longer needed elsewhere, but this is optional since unused CSS doesn't affect functionality.
 
 ---
 
 ## Summary
 
-| Change | File | Action |
-|--------|------|--------|
-| Remove accent div | `src/pages/Index.tsx` | Delete lines 181-182 |
-| Remove accent CSS (optional) | `src/index.css` | Delete lines 111-124 |
+| Element | Before | After |
+|---------|--------|-------|
+| Header icon color | Green (`--primary`) | Neutral gray (`--tm-ink / 0.7`) |
 
-The "Building your personalized move profile" modal will no longer have a green bar at the top.
+The section title will no longer have a green icon accent beside it.
