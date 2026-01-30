@@ -1366,7 +1366,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 25%;
+  object-position: center 15%;
 }
 
 /* Hero background overlay - no opacity, fully transparent */
@@ -28949,6 +28949,7 @@ html.dark .tru-summary-header-large,
   overflow: hidden;
   position: relative;
   z-index: 10;
+  margin-top: -175px;
 }
 
 .stats-strip-inner {
