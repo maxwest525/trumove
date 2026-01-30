@@ -20,27 +20,29 @@ const useScrollToTop = () => {
   }, []);
 };
 
-// Fake Agent View - Shows Trudy with professional employee photo
+// Fake Agent View - Full-bleed video feed style like a real call
 function FakeAgentView() {
   return (
-    <div className="text-center">
-      {/* Professional woman employee photo */}
-      <div className="relative inline-block mb-4">
-        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/30 shadow-xl">
-          <img 
-            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face" 
-            alt="Trudy - Moving Specialist" 
-            className="w-full h-full object-cover" 
-          />
-        </div>
-        {/* Speaking indicator ring */}
-        <div className="absolute inset-0 rounded-full border-4 border-primary animate-ping opacity-20" />
+    <div className="absolute inset-0">
+      {/* Full-bleed agent "video" with professional background */}
+      <div className="absolute inset-0">
+        {/* Professional woman on video call - fills the space */}
+        <img 
+          src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop" 
+          alt="Trudy Martinez" 
+          className="w-full h-full object-cover"
+        />
+        {/* Subtle gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-slate-900/30" />
       </div>
-      <p className="text-white font-bold text-lg">Trudy Martinez</p>
-      <p className="text-white/60 text-sm">Senior Moving Specialist</p>
-      <div className="flex items-center justify-center gap-1.5 mt-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-        <span className="text-green-400 text-xs font-medium">Speaking...</span>
+      
+      {/* Name badge overlay - bottom left like real video calls */}
+      <div className="absolute bottom-20 left-4 flex items-center gap-3 px-3 py-2 rounded-lg bg-black/50 backdrop-blur-sm">
+        <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
+        <div>
+          <p className="text-white font-bold text-sm">Trudy Martinez</p>
+          <p className="text-white/60 text-xs">Senior Moving Specialist</p>
+        </div>
       </div>
     </div>
   );
@@ -198,19 +200,34 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [hasRunTimeline, setHasRunTimeline] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
 
-  // Simulated Trudy conversation timeline
+  // Call duration timer
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCallDuration(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Format duration as M:SS
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Simulated Trudy conversation timeline - feels like she just answered
   useEffect(() => {
     if (hasRunTimeline) return;
     setHasRunTimeline(true);
 
     const timeline: { delay: number; text?: string; typing?: boolean }[] = [
-      { delay: 500, text: "Hi! I'm Trudy, your TruMove specialist. I can see you've joined! 👋" },
-      { delay: 4000, typing: true },
-      { delay: 6000, text: "I notice you're exploring our inventory tools. Would you like me to show you how screen sharing works?" },
-      { delay: 11000, typing: true },
-      { delay: 13000, text: "Click 'Share Screen' below and I can help you review your inventory in real-time!" },
-      { delay: 20000, text: "Take your time - I'm here whenever you're ready! 😊" },
+      { delay: 300, text: "Hi there! Thanks for calling TruMove! 👋" },
+      { delay: 3500, typing: true },
+      { delay: 5500, text: "I'm Trudy, your dedicated moving specialist. How can I help you today?" },
+      { delay: 10000, typing: true },
+      { delay: 12000, text: "Feel free to share your screen if you'd like me to review your inventory!" },
     ];
 
     const timeouts: NodeJS.Timeout[] = [];
@@ -271,7 +288,7 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
       {/* Main video area */}
       <div className="flex-1 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         {/* Agent always visible (dimmed when screen sharing) */}
-        <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${isScreenSharing ? 'opacity-30' : 'opacity-100'}`}>
+        <div className={`absolute inset-0 transition-opacity duration-300 ${isScreenSharing ? 'opacity-30' : 'opacity-100'}`}>
           <FakeAgentView />
         </div>
         
@@ -280,19 +297,32 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
           <InventoryShareModal onClose={() => setIsScreenSharing(false)} />
         )}
 
-        {/* Self view (picture-in-picture) */}
-        <div className="absolute bottom-4 right-4 w-32 h-24 rounded-lg overflow-hidden border-2 border-white/20 bg-slate-700">
+        {/* Self view (picture-in-picture) - Larger and more realistic */}
+        <div className="absolute bottom-20 right-4 w-36 h-28 rounded-xl overflow-hidden border-2 border-white/30 bg-slate-800 shadow-xl">
           {isVideoOff ? (
             <div className="w-full h-full flex items-center justify-center bg-slate-800">
               <VideoOff className="w-6 h-6 text-white/40" />
             </div>
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-600">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                <span className="text-white/80 text-sm font-bold">You</span>
+            <div className="w-full h-full relative">
+              {/* Simulated webcam with gradient - looks like real video feed */}
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-600 via-slate-500 to-slate-600" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full bg-primary/20 border-2 border-white/30 flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">You</span>
+                </div>
               </div>
+              {/* Muted indicator */}
+              {isMuted && (
+                <div className="absolute bottom-2 right-2 p-1.5 rounded-full bg-red-500">
+                  <MicOff className="w-3 h-3 text-white" />
+                </div>
+              )}
             </div>
           )}
+          <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] font-medium">
+            You
+          </div>
         </div>
 
         {/* Chat panel */}
@@ -320,12 +350,23 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
           </div>
         </div>
 
-        {/* Connection status */}
+        {/* Connection status - looks like a real call */}
         <div className="absolute top-4 left-4 flex items-center gap-2">
-          <div className="px-3 py-1.5 rounded-full bg-amber-500/90 text-white text-xs font-bold flex items-center gap-2">
+          <div className="px-3 py-1.5 rounded-full bg-green-500/90 text-white text-xs font-bold flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            DEMO MODE
+            Connected • {formatDuration(callDuration)}
           </div>
+        </div>
+
+        {/* Call quality indicator */}
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm">
+          <div className="flex gap-0.5">
+            <div className="w-1 h-3 rounded-sm bg-green-400" />
+            <div className="w-1 h-3 rounded-sm bg-green-400" />
+            <div className="w-1 h-3 rounded-sm bg-green-400" />
+            <div className="w-1 h-2 rounded-sm bg-green-400/50" />
+          </div>
+          <span className="text-[10px] text-white/70 font-medium">HD</span>
         </div>
       </div>
 
