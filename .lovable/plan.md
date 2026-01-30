@@ -1,101 +1,81 @@
 
-
-# Auto-Minimize Trudy Pill on Scroll
+# Move Stats Strip and Adjust Spacing
 
 ## Overview
-Modify the FloatingTruckChat component to automatically minimize when the user scrolls, while keeping the full expanded pill visible on initial page load (before any scroll).
+Move the black stats strip from its current position (after AI Inventory Analysis) to between the hero and the AI Inventory Analysis section, and adjust the spacing between items for better visual balance.
 
 ---
 
-## Current Behavior
-- Pill starts expanded (unless localStorage says minimized)
-- User must manually click the minimize button to collapse it
-- Minimized state persists via localStorage
+## Current Layout Order
 
-## New Behavior
-- Pill starts expanded on page load
-- When user scrolls down, automatically minimize to compact truck + hide button
-- User can click to re-expand (returns to full pill)
-- Scroll-triggered minimization is temporary (not persisted to localStorage)
-- Manual minimize button still persists to localStorage as before
+1. Hero Section (ends at line 1541)
+2. AI Inventory Analysis Section
+3. **StatsStrip** (currently here - line 1626)
+4. Consult Section
+
+## New Layout Order
+
+1. Hero Section
+2. **StatsStrip** (moving here)
+3. AI Inventory Analysis Section
+4. Consult Section
 
 ---
 
 ## Changes Required
 
-### File: `src/components/FloatingTruckChat.tsx`
+### File: `src/pages/Index.tsx`
 
-**Add scroll detection logic:**
+**1. Remove StatsStrip from current position (line 1625-1626):**
 
+Delete:
 ```tsx
-import { useState, useEffect } from 'react';
-
-// New state to track scroll-based minimization (separate from manual)
-const [isScrollMinimized, setIsScrollMinimized] = useState(false);
-
-// Combined minimized state
-const isCurrentlyMinimized = isMinimized || isScrollMinimized;
-
-// Scroll listener effect
-useEffect(() => {
-  let lastScrollY = window.scrollY;
-  
-  const handleScroll = () => {
-    const currentScrollY = window.scrollY;
-    
-    // Minimize when scrolling down past 100px threshold
-    if (currentScrollY > 100 && !isScrollMinimized) {
-      setIsScrollMinimized(true);
-    }
-  };
-  
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  return () => window.removeEventListener('scroll', handleScroll);
-}, [isScrollMinimized]);
+{/* BLACK STATS STRIP - Section Divider */}
+<StatsStrip />
 ```
 
-**Update handleReopen to clear scroll minimization:**
+**2. Add StatsStrip between hero and AI section (after line 1541):**
 
+After `</div> {/* End tru-hero-wrapper */}`:
 ```tsx
-const handleReopen = () => {
-  setIsMinimized(false);
-  setIsScrollMinimized(false); // Also clear scroll-triggered state
-  localStorage.removeItem('tm_ai_helper_minimized');
-};
-```
+</div> {/* End tru-hero-wrapper */}
 
-**Update conditional rendering:**
+{/* BLACK STATS STRIP - Section Divider */}
+<StatsStrip />
 
-```tsx
-// Change from: if (isMinimized)
-// To: if (isCurrentlyMinimized)
-if (isCurrentlyMinimized) {
-  return (
-    // ... minimized compact view
-  );
-}
+{/* START YOUR AI INVENTORY ANALYSIS ... */}
 ```
 
 ---
 
-## Compact Minimized Design
+### File: `src/index.css`
 
-The minimized state shows:
-- Truck icon (clickable to expand/open chat)
-- Hide/minimize button
+**Adjust spacing between stats strip items (line 28629):**
 
-Current minimized view already has this structure - just ensure it's clear and functional.
+Current:
+```css
+.stats-strip-inner {
+  gap: 16px;
+}
+```
+
+Updated to wider spacing:
+```css
+.stats-strip-inner {
+  gap: 28px;
+}
+```
+
+This increases the gap from 16px to 28px for better visual separation between the 6 stat items.
 
 ---
 
 ## Summary
 
-| File | Change |
-|------|--------|
-| `src/components/FloatingTruckChat.tsx` | Add `useEffect` for scroll detection |
-| `src/components/FloatingTruckChat.tsx` | Add `isScrollMinimized` state |
-| `src/components/FloatingTruckChat.tsx` | Use combined minimized state for rendering |
-| `src/components/FloatingTruckChat.tsx` | Update `handleReopen` to clear both states |
+| File | Line(s) | Change |
+|------|---------|--------|
+| `src/pages/Index.tsx` | 1541 | Add `<StatsStrip />` after hero wrapper closing div |
+| `src/pages/Index.tsx` | 1625-1626 | Remove `<StatsStrip />` from after AI section |
+| `src/index.css` | 28629 | Change gap from `16px` to `28px` |
 
-The pill will now auto-collapse on scroll for a cleaner browsing experience, while remaining expandable when the user wants to interact with Trudy.
-
+The stats strip will now appear as a visual divider between the hero and the AI Inventory Analysis section, with wider spacing between items for improved readability.
