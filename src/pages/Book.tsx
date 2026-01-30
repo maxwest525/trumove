@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import SiteShell from "@/components/layout/SiteShell";
 import { DailyVideoRoom } from "@/components/video-consult/DailyVideoRoom";
-import { Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, Mic, MicOff, VideoOff, MessageSquare } from "lucide-react";
+import { Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,20 +20,24 @@ const useScrollToTop = () => {
   }, []);
 };
 
-// Fake Agent View - Shows Trudy with speaking indicator
+// Fake Agent View - Shows Trudy with professional employee photo
 function FakeAgentView() {
   return (
     <div className="text-center">
-      {/* Trudy Avatar */}
+      {/* Professional woman employee photo */}
       <div className="relative inline-block mb-4">
-        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary/30 shadow-xl">
-          <img src={trudyAvatar} alt="Trudy" className="w-full h-full object-cover" />
+        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/30 shadow-xl">
+          <img 
+            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face" 
+            alt="Trudy - Moving Specialist" 
+            className="w-full h-full object-cover" 
+          />
         </div>
         {/* Speaking indicator ring */}
         <div className="absolute inset-0 rounded-full border-4 border-primary animate-ping opacity-20" />
       </div>
-      <p className="text-white font-bold text-lg">Trudy</p>
-      <p className="text-white/60 text-sm">Moving Specialist</p>
+      <p className="text-white font-bold text-lg">Trudy Martinez</p>
+      <p className="text-white/60 text-sm">Senior Moving Specialist</p>
       <div className="flex items-center justify-center gap-1.5 mt-2">
         <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
         <span className="text-green-400 text-xs font-medium">Speaking...</span>
@@ -70,12 +74,23 @@ const inventoryItems = [
   { name: "Washer", room: "Laundry", qty: 1, image: "/inventory/appliances/washer.png", weight: 170 },
 ];
 
-// Calculate totals
-const totalItems = inventoryItems.reduce((sum, item) => sum + item.qty, 0);
-const totalWeight = inventoryItems.reduce((sum, item) => sum + (item.weight * item.qty), 0);
-
-// Inventory Share Modal - Floating window showing customer's inventory
+// Inventory Share Modal - Interactive floating window showing customer's inventory
 function InventoryShareModal({ onClose }: { onClose: () => void }) {
+  const [items, setItems] = useState(inventoryItems.map(item => ({ ...item })));
+
+  const updateQuantity = (index: number, delta: number) => {
+    setItems(prev => prev.map((item, i) => 
+      i === index ? { ...item, qty: Math.max(0, item.qty + delta) } : item
+    ).filter(item => item.qty > 0));
+  };
+
+  const removeItem = (index: number) => {
+    setItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const totalItems = items.reduce((sum, item) => sum + item.qty, 0);
+  const totalWeight = items.reduce((sum, item) => sum + (item.weight * item.qty), 0);
+
   return (
     <div className="absolute inset-4 flex items-center justify-center z-10">
       {/* Modal */}
@@ -95,32 +110,63 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
           <Monitor className="w-4 h-4 text-primary" />
         </div>
         
-        {/* Inventory Content */}
+        {/* Inventory Content - Interactive */}
         <div className="p-4 max-h-[300px] overflow-y-auto">
-          <div className="space-y-2">
-            {inventoryItems.map((item, i) => (
-              <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                <div className="w-10 h-10 rounded-md bg-white dark:bg-slate-600 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-500">
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    className="w-8 h-8 object-contain mix-blend-multiply dark:mix-blend-normal"
-                  />
+          {items.length > 0 ? (
+            <div className="space-y-2">
+              {items.map((item, i) => (
+                <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 group hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                  {/* Image thumbnail */}
+                  <div className="w-10 h-10 rounded-md bg-white dark:bg-slate-600 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-500">
+                    <img 
+                      src={item.image} 
+                      alt={item.name} 
+                      className="w-8 h-8 object-contain mix-blend-multiply dark:mix-blend-normal"
+                    />
+                  </div>
+                  
+                  {/* Item info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-800 dark:text-white truncate">{item.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{item.room}</p>
+                  </div>
+                  
+                  {/* Quantity controls */}
+                  <div className="flex items-center gap-1">
+                    <button 
+                      onClick={() => updateQuantity(i, -1)}
+                      className="w-6 h-6 rounded bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors"
+                    >
+                      <Minus className="w-3 h-3" />
+                    </button>
+                    <span className="w-8 text-center text-sm font-bold text-slate-700 dark:text-slate-200">{item.qty}</span>
+                    <button 
+                      onClick={() => updateQuantity(i, 1)}
+                      className="w-6 h-6 rounded bg-primary/20 hover:bg-primary/30 flex items-center justify-center text-primary transition-colors"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </button>
+                  </div>
+                  
+                  {/* Delete button - visible on hover */}
+                  <button 
+                    onClick={() => removeItem(i)}
+                    className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 flex items-center justify-center text-red-500 transition-all"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-800 dark:text-white truncate">{item.name}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{item.room}</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-sm font-bold text-slate-600 dark:text-slate-300">×{item.qty}</span>
-                  <p className="text-[10px] text-slate-400">{item.weight} lbs</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-slate-400">
+              <Package className="w-10 h-10 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">No items in inventory</p>
+            </div>
+          )}
         </div>
         
-        {/* Footer */}
+        {/* Footer with dynamic totals */}
         <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-600 flex items-center justify-between">
           <span className="text-xs text-slate-500 dark:text-slate-400">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
           <span className="text-xs text-primary font-medium flex items-center gap-1">
