@@ -1,105 +1,78 @@
 
-# Style Why TruMove Card Headers + Delete Interactive Demo Info
+# Fix Video Consult Image Cropping
 
 ## Overview
-Two changes requested:
-1. Update the "Why TruMove?" card header and subtitle to match the consistent header styling used elsewhere (like the AI Inventory Analysis section with gradient accents)
-2. Remove the "This is an interactive demo" info callout box from the AI Inventory Analysis section
+Adjust the image cropping for the video consult preview image in the "Why TruMove" carousel cards so the image shows the important content (likely faces/people) rather than cropping it incorrectly.
 
 ---
 
 ## Current State
 
-### Why TruMove Card (lines 1478-1483 in Index.tsx)
-```tsx
-<h3 className="tru-why-title-premium">
-  Why TruMove?
-</h3>
-<p className="tru-why-subtitle-premium tru-why-subtitle-bold-italic">
-  Skip the van line middleman...
-</p>
-```
-- Plain text title, no gradient accent
-- Smaller size (22px) compared to section headers (36px)
+The `.tru-why-carousel-card-image img` CSS rule uses `object-fit: cover` without specifying an `object-position`, which defaults to `center center`. This may be cutting off important parts of the video consult image.
 
-### Interactive Demo Info (lines 1556-1570 in Index.tsx)
-```tsx
-<div className="tru-ai-demo-info">
-  <div className="tru-ai-demo-info-icon">...</div>
-  <div className="tru-ai-demo-info-content">
-    <p className="tru-ai-demo-info-title">This is an interactive demo</p>
-    <p className="tru-ai-demo-info-text">Experience how our AI scans...</p>
-  </div>
-</div>
+**Current CSS (lines 26246-26251):**
+```css
+.tru-why-carousel-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
 ```
-- This entire block will be removed
+
+For comparison, the Features carousel uses `object-position: center 30%` to show more of the top portion of images.
 
 ---
 
 ## Changes Required
 
-### File: `src/pages/Index.tsx`
+### File: `src/index.css`
 
-#### 1. Update Why TruMove Card Header (lines 1478-1483)
+**Lines 26246-26251** - Add `object-position` to show the correct portion of the image:
 
 **Before:**
-```tsx
-<h3 className="tru-why-title-premium">
-  Why TruMove?
-</h3>
-<p className="tru-why-subtitle-premium tru-why-subtitle-bold-italic">
-  Skip the van line middleman. Get matched with vetted carriers who compete for your business.
-</p>
+```css
+.tru-why-carousel-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
 ```
 
 **After:**
-```tsx
-<h3 className="tru-ai-steps-title" style={{ fontSize: '24px', marginBottom: '8px' }}>
-  Why <span className="tru-ai-gradient-text">TruMove</span>?
-</h3>
-<div className="tru-ai-accent-line" style={{ marginBottom: '12px' }} />
-<p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none' }}>
-  Skip the van line middleman. Get matched with vetted carriers who compete for your business.
-</p>
+```css
+.tru-why-carousel-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.3s ease;
+}
 ```
 
-This applies:
-- Same gradient text effect on "TruMove" (using existing `tru-ai-gradient-text` class)
-- Same accent line divider (using existing `tru-ai-accent-line` class)
-- Same title and subtitle classes for consistent typography
-- Inline style overrides for appropriate sizing within the card context
-
-#### 2. Delete Interactive Demo Info Box (lines 1556-1570)
-
-**Remove this entire block:**
-```tsx
-{/* Demo Info Callout */}
-<div className="tru-ai-demo-info">
-  <div className="tru-ai-demo-info-icon">
-    <Info className="w-5 h-5" />
-  </div>
-  <div className="tru-ai-demo-info-content">
-    <p className="tru-ai-demo-info-title">
-      This is an interactive demo
-    </p>
-    <p className="tru-ai-demo-info-text">
-      Experience how our AI scans a room and automatically detects furniture, boxes, and appliances. 
-      The demo uses sample imagery — when you're ready, you can scan your own home.
-    </p>
-  </div>
-</div>
-```
+Using `center top` will show the top portion of the image, which typically includes faces and heads in video call previews. If needed, this can be fine-tuned to `center 20%` or `center 30%` depending on the exact image composition.
 
 ---
 
 ## Visual Result
 
-| Element | Before | After |
-|---------|--------|-------|
-| Why TruMove title | Plain "Why TruMove?" | "Why **TruMove**?" with green gradient on "TruMove" |
-| Why TruMove subtitle | Bold italic, custom class | Matches AI section subtitle styling |
-| Accent line | None | Green gradient line under title |
-| Demo info box | Visible teal/green callout | Removed entirely |
+| Before | After |
+|--------|-------|
+| Image cropped to center (may cut off heads) | Image shows top portion (faces visible) |
+
+---
+
+## Alternative Positions
+
+If `center top` isn't quite right, here are other options:
+
+| Position | Effect |
+|----------|--------|
+| `center top` | Shows topmost part of image |
+| `center 20%` | Shows near-top, slight headroom |
+| `center 30%` | Shows upper-third (matches Features carousel) |
+| `center center` | Default - dead center |
 
 ---
 
@@ -107,5 +80,4 @@ This applies:
 
 | File | Change |
 |------|--------|
-| `src/pages/Index.tsx` | Lines 1478-1483: Update Why TruMove header to use gradient styling |
-| `src/pages/Index.tsx` | Lines 1556-1570: Delete the interactive demo info callout |
+| `src/index.css` | Add `object-position: center top;` to `.tru-why-carousel-card-image img` (line 26249) |
