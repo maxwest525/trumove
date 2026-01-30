@@ -150,7 +150,7 @@ export default function FeatureCarousel() {
       >
         <CarouselContent className="features-carousel-content" allowOverflow>
           {features.map((feature, index) => (
-            <CarouselItem key={index} className="features-carousel-item basis-1/2 md:basis-1/4">
+            <CarouselItem key={index} className="features-carousel-item">
               <div 
                 className="features-carousel-card"
                 onClick={() => handleCardClick(feature)}
