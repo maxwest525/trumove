@@ -16609,7 +16609,9 @@
   display: flex;
   margin-left: 0 !important;
   margin-right: 0 !important;
-  padding: 8px 8px;  /* Horizontal padding prevents edge clipping */
+  padding: 48px 8px;  /* Vertical padding for 1.35x scale overflow */
+  margin-top: -40px;  /* Negative margin to maintain visual spacing */
+  margin-bottom: -40px;
 }
 
 /* 4 cards visible - 25% each, padding creates gaps */
