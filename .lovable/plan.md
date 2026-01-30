@@ -1,10 +1,10 @@
 
 
-# Spread Out Trust Strip Items Even More
+# Increase Navigation Header Font Size
 
 ## Goal
 
-Further increase the spacing between trust strip items for an even more open, spacious layout.
+Make the navigation header link text even larger for improved visibility and readability.
 
 ---
 
@@ -12,14 +12,14 @@ Further increase the spacing between trust strip items for an even more open, sp
 
 ### File: `src/index.css`
 
-#### Change: Increase gap between items (line 28657)
+#### Change: Increase nav link font size (line 11235)
 
 ```css
 /* Before */
-gap: 32px;
+font-size: 13px;
 
 /* After */
-gap: 48px;
+font-size: 16px;
 ```
 
 ---
@@ -28,13 +28,13 @@ gap: 48px;
 
 | File | Line | Change |
 |------|------|--------|
-| `src/index.css` | 28657 | Increase gap from `32px` to `48px` |
+| `src/index.css` | 11235 | Increase font size from `13px` to `16px` |
 
 ---
 
 ## Expected Result
 
-- Trust strip items will have 50% more spacing between them (48px instead of 32px)
-- The strip will feel even more open and breathable
-- Items will remain centered and horizontally scrollable on smaller screens
+- Navigation links will be 3px larger (16px) for significantly improved readability
+- Text will be more prominent and easier to read at a glance
+- The larger size maintains the refined header aesthetic while being more accessible
 
