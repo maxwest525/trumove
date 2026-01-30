@@ -89,7 +89,7 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         {/* Text Label */}
         <div className="flex flex-col items-start">
           <span className="text-sm font-bold leading-tight text-background">Trudy The Move Specialist</span>
-          <span className="text-xs leading-tight text-primary font-semibold">AI Chat Assistance</span>
+          <span className="text-xs leading-tight text-primary font-semibold">Ask Me Anything</span>
         </div>
         
         {/* Status indicator - smaller and more subtle */}
