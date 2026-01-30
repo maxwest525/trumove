@@ -326,17 +326,6 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
             
             {/* Theme Toggle */}
             <ThemeToggle />
-            
-            
-            {/* Agent Login Button - Far Right */}
-            <Link 
-              to="/agent-login" 
-              className="header-btn header-btn-agent"
-              aria-label="Agent Login"
-            >
-              <User className="w-4 h-4" />
-              <span>Agent Login</span>
-            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -349,6 +338,16 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+
+        {/* Agent Login Button - Absolute Far Right (outside header-inner) */}
+        <Link 
+          to="/agent-login" 
+          className="header-btn header-btn-agent"
+          aria-label="Agent Login"
+        >
+          <User className="w-4 h-4" />
+          <span>Agent Login</span>
+        </Link>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
