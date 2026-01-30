@@ -1,19 +1,20 @@
 
-
-# Hero Header Backdrop Edge Fade
+# Add Subtle Hover Scale Effect to Navigation Links
 
 ## Goal
 
-Add a subtle fade-out effect to the edges of the hero header backdrop, creating a softer, more organic appearance instead of hard rectangular edges.
+Add a subtle scale transform on hover to the navigation header links for a more interactive, premium feel.
 
 ---
 
 ## Current Implementation
 
-The backdrop is created using a `::before` pseudo-element on `.tru-hero-header-section.tru-hero-header-refined` with:
-- A linear gradient from 35% black opacity at top to 20% at bottom
-- A 16px border radius
-- Backdrop blur effect
+The `.header-nav-link` hover state (lines 11248-11254) currently has:
+- Color change to full opacity
+- Box-shadow glow effect
+- Transition of `all 200ms ease`
+
+The base `.header-nav-link` (line 11241) already has `transition: all 200ms ease` which will handle the scale animation.
 
 ---
 
@@ -21,47 +22,49 @@ The backdrop is created using a `::before` pseudo-element on `.tru-hero-header-s
 
 ### File: `src/index.css`
 
-#### Change: Add mask-image for edge fade (lines 26062-26074)
+#### Change: Add scale transform to hover state (lines 11248-11254)
 
 ```css
 /* Before */
-.tru-hero-header-section.tru-hero-header-refined::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    hsl(0 0% 0% / 0.35) 0%,
-    hsl(0 0% 0% / 0.20) 100%
-  );
-  border-radius: 16px;
-  z-index: -1;
-  backdrop-filter: blur(8px);
+.header-nav-link:hover {
+  color: hsl(var(--tm-ink));
+  background: transparent;
+  box-shadow: 
+    0 0 12px hsl(var(--primary) / 0.35),
+    0 0 24px hsl(var(--primary) / 0.15);
 }
 
 /* After */
-.tru-hero-header-section.tru-hero-header-refined::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    hsl(0 0% 0% / 0.35) 0%,
-    hsl(0 0% 0% / 0.20) 100%
-  );
-  border-radius: 16px;
-  z-index: -1;
-  backdrop-filter: blur(8px);
-  -webkit-mask-image: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    black 60%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    black 60%,
-    transparent 100%
-  );
+.header-nav-link:hover {
+  color: hsl(var(--tm-ink));
+  background: transparent;
+  box-shadow: 
+    0 0 12px hsl(var(--primary) / 0.35),
+    0 0 24px hsl(var(--primary) / 0.15);
+  transform: scale(1.05);
+}
+```
+
+#### Change: Add scale transform to dark mode hover state (lines 11256-11262)
+
+```css
+/* Before */
+.dark .header-nav-link:hover {
+  color: hsl(var(--foreground));
+  background: transparent;
+  box-shadow: 
+    0 0 12px hsl(var(--primary) / 0.4),
+    0 0 24px hsl(var(--primary) / 0.2);
+}
+
+/* After */
+.dark .header-nav-link:hover {
+  color: hsl(var(--foreground));
+  background: transparent;
+  box-shadow: 
+    0 0 12px hsl(var(--primary) / 0.4),
+    0 0 24px hsl(var(--primary) / 0.2);
+  transform: scale(1.05);
 }
 ```
 
@@ -71,15 +74,14 @@ The backdrop is created using a `::before` pseudo-element on `.tru-hero-header-s
 
 | File | Lines | Change |
 |------|-------|--------|
-| `src/index.css` | 26062-26074 | Add CSS mask-image property for subtle edge fade |
+| `src/index.css` | 11248-11254 | Add `transform: scale(1.05)` to light mode hover |
+| `src/index.css` | 11256-11262 | Add `transform: scale(1.05)` to dark mode hover |
 
 ---
 
 ## Expected Result
 
-- The hero header backdrop will subtly fade out toward its edges
-- Creates a softer, more organic appearance
-- The center of the backdrop remains fully opaque for text legibility
-- Edges blend smoothly into the hero background
+- Navigation links will subtly scale up by 5% on hover
+- Combined with the existing glow effect, creates a premium, interactive feel
+- The existing `transition: all 200ms ease` ensures smooth animation
 - Works in both light and dark modes
-
