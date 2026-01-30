@@ -1478,7 +1478,7 @@ export default function Index() {
                   <h3 className="tru-ai-steps-title" style={{ fontSize: '24px', marginBottom: '8px' }}>
                     Why <span className="tru-ai-gradient-text">TruMove</span>?
                   </h3>
-                  <div className="tru-ai-accent-line" style={{ marginBottom: '12px' }} />
+                  <div className="tru-ai-accent-line" style={{ marginBottom: '6px' }} />
                   <p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none' }}>
                     Skip the van line middleman. Get matched with vetted carriers who compete for your business.
                   </p>

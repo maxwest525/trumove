@@ -26097,7 +26097,7 @@
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .tru-why-title-premium {
@@ -26135,12 +26135,12 @@
 .tru-why-mission-paragraph.tru-why-mission-large {
   font-size: 15px;
   line-height: 1.7;
-  margin: 8px 0 16px 0;
+  margin: 4px 0 8px 0;
 }
 
 /* Inline 2-Card Feature Carousel */
 .tru-why-inline-carousel {
-  margin: 12px 0 8px 0;
+  margin: 4px 0 8px 0;
   width: 100%;
 }
 
