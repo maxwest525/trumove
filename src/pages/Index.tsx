@@ -1531,12 +1531,6 @@ export default function Index() {
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="tru-ai-steps-section">
             <div className="tru-ai-steps-inner">
-              {/* Header Badge */}
-              <div className="tru-ai-header-badge">
-                <Sparkles className="w-4 h-4" />
-                <span>Powered by AI</span>
-              </div>
-
               {/* Gradient Header */}
               <h2 className="tru-ai-steps-title">
                 <span className="tru-ai-gradient-text">AI</span> Inventory Analysis
