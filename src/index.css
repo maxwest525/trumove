@@ -1860,6 +1860,9 @@
   overflow: hidden;
   cursor: pointer;
   border: 1px solid hsl(var(--border));
+  box-shadow: 
+    0 2px 8px hsl(var(--tm-ink) / 0.06),
+    0 4px 16px hsl(var(--primary) / 0.04);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -26081,7 +26084,9 @@
   border: 1px solid transparent;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.08),
+    0 8px 32px hsl(var(--primary) / 0.06);
   transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -27215,8 +27220,16 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-color: hsl(0 0% 100% / 0.1);
-  box-shadow: 0 8px 32px hsl(0 0% 0% / 0.3);
-  box-shadow: none;
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.3),
+    0 8px 32px hsl(var(--primary) / 0.1);
+}
+
+.dark .tru-hero-value-cards-open .tru-value-card-open {
+  box-shadow: 
+    0 2px 8px hsl(var(--tm-ink) / 0.2),
+    0 4px 16px hsl(var(--primary) / 0.08),
+    0 0 1px hsl(var(--primary) / 0.15);
 }
 
 .dark .tru-floating-form-card {
