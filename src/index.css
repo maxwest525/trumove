@@ -25951,12 +25951,26 @@
   border-radius: 24px;
 }
 
+/* =============================================
+   HERO CONTAINER TRANSPARENCY FIXES
+   ============================================= */
 .tru-hero-content-panel {
   position: relative;
+  background: transparent !important;
 }
 
 .tru-hero-form-panel {
   position: relative;
+  background: transparent !important;
+}
+
+.tru-hero-right-half,
+.tru-hero-right-stacked {
+  background: transparent !important;
+}
+
+.tru-hero-stacked-cards {
+  background: transparent !important;
 }
 
 /* =============================================
