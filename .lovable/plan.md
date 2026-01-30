@@ -1,76 +1,37 @@
 
 
-# Darken Hero Backdrop and Smooth Side Edges
+# Add Subtle Separator Lines Between Header Nav Items
 
-## Problem
+## Goal
 
-1. The backdrop needs to be even darker for better text legibility
-2. The sides of the backdrop have visible cutoff edges because the ellipse width is only 70%
-
----
-
-## Solution
-
-1. Increase the opacity values in the radial gradient for a darker effect
-2. Widen the ellipse from `70% 80%` to `90% 85%` for smoother horizontal fade
-3. Extend the horizontal inset further to give more fade room
-4. Adjust the mask to be wider horizontally for seamless side blending
+Add elegant, subtle vertical divider lines between navigation items in the header for visual separation without overwhelming the clean design.
 
 ---
 
-## Current Values
+## Approach
+
+Use a CSS pseudo-element (`::after`) on each nav item to create a thin vertical line between items, with appropriate styling to keep it subtle and elegant.
+
+---
+
+## Implementation Details
 
 ```css
-.tru-hero-header-section.tru-hero-header-refined::before {
-  inset: -40px -60px;
-  background: radial-gradient(
-    ellipse 70% 80% at 50% 50%,
-    hsl(0 0% 0% / 0.38) 0%,
-    hsl(0 0% 0% / 0.25) 30%,
-    hsl(0 0% 0% / 0.10) 60%,
-    transparent 85%
-  );
-  -webkit-mask-image: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    black 0%,
-    black 20%,
-    rgba(0,0,0,0.5) 50%,
-    transparent 80%
-  );
+/* Add subtle divider lines between nav items */
+.header-nav-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 16px;
+  width: 1px;
+  background: hsl(var(--tm-ink) / 0.15);
+  pointer-events: none;
 }
-```
 
----
-
-## New Values
-
-```css
-.tru-hero-header-section.tru-hero-header-refined::before {
-  /* Extend horizontal spread for smoother side fade */
-  inset: -40px -100px;
-  background: radial-gradient(
-    /* Wider ellipse for smoother sides */
-    ellipse 90% 85% at 50% 50%,
-    hsl(0 0% 0% / 0.50) 0%,    /* 50% at center (+12%) */
-    hsl(0 0% 0% / 0.35) 30%,   /* 35% at 30% (+10%) */
-    hsl(0 0% 0% / 0.15) 60%,   /* 15% at 60% (+5%) */
-    transparent 90%            /* Extended fade out point */
-  );
-  -webkit-mask-image: radial-gradient(
-    /* Wider horizontal mask for smooth side blending */
-    ellipse 120% 100% at 50% 50%,
-    black 0%,
-    black 25%,
-    rgba(0,0,0,0.6) 55%,
-    transparent 85%
-  );
-  mask-image: radial-gradient(
-    ellipse 120% 100% at 50% 50%,
-    black 0%,
-    black 25%,
-    rgba(0,0,0,0.6) 55%,
-    transparent 85%
-  );
+.dark .header-nav-item:not(:last-child)::after {
+  background: hsl(var(--foreground) / 0.15);
 }
 ```
 
@@ -78,18 +39,26 @@
 
 ## Summary of Changes
 
-| File | Lines | Change |
-|------|-------|--------|
-| `src/index.css` | 26130 | Change `inset: -40px -60px` → `-40px -100px` for wider horizontal spread |
-| `src/index.css` | 26131-26137 | Widen ellipse to `90% 85%`, increase opacity values, extend fade to 90% |
-| `src/index.css` | 26142-26155 | Widen mask ellipse to `120% 100%` for smoother horizontal edge blending |
+| File | Location | Change |
+|------|----------|--------|
+| `src/index.css` | After `.header-nav-item` (~line 11244) | Add `::after` pseudo-element for subtle vertical divider between nav items |
+
+---
+
+## Design Notes
+
+- **Subtle opacity (15%)**: Visible but not distracting
+- **Short height (16px)**: Doesn't span full nav height for elegance
+- **Positioned with `::after`**: No extra HTML needed
+- **Excluded from last item**: No trailing divider on the right
+- **Dark mode support**: Adjusts to foreground color variable
 
 ---
 
 ## Expected Result
 
-- Backdrop is noticeably darker (50% center vs 38%)
-- Side edges fade smoothly with no visible cutoff
-- The wider ellipse and extended inset create seamless horizontal blending
-- Vertical edges remain soft and natural
+- Thin, subtle vertical lines appear between each navigation link
+- Lines are centered vertically and shorter than the nav items
+- Dividers respect both light and dark mode themes
+- Clean, professional visual separation without clutter
 
