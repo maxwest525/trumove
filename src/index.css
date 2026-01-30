@@ -11247,28 +11247,39 @@
 
 .header-nav-link:hover {
   color: hsl(var(--tm-ink));
-  background: hsl(var(--primary) / 0.3);
+  background: transparent;
+  box-shadow: 
+    0 0 12px hsl(var(--primary) / 0.35),
+    0 0 24px hsl(var(--primary) / 0.15);
 }
 
 .dark .header-nav-link:hover {
   color: hsl(var(--foreground));
-  background: hsl(var(--primary) / 0.3);
+  background: transparent;
+  box-shadow: 
+    0 0 12px hsl(var(--primary) / 0.4),
+    0 0 24px hsl(var(--primary) / 0.2);
 }
 
-/* Pill-shaped active state - green tint with dark border */
+/* Pill-shaped active state - dark background with green glow */
 .header-nav-link.is-active {
-  color: hsl(var(--tm-ink));
-  background: hsl(var(--primary) / 0.08);
-  border: 2px solid hsl(var(--tm-ink) / 0.7);
+  color: hsl(0 0% 100%);
+  background: hsl(220 15% 10%);
+  border: none;
   font-weight: 700;
-  box-shadow: 0 1px 4px hsl(var(--tm-ink) / 0.08);
-  padding: 6px 12px;
+  box-shadow: 
+    0 0 10px hsl(var(--primary) / 0.3),
+    0 0 20px hsl(var(--primary) / 0.15);
+  padding: 10px 16px;
 }
 
 .dark .header-nav-link.is-active {
-  color: hsl(var(--foreground));
-  background: hsl(var(--primary) / 0.1);
-  border: 2px solid hsl(var(--foreground) / 0.7);
+  color: hsl(0 0% 100%);
+  background: hsl(220 15% 8%);
+  border: none;
+  box-shadow: 
+    0 0 12px hsl(var(--primary) / 0.35),
+    0 0 24px hsl(var(--primary) / 0.2);
 }
 
 .header-nav-chevron {
