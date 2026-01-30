@@ -2255,7 +2255,7 @@
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
-  height: 400px;
+  height: 450px;
   overflow: hidden;
 }
 
@@ -2268,20 +2268,34 @@
 .tru-ai-two-column {
   flex: 1;
   min-height: 0;
+  align-items: stretch;
 }
 
-/* AI Inventory Analysis Subtitle */
-.tru-ai-steps-subtitle {
-  font-size: 14px;
-  font-weight: 500;
-  color: hsl(var(--muted-foreground));
-  text-align: center;
-  margin-bottom: 12px;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
+/* Scanner Start Button Overlay */
+.tru-ai-scanner-start-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  z-index: 15;
+  box-shadow: 0 4px 16px hsl(var(--tm-ink) / 0.4);
+  transition: all 0.2s ease;
+}
+
+.tru-ai-scanner-start-btn:hover {
+  background: hsl(var(--primary));
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px hsl(var(--primary) / 0.5);
 }
 
 /* AI Demo Info Callout */
@@ -2589,12 +2603,14 @@
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  height: 100%;
 }
 
 .tru-ai-right-column {
   display: flex;
   flex-direction: column;
   min-width: 240px;
+  height: 100%;
 }
 
 /* Inactive state for scanner and detection columns */
@@ -2619,37 +2635,17 @@
 }
 
 .tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 220px;
+  height: 100%;
+  flex: 1;
 }
 
 .tru-ai-preview-vertical .tru-ai-live-inventory {
-  min-height: 0;
-  max-height: 220px;
+  height: 100%;
+  flex: 1;
+  max-height: none;
 }
 
-/* Centered demo button */
-.tru-ai-demo-button-centered {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: hsl(var(--foreground));
-  color: hsl(var(--background));
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  margin: 10px auto 16px;
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
-  transition: all 0.2s ease;
-}
-
-.tru-ai-demo-button-centered:hover {
-  background: hsl(var(--primary));
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px hsl(var(--primary) / 0.5);
-}
+/* Step with preview thumbnail - row layout for vertical steps */
 
 /* Step with preview thumbnail - row layout for vertical steps */
 .tru-ai-step-with-preview {

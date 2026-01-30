@@ -292,9 +292,10 @@ MoveSummaryModal.displayName = "MoveSummaryModal";
 // Scanner Component - Center column
 interface ScannerPreviewProps {
   isRunning: boolean;
+  onStartDemo: () => void;
 }
 
-function ScannerPreview({ isRunning }: ScannerPreviewProps) {
+function ScannerPreview({ isRunning, onStartDemo }: ScannerPreviewProps) {
   return (
     <div className="tru-ai-live-scanner">
       <img src={sampleRoomLiving} alt="Room being scanned" />
@@ -305,11 +306,14 @@ function ScannerPreview({ isRunning }: ScannerPreviewProps) {
         <Scan className="w-4 h-4" />
         <span>Scanning...</span>
       </div>
-      {/* Demo pill overlay */}
-      <div className="tru-ai-demo-pill">
-        <Sparkles className="w-3 h-3" />
-        {isRunning ? "Running..." : "Demo"}
-      </div>
+      {/* Start Demo button as overlay - top right */}
+      <button 
+        className="tru-ai-scanner-start-btn"
+        onClick={onStartDemo}
+      >
+        <Sparkles className="w-3.5 h-3.5" />
+        {isRunning ? "Running..." : "Start Demo"}
+      </button>
     </div>
   );
 }
@@ -1532,23 +1536,6 @@ export default function Index() {
               {/* Accent Line */}
               <div className="tru-ai-accent-line" />
 
-              <p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
-              
-              {/* Centered Demo Button */}
-              <div className="flex justify-center">
-                <button 
-                  className="tru-ai-demo-button-centered"
-                  onClick={() => {
-                    setScanDemoRunning(true);
-                    setTimeout(() => {
-                      scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
-                  }}
-                >
-                  <Sparkles className="w-4 h-4" />
-                  Start Demo AI Analysis
-                </button>
-              </div>
               
               {/* Three-column layout: Steps | Scanner | Detection */}
               <div className="tru-ai-two-column" ref={scanPreviewRef}>
@@ -1590,7 +1577,15 @@ export default function Index() {
                 
                 {/* Center column: Scanner preview */}
                 <div className={`tru-ai-center-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
-                  <ScannerPreview isRunning={scanDemoRunning} />
+                  <ScannerPreview 
+                    isRunning={scanDemoRunning} 
+                    onStartDemo={() => {
+                      setScanDemoRunning(true);
+                      setTimeout(() => {
+                        scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }, 100);
+                    }} 
+                  />
                 </div>
                 
                 {/* Right column: Detection list */}
