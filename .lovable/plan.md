@@ -1,25 +1,22 @@
 
 
-# Make Hero Header Backdrop Lighter
+# Reduce Dead Space in Why TruMove Card
 
 ## Overview
-Reduce the opacity of the dark backdrop box behind the hero headline "A Smarter Way To Move" to make it less prominent while still maintaining text readability.
+Tighten the vertical spacing in the "Why TruMove" card by reducing gaps, margins, and padding to create a more compact layout.
 
 ---
 
 ## Current State
 
-The hero header backdrop (lines 25913-25925) uses:
+The card has generous spacing throughout:
 
-```css
-background: linear-gradient(
-  180deg,
-  hsl(0 0% 0% / 0.75) 0%,   /* 75% black at top */
-  hsl(0 0% 0% / 0.55) 100%  /* 55% black at bottom */
-);
-```
-
-This creates a fairly dark semi-transparent box behind the headline.
+| Element | Current Value |
+|---------|---------------|
+| Content container gap | `16px` |
+| Mission paragraph margin | `margin: 8px 0 16px 0` |
+| Inline carousel margin | `margin: 12px 0 8px 0` |
+| Subtitle margin-bottom (inline) | `12px` |
 
 ---
 
@@ -27,16 +24,42 @@ This creates a fairly dark semi-transparent box behind the headline.
 
 ### File: `src/index.css`
 
-**Update the backdrop opacity (lines 25917-25921):**
-
-Reduce opacity to make the box lighter/more transparent:
-
+**1. Reduce content container gap (line 26100):**
 ```css
-background: linear-gradient(
-  180deg,
-  hsl(0 0% 0% / 0.45) 0%,   /* 45% black (was 75%) */
-  hsl(0 0% 0% / 0.30) 100%  /* 30% black (was 55%) */
-);
+/* From */
+gap: 16px;
+
+/* To */
+gap: 10px;
+```
+
+**2. Reduce mission paragraph margin (line 26138):**
+```css
+/* From */
+margin: 8px 0 16px 0;
+
+/* To */
+margin: 4px 0 8px 0;
+```
+
+**3. Reduce inline carousel top margin (line 26143):**
+```css
+/* From */
+margin: 12px 0 8px 0;
+
+/* To */
+margin: 4px 0 8px 0;
+```
+
+### File: `src/pages/Index.tsx`
+
+**4. Reduce accent line bottom margin (line 1481):**
+```tsx
+/* From */
+style={{ marginBottom: '12px' }}
+
+/* To */
+style={{ marginBottom: '6px' }}
 ```
 
 ---
@@ -45,18 +68,10 @@ background: linear-gradient(
 
 | Element | Before | After |
 |---------|--------|-------|
-| Top of backdrop | 75% opacity | 45% opacity |
-| Bottom of backdrop | 55% opacity | 30% opacity |
+| Content gap | 16px | 10px |
+| Mission paragraph margin | 8px 0 16px 0 | 4px 0 8px 0 |
+| Carousel top margin | 12px | 4px |
+| Accent line bottom margin | 12px | 6px |
 
-The hero background image will be more visible through the backdrop while still providing enough contrast for the white headline text to remain readable.
-
----
-
-## Alternative Options
-
-If the proposed values feel too light or too dark, we can adjust:
-
-- **Lighter**: 35%/20% for a very subtle overlay
-- **Moderate**: 55%/40% for a middle ground
-- **Current**: 75%/55% (existing)
+This will move the divider, subheader, and carousel closer together, reducing approximately 20-24px of vertical dead space in the card.
 
