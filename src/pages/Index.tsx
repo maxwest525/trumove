@@ -37,7 +37,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
-import FeatureCarousel from "@/components/FeatureCarousel";
+
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
@@ -748,15 +748,6 @@ export default function Index() {
                 </div>
               </div>
             )}
-            
-            {/* Hero Header with Headline + Short Subheadline - Refined per plan */}
-            <div className="tru-hero-header-section tru-hero-header-refined">
-              <h1 className="tru-hero-headline-main">
-                <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
-                A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
-              </h1>
-              {/* Subheadline temporarily removed - to be repositioned */}
-            </div>
 
 
             {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
@@ -1364,10 +1355,6 @@ export default function Index() {
           </section>
         </div> {/* End tru-hero-wrapper */}
 
-          {/* FULL-WIDTH FEATURE CAROUSEL - Directly under Why TruMove */}
-          <section className="tru-feature-carousel-fullwidth tru-carousel-compact">
-            <FeatureCarousel />
-          </section>
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="tru-ai-steps-section">
