@@ -26266,16 +26266,21 @@
 .tru-why-mission-paragraph {
   font-size: 13px;
   font-weight: 400;
-  color: hsl(var(--muted-foreground));
+  color: hsl(var(--tm-ink));
   line-height: 1.65;
-  margin: 4px 0 8px 0;
+  margin: 0 0 8px 0;
 }
 
 /* Large mission paragraph variant */
 .tru-why-mission-paragraph.tru-why-mission-large {
   font-size: 15px;
   line-height: 1.7;
-  margin: 4px 0 8px 0;
+  margin: 0 0 8px 0;
+}
+
+/* Why TruMove card - force black text on subtitle */
+.tru-why-card-premium .tru-ai-steps-subtitle {
+  color: hsl(var(--tm-ink));
 }
 
 /* Inline 2-Card Feature Carousel */
