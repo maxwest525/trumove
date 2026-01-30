@@ -16744,6 +16744,8 @@
   justify-content: center;
   overflow: hidden;
   margin-top: auto;
+  border: 3px solid white;
+  box-shadow: 0 2px 12px hsl(var(--tm-ink) / 0.15);
 }
 
 /* Image - edge-to-edge with controlled cropping */
@@ -16754,8 +16756,6 @@
   object-position: center 30%;
   border-radius: 4px;
   transition: transform 0.4s ease;
-  border: 2px solid white;
-  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.1);
 }
 
 .features-carousel-card:hover .features-carousel-card-image-wrapper img {
