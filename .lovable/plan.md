@@ -1,73 +1,34 @@
 
-
-# Smoother Carousel Rotation
+# Make "A Smarter Way to Move" Tagline Larger
 
 ## Overview
-The "Why TruMove?" carousel currently rotates with the default Embla Carousel transition speed, which can feel abrupt. We'll configure smoother animation parameters.
+The tagline "A Smarter Way to Move" in the homepage main form is currently set to 14px font size. We'll increase it to be more prominent and eye-catching.
 
 ---
 
-## Changes
-
-### 1. Add Smooth Duration to Carousel Config
-**File:** `src/pages/Index.tsx` (line 1262)
-
-Add `duration` option to the Embla carousel configuration for a smoother slide transition:
-
-```tsx
-// FROM:
-opts={{ align: "start", loop: true }}
-
-// TO:
-opts={{ align: "start", loop: true, duration: 35 }}
-```
-
-The `duration` value (in scroll animation speed factor) of 35 creates a smoother, more elegant transition between slides. Higher values = slower/smoother animations (default is around 25).
-
----
-
-### 2. Enhance CSS Transition Smoothness
-**File:** `src/index.css` (line 25467-25469)
-
-Add CSS transition to the carousel content for additional smoothness:
+## Current State
+**File:** `src/index.css` (lines 25367-25372)
 
 ```css
-/* FROM: */
-.tru-why-carousel-content {
-  margin-left: 0;
-}
-
-/* TO: */
-.tru-why-carousel-content {
-  margin-left: 0;
-  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+.tru-qb-header-tagline {
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.01em;
 }
 ```
 
 ---
 
-### 3. Smooth Out Item Transitions
-**File:** `src/index.css` (line 25471-25477)
-
-Enhance the carousel item transition for opacity and transforms:
+## Change
+Increase the font size from 14px to 20px and boost the font weight for better visual impact:
 
 ```css
-/* FROM: */
-.tru-why-carousel-item {
-  padding-left: 4px;
-  padding-right: 4px;
-  position: relative;
-  z-index: 1;
-  transition: opacity 0.3s ease, z-index 0s 0.2s;
-}
-
-/* TO: */
-.tru-why-carousel-item {
-  padding-left: 4px;
-  padding-right: 4px;
-  position: relative;
-  z-index: 1;
-  transition: opacity 0.5s ease-out, z-index 0s 0.3s, transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+.tru-qb-header-tagline {
+  font-size: 20px;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.02em;
 }
 ```
 
@@ -77,12 +38,8 @@ Enhance the carousel item transition for opacity and transforms:
 
 | Task | File | Change |
 |------|------|--------|
-| Embla duration config | `src/pages/Index.tsx` | Add `duration: 35` for smoother scroll |
-| Content CSS transition | `src/index.css` | Add 0.5s cubic-bezier transform transition |
-| Item CSS transitions | `src/index.css` | Enhance opacity/transform transitions |
+| Increase tagline size | `src/index.css` | Font size 14px → 20px, weight 600 → 700 |
 
 ## Visual Result
-- Carousel slides will glide smoothly between cards instead of snapping
-- The 35 duration factor creates an elegant, professional-feeling animation
-- CSS transitions add additional polish to opacity and transform changes
-
+- "A Smarter Way to Move" will be noticeably larger and more prominent in the form header
+- The increased weight and letter-spacing will improve readability
