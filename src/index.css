@@ -16674,7 +16674,7 @@
 
 /* Hover effects - contained within carousel bounds */
 .features-carousel-card:hover {
-  transform: scale(1.15) translateZ(0);
+  transform: scale(1.22) translateZ(0);
   z-index: 100;
   border-color: hsl(var(--primary) / 0.4);
   box-shadow: 
@@ -16689,7 +16689,7 @@
 
 /* Remove any transform on active to prevent flicker */
 .features-carousel-card:active {
-  transform: scale(1.15) translateZ(0);
+  transform: scale(1.22) translateZ(0);
 }
 
 .features-carousel-card:focus-visible {
