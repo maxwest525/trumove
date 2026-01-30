@@ -1,117 +1,146 @@
 
+# Add Subtle Glow/Shadow to Hero Cards
 
-# Restore TruMove Logo on Floating Nav Bar
+## Overview
+Add a subtle ambient glow or shadow to hero cards so they have visual depth even before hover interaction, making the UI feel more polished and premium.
 
-## Issue Found
-
-The FloatingNav component (which contains the TruMove logo) is inside a **commented-out block** in `src/pages/Index.tsx` (lines 1361-1443).
-
-The comment says:
-```tsx
-{/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill
-<div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-  ...
-  <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
-  ...
-</div>
-*/}
-```
+---
 
 ## Current State
 
-| Component | Status |
-|-----------|--------|
-| FloatingNav component | Exists and has logo implemented |
-| Logo styling (.tru-static-nav-logo) | Exists in CSS |
-| Rendering in Index.tsx | Commented out |
+| Card | Base Shadow | Hover Shadow |
+|------|-------------|--------------|
+| Feature Cards (`.tru-value-card-open`) | None | Yes - glow effect |
+| Form Card (`.tru-form-card`) | Subtle shadow | N/A |
+| Why TruMove (`.tru-why-card-premium`) | Very subtle | Yes - glow effect |
 
-## Solution
-
-Uncomment the FloatingNav section to restore the floating navigation bar with the TruMove logo.
+The feature cards look "flat" until hovered because they have no base shadow.
 
 ---
 
 ## Changes Required
 
-### File: `src/pages/Index.tsx`
+### File: `src/index.css`
 
-**Lines 1361-1443**: Uncomment the sidebar section containing the FloatingNav:
+#### 1. Add Base Shadow to Feature Cards
 
-```tsx
-// BEFORE (commented out)
-{/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill
-<div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-  <TooltipProvider delayDuration={0}>
-    ...
-  </TooltipProvider>
-  <TooltipProvider delayDuration={200}>
-    <div className="tru-sidebar-nav-pill-v3">
-      <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
-    </div>
-  </TooltipProvider>
-</div>
-*/}
+**Lines 1853-1864** - Add `box-shadow` to the base `.tru-value-card-open` style:
 
-// AFTER (uncommented)
-<div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-  <TooltipProvider delayDuration={0}>
-    ...Summary pill content...
-  </TooltipProvider>
-  <TooltipProvider delayDuration={200}>
-    <div className="tru-sidebar-nav-pill-v3">
-      <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
-    </div>
-  </TooltipProvider>
-</div>
+```css
+/* BEFORE */
+.tru-hero-value-cards-open .tru-value-card-open {
+  display: flex;
+  flex-direction: column;
+  height: 260px;
+  padding: 14px;
+  padding-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid hsl(var(--border));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* AFTER */
+.tru-hero-value-cards-open .tru-value-card-open {
+  display: flex;
+  flex-direction: column;
+  height: 260px;
+  padding: 14px;
+  padding-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 
+    0 2px 8px hsl(var(--tm-ink) / 0.06),
+    0 4px 16px hsl(var(--primary) / 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 ```
 
----
+#### 2. Enhance Why TruMove Card Base Glow
 
-## What Will Be Restored
+**Line 26076** - Increase the base shadow intensity slightly:
 
-| Element | Description |
-|---------|-------------|
-| TruMove Logo | 36x36px logo at top of nav bar with hover glow effect |
-| AI Estimator | Sparkles icon linking to /online-estimate |
-| Carrier Vetting | Shield icon linking to /vetting |
-| AI Chat | MessageSquare icon opening chat modal |
-| Shipment Tracking | MapPin icon linking to /track |
-| Video Consult | Video icon linking to /book |
-| Call Us | Headphones icon linking to tel: |
-| Agent Login | User icon linking to /agent-login |
+```css
+/* BEFORE */
+.tru-why-card-premium {
+  ...
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
+}
+
+/* AFTER */
+.tru-why-card-premium {
+  ...
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.08),
+    0 8px 32px hsl(var(--primary) / 0.06);
+}
+```
+
+#### 3. Dark Mode Enhancement
+
+Add dark mode specific shadows that use a subtle green glow for consistency:
+
+```css
+/* Around line 27205 - Dark Mode */
+.dark .tru-hero-value-cards-open .tru-value-card-open {
+  box-shadow: 
+    0 2px 8px hsl(var(--tm-ink) / 0.2),
+    0 4px 16px hsl(var(--primary) / 0.08),
+    0 0 1px hsl(var(--primary) / 0.15);
+}
+
+.dark .tru-why-card-premium {
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.3),
+    0 8px 32px hsl(var(--primary) / 0.1);
+}
+```
 
 ---
 
 ## Visual Result
 
+**Before:**
 ```text
-┌────────────────────────────────────────────────────────────────┐
-│                                                                │
-│                                              ┌───────────┐     │
-│                                              │  [LOGO]   │     │
-│                                              │    ✨     │     │
-│         HERO CONTENT                         │    🛡️     │     │
-│                                              │    💬     │     │
-│                                              │    📍     │     │
-│                                              │    📹     │     │
-│                                              │    📞     │     │
-│                                              │    👤     │     │
-│                                              └───────────┘     │
-│                                                                │
-└────────────────────────────────────────────────────────────────┘
+┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│   FLAT CARD     │  │   FLAT CARD     │  │   FLAT CARD     │
+│   (no depth)    │  │   (no depth)    │  │   (no depth)    │
+└─────────────────┘  └─────────────────┘  └─────────────────┘
+```
+
+**After:**
+```text
+╔═════════════════╗  ╔═════════════════╗  ╔═════════════════╗
+║   CARD          ║  ║   CARD          ║  ║   CARD          ║
+║   (subtle glow) ║  ║   (subtle glow) ║  ║   (subtle glow) ║
+╚═════════════════╝  ╚═════════════════╝  ╚═════════════════╝
+       ░░░                  ░░░                  ░░░
+    (shadow)            (shadow)            (shadow)
 ```
 
 ---
 
-## Technical Details
+## Shadow Design Approach
+
+The shadows use a two-layer approach for depth:
+
+1. **Ink Layer** - Neutral dark shadow for grounding
+2. **Primary Layer** - Subtle brand-colored glow for warmth
+
+This creates cards that feel "lifted" off the page with a premium, soft-lit appearance.
+
+---
+
+## Summary
+
+| Change | Description |
+|--------|-------------|
+| Feature card base shadow | Add dual-layer shadow with ink + primary tint |
+| Why TruMove card enhanced | Slightly stronger base glow |
+| Dark mode variants | Green-tinted ambient glow for consistency |
 
 ### File Modified
-| File | Change |
-|------|--------|
-| `src/pages/Index.tsx` | Uncomment lines 1361-1443 |
-
-### Components Affected
-- FloatingNav will render with `iconsOnly` mode
-- TruMove logo uses `.tru-static-nav-logo` styling
-- Dark mode applies `brightness(0) invert(1)` to logo
-
+- `src/index.css` - 4 small additions
