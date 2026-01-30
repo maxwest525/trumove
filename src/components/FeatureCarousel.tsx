@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogClose, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { X } from "lucide-react";
 
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -54,6 +56,7 @@ export default function FeatureCarousel() {
   const [api, setApi] = useState<CarouselApi>();
   const [isPaused, setIsPaused] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [selectedFeature, setSelectedFeature] = useState<typeof features[0] | null>(null);
   const scrollIntervalRef = useRef<number | null>(null);
 
   // Autoplay with 4s interval, pauses on hover
@@ -103,10 +106,10 @@ export default function FeatureCarousel() {
             <CarouselItem key={index} className="features-carousel-item basis-1/2 md:basis-1/4">
               <div 
                 className="features-carousel-card"
-                onClick={() => navigate(feature.route)}
+                onClick={() => setSelectedFeature(feature)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && navigate(feature.route)}
+                onKeyDown={(e) => e.key === 'Enter' && setSelectedFeature(feature)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
@@ -131,6 +134,37 @@ export default function FeatureCarousel() {
         <CarouselPrevious className="features-carousel-prev" />
         <CarouselNext className="features-carousel-next" />
       </Carousel>
+
+      {/* Feature Preview Modal */}
+      <Dialog open={!!selectedFeature} onOpenChange={(open) => !open && setSelectedFeature(null)}>
+        <DialogContent className="feature-preview-modal">
+          <DialogTitle className="sr-only">{selectedFeature?.title}</DialogTitle>
+          <DialogDescription className="sr-only">{selectedFeature?.desc}</DialogDescription>
+          <DialogClose className="feature-preview-close">
+            <X className="h-5 w-5" />
+          </DialogClose>
+          {selectedFeature && (
+            <div className="feature-preview-content">
+              <div className="feature-preview-image">
+                <img src={selectedFeature.image} alt={selectedFeature.title} />
+              </div>
+              <div className="feature-preview-info">
+                <h3>{selectedFeature.title}</h3>
+                <p>{selectedFeature.desc}</p>
+                <button 
+                  className="feature-preview-cta"
+                  onClick={() => {
+                    setSelectedFeature(null);
+                    navigate(selectedFeature.route);
+                  }}
+                >
+                  Explore Feature
+                </button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
