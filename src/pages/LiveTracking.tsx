@@ -18,6 +18,8 @@ import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import FloatingNav from "@/components/FloatingNav";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { getWebGLDiagnostics, type WebGLDiagnostics } from "@/lib/webglDiagnostics";
 import { Button } from "@/components/ui/button";
@@ -487,6 +489,13 @@ export default function LiveTracking() {
     <div className="live-tracking-page">
       {/* Site Header - White logo for tracking page */}
       <Header whiteLogo />
+      
+      {/* Floating Navigation */}
+      <TooltipProvider delayDuration={200}>
+        <div className="tru-sidebar-nav-pill-v3">
+          <FloatingNav iconsOnly />
+        </div>
+      </TooltipProvider>
       
       {/* Dashboard Header */}
       <header className="tracking-header">
