@@ -1,64 +1,44 @@
 
-# Update Homepage Hero Quote Wizard Header
+
+# Remove Green Accent Bar from Quote Form Header
 
 ## Overview
-Update the hero quote form header to have:
-1. Gray pill background (`hsl(220 15% 93%)`) with green accent bar
-2. Black text for "A SMARTER WAY TO"
-3. Green gradient on "MOVE"
-4. Subheader: "Carriers vetted against FMCSA safety records"
+Remove the 3px green gradient accent bar from the homepage quote form header in both light and dark modes, as the progress bar provides sufficient visual hierarchy.
 
 ---
 
-## Technical Details
+## Change
 
-### File: `src/pages/Index.tsx`
+### File: `src/index.css`
 
-**Lines 1026-1031 - Replace the current header structure:**
+**Lines 4320-4329 - Remove the `::before` pseudo-element:**
 
-```tsx
-// From
-<div className="tru-qb-form-header tru-qb-form-header-clean">
-  <div className="tru-qb-form-header-brand">
-    <img src={logoImg} alt="TruMove" className="tru-qb-header-logo-clean" />
-    <span className="tru-qb-header-tagline">A SMARTER WAY TO MOVE</span>
-  </div>
-</div>
-
-// To
-<div className="tru-qb-form-header tru-qb-form-header-pill">
-  <div className="tru-qb-form-title-group">
-    <span className="tru-qb-form-title tru-qb-form-title-large">
-      A SMARTER WAY TO <span className="tru-qb-title-accent">MOVE</span>
-    </span>
-    <span className="tru-qb-form-subtitle-compact">
-      Carriers vetted against FMCSA safety records
-    </span>
-  </div>
-</div>
+```css
+/* REMOVE this entire block */
+.tru-qb-form-header.tru-qb-form-header-pill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, hsl(142 76% 50%) 0%, hsl(160 80% 45%) 100%);
+  border-radius: 16px 16px 0 0;
+}
 ```
-
----
-
-## What This Uses
-
-The existing CSS classes already provide:
-
-| Class | Effect |
-|-------|--------|
-| `.tru-qb-form-header-pill` | Gray background `hsl(220 15% 93%)` + 3px green gradient accent bar at top |
-| `.tru-qb-form-title-large` | 24px, font-weight 800, dark text |
-| `.tru-qb-title-accent` | Green gradient text (for "MOVE") |
-| `.tru-qb-form-subtitle-compact` | 9px muted subheader text |
 
 ---
 
 ## Visual Result
 
-| Element | Before | After |
-|---------|--------|-------|
-| Background | Transparent | Gray pill with green top bar |
-| Main text | Logo + tagline | "A SMARTER WAY TO MOVE" (black) |
-| "MOVE" | Plain text | Green gradient accent |
-| Subheader | None | "Carriers vetted against FMCSA safety records" |
-| Logo | Visible | Removed (text-only header) |
+| Mode | Before | After |
+|------|--------|-------|
+| Light | Gray pill + green bar at top | Gray pill only |
+| Dark | Dark pill + green bar at top | Dark pill only |
+
+The header will retain:
+- Gray pill background (light mode) / dark background (dark mode)
+- Black text "A SMARTER WAY TO" with green "MOVE"
+- Subheader "Carriers vetted against FMCSA safety records"
+- Just no green accent bar at the top
+
