@@ -1458,7 +1458,18 @@ export default function Index() {
             <div className="tru-ai-steps-inner">
               <h2 className="tru-ai-steps-title">Start Your AI Inventory Analysis</h2>
               
-{/* Live Scan Preview */}
+              {/* Primary CTA Button */}
+              <button 
+                type="button"
+                onClick={() => handleInventoryClick("ai")}
+                className="tru-ai-start-btn"
+              >
+                <Scan className="w-5 h-5" />
+                Start AI Analysis
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              {/* Live Scan Preview */}
               <LiveScanPreview />
               
               {/* 3-step grid */}
