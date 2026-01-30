@@ -28654,7 +28654,7 @@ html.dark .tru-summary-header-large,
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 32px;
   flex-wrap: nowrap;
   white-space: nowrap;
   min-width: max-content;
