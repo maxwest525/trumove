@@ -107,22 +107,6 @@
   border-radius: 18px;
   z-index: -1;
 }
-
-/* Top Accent Stripe */
-.tru-move-summary-accent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, 
-    hsl(var(--primary)), 
-    hsl(var(--primary) / 0.6), 
-    hsl(var(--primary))
-  );
-  border-radius: 16px 16px 0 0;
-}
-
 /* Close Button */
 .tru-move-summary-close {
   position: absolute;
