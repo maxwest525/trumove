@@ -1,9 +1,9 @@
 
 
-# Update Step 1 Headline Text
+# Make Tagline All Caps
 
 ## Overview
-Change the Step 1 headline from "Enter your route to begin matching" to "Build Your Free Estimate Now!"
+Update the tagline text in the hero quote wizard to be uppercase.
 
 ---
 
@@ -11,18 +11,18 @@ Change the Step 1 headline from "Enter your route to begin matching" to "Build Y
 
 ### File: `src/pages/Index.tsx`
 
-**Line 1039:**
+**Line 1029:**
 
 ```tsx
 // From
-<h1 className="tru-qb-question tru-qb-question-decorated">Enter your route to begin matching</h1>
+<span className="tru-qb-header-tagline">A Smarter Way to Move</span>
 
 // To
-<h1 className="tru-qb-question tru-qb-question-decorated">Build Your Free Estimate Now!</h1>
+<span className="tru-qb-header-tagline">A SMARTER WAY TO MOVE</span>
 ```
 
 ---
 
 ## Result
-The Step 1 form will now display the more action-oriented headline "Build Your Free Estimate Now!" instead of the previous routing-focused text.
+The tagline will display as "A SMARTER WAY TO MOVE" in all caps while keeping the logo and existing styling intact.
 
