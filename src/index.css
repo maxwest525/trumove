@@ -23764,12 +23764,7 @@
 .tru-hero-particles-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse 100% 80% at 50% 30%,
-    transparent 0%,
-    hsl(var(--background) / 0.2) 50%,
-    hsl(var(--background) / 0.5) 100%
-  );
+  background: transparent;
   pointer-events: none;
   z-index: 0;
 }
