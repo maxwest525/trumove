@@ -288,29 +288,37 @@ function MoveSummaryModal({
 }
 
 // Live Scan Preview Component
-function LiveScanPreview() {
+interface LiveScanPreviewProps {
+  isRunning: boolean;
+  containerRef: React.RefObject<HTMLDivElement>;
+}
+
+function LiveScanPreview({ isRunning, containerRef }: LiveScanPreviewProps) {
   const [visibleCount, setVisibleCount] = useState(0);
 
   useEffect(() => {
+    if (!isRunning) {
+      setVisibleCount(0);
+      return;
+    }
+    
     const interval = setInterval(() => {
       setVisibleCount(prev => {
         if (prev >= SCAN_DEMO_ITEMS.length) {
-          // Reset after a pause
-          setTimeout(() => setVisibleCount(0), 500);
-          return prev;
+          return prev; // Stop at the end, don't loop
         }
         return prev + 1;
       });
-    }, 1200);
+    }, 800); // Slightly faster for better UX
     return () => clearInterval(interval);
-  }, []);
+  }, [isRunning]);
 
   const visibleItems = SCAN_DEMO_ITEMS.slice(0, visibleCount);
   const totalWeight = visibleItems.reduce((sum, item) => sum + item.weight, 0);
   const totalCuFt = visibleItems.reduce((sum, item) => sum + item.cuft, 0);
 
   return (
-    <div className="tru-ai-preview-live">
+    <div ref={containerRef} className={`tru-ai-preview-live ${isRunning ? 'is-running' : ''}`}>
       <div className="tru-ai-live-scanner">
         <img src={sampleRoomLiving} alt="Room being scanned" />
         <div className="tru-ai-scanner-overlay">
@@ -484,6 +492,10 @@ export default function Index() {
   const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
   const [leadCaptureTarget, setLeadCaptureTarget] = useState<"manual" | "ai">("manual");
   const [hasProvidedContactInfo, setHasProvidedContactInfo] = useState(false);
+  
+  // AI Scan Demo state
+  const [scanDemoRunning, setScanDemoRunning] = useState(false);
+  const scanPreviewRef = useRef<HTMLDivElement>(null);
   
   // Form state
   const [fromZip, setFromZip] = useState("");
@@ -1560,16 +1572,22 @@ export default function Index() {
               {/* Primary CTA Button */}
               <button 
                 type="button"
-                onClick={() => navigate("/scan-room")}
+                onClick={() => {
+                  setScanDemoRunning(true);
+                  // Scroll to preview smoothly
+                  setTimeout(() => {
+                    scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }, 100);
+                }}
                 className="tru-ai-start-btn"
               >
                 <Scan className="w-5 h-5" />
-                Demo AI Analysis
+                {scanDemoRunning ? "Scanning..." : "Demo AI Analysis"}
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               {/* Live Scan Preview */}
-              <LiveScanPreview />
+              <LiveScanPreview isRunning={scanDemoRunning} containerRef={scanPreviewRef} />
               
               {/* 3-step grid */}
               <div className="tru-ai-steps-grid">
