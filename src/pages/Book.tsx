@@ -42,17 +42,40 @@ function FakeAgentView() {
   );
 }
 
+// Typing indicator for Trudy chat
+function ChatTypingIndicator() {
+  return (
+    <div className="flex items-center gap-1 text-xs text-white/50 py-1">
+      <span className="font-bold text-white/70">Trudy</span>
+      <span className="flex gap-0.5 ml-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
+      </span>
+    </div>
+  );
+}
+
+// Realistic inventory items with actual images
+const inventoryItems = [
+  { name: "3-Cushion Sofa", room: "Living Room", qty: 1, image: "/inventory/living-room/sofa-3-cushion.png", weight: 180 },
+  { name: "55\" Plasma TV", room: "Living Room", qty: 1, image: "/inventory/living-room/tv-plasma.png", weight: 65 },
+  { name: "Armchair", room: "Living Room", qty: 2, image: "/inventory/living-room/armchair.png", weight: 85 },
+  { name: "Coffee Table", room: "Living Room", qty: 1, image: "/inventory/living-room/coffee-table.png", weight: 45 },
+  { name: "Queen Bed", room: "Bedroom", qty: 1, image: "/inventory/bedroom/bed-queen.png", weight: 150 },
+  { name: "Dresser", room: "Bedroom", qty: 1, image: "/inventory/bedroom/dresser.png", weight: 120 },
+  { name: "Nightstand", room: "Bedroom", qty: 2, image: "/inventory/bedroom/nightstand.png", weight: 35 },
+  { name: "Medium Box", room: "General", qty: 8, image: "/inventory/boxes/medium-box.png", weight: 25 },
+  { name: "Refrigerator", room: "Kitchen", qty: 1, image: "/inventory/appliances/refrigerator.png", weight: 250 },
+  { name: "Washer", room: "Laundry", qty: 1, image: "/inventory/appliances/washer.png", weight: 170 },
+];
+
+// Calculate totals
+const totalItems = inventoryItems.reduce((sum, item) => sum + item.qty, 0);
+const totalWeight = inventoryItems.reduce((sum, item) => sum + (item.weight * item.qty), 0);
+
 // Inventory Share Modal - Floating window showing customer's inventory
 function InventoryShareModal({ onClose }: { onClose: () => void }) {
-  const mockItems = [
-    { name: "3-Seat Sofa", room: "Living Room", qty: 1, icon: "🛋" },
-    { name: "55\" Smart TV", room: "Living Room", qty: 1, icon: "📺" },
-    { name: "Armchair", room: "Living Room", qty: 2, icon: "🪑" },
-    { name: "Coffee Table", room: "Living Room", qty: 1, icon: "☕" },
-    { name: "Medium Box", room: "Bedroom", qty: 4, icon: "📦" },
-    { name: "Queen Bed Frame", room: "Bedroom", qty: 1, icon: "🛏" },
-  ];
-  
   return (
     <div className="absolute inset-4 flex items-center justify-center z-10">
       {/* Modal */}
@@ -75,14 +98,23 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
         {/* Inventory Content */}
         <div className="p-4 max-h-[300px] overflow-y-auto">
           <div className="space-y-2">
-            {mockItems.map((item, i) => (
+            {inventoryItems.map((item, i) => (
               <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                <span className="text-xl">{item.icon}</span>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-slate-800 dark:text-white">{item.name}</p>
+                <div className="w-10 h-10 rounded-md bg-white dark:bg-slate-600 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-500">
+                  <img 
+                    src={item.image} 
+                    alt={item.name} 
+                    className="w-8 h-8 object-contain mix-blend-multiply dark:mix-blend-normal"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-slate-800 dark:text-white truncate">{item.name}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{item.room}</p>
                 </div>
-                <span className="text-sm font-bold text-slate-600 dark:text-slate-300">×{item.qty}</span>
+                <div className="text-right">
+                  <span className="text-sm font-bold text-slate-600 dark:text-slate-300">×{item.qty}</span>
+                  <p className="text-[10px] text-slate-400">{item.weight} lbs</p>
+                </div>
               </div>
             ))}
           </div>
@@ -90,7 +122,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
         
         {/* Footer */}
         <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-600 flex items-center justify-between">
-          <span className="text-xs text-slate-500 dark:text-slate-400">10 items • Est. 1,850 lbs</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
           <span className="text-xs text-primary font-medium flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             Live sharing
@@ -101,20 +133,74 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+// Trudy's contextual responses
+const trudyResponses = [
+  "Great question! I'm checking that for you now.",
+  "That's a common concern - let me explain how we handle that.",
+  "Absolutely! I'll make a note of that in your profile.",
+  "I see that on my end. Let's walk through it together.",
+  "Good thinking! That's exactly what I'd recommend.",
+  "Let me pull up those details for you real quick.",
+];
+
 // Demo Video Placeholder Component - shows fake video call experience
 function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [chatMessages, setChatMessages] = useState<{ from: string; text: string }[]>([
-    { from: "Support", text: "Hi! I'm here to help you with your move." },
-  ]);
+  const [chatMessages, setChatMessages] = useState<{ from: string; text: string }[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [hasRunTimeline, setHasRunTimeline] = useState(false);
+
+  // Simulated Trudy conversation timeline
+  useEffect(() => {
+    if (hasRunTimeline) return;
+    setHasRunTimeline(true);
+
+    const timeline: { delay: number; text?: string; typing?: boolean }[] = [
+      { delay: 500, text: "Hi! I'm Trudy, your TruMove specialist. I can see you've joined! 👋" },
+      { delay: 4000, typing: true },
+      { delay: 6000, text: "I notice you're exploring our inventory tools. Would you like me to show you how screen sharing works?" },
+      { delay: 11000, typing: true },
+      { delay: 13000, text: "Click 'Share Screen' below and I can help you review your inventory in real-time!" },
+      { delay: 20000, text: "Take your time - I'm here whenever you're ready! 😊" },
+    ];
+
+    const timeouts: NodeJS.Timeout[] = [];
+
+    timeline.forEach((event) => {
+      const timeout = setTimeout(() => {
+        if (event.typing) {
+          setIsTyping(true);
+        } else if (event.text) {
+          setIsTyping(false);
+          setChatMessages(prev => [...prev, { from: "Trudy", text: event.text! }]);
+        }
+      }, event.delay);
+      timeouts.push(timeout);
+    });
+
+    return () => {
+      timeouts.forEach(clearTimeout);
+    };
+  }, [hasRunTimeline]);
 
   const handleShareScreen = () => {
     setIsScreenSharing(!isScreenSharing);
     if (!isScreenSharing) {
-      toast.success("Screen sharing started - Both parties can now view and collaborate on documents");
+      toast.success("Screen sharing started");
+      // Trudy responds to screen share
+      setTimeout(() => {
+        setIsTyping(true);
+      }, 800);
+      setTimeout(() => {
+        setIsTyping(false);
+        setChatMessages(prev => [...prev, { 
+          from: "Trudy", 
+          text: "Perfect! I can see your inventory now. Let me walk you through each item..." 
+        }]);
+      }, 2000);
     } else {
       toast("Screen sharing stopped");
     }
@@ -122,12 +208,15 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      setChatMessages([...chatMessages, { from: "You", text: newMessage }]);
+      setChatMessages(prev => [...prev, { from: "You", text: newMessage }]);
       setNewMessage("");
-      // Simulate support response
+      // Show typing then respond
+      setTimeout(() => setIsTyping(true), 500);
       setTimeout(() => {
-        setChatMessages(prev => [...prev, { from: "Support", text: "I can see your screen now. Let me help you with the inventory." }]);
-      }, 1500);
+        setIsTyping(false);
+        const response = trudyResponses[Math.floor(Math.random() * trudyResponses.length)];
+        setChatMessages(prev => [...prev, { from: "Trudy", text: response }]);
+      }, 2000);
     }
   };
 
@@ -160,18 +249,19 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
           )}
         </div>
 
-        {/* Chat panel (collapsed) */}
-        <div className="absolute top-4 right-4 w-64 bg-black/60 backdrop-blur-sm rounded-lg overflow-hidden border border-white/10">
+        {/* Chat panel */}
+        <div className="absolute top-4 right-4 w-72 bg-black/70 backdrop-blur-sm rounded-lg overflow-hidden border border-white/10">
           <div className="p-2 border-b border-white/10 flex items-center gap-2">
             <MessageSquare className="w-4 h-4 text-white/60" />
-            <span className="text-xs font-medium text-white/80">Chat</span>
+            <span className="text-xs font-medium text-white/80">Chat with Trudy</span>
           </div>
-          <div className="h-24 overflow-y-auto p-2 space-y-1">
+          <div className="h-32 overflow-y-auto p-2 space-y-1.5">
             {chatMessages.map((msg, i) => (
-              <div key={i} className={`text-xs ${msg.from === "You" ? "text-primary" : "text-white/70"}`}>
+              <div key={i} className={`text-xs ${msg.from === "You" ? "text-primary" : "text-white/80"}`}>
                 <span className="font-bold">{msg.from}:</span> {msg.text}
               </div>
             ))}
+            {isTyping && <ChatTypingIndicator />}
           </div>
           <div className="p-2 border-t border-white/10 flex gap-1">
             <input
