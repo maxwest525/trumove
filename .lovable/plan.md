@@ -1,66 +1,106 @@
 
-
-# Fix Carousel Preview Card Sizing - Show Only 4 Cards
+# Fix Carousel to Show Exactly 4 Cards - No 5th Card Visible
 
 ## Problem Analysis
 
-The carousel currently has conflicting sizing rules:
+Looking at your screenshot, the 5th card ("TruMove Specialist") is peeking through on the right side. This happens because:
 
-1. **In JSX (`FeatureCarousel.tsx` line 153)**: `basis-1/2 md:basis-1/4` - shows 2 cards by default, 4 on md+
-2. **In CSS (`index.css` line 16708)**: `flex: 0 0 25% !important` - forces 25% width (4 cards)
-
-The CSS `!important` rule should override the Tailwind classes, but there may be specificity issues or the Tailwind classes are being applied after. Additionally, the padding on items (`padding: 0 8px`) affects the visible card width.
-
----
+1. **Container padding**: `.features-carousel-content` has `padding: 8px 24px 8px 8px` (24px on right)
+2. **Item padding**: Each `.features-carousel-item` has `padding: 0 8px` for spacing between cards
+3. **25% width calculation**: The `flex: 0 0 25%` is calculated on the container width, but the combined padding creates space for a 5th card to peek through
 
 ## Solution
 
-Ensure consistent 4-card display by:
-1. Updating the JSX to use `basis-1/4` only (remove `basis-1/2`)
-2. Confirming the CSS properly enforces 25% width for 4 visible cards
+Adjust the item width calculation to account for the total padding, ensuring exactly 4 cards fit with no overflow:
+
+### Option 1: Use calc() for precise sizing (Recommended)
+Calculate the exact width accounting for padding: `calc(25% - 4px)` or similar adjustment
+
+### Option 2: Add overflow:hidden to carousel container
+Add `overflow-x: clip` to the parent container (not `hidden` which would break hover effects)
 
 ---
 
 ## Implementation
 
-### File: `src/components/FeatureCarousel.tsx`
+### File: `src/index.css`
 
-**Line 153 - Remove the mobile-first 2-card sizing:**
+**Lines 16706-16719 - Adjust item width:**
 
-```tsx
-// Before:
-<CarouselItem key={index} className="features-carousel-item basis-1/2 md:basis-1/4">
-
-// After:
-<CarouselItem key={index} className="features-carousel-item">
+```css
+/* 4 cards visible - exact 25% with padding accounted for */
+.features-carousel-item {
+  flex: 0 0 calc(25% - 4px) !important;  /* Reduced to prevent 5th card peek */
+  min-width: 0;
+  padding: 0 8px !important;
+  margin: 0 !important;
+  position: relative;
+  overflow: visible !important;
+  box-sizing: border-box;
+  z-index: 1;
+  /* Scroll snap point */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
 ```
 
-The CSS class `.features-carousel-item` already handles the sizing with `flex: 0 0 25% !important`, and the responsive breakpoints in CSS handle tablet/mobile sizing correctly. Removing the Tailwind basis classes eliminates any potential conflict.
+**Lines 16696-16704 - Also adjust content padding:**
+
+```css
+.features-carousel-content {
+  display: flex;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 8px 0 8px 8px;  /* Remove right padding - let cards fill space */
+  /* Smooth scroll snap enhancement */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+```
+
+**Additionally, update responsive breakpoints (lines 16890-16894, 16897-16900, 16912-16916):**
+
+```css
+/* Responsive: 3 cards on large tablet */
+@media (max-width: 1279px) {
+  .features-carousel-item {
+    flex: 0 0 calc(33.333% - 4px) !important;
+  }
+}
+
+/* Responsive: 2 cards on tablet */
+@media (max-width: 1024px) {
+  .features-carousel-item {
+    flex: 0 0 calc(50% - 4px) !important;
+  }
+}
+
+/* Responsive: 1 card on mobile */
+@media (max-width: 640px) {
+  .features-carousel-item {
+    flex: 0 0 calc(100% - 4px) !important;
+    padding: 0 4px !important;
+  }
+}
+```
 
 ---
 
 ## Technical Summary
 
-| File | Line | Change |
-|------|------|--------|
-| `src/components/FeatureCarousel.tsx` | 153 | Remove `basis-1/2 md:basis-1/4` from className |
-
----
-
-## Design Notes
-
-- **Desktop (1280px+)**: 4 cards visible (25% each via CSS)
-- **Large tablet (1024-1279px)**: 3 cards visible (33.333% via CSS media query)
-- **Tablet (641-1024px)**: 2 cards visible (50% via CSS media query)
-- **Mobile (≤640px)**: 1 card visible (100% via CSS media query)
-
-The CSS already has proper responsive breakpoints at lines 16890-16930. By removing the conflicting Tailwind classes, the CSS rules will apply cleanly without any specificity battles.
+| File | Lines | Change |
+|------|-------|--------|
+| `src/index.css` | 16700 | Remove right padding: `padding: 8px 0 8px 8px` |
+| `src/index.css` | 16708 | Use calc: `flex: 0 0 calc(25% - 4px)` |
+| `src/index.css` | 16892 | Update tablet: `flex: 0 0 calc(33.333% - 4px)` |
+| `src/index.css` | 16899 | Update tablet: `flex: 0 0 calc(50% - 4px)` |
+| `src/index.css` | 16914 | Update mobile: `flex: 0 0 calc(100% - 4px)` |
 
 ---
 
 ## Expected Result
 
-- Exactly 4 cards visible at a time on desktop screens
-- Smooth responsive behavior as screen size decreases
-- No conflicting sizing rules between Tailwind and custom CSS
-
+- Exactly 4 cards visible on desktop with no 5th card peeking through
+- Proper responsive behavior at all breakpoints (3 cards → 2 cards → 1 card)
+- Hover pop-out effects still work correctly
+- Smooth scroll snap behavior maintained
