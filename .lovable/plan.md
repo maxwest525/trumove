@@ -1,27 +1,32 @@
 
 
-# Navigation Bar Styling Updates
+# Increase Shadow Intensity & Border Thickness on Hero Cards
 
 ## Current State
 
-The header navigation currently has:
-- Nav link text color: `hsl(var(--tm-ink) / 0.7)` (gray/muted)
-- Gap between nav items: `12px`
-- Call button and Theme Toggle in `.header-actions` with `margin-left: 32px` and `padding-right: 140px`
-- Agent Login button absolutely positioned at `right: 24px`
+The cards currently have subtle shadows and borders that feel too light:
+
+| Card | Current Border | Current Shadow Opacity |
+|------|----------------|----------------------|
+| Feature Cards | `2px solid hsl(--tm-ink / 0.15)` | 0.12, 0.10, 0.08 |
+| Form Card | `2px solid hsl(--tm-ink / 0.12)` | 0.08, 0.16, 0.12 |
+| Why TruMove | `2px solid hsl(--tm-ink / 0.12)` | 0.08, 0.14, 0.12 |
+
+---
 
 ## Changes to Make
 
-### 1. Make Navigation Text Black
-Change the `.header-nav-link` color from the muted gray (`hsl(var(--tm-ink) / 0.7)`) to solid black (`hsl(var(--tm-ink))`).
+### 1. Increase Border Thickness & Opacity
+Change borders from `2px` to `3px` and increase opacity for more definition:
+- Feature Cards: `3px solid hsl(var(--tm-ink) / 0.25)`
+- Form Card: `3px solid hsl(var(--tm-ink) / 0.20)`
+- Why TruMove: `3px solid hsl(var(--tm-ink) / 0.20)`
 
-### 2. Increase Spacing Between Navigation Links
-Increase the gap in `.header-nav` from `12px` to `20px` for better separation.
-
-Also adjust the divider positioning to account for the wider gap.
-
-### 3. Move Call & Theme Toggle Closer to Agent Login
-Reduce the `padding-right` in `.header-actions` from `140px` to something smaller like `80px` to bring Call and Theme Toggle closer to the Agent Login button.
+### 2. Boost Shadow Intensity
+Increase shadow opacity values by roughly 50-80% for more dramatic depth:
+- Bump base shadows from 0.08-0.12 → 0.15-0.20
+- Boost mid-layer shadows from 0.10-0.16 → 0.20-0.28
+- Increase deep layer and glow from 0.08-0.12 → 0.15-0.20
 
 ---
 
@@ -29,69 +34,112 @@ Reduce the `padding-right` in `.header-actions` from `140px` to something smalle
 
 ### File: `src/index.css`
 
-**Change 1: Lines 11301-11306 - Increase nav gap**
+**Change 1: Feature Cards (Lines 1860-1864)**
 ```css
-.header-nav {
-  display: flex;
-  align-items: center;
-  gap: 20px;  /* Was 12px */
-  margin-left: auto;
-}
+/* Before */
+border: 2px solid hsl(var(--tm-ink) / 0.15);
+box-shadow: 
+  0 4px 12px hsl(var(--tm-ink) / 0.12),
+  0 8px 32px hsl(var(--tm-ink) / 0.10),
+  0 16px 48px hsl(var(--primary) / 0.08);
+
+/* After */
+border: 3px solid hsl(var(--tm-ink) / 0.25);
+box-shadow: 
+  0 4px 12px hsl(var(--tm-ink) / 0.20),
+  0 8px 32px hsl(var(--tm-ink) / 0.18),
+  0 16px 48px hsl(var(--primary) / 0.15);
 ```
 
-**Change 2: Lines 11317 - Adjust divider position**
+**Change 2: Feature Cards Hover (Lines 1895-1899)**
 ```css
-.header-nav-item:not(:last-child)::after {
-  right: -10px;  /* Was -6px, adjust for wider gap */
-}
+/* Before */
+border-color: hsl(var(--primary) / 0.5);
+box-shadow: 
+  0 12px 32px hsl(var(--primary) / 0.2),
+  0 24px 64px hsl(var(--tm-ink) / 0.15),
+  0 0 0 2px hsl(var(--primary) / 0.25);
+
+/* After */
+border-color: hsl(var(--primary) / 0.6);
+box-shadow: 
+  0 12px 32px hsl(var(--primary) / 0.35),
+  0 24px 64px hsl(var(--tm-ink) / 0.25),
+  0 0 0 3px hsl(var(--primary) / 0.35);
 ```
 
-**Change 3: Lines 11330-11342 - Make nav link text black**
+**Change 3: Form Card (Lines 7308-7313)**
 ```css
-.header-nav-link {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  color: hsl(var(--tm-ink));  /* Was hsl(var(--tm-ink) / 0.7) */
-  text-decoration: none;
-  border-radius: 20px;
-  transition: all 200ms ease;
-}
+/* Before */
+border: 2px solid hsl(var(--tm-ink) / 0.12);
+box-shadow:
+  0 4px 12px hsl(var(--tm-ink) / 0.08),
+  0 16px 48px hsl(var(--tm-ink) / 0.16),
+  0 32px 80px hsl(var(--tm-ink) / 0.12),
+  0 0 0 1px hsl(var(--primary) / 0.08);
+
+/* After */
+border: 3px solid hsl(var(--tm-ink) / 0.20);
+box-shadow:
+  0 4px 12px hsl(var(--tm-ink) / 0.15),
+  0 16px 48px hsl(var(--tm-ink) / 0.28),
+  0 32px 80px hsl(var(--tm-ink) / 0.20),
+  0 0 0 2px hsl(var(--primary) / 0.12);
 ```
 
-**Change 4: Lines 11397-11404 - Reduce padding-right in header-actions**
+**Change 4: Why TruMove Card (Lines 26386-26392)**
 ```css
-.header-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-left: 32px;
-  padding-right: 80px;  /* Was 140px - closer to Agent Login */
-}
+/* Before */
+border: 2px solid hsl(var(--tm-ink) / 0.12);
+box-shadow: 
+  0 4px 12px hsl(var(--tm-ink) / 0.08),
+  0 12px 40px hsl(var(--tm-ink) / 0.14),
+  0 24px 64px hsl(var(--primary) / 0.12);
+
+/* After */
+border: 3px solid hsl(var(--tm-ink) / 0.20);
+box-shadow: 
+  0 4px 12px hsl(var(--tm-ink) / 0.15),
+  0 12px 40px hsl(var(--tm-ink) / 0.25),
+  0 24px 64px hsl(var(--primary) / 0.20);
+```
+
+**Change 5: Why TruMove Card Hover (Lines 26400-26404)**
+```css
+/* Before */
+border-color: hsl(var(--primary) / 0.35);
+box-shadow: 
+  0 8px 24px hsl(var(--primary) / 0.18),
+  0 20px 56px hsl(var(--tm-ink) / 0.18),
+  0 32px 80px hsl(var(--primary) / 0.12);
+
+/* After */
+border-color: hsl(var(--primary) / 0.50);
+box-shadow: 
+  0 8px 24px hsl(var(--primary) / 0.30),
+  0 20px 56px hsl(var(--tm-ink) / 0.28),
+  0 32px 80px hsl(var(--primary) / 0.20);
 ```
 
 ---
 
 ## Technical Summary
 
-| Element | Before | After |
-|---------|--------|-------|
-| Nav link text | `hsl(var(--tm-ink) / 0.7)` (muted) | `hsl(var(--tm-ink))` (black) |
-| Nav gap | `12px` | `20px` |
-| Divider position | `right: -6px` | `right: -10px` |
-| Actions padding-right | `140px` | `80px` |
+| Card | Border Change | Shadow Opacity Change |
+|------|---------------|----------------------|
+| Feature Cards | `2px / 0.15` → `3px / 0.25` | +60-80% more intense |
+| Feature Hover | Outer ring `2px` → `3px` | +50-75% more intense |
+| Form Card | `2px / 0.12` → `3px / 0.20` | +75-90% more intense |
+| Why TruMove | `2px / 0.12` → `3px / 0.20` | +60-80% more intense |
+| Why TruMove Hover | Border `0.35` → `0.50` | +55-65% more intense |
 
 ---
 
 ## Expected Result
 
-- Navigation links appear in solid black text for better readability
-- Navigation items have more visual breathing room (20px gaps)
-- Call button and Light/Dark toggle are positioned closer to the Agent Login button on the right side
-- Overall header feels more balanced and legible
+- Cards have thick, clearly visible 3px borders
+- Shadows are noticeably deeper and more pronounced
+- Cards feel more substantial and "grounded" on the page
+- Hover states show even more dramatic lift and glow effects
+- Overall hero section has a premium, high-contrast aesthetic
 
