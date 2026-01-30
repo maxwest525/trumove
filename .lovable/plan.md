@@ -1,213 +1,123 @@
 
 
-# Plan: Enhanced Demo Mode - Professional Employee Image & Interactive Inventory Modal
+# Plan: Fix Chat Modal Dark Mode Styling and "TruDy" Capitalization
 
 ## Overview
 
-Update the `/book` video consult demo mode with:
-1. **Professional woman employee image for Trudy** - Replace the current avatar with a realistic professional headshot
-2. **Interactive inventory modal** - Make items clickable with +/- quantity controls, similar to the actual inventory builder
+The user identified issues with the chat modal in dark mode:
+1. "TruDy" should be "Trudy" (consistent capitalization)
+2. Header and footer are white in dark mode instead of dark
+3. Colors aren't aligned with dark mode theming
+
+## Root Cause Analysis
+
+### Issue 1: "TruDy" Capitalization
+Multiple files use "TruDy" instead of "Trudy":
+- `ChatModal.tsx` line 59: "Ask TruDy" button
+- `AIChatContainer.tsx` line 228: "TruDy with TruMove" header
+- `AIChatContainer.tsx` lines 225, 270: alt text "TruDy"
+- `ChatMessage.tsx` line 15: alt text "TruDy"
+- `TypingIndicator.tsx` line 7: alt text "TruDy"
+- `pageContextConfig.ts`: Multiple "TruDy" in welcome messages
+
+### Issue 2: Dark Mode Styling Missing
+The CSS has hardcoded `#ffffff` backgrounds without dark mode overrides:
+
+**Light mode (current):**
+```css
+.chat-modal-panel { background: #ffffff; }
+.chat-modal-header { background: linear-gradient(180deg, #ffffff, hsl(var(--primary) / 0.03)); }
+.chat-modal-footer { /* no explicit background, inherits white */ }
+```
+
+**Missing dark mode overrides** - there are no `.dark .chat-modal-*` rules in the CSS.
+
+### Bonus Fix
+Found typo in `FloatingTruckChat.tsx` line 92: "AI Chat Assitance" should be "AI Chat Assistance"
 
 ---
 
-## Implementation Details
+## File Changes
 
-### 1. Professional Trudy Image
+### 1. `src/components/chat/ChatModal.tsx`
+**Line 59:** Change "Ask TruDy" to "Ask Trudy"
 
-**Current State:** Uses `trudyAvatar.png` - a stylized/avatar image
+### 2. `src/components/chat/AIChatContainer.tsx`
+**Line 225:** Change alt="TruDy" to alt="Trudy"
+**Line 228:** Change "TruDy with TruMove" to "Trudy with TruMove"
+**Line 270:** Change alt="TruDy" to alt="Trudy"
 
-**Solution:** Use a professional stock photo of a woman in a customer service/office setting. Since we don't have one in assets, we'll use a high-quality placeholder service like `randomuser.me` or similar for a professional female headshot.
+### 3. `src/components/chat/ChatMessage.tsx`
+**Line 15:** Change alt="TruDy" to alt="Trudy"
 
-**Update `FakeAgentView` component:**
-```tsx
-function FakeAgentView() {
-  return (
-    <div className="text-center">
-      <div className="relative inline-block mb-4">
-        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/30 shadow-xl">
-          {/* Professional woman employee photo */}
-          <img 
-            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face" 
-            alt="Trudy - Moving Specialist" 
-            className="w-full h-full object-cover" 
-          />
-        </div>
-        <div className="absolute inset-0 rounded-full border-4 border-primary animate-ping opacity-20" />
-      </div>
-      <p className="text-white font-bold text-lg">Trudy Martinez</p>
-      <p className="text-white/60 text-sm">Senior Moving Specialist</p>
-      <div className="flex items-center justify-center gap-1.5 mt-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-        <span className="text-green-400 text-xs font-medium">Speaking...</span>
-      </div>
-    </div>
-  );
+### 4. `src/components/chat/TypingIndicator.tsx`
+**Line 7:** Change alt="TruDy" to alt="Trudy"
+
+### 5. `src/components/chat/pageContextConfig.ts`
+Update all "TruDy" occurrences to "Trudy" in welcome messages:
+- Line 22: "Hi! I'm Trudy, your TruMove moving assistant..."
+- Line 82: "...I'm Trudy, here to help!..."
+- Line 92: "Hi! I'm Trudy, your TruMove moving assistant..."
+
+### 6. `src/components/FloatingTruckChat.tsx`
+**Line 92:** Fix typo "AI Chat Assitance" to "AI Chat Assistance"
+
+### 7. `src/index.css`
+Add dark mode overrides for chat modal (after line ~11309):
+
+```css
+/* Chat Modal Dark Mode */
+.dark .chat-modal-panel {
+  background: hsl(var(--card));
+}
+
+.dark .chat-modal-header {
+  background: linear-gradient(180deg, hsl(var(--card)), hsl(var(--muted) / 0.5));
+  border-color: hsl(var(--border));
+}
+
+.dark .chat-modal-close {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .chat-modal-close:hover {
+  background: hsl(var(--foreground) / 0.1);
+  color: hsl(var(--foreground));
+}
+
+.dark .chat-modal-footer {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .chat-modal-link {
+  color: hsl(var(--primary));
 }
 ```
 
 ---
 
-### 2. Interactive Inventory Modal
-
-**Current State:** Static list of items with no click interaction
-
-**New Features:**
-- +/- buttons on each item to adjust quantity
-- Visual feedback when quantity changes (highlight animation)
-- Dynamic total recalculation
-- Delete button to remove items entirely
-- More realistic "active editing" feel
-
-**Update `InventoryShareModal` component:**
-
-```tsx
-function InventoryShareModal({ onClose }: { onClose: () => void }) {
-  const [items, setItems] = useState(inventoryItems.map(item => ({ ...item })));
-
-  const updateQuantity = (index: number, delta: number) => {
-    setItems(prev => prev.map((item, i) => 
-      i === index ? { ...item, qty: Math.max(0, item.qty + delta) } : item
-    ).filter(item => item.qty > 0));
-  };
-
-  const removeItem = (index: number) => {
-    setItems(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const totalItems = items.reduce((sum, item) => sum + item.qty, 0);
-  const totalWeight = items.reduce((sum, item) => sum + (item.weight * item.qty), 0);
-
-  return (
-    <div className="absolute inset-4 flex items-center justify-center z-10">
-      <div className="w-full max-w-lg bg-white dark:bg-slate-800 rounded-xl shadow-2xl ...">
-        {/* Window Chrome - unchanged */}
-        
-        {/* Inventory Content - Now Interactive */}
-        <div className="p-4 max-h-[300px] overflow-y-auto">
-          <div className="space-y-2">
-            {items.map((item, i) => (
-              <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50 group hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                {/* Image thumbnail */}
-                <div className="w-10 h-10 rounded-md bg-white ...">
-                  <img src={item.image} alt={item.name} className="..." />
-                </div>
-                
-                {/* Item info */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium ...">{item.name}</p>
-                  <p className="text-xs ...">{item.room}</p>
-                </div>
-                
-                {/* Quantity controls - NEW */}
-                <div className="flex items-center gap-1">
-                  <button 
-                    onClick={() => updateQuantity(i, -1)}
-                    className="w-6 h-6 rounded bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors"
-                  >
-                    <Minus className="w-3 h-3" />
-                  </button>
-                  <span className="w-8 text-center text-sm font-bold">{item.qty}</span>
-                  <button 
-                    onClick={() => updateQuantity(i, 1)}
-                    className="w-6 h-6 rounded bg-primary/20 hover:bg-primary/30 flex items-center justify-center text-primary transition-colors"
-                  >
-                    <Plus className="w-3 h-3" />
-                  </button>
-                </div>
-                
-                {/* Delete button - visible on hover */}
-                <button 
-                  onClick={() => removeItem(i)}
-                  className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 flex items-center justify-center text-red-500 transition-all"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ))}
-          </div>
-          
-          {/* Empty state */}
-          {items.length === 0 && (
-            <div className="text-center py-8 text-slate-400">
-              <Package className="w-10 h-10 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No items in inventory</p>
-            </div>
-          )}
-        </div>
-        
-        {/* Footer with dynamic totals */}
-        <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t ...">
-          <span className="text-xs ...">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
-          <span className="text-xs text-primary font-medium ...">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Live sharing
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-```
-
----
-
-## Visual Preview
-
-**Trudy Video Feed:**
-```text
-┌─────────────────────────────────────┐
-│                                     │
-│      ┌───────────────────┐          │
-│      │                   │          │
-│      │  [Professional    │          │
-│      │   woman photo     │          │
-│      │   with headset]   │          │
-│      │                   │          │
-│      └───────────────────┘          │
-│                                     │
-│      Trudy Martinez                 │
-│   Senior Moving Specialist          │
-│      ● Speaking...                  │
-│                                     │
-└─────────────────────────────────────┘
-```
-
-**Interactive Inventory Modal:**
-```text
-┌────────────────────────────────────────────────────────┐
-│ ● ● ●    Customer's Screen - My Move Inventory         │
-├────────────────────────────────────────────────────────┤
-│                                                        │
-│ [img] 3-Cushion Sofa     Living Room   [-] 1 [+]  [×] │
-│ [img] 55" Plasma TV      Living Room   [-] 1 [+]  [×] │
-│ [img] Armchair           Living Room   [-] 2 [+]  [×] │
-│ [img] Queen Bed          Bedroom       [-] 1 [+]  [×] │
-│ [img] Medium Box         General       [-] 8 [+]  [×] │
-│                                                        │
-├────────────────────────────────────────────────────────┤
-│ 19 items • Est. 1,890 lbs           🟢 Live sharing    │
-└────────────────────────────────────────────────────────┘
-```
-
----
-
-## Files Changed
+## Summary of Changes
 
 | File | Change |
 |------|--------|
-| `src/pages/Book.tsx` | Update `FakeAgentView` with professional photo, make `InventoryShareModal` interactive with quantity controls |
+| `ChatModal.tsx` | "TruDy" → "Trudy" (1 occurrence) |
+| `AIChatContainer.tsx` | "TruDy" → "Trudy" (3 occurrences) |
+| `ChatMessage.tsx` | "TruDy" → "Trudy" (1 occurrence) |
+| `TypingIndicator.tsx` | "TruDy" → "Trudy" (1 occurrence) |
+| `pageContextConfig.ts` | "TruDy" → "Trudy" (3 occurrences) |
+| `FloatingTruckChat.tsx` | Fix "Assitance" → "Assistance" |
+| `index.css` | Add dark mode styles for `.chat-modal-*` components |
 
 ---
 
 ## Testing Checklist
 
-1. Navigate to /book and enter "demo"
-2. Verify Trudy shows as a professional woman employee (realistic photo)
-3. Click "Share Screen" to open inventory modal
-4. Click +/- buttons on items and verify quantities update
-5. Verify totals recalculate dynamically
-6. Hover over items and verify delete button appears
-7. Delete an item and verify it disappears
-8. Delete all items and verify empty state appears
-9. Test in both light and dark mode
+1. Toggle to dark mode and open the chat modal
+2. Verify header has dark background (not white)
+3. Verify footer has dark background (not white)
+4. Verify all text shows "Trudy" (not "TruDy")
+5. Verify floating button shows "AI Chat Assistance" (spelling fixed)
+6. Test in both light and dark modes for consistent appearance
 
