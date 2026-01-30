@@ -1,44 +1,28 @@
 
 
-# Remove Green Accent Bar from Quote Form Header
+# Update Quote Wizard Headline
 
 ## Overview
-Remove the 3px green gradient accent bar from the homepage quote form header in both light and dark modes, as the progress bar provides sufficient visual hierarchy.
+Change the Step 1 headline from "Build Your Free Estimate Now!" to "GET YOUR QUOTE NOW!"
 
 ---
 
 ## Change
 
-### File: `src/index.css`
+### File: `src/pages/Index.tsx`
 
-**Lines 4320-4329 - Remove the `::before` pseudo-element:**
+**Line 1043:**
 
-```css
-/* REMOVE this entire block */
-.tru-qb-form-header.tru-qb-form-header-pill::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, hsl(142 76% 50%) 0%, hsl(160 80% 45%) 100%);
-  border-radius: 16px 16px 0 0;
-}
+```tsx
+// From
+<h1 className="tru-qb-question tru-qb-question-decorated">Build Your Free Estimate Now!</h1>
+
+// To
+<h1 className="tru-qb-question tru-qb-question-decorated">GET YOUR QUOTE NOW!</h1>
 ```
 
 ---
 
-## Visual Result
-
-| Mode | Before | After |
-|------|--------|-------|
-| Light | Gray pill + green bar at top | Gray pill only |
-| Dark | Dark pill + green bar at top | Dark pill only |
-
-The header will retain:
-- Gray pill background (light mode) / dark background (dark mode)
-- Black text "A SMARTER WAY TO" with green "MOVE"
-- Subheader "Carriers vetted against FMCSA safety records"
-- Just no green accent bar at the top
+## Result
+The Step 1 headline in the quote wizard will display "GET YOUR QUOTE NOW!" in all caps.
 
