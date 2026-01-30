@@ -326,10 +326,6 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
             <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
             DEMO MODE
           </div>
-          <div className="px-3 py-1.5 rounded-full bg-green-500/90 text-white text-xs font-bold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-white" />
-            Connected
-          </div>
         </div>
       </div>
 
