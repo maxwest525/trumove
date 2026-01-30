@@ -1,25 +1,30 @@
 
-# Fix Hero Backdrop Stacking and Cutoff Issue
+# Fix Hero Backdrop Cutoff Issue - Complete Solution
 
-## Problem Analysis
+## Root Cause Analysis
 
-The hero headline backdrop is overlaying the quote wizard and Why TruMove cards because of a z-index stacking issue:
+The issue is **NOT a z-index problem** - we've already correctly set the content panels to `z-index: 15` and the cards to `z-index: 20`. The visible cutoff is caused by:
 
-1. **Header section** (`.tru-hero-header-section.tru-hero-header-refined`) has `z-index: 10`
-2. **Content panels** (`.tru-hero-content-panel` and `.tru-hero-right-half`) only have `z-index: 1`
-3. **Backdrop** (`::before` pseudo-element) has `z-index: -1` relative to its parent, but since the parent has `z-index: 10`, the backdrop effectively stacks at `z-index: 9`
-4. This puts the backdrop ABOVE the content panels (which are at `z-index: 1`)
+1. **`.tru-hero.tru-hero-split`** has `overflow: hidden` (line 24667) - required to contain the particle animation
+2. **The backdrop pseudo-element** extends `-250px` beyond its container on the right side via `inset: -150px -250px`
+3. **The overflow: hidden** clips this extension, creating the visible hard edge you're seeing
 
-The visible cutoff on the right side is caused by the backdrop extending 250px beyond its container, hitting the `overflow: hidden` on `.tru-hero.tru-hero-split`.
+The backdrop is being cut off at the container boundary because it physically extends beyond the `overflow: hidden` container.
 
 ---
 
-## Solution
+## Solution Strategy
 
-Increase the z-index of the hero content panels to be higher than the header section so they stack above the backdrop:
+Instead of trying to extend the backdrop beyond the container (which gets clipped), we need to **contain the backdrop within the hero container** and make it work within those boundaries.
 
-- Change `.tru-hero-content-panel` and `.tru-hero-right-half` from `z-index: 1` to `z-index: 15`
-- This ensures these panels (and their child cards) stack above the header's backdrop
+### Option A: Reduce backdrop extension and adjust gradient (Recommended)
+- Change `inset` from `-150px -250px` to `-150px -100px` (less horizontal extension)
+- Adjust the gradient mask to fade more aggressively near the edges
+- This keeps the backdrop effect while preventing the hard cutoff
+
+### Option B: Apply backdrop differently
+- Remove the pseudo-element approach
+- Apply a gradient overlay directly on the header section that doesn't extend beyond
 
 ---
 
@@ -27,15 +32,44 @@ Increase the z-index of the hero content panels to be higher than the header sec
 
 ### File: `src/index.css`
 
-**Change at lines 24670-24676:**
+**Lines 26144-26179 - Adjust backdrop sizing and fade:**
 
 ```css
-/* Ensure hero content stays above particles AND header backdrop */
-.tru-hero-top-section,
-.tru-hero-content-panel,
-.tru-hero-right-half {
-  position: relative;
-  z-index: 15;  /* Changed from 1 to 15 - stack above header backdrop (z-index: 10) */
+.tru-hero-header-section.tru-hero-header-refined::before {
+  content: '';
+  position: absolute;
+  /* REDUCED: Stay within container bounds to avoid overflow clipping */
+  inset: -100px -80px;  /* Changed from -150px -250px */
+  background: radial-gradient(
+    /* Tighter ellipse centered on headline */
+    ellipse 80% 80% at 50% 50%,  /* Changed from 60% 70% */
+    hsl(0 0% 0% / 0.50) 0%,
+    hsl(0 0% 0% / 0.38) 20%,     /* Faster fade */
+    hsl(0 0% 0% / 0.18) 40%,
+    hsl(0 0% 0% / 0.06) 60%,
+    transparent 75%              /* Changed from 80% */
+  );
+  z-index: -1;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  /* Tighter mask to fade completely before hitting container edges */
+  -webkit-mask-image: radial-gradient(
+    ellipse 100% 100% at 50% 50%,  /* Changed from 160% 130% */
+    black 0%,
+    black 15%,
+    rgba(0,0,0,0.6) 35%,
+    rgba(0,0,0,0.2) 55%,
+    transparent 70%               /* Changed from 75% */
+  );
+  mask-image: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    black 0%,
+    black 15%,
+    rgba(0,0,0,0.6) 35%,
+    rgba(0,0,0,0.2) 55%,
+    transparent 70%
+  );
+  pointer-events: none;
 }
 ```
 
@@ -45,22 +79,26 @@ Increase the z-index of the hero content panels to be higher than the header sec
 
 | File | Lines | Change |
 |------|-------|--------|
-| `src/index.css` | 24675 | Change `z-index: 1` → `z-index: 15` |
+| `src/index.css` | 26148 | Change `inset: -150px -250px` → `inset: -100px -80px` |
+| `src/index.css` | 26149-26157 | Adjust gradient to fade faster |
+| `src/index.css` | 26162-26177 | Tighten mask to fade before container edge |
 
 ---
 
-## Design Notes
+## Why This Works
 
-- **z-index: 15**: Higher than the header's `z-index: 10`, ensuring content panels stack above the backdrop
-- **z-index: 20 on cards**: `.tru-form-card` and `.tru-why-card-premium` already have `z-index: 20`, which will still work correctly since their parent container is now higher
-- The `.tru-hero-top-section` is also updated for consistency, though it's less critical
-- The cutoff appearance is actually the mask gradient fading to transparency - with proper z-stacking, this will be hidden behind the cards as intended
+- **Before**: Backdrop extended 250px beyond container → got clipped by `overflow: hidden` → hard visible edge
+- **After**: Backdrop stays within container bounds → gradient fades to transparent naturally → no visible edge
+
+The backdrop will still provide the same legibility enhancement for the headline text, but now it fades to transparent BEFORE reaching the container boundary, eliminating the cutoff entirely.
 
 ---
 
-## Expected Result
+## Alternative: Remove overflow hidden (NOT recommended)
 
-- Quote wizard and Why TruMove cards appear above the hero backdrop
-- The backdrop gradient fades seamlessly behind the headline
-- No visible cutoff edges overlaying the cards
-- All card interactions (hover effects, carousels) continue to work correctly
+We could remove `overflow: hidden` from `.tru-hero.tru-hero-split`, but this would cause issues with:
+- Particle animation bleeding outside the hero section
+- Potential horizontal scrolling issues
+- Other visual elements extending beyond intended bounds
+
+The recommended approach keeps the containment while fixing the visual issue.
