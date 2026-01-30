@@ -159,7 +159,9 @@ interface MoveSummaryModalProps {
   onClose?: () => void;
 }
 
-function MoveSummaryModal({ 
+import React from "react";
+
+const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>(({ 
   fromCity, 
   toCity, 
   distance, 
@@ -168,14 +170,14 @@ function MoveSummaryModal({
   moveDate,
   estimatedDuration,
   onClose
-}: MoveSummaryModalProps) {
+}, ref) => {
   const hasData = fromCity || toCity;
   if (!hasData) return null;
 
   const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
 
   return (
-    <div className="tru-move-summary-modal">
+    <div className="tru-move-summary-modal" ref={ref}>
       {/* Top Accent Stripe */}
       <div className="tru-move-summary-accent" />
       
@@ -286,7 +288,9 @@ function MoveSummaryModal({
       </div>
     </div>
   );
-}
+});
+
+MoveSummaryModal.displayName = "MoveSummaryModal";
 
 // Live Scan Preview Component
 interface LiveScanPreviewProps {
@@ -529,6 +533,7 @@ export default function Index() {
   
   // Move Summary Modal visibility state
   const [showMoveSummary, setShowMoveSummary] = useState(true);
+  const moveSummaryRef = useRef<HTMLDivElement>(null);
   
   // Reset Move Summary visibility when locations change
   useEffect(() => {
@@ -536,6 +541,22 @@ export default function Index() {
       setShowMoveSummary(true);
     }
   }, [fromCity, toCity]);
+  
+  // Handle click outside to dismiss move summary
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showMoveSummary && 
+        moveSummaryRef.current && 
+        !moveSummaryRef.current.contains(event.target as Node)
+      ) {
+        setShowMoveSummary(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showMoveSummary]);
   
   
   // Why TruMove features data - Updated per plan
@@ -1451,6 +1472,7 @@ export default function Index() {
               {/* Move Summary Modal - appears when location data exists */}
               {showMoveSummary && (
                 <MoveSummaryModal 
+                  ref={moveSummaryRef}
                   fromCity={fromCity}
                   toCity={toCity}
                   distance={distance}
