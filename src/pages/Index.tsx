@@ -751,10 +751,13 @@ export default function Index() {
 
             {/* Hero Header with Headline + Short Subheadline */}
             <div className="tru-hero-header-section tru-hero-header-refined">
-              <h1 className="tru-hero-headline-main">
+              <h1 className="tru-hero-headline-main tru-headline-animated">
                 <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
                 A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
               </h1>
+              <p className="tru-hero-subheadline-refined tru-subheadline-animated">
+                Moving. The Way Its Supposed To Be
+              </p>
             </div>
 
             {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
@@ -1288,7 +1291,7 @@ export default function Index() {
                 <div className="tru-why-card-premium-glow" />
                 <div className="tru-why-card-premium-content">
                   <h3 className="tru-why-title-premium">
-                    Your Move. Your Terms.
+                    Why TruMove?
                   </h3>
                   <p className="tru-why-subtitle-premium tru-why-subtitle-bold-italic">
                     Skip the van line middleman. Get matched with vetted carriers who compete for your business.
@@ -1344,17 +1347,6 @@ export default function Index() {
                     </Carousel>
                   </div>
                   
-                  {/* Trust Badges */}
-                  <div className="tru-why-trust-badges">
-                    <div className="tru-why-trust-badge">
-                      <CheckCircle className="w-3.5 h-3.5" />
-                      <span>FMCSA VERIFIED</span>
-                    </div>
-                    <div className="tru-why-trust-badge">
-                      <CheckCircle className="w-3.5 h-3.5" />
-                      <span>LICENSED BROKER</span>
-                    </div>
-                  </div>
                 </div>
               </div>
               
