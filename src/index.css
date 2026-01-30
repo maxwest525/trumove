@@ -5862,6 +5862,85 @@
   color: hsl(0 0% 100% / 0.5) !important;
 }
 
+/* AI Header Badge */
+.tru-ai-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: hsl(var(--primary) / 0.1);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--primary));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.tru-ai-header-badge svg {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.15); }
+}
+
+/* AI Gradient Text */
+.tru-ai-gradient-text {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(145 80% 42%) 50%,
+    hsl(var(--primary)) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* AI Accent Line */
+.tru-ai-accent-line {
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--primary)),
+    transparent
+  );
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+
+/* Dark mode adjustments */
+.dark .tru-ai-header-badge {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.dark .tru-ai-gradient-text {
+  background: linear-gradient(
+    135deg,
+    hsl(142 70% 55%) 0%,
+    hsl(160 75% 50%) 50%,
+    hsl(142 70% 55%) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 
 /* Responsive: Stack on mobile */
 @media (max-width: 900px) {
