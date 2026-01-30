@@ -2033,7 +2033,7 @@
 }
 
 .tru-route-analysis-header svg {
-  color: hsl(var(--primary));
+  color: hsl(var(--tm-ink) / 0.7);
 }
 
 .tru-analyzing-spin {
