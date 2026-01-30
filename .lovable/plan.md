@@ -1,22 +1,18 @@
 
 
-# Reduce Dead Space in Why TruMove Card
+# Make Hero Backdrop Lighter & Tighter
 
 ## Overview
-Tighten the vertical spacing in the "Why TruMove" card by reducing gaps, margins, and padding to create a more compact layout.
+Further reduce the backdrop opacity to 35%/20% and decrease padding to make the box fit more snugly around the headline text.
 
 ---
 
 ## Current State
 
-The card has generous spacing throughout:
-
-| Element | Current Value |
-|---------|---------------|
-| Content container gap | `16px` |
-| Mission paragraph margin | `margin: 8px 0 16px 0` |
-| Inline carousel margin | `margin: 12px 0 8px 0` |
-| Subtitle margin-bottom (inline) | `12px` |
+| Property | Current Value |
+|----------|---------------|
+| Background opacity | `45%` → `30%` (top to bottom gradient) |
+| Padding | `32px 56px 40px` (top, horizontal, bottom) |
 
 ---
 
@@ -24,54 +20,41 @@ The card has generous spacing throughout:
 
 ### File: `src/index.css`
 
-**1. Reduce content container gap (line 26100):**
-```css
-/* From */
-gap: 16px;
+**1. Make backdrop lighter (lines 25917-25921):**
 
-/* To */
-gap: 10px;
+Reduce opacity from 45%/30% to 35%/20%:
+
+```css
+background: linear-gradient(
+  180deg,
+  hsl(0 0% 0% / 0.35) 0%,
+  hsl(0 0% 0% / 0.20) 100%
+);
 ```
 
-**2. Reduce mission paragraph margin (line 26138):**
+**2. Tighten padding around text (line 25907):**
+
+Reduce padding to bring the box edges closer to the words:
+
 ```css
 /* From */
-margin: 8px 0 16px 0;
+padding: 32px 56px 40px;
 
 /* To */
-margin: 4px 0 8px 0;
-```
-
-**3. Reduce inline carousel top margin (line 26143):**
-```css
-/* From */
-margin: 12px 0 8px 0;
-
-/* To */
-margin: 4px 0 8px 0;
-```
-
-### File: `src/pages/Index.tsx`
-
-**4. Reduce accent line bottom margin (line 1481):**
-```tsx
-/* From */
-style={{ marginBottom: '12px' }}
-
-/* To */
-style={{ marginBottom: '6px' }}
+padding: 20px 36px 24px;
 ```
 
 ---
 
 ## Result
 
-| Element | Before | After |
-|---------|--------|-------|
-| Content gap | 16px | 10px |
-| Mission paragraph margin | 8px 0 16px 0 | 4px 0 8px 0 |
-| Carousel top margin | 12px | 4px |
-| Accent line bottom margin | 12px | 6px |
+| Property | Before | After |
+|----------|--------|-------|
+| Top opacity | 45% | 35% |
+| Bottom opacity | 30% | 20% |
+| Top padding | 32px | 20px |
+| Horizontal padding | 56px | 36px |
+| Bottom padding | 40px | 24px |
 
-This will move the divider, subheader, and carousel closer together, reducing approximately 20-24px of vertical dead space in the card.
+The backdrop will be more transparent, allowing more of the hero image to show through, and the box will wrap more tightly around the headline text, reducing approximately 40px of total dead space.
 
