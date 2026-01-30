@@ -14402,9 +14402,9 @@
 }
 
 .tru-qb-question {
-  font-size: clamp(17px, 2.8vw, 20px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: clamp(22px, 3.5vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: hsl(var(--tm-ink));
   margin-top: 4px;
   margin-bottom: 4px;
@@ -16734,6 +16734,8 @@
   object-position: center 30%;
   border-radius: 4px;
   transition: transform 0.4s ease;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.1);
 }
 
 .features-carousel-card:hover .features-carousel-card-image-wrapper img {
