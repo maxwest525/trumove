@@ -1,123 +1,56 @@
 
+# Fix: Remove Transparent Box on Homepage
 
-# Plan: Fix Chat Modal Dark Mode Styling and "TruDy" Capitalization
+## Issue Identified
+A semi-transparent white box is appearing on the right side of the homepage hero section. Based on investigation, this appears to be caused by one of the following CSS styling issues in the hero grid layout:
 
-## Overview
+1. The `.tru-hero-right-half` wrapper
+2. The `.tru-hero-content-panel.tru-hero-stacked-cards` container  
+3. A pseudo-element (`::before` or `::after`) on one of the hero containers
 
-The user identified issues with the chat modal in dark mode:
-1. "TruDy" should be "Trudy" (consistent capitalization)
-2. Header and footer are white in dark mode instead of dark
-3. Colors aren't aligned with dark mode theming
+## Solution
 
-## Root Cause Analysis
+Add explicit styling overrides to ensure these containers have fully transparent backgrounds and no unintended visual elements:
 
-### Issue 1: "TruDy" Capitalization
-Multiple files use "TruDy" instead of "Trudy":
-- `ChatModal.tsx` line 59: "Ask TruDy" button
-- `AIChatContainer.tsx` line 228: "TruDy with TruMove" header
-- `AIChatContainer.tsx` lines 225, 270: alt text "TruDy"
-- `ChatMessage.tsx` line 15: alt text "TruDy"
-- `TypingIndicator.tsx` line 7: alt text "TruDy"
-- `pageContextConfig.ts`: Multiple "TruDy" in welcome messages
+### CSS Changes (`src/index.css`)
 
-### Issue 2: Dark Mode Styling Missing
-The CSS has hardcoded `#ffffff` backgrounds without dark mode overrides:
-
-**Light mode (current):**
-```css
-.chat-modal-panel { background: #ffffff; }
-.chat-modal-header { background: linear-gradient(180deg, #ffffff, hsl(var(--primary) / 0.03)); }
-.chat-modal-footer { /* no explicit background, inherits white */ }
-```
-
-**Missing dark mode overrides** - there are no `.dark .chat-modal-*` rules in the CSS.
-
-### Bonus Fix
-Found typo in `FloatingTruckChat.tsx` line 92: "AI Chat Assitance" should be "AI Chat Assistance"
-
----
-
-## File Changes
-
-### 1. `src/components/chat/ChatModal.tsx`
-**Line 59:** Change "Ask TruDy" to "Ask Trudy"
-
-### 2. `src/components/chat/AIChatContainer.tsx`
-**Line 225:** Change alt="TruDy" to alt="Trudy"
-**Line 228:** Change "TruDy with TruMove" to "Trudy with TruMove"
-**Line 270:** Change alt="TruDy" to alt="Trudy"
-
-### 3. `src/components/chat/ChatMessage.tsx`
-**Line 15:** Change alt="TruDy" to alt="Trudy"
-
-### 4. `src/components/chat/TypingIndicator.tsx`
-**Line 7:** Change alt="TruDy" to alt="Trudy"
-
-### 5. `src/components/chat/pageContextConfig.ts`
-Update all "TruDy" occurrences to "Trudy" in welcome messages:
-- Line 22: "Hi! I'm Trudy, your TruMove moving assistant..."
-- Line 82: "...I'm Trudy, here to help!..."
-- Line 92: "Hi! I'm Trudy, your TruMove moving assistant..."
-
-### 6. `src/components/FloatingTruckChat.tsx`
-**Line 92:** Fix typo "AI Chat Assitance" to "AI Chat Assistance"
-
-### 7. `src/index.css`
-Add dark mode overrides for chat modal (after line ~11309):
+Add/update the following rules to ensure the hero right-side containers are completely transparent:
 
 ```css
-/* Chat Modal Dark Mode */
-.dark .chat-modal-panel {
-  background: hsl(var(--card));
+/* Hero right half - ensure no background */
+.tru-hero-right-half,
+.tru-hero-right-stacked {
+  background: transparent !important;
 }
 
-.dark .chat-modal-header {
-  background: linear-gradient(180deg, hsl(var(--card)), hsl(var(--muted) / 0.5));
-  border-color: hsl(var(--border));
+/* Stacked cards container - ensure no background */
+.tru-hero-stacked-cards {
+  background: transparent !important;
 }
 
-.dark .chat-modal-close {
-  color: hsl(var(--muted-foreground));
-}
-
-.dark .chat-modal-close:hover {
-  background: hsl(var(--foreground) / 0.1);
-  color: hsl(var(--foreground));
-}
-
-.dark .chat-modal-footer {
-  background: hsl(var(--card));
-  border-color: hsl(var(--border));
-  color: hsl(var(--muted-foreground));
-}
-
-.dark .chat-modal-link {
-  color: hsl(var(--primary));
+/* Content panel - ensure no background unless it's the premium card */
+.tru-hero-content-panel {
+  background: transparent !important;
 }
 ```
 
----
-
-## Summary of Changes
-
-| File | Change |
-|------|--------|
-| `ChatModal.tsx` | "TruDy" → "Trudy" (1 occurrence) |
-| `AIChatContainer.tsx` | "TruDy" → "Trudy" (3 occurrences) |
-| `ChatMessage.tsx` | "TruDy" → "Trudy" (1 occurrence) |
-| `TypingIndicator.tsx` | "TruDy" → "Trudy" (1 occurrence) |
-| `pageContextConfig.ts` | "TruDy" → "Trudy" (3 occurrences) |
-| `FloatingTruckChat.tsx` | Fix "Assitance" → "Assistance" |
-| `index.css` | Add dark mode styles for `.chat-modal-*` components |
+Also check and remove any `::before` or `::after` pseudo-elements on `.tru-hero-content-panel` that might be creating this visual artifact.
 
 ---
 
-## Testing Checklist
+## Technical Details
 
-1. Toggle to dark mode and open the chat modal
-2. Verify header has dark background (not white)
-3. Verify footer has dark background (not white)
-4. Verify all text shows "Trudy" (not "TruDy")
-5. Verify floating button shows "AI Chat Assistance" (spelling fixed)
-6. Test in both light and dark modes for consistent appearance
+### Files to Modify
+- `src/index.css`
 
+### Implementation Steps
+1. Search for any background styling on `.tru-hero-right-half`, `.tru-hero-right-stacked`, `.tru-hero-content-panel`, and `.tru-hero-stacked-cards`
+2. Add `background: transparent` rules to override any inherited or unintended backgrounds
+3. Check for any pseudo-elements that may be rendering a box and remove or hide them
+4. Test in both light and dark mode to confirm the transparent box is gone
+
+### Verification
+- Navigate to the homepage
+- Confirm the transparent box is no longer visible on the right side
+- Ensure the quote form and "Your Move. Your Terms" card still render correctly
+- Test in both light and dark modes
