@@ -1,102 +1,145 @@
 
-# Add Demo Info Callout to AI Inventory Analysis Section
+
+# Add Gradient Accent and Decorative Elements to AI Inventory Analysis Header
 
 ## Overview
-Add an informational callout box above the "Demo AI Analysis" button to set user expectations and explain what the demo showcases before they try it.
+Enhance the "AI Inventory Analysis" header with a gradient text effect, decorative accent line, and subtle animated sparkle to create more visual impact.
 
 ---
 
-## Current Flow
-1. User sees "AI Inventory Analysis" header
-2. User clicks "Demo AI Analysis" button
-3. Lead capture modal appears (if no contact info)
-4. User navigates to `/scan-room`
+## Current State
+- Plain white/foreground text header
+- No decorative elements
+- Simple centered text styling
 
-## Problem
-Users may not understand what they're about to see or what the demo demonstrates. Adding context improves the user experience and sets proper expectations.
+## Target State
+- Gradient text effect on "AI" portion of the header
+- Decorative accent line below header
+- Subtle animated sparkle/glow effect
+- Small icon badge above the header
 
 ---
 
 ## Changes
 
-### 1. Add Demo Info Callout Component
-**File:** `src/pages/Index.tsx` (around line 1536)
+### 1. Update JSX to Add Decorative Elements
+**File:** `src/pages/Index.tsx` (line 1534)
 
-Insert an info callout between the subtitle and the button:
+Wrap the header with decorative elements:
 
 ```tsx
-{/* Demo Info Callout */}
-<div className="tru-ai-demo-info">
-  <div className="tru-ai-demo-info-icon">
-    <Info className="w-5 h-5" />
-  </div>
-  <div className="tru-ai-demo-info-content">
-    <p className="tru-ai-demo-info-title">
-      This is an interactive demo
-    </p>
-    <p className="tru-ai-demo-info-text">
-      Experience how our AI scans a room and automatically detects furniture, boxes, and appliances. 
-      The demo uses sample imagery — when you're ready, you can scan your own home.
-    </p>
-  </div>
+{/* Header Badge */}
+<div className="tru-ai-header-badge">
+  <Sparkles className="w-4 h-4" />
+  <span>Powered by AI</span>
 </div>
+
+{/* Gradient Header */}
+<h2 className="tru-ai-steps-title">
+  <span className="tru-ai-gradient-text">AI</span> Inventory Analysis
+</h2>
+
+{/* Accent Line */}
+<div className="tru-ai-accent-line" />
+
+<p className="tru-ai-steps-subtitle">...</p>
 ```
 
-### 2. Add Info Icon Import
-**File:** `src/pages/Index.tsx`
-
-Ensure `Info` icon is imported from lucide-react:
-
-```tsx
-import { Info, ... } from "lucide-react";
-```
-
-### 3. Add CSS Styling for Demo Info Callout
+### 2. Add CSS for Header Badge
 **File:** `src/index.css`
 
 ```css
-/* AI Demo Info Callout */
-.tru-ai-demo-info {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  background: hsl(var(--primary) / 0.08);
-  border: 1px solid hsl(var(--primary) / 0.2);
-  border-radius: 12px;
-  padding: 16px 20px;
-  max-width: 520px;
-  margin: 0 auto 24px;
-  text-align: left;
-}
-
-.tru-ai-demo-info-icon {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  display: flex;
+/* AI Header Badge */
+.tru-ai-header-badge {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  background: hsl(var(--primary) / 0.15);
-  border-radius: 10px;
+  gap: 6px;
+  padding: 6px 14px;
+  background: hsl(var(--primary) / 0.1);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
   color: hsl(var(--primary));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
 }
 
-.tru-ai-demo-info-content {
-  flex: 1;
+.tru-ai-header-badge svg {
+  animation: sparkle 2s ease-in-out infinite;
 }
 
-.tru-ai-demo-info-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: hsl(var(--foreground));
-  margin: 0 0 4px;
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.15); }
+}
+```
+
+### 3. Add CSS for Gradient Text
+**File:** `src/index.css`
+
+```css
+/* AI Gradient Text */
+.tru-ai-gradient-text {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(145 80% 42%) 50%,
+    hsl(var(--primary)) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 3s ease-in-out infinite;
 }
 
-.tru-ai-demo-info-text {
-  font-size: 14px;
-  color: hsl(var(--muted-foreground));
-  line-height: 1.5;
-  margin: 0;
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+```
+
+### 4. Add CSS for Accent Line
+**File:** `src/index.css`
+
+```css
+/* AI Accent Line */
+.tru-ai-accent-line {
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--primary)),
+    transparent
+  );
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+```
+
+### 5. Update Dark Mode Styles
+**File:** `src/index.css`
+
+```css
+.dark .tru-ai-header-badge {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.dark .tru-ai-gradient-text {
+  background: linear-gradient(
+    135deg,
+    hsl(142 70% 55%) 0%,
+    hsl(160 75% 50%) 50%,
+    hsl(142 70% 55%) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 ```
 
@@ -106,23 +149,14 @@ import { Info, ... } from "lucide-react";
 
 ```
 ┌──────────────────────────────────────────────┐
-│          AI Inventory Analysis               │
+│                                              │
+│           ✨ POWERED BY AI                   │  ← Badge with sparkle
+│                                              │
+│          AI Inventory Analysis               │  ← "AI" has gradient
+│           ───────────────                    │  ← Accent line
+│                                              │
 │  Take a video or pictures of your room...   │
 │                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ ℹ️  This is an interactive demo        │  │
-│  │    Experience how our AI scans a room  │  │
-│  │    and automatically detects...        │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│         [ Demo AI Analysis → ]               │
-│                                              │
-│      ┌──────────┐  ┌──────────────┐          │
-│      │ Scanner  │  │ Live Items   │          │
-│      │ Preview  │  │ Detection    │          │
-│      └──────────┘  └──────────────┘          │
-│                                              │
-│    ① Video    ② AI Detection    ③ Agent     │
 └──────────────────────────────────────────────┘
 ```
 
@@ -130,14 +164,16 @@ import { Info, ... } from "lucide-react";
 
 ## Summary
 
-| Change | File | Description |
-|--------|------|-------------|
-| Add Info import | `src/pages/Index.tsx` | Import Info icon from lucide-react |
-| Add demo info callout | `src/pages/Index.tsx` | JSX callout with icon, title, and explanation |
-| Add callout styling | `src/index.css` | Green-tinted info box with icon badge |
+| Element | Description |
+|---------|-------------|
+| Header Badge | "Powered by AI" pill with sparkle icon animation |
+| Gradient Text | Animated gradient on "AI" word that shifts colors |
+| Accent Line | Horizontal gradient line below header |
+| Dark Mode | Adjusted gradient colors for visibility |
 
 ## Visual Result
-- Clear callout explains this is a demo before users click
-- Green-tinted design matches the primary brand color
-- Icon badge draws attention without being aggressive
-- Users understand they'll see sample imagery, not their actual home
+- "Powered by AI" badge draws attention with subtle sparkle animation
+- "AI" word stands out with animated green gradient
+- Decorative accent line provides visual separation
+- Professional, polished look that emphasizes AI capabilities
+
