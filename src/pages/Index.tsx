@@ -16,6 +16,7 @@ import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import RouteAnalysisSection from "@/components/RouteAnalysisSection";
+import FeatureCarousel from "@/components/FeatureCarousel";
 import StatsStrip from "@/components/StatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallax } from "@/hooks/useParallax";
@@ -536,20 +537,6 @@ export default function Index() {
     }
   }, [fromCity, toCity]);
   
-  // Hero carousel auto-cycling state
-  const [heroCarouselApi, setHeroCarouselApi] = useState<CarouselApi>();
-  const [isHeroCarouselPaused, setIsHeroCarouselPaused] = useState(false);
-  
-  // Hero carousel autoplay effect (6-second interval)
-  useEffect(() => {
-    if (!heroCarouselApi || isHeroCarouselPaused) return;
-    
-    const intervalId = setInterval(() => {
-      heroCarouselApi.scrollNext();
-    }, 6000);
-    
-    return () => clearInterval(intervalId);
-  }, [heroCarouselApi, isHeroCarouselPaused]);
   
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
@@ -1492,50 +1479,8 @@ export default function Index() {
                     We built TruMove to cut through the complexity of the moving industry. Using AI-powered inventory scanning and live video consultations, we understand your move better than anyone. Then we vet carriers through verified FMCSA and DOT safety databases to match you with movers you can actually trust.
                   </p>
                   
-                  {/* Inline 2-Card Feature Carousel */}
-                  <div 
-                    className="tru-why-inline-carousel"
-                    onMouseEnter={() => setIsHeroCarouselPaused(true)}
-                    onMouseLeave={() => setIsHeroCarouselPaused(false)}
-                  >
-                    <Carousel
-                      setApi={setHeroCarouselApi}
-                      opts={{ align: "start", loop: true, duration: 35 }}
-                      className="tru-why-carousel"
-                    >
-                      <CarouselContent className="tru-why-carousel-content">
-                        {[
-                          { title: "Smart Carrier Match", desc: "Our algorithm finds the best carrier for your route.", image: previewCarrierVetting, route: "/vetting", action: "navigate" as const },
-                          { title: "TruMove Specialist", desc: "Live video consultation for personalized guidance.", image: trudyVideoCall, route: "/book", action: "navigate" as const },
-                          { title: "Inventory Builder", desc: "Build your item list room by room for accurate pricing.", image: previewAiScanner, route: "/online-estimate", action: "navigate" as const },
-                          { title: "AI Room Scanner", desc: "Point your camera and AI detects furniture instantly.", image: sampleRoomLiving, route: "/scan-room", action: "navigate" as const },
-                          { title: "Shipment Tracking", desc: "Track your shipment in real-time with live updates.", image: previewPropertyLookup, route: "/track", action: "navigate" as const },
-                          { title: "FMCSA Verified", desc: "Real-time safety data checks from official databases.", image: scanRoomPreview, route: "/vetting", action: "navigate" as const },
-                          { title: "Trudy AI Assistant", desc: "Your virtual moving assistant, available 24/7.", image: trudyAvatar, route: "", action: "openChat" as const },
-                        ].map((feature, index) => (
-                          <CarouselItem key={index} className="tru-why-carousel-item basis-1/3">
-                            <div 
-                              className="tru-why-carousel-card"
-                              onClick={() => feature.action === "openChat" ? setChatOpen(true) : navigate(feature.route)}
-                              role="button"
-                              tabIndex={0}
-                              onKeyDown={(e) => e.key === 'Enter' && (feature.action === "openChat" ? setChatOpen(true) : navigate(feature.route))}
-                            >
-                              <div className="tru-why-carousel-card-text">
-                                <h4 className="tru-why-carousel-card-title">{feature.title}</h4>
-                                <p className="tru-why-carousel-card-desc">{feature.desc}</p>
-                              </div>
-                              <div className="tru-why-carousel-card-image">
-                                <img src={feature.image} alt={feature.title} />
-                              </div>
-                            </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious className="tru-why-carousel-prev" />
-                      <CarouselNext className="tru-why-carousel-next" />
-                    </Carousel>
-                  </div>
+                  {/* Feature Carousel with hover expansion + click modal */}
+                  <FeatureCarousel />
                   
                 </div>
               </div>
