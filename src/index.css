@@ -2639,8 +2639,8 @@
 }
 
 .tru-ai-step-preview {
-  width: 120px;
-  height: 90px;
+  width: 150px;
+  height: 112px;
   border-radius: 10px;
   overflow: hidden;
   flex-shrink: 0;
