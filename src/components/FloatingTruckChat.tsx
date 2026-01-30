@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Truck, Sparkles, Hand, ChevronRight, ChevronLeft } from 'lucide-react';
 import ChatModal from './chat/ChatModal';
@@ -12,10 +12,31 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
   const [isOpen, setIsOpen] = useState(false);
   const [showButton] = useState(true);
   
-  // Minimized state with localStorage persistence
+  // Manual minimized state with localStorage persistence
   const [isMinimized, setIsMinimized] = useState(() => {
     return localStorage.getItem('tm_ai_helper_minimized') === 'true';
   });
+
+  // Scroll-triggered minimization (temporary, not persisted)
+  const [isScrollMinimized, setIsScrollMinimized] = useState(false);
+
+  // Combined minimized state
+  const isCurrentlyMinimized = isMinimized || isScrollMinimized;
+
+  // Scroll listener to auto-minimize
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Minimize when scrolling down past 100px threshold
+      if (currentScrollY > 100 && !isScrollMinimized) {
+        setIsScrollMinimized(true);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isScrollMinimized]);
 
   const handleMinimize = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -25,11 +46,12 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
 
   const handleReopen = () => {
     setIsMinimized(false);
+    setIsScrollMinimized(false); // Also clear scroll-triggered state
     localStorage.removeItem('tm_ai_helper_minimized');
   };
 
   // When minimized - show a vertical strip on the right edge
-  if (isMinimized) {
+  if (isCurrentlyMinimized) {
     return (
       <>
         <button
