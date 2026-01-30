@@ -77,6 +77,161 @@
   }
 }
 
+/* =============================================
+   MOVE SUMMARY MODAL - Hero Right Side
+   ============================================= */
+.tru-move-summary-modal {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
+  animation: slideInRight 0.4s ease-out;
+  margin-bottom: 16px;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tru-move-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tru-move-summary-header svg {
+  color: hsl(var(--primary));
+}
+
+.tru-move-summary-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+.tru-move-summary-grid {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+}
+
+/* Larger Map Thumbnails - 80x80px */
+.tru-move-summary-map {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  flex-shrink: 0;
+}
+
+.tru-move-summary-map img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tru-move-summary-map-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+}
+
+/* Distance Badge - Green on Black */
+.tru-move-summary-distance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 18px;
+  background: hsl(220 15% 8%);
+  border-radius: 12px;
+  min-width: 90px;
+}
+
+.tru-move-summary-distance svg {
+  color: hsl(var(--primary));
+}
+
+.tru-move-summary-mileage {
+  font-size: 16px;
+  font-weight: 800;
+  color: hsl(var(--primary));
+}
+
+.tru-move-summary-location {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.tru-move-summary-location-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tru-move-summary-location-info .label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--muted-foreground));
+}
+
+.tru-move-summary-location-info .value {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Dark mode adjustments */
+.dark .tru-move-summary-modal {
+  background: hsl(220 15% 10%);
+  border-color: hsl(0 0% 100% / 0.1);
+}
+
+.dark .tru-move-summary-distance {
+  background: hsl(0 0% 0%);
+  border: 1px solid hsl(var(--primary) / 0.3);
+}
+
+.dark .tru-move-summary-map-placeholder {
+  background: hsl(220 15% 15%);
+  color: hsl(0 0% 100% / 0.4);
+}
+
+@media (max-width: 768px) {
+  .tru-move-summary-grid {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .tru-move-summary-map {
+    width: 64px;
+    height: 64px;
+  }
+}
+
 /* Hero Top Section - Full Width Centered */
 .tru-hero-top-section {
   width: 100%;
