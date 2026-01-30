@@ -2255,8 +2255,19 @@
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
-  max-height: 400px;
+  height: 400px;
   overflow: hidden;
+}
+
+.tru-ai-steps-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tru-ai-two-column {
+  flex: 1;
+  min-height: 0;
 }
 
 /* AI Inventory Analysis Subtitle */
