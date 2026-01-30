@@ -11416,6 +11416,34 @@
   border: 1px solid hsl(var(--tm-ink) / 0.2);
 }
 
+/* Subtle divider before Agent Login */
+.header-btn-agent::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 24px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    hsl(var(--tm-ink) / 0.15) 20%,
+    hsl(var(--tm-ink) / 0.15) 80%,
+    transparent 100%
+  );
+}
+
+.dark .header-btn-agent::before {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    hsl(0 0% 100% / 0.12) 20%,
+    hsl(0 0% 100% / 0.12) 80%,
+    transparent 100%
+  );
+}
+
 /* Hide absolute Agent Login on smaller screens (mobile menu has it) */
 @media (max-width: 1200px) {
   .header-btn-agent {
