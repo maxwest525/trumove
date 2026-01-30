@@ -1,146 +1,71 @@
 
-# Add Subtle Glow/Shadow to Hero Cards
+# Fix Trudy Martinez Face in Video Preview
 
-## Overview
-Add a subtle ambient glow or shadow to hero cards so they have visual depth even before hover interaction, making the UI feel more polished and premium.
+## Issue
+The `FakeAgentView` component in `src/pages/Book.tsx` uses a random Unsplash stock photo URL for Trudy Martinez instead of the actual Trudy model image that exists in the project assets.
 
----
+**Current (line 36):**
+```tsx
+src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop"
+```
 
-## Current State
+This shows a random professional woman from Unsplash, not Trudy.
 
-| Card | Base Shadow | Hover Shadow |
-|------|-------------|--------------|
-| Feature Cards (`.tru-value-card-open`) | None | Yes - glow effect |
-| Form Card (`.tru-form-card`) | Subtle shadow | N/A |
-| Why TruMove (`.tru-why-card-premium`) | Very subtle | Yes - glow effect |
-
-The feature cards look "flat" until hovered because they have no base shadow.
+## Solution
+Replace the Unsplash URL with the `trudy-model.jpg` asset that already exists in the project and is used elsewhere (Index.tsx).
 
 ---
 
 ## Changes Required
 
-### File: `src/index.css`
+### File: `src/pages/Book.tsx`
 
-#### 1. Add Base Shadow to Feature Cards
+#### 1. Update Import (line 19)
 
-**Lines 1853-1864** - Add `box-shadow` to the base `.tru-value-card-open` style:
+Change from importing the avatar to importing the full model image:
 
-```css
-/* BEFORE */
-.tru-hero-value-cards-open .tru-value-card-open {
-  display: flex;
-  flex-direction: column;
-  height: 260px;
-  padding: 14px;
-  padding-bottom: 14px;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  border: 1px solid hsl(var(--border));
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+```tsx
+// BEFORE
+import trudyAvatar from "@/assets/trudy-avatar.png";
 
-/* AFTER */
-.tru-hero-value-cards-open .tru-value-card-open {
-  display: flex;
-  flex-direction: column;
-  height: 260px;
-  padding: 14px;
-  padding-bottom: 14px;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  border: 1px solid hsl(var(--border));
-  box-shadow: 
-    0 2px 8px hsl(var(--tm-ink) / 0.06),
-    0 4px 16px hsl(var(--primary) / 0.04);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+// AFTER
+import trudyModel from "@/assets/trudy-model.jpg";
+import trudyAvatar from "@/assets/trudy-avatar.png";  // Keep if used elsewhere
 ```
 
-#### 2. Enhance Why TruMove Card Base Glow
+#### 2. Update FakeAgentView Image (line 36)
 
-**Line 26076** - Increase the base shadow intensity slightly:
+Replace the Unsplash URL with the Trudy model image:
 
-```css
-/* BEFORE */
-.tru-why-card-premium {
-  ...
-  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
-}
+```tsx
+// BEFORE
+<img 
+  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop" 
+  alt="Trudy Martinez" 
+  className="w-full h-full object-cover"
+/>
 
-/* AFTER */
-.tru-why-card-premium {
-  ...
-  box-shadow: 
-    0 4px 12px hsl(var(--tm-ink) / 0.08),
-    0 8px 32px hsl(var(--primary) / 0.06);
-}
-```
-
-#### 3. Dark Mode Enhancement
-
-Add dark mode specific shadows that use a subtle green glow for consistency:
-
-```css
-/* Around line 27205 - Dark Mode */
-.dark .tru-hero-value-cards-open .tru-value-card-open {
-  box-shadow: 
-    0 2px 8px hsl(var(--tm-ink) / 0.2),
-    0 4px 16px hsl(var(--primary) / 0.08),
-    0 0 1px hsl(var(--primary) / 0.15);
-}
-
-.dark .tru-why-card-premium {
-  box-shadow: 
-    0 4px 12px hsl(var(--tm-ink) / 0.3),
-    0 8px 32px hsl(var(--primary) / 0.1);
-}
+// AFTER
+<img 
+  src={trudyModel} 
+  alt="Trudy Martinez" 
+  className="w-full h-full object-cover"
+/>
 ```
 
 ---
 
-## Visual Result
+## Result
 
-**Before:**
-```text
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│   FLAT CARD     │  │   FLAT CARD     │  │   FLAT CARD     │
-│   (no depth)    │  │   (no depth)    │  │   (no depth)    │
-└─────────────────┘  └─────────────────┘  └─────────────────┘
-```
-
-**After:**
-```text
-╔═════════════════╗  ╔═════════════════╗  ╔═════════════════╗
-║   CARD          ║  ║   CARD          ║  ║   CARD          ║
-║   (subtle glow) ║  ║   (subtle glow) ║  ║   (subtle glow) ║
-╚═════════════════╝  ╚═════════════════╝  ╚═════════════════╝
-       ░░░                  ░░░                  ░░░
-    (shadow)            (shadow)            (shadow)
-```
-
----
-
-## Shadow Design Approach
-
-The shadows use a two-layer approach for depth:
-
-1. **Ink Layer** - Neutral dark shadow for grounding
-2. **Primary Layer** - Subtle brand-colored glow for warmth
-
-This creates cards that feel "lifted" off the page with a premium, soft-lit appearance.
+| Before | After |
+|--------|-------|
+| Random Unsplash stock photo | Actual Trudy Martinez model image |
+| Inconsistent branding | Consistent with Index.tsx Trudy appearance |
 
 ---
 
 ## Summary
 
-| Change | Description |
-|--------|-------------|
-| Feature card base shadow | Add dual-layer shadow with ink + primary tint |
-| Why TruMove card enhanced | Slightly stronger base glow |
-| Dark mode variants | Green-tinted ambient glow for consistency |
-
-### File Modified
-- `src/index.css` - 4 small additions
+| File | Change |
+|------|--------|
+| `src/pages/Book.tsx` | Add import for `trudy-model.jpg`, update `FakeAgentView` image src |
