@@ -81,13 +81,28 @@
    MOVE SUMMARY MODAL - Hero Right Side
    ============================================= */
 .tru-move-summary-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
   background: hsl(var(--card));
   border: 1px solid hsl(var(--primary) / 0.2);
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.15);
   animation: slideInRight 0.4s ease-out;
-  margin-bottom: 16px;
+}
+
+.tru-move-summary-modal::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: hsl(var(--background) / 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 18px;
+  z-index: -1;
 }
 
 @keyframes slideInRight {
@@ -25832,6 +25847,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: relative;
 }
 
 /* =============================================
