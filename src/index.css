@@ -16678,17 +16678,9 @@
   position: relative;
 }
 
-/* Fade gradient on right edge to hint at more cards */
+/* Fade gradient on right edge - DISABLED to prevent white shadow artifact */
 .features-carousel-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 48px;
-  background: linear-gradient(to right, transparent, hsl(var(--background)));
-  pointer-events: none;
-  z-index: 5;
+  display: none;
 }
 
 /* Carousel content - fully reset Embla defaults */
@@ -26322,7 +26314,6 @@
    ============================================= */
 .tru-why-card-premium {
   position: relative;
-  z-index: 20;
   background: hsl(var(--background) / 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
