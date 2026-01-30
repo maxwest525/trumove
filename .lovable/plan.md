@@ -142,4 +142,3 @@ Increase the headline font size:
 | White image border | `src/index.css` | 16729-16737 |
 | Smooth carousel | `src/components/FeatureCarousel.tsx` | 98 |
 | Bigger headline | `src/index.css` | 14404-14414 |
-

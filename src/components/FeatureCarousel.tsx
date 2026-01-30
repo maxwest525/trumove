@@ -95,7 +95,7 @@ export default function FeatureCarousel() {
     >
       <Carousel
         setApi={setApi}
-        opts={{ align: "start", loop: true, dragFree: true }}
+        opts={{ align: "start", loop: true, dragFree: false, duration: 30, skipSnaps: false }}
         className="features-carousel-container"
       >
         <CarouselContent className="features-carousel-content">
