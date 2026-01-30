@@ -26322,6 +26322,7 @@
    ============================================= */
 .tru-why-card-premium {
   position: relative;
+  z-index: 20;
   background: hsl(var(--background) / 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
