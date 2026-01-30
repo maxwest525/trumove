@@ -1320,9 +1320,9 @@ export default function Index() {
                           { title: "AI Room Scanner", desc: "Point your camera and AI detects furniture instantly.", image: sampleRoomLiving, route: "/scan-room", action: "navigate" as const },
                           { title: "Shipment Tracking", desc: "Track your shipment in real-time with live updates.", image: previewPropertyLookup, route: "/track", action: "navigate" as const },
                           { title: "FMCSA Verified", desc: "Real-time safety data checks from official databases.", image: scanRoomPreview, route: "/vetting", action: "navigate" as const },
-                          { title: "TruDy AI Assistant", desc: "Your virtual moving assistant, available 24/7.", image: trudyAvatar, route: "", action: "openChat" as const },
+                          { title: "Trudy AI Assistant", desc: "Your virtual moving assistant, available 24/7.", image: trudyAvatar, route: "", action: "openChat" as const },
                         ].map((feature, index) => (
-                          <CarouselItem key={index} className="tru-why-carousel-item basis-1/2">
+                          <CarouselItem key={index} className="tru-why-carousel-item basis-1/3">
                             <div 
                               className="tru-why-carousel-card"
                               onClick={() => feature.action === "openChat" ? setChatOpen(true) : navigate(feature.route)}
