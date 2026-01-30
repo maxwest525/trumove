@@ -1,111 +1,92 @@
 
 
-# Fix Feature Carousel Bottom Clipping + Update Trudy AI Card Image
+# Fix Feature Carousel Image Mappings
 
-## Issues Identified
+## Current Issues
 
-### Issue 1: Bottom Clipping on Hover
-The 135% scale hover effect causes cards to overflow beyond the carousel container bounds. Currently:
-- Cards scale to 1.35x their original size
-- The carousel has 8px padding on all sides (line 16612: `padding: 8px 8px`)
-- A 240px card at 1.35x becomes 324px - that's 84px extra height (42px top + 42px bottom)
-- The 8px padding is not enough to accommodate the 42px bottom overflow
+The feature-to-image mappings are misaligned:
 
-**Solution**: Increase vertical padding on the carousel content to 48px to give room for the bottom expansion.
-
-### Issue 2: Trudy AI Card Image
-The current image is `trudy-avatar.png` (a static headshot). The user wants a "truck with word bubbles" similar to the floating chat button's design.
-
-**Solution**: Create an inline SVG/React component that composes a Truck icon with speech bubble decorations, styled to match the tech-forward aesthetic.
+| Feature | Current Image | Issue |
+|---------|---------------|-------|
+| Inventory Builder | `preview-ai-scanner.jpg` | Shows AI scanner, not inventory building |
+| AI Room Scanner | `sample-room-living.jpg` | Shows static room, not scanner interface |
+| Shipment Tracking | `preview-property-lookup.jpg` | Shows property lookup, not shipment tracking |
+| Smart Carrier Match | `preview-carrier-vetting.jpg` | ✓ Correct |
+| TruMove Specialist | `trudy-video-call.jpg` | ✓ Correct |
+| FMCSA Verified | `scan-room-preview.jpg` | Shows room scan, irrelevant to FMCSA |
+| Trudy AI Assistant | TruckChatIcon | ✓ Correct |
 
 ---
 
-## Implementation Plan
+## Recommended Image Remapping
 
-### Step 1: Fix Bottom Clipping with Increased Padding
+Based on available assets in `src/assets/`:
 
-**File: `src/index.css`** (line 16612)
+| Feature | Recommended Image | Reasoning |
+|---------|-------------------|-----------|
+| **Inventory Builder** | `sample-room-living.jpg` | Shows furniture items to inventory |
+| **AI Room Scanner** | `scan-room-preview.jpg` | Shows scanner interface preview |
+| **Shipment Tracking** | `preview-property-lookup.jpg` | Shows map/location (closest to tracking) |
+| **Smart Carrier Match** | `preview-carrier-vetting.jpg` | ✓ Keep - shows carrier search |
+| **TruMove Specialist** | `trudy-video-call.jpg` | ✓ Keep - shows video consult |
+| **FMCSA Verified** | `preview-carrier-vetting.jpg` | Shows carrier verification (FMCSA related) |
+| **Trudy AI Assistant** | TruckChatIcon | ✓ Keep - custom truck icon |
 
-Change from:
-```css
-.features-carousel-content {
-  padding: 8px 8px;
-}
-```
+**Note**: Some images will be shared (e.g., carrier vetting for both Smart Carrier Match and FMCSA Verified) since they're conceptually related. Alternatively, we could use the `preview-video-consult.jpg` for TruMove Specialist and `trudy-video-call.jpg` elsewhere.
 
-To:
-```css
-.features-carousel-content {
-  padding: 48px 8px;  /* Vertical padding for 1.35x scale overflow */
-  margin: -40px 0;    /* Negative margin to maintain visual spacing */
-}
-```
+---
 
-This gives 48px of space above and below for hover expansion, while the negative margin keeps the visual layout tight.
-
-### Step 2: Create Truck Chat Icon Component for Trudy Card
+## Implementation
 
 **File: `src/components/FeatureCarousel.tsx`**
 
-Replace the static image for the Trudy AI Assistant card with an inline component that renders:
-- A Truck icon (from lucide-react)
-- Sparkle decorations
-- Speech bubble indicators
+Update the features array (lines 38-81):
 
 ```tsx
-// Inside FeatureCarousel.tsx - Create a TruckChatIcon component
-const TruckChatIcon = () => (
-  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
-    <div className="relative">
-      <Truck className="w-16 h-16 text-foreground" />
-      <div className="absolute -top-3 -right-3 flex gap-1">
-        <MessageCircle className="w-6 h-6 text-primary fill-primary/20" />
-        <Sparkles className="w-4 h-4 text-primary animate-pulse" />
-      </div>
-    </div>
-  </div>
-);
-```
-
-### Step 3: Update Features Array to Use Custom Component
-
-**File: `src/components/FeatureCarousel.tsx`**
-
-Modify the Feature type and data to support either an image URL or a custom component:
-
-```tsx
-type Feature = {
-  title: string;
-  desc: string;
-  image?: string;
-  customIcon?: React.ReactNode;
-  route?: string;
-  action?: "openChat";
-};
-
-// Update Trudy AI Assistant entry
-{
-  title: "Trudy AI Assistant",
-  desc: "Chat with our AI to get instant answers about your move.",
-  customIcon: <TruckChatIcon />,
-  action: "openChat",
-}
-```
-
-### Step 4: Update Card Rendering to Handle Custom Icons
-
-**File: `src/components/FeatureCarousel.tsx`**
-
-In the JSX, conditionally render either the image or the custom icon:
-
-```tsx
-<div className="features-carousel-card-image-wrapper">
-  {feature.customIcon ? (
-    feature.customIcon
-  ) : (
-    <img src={feature.image} alt={`${feature.title} Preview`} />
-  )}
-</div>
+const features: Feature[] = [
+  {
+    title: "Inventory Builder",
+    desc: "Build your item list room by room for accurate pricing estimates.",
+    image: sampleRoomLiving,  // Shows furniture to catalog
+    route: "/online-estimate",
+  },
+  {
+    title: "AI Room Scanner",
+    desc: "Point your camera and AI detects furniture instantly.",
+    image: scanRoomPreview,  // Shows scanner interface
+    route: "/scan-room",
+  },
+  {
+    title: "Shipment Tracking",
+    desc: "Track your shipment in real-time with live updates and notifications.",
+    image: previewPropertyLookup,  // Shows map/location view
+    route: "/track",
+  },
+  {
+    title: "Smart Carrier Match",
+    desc: "Our algorithm finds the best carrier for your route.",
+    image: previewCarrierVetting,  // Keep - carrier search UI
+    route: "/vetting",
+  },
+  {
+    title: "TruMove Specialist",
+    desc: "Live video consultation for personalized guidance.",
+    image: trudyVideoCall,  // Keep - video call preview
+    route: "/book",
+  },
+  {
+    title: "FMCSA Verified",
+    desc: "Real-time safety data checks from official databases.",
+    image: previewCarrierVetting,  // Carrier verification (FMCSA data)
+    route: "/vetting",
+  },
+  {
+    title: "Trudy AI Assistant",
+    desc: "Chat with our AI to get instant answers about your move.",
+    customIcon: <TruckChatIcon />,  // Keep - custom icon
+    action: "openChat",
+  },
+];
 ```
 
 ---
@@ -114,17 +95,7 @@ In the JSX, conditionally render either the image or the custom icon:
 
 | File | Change |
 |------|--------|
-| `src/index.css` | Increase vertical padding on `.features-carousel-content` to 48px with compensating negative margin |
-| `src/components/FeatureCarousel.tsx` | Add `Truck`, `MessageCircle`, `Sparkles` imports from lucide-react |
-| `src/components/FeatureCarousel.tsx` | Create `TruckChatIcon` component |
-| `src/components/FeatureCarousel.tsx` | Update Feature type to support `customIcon` |
-| `src/components/FeatureCarousel.tsx` | Replace Trudy card image with `<TruckChatIcon />` |
-| `src/components/FeatureCarousel.tsx` | Update card rendering to handle custom icons |
+| `src/components/FeatureCarousel.tsx` | Swap image references for Inventory Builder, AI Room Scanner, and FMCSA Verified |
 
----
-
-## Visual Result
-
-- **Hover expansion**: Cards can now grow 35% larger without being cut off at the bottom
-- **Trudy AI card**: Shows a modern truck icon with animated sparkles and chat bubble, matching the floating chat button's aesthetic
+This ensures each feature card displays a relevant preview image that matches its functionality.
 
