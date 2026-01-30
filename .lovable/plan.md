@@ -1,304 +1,287 @@
 
-# Homepage Layout Changes: Feature Cards + AI Inventory Analysis Section
+# Plan: Enhanced Demo Mode with Trudy Chat & Realistic Inventory
 
 ## Overview
 
-The user wants to:
-1. Move feature carousel cards higher up on the page
-2. Move the "Start Your AI Inventory Analysis" section up (but not over feature cards)
-3. Add a small preview video/image showing the walkthrough process
-4. Update copy to explain video walkthrough OR photos with AI identification
-5. Emphasize live agent confirmation to avoid discrepancies
-6. Highlight the benefit of avoiding strangers searching your house
+Enhance the `/book` video consult demo mode with:
+1. **Simulated typing/chat messages from Trudy** - Realistic conversation flow with typing indicators
+2. **Realistic inventory items** - Replace emoji icons with actual 3D-rendered images from `/public/inventory/`
 
 ---
 
-## Current Page Structure (Order)
+## Current State Analysis
 
+**File:** `src/pages/Book.tsx`
+
+The demo mode currently has:
+- Basic chat with a single initial message from "Support"
+- Simple user message handling with one generic response
+- Inventory items using emoji icons (🛋, 📺, 🪑, etc.)
+- No typing indicators or conversation flow
+
+---
+
+## Implementation Details
+
+### 1. Simulated Trudy Chat with Typing Indicator
+
+**New conversation flow:**
 ```text
-1. Hero Section (form + Why TruMove)
-2. Feature Carousel
-3. Black Stats Strip
-4. Route Analysis Section ("Building your personalized move profile")
-5. AI Inventory Analysis Section (3 steps)
-6. Consult Section
-7. How It Works Steps
+[0s]   Trudy: "Hi! I'm Trudy, your TruMove specialist. I can see you've joined! 👋"
+[3s]   Trudy: (typing indicator)
+[5s]   Trudy: "I notice you're exploring our inventory builder. Would you like me to walk you through how screen sharing works?"
+[10s]  Trudy: (typing indicator)
+[12s]  Trudy: "Click 'Share Screen' below and I'll show you how we can review your inventory together in real-time."
+[20s]  Trudy: "Take your time - I'm here whenever you're ready! 😊"
 ```
 
-## Proposed New Order
+**New TypingIndicator component:**
+```tsx
+function ChatTypingIndicator() {
+  return (
+    <div className="flex items-center gap-1 text-xs text-white/50 py-1">
+      <span className="font-bold">Trudy</span>
+      <span className="flex gap-0.5">
+        <span className="w-1 h-1 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }} />
+        <span className="w-1 h-1 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
+        <span className="w-1 h-1 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
+      </span>
+    </div>
+  );
+}
+```
 
-```text
-1. Hero Section (form + Why TruMove)
-2. Feature Carousel (moved UP by reducing top margin)
-3. AI Inventory Analysis Section (moved UP before Stats Strip)
-4. Black Stats Strip
-5. Route Analysis Section
-6. Consult Section
-7. How It Works Steps
+**Chat state management:**
+```tsx
+const [chatMessages, setChatMessages] = useState<{ from: string; text: string }[]>([]);
+const [isTyping, setIsTyping] = useState(false);
+
+useEffect(() => {
+  // Simulated conversation timeline
+  const timeline = [
+    { delay: 500, text: "Hi! I'm Trudy, your TruMove specialist. I can see you've joined! 👋" },
+    { delay: 4000, typing: true },
+    { delay: 6000, text: "I notice you're exploring our inventory tools. Would you like me to show you how screen sharing works?" },
+    { delay: 12000, typing: true },
+    { delay: 14000, text: "Click 'Share Screen' below and I can help you review your inventory in real-time!" },
+    { delay: 22000, text: "Take your time - I'm here whenever you're ready! 😊" },
+  ];
+  
+  // Run timeline
+}, []);
 ```
 
 ---
 
-## File Changes
+### 2. Realistic Inventory Items with Images
 
-### 1. `src/pages/Index.tsx`
-
-**Reorder sections** (lines 1338-1404):
-
-Current order:
-- Feature Carousel
-- StatsStrip
-- RouteAnalysisSection
-- AI Steps Section
-
-New order:
-- Feature Carousel (tighter margins)
-- AI Steps Section (moved up)
-- StatsStrip
-- RouteAnalysisSection
-
-**Update AI Steps Section content** with:
-- Small preview image/video placeholder using `sampleRoomLiving` or similar
-- Updated copy explaining video walkthrough OR photos
-- AI-powered object detection language
-- Live agent confirmation messaging
-- Privacy benefit (no strangers in your house)
-
-**New section structure:**
+**Replace mockItems with real images:**
 
 ```tsx
-{/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-<section className="tru-ai-steps-section">
-  <div className="tru-ai-steps-inner">
-    <h2 className="tru-ai-steps-title">Start Your AI Inventory Analysis</h2>
-    
-    {/* NEW: Preview Video/Image Block */}
-    <div className="tru-ai-preview-block">
-      <div className="tru-ai-preview-video">
-        <img src={sampleRoomLiving} alt="AI scanning a room" />
-        <div className="tru-ai-preview-overlay">
-          <Camera className="w-8 h-8" />
-          <span>See how it works</span>
-        </div>
-      </div>
-      <div className="tru-ai-preview-content">
-        <p className="tru-ai-preview-tagline">
-          <strong>Walk through your home with your phone camera</strong> or snap photos of each room.
-          Our neural network identifies furniture, boxes, and appliances automatically—calculating 
-          weight, volume, and cubic footage in seconds.
-        </p>
-        <p className="tru-ai-preview-trust">
-          <CheckCircle className="w-4 h-4" />
-          <span>Every inventory is confirmed with a live TruMove specialist before your quote is finalized—
-          so there are no surprises on move day.</span>
-        </p>
-        <p className="tru-ai-preview-privacy">
-          <ShieldCheck className="w-4 h-4" />
-          <span>No strangers walking through your home. You control the camera, you control the process.</span>
-        </p>
-      </div>
-    </div>
-    
-    {/* Existing 3-step grid - simplified */}
-    <div className="tru-ai-steps-grid">
-      <div className="tru-ai-step">
-        <div className="tru-ai-step-number">1</div>
-        <div className="tru-ai-step-content">
-          <h3 className="tru-ai-step-title">Video or Photos</h3>
-          <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
-        </div>
-      </div>
-      <div className="tru-ai-step">
-        <div className="tru-ai-step-number">2</div>
-        <div className="tru-ai-step-content">
-          <h3 className="tru-ai-step-title">AI Detection</h3>
-          <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
-        </div>
-      </div>
-      <div className="tru-ai-step">
-        <div className="tru-ai-step-number">3</div>
-        <div className="tru-ai-step-content">
-          <h3 className="tru-ai-step-title">Agent Confirmation</h3>
-          <p className="tru-ai-step-desc">A live specialist reviews to ensure accuracy.</p>
-        </div>
-      </div>
-    </div>
-    
-    {/* Existing action buttons */}
-    <div className="tru-inventory-actions">
-      ...
-    </div>
+const inventoryItems = [
+  { 
+    name: "3-Cushion Sofa", 
+    room: "Living Room", 
+    qty: 1, 
+    image: "/inventory/living-room/sofa-3-cushion.png",
+    weight: 180,
+    volume: 45
+  },
+  { 
+    name: "55\" Plasma TV", 
+    room: "Living Room", 
+    qty: 1, 
+    image: "/inventory/living-room/tv-plasma.png",
+    weight: 65,
+    volume: 8
+  },
+  { 
+    name: "Armchair", 
+    room: "Living Room", 
+    qty: 2, 
+    image: "/inventory/living-room/armchair.png",
+    weight: 85,
+    volume: 24
+  },
+  { 
+    name: "Coffee Table", 
+    room: "Living Room", 
+    qty: 1, 
+    image: "/inventory/living-room/coffee-table.png",
+    weight: 45,
+    volume: 12
+  },
+  { 
+    name: "Queen Bed", 
+    room: "Bedroom", 
+    qty: 1, 
+    image: "/inventory/bedroom/bed-queen.png",
+    weight: 150,
+    volume: 60
+  },
+  { 
+    name: "Dresser", 
+    room: "Bedroom", 
+    qty: 1, 
+    image: "/inventory/bedroom/dresser.png",
+    weight: 120,
+    volume: 28
+  },
+  { 
+    name: "Nightstand", 
+    room: "Bedroom", 
+    qty: 2, 
+    image: "/inventory/bedroom/nightstand.png",
+    weight: 35,
+    volume: 6
+  },
+  { 
+    name: "Medium Box", 
+    room: "General", 
+    qty: 8, 
+    image: "/inventory/boxes/medium-box.png",
+    weight: 25,
+    volume: 3
+  },
+  { 
+    name: "Refrigerator", 
+    room: "Kitchen", 
+    qty: 1, 
+    image: "/inventory/appliances/refrigerator.png",
+    weight: 250,
+    volume: 40
+  },
+  { 
+    name: "Washer", 
+    room: "Laundry", 
+    qty: 1, 
+    image: "/inventory/appliances/washer.png",
+    weight: 170,
+    volume: 18
+  },
+];
+```
+
+**Updated inventory item UI:**
+
+```tsx
+<div className="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+  <div className="w-10 h-10 rounded-md bg-white dark:bg-slate-600 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-500">
+    <img 
+      src={item.image} 
+      alt={item.name} 
+      className="w-8 h-8 object-contain mix-blend-multiply dark:mix-blend-normal"
+    />
   </div>
-</section>
+  <div className="flex-1 min-w-0">
+    <p className="text-sm font-medium text-slate-800 dark:text-white truncate">{item.name}</p>
+    <p className="text-xs text-slate-500 dark:text-slate-400">{item.room}</p>
+  </div>
+  <div className="text-right">
+    <span className="text-sm font-bold text-slate-600 dark:text-slate-300">×{item.qty}</span>
+    <p className="text-[10px] text-slate-400">{item.weight} lbs</p>
+  </div>
+</div>
+```
+
+**Updated footer with calculated totals:**
+
+```tsx
+// Calculate totals from inventory
+const totalItems = inventoryItems.reduce((sum, item) => sum + item.qty, 0);
+const totalWeight = inventoryItems.reduce((sum, item) => sum + (item.weight * item.qty), 0);
+
+// Footer
+<div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t">
+  <span className="text-xs text-slate-500">
+    {totalItems} items • Est. {totalWeight.toLocaleString()} lbs
+  </span>
+</div>
 ```
 
 ---
 
-### 2. `src/index.css`
+### 3. Additional Context-Aware Messages
 
-**Move feature carousel higher:**
+**When screen sharing starts, add Trudy response:**
 
-Update `.tru-feature-carousel-fullwidth` (line 15492):
-```css
-.tru-feature-carousel-fullwidth {
-  margin: 24px auto 0;  /* Was 48px - reduced */
-  padding: 16px 24px 24px;  /* Reduced top padding */
-}
+```tsx
+const handleShareScreen = () => {
+  setIsScreenSharing(!isScreenSharing);
+  if (!isScreenSharing) {
+    toast.success("Screen sharing started");
+    // Trudy responds to screen share
+    setTimeout(() => {
+      setChatMessages(prev => [...prev, { 
+        from: "Trudy", 
+        text: "Perfect! I can see your inventory now. Let me walk you through each item..." 
+      }]);
+    }, 1500);
+  } else {
+    toast("Screen sharing stopped");
+  }
+};
 ```
 
-**Add new AI preview block styles:**
+**When user sends a message, Trudy responds contextually:**
 
-```css
-/* AI Preview Block - Video/Image + Copy */
-.tru-ai-preview-block {
-  display: flex;
-  gap: 32px;
-  align-items: center;
-  margin-bottom: 32px;
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 16px;
-  padding: 24px;
-  text-align: left;
-}
+```tsx
+const trudyResponses = [
+  "Great question! I'm checking that for you now.",
+  "That's a common concern - let me explain how we handle that.",
+  "Absolutely! I'll make a note of that in your profile.",
+  "I see that on my end. Let's walk through it together.",
+];
 
-.tru-ai-preview-video {
-  flex-shrink: 0;
-  width: 180px;
-  height: 120px;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-  background: hsl(var(--muted));
-}
-
-.tru-ai-preview-video img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.tru-ai-preview-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: hsl(var(--tm-ink) / 0.5);
-  color: white;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: background 0.2s ease;
-}
-
-.tru-ai-preview-video:hover .tru-ai-preview-overlay {
-  background: hsl(var(--primary) / 0.7);
-}
-
-.tru-ai-preview-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.tru-ai-preview-tagline {
-  font-size: 15px;
-  color: hsl(var(--tm-ink) / 0.85);
-  line-height: 1.6;
-}
-
-.tru-ai-preview-tagline strong {
-  color: hsl(var(--tm-ink));
-  font-weight: 700;
-}
-
-.tru-ai-preview-trust,
-.tru-ai-preview-privacy {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.7);
-  line-height: 1.5;
-}
-
-.tru-ai-preview-trust svg {
-  color: hsl(var(--primary));
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.tru-ai-preview-privacy svg {
-  color: hsl(var(--primary));
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* Responsive - stack on mobile */
-@media (max-width: 768px) {
-  .tru-ai-preview-block {
-    flex-direction: column;
-    text-align: center;
+const handleSendMessage = () => {
+  if (newMessage.trim()) {
+    setChatMessages([...chatMessages, { from: "You", text: newMessage }]);
+    setNewMessage("");
+    // Show typing then respond
+    setTimeout(() => setIsTyping(true), 500);
+    setTimeout(() => {
+      setIsTyping(false);
+      const response = trudyResponses[Math.floor(Math.random() * trudyResponses.length)];
+      setChatMessages(prev => [...prev, { from: "Trudy", text: response }]);
+    }, 2000);
   }
-  
-  .tru-ai-preview-video {
-    width: 100%;
-    max-width: 280px;
-    height: 160px;
-  }
-  
-  .tru-ai-preview-trust,
-  .tru-ai-preview-privacy {
-    justify-content: center;
-    text-align: left;
-  }
-}
+};
 ```
 
 ---
 
 ## Visual Layout
 
-**Before:**
+**Chat Panel (enhanced):**
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│  HERO (Form + Why TruMove)                                  │
-├─────────────────────────────────────────────────────────────┤
-│  FEATURE CAROUSEL (48px top margin)                         │
-├─────────────────────────────────────────────────────────────┤
-│  BLACK STATS STRIP                                          │
-├─────────────────────────────────────────────────────────────┤
-│  Route Analysis Section                                     │
-├─────────────────────────────────────────────────────────────┤
-│  AI Inventory Analysis (basic 3 steps)                      │
-└─────────────────────────────────────────────────────────────┘
+┌────────────────────────────────┐
+│ 💬 Chat                        │
+├────────────────────────────────┤
+│ Trudy: Hi! I'm Trudy... 👋     │
+│ Trudy: Would you like me to... │
+│ Trudy ●●● (typing)             │ <- Animated dots
+│ You: How does this work?       │
+│ Trudy: Great question! I'm...  │
+├────────────────────────────────┤
+│ [Type a message...         ]   │
+└────────────────────────────────┘
 ```
 
-**After:**
+**Inventory Modal (enhanced):**
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│  HERO (Form + Why TruMove)                                  │
-├─────────────────────────────────────────────────────────────┤
-│  FEATURE CAROUSEL (24px top margin - tighter)               │
-├─────────────────────────────────────────────────────────────┤
-│  AI INVENTORY ANALYSIS (moved UP)                           │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │ [Preview Image]  Walk through with camera or snap   │    │
-│  │ [Play icon]      photos. AI identifies furniture... │    │
-│  │                  ✓ Live agent confirmation          │    │
-│  │                  ✓ No strangers in your home        │    │
-│  └─────────────────────────────────────────────────────┘    │
-│  [1] Video/Photos  [2] AI Detection  [3] Agent Confirm      │
-├─────────────────────────────────────────────────────────────┤
-│  BLACK STATS STRIP                                          │
-├─────────────────────────────────────────────────────────────┤
-│  Route Analysis Section                                     │
-└─────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────┐
+│ ● ● ●   Customer's Screen - My Move Inventory  │
+├────────────────────────────────────────────────┤
+│ [🛋️ img] 3-Cushion Sofa    Living Room    ×1  │
+│ [📺 img] 55" Plasma TV     Living Room    ×1  │
+│ [🪑 img] Armchair          Living Room    ×2  │
+│ [☕ img] Coffee Table       Living Room    ×1  │
+│ [🛏️ img] Queen Bed         Bedroom        ×1  │
+│ [📦 img] Medium Box         General        ×8  │
+│ [❄️ img] Refrigerator       Kitchen        ×1  │
+├────────────────────────────────────────────────┤
+│ 16 items • Est. 1,890 lbs    🟢 Live sharing   │
+└────────────────────────────────────────────────┘
 ```
 
 ---
@@ -307,32 +290,18 @@ Update `.tru-feature-carousel-fullwidth` (line 15492):
 
 | File | Change |
 |------|--------|
-| `src/pages/Index.tsx` | Reorder sections (AI steps before Stats Strip), add preview block with image and updated copy |
-| `src/index.css` | Reduce feature carousel margins, add `.tru-ai-preview-block` styles |
-
----
-
-## Updated Copy (Tech-forward language)
-
-**Headline:** Start Your AI Inventory Analysis
-
-**Preview Block Text:**
-"Walk through your home with your phone camera or snap photos of each room. Our neural network identifies furniture, boxes, and appliances automatically—calculating weight, volume, and cubic footage in seconds."
-
-**Trust Message:**
-"Every inventory is confirmed with a live TruMove specialist before your quote is finalized—so there are no surprises on move day."
-
-**Privacy Message:**
-"No strangers walking through your home. You control the camera, you control the process."
+| `src/pages/Book.tsx` | Add typing indicator, conversation timeline, realistic inventory items with images, context-aware chat responses |
 
 ---
 
 ## Testing Checklist
 
-1. Verify feature carousel appears higher on page (tighter margin)
-2. Verify AI Inventory Analysis section appears before the black stats strip
-3. Verify preview image block renders with sample room image
-4. Verify updated copy appears with tech-forward language
-5. Verify live agent confirmation and privacy messaging is visible
-6. Test on mobile to ensure preview block stacks properly
-7. Verify action buttons (Build Inventory, Video Consult) still work
+1. Navigate to /book and enter "demo" to join demo room
+2. Verify Trudy's welcome messages appear with realistic timing
+3. Verify typing indicator (●●●) appears between messages
+4. Click "Share Screen" and verify Trudy responds contextually
+5. Verify inventory modal shows actual 3D-rendered images (not emojis)
+6. Verify item images render correctly on both light and dark mode
+7. Send a chat message and verify Trudy responds with typing indicator
+8. Verify calculated totals (items + weight) are accurate in footer
+9. Test "Stop Sharing" and verify modal closes properly
