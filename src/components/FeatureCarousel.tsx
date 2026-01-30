@@ -137,7 +137,15 @@ export default function FeatureCarousel() {
     >
       <Carousel
         setApi={setApi}
-        opts={{ align: "start", loop: true, dragFree: false, duration: 30, skipSnaps: false }}
+        opts={{ 
+          align: "start", 
+          loop: true, 
+          dragFree: false, 
+          duration: 25, 
+          skipSnaps: false,
+          dragThreshold: 10,
+          inViewThreshold: 0.7
+        }}
         className="features-carousel-container"
       >
         <CarouselContent className="features-carousel-content" allowOverflow>
