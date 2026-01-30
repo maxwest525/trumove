@@ -1,26 +1,22 @@
 
-# Fix Video Consult Image Cropping
+# Unify Black Stats Strip to Match Grey SAFER Trust Strip
 
 ## Overview
-Adjust the image cropping for the video consult preview image in the "Why TruMove" carousel cards so the image shows the important content (likely faces/people) rather than cropping it incorrectly.
+Update the black stats strip CSS to match the grey SAFER trust strip dimensions and styling, creating visual consistency between the two horizontal trust indicators.
 
 ---
 
-## Current State
+## Current vs Target Values
 
-The `.tru-why-carousel-card-image img` CSS rule uses `object-fit: cover` without specifying an `object-position`, which defaults to `center center`. This may be cutting off important parts of the video consult image.
-
-**Current CSS (lines 26246-26251):**
-```css
-.tru-why-carousel-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-```
-
-For comparison, the Features carousel uses `object-position: center 30%` to show more of the top portion of images.
+| Property | Current (Black Strip) | Target (Match Grey Strip) |
+|----------|----------------------|---------------------------|
+| Padding | `6px 16px` | `8px 24px` |
+| Font Size | `10px` | `12px` |
+| Font Weight | `600` | `700` |
+| Icon Size | `12px` | `16px` |
+| Gap (inner) | `4px` | `16px` |
+| Gap (item) | `4px` | `6px` (icon-to-text) |
+| Dot Margin | `0 4px` | `0 8px` |
 
 ---
 
@@ -28,56 +24,86 @@ For comparison, the Features carousel uses `object-position: center 30%` to show
 
 ### File: `src/index.css`
 
-**Lines 26246-26251** - Add `object-position` to show the correct portion of the image:
-
-**Before:**
+#### 1. Update `.stats-strip` padding (line 28618)
 ```css
-.tru-why-carousel-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
+/* Before */
+padding: 6px 16px;
+
+/* After */
+padding: 8px 24px;
 ```
 
-**After:**
+#### 2. Update `.stats-strip-inner` gap (line 28629)
 ```css
-.tru-why-carousel-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  transition: transform 0.3s ease;
-}
+/* Before */
+gap: 4px;
+
+/* After */
+gap: 16px;
 ```
 
-Using `center top` will show the top portion of the image, which typically includes faces and heads in video call previews. If needed, this can be fine-tuned to `center 20%` or `center 30%` depending on the exact image composition.
+#### 3. Update `.stats-strip-item` styles (lines 28636-28638)
+```css
+/* Before */
+gap: 4px;
+font-size: 10px;
+font-weight: 600;
+
+/* After */
+gap: 6px;
+font-size: 12px;
+font-weight: 700;
+```
+
+#### 4. Update `.stats-strip-item svg` size (lines 28647-28648)
+```css
+/* Before */
+width: 12px;
+height: 12px;
+
+/* After */
+width: 16px;
+height: 16px;
+```
+
+#### 5. Update `.stats-strip-dot` margin (line 28655)
+```css
+/* Before */
+margin: 0 4px;
+
+/* After */
+margin: 0 8px;
+```
 
 ---
 
 ## Visual Result
 
-| Before | After |
-|--------|-------|
-| Image cropped to center (may cut off heads) | Image shows top portion (faces visible) |
+**Before:**
+```
+[Small] SERVING 48 STATES • 50,000+ MOVES • 24/7 SUPPORT
+        (compact, tight spacing)
+```
 
----
-
-## Alternative Positions
-
-If `center top` isn't quite right, here are other options:
-
-| Position | Effect |
-|----------|--------|
-| `center top` | Shows topmost part of image |
-| `center 20%` | Shows near-top, slight headroom |
-| `center 30%` | Shows upper-third (matches Features carousel) |
-| `center center` | Default - dead center |
+**After:**
+```
+[Matched] SERVING 48 STATES  •  50,000+ MOVES  •  24/7 SUPPORT
+          (same height/weight as grey SAFER strip)
+```
 
 ---
 
 ## Summary
 
-| File | Change |
-|------|--------|
-| `src/index.css` | Add `object-position: center top;` to `.tru-why-carousel-card-image img` (line 26249) |
+| Line | Property | Change |
+|------|----------|--------|
+| 28618 | `.stats-strip` padding | `6px 16px` → `8px 24px` |
+| 28629 | `.stats-strip-inner` gap | `4px` → `16px` |
+| 28636 | `.stats-strip-item` gap | `4px` → `6px` |
+| 28637 | `.stats-strip-item` font-size | `10px` → `12px` |
+| 28638 | `.stats-strip-item` font-weight | `600` → `700` |
+| 28647-28648 | `.stats-strip-item svg` size | `12px` → `16px` |
+| 28655 | `.stats-strip-dot` margin | `0 4px` → `0 8px` |
+
+### File Modified
+- `src/index.css` - 5 property updates across the stats-strip rules
