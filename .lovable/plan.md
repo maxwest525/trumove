@@ -1,80 +1,128 @@
 
 
-# Fix Header Backdrop Gradient Banding Lines
+# Hero Layout Adjustments
 
-## Problem
+## Summary of Changes
 
-The header backdrop on the hero section is showing visible lines/banding. This is caused by the radial gradient on the `::before` pseudo-element at lines 26238-26273, which uses multiple opacity stops that create visible banding artifacts, especially at:
-- `hsl(0 0% 0% / 0.50)` to `hsl(0 0% 0% / 0.38)` (sharp jump)
-- Combined with mask-image gradients that add more edge definition
-
-## Root Cause
-
-The current gradient has discrete opacity stops that create visible "rings" or lines:
-```css
-background: radial-gradient(
-  ellipse 80% 80% at 50% 50%,
-  hsl(0 0% 0% / 0.50) 0%,
-  hsl(0 0% 0% / 0.38) 20%,
-  hsl(0 0% 0% / 0.18) 40%,
-  hsl(0 0% 0% / 0.06) 60%,
-  transparent 75%
-);
-```
-
-## Solution
-
-Replace the stepped radial gradient with a single, smooth gradient that has minimal opacity jumps. Also simplify the mask-image to avoid double-banding artifacts.
+The user wants two layout modifications to the hero section:
+1. **Move the family image higher up** - Adjust the `object-position` so more of the family is visible (less cropped from top)
+2. **Move the black StatsStrip and everything below it up by 175px** - Add negative margin to pull content upward, overlapping into the hero area
 
 ---
 
-## Implementation
+## Current Layout
 
-### File: `src/index.css` (Lines 26238-26273)
+```text
+┌──────────────────────────────────────────────────────────────────┐
+│  HERO WRAPPER (min-height: 100vh)                                │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │  Background Image (.tru-hero-bg-image)                     │  │
+│  │  object-position: center 25%  ← Crops family from top      │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │  Hero Content (form, headline, feature cards)              │  │
+│  └────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  BLACK STATS STRIP                                               │
+└──────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  AI INVENTORY ANALYSIS SECTION                                   │
+└──────────────────────────────────────────────────────────────────┘
+```
 
-**Replace the current `::before` pseudo-element with a smoother version:**
+## New Layout
+
+```text
+┌──────────────────────────────────────────────────────────────────┐
+│  HERO WRAPPER (min-height: 100vh)                                │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │  Background Image (.tru-hero-bg-image)                     │  │
+│  │  object-position: center 15%  ← Shows more of family       │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │  Hero Content (form, headline, feature cards)              │  │
+│  └────────────────────────────────────────────────────────────┤  │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │  BLACK STATS STRIP  ← Moved up 175px (overlaps hero)       │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│  ┌────────────────────────────────────────────────────────────┐  │
+│  │  AI INVENTORY ANALYSIS  ← Also moves up with strip         │  │
+└──┴────────────────────────────────────────────────────────────┴──┘
+```
+
+---
+
+## Implementation Details
+
+### File: `src/index.css`
+
+**Change 1: Move Family Higher (Line 1369)**
+
+Adjust the background image position from `center 25%` to `center 15%` to show more of the family (less top cropping):
 
 ```css
-.tru-hero-header-section.tru-hero-header-refined::before {
-  content: '';
-  position: absolute;
-  inset: -80px -60px;
-  background: radial-gradient(
-    ellipse 90% 90% at 50% 50%,
-    hsl(0 0% 0% / 0.35) 0%,
-    hsl(0 0% 0% / 0.25) 30%,
-    hsl(0 0% 0% / 0.10) 55%,
-    transparent 80%
-  );
-  z-index: -1;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  pointer-events: none;
+/* Before */
+.tru-hero-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+}
+
+/* After */
+.tru-hero-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 15%;  /* Show more family, less sky */
 }
 ```
 
-**Key Changes:**
-1. **Smoother gradient stops** - Fewer stops with gentler opacity transitions (0.35 → 0.25 → 0.10 → 0) instead of 5 abrupt stops
-2. **Remove mask-image entirely** - The mask-image was adding additional gradient banding on top of the background gradient
-3. **Slightly smaller inset** - Tighter bounds to avoid edge artifacts
-4. **Reduced blur** - 3px instead of 4px to reduce any blur-edge artifacts
+**Change 2: Pull StatsStrip Up 175px (Lines 28944-28952)**
+
+Add a negative top margin to the `.stats-strip` to pull it up into the hero area:
+
+```css
+/* Before */
+.stats-strip {
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-top: 1px solid hsl(0 0% 100% / 0.08);
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  padding: 8px 24px;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+}
+
+/* After */
+.stats-strip {
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-top: 1px solid hsl(0 0% 100% / 0.08);
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  padding: 8px 24px;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  margin-top: -175px;  /* Pull up into hero area */
+}
+```
 
 ---
 
 ## Technical Summary
 
-| Property | Before | After |
-|----------|--------|-------|
-| Gradient stops | 5 stops (0.50, 0.38, 0.18, 0.06, 0) | 4 stops (0.35, 0.25, 0.10, 0) |
-| Mask-image | Yes (adding more edges) | Removed |
-| Inset | -100px -80px | -80px -60px |
-| Blur | 4px | 3px |
+| Element | Property | Before | After |
+|---------|----------|--------|-------|
+| `.tru-hero-bg-image` | `object-position` | `center 25%` | `center 15%` |
+| `.stats-strip` | `margin-top` | (none) | `-175px` |
 
 ---
 
 ## Expected Result
 
-- No visible lines or banding in the header backdrop
-- Smooth, subtle dark vignette behind headline text for readability
-- Clean fade to transparent edges without artifacts
+- The family in the hero background image is positioned higher (more visible, less cropped from top)
+- The black StatsStrip overlaps the hero by 175px, making the page more compact
+- All content below the StatsStrip (AI Inventory Analysis, etc.) also shifts up accordingly
+- Creates a tighter, more cohesive hero-to-content transition
 
