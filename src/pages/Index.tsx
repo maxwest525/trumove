@@ -873,57 +873,6 @@ export default function Index() {
                           </div>
                         </div>
 
-                        {/* Permanent Route Summary Strip - Always visible */}
-                        <div className="tru-qb-route-summary tru-qb-route-summary-permanent">
-                          <div className="tru-qb-route-summary-inner">
-                            {/* Origin */}
-                            <div className={`tru-qb-route-summary-item ${fromCity ? 'has-data' : ''} ${updatedFields.has('from') ? 'is-pulsing' : ''}`}>
-                              <div className="tru-qb-route-summary-icon">
-                                {fromCoords ? (
-                                  <img 
-                                    src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/80x80@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
-                                    alt="Origin"
-                                    className="tru-qb-route-mini-map"
-                                  />
-                                ) : (
-                                  <Globe className="w-4 h-4 text-muted-foreground" />
-                                )}
-                              </div>
-                              <div className="tru-qb-route-summary-text">
-                                <span className="tru-qb-route-summary-label">Origin</span>
-                                <span className="tru-qb-route-summary-value">{fromCity || "Enter city"}</span>
-                              </div>
-                            </div>
-                            
-                            {/* Distance */}
-                            <div className={`tru-qb-route-summary-distance ${updatedFields.has('distance') ? 'is-pulsing' : ''} ${distance > 0 ? 'has-value' : ''}`}>
-                              <Route className="w-3.5 h-3.5" />
-                              <span>{distance > 0 ? `${distance.toLocaleString()} mi` : "— mi"}</span>
-                              {distance > 0 && (
-                                <span className="tru-qb-route-summary-type">{moveType === 'long-distance' ? 'Long Distance' : 'Local'}</span>
-                              )}
-                            </div>
-                            
-                            {/* Destination */}
-                            <div className={`tru-qb-route-summary-item ${toCity ? 'has-data' : ''} ${updatedFields.has('to') ? 'is-pulsing' : ''}`}>
-                              <div className="tru-qb-route-summary-icon">
-                                {toCoords ? (
-                                  <img 
-                                    src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/80x80@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
-                                    alt="Destination"
-                                    className="tru-qb-route-mini-map"
-                                  />
-                                ) : (
-                                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                                )}
-                              </div>
-                              <div className="tru-qb-route-summary-text">
-                                <span className="tru-qb-route-summary-label">Destination</span>
-                                <span className="tru-qb-route-summary-value">{toCity || "Enter city"}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
 
                         {/* Move Date */}
                         <p className="tru-qb-section-label" style={{ marginTop: '1.25rem' }}>Move Date</p>
