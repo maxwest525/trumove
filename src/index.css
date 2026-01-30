@@ -11180,6 +11180,8 @@
     0 8px 24px hsl(var(--tm-ink) / 0.04),
     0 16px 48px hsl(var(--tm-ink) / 0.02);
   transition: all 300ms ease;
+  /* Position context for absolute Agent Login button */
+  position: relative;
 }
 
 .header-main.header-floating.is-scrolled {
@@ -11403,12 +11405,22 @@
   color: hsl(var(--foreground));
 }
 
-/* Agent Login Button */
+/* Agent Login Button - Absolute positioned at far right */
 .header-btn-agent {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
   background: transparent;
   color: hsl(var(--tm-ink));
   border: 1px solid hsl(var(--tm-ink) / 0.2);
-  margin-left: auto;
+}
+
+/* Hide absolute Agent Login on smaller screens (mobile menu has it) */
+@media (max-width: 1200px) {
+  .header-btn-agent {
+    display: none;
+  }
 }
 
 .dark .header-btn-agent {
