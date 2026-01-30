@@ -1,241 +1,146 @@
 
+# Enhance Analyzing Route Modal - Prominent Style & Bigger Maps
 
-# Reorganize AI Inventory Analysis Section - Compact Two-Column Layout
+## Changes Overview
 
-## Current Layout (Vertical Stack)
-```text
-┌─────────────────────────────────────────────────────┐
-│           AI Inventory Analysis (title)             │
-│              ─────────────────────                  │
-│           Take a video or pictures...              │
-│            [Demo AI Analysis Button]                │
-├─────────────────────────────────────────────────────┤
-│  ┌──────────────────┐  ┌──────────────────────────┐ │
-│  │   Room Scanner   │  │    Live Inventory List   │ │
-│  │   (image + scan) │  │    (items appearing)     │ │
-│  └──────────────────┘  └──────────────────────────┘ │
-├─────────────────────────────────────────────────────┤
-│   ①────────────  ②────────────  ③────────────      │
-│   Video/Photos   AI Detection   Agent Confirm      │
-├─────────────────────────────────────────────────────┤
-│   [Build Inventory]    [Book Video Consult]         │
-└─────────────────────────────────────────────────────┘
+### 1. Remove Green Accent from Header
+The pulsing Radar icon uses green color. We'll change it to a neutral dark color (--tm-ink) so it blends with the header text instead of standing out as a green accent.
+
+### 2. Add Prominent Black Border
+Replace the subtle 1px border with a bold 3px black stroke to make the modal pop:
+
+```css
+.tru-analyze-popup-modal {
+  border: 3px solid hsl(var(--tm-ink));
+}
 ```
 
-## New Layout (Side-by-Side)
-```text
-┌─────────────────────────────────────────────────────┐
-│           AI Inventory Analysis (title)             │
-│              ─────────────────────                  │
-│           Take a video or pictures...              │
-├───────────────────────────┬─────────────────────────┤
-│                           │  ┌───────────────────┐  │
-│  ① Video or Photos        │  │  Room Scanner     │  │
-│     Walk through rooms... │  │  (image + scan)   │  │
-│                           │  └───────────────────┘  │
-│  ② AI Detection           │  ┌───────────────────┐  │
-│     Computer vision...    │  │  Live Inventory   │  │
-│                           │  │  (items list)     │  │
-│  ③ Agent Confirmation     │  └───────────────────┘  │
-│     A live specialist...  │                         │
-│                           │                         │
-│  [Demo AI Analysis]       │                         │
-├───────────────────────────┴─────────────────────────┤
-│   [Build Inventory]    [Book Video Consult]         │
-└─────────────────────────────────────────────────────┘
+### 3. Make Maps Bigger
+Increase the map panel sizes significantly:
+- Origin/Destination frames: 280x160px → 360x220px
+- Route (center) frame: 360x160px → 440x220px
+
+### 4. Use Street View for Origin & Destination
+Switch from satellite imagery (zoom 14) to Google Street View Static API for a closer, more personal perspective of the addresses. Fall back to satellite if Street View is unavailable.
+
+Street View URL format:
 ```
-
-This keeps all elements at the same size but rearranges them into a more compact horizontal structure.
-
----
-
-## Implementation
-
-### File: `src/pages/Index.tsx`
-
-**Lines 1517-1595: Restructure the AI Steps section**
-
-Move the button after the steps, wrap steps + button in a left column, and put LiveScanPreview in a right column:
-
-```tsx
-{/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-<section className="tru-ai-steps-section">
-  <div className="tru-ai-steps-inner">
-    {/* Gradient Header */}
-    <h2 className="tru-ai-steps-title">
-      <span className="tru-ai-gradient-text">AI</span> Inventory Analysis
-    </h2>
-
-    {/* Accent Line */}
-    <div className="tru-ai-accent-line" />
-
-    <p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
-    
-    {/* Two-column layout: Steps on left, Demo on right */}
-    <div className="tru-ai-two-column">
-      {/* Left column: Vertical steps + button */}
-      <div className="tru-ai-left-column">
-        <div className="tru-ai-steps-vertical">
-          <div className="tru-ai-step">
-            <div className="tru-ai-step-number">1</div>
-            <div className="tru-ai-step-content">
-              <h3 className="tru-ai-step-title">Video or Photos</h3>
-              <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
-            </div>
-          </div>
-          <div className="tru-ai-step">
-            <div className="tru-ai-step-number">2</div>
-            <div className="tru-ai-step-content">
-              <h3 className="tru-ai-step-title">AI Detection</h3>
-              <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
-            </div>
-          </div>
-          <div className="tru-ai-step">
-            <div className="tru-ai-step-number">3</div>
-            <div className="tru-ai-step-content">
-              <h3 className="tru-ai-step-title">Agent Confirmation</h3>
-              <p className="tru-ai-step-desc">A live specialist reviews to ensure accuracy.</p>
-            </div>
-          </div>
-        </div>
-        
-        {/* Primary CTA Button */}
-        <button 
-          type="button"
-          onClick={() => {
-            setScanDemoRunning(true);
-            setTimeout(() => {
-              scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-          }}
-          className="tru-ai-start-btn tru-ai-start-btn-left"
-        >
-          <Scan className="w-5 h-5" />
-          {scanDemoRunning ? "Scanning..." : "Demo AI Analysis"}
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
-      
-      {/* Right column: Demo preview */}
-      <div className="tru-ai-right-column">
-        <LiveScanPreview isRunning={scanDemoRunning} containerRef={scanPreviewRef} />
-      </div>
-    </div>
-    
-    {/* Inventory Action Buttons */}
-    <div className="tru-inventory-actions">
-      <button 
-        type="button" 
-        className="tru-inventory-action-btn"
-        onClick={() => navigate("/online-estimate")}
-      >
-        <Boxes className="w-5 h-5" />
-        <span>Build Inventory Manually</span>
-      </button>
-      <button 
-        type="button" 
-        className="tru-inventory-action-btn"
-        onClick={() => navigate("/book")}
-      >
-        <Video className="w-5 h-5" />
-        <span>Prefer to talk? Book Video Consult</span>
-      </button>
-    </div>
-  </div>
-</section>
+https://maps.googleapis.com/maps/api/streetview?size=720x440&location={lat},{lng}&key={API_KEY}
 ```
 
 ---
+
+## Implementation Details
 
 ### File: `src/index.css`
 
-**Add new CSS for the two-column layout (~after line 2562)**
-
+**Lines 13892-13894: Change icon color from green to neutral**
 ```css
-/* Two-column layout for AI section */
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 32px;
-  align-items: start;
-  margin-bottom: 32px;
-  text-align: left;
+/* Before */
+.tru-analyzing-icon {
+  color: hsl(var(--primary));
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
-.tru-ai-left-column {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.tru-ai-right-column {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Vertical steps layout */
-.tru-ai-steps-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* Override for left-aligned button */
-.tru-ai-start-btn.tru-ai-start-btn-left {
-  margin: 0;
-  align-self: flex-start;
-}
-
-/* Responsive: Stack on mobile */
-@media (max-width: 768px) {
-  .tru-ai-two-column {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  
-  .tru-ai-start-btn.tru-ai-start-btn-left {
-    align-self: center;
-  }
+/* After */
+.tru-analyzing-icon {
+  color: hsl(var(--tm-ink));
+  animation: pulse 1.5s ease-in-out infinite;
 }
 ```
 
-**Update LiveScanPreview container to be single-column when inside right column**
-
+**Lines 14033-14047: Add prominent black border to modal**
 ```css
-/* When inside the two-column layout, stack scanner and inventory vertically */
-.tru-ai-right-column .tru-ai-preview-live {
-  grid-template-columns: 1fr;
-  max-width: none;
-  margin: 0;
-  gap: 16px;
+.tru-analyze-popup-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 32px;
+  max-width: 1200px; /* Wider to fit larger maps */
+  width: 96%;
+  background: hsl(var(--background));
+  border-radius: 24px;
+  border: 3px solid hsl(var(--tm-ink)); /* Bold black border */
+  box-shadow: 
+    0 30px 60px -15px hsl(var(--tm-ink) / 0.4),
+    0 15px 30px -10px hsl(var(--tm-ink) / 0.25);
+  animation: popupEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+```
+
+**Lines 14111-14130: Increase map frame sizes**
+```css
+.tru-analyze-strip-frame {
+  position: relative;
+  width: 360px;  /* Was 280px */
+  height: 220px; /* Was 160px */
+  /* ... rest unchanged */
 }
 
-.tru-ai-right-column .tru-ai-live-inventory {
-  height: auto;
-  min-height: 200px;
+.tru-analyze-strip-route .tru-analyze-strip-frame {
+  width: 440px; /* Was 360px */
 }
+
+.tru-analyze-strip-route-frame {
+  width: 440px !important; /* Was 360px */
+}
+```
+
+---
+
+### File: `src/pages/Index.tsx`
+
+**Lines 949-959 and 986-996: Use Street View for Origin & Destination**
+
+Replace the Mapbox satellite static images with Google Street View for a closer view:
+
+```tsx
+{/* Origin - Street View */}
+<img 
+  src={fromCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${fromCoords[1]},${fromCoords[0]}&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
+  alt="Origin location"
+  className="tru-analyze-strip-img"
+  onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
+  onError={(e) => {
+    // Fallback to satellite if Street View unavailable
+    e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords?.[0]},${fromCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
+  }}
+/>
+
+{/* Destination - Street View */}
+<img 
+  src={toCoords ? `https://maps.googleapis.com/maps/api/streetview?size=720x440&location=${toCoords[1]},${toCoords[0]}&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo` : ''}
+  alt="Destination location"
+  className="tru-analyze-strip-img"
+  onLoad={(e) => e.currentTarget.classList.add('is-loaded')}
+  onError={(e) => {
+    // Fallback to satellite if Street View unavailable
+    e.currentTarget.src = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords?.[0]},${toCoords?.[1]},16,0/720x440@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`;
+  }}
+/>
 ```
 
 ---
 
 ## Technical Summary
 
-| File | Change |
-|------|--------|
-| `src/pages/Index.tsx` | Restructure AI section into 2-column grid: left (vertical steps + button), right (demo viewer) |
-| `src/index.css` | Add `.tru-ai-two-column`, `.tru-ai-left-column`, `.tru-ai-right-column`, `.tru-ai-steps-vertical` styles |
-| `src/index.css` | Add responsive breakpoint to stack columns on mobile |
-| `src/index.css` | Override LiveScanPreview to stack vertically when in right column |
+| File | Lines | Change |
+|------|-------|--------|
+| `src/index.css` | 13892-13894 | Change `.tru-analyzing-icon` color from `--primary` (green) to `--tm-ink` (black) |
+| `src/index.css` | 14043 | Change border from `1px solid hsl(var(--border))` to `3px solid hsl(var(--tm-ink))` |
+| `src/index.css` | 14039 | Increase max-width from `1100px` to `1200px` |
+| `src/index.css` | 14113-14114 | Increase origin/dest frame size to 360x220px |
+| `src/index.css` | 14125-14130 | Increase route frame size to 440x220px |
+| `src/pages/Index.tsx` | 951-956 | Switch Origin image to Google Street View with satellite fallback |
+| `src/pages/Index.tsx` | 988-993 | Switch Destination image to Google Street View with satellite fallback |
 
 ---
 
 ## Expected Result
 
-- Section becomes more vertically compact
-- Steps 1, 2, 3 stack vertically on the left side
-- Demo viewer (scanner + inventory) displays on the right side
-- All elements maintain their current size (no shrinking)
-- "Demo AI Analysis" button moves below the steps on the left
-- Action buttons remain at the bottom, centered
-- Mobile: Gracefully stacks into single column
-
+- No green strip/accent at top - icon blends with header text
+- Bold 3px black border makes the modal very prominent
+- Maps are 30-40% larger for better visibility
+- Street View shows a more personal, street-level perspective of origin/destination
+- Satellite fallback ensures imagery is always shown even if Street View unavailable
