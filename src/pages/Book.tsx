@@ -3,7 +3,7 @@ import SiteShell from "@/components/layout/SiteShell";
 import { DailyVideoRoom } from "@/components/video-consult/DailyVideoRoom";
 import { 
   Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, 
-  Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package,
+  Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -140,6 +140,7 @@ const inventoryItemsByRoom: Record<string, { name: string; weight: number; image
 function InventoryShareModal({ onClose }: { onClose: () => void }) {
   const [activeRoom, setActiveRoom] = useState('Living Room');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
   const [quantities, setQuantities] = useState<Record<string, number>>({
     'Living Room-3-Cushion Sofa': 1,
     'Living Room-55" Plasma TV': 1,
@@ -178,6 +179,13 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
   }, 0);
 
   const roomItems = inventoryItemsByRoom[activeRoom] || [];
+  
+  // Filter items based on search query
+  const filteredItems = searchQuery.trim() 
+    ? roomItems.filter(item => 
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : roomItems;
 
   return (
     <div className="absolute inset-4 flex items-center justify-center z-10">
@@ -239,9 +247,32 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
 
           {/* Right Content - Item Grid */}
           <div className="flex-1 flex flex-col">
-            {/* View Toggle Header */}
-            <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-800/30">
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{activeRoom}</span>
+            {/* Search Bar + View Toggle Header */}
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-800/30">
+              {/* Search Input */}
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search items..."
+                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
+                />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+              
+              {/* Room Label */}
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">{activeRoom}</span>
+              
+              {/* View Toggle */}
               <div className="flex rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 p-0.5">
                 <button
                   onClick={() => setViewMode('grid')}
@@ -272,7 +303,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
             <div className="flex-1 p-3 overflow-y-auto">
               {viewMode === 'grid' ? (
                 <div className="grid grid-cols-4 gap-2">
-                  {roomItems.map((item) => {
+                  {filteredItems.map((item) => {
                     const qty = quantities[`${activeRoom}-${item.name}`] || 0;
                     return (
                       <div 
@@ -310,7 +341,7 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {roomItems.map((item) => {
+                  {filteredItems.map((item) => {
                     const qty = quantities[`${activeRoom}-${item.name}`] || 0;
                     return (
                       <div 
