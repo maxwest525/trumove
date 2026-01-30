@@ -1,64 +1,88 @@
 
-
-# Vertically Center TruMove Logo with Headline Text
+# Style Form Header to Match Reference Image
 
 ## Overview
-Adjust the TruMove logo positioning so it's vertically centered specifically with the words "A Smarter Way To Move", not just the container.
+Update the EstimateWizard form header to match the reference image style with:
+- Dark uppercase text "BUILD YOUR" with green "MOVE"
+- Slightly darker background
+- Tiny subheader in muted uppercase
 
 ---
 
 ## Current State
 
-The headline structure is:
-```tsx
-<h1 className="tru-hero-headline-main tru-headline-animated">
-  <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
-  A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
-</h1>
-```
-
-Current logo CSS (line 25933-25942):
-```css
-.tru-hero-headline-logo {
-  height: 72px;
-  margin-right: 16px;
-  margin-bottom: 8px;  /* This pushes the logo UP relative to text */
-  vertical-align: middle;
-}
-```
-
-The `margin-bottom: 8px` is causing the logo to sit higher than the text baseline.
+| Element | Current | Target |
+|---------|---------|--------|
+| Title text | "Build your move" (sentence case) | "BUILD YOUR MOVE" (uppercase) |
+| Title color | Dark (`hsl(var(--tm-ink))`) | Same - already dark |
+| "Move" accent | Green gradient | Same - already green |
+| Background | `hsl(220 15% 96%)` (light gray) | Slightly darker: `hsl(220 15% 93%)` |
+| Subheader | Already exists | Already exists - may need font tweaks |
+| Green accent bar | Missing | Add at top |
 
 ---
 
-## Proposed Change
+## Proposed Changes
+
+### File: `src/components/estimate/EstimateWizard.tsx`
+
+**Update the header content (lines 242-247):**
+
+```tsx
+// From
+<span className="tru-qb-form-title tru-qb-form-title-large">Build your <span className="tru-qb-title-accent">move</span></span>
+
+// To
+<span className="tru-qb-form-title tru-qb-form-title-large">BUILD YOUR <span className="tru-qb-title-accent">MOVE</span></span>
+```
+
+---
 
 ### File: `src/index.css`
 
-Remove the `margin-bottom` from the logo so it aligns properly with the text via flexbox:
+**1. Add green accent bar at top of header (after line 4318):**
+
+Add a `::before` pseudo-element to create the green gradient stripe at the top of the header:
+
+```css
+.tru-qb-form-header.tru-qb-form-header-pill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, hsl(142 76% 50%) 0%, hsl(160 80% 45%) 100%);
+  border-radius: 16px 16px 0 0;
+}
+```
+
+**2. Darken the header background (line 4315):**
 
 ```css
 /* From */
-.tru-hero-headline-logo {
-  height: 72px;
-  width: auto;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 16px;
-  margin-bottom: 8px;  /* Remove this */
-  ...
-}
+background: hsl(220 15% 96%);
 
 /* To */
-.tru-hero-headline-logo {
-  height: 72px;
-  width: auto;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 16px;
-  margin-bottom: 0;    /* Changed to 0 */
-  ...
-}
+background: hsl(220 15% 93%);
+```
+
+**3. Ensure title text styling (lines 4343-4348):**
+
+Already styled correctly with `font-weight: 800` and dark color. No changes needed.
+
+**4. Adjust subtitle styling if needed (lines 4442-4448):**
+
+Already styled with uppercase, small font. May tweak to be smaller/more muted:
+
+```css
+/* From */
+font-size: 10px;
+color: hsl(var(--tm-ink) / 0.45);
+
+/* To */
+font-size: 9px;
+color: hsl(var(--tm-ink) / 0.38);
 ```
 
 ---
@@ -67,7 +91,15 @@ Remove the `margin-bottom` from the logo so it aligns properly with the text via
 
 | Change | Before | After |
 |--------|--------|-------|
-| Logo vertical position | 8px higher than text center | Centered with text |
+| Header background | Light gray (96% lightness) | Slightly darker (93% lightness) |
+| Title text | Sentence case | UPPERCASE |
+| Green accent bar | None | 3px gradient bar at top |
+| Subheader | 10px, 45% opacity | 9px, 38% opacity (tinier) |
 
-The logo will now sit at the same vertical center as the words "A Smarter Way To Move".
+The form header will now match the reference image with the dark "BUILD YOUR MOVE" text, green accent on "MOVE", darker background, and tiny subheader.
 
+---
+
+## Dark Mode Considerations
+
+The existing dark mode overrides will continue to work - the header will have a dark background (`hsl(220 15% 8%)`) with white text in dark mode. The green accent bar and "MOVE" gradient will remain consistent.
