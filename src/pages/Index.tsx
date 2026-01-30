@@ -289,15 +289,37 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
 
 MoveSummaryModal.displayName = "MoveSummaryModal";
 
-// Live Scan Preview Component
-interface LiveScanPreviewProps {
+// Scanner Component - Center column
+interface ScannerPreviewProps {
   isRunning: boolean;
-  containerRef: React.RefObject<HTMLDivElement>;
-  onStartDemo?: () => void;
-  hideStartButton?: boolean;
 }
 
-function LiveScanPreview({ isRunning, containerRef, onStartDemo, hideStartButton }: LiveScanPreviewProps) {
+function ScannerPreview({ isRunning }: ScannerPreviewProps) {
+  return (
+    <div className="tru-ai-live-scanner">
+      <img src={sampleRoomLiving} alt="Room being scanned" />
+      <div className="tru-ai-scanner-overlay">
+        <div className="tru-ai-scanner-line" />
+      </div>
+      <div className="tru-ai-scanner-badge">
+        <Scan className="w-4 h-4" />
+        <span>Scanning...</span>
+      </div>
+      {/* Demo pill overlay */}
+      <div className="tru-ai-demo-pill">
+        <Sparkles className="w-3 h-3" />
+        {isRunning ? "Running..." : "Demo"}
+      </div>
+    </div>
+  );
+}
+
+// Detection List Component - Right column
+interface DetectionListProps {
+  isRunning: boolean;
+}
+
+function DetectionList({ isRunning }: DetectionListProps) {
   const [visibleCount, setVisibleCount] = useState(0);
 
   useEffect(() => {
@@ -309,11 +331,11 @@ function LiveScanPreview({ isRunning, containerRef, onStartDemo, hideStartButton
     const interval = setInterval(() => {
       setVisibleCount(prev => {
         if (prev >= SCAN_DEMO_ITEMS.length) {
-          return prev; // Stop at the end, don't loop
+          return prev;
         }
         return prev + 1;
       });
-    }, 800); // Slightly faster for better UX
+    }, 800);
     return () => clearInterval(interval);
   }, [isRunning]);
 
@@ -322,58 +344,34 @@ function LiveScanPreview({ isRunning, containerRef, onStartDemo, hideStartButton
   const totalCuFt = visibleItems.reduce((sum, item) => sum + item.cuft, 0);
 
   return (
-    <div ref={containerRef} className={`tru-ai-preview-horizontal ${isRunning ? 'is-running' : ''}`}>
-      {/* Room scan with overlay pill */}
-      <div className="tru-ai-live-scanner">
-        <img src={sampleRoomLiving} alt="Room being scanned" />
-        <div className="tru-ai-scanner-overlay">
-          <div className="tru-ai-scanner-line" />
-        </div>
-        <div className="tru-ai-scanner-badge">
-          <Scan className="w-4 h-4" />
-          <span>Scanning...</span>
-        </div>
-        {/* Demo pill overlay */}
-        {onStartDemo && !hideStartButton && (
-          <button 
-            onClick={onStartDemo}
-            className="tru-ai-demo-pill"
-          >
-            <Sparkles className="w-3 h-3" />
-            {isRunning ? "Running..." : "Demo"}
-          </button>
-        )}
+    <div className="tru-ai-live-inventory">
+      <div className="tru-ai-live-header">
+        <Sparkles className="w-4 h-4" />
+        <span>Live Detection</span>
       </div>
-      {/* Live detection list */}
-      <div className="tru-ai-live-inventory">
-        <div className="tru-ai-live-header">
-          <Sparkles className="w-4 h-4" />
-          <span>Live Detection</span>
-        </div>
-        <div className="tru-ai-live-items">
-          {visibleItems.map((item, i) => (
-            <div 
-              key={`${item.name}-${i}`} 
-              className="tru-ai-live-item"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            >
-              <img src={item.image} alt={item.name} />
-              <span className="tru-ai-live-item-name">{item.name}</span>
-              <span className="tru-ai-live-item-weight">{item.weight} lbs</span>
-            </div>
-          ))}
-        </div>
-        <div className="tru-ai-live-totals">
-          <span>
-            <span className="tru-ai-total-label">Items:</span> {visibleCount}
-          </span>
-          <span>
-            <span className="tru-ai-total-label">Weight:</span> {totalWeight} lbs
-          </span>
-          <span>
-            <span className="tru-ai-total-label">Volume:</span> {totalCuFt} cu ft
-          </span>
-        </div>
+      <div className="tru-ai-live-items">
+        {visibleItems.map((item, i) => (
+          <div 
+            key={`${item.name}-${i}`} 
+            className="tru-ai-live-item"
+            style={{ animationDelay: `${i * 0.1}s` }}
+          >
+            <img src={item.image} alt={item.name} />
+            <span className="tru-ai-live-item-name">{item.name}</span>
+            <span className="tru-ai-live-item-weight">{item.weight} lbs</span>
+          </div>
+        ))}
+      </div>
+      <div className="tru-ai-live-totals">
+        <span>
+          <span className="tru-ai-total-label">Items:</span> {visibleCount}
+        </span>
+        <span>
+          <span className="tru-ai-total-label">Weight:</span> {totalWeight} lbs
+        </span>
+        <span>
+          <span className="tru-ai-total-label">Volume:</span> {totalCuFt} cu ft
+        </span>
       </div>
     </div>
   );
@@ -1552,8 +1550,8 @@ export default function Index() {
                 </button>
               </div>
               
-              {/* Two-column layout: Steps on left, Demo on right */}
-              <div className="tru-ai-two-column">
+              {/* Three-column layout: Steps | Scanner | Detection */}
+              <div className="tru-ai-two-column" ref={scanPreviewRef}>
                 {/* Left column: Vertical steps with preview thumbnails */}
                 <div className="tru-ai-left-column">
                   <div className="tru-ai-steps-vertical">
@@ -1590,19 +1588,14 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Right column: Demo preview - stacked vertically for maximum size */}
-                <div className="tru-ai-right-column tru-ai-preview-vertical">
-                  <LiveScanPreview 
-                    isRunning={scanDemoRunning} 
-                    containerRef={scanPreviewRef}
-                    onStartDemo={() => {
-                      setScanDemoRunning(true);
-                      setTimeout(() => {
-                        scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      }, 100);
-                    }}
-                    hideStartButton={true}
-                  />
+                {/* Center column: Scanner preview */}
+                <div className={`tru-ai-center-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
+                  <ScannerPreview isRunning={scanDemoRunning} />
+                </div>
+                
+                {/* Right column: Detection list */}
+                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
+                  <DetectionList isRunning={scanDemoRunning} />
                 </div>
               </div>
             </div>
