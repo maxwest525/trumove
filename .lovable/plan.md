@@ -1,110 +1,92 @@
 
+# Fix Why TruMove Card Clipping Issue
 
-# Add Unique Images for FMCSA Verified and Smart Carrier Match
+## Problem Analysis
 
-## Current Issue
+The Why TruMove card appears rounded on the left but squared/cut off on the right side due to container clipping and unbalanced padding.
 
-Both "Smart Carrier Match" and "FMCSA Verified" features use the same image (`previewCarrierVetting`), making them visually indistinguishable in the carousel.
+### Root Causes Found
 
-## Solution
+| Container | Issue |
+|-----------|-------|
+| `.tru-hero.tru-hero-split` | `overflow: hidden` (line 24575) clips child content |
+| `.tru-hero.tru-hero-split` | Unbalanced padding: `48px 24px 24px 48px` (48px left, 24px right) |
+| `.tru-hero-content-panel` | `padding-left: 24px` but no `padding-right` |
 
-Create custom icon components for each feature (similar to how Trudy AI Assistant has `TruckChatIcon`). This approach:
-- Creates unique, distinctive visuals for each feature
-- Uses lucide-react icons already in the project
-- Maintains consistent styling with the existing TruckChatIcon pattern
+The card extends to the right edge of its container, and the combination of `overflow: hidden` and missing right padding causes the rounded corners to be clipped.
 
 ---
 
-## Implementation Plan
+## Solution
 
-### Step 1: Create Smart Carrier Match Icon Component
+Add right padding to the content panel and balance the hero split padding to give the card room to display its rounded corners.
 
-**File: `src/components/FeatureCarousel.tsx`**
+---
 
-Add a new component that visualizes "smart matching" with trucks and a connection/matching visual:
+## Implementation
 
-```tsx
-import { Truck, GitCompare, Star } from "lucide-react";
+### Change 1: Add padding-right to content panel
 
-const SmartMatchIcon = () => (
-  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
-    <div className="relative flex items-center gap-2">
-      <Truck className="w-10 h-10 text-foreground" />
-      <GitCompare className="w-8 h-8 text-primary" />
-      <Star className="w-6 h-6 text-primary fill-primary/30 absolute -top-2 right-0" />
-    </div>
-  </div>
-);
+**File: `src/index.css`** (line 1559)
+
+Add `padding-right: 24px` to `.tru-hero-content-panel`:
+
+```css
+/* Current */
+.tru-hero-content-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: flex-start;
+  height: auto;
+  grid-row: 2;
+  grid-column: 2;
+  padding-left: 24px;
+  padding-top: 0;
+}
+
+/* Updated */
+.tru-hero-content-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: flex-start;
+  height: auto;
+  grid-row: 2;
+  grid-column: 2;
+  padding-left: 24px;
+  padding-right: 24px;  /* <-- Add this */
+  padding-top: 0;
+}
 ```
 
-### Step 2: Create FMCSA Verified Icon Component
+### Change 2: Balance hero split padding
 
-**File: `src/components/FeatureCarousel.tsx`**
+**File: `src/index.css`** (line 1398)
 
-Add a component that visualizes "official verification" with a shield/badge and checkmark:
+Update the hero split padding to be balanced:
 
-```tsx
-import { ShieldCheck, FileCheck, BadgeCheck } from "lucide-react";
+```css
+/* Current */
+padding: 48px 24px 24px 48px;
 
-const FMCSAVerifiedIcon = () => (
-  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
-    <div className="relative">
-      <ShieldCheck className="w-16 h-16 text-foreground" />
-      <BadgeCheck className="w-6 h-6 text-primary absolute -bottom-1 -right-1" />
-    </div>
-  </div>
-);
-```
-
-### Step 3: Update Features Array
-
-**File: `src/components/FeatureCarousel.tsx`**
-
-Replace the `image` property with `customIcon` for both features:
-
-```tsx
-{
-  title: "Smart Carrier Match",
-  desc: "Our algorithm finds the best carrier for your route.",
-  customIcon: <SmartMatchIcon />,
-  route: "/vetting",
-},
-// ...
-{
-  title: "FMCSA Verified",
-  desc: "Real-time safety data checks from official databases.",
-  customIcon: <FMCSAVerifiedIcon />,
-  route: "/vetting",
-},
-```
-
-### Step 4: Update Imports
-
-**File: `src/components/FeatureCarousel.tsx`**
-
-Add new icon imports from lucide-react:
-
-```tsx
-import { X, Truck, MessageCircle, Sparkles, GitCompare, Star, ShieldCheck, BadgeCheck } from "lucide-react";
+/* Updated - balanced left/right */
+padding: 48px 48px 24px 48px;
 ```
 
 ---
 
 ## Summary of Changes
 
-| File | Change |
-|------|--------|
-| `src/components/FeatureCarousel.tsx` | Add `GitCompare`, `Star`, `ShieldCheck`, `BadgeCheck` imports |
-| `src/components/FeatureCarousel.tsx` | Create `SmartMatchIcon` component |
-| `src/components/FeatureCarousel.tsx` | Create `FMCSAVerifiedIcon` component |
-| `src/components/FeatureCarousel.tsx` | Update Smart Carrier Match to use `customIcon` |
-| `src/components/FeatureCarousel.tsx` | Update FMCSA Verified to use `customIcon` |
+| File | Line | Change |
+|------|------|--------|
+| `src/index.css` | 1398 | Change hero split padding from `48px 24px 24px 48px` to `48px 48px 24px 48px` |
+| `src/index.css` | 1559-1561 | Add `padding-right: 24px` to `.tru-hero-content-panel` |
 
 ---
 
-## Visual Result
+## Expected Result
 
-- **Smart Carrier Match**: Shows a truck with matching/comparison arrows and a star, representing the algorithm finding the best carrier
-- **FMCSA Verified**: Shows a shield with checkmark badge, representing official government verification and safety
-- Both icons use the same gradient background styling as the Trudy AI icon for visual consistency
-
+- The Why TruMove card will have fully visible rounded corners on both left and right sides
+- The card will have equal spacing from the viewport edge on both sides
+- The overall hero layout will appear more balanced
