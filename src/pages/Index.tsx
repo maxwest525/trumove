@@ -991,16 +991,16 @@ export default function Index() {
               </div>
             )}
 
-            {/* Hero Header with Headline Only - Subtitle outside backdrop */}
+            {/* Hero Header with Headline + Subtitle inside backdrop */}
             <div className="tru-hero-header-section tru-hero-header-refined">
               <h1 className="tru-hero-headline-main tru-headline-animated">
                 <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
                 A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
               </h1>
+              <p className="tru-hero-subheadline-refined tru-subheadline-animated">
+                Moving. The Way Its Supposed To Be
+              </p>
             </div>
-            <p className="tru-hero-subheadline-refined tru-subheadline-animated">
-              Moving. The Way Its Supposed To Be
-            </p>
 
             {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
             <div 
