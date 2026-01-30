@@ -144,6 +144,87 @@ const SCAN_DEMO_ITEMS = [
   { name: "Floor Lamp", weight: 15, cuft: 4, image: "/inventory/living-room/lamp-floor.png" },
 ];
 
+// Move Summary Modal - Hero Right Side
+interface MoveSummaryModalProps {
+  fromCity: string;
+  toCity: string;
+  distance: number;
+  fromCoords: [number, number] | null;
+  toCoords: [number, number] | null;
+}
+
+function MoveSummaryModal({ 
+  fromCity, 
+  toCity, 
+  distance, 
+  fromCoords, 
+  toCoords 
+}: MoveSummaryModalProps) {
+  const hasData = fromCity || toCity;
+  if (!hasData) return null;
+
+  const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
+
+  return (
+    <div className="tru-move-summary-modal">
+      <div className="tru-move-summary-header">
+        <CheckCircle className="w-5 h-5" />
+        <h3>Move Summary</h3>
+      </div>
+      
+      <div className="tru-move-summary-grid">
+        {/* Origin */}
+        <div className="tru-move-summary-location">
+          <div className="tru-move-summary-map">
+            {fromCoords ? (
+              <img 
+                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/160x160@2x?access_token=${MAPBOX_TOKEN}`}
+                alt="Origin satellite view"
+              />
+            ) : (
+              <div className="tru-move-summary-map-placeholder">
+                <MapPin className="w-6 h-6" />
+              </div>
+            )}
+          </div>
+          <div className="tru-move-summary-location-info">
+            <span className="label">Origin</span>
+            <span className="value">{fromCity || "Enter origin..."}</span>
+          </div>
+        </div>
+        
+        {/* Distance Badge - Green on Black */}
+        <div className="tru-move-summary-distance">
+          <Route className="w-4 h-4" />
+          <span className="tru-move-summary-mileage">
+            {distance > 0 ? `${distance.toLocaleString()} mi` : "— mi"}
+          </span>
+        </div>
+        
+        {/* Destination */}
+        <div className="tru-move-summary-location">
+          <div className="tru-move-summary-map">
+            {toCoords ? (
+              <img 
+                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/160x160@2x?access_token=${MAPBOX_TOKEN}`}
+                alt="Destination satellite view"
+              />
+            ) : (
+              <div className="tru-move-summary-map-placeholder">
+                <Truck className="w-6 h-6" />
+              </div>
+            )}
+          </div>
+          <div className="tru-move-summary-location-info">
+            <span className="label">Destination</span>
+            <span className="value">{toCity || "Enter destination..."}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Live Scan Preview Component
 function LiveScanPreview() {
   const [visibleCount, setVisibleCount] = useState(0);
@@ -1290,8 +1371,17 @@ export default function Index() {
               */}
             </div>
 
-            {/* RIGHT SIDE: Why TruMove Card + Tracking Demo */}
+            {/* RIGHT SIDE: Move Summary Modal + Why TruMove Card */}
             <div className="tru-hero-content-panel tru-hero-stacked-cards">
+              {/* Move Summary Modal - appears when location data exists */}
+              <MoveSummaryModal 
+                fromCity={fromCity}
+                toCity={toCity}
+                distance={distance}
+                fromCoords={fromCoords}
+                toCoords={toCoords}
+              />
+              
               {/* CARD 1: Why TruMove - Premium Card */}
               <div className="tru-why-card-premium" ref={parallaxCardsRef}
                 style={{ transform: `translateY(${cardsParallax.y}px)` }}
@@ -1421,15 +1511,7 @@ export default function Index() {
           {/* BLACK STATS STRIP - Section Divider */}
           <StatsStrip />
 
-          {/* ROUTE ANALYSIS SECTION - Always visible */}
-          <RouteAnalysisSection 
-            fromCity={fromCity}
-            toCity={toCity}
-            distance={distance}
-            isAnalyzing={isSearchingCarriers}
-            fromCoords={fromCoords}
-            toCoords={toCoords}
-          />
+          {/* Move Summary is now in the hero right panel */}
 
           {/* CONSULT SECTION - Compact */}
           <section className="tru-consult-compact">
