@@ -2203,13 +2203,16 @@
 
 /* AI Inventory Analysis Subtitle */
 .tru-ai-steps-subtitle {
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 500;
   color: hsl(var(--muted-foreground));
   text-align: center;
-  margin-bottom: 24px;
-  max-width: 400px;
+  margin-bottom: 32px;
+  max-width: 500px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
 }
 
 /* Start AI Analysis Button - Premium Dark Style */
@@ -2436,10 +2439,12 @@
 }
 
 .tru-ai-steps-title {
-  font-size: 24px;
+  font-size: 36px;
   font-weight: 800;
-  color: hsl(var(--tm-ink));
-  margin-bottom: 32px;
+  color: hsl(var(--foreground));
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+  text-align: center;
 }
 
 .tru-ai-steps-grid {
