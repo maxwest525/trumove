@@ -1,83 +1,58 @@
 
-
-# Move Stats Strip and Adjust Spacing
+# Match "Move" Text Color to Logo Green
 
 ## Overview
-Move the black stats strip from its current position (after AI Inventory Analysis) to between the hero and the AI Inventory Analysis section, and adjust the spacing between items for better visual balance.
+Change the word "Move" in the hero headline to use the exact bright green from the TruMove logo (`--tm-green: 120 100% 54%`) instead of the current gradient greens.
 
 ---
 
-## Current Layout Order
+## Current State
+The logo uses a vibrant bright green: `hsl(120 100% 54%)` 
 
-1. Hero Section (ends at line 1541)
-2. AI Inventory Analysis Section (lines 1544-1623)
-3. **StatsStrip** (currently here - lines 1625-1626)
-4. Consult Section
-
-## New Layout Order
-
-1. Hero Section
-2. **StatsStrip** (moving here)
-3. AI Inventory Analysis Section
-4. Consult Section
+The "Move" text currently uses different, more muted greens:
+- Line 1452: `hsl(145 70% 45%)` - teal-ish green
+- Line 1764: `hsl(var(--primary))` to `hsl(160 80% 40%)` - gradient
 
 ---
 
 ## Changes Required
 
-### File: `src/pages/Index.tsx`
-
-**1. Remove StatsStrip from current position (lines 1625-1626):**
-
-Delete these lines:
-```tsx
-{/* BLACK STATS STRIP - Section Divider */}
-<StatsStrip />
-```
-
-**2. Add StatsStrip between hero and AI section (after line 1541):**
-
-Insert after the hero wrapper closing tag:
-```tsx
-      </div> {/* End tru-hero-wrapper */}
-
-      {/* BLACK STATS STRIP - Section Divider */}
-      <StatsStrip />
-
-      {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
-```
-
----
-
 ### File: `src/index.css`
 
-**Adjust spacing between stats strip items (line 28621):**
+**1. Update first `.tru-hero-headline-accent` (line 1451-1459):**
 
-Change gap from 16px to 28px for better visual separation:
+Replace the gradient with solid bright green matching the logo:
 
-Current:
 ```css
-.stats-strip-inner {
-  gap: 16px;
+.tru-hero-headline-accent {
+  color: hsl(var(--tm-green));
+  -webkit-text-fill-color: hsl(var(--tm-green));
+  position: relative;
+  display: inline-block;
+  filter: drop-shadow(0 2px 8px hsl(var(--tm-green) / 0.4));
 }
 ```
 
-Updated:
+**2. Update second `.tru-hero-headline-accent` (line 1763-1769):**
+
+Same solid bright green:
+
 ```css
-.stats-strip-inner {
-  gap: 28px;
+.tru-hero-headline-accent {
+  color: hsl(var(--tm-green));
+  -webkit-text-fill-color: hsl(var(--tm-green));
+  font-weight: 900;
+  filter: drop-shadow(0 2px 8px hsl(var(--tm-green) / 0.4));
 }
 ```
 
 ---
 
-## Summary
+## Result
 
-| File | Line(s) | Change |
-|------|---------|--------|
-| `src/pages/Index.tsx` | 1541 | Add `<StatsStrip />` after hero wrapper closing div |
-| `src/pages/Index.tsx` | 1625-1626 | Remove `<StatsStrip />` from after AI section |
-| `src/index.css` | 28621 | Change gap from `16px` to `28px` |
+| Element | Before | After |
+|---------|--------|-------|
+| "Move" text | Gradient teal-green `hsl(145 70% 45%)` | Solid bright green `hsl(120 100% 54%)` |
+| Drop shadow | Muted | Bright green glow to match |
 
-The stats strip will now appear as a visual divider between the hero and the AI Inventory Analysis section, with wider spacing between items for improved readability.
-
+The word "Move" will now match the exact bright green from the TruMove logo, creating visual consistency in the hero headline.
