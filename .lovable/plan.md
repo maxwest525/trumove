@@ -1,220 +1,88 @@
 
-# Enhance Move Summary Modal with Full Profile Info
+# Fix AI Inventory Analysis Section
 
 ## Overview
-Update the Move Summary modal to match the reference design with better header text, subtitle, status indicators, move date/ETA, and larger satellite images without increasing the overall card size.
-
----
-
-## Current State
-- Header says "Move Summary"
-- No subtitle text
-- Shows origin/distance/destination
-- No status indicators at bottom
-- Satellite maps are 80x80px
-- No move date or ETA displayed
-
-## Target State (based on reference image)
-- Header: "Building your personalized move profile" with green checkmark
-- Subtitle explaining the validation process
-- Origin/Distance/Destination layout preserved but with larger satellite images
-- Status indicators row: "Cities validated", "Distance calculated", "Carrier matching ready"
-- Move date and ETA added to the display
-- Larger satellite thumbnails (100x100px) within same overall card footprint
+Update the AI Inventory Analysis section with corrected button styling, text, and header content.
 
 ---
 
 ## Changes
 
-### 1. Update MoveSummaryModal Component
-**File:** `src/pages/Index.tsx` (lines 148-225)
+### 1. Update Header & Subheader Text
+**File:** `src/pages/Index.tsx` (lines 1503)
 
-Update the interface to accept move date and ETA props:
-
-```tsx
-interface MoveSummaryModalProps {
-  fromCity: string;
-  toCity: string;
-  distance: number;
-  fromCoords: [number, number] | null;
-  toCoords: [number, number] | null;
-  moveDate?: Date | null;
-  estimatedDuration?: string;
-}
-```
-
-Update the component to include:
-- New header text: "Building your personalized move profile"
-- Subtitle paragraph
-- Status indicators row at bottom
-- Move date and ETA display
+Change:
+- Header: "Start Your AI Inventory Analysis" → **"AI Inventory Analysis"**
+- Add subheader: **"Take a video or pictures of your room and let us do the rest"**
 
 ```tsx
-function MoveSummaryModal({ 
-  fromCity, toCity, distance, fromCoords, toCoords, moveDate, estimatedDuration 
-}: MoveSummaryModalProps) {
-  const hasData = fromCity || toCity;
-  if (!hasData) return null;
-
-  return (
-    <div className="tru-move-summary-modal">
-      {/* Header */}
-      <div className="tru-move-summary-header">
-        <CheckCircle className="w-5 h-5" />
-        <h3>Building your personalized move profile</h3>
-      </div>
-      
-      {/* Subtitle */}
-      <p className="tru-move-summary-subtitle">
-        We validate cities, analyze distance and access, prepare carrier matching, and estimate weight and volume.
-      </p>
-      
-      {/* Location Grid */}
-      <div className="tru-move-summary-grid">
-        {/* Origin with larger map */}
-        <div className="tru-move-summary-location">
-          <div className="tru-move-summary-map tru-move-summary-map-lg">
-            {fromCoords ? <img ... /> : <placeholder />}
-          </div>
-          <div className="tru-move-summary-location-info">
-            <span className="label">Origin</span>
-            <span className="value">{fromCity || "Enter origin..."}</span>
-          </div>
-        </div>
-        
-        {/* Distance Badge */}
-        <div className="tru-move-summary-distance">
-          <Route />
-          <span>{distance} mi</span>
-        </div>
-        
-        {/* Destination with larger map */}
-        <div className="tru-move-summary-location">
-          ...
-        </div>
-      </div>
-      
-      {/* Move Date & ETA Row */}
-      {(moveDate || estimatedDuration) && (
-        <div className="tru-move-summary-details">
-          {moveDate && (
-            <div className="tru-move-summary-detail">
-              <Calendar className="w-4 h-4" />
-              <span>{format(moveDate, "MMM d, yyyy")}</span>
-            </div>
-          )}
-          {estimatedDuration && (
-            <div className="tru-move-summary-detail">
-              <Clock className="w-4 h-4" />
-              <span>ETA: {estimatedDuration}</span>
-            </div>
-          )}
-        </div>
-      )}
-      
-      {/* Status Indicators */}
-      <div className="tru-move-summary-status">
-        <div className={`tru-move-summary-status-item ${fromCity && toCity ? 'is-complete' : ''}`}>
-          <CheckCircle className="w-3.5 h-3.5" />
-          <span>Cities validated</span>
-        </div>
-        <div className={`tru-move-summary-status-item ${distance > 0 ? 'is-complete' : ''}`}>
-          <CheckCircle className="w-3.5 h-3.5" />
-          <span>Distance calculated</span>
-        </div>
-        <div className={`tru-move-summary-status-item ${fromCity && toCity ? 'is-complete' : ''}`}>
-          <CheckCircle className="w-3.5 h-3.5" />
-          <span>Carrier matching ready</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+<h2 className="tru-ai-steps-title">AI Inventory Analysis</h2>
+<p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
 ```
 
-### 2. Update MoveSummaryModal Usage to Pass New Props
-**File:** `src/pages/Index.tsx` (lines 1377-1383)
+### 2. Update Button Text
+**File:** `src/pages/Index.tsx` (lines 1506-1514)
+
+Change button text from "Start AI Analysis" → **"Demo AI Analysis"**
 
 ```tsx
-<MoveSummaryModal 
-  fromCity={fromCity}
-  toCity={toCity}
-  distance={distance}
-  fromCoords={fromCoords}
-  toCoords={toCoords}
-  moveDate={moveDate}
-  estimatedDuration={estimatedDuration}
-/>
+<button 
+  type="button"
+  onClick={() => handleInventoryClick("ai")}
+  className="tru-ai-start-btn"
+>
+  <Scan className="w-5 h-5" />
+  Demo AI Analysis
+  <ArrowRight className="w-4 h-4" />
+</button>
 ```
 
-### 3. Add New CSS Styles
-**File:** `src/index.css` (after line 120)
+### 3. Fix Button Colors (Premium Dark Style)
+**File:** `src/index.css` (lines 2190-2210)
+
+Change from all-green to premium dark style (dark background with green glow):
 
 ```css
-/* Subtitle */
-.tru-move-summary-subtitle {
-  font-size: 13px;
+/* Start AI Analysis Button - Premium Dark Style */
+.tru-ai-start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  margin: 0 auto 24px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+}
+
+.tru-ai-start-btn:hover {
+  background: hsl(var(--primary));
+  color: hsl(var(--foreground));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px hsl(var(--primary) / 0.5);
+}
+```
+
+### 4. Add Subtitle Style
+**File:** `src/index.css`
+
+Add styling for the new subtitle below the header:
+
+```css
+.tru-ai-steps-subtitle {
+  font-size: 16px;
   color: hsl(var(--muted-foreground));
   text-align: center;
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
-
-/* Larger Map Size (100x100) */
-.tru-move-summary-map-lg {
-  width: 100px;
-  height: 100px;
-}
-
-/* Move Details Row (Date + ETA) */
-.tru-move-summary-details {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid hsl(var(--border) / 0.5);
-}
-
-.tru-move-summary-detail {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: hsl(var(--foreground));
-}
-
-.tru-move-summary-detail svg {
-  color: hsl(var(--primary));
-}
-
-/* Status Indicators Row */
-.tru-move-summary-status {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 16px;
-  padding-top: 12px;
-}
-
-.tru-move-summary-status-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: hsl(var(--muted-foreground));
-}
-
-.tru-move-summary-status-item svg {
-  color: hsl(var(--muted-foreground) / 0.5);
-}
-
-.tru-move-summary-status-item.is-complete {
-  color: hsl(var(--foreground));
-}
-
-.tru-move-summary-status-item.is-complete svg {
-  color: hsl(var(--primary));
+  margin-bottom: 24px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 ```
 
@@ -224,19 +92,14 @@ function MoveSummaryModal({
 
 | Change | File | Description |
 |--------|------|-------------|
-| Update header text | `src/pages/Index.tsx` | "Building your personalized move profile" |
-| Add subtitle | `src/pages/Index.tsx` | Descriptive text about validation |
-| Add status indicators | `src/pages/Index.tsx` | Cities validated, Distance calculated, Carrier matching ready |
-| Pass moveDate & ETA props | `src/pages/Index.tsx` | Add to component usage |
-| Show date/ETA row | `src/pages/Index.tsx` | Display move date and estimated duration |
-| Larger satellite maps | `src/index.css` | 100x100px with tru-move-summary-map-lg class |
-| Style subtitle | `src/index.css` | Centered muted text |
-| Style status items | `src/index.css` | Green checkmarks when complete |
+| Update header text | `src/pages/Index.tsx` | "AI Inventory Analysis" |
+| Add subtitle | `src/pages/Index.tsx` | "Take a video or pictures..." |
+| Change button text | `src/pages/Index.tsx` | "Demo AI Analysis" |
+| Premium dark button | `src/index.css` | Dark bg, green hover/glow |
+| Subtitle styling | `src/index.css` | Centered muted text |
 
 ## Visual Result
-- Card header now says "Building your personalized move profile" with green checkmark
-- Subtitle explains the validation/analysis process
-- Satellite maps are larger (100x100px) for better visibility
-- Move date and ETA displayed when available
-- Bottom status row shows green checkmarks for completed steps
-- Overall card size stays compact by using efficient spacing
+- Header is shorter and cleaner: "AI Inventory Analysis"
+- Subtitle explains the feature in simple terms
+- Button has premium dark styling (black background, green glow)
+- On hover, button transitions to green with enhanced shadow
