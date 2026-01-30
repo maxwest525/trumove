@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import trudyAvatar from "@/assets/trudy-avatar.png";
+import trudyModel from "@/assets/trudy-model.jpg";
 
 // Scroll to top on mount
 const useScrollToTop = () => {
@@ -31,9 +32,9 @@ function FakeAgentView() {
     <div className="absolute inset-0">
       {/* Full-bleed agent "video" with professional background */}
       <div className="absolute inset-0">
-        {/* Professional woman on video call - fills the space */}
+        {/* Trudy Martinez on video call - fills the space */}
         <img 
-          src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop" 
+          src={trudyModel}
           alt="Trudy Martinez" 
           className="w-full h-full object-cover"
         />
