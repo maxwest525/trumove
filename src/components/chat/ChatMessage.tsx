@@ -12,7 +12,7 @@ export default function ChatMessage({ sender, content, timestamp }: ChatMessageP
     <div className={cn("chat-message", sender === 'bot' ? "is-bot" : "is-user")}>
       {sender === 'bot' && (
         <div className="chat-avatar">
-          <img src={trudyAvatar} alt="TruDy" className="w-8 h-8 rounded-full object-cover" />
+          <img src={trudyAvatar} alt="Trudy" className="w-8 h-8 rounded-full object-cover" />
         </div>
       )}
       <div className="chat-bubble">

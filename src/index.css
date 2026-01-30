@@ -11308,6 +11308,35 @@
   color: hsl(120 80% 35%);
 }
 
+/* Chat Modal Dark Mode */
+.dark .chat-modal-panel {
+  background: hsl(var(--card));
+}
+
+.dark .chat-modal-header {
+  background: linear-gradient(180deg, hsl(var(--card)), hsl(var(--muted) / 0.5));
+  border-color: hsl(var(--border));
+}
+
+.dark .chat-modal-close {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .chat-modal-close:hover {
+  background: hsl(var(--foreground) / 0.1);
+  color: hsl(var(--foreground));
+}
+
+.dark .chat-modal-footer {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .chat-modal-link {
+  color: hsl(var(--primary));
+}
+
 @media (max-width: 480px) {
   .chat-modal-panel {
     top: 0;

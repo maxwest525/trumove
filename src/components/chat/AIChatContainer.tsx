@@ -222,10 +222,10 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
       <div className="chat-header">
         <div className="chat-header-left">
           <div className="chat-avatar-small bg-primary/10">
-            <img src={trudyAvatar} alt="TruDy" className="w-6 h-6 rounded-full object-cover" />
+            <img src={trudyAvatar} alt="Trudy" className="w-6 h-6 rounded-full object-cover" />
           </div>
           <div className="chat-header-info">
-            <span className="chat-header-name">TruDy with TruMove</span>
+            <span className="chat-header-name">Trudy with TruMove</span>
             <span className="chat-header-status">
               <span className={cn("chat-status-dot", isConnected && "bg-primary")}></span>
               {isConnecting ? "Connecting..." : isConnected ? "Online" : "Offline"}
@@ -267,7 +267,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
           >
             {msg.role === "assistant" && (
               <div className="chat-avatar">
-                <img src={trudyAvatar} alt="TruDy" className="w-8 h-8 rounded-full object-cover" />
+                <img src={trudyAvatar} alt="Trudy" className="w-8 h-8 rounded-full object-cover" />
               </div>
             )}
             <div className="chat-bubble">
