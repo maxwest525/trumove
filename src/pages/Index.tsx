@@ -24,7 +24,7 @@ import logoImg from "@/assets/logo.png";
 // Preview images for value cards
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
 import previewCarrierVetting from "@/assets/preview-carrier-vetting.jpg";
-import previewVideoConsult from "@/assets/preview-video-consult.jpg";
+import trudyVideoCall from "@/assets/trudy-video-call.jpg";
 import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
@@ -1502,7 +1502,7 @@ export default function Index() {
                       <CarouselContent className="tru-why-carousel-content">
                         {[
                           { title: "Smart Carrier Match", desc: "Our algorithm finds the best carrier for your route.", image: previewCarrierVetting, route: "/vetting", action: "navigate" as const },
-                          { title: "TruMove Specialist", desc: "Live video consultation for personalized guidance.", image: previewVideoConsult, route: "/book", action: "navigate" as const },
+                          { title: "TruMove Specialist", desc: "Live video consultation for personalized guidance.", image: trudyVideoCall, route: "/book", action: "navigate" as const },
                           { title: "Inventory Builder", desc: "Build your item list room by room for accurate pricing.", image: previewAiScanner, route: "/online-estimate", action: "navigate" as const },
                           { title: "AI Room Scanner", desc: "Point your camera and AI detects furniture instantly.", image: sampleRoomLiving, route: "/scan-room", action: "navigate" as const },
                           { title: "Shipment Tracking", desc: "Track your shipment in real-time with live updates.", image: previewPropertyLookup, route: "/track", action: "navigate" as const },
