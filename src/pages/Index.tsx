@@ -46,7 +46,7 @@ import {
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned
+  Play, Pause, MapPinned, Calendar
 } from "lucide-react";
 
 
@@ -151,6 +151,8 @@ interface MoveSummaryModalProps {
   distance: number;
   fromCoords: [number, number] | null;
   toCoords: [number, number] | null;
+  moveDate?: Date | null;
+  estimatedDuration?: string;
 }
 
 function MoveSummaryModal({ 
@@ -158,7 +160,9 @@ function MoveSummaryModal({
   toCity, 
   distance, 
   fromCoords, 
-  toCoords 
+  toCoords,
+  moveDate,
+  estimatedDuration
 }: MoveSummaryModalProps) {
   const hasData = fromCity || toCity;
   if (!hasData) return null;
@@ -167,18 +171,24 @@ function MoveSummaryModal({
 
   return (
     <div className="tru-move-summary-modal">
+      {/* Header */}
       <div className="tru-move-summary-header">
         <CheckCircle className="w-5 h-5" />
-        <h3>Move Summary</h3>
+        <h3>Building your personalized move profile</h3>
       </div>
+      
+      {/* Subtitle */}
+      <p className="tru-move-summary-subtitle">
+        We validate cities, analyze distance and access, prepare carrier matching, and estimate weight and volume.
+      </p>
       
       <div className="tru-move-summary-grid">
         {/* Origin */}
         <div className="tru-move-summary-location">
-          <div className="tru-move-summary-map">
+          <div className="tru-move-summary-map tru-move-summary-map-lg">
             {fromCoords ? (
               <img 
-                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/160x160@2x?access_token=${MAPBOX_TOKEN}`}
+                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/200x200@2x?access_token=${MAPBOX_TOKEN}`}
                 alt="Origin satellite view"
               />
             ) : (
@@ -203,10 +213,10 @@ function MoveSummaryModal({
         
         {/* Destination */}
         <div className="tru-move-summary-location">
-          <div className="tru-move-summary-map">
+          <div className="tru-move-summary-map tru-move-summary-map-lg">
             {toCoords ? (
               <img 
-                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/160x160@2x?access_token=${MAPBOX_TOKEN}`}
+                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/200x200@2x?access_token=${MAPBOX_TOKEN}`}
                 alt="Destination satellite view"
               />
             ) : (
@@ -219,6 +229,40 @@ function MoveSummaryModal({
             <span className="label">Destination</span>
             <span className="value">{toCity || "Enter destination..."}</span>
           </div>
+        </div>
+      </div>
+      
+      {/* Move Date & ETA Row */}
+      {(moveDate || estimatedDuration) && (
+        <div className="tru-move-summary-details">
+          {moveDate && (
+            <div className="tru-move-summary-detail">
+              <Calendar className="w-4 h-4" />
+              <span>{format(moveDate, "MMM d, yyyy")}</span>
+            </div>
+          )}
+          {estimatedDuration && (
+            <div className="tru-move-summary-detail">
+              <Clock className="w-4 h-4" />
+              <span>ETA: {estimatedDuration}</span>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Status Indicators */}
+      <div className="tru-move-summary-status">
+        <div className={`tru-move-summary-status-item ${fromCity && toCity ? 'is-complete' : ''}`}>
+          <CheckCircle className="w-3.5 h-3.5" />
+          <span>Cities validated</span>
+        </div>
+        <div className={`tru-move-summary-status-item ${distance > 0 ? 'is-complete' : ''}`}>
+          <CheckCircle className="w-3.5 h-3.5" />
+          <span>Distance calculated</span>
+        </div>
+        <div className={`tru-move-summary-status-item ${fromCity && toCity ? 'is-complete' : ''}`}>
+          <CheckCircle className="w-3.5 h-3.5" />
+          <span>Carrier matching ready</span>
         </div>
       </div>
     </div>
