@@ -1,35 +1,33 @@
 
 
-# AI Inventory Analysis - Maximize Content at 450px Height
+# Maximize AI Inventory Analysis Width & Preview Sizes
 
 ## Summary
 
-Restructure the AI Inventory Analysis section to:
-1. Increase section height from 400px to **450px**
-2. Remove the subtitle text "Take a video or pictures of your room and let us do the rest"
-3. Move the "Start Demo AI Analysis" button to the **top-right corner of the scanner preview** as an overlay
-4. Maximize the scanner and detection card sizes with **matching dimensions**
-5. Adjust content distribution to fill the available space
+Expand the AI Inventory Analysis section to use the full page width and maximize the scanner preview and detection card sizes. Key changes:
+1. Remove the `max-width: 900px` constraint on `.tru-ai-steps-inner`
+2. Use horizontal padding instead to create breathing room from edges
+3. Increase the right column (detection list) minimum width
+4. Set more generous proportions for the three-column grid
 
 ---
 
-## Target Layout
+## Current State vs Target
 
 ```text
+CURRENT (constrained to 900px):
 ┌─────────────────────────────────────────────────────────────┐
-│              AI Inventory Analysis                          │
-│              ───────────────                                │
-├───────────────┬─────────────────────────┬───────────────────┤
-│               │  ┌─────────────────────┐│                   │
-│  [img] 1 Step │  │ [Start Demo...] btn ││   LIVE DETECTION  │
-│               │  │                     ││   ─────────────   │
-│  [img] 2 Step │  │   Room Scanner      ││   - Item 1        │
-│               │  │   Preview           ││   - Item 2        │
-│  [img] 3 Step │  │   (Demo pill)       ││   - Item 3        │
-│               │  │                     ││                   │
-│   Vertical    │  └─────────────────────┘│   Items/Wt/Vol    │
-└───────────────┴─────────────────────────┴───────────────────┘
-                    ↑ Matching height ↑
+│      ╔═══════════════════════════════════════════╗          │
+│      ║  Steps | Scanner (small) | Detection      ║          │
+│      ╚═══════════════════════════════════════════╝          │
+│      ↑ max-width: 900px centered ↑                          │
+└─────────────────────────────────────────────────────────────┘
+
+TARGET (full width with padding):
+┌─────────────────────────────────────────────────────────────┐
+│   Steps  |   Scanner (LARGE)    |    Detection (LARGE)      │
+│          |   Fills available    |    Matches scanner        │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -38,50 +36,54 @@ Restructure the AI Inventory Analysis section to:
 
 ### File: `src/index.css`
 
-**1. Increase section height to 450px (Line 2258)**
+**1. Remove max-width constraint on inner container (Lines 2570-2574)**
 
 Change:
 ```css
-height: 400px;
+.tru-ai-steps-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
 ```
 To:
 ```css
-height: 450px;
-```
-
-**2. Update scanner height to fill available space (Line 2621-2623)**
-
-Change the scanner to use the full column height:
-```css
-.tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 100%;
-  flex: 1;
+.tru-ai-steps-inner {
+  max-width: none;
+  padding: 0 48px;
+  text-align: center;
 }
 ```
 
-**3. Update detection list to match scanner height (Lines 2625-2628)**
+**2. Update three-column grid for better proportions (Lines 2586-2593)**
 
-Change detection list to fill height and match scanner:
+Change:
 ```css
-.tru-ai-preview-vertical .tru-ai-live-inventory {
-  height: 100%;
-  flex: 1;
-  max-height: none;
+.tru-ai-two-column {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 0;
+  text-align: left;
+}
+```
+To:
+```css
+.tru-ai-two-column {
+  display: grid;
+  grid-template-columns: 180px 1fr 300px;
+  gap: 32px;
+  align-items: stretch;
+  margin-bottom: 0;
+  text-align: left;
 }
 ```
 
-**4. Ensure center and right columns stretch to fill height (Lines 2587-2598)**
+**3. Increase right column minimum width (Lines 2609-2614)**
 
-Update columns to fill available vertical space:
+Change:
 ```css
-.tru-ai-center-column {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-}
-
 .tru-ai-right-column {
   display: flex;
   flex-direction: column;
@@ -89,123 +91,51 @@ Update columns to fill available vertical space:
   height: 100%;
 }
 ```
-
-**5. Make three-column grid fill the remaining height (Line 2268-2271)**
-
-Update:
+To:
 ```css
-.tru-ai-two-column {
-  flex: 1;
-  min-height: 0;
-  align-items: stretch;
+.tru-ai-right-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+  height: 100%;
 }
 ```
 
-**6. Create new button overlay class for scanner**
+**4. Increase step preview thumbnail size (Lines 2659-2667)**
 
-Add after the demo-pill styles:
+Change:
 ```css
-.tru-ai-scanner-start-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: hsl(var(--foreground));
-  color: hsl(var(--background));
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  z-index: 15;
-  box-shadow: 0 4px 16px hsl(var(--tm-ink) / 0.4);
-  transition: all 0.2s ease;
+.tru-ai-step-preview {
+  width: 80px;
+  height: 60px;
+  ...
 }
-
-.tru-ai-scanner-start-btn:hover {
-  background: hsl(var(--primary));
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px hsl(var(--primary) / 0.5);
+```
+To:
+```css
+.tru-ai-step-preview {
+  width: 100px;
+  height: 75px;
+  ...
 }
 ```
 
-**7. Remove or hide the demo pill when button is present**
+**5. Update section padding for full-width feel (Lines 2252-2260)**
 
-Since the button will be in the top-right, we can move the demo pill to bottom-right or remove it to avoid overlap.
-
----
-
-### File: `src/pages/Index.tsx`
-
-**8. Remove the subtitle paragraph (Line 1535)**
-
-Delete:
-```tsx
-<p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
-```
-
-**9. Remove the centered demo button div (Lines 1537-1551)**
-
-Delete the entire `<div className="flex justify-center">` block containing the button.
-
-**10. Move button inside ScannerPreview component (Lines 297-315)**
-
-Update ScannerPreview to include the button as an overlay:
-```tsx
-interface ScannerPreviewProps {
-  isRunning: boolean;
-  onStartDemo: () => void;
-}
-
-function ScannerPreview({ isRunning, onStartDemo }: ScannerPreviewProps) {
-  return (
-    <div className="tru-ai-live-scanner">
-      <img src={sampleRoomLiving} alt="Room being scanned" />
-      <div className="tru-ai-scanner-overlay">
-        <div className="tru-ai-scanner-line" />
-      </div>
-      <div className="tru-ai-scanner-badge">
-        <Scan className="w-4 h-4" />
-        <span>Scanning...</span>
-      </div>
-      {/* Start Demo button as overlay - top right */}
-      <button 
-        className="tru-ai-scanner-start-btn"
-        onClick={onStartDemo}
-      >
-        <Sparkles className="w-3.5 h-3.5" />
-        {isRunning ? "Running..." : "Start Demo"}
-      </button>
-    </div>
-  );
+Change:
+```css
+.tru-ai-steps-section {
+  padding: 16px 24px 20px;
+  ...
 }
 ```
-
-**11. Update ScannerPreview usage (Line 1593)**
-
-Pass the click handler:
-```tsx
-<ScannerPreview 
-  isRunning={scanDemoRunning} 
-  onStartDemo={() => {
-    setScanDemoRunning(true);
-    setTimeout(() => {
-      scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
-  }} 
-/>
+To:
+```css
+.tru-ai-steps-section {
+  padding: 16px 0 20px;
+  ...
+}
 ```
-
----
-
-## CSS Classes to Delete (Cleanup)
-
-- `.tru-ai-steps-subtitle` (Lines 2274-2285) - no longer used
-- `.tru-ai-demo-button-centered` (Lines 2631-2652) - replaced by overlay button
-- `.tru-ai-demo-pill` styles can remain for the "Demo" indicator on scanner
 
 ---
 
@@ -213,10 +143,12 @@ Pass the click handler:
 
 | Element | Before | After |
 |---------|--------|-------|
-| Section height | 400px | 450px |
-| Subtitle text | Present | Removed |
-| Demo button location | Centered above grid | Top-right overlay on scanner |
-| Scanner height | 220px fixed | Flex to fill column |
-| Detection list height | max-height: 220px | Flex to fill column (matching scanner) |
-| Demo pill | Top-right of scanner | Remove (replaced by button) |
+| Inner container max-width | 900px | none (full width) |
+| Horizontal padding | 24px on section | 48px on inner |
+| Grid columns | `auto 1fr auto` | `180px 1fr 300px` |
+| Column gap | 24px | 32px |
+| Right column min-width | 240px | 280px |
+| Step thumbnails | 80×60px | 100×75px |
+
+This spreads the content across the full viewport width while maintaining proper spacing, and maximizes the scanner preview and detection list sizes.
 
