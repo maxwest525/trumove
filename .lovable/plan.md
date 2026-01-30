@@ -1,56 +1,30 @@
 
 
-# Spread Out Header Nav Items and Separate Action Buttons
+# Fix Hero Backdrop Overlaying Cards
 
 ## Problem
 
-1. The navigation items are too close together (current `gap: 4px`)
-2. The Call button and theme toggle need more separation from the main nav links
+The hero headline backdrop (`::before` pseudo-element) with the extended `inset: -150px -250px` is now large enough to overlap the form cards below it. Even though the pseudo-element has `z-index: -1`, the parent `.tru-hero-header-section.tru-hero-header-refined` has `z-index: 10`, creating a stacking context where the backdrop can appear over other elements.
 
 ---
 
 ## Solution
 
-1. Increase the gap between nav items from `4px` to `12px`
-2. Add a left margin to `.header-actions` to create visual separation from the nav links
-3. Adjust the divider line position to account for wider spacing
+Add `position: relative` and `z-index: 20` to the `.tru-form-card` so it explicitly stacks above the header section's stacking context.
 
 ---
 
 ## Implementation
 
-### Change 1: Increase nav item spacing
+### Change: Add z-index to form card
 
 ```css
-/* Line 11237 */
-.header-nav {
-  display: flex;
-  align-items: center;
-  gap: 12px;  /* Changed from 4px to 12px */
-  margin-left: auto;
-}
-```
-
-### Change 2: Add separation before action buttons
-
-```css
-/* Line 11330-11337 */
-.header-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-left: 32px;  /* Changed from auto to fixed spacing for separation */
-  padding-right: 140px;
-}
-```
-
-### Change 3: Adjust divider position for wider spacing
-
-```css
-/* Line 11247-11256 */
-.header-nav-item:not(:last-child)::after {
-  right: -6px;  /* Changed from -2px to center in wider gap */
+/* Line 7235-7249 */
+.tru-form-card {
+  position: relative;
+  z-index: 20;  /* ADD - Stack above hero backdrop */
+  width: 100%;
+  max-width: 600px;
   /* ... rest unchanged ... */
 }
 ```
@@ -59,17 +33,23 @@
 
 ## Summary of Changes
 
-| File | Lines | Change |
-|------|-------|--------|
-| `src/index.css` | 11237 | Change `gap: 4px` → `gap: 12px` for wider nav spacing |
-| `src/index.css` | 11250 | Change divider `right: -2px` → `right: -6px` to center in gap |
-| `src/index.css` | 11335 | Change `margin-left: auto` → `margin-left: 32px` for action button separation |
+| File | Line | Change |
+|------|------|--------|
+| `src/index.css` | 7237 | Add `z-index: 20;` after `position: relative;` to stack cards above backdrop |
+
+---
+
+## Design Notes
+
+- **z-index: 20**: Higher than the hero header's `z-index: 10`, ensuring cards always appear above the backdrop
+- **position: relative**: Already exists, which is required for z-index to work
+- This is the minimal fix - only one line added
 
 ---
 
 ## Expected Result
 
-- Navigation items are more spread out with comfortable spacing
-- Call button and theme toggle are visually separated from the main nav
-- Divider lines remain centered between nav items
+- Form cards will appear above the hero backdrop
+- The backdrop seamlessly fades behind the headline AND behind the cards
+- No visual overlap issues
 
