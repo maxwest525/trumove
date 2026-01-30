@@ -1,115 +1,70 @@
 
-# Fix Invisible Hero Headline
 
-## Problem Analysis
-The hero headline "TruMove A Smarter Way To Move" is invisible because:
+# Change Trudy Carousel Image to a Professional Model
 
-1. **Color conflict**: The `.tru-headline-animated` class applies `-webkit-text-fill-color: transparent` with a white/green gradient
-2. **Light background**: The hero shows a bright house image, making white text invisible
-3. **Insufficient backdrop**: The dark gradient backdrop behind the header is too subtle (35% to 15% opacity)
-
-Looking at the reference image you provided, the headline needs a **dark background** behind it to make the white/green shimmer text visible.
+## Overview
+Replace the current `trudy-avatar.png` used in the "Trudy AI Assistant" carousel card with a professional, polished image featuring a famous model or stock photo of a professional woman that better represents a high-end AI assistant.
 
 ---
 
-## Solution
-Make the hero header section have a stronger dark backdrop so the white/green gradient text is visible. Also ensure the text colors provide enough contrast.
+## Approach Options
+
+Since we need an image of a "famous model," there are two approaches:
+
+### Option A: Use a High-Quality Stock Image (Recommended)
+Download a professional stock photo of an elegant, professional woman (like a customer service representative or virtual assistant aesthetic) and add it to the assets folder.
+
+### Option B: Use a Placeholder URL
+Temporarily use an external image URL from a stock photo site, though this isn't ideal for production.
 
 ---
 
-## Changes
+## Implementation
 
-### 1. Strengthen Header Backdrop
-**File:** `src/index.css` (lines 25225-25236)
+### 1. Add New Image Asset
+**Action:** Upload a new professional model/assistant image to the project
 
-The current backdrop is too subtle at 35%→15% opacity. Increase it significantly:
+**Location:** `src/assets/trudy-model.jpg` (or similar name)
 
-```css
-.tru-hero-header-section.tru-hero-header-refined::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    hsl(0 0% 0% / 0.75) 0%,
-    hsl(0 0% 0% / 0.55) 100%
-  );
-  border-radius: 16px;
-  z-index: -1;
-  backdrop-filter: blur(8px);
-}
+The image should convey:
+- Professional, friendly demeanor
+- Customer service/assistant vibe
+- High-quality, polished appearance
+
+### 2. Update Import Statement
+**File:** `src/pages/Index.tsx` (line 32)
+
+```tsx
+// FROM:
+import trudyAvatar from "@/assets/trudy-avatar.png";
+
+// TO:
+import trudyAvatar from "@/assets/trudy-model.jpg";
 ```
 
-### 2. Ensure Headline Text Has Proper Contrast
-**File:** `src/index.css` (lines 25287-25302)
-
-The shimmer gradient is correct but needs a stronger drop-shadow for edge definition:
-
-```css
-.tru-headline-animated {
-  background: linear-gradient(
-    90deg,
-    hsl(0 0% 100%) 0%,
-    hsl(142 72% 65%) 25%,
-    hsl(0 0% 100%) 50%,
-    hsl(142 72% 65%) 75%,
-    hsl(0 0% 100%) 100%
-  );
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: headline-shimmer 2.5s ease-in-out infinite;
-  filter: drop-shadow(0 2px 12px hsl(0 0% 0% / 0.6)) drop-shadow(0 4px 20px hsl(0 0% 0% / 0.4));
-}
+Or rename the import for clarity:
+```tsx
+import trudyModelImage from "@/assets/trudy-model.jpg";
 ```
 
-### 3. Increase Subheadline Visibility  
-**File:** `src/index.css` (lines 25275-25284)
+### 3. Update Carousel Reference (if import name changes)
+**File:** `src/pages/Index.tsx` (line 1273)
 
-Ensure the subheadline has strong contrast:
-
-```css
-.tru-hero-subheadline-refined {
-  font-size: clamp(18px, 2.5vw, 26px);
-  line-height: 1.5;
-  color: hsl(0 0% 100%);
-  max-width: 600px;
-  margin: 0 auto;
-  font-weight: 600;
-  text-shadow: 0 2px 16px hsl(0 0% 0% / 0.7), 0 4px 24px hsl(0 0% 0% / 0.5);
-  letter-spacing: 0.02em;
-}
-```
-
-### 4. Add More Padding to Header Section
-**File:** `src/index.css` (lines 25218-25223)
-
-Give the backdrop more visual presence:
-
-```css
-.tru-hero-header-section.tru-hero-header-refined {
-  position: relative;
-  padding: 32px 56px 40px;
-  text-align: center;
-  z-index: 10;
-  margin-bottom: 24px;
-}
+If we change the import name:
+```tsx
+{ title: "Trudy AI Assistant", desc: "Your virtual moving assistant, available 24/7.", image: trudyModelImage, route: "", action: "openChat" as const },
 ```
 
 ---
 
 ## Summary
 
-| Change | File | Description |
-|--------|------|-------------|
-| Stronger backdrop | `src/index.css` | Increase opacity from 35%→75%, add blur |
-| Enhanced drop-shadow | `src/index.css` | Stronger shadow on headline text |
-| Subheadline contrast | `src/index.css` | White text with heavy shadow |
-| More padding | `src/index.css` | Larger backdrop area |
+| Step | Action |
+|------|--------|
+| 1 | Upload new professional model image to `src/assets/` |
+| 2 | Update import statement in `Index.tsx` |
+| 3 | (Optional) Rename variable if desired |
 
-## Visual Result
-- The headline "TruMove A Smarter Way To Move" will appear prominently with a semi-transparent dark backdrop
-- The white/green shimmer gradient will be clearly visible
-- The subheadline "Moving. The Way Its Supposed To Be" will be white and readable
-- The backdrop provides consistent readability regardless of the background image brightness
+## Note
+You'll need to provide or upload the image of the famous model you'd like to use. Once uploaded, I can update the code to reference the new image.
+
