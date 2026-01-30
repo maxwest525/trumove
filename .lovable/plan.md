@@ -1,10 +1,10 @@
 
 
-# Spread Out Trust Strip Items
+# Spread Out Trust Strip Items Even More
 
 ## Goal
 
-Increase the spacing between items on the trust strip for a more open, breathable layout.
+Further increase the spacing between trust strip items for an even more open, spacious layout.
 
 ---
 
@@ -16,10 +16,10 @@ Increase the spacing between items on the trust strip for a more open, breathabl
 
 ```css
 /* Before */
-gap: 16px;
+gap: 32px;
 
 /* After */
-gap: 32px;
+gap: 48px;
 ```
 
 ---
@@ -28,13 +28,13 @@ gap: 32px;
 
 | File | Line | Change |
 |------|------|--------|
-| `src/index.css` | 28657 | Increase gap from `16px` to `32px` |
+| `src/index.css` | 28657 | Increase gap from `32px` to `48px` |
 
 ---
 
 ## Expected Result
 
-- Trust strip items will have double the spacing between them (32px instead of 16px)
-- The strip will feel more open and less crowded
+- Trust strip items will have 50% more spacing between them (48px instead of 32px)
+- The strip will feel even more open and breathable
 - Items will remain centered and horizontally scrollable on smaller screens
 
