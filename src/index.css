@@ -27769,6 +27769,58 @@ html.dark .tru-summary-header-large,
 }
 
 /* ========================================
+   BLACK TRUST STRIP - Compliance bar
+   ======================================== */
+.trust-strip {
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-bottom: 1px solid hsl(0 0% 100% / 0.1);
+  padding: 6px 24px;
+  overflow-x: auto;
+}
+
+.trust-strip-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: max-content;
+  margin: 0 auto;
+}
+
+.trust-strip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 100% / 0.85);
+}
+
+.trust-strip-item svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Gold accent icons */
+.trust-strip-item.accent-gold svg {
+  color: hsl(45 90% 55%);
+}
+
+/* Green accent icons */
+.trust-strip-item.accent-green svg {
+  color: hsl(142 70% 55%);
+}
+
+.trust-strip-dot {
+  color: hsl(0 0% 100% / 0.3);
+  margin: 0 8px;
+}
+
+/* ========================================
    BLACK STATS SECTION DIVIDER
    ======================================== */
 .stats-strip {
