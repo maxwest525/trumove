@@ -1353,10 +1353,7 @@
   overflow-x: hidden;  /* Prevent horizontal scroll */
 }
 
-/* Allow overflow when carousel card is hovered */
-.tru-hero-wrapper:has(.features-carousel-card:hover) {
-  overflow-x: visible;
-}
+/* Carousel cards hover within container bounds */
 
 /* Full-width hero background image */
 .tru-hero-bg {
@@ -16675,9 +16672,9 @@
   transition: opacity 0.25s ease;
 }
 
-/* Hover effects - dramatic expansion breaking container limits */
+/* Hover effects - contained within carousel bounds */
 .features-carousel-card:hover {
-  transform: scale(1.35) translateZ(0);
+  transform: scale(1.15) translateZ(0);
   z-index: 100;
   border-color: hsl(var(--primary) / 0.4);
   box-shadow: 
@@ -16692,7 +16689,7 @@
 
 /* Remove any transform on active to prevent flicker */
 .features-carousel-card:active {
-  transform: scale(1.35) translateZ(0);
+  transform: scale(1.15) translateZ(0);
 }
 
 .features-carousel-card:focus-visible {
@@ -26221,10 +26218,7 @@
   transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Allow overflow only when carousel card is hovered */
-.tru-why-card-premium:has(.features-carousel-card:hover) {
-  overflow: visible;
-}
+/* Carousel hover contained - no overflow toggle needed */
 
 .tru-why-card-premium:hover {
   transform: translateY(-4px);
