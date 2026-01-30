@@ -1,45 +1,25 @@
 
-# Enhance Hero Header, Update "Why TruMove?" Card & Adjust Carousel
+
+# UI Enhancements: Animations, Hover Effects & Form Cleanup
 
 ## Overview
-Five changes to enhance visual appeal and readability:
-1. Add subheader "Moving. The Way Its Supposed To Be" below the main headline
-2. Add eye-catching animation/effects to header and subheader
-3. Adjust carousel card image aspect ratio for better balance
-4. Remove trust strip (FMCSA/Licensed badges) from the card
-5. Change card header from "Your Move. Your Terms." to "Why TruMove?"
+Four enhancements based on your feedback:
+1. Adjust shimmer animation speed/colors to be more eye-catching
+2. Add hover effects to the "Why TruMove?" card
+3. Add enlarged modal preview when hovering carousel cards
+4. Remove the "Origin / Mileage / Destination" route summary strip from the form
 
 ---
 
 ## Changes
 
-### 1. Add Subheader & Eye-Catching Effects to Hero Header
-**File:** `src/pages/Index.tsx` (lines 752-758)
+### 1. Enhance Shimmer Animation
+**File:** `src/index.css` (lines 25266-25286)
 
-Update the hero header section:
-
-```tsx
-{/* Hero Header with Headline + Short Subheadline */}
-<div className="tru-hero-header-section tru-hero-header-refined">
-  <h1 className="tru-hero-headline-main tru-headline-animated">
-    <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
-    A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
-  </h1>
-  <p className="tru-hero-subheadline-refined tru-subheadline-animated">
-    Moving. The Way Its Supposed To Be
-  </p>
-</div>
-```
-
----
-
-### 2. Add Eye-Catching CSS Animations
-**File:** `src/index.css`
-
-Add new animation styles for the headline and subheadline:
+Make the shimmer faster (2.5s instead of 4s) and use more vibrant green tones:
 
 ```css
-/* Animated headline - gradient shimmer effect */
+/* FROM: */
 .tru-headline-animated {
   background: linear-gradient(
     90deg,
@@ -50,91 +30,128 @@ Add new animation styles for the headline and subheadline:
     hsl(var(--tm-ink)) 100%
   );
   background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
   animation: headline-shimmer 4s ease-in-out infinite;
 }
 
-@keyframes headline-shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* Subheadline with fade-in and subtle glow */
-.tru-subheadline-animated {
-  animation: subheadline-fade 1.5s ease-out forwards;
-  text-shadow: 0 0 20px hsl(var(--primary) / 0.3);
-}
-
-@keyframes subheadline-fade {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+/* TO: */
+.tru-headline-animated {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--tm-ink)) 0%,
+    hsl(142 72% 45%) 20%,
+    hsl(var(--tm-ink)) 40%,
+    hsl(142 72% 55%) 60%,
+    hsl(var(--tm-ink)) 80%,
+    hsl(142 72% 45%) 100%
+  );
+  background-size: 300% 100%;
+  animation: headline-shimmer 2.5s ease-in-out infinite;
 }
 ```
 
 ---
 
-### 3. Change Card Header to "Why TruMove?"
-**File:** `src/pages/Index.tsx` (line 1291)
+### 2. Add Hover Effects to "Why TruMove?" Card
+**File:** `src/index.css` (after line 25374)
 
-```tsx
-// FROM:
-<h3 className="tru-why-title-premium">
-  Your Move. Your Terms.
-</h3>
+Add a subtle lift, glow, and border highlight on hover:
 
-// TO:
-<h3 className="tru-why-title-premium">
-  Why TruMove?
-</h3>
+```css
+.tru-why-card-premium {
+  /* existing styles... */
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tru-why-card-premium:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 12px 40px hsl(var(--primary) / 0.15),
+    0 4px 16px hsl(var(--tm-ink) / 0.1);
+  border: 1px solid hsl(var(--primary) / 0.2);
+}
 ```
 
 ---
 
-### 4. Remove Trust Badges from Card
-**File:** `src/pages/Index.tsx` (lines 1347-1357)
+### 3. Add Enlarged Modal on Carousel Card Hover
+**File:** `src/index.css`
 
-Delete the entire trust badges section:
+Add a CSS-powered enlarged preview that appears on hover:
+
+```css
+/* Enlarged modal on hover */
+.tru-why-carousel-card {
+  position: relative;
+}
+
+.tru-why-carousel-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: hsl(var(--tm-ink) / 0);
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  pointer-events: none;
+}
+
+.tru-why-carousel-card:hover::after {
+  background: hsl(var(--tm-ink) / 0.03);
+}
+
+/* Scale up on hover for enlarged effect */
+.tru-why-carousel-card:hover {
+  transform: scale(1.08) translateY(-4px);
+  z-index: 20;
+  box-shadow: 
+    0 16px 48px hsl(var(--tm-ink) / 0.2),
+    0 8px 24px hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+/* Ensure proper stacking context */
+.tru-why-carousel-item {
+  position: relative;
+  z-index: 1;
+  transition: z-index 0s 0.2s;
+}
+
+.tru-why-carousel-item:hover {
+  z-index: 20;
+  transition: z-index 0s;
+}
+```
+
+---
+
+### 4. Remove Route Summary Strip from Form
+**File:** `src/pages/Index.tsx` (lines 876-926)
+
+Delete the entire "Permanent Route Summary Strip" section:
 
 ```tsx
-// DELETE THIS SECTION:
-{/* Trust Badges */}
-<div className="tru-why-trust-badges">
-  <div className="tru-why-trust-badge">
-    <CheckCircle className="w-3.5 h-3.5" />
-    <span>FMCSA VERIFIED</span>
-  </div>
-  <div className="tru-why-trust-badge">
-    <CheckCircle className="w-3.5 h-3.5" />
-    <span>LICENSED BROKER</span>
+// DELETE THIS ENTIRE BLOCK (lines 876-926):
+{/* Permanent Route Summary Strip - Always visible */}
+<div className="tru-qb-route-summary tru-qb-route-summary-permanent">
+  <div className="tru-qb-route-summary-inner">
+    {/* Origin */}
+    <div className={`tru-qb-route-summary-item ...`}>
+      ...
+    </div>
+    
+    {/* Distance */}
+    <div className={`tru-qb-route-summary-distance ...`}>
+      ...
+    </div>
+    
+    {/* Destination */}
+    <div className={`tru-qb-route-summary-item ...`}>
+      ...
+    </div>
   </div>
 </div>
 ```
 
----
-
-### 5. Adjust Carousel Card Image Aspect Ratio
-**File:** `src/index.css` (line 25457)
-
-Make images taller for better balance with the larger text:
-
-```css
-/* FROM: */
-.tru-why-carousel-card-image {
-  width: 100%;
-  aspect-ratio: 2 / 1;
-  overflow: hidden;
-  background: hsl(var(--muted));
-}
-
-/* TO: */
-.tru-why-carousel-card-image {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: hsl(var(--muted));
-}
-```
+This removes the section shown in your screenshot with "ORIGIN / — mi / DESTINATION".
 
 ---
 
@@ -142,15 +159,14 @@ Make images taller for better balance with the larger text:
 
 | Task | File | Change |
 |------|------|--------|
-| Add subheader | `src/pages/Index.tsx` | Add "Moving. The Way Its Supposed To Be" paragraph |
-| Eye-catching effects | `src/index.css` | Gradient shimmer on headline, fade-in glow on subheader |
-| Change card header | `src/pages/Index.tsx` | "Your Move. Your Terms." → "Why TruMove?" |
-| Remove trust strip | `src/pages/Index.tsx` | Delete `tru-why-trust-badges` div |
-| Adjust carousel images | `src/index.css` | Change aspect-ratio from `2/1` to `16/10` |
+| Faster/brighter shimmer | `src/index.css` | 2.5s animation, more vibrant greens, 300% background |
+| Card hover effects | `src/index.css` | Add lift, glow, and border on `.tru-why-card-premium:hover` |
+| Enlarged carousel preview | `src/index.css` | Scale 1.08x with shadow on `.tru-why-carousel-card:hover` |
+| Remove route summary | `src/pages/Index.tsx` | Delete `tru-qb-route-summary-permanent` div (lines 876-926) |
 
 ## Visual Result
-- Hero header will have an animated gradient shimmer effect that catches the eye
-- New subheader "Moving. The Way Its Supposed To Be" fades in with a subtle green glow
-- Carousel card images will be taller (16:10 ratio) to balance with the larger text
-- Card title now reads "Why TruMove?" - cleaner and more direct
-- Trust badges removed from the card for a cleaner look
+- Hero headline shimmer will be faster and more noticeable with brighter green tones
+- "Why TruMove?" card will lift up with a green glow when hovered
+- Carousel cards will enlarge smoothly on hover, creating an eye-catching modal-like effect
+- The form will be cleaner without the Origin/Mileage/Destination strip
+
