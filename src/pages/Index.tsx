@@ -1540,8 +1540,6 @@ export default function Index() {
           </section>
         </div> {/* End tru-hero-wrapper */}
 
-        {/* BLACK STATS STRIP - Section Divider */}
-        <StatsStrip />
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="tru-ai-steps-section">
@@ -1624,6 +1622,8 @@ export default function Index() {
             </div>
           </section>
 
+          {/* BLACK STATS STRIP - Section Divider */}
+          <StatsStrip />
 
           {/* Move Summary is now in the hero right panel */}
 
