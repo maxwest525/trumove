@@ -2268,7 +2268,7 @@
    ============================================= */
 .tru-ai-steps-section {
   padding: 24px 24px 48px;
-  margin-top: -120px;
+  margin-top: 0;
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
@@ -28609,6 +28609,8 @@ html.dark .tru-summary-header-large,
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   padding: 8px 24px;
   overflow: hidden;
+  position: relative;
+  z-index: 10;
 }
 
 .stats-strip-inner {
