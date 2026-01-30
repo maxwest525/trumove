@@ -1023,10 +1023,14 @@ export default function Index() {
                     />
                   </div>
                   
-                  <div className="tru-qb-form-header tru-qb-form-header-clean">
-                    <div className="tru-qb-form-header-brand">
-                      <img src={logoImg} alt="TruMove" className="tru-qb-header-logo-clean" />
-                      <span className="tru-qb-header-tagline">A SMARTER WAY TO MOVE</span>
+                  <div className="tru-qb-form-header tru-qb-form-header-pill">
+                    <div className="tru-qb-form-title-group">
+                      <span className="tru-qb-form-title tru-qb-form-title-large">
+                        A SMARTER WAY TO <span className="tru-qb-title-accent">MOVE</span>
+                      </span>
+                      <span className="tru-qb-form-subtitle-compact">
+                        Carriers vetted against FMCSA safety records
+                      </span>
                     </div>
                   </div>
 
