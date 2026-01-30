@@ -24832,10 +24832,10 @@
 }
 
 .stats-strip-item {
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
+  flex-direction: row;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
 }
 
 .stats-strip-label {
@@ -28632,6 +28632,7 @@ html.dark .tru-summary-header-large,
 
 .stats-strip-item {
   display: inline-flex;
+  flex-direction: row;
   align-items: center;
   gap: 6px;
   font-size: 12px;
@@ -28648,11 +28649,6 @@ html.dark .tru-summary-header-large,
   height: 16px;
   color: hsl(142 70% 50%);
   flex-shrink: 0;
-}
-
-.stats-strip-dot {
-  color: hsl(0 0% 100% / 0.3);
-  margin: 0 8px;
 }
 
 /* =============================================
