@@ -1,92 +1,77 @@
 
-# Fix Why TruMove Card Clipping Issue
+# Fix Hover Enlarge Previews Being Cut Off
 
 ## Problem Analysis
 
-The Why TruMove card appears rounded on the left but squared/cut off on the right side due to container clipping and unbalanced padding.
+The feature carousel cards have a 1.35x scale hover effect that expands beyond the card boundaries. However, the parent `.tru-why-card-premium` container has `overflow: hidden` which clips these enlarged previews.
 
-### Root Causes Found
+### Current CSS Structure
 
-| Container | Issue |
-|-----------|-------|
-| `.tru-hero.tru-hero-split` | `overflow: hidden` (line 24575) clips child content |
-| `.tru-hero.tru-hero-split` | Unbalanced padding: `48px 24px 24px 48px` (48px left, 24px right) |
-| `.tru-hero-content-panel` | `padding-left: 24px` but no `padding-right` |
+```
+.tru-why-card-premium (overflow: hidden) ← CLIPS CONTENT
+  └── .tru-why-card-premium-content
+       └── .features-carousel (overflow: visible !important)
+            └── .features-carousel-container
+                 └── .features-carousel-content (overflow: visible !important)
+                      └── .features-carousel-card:hover (scale: 1.35) ← GETS CUT OFF
+```
 
-The card extends to the right edge of its container, and the combination of `overflow: hidden` and missing right padding causes the rounded corners to be clipped.
+The carousel and its children have `overflow: visible !important` but this is negated by the parent card having `overflow: hidden`.
 
 ---
 
 ## Solution
 
-Add right padding to the content panel and balance the hero split padding to give the card room to display its rounded corners.
+Remove `overflow: hidden` from `.tru-why-card-premium` so the hover-enlarged carousel cards can expand beyond the card boundaries as intended.
 
 ---
 
 ## Implementation
 
-### Change 1: Add padding-right to content panel
+### File: `src/index.css` (line 26216)
 
-**File: `src/index.css`** (line 1559)
+Remove the `overflow: hidden` property from `.tru-why-card-premium`:
 
-Add `padding-right: 24px` to `.tru-hero-content-panel`:
-
+**Before:**
 ```css
-/* Current */
-.tru-hero-content-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  justify-content: flex-start;
-  height: auto;
-  grid-row: 2;
-  grid-column: 2;
-  padding-left: 24px;
-  padding-top: 0;
-}
-
-/* Updated */
-.tru-hero-content-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  justify-content: flex-start;
-  height: auto;
-  grid-row: 2;
-  grid-column: 2;
-  padding-left: 24px;
-  padding-right: 24px;  /* <-- Add this */
-  padding-top: 0;
+.tru-why-card-premium {
+  position: relative;
+  background: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  overflow: hidden;  /* <-- This clips the hover previews */
+  box-shadow: ...
 }
 ```
 
-### Change 2: Balance hero split padding
-
-**File: `src/index.css`** (line 1398)
-
-Update the hero split padding to be balanced:
-
+**After:**
 ```css
-/* Current */
-padding: 48px 24px 24px 48px;
-
-/* Updated - balanced left/right */
-padding: 48px 48px 24px 48px;
+.tru-why-card-premium {
+  position: relative;
+  background: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  /* overflow: hidden removed to allow carousel hover expansion */
+  box-shadow: ...
+}
 ```
 
 ---
 
-## Summary of Changes
+## Summary
 
 | File | Line | Change |
 |------|------|--------|
-| `src/index.css` | 1398 | Change hero split padding from `48px 24px 24px 48px` to `48px 48px 24px 48px` |
-| `src/index.css` | 1559-1561 | Add `padding-right: 24px` to `.tru-hero-content-panel` |
+| `src/index.css` | 26216 | Remove `overflow: hidden` from `.tru-why-card-premium` |
 
 ---
 
 ## Expected Result
 
-- The Why TruMove card will have fully visible rounded corners on both left and right sides
-- The card will have equal spacing from the viewport edge on both sides
-- The overall hero layout will appear more balanced
+- Hover-enlarged carousel cards will now expand beyond the Why TruMove card boundaries
+- The dramatic 1.35x scale effect will be fully visible
+- The rounded corners of the card will still render correctly (handled by the inner content)
