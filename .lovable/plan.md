@@ -1,56 +1,66 @@
 
+# Fix Hero Backdrop Stacking and Cutoff Issue
 
-# Fix Hero Backdrop Overlaying Quote Wizard and Why TruMove Card
+## Problem Analysis
 
-## Problem
+The hero headline backdrop is overlaying the quote wizard and Why TruMove cards because of a z-index stacking issue:
 
-The hero headline backdrop (`::before` pseudo-element) with the extended `inset: -150px -250px` is large enough to overlap both the quote wizard form AND the "Why TruMove" card below it. While we added `z-index: 20` to `.tru-form-card`, the `.tru-why-card-premium` doesn't have an explicit z-index, so it's being overlaid by the backdrop.
+1. **Header section** (`.tru-hero-header-section.tru-hero-header-refined`) has `z-index: 10`
+2. **Content panels** (`.tru-hero-content-panel` and `.tru-hero-right-half`) only have `z-index: 1`
+3. **Backdrop** (`::before` pseudo-element) has `z-index: -1` relative to its parent, but since the parent has `z-index: 10`, the backdrop effectively stacks at `z-index: 9`
+4. This puts the backdrop ABOVE the content panels (which are at `z-index: 1`)
+
+The visible cutoff on the right side is caused by the backdrop extending 250px beyond its container, hitting the `overflow: hidden` on `.tru-hero.tru-hero-split`.
 
 ---
 
 ## Solution
 
-Add `z-index: 20` to the `.tru-why-card-premium` class so both the quote wizard and the Why TruMove card stack above the hero header's backdrop.
+Increase the z-index of the hero content panels to be higher than the header section so they stack above the backdrop:
+
+- Change `.tru-hero-content-panel` and `.tru-hero-right-half` from `z-index: 1` to `z-index: 15`
+- This ensures these panels (and their child cards) stack above the header's backdrop
 
 ---
 
 ## Implementation
 
-### Change: Add z-index to Why TruMove card
+### File: `src/index.css`
+
+**Change at lines 24670-24676:**
 
 ```css
-/* Line 26323-26335 */
-.tru-why-card-premium {
+/* Ensure hero content stays above particles AND header backdrop */
+.tru-hero-top-section,
+.tru-hero-content-panel,
+.tru-hero-right-half {
   position: relative;
-  z-index: 20;  /* ADD - Stack above hero backdrop */
-  background: hsl(var(--background) / 0.85);
-  backdrop-filter: blur(12px);
-  /* ... rest unchanged ... */
+  z-index: 15;  /* Changed from 1 to 15 - stack above header backdrop (z-index: 10) */
 }
 ```
 
 ---
 
-## Summary of Changes
+## Technical Summary
 
-| File | Line | Change |
-|------|------|--------|
-| `src/index.css` | 26324 | Add `z-index: 20;` after `position: relative;` to stack Why TruMove card above backdrop |
+| File | Lines | Change |
+|------|-------|--------|
+| `src/index.css` | 24675 | Change `z-index: 1` → `z-index: 15` |
 
 ---
 
 ## Design Notes
 
-- **z-index: 20**: Matches the form card's z-index, ensuring both cards appear above the hero header section (z-index: 10) and its backdrop
-- **position: relative**: Already exists on `.tru-why-card-premium`, which is required for z-index to work
-- This is a one-line fix
+- **z-index: 15**: Higher than the header's `z-index: 10`, ensuring content panels stack above the backdrop
+- **z-index: 20 on cards**: `.tru-form-card` and `.tru-why-card-premium` already have `z-index: 20`, which will still work correctly since their parent container is now higher
+- The `.tru-hero-top-section` is also updated for consistency, though it's less critical
+- The cutoff appearance is actually the mask gradient fading to transparency - with proper z-stacking, this will be hidden behind the cards as intended
 
 ---
 
 ## Expected Result
 
-- Quote wizard form cards appear above the hero backdrop
-- Why TruMove card appears above the hero backdrop  
-- The backdrop seamlessly fades behind the headline AND behind all cards
-- No visual overlap issues with any card elements
-
+- Quote wizard and Why TruMove cards appear above the hero backdrop
+- The backdrop gradient fades seamlessly behind the headline
+- No visible cutoff edges overlaying the cards
+- All card interactions (hover effects, carousels) continue to work correctly
