@@ -1,10 +1,10 @@
 
 
-# Reduce Trust Strip Text Size
+# Spread Out Trust Strip Items
 
 ## Goal
 
-Make the trust strip text slightly smaller for a more refined, subtle appearance that doesn't compete with the main navigation.
+Increase the spacing between items on the trust strip for a more open, breathable layout.
 
 ---
 
@@ -12,42 +12,29 @@ Make the trust strip text slightly smaller for a more refined, subtle appearance
 
 ### File: `src/index.css`
 
-#### Change 1: Reduce font size (line 28668)
+#### Change: Increase gap between items (line 28657)
 
 ```css
 /* Before */
-font-size: 12px;
+gap: 16px;
 
 /* After */
-font-size: 10px;
-```
-
-#### Change 2: Reduce icon size to match (lines 28676-28677)
-
-```css
-/* Before */
-width: 16px;
-height: 16px;
-
-/* After */
-width: 12px;
-height: 12px;
+gap: 32px;
 ```
 
 ---
 
 ## Summary of Changes
 
-| File | Line(s) | Change |
-|------|---------|--------|
-| `src/index.css` | 28668 | Reduce font size from `12px` to `10px` |
-| `src/index.css` | 28676-28677 | Reduce icon size from `16px` to `12px` to match |
+| File | Line | Change |
+|------|------|--------|
+| `src/index.css` | 28657 | Increase gap from `16px` to `32px` |
 
 ---
 
 ## Expected Result
 
-- Trust strip text will be 2px smaller (10px) for a more refined look
-- Icons will scale proportionally to 12px to maintain visual balance
-- The strip will feel more subtle and supportive rather than competing with the navigation
+- Trust strip items will have double the spacing between them (32px instead of 16px)
+- The strip will feel more open and less crowded
+- Items will remain centered and horizontally scrollable on smaller screens
 
