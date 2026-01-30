@@ -2570,6 +2570,54 @@
   text-align: center;
 }
 
+/* Two-column layout for AI section */
+.tru-ai-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 32px;
+  align-items: start;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.tru-ai-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tru-ai-right-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Vertical steps layout */
+.tru-ai-steps-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Override for left-aligned button */
+.tru-ai-start-btn.tru-ai-start-btn-left {
+  margin: 0;
+  align-self: flex-start;
+}
+
+/* When inside the two-column layout, stack scanner and inventory vertically */
+.tru-ai-right-column .tru-ai-preview-live {
+  grid-template-columns: 1fr;
+  max-width: none;
+  margin: 0;
+  gap: 16px;
+}
+
+.tru-ai-right-column .tru-ai-live-inventory {
+  height: auto;
+  min-height: 200px;
+}
+
+/* Legacy grid (keeping for reference) */
 .tru-ai-steps-grid {
   display: flex;
   justify-content: center;
@@ -2616,6 +2664,22 @@
   font-size: 13px;
   color: hsl(var(--tm-ink) / 0.6);
   line-height: 1.4;
+}
+
+/* Responsive: Stack on mobile */
+@media (max-width: 768px) {
+  .tru-ai-two-column {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .tru-ai-start-btn.tru-ai-start-btn-left {
+    align-self: center;
+  }
+  
+  .tru-ai-right-column .tru-ai-preview-live {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Inventory Action Buttons - Identical Styling */
