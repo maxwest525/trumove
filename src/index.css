@@ -23501,6 +23501,49 @@
   border-color: var(--cv-border) !important;
 }
 
+/* Fix outline buttons in carrier vetting dark mode - prevent white-on-white */
+.carrier-vetting-dark button[data-slot="button"],
+.carrier-vetting-dark [class*="Button"] {
+  --tw-text-opacity: 1;
+}
+
+.carrier-vetting-dark button[class*="outline"],
+.carrier-vetting-dark .gap-2[class*="border-green"],
+.carrier-vetting-dark .gap-2[class*="border-red"],
+.carrier-vetting-dark .gap-2[class*="border-amber"] {
+  background: hsl(222 30% 12%) !important;
+  color: hsl(220 10% 90%) !important;
+  border-width: 1.5px !important;
+}
+
+.carrier-vetting-dark button[class*="outline"]:hover,
+.carrier-vetting-dark .gap-2[class*="border-green"]:hover,
+.carrier-vetting-dark .gap-2[class*="border-red"]:hover,
+.carrier-vetting-dark .gap-2[class*="border-amber"]:hover {
+  background: hsl(222 30% 18%) !important;
+  color: white !important;
+}
+
+/* Carrier Safety Comparison header buttons */
+.carrier-vetting-dark .gap-2.border-border,
+.carrier-vetting-dark button.gap-2 {
+  background: hsl(222 30% 14%) !important;
+  border: 1.5px solid hsl(220 20% 30%) !important;
+  color: hsl(220 10% 85%) !important;
+}
+
+.carrier-vetting-dark .gap-2.border-border:hover,
+.carrier-vetting-dark button.gap-2:hover {
+  background: hsl(222 30% 20%) !important;
+  border-color: hsl(var(--primary) / 0.5) !important;
+  color: white !important;
+}
+
+/* Ensure button text in carrier vetting is always visible */
+.carrier-vetting-dark button span {
+  color: inherit !important;
+}
+
 /* Sections in dark theme */
 .carrier-vetting-dark .py-8,
 .carrier-vetting-dark .py-12,
