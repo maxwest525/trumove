@@ -1,38 +1,85 @@
 
-# Fix Hero Card Border Visibility
+# Make Hero Carousel Cards More Compact
 
-## Problem
-The "Your Move. Your Terms" card on the right side of the hero has a visible border outline. Looking at line 25342 in `src/index.css`:
-
-```css
-border: 1px solid hsl(var(--tm-ink) / 0.1);
-```
-
-This creates a subtle but visible border around the entire card.
-
-## Solution
-Remove or hide the border by setting it to `transparent` or `none`.
-
-## Technical Details
-
-### File to Modify
-- `src/index.css`
-
-### Change (Line 25342)
-```css
-/* From: */
-border: 1px solid hsl(var(--tm-ink) / 0.1);
-
-/* To: */
-border: none;
-```
-
-This single line change will remove the visible border around the premium card while keeping all other styling (backdrop blur, shadow, rounded corners) intact.
+## Overview
+Further reduce the size of the carousel cards in the "Your Move. Your Terms" section by making images smaller and tightening all spacing.
 
 ---
 
-## Alternative Options
+## Changes Required (src/index.css)
 
-If you want to keep a very subtle border for definition, you could use a more transparent value:
-- `border: 1px solid hsl(var(--tm-ink) / 0.03);` - Almost invisible
-- `border: 1px solid transparent;` - Invisible but maintains spacing
+### 1. Reduce Card Text Padding (Line 25443)
+```css
+/* From: */
+padding: 10px 10px 8px;
+
+/* To: */
+padding: 8px 8px 6px;
+```
+
+### 2. Reduce Title Font Size (Line 25447)
+```css
+/* From: */
+font-size: 11px;
+
+/* To: */
+font-size: 10px;
+```
+
+### 3. Reduce Description Font Size (Line 25454)
+```css
+/* From: */
+font-size: 9px;
+
+/* To: */
+font-size: 8px;
+```
+
+### 4. Make Image Smaller with Tighter Aspect Ratio (Line 25463)
+```css
+/* From: */
+aspect-ratio: 16 / 9;
+
+/* To: */
+aspect-ratio: 2 / 1;
+```
+
+### 5. Reduce Card Border Radius (Line 25429)
+```css
+/* From: */
+border-radius: 12px;
+
+/* To: */
+border-radius: 8px;
+```
+
+### 6. Reduce Item Padding (Lines 25415-25416)
+```css
+/* From: */
+padding-left: 6px;
+padding-right: 6px;
+
+/* To: */
+padding-left: 4px;
+padding-right: 4px;
+```
+
+---
+
+## Summary of Reductions
+
+| Element | Before | After | Reduction |
+|---------|--------|-------|-----------|
+| Text padding | 10px 10px 8px | 8px 8px 6px | ~20% |
+| Title font | 11px | 10px | ~9% |
+| Description font | 9px | 8px | ~11% |
+| Image aspect | 16/9 (1.78) | 2/1 (2.0) | ~12% shorter |
+| Border radius | 12px | 8px | 33% |
+| Item gap | 6px | 4px | 33% |
+
+---
+
+## File to Modify
+- `src/index.css`
+
+This creates noticeably more compact cards while maintaining readability and visual hierarchy.
