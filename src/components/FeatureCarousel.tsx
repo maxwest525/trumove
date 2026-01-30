@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogClose, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X } from "lucide-react";
+import { X, Truck, MessageCircle, Sparkles } from "lucide-react";
 
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -16,10 +16,24 @@ import trudyAvatar from "@/assets/trudy-avatar.png";
 type Feature = {
   title: string;
   desc: string;
-  image: string;
+  image?: string;
+  customIcon?: React.ReactNode;
   route?: string;
   action?: "openChat";
 };
+
+// Truck with chat bubbles icon for Trudy AI card
+const TruckChatIcon = () => (
+  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
+    <div className="relative">
+      <Truck className="w-16 h-16 text-foreground" />
+      <div className="absolute -top-3 -right-3 flex gap-1">
+        <MessageCircle className="w-6 h-6 text-primary fill-primary/20" />
+        <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+      </div>
+    </div>
+  </div>
+);
 
 const features: Feature[] = [
   {
@@ -61,7 +75,7 @@ const features: Feature[] = [
   {
     title: "Trudy AI Assistant",
     desc: "Chat with our AI to get instant answers about your move.",
-    image: trudyAvatar,
+    customIcon: <TruckChatIcon />,
     action: "openChat",
   },
 ];
@@ -144,7 +158,11 @@ export default function FeatureCarousel() {
                   </div>
                 </div>
                 <div className="features-carousel-card-image-wrapper">
-                  <img src={feature.image} alt={`${feature.title} Preview`} />
+                  {feature.customIcon ? (
+                    feature.customIcon
+                  ) : (
+                    <img src={feature.image} alt={`${feature.title} Preview`} />
+                  )}
                 </div>
                 
                 {/* Hover label */}
