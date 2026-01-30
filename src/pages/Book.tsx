@@ -301,7 +301,17 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
 
             {/* Item Grid */}
             <div className="flex-1 p-3 overflow-y-auto">
-              {viewMode === 'grid' ? (
+              {filteredItems.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                  <Search className="w-8 h-8 text-slate-300 dark:text-slate-500 mb-3" />
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                    No items found
+                  </p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                    Try a different search term
+                  </p>
+                </div>
+              ) : viewMode === 'grid' ? (
                 <div className="grid grid-cols-4 gap-2">
                   {filteredItems.map((item) => {
                     const qty = quantities[`${activeRoom}-${item.name}`] || 0;
