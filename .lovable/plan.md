@@ -1,85 +1,57 @@
 
 
-# Fix Hero Backdrop Hard Edge Cutoff on All Sides
+# Spread Out Header Nav Items and Separate Action Buttons
 
 ## Problem
 
-The backdrop pseudo-element has visible hard edges on **all four sides** (top, bottom, left, and right). The current inset of `-40px -100px` is too small, causing the element boundaries to be visible even though the gradient fades toward transparent.
+1. The navigation items are too close together (current `gap: 4px`)
+2. The Call button and theme toggle need more separation from the main nav links
 
 ---
 
 ## Solution
 
-1. **Extend inset on all sides significantly** - Change from `-40px -100px` to `-150px -250px` to push all edges far beyond the visible area
-2. **Adjust the gradient ellipse to be more balanced** - Use `60% 70%` to keep the dark area focused on text while allowing extended fade in all directions
-3. **Create a more gradual 5-stop fade** - Ensures smooth transition from dark to transparent
-4. **Widen the mask in both dimensions** - Use `160% 130%` so the mask fade completes well before any element edges
+1. Increase the gap between nav items from `4px` to `12px`
+2. Add a left margin to `.header-actions` to create visual separation from the nav links
+3. Adjust the divider line position to account for wider spacing
 
 ---
 
-## Current Values
+## Implementation
+
+### Change 1: Increase nav item spacing
 
 ```css
-.tru-hero-header-section.tru-hero-header-refined::before {
-  inset: -40px -100px;
-  background: radial-gradient(
-    ellipse 90% 85% at 50% 50%,
-    hsl(0 0% 0% / 0.50) 0%,
-    hsl(0 0% 0% / 0.35) 30%,
-    hsl(0 0% 0% / 0.15) 60%,
-    transparent 90%
-  );
-  -webkit-mask-image: radial-gradient(
-    ellipse 120% 100% at 50% 50%,
-    black 0%,
-    black 25%,
-    rgba(0,0,0,0.6) 55%,
-    transparent 85%
-  );
-  mask-image: radial-gradient(
-    ellipse 120% 100% at 50% 50%,
-    black 0%,
-    black 25%,
-    rgba(0,0,0,0.6) 55%,
-    transparent 85%
-  );
+/* Line 11237 */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;  /* Changed from 4px to 12px */
+  margin-left: auto;
 }
 ```
 
----
-
-## New Values
+### Change 2: Add separation before action buttons
 
 ```css
-.tru-hero-header-section.tru-hero-header-refined::before {
-  /* Push ALL edges much further out - top/bottom AND left/right */
-  inset: -150px -250px;
-  background: radial-gradient(
-    /* Balanced ellipse for all-direction fade */
-    ellipse 60% 70% at 50% 50%,
-    hsl(0 0% 0% / 0.50) 0%,
-    hsl(0 0% 0% / 0.38) 25%,
-    hsl(0 0% 0% / 0.20) 45%,
-    hsl(0 0% 0% / 0.08) 65%,
-    transparent 80%
-  );
-  /* Wider mask in BOTH dimensions for seamless fade on all sides */
-  -webkit-mask-image: radial-gradient(
-    ellipse 160% 130% at 50% 50%,
-    black 0%,
-    black 20%,
-    rgba(0,0,0,0.7) 40%,
-    rgba(0,0,0,0.3) 60%,
-    transparent 75%
-  );
-  mask-image: radial-gradient(
-    ellipse 160% 130% at 50% 50%,
-    black 0%,
-    black 20%,
-    rgba(0,0,0,0.7) 40%,
-    rgba(0,0,0,0.3) 60%,
-    transparent 75%
-  );
+/* Line 11330-11337 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: 32px;  /* Changed from auto to fixed spacing for separation */
+  padding-right: 140px;
+}
+```
+
+### Change 3: Adjust divider position for wider spacing
+
+```css
+/* Line 11247-11256 */
+.header-nav-item:not(:last-child)::after {
+  right: -6px;  /* Changed from -2px to center in wider gap */
+  /* ... rest unchanged ... */
 }
 ```
 
@@ -89,26 +61,15 @@ The backdrop pseudo-element has visible hard edges on **all four sides** (top, b
 
 | File | Lines | Change |
 |------|-------|--------|
-| `src/index.css` | 26147 | Change `inset: -40px -100px` → `-150px -250px` to push ALL edges far beyond view |
-| `src/index.css` | 26148-26154 | Adjust gradient to `60% 70%` ellipse with 5-stop fade ending at 80% |
-| `src/index.css` | 26159-26172 | Widen mask to `160% 130%` with 5-stop fade ending at 75% |
-
----
-
-## Design Notes
-
-- **Extended vertical inset (-150px)**: Fixes top/bottom cutoff issue
-- **Extended horizontal inset (-250px)**: Fixes left/right cutoff issue
-- **Balanced ellipse (60% 70%)**: Proportional fade in all directions
-- **5-stop gradients**: Much smoother transition curves
-- **Earlier transparency (80%/75%)**: Gradient fully fades well before element boundaries
+| `src/index.css` | 11237 | Change `gap: 4px` → `gap: 12px` for wider nav spacing |
+| `src/index.css` | 11250 | Change divider `right: -2px` → `right: -6px` to center in gap |
+| `src/index.css` | 11335 | Change `margin-left: auto` → `margin-left: 32px` for action button separation |
 
 ---
 
 ## Expected Result
 
-- No visible hard edges or cutoff lines on any side (top, bottom, left, right)
-- Backdrop seamlessly blends into the hero background image in all directions
-- Dark area remains focused behind the headline text
-- Natural, organic fade that feels like a soft vignette
+- Navigation items are more spread out with comfortable spacing
+- Call button and theme toggle are visually separated from the main nav
+- Divider lines remain centered between nav items
 
