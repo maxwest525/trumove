@@ -11,8 +11,17 @@ import trudyVideoCall from "@/assets/trudy-video-call.jpg";
 import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
+import trudyAvatar from "@/assets/trudy-avatar.png";
 
-const features = [
+type Feature = {
+  title: string;
+  desc: string;
+  image: string;
+  route?: string;
+  action?: "openChat";
+};
+
+const features: Feature[] = [
   {
     title: "Inventory Builder",
     desc: "Build your item list room by room for accurate pricing estimates.",
@@ -49,6 +58,12 @@ const features = [
     image: scanRoomPreview,
     route: "/vetting",
   },
+  {
+    title: "Trudy AI Assistant",
+    desc: "Chat with our AI to get instant answers about your move.",
+    image: trudyAvatar,
+    action: "openChat",
+  },
 ];
 
 export default function FeatureCarousel() {
@@ -56,7 +71,7 @@ export default function FeatureCarousel() {
   const [api, setApi] = useState<CarouselApi>();
   const [isPaused, setIsPaused] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [selectedFeature, setSelectedFeature] = useState<typeof features[0] | null>(null);
+  const [selectedFeature, setSelectedFeature] = useState<Feature | null>(null);
   const scrollIntervalRef = useRef<number | null>(null);
 
   // Autoplay with 4s interval, pauses on hover
@@ -90,6 +105,15 @@ export default function FeatureCarousel() {
     setHoveredIndex(null);
   }, []);
 
+  const handleCardClick = (feature: Feature) => {
+    if (feature.action === "openChat") {
+      // Dispatch custom event to open FloatingTruckChat
+      window.dispatchEvent(new CustomEvent('openTrudyChat'));
+    } else {
+      setSelectedFeature(feature);
+    }
+  };
+
   return (
     <div 
       className="features-carousel"
@@ -101,15 +125,15 @@ export default function FeatureCarousel() {
         opts={{ align: "start", loop: true, dragFree: false, duration: 30, skipSnaps: false }}
         className="features-carousel-container"
       >
-        <CarouselContent className="features-carousel-content">
+        <CarouselContent className="features-carousel-content" allowOverflow>
           {features.map((feature, index) => (
             <CarouselItem key={index} className="features-carousel-item basis-1/2 md:basis-1/4">
               <div 
                 className="features-carousel-card"
-                onClick={() => setSelectedFeature(feature)}
+                onClick={() => handleCardClick(feature)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && setSelectedFeature(feature)}
+                onKeyDown={(e) => e.key === 'Enter' && handleCardClick(feature)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
@@ -125,7 +149,9 @@ export default function FeatureCarousel() {
                 
                 {/* Hover label */}
                 {hoveredIndex === index && (
-                  <span className="features-carousel-hover-label">Click to explore</span>
+                  <span className="features-carousel-hover-label">
+                    {feature.action === "openChat" ? "Click to chat" : "Click to explore"}
+                  </span>
                 )}
               </div>
             </CarouselItem>
@@ -155,7 +181,9 @@ export default function FeatureCarousel() {
                   className="feature-preview-cta"
                   onClick={() => {
                     setSelectedFeature(null);
-                    navigate(selectedFeature.route);
+                    if (selectedFeature.route) {
+                      navigate(selectedFeature.route);
+                    }
                   }}
                 >
                   Explore Feature

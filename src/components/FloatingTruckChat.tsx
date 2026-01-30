@@ -38,6 +38,20 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isScrollMinimized]);
 
+  // Listen for custom event to open chat from anywhere (e.g., FeatureCarousel)
+  useEffect(() => {
+    const handleOpenTrudyChat = () => {
+      setIsOpen(true);
+      // Also un-minimize if needed
+      setIsMinimized(false);
+      setIsScrollMinimized(false);
+      localStorage.removeItem('tm_ai_helper_minimized');
+    };
+
+    window.addEventListener('openTrudyChat', handleOpenTrudyChat);
+    return () => window.removeEventListener('openTrudyChat', handleOpenTrudyChat);
+  }, []);
+
   const handleMinimize = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsMinimized(true);
