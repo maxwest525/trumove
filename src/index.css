@@ -82,7 +82,7 @@
    ============================================= */
 .tru-move-summary-modal {
   position: absolute;
-  top: 0;
+  top: 24px;
   left: 0;
   right: 0;
   z-index: 10;
