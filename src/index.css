@@ -2574,8 +2574,8 @@
 /* Two-column layout for AI section */
 .tru-ai-two-column {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 32px;
+  grid-template-columns: 0.8fr 1.5fr;
+  gap: 40px;
   align-items: start;
   margin-bottom: 32px;
   text-align: left;
@@ -2590,6 +2590,68 @@
 .tru-ai-right-column {
   display: flex;
   flex-direction: column;
+}
+
+/* Stacked vertical layout for scanner + inventory list */
+.tru-ai-preview-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tru-ai-preview-vertical .tru-ai-live-scanner {
+  height: 280px;
+}
+
+.tru-ai-preview-vertical .tru-ai-live-inventory {
+  min-height: 260px;
+}
+
+/* Centered demo button */
+.tru-ai-demo-button-centered {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  margin: 20px auto 32px;
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+  transition: all 0.2s ease;
+}
+
+.tru-ai-demo-button-centered:hover {
+  background: hsl(var(--primary));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px hsl(var(--primary) / 0.5);
+}
+
+/* Step with preview thumbnail */
+.tru-ai-step-with-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.tru-ai-step-preview {
+  width: 64px;
+  height: 48px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid hsl(var(--tm-ink) / 0.12);
+  background: hsl(var(--muted) / 0.3);
+}
+
+.tru-ai-step-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Vertical steps layout */
