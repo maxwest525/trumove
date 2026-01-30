@@ -2285,6 +2285,50 @@
   letter-spacing: -0.01em;
 }
 
+/* AI Demo Info Callout */
+.tru-ai-demo-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  max-width: 520px;
+  margin: 0 auto 24px;
+  text-align: left;
+}
+
+.tru-ai-demo-info-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--primary) / 0.15);
+  border-radius: 10px;
+  color: hsl(var(--primary));
+}
+
+.tru-ai-demo-info-content {
+  flex: 1;
+}
+
+.tru-ai-demo-info-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin: 0 0 4px;
+}
+
+.tru-ai-demo-info-text {
+  font-size: 14px;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.5;
+  margin: 0;
+}
+
 /* Start AI Analysis Button - Premium Dark Style */
 .tru-ai-start-btn {
   display: inline-flex;

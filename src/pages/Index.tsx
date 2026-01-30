@@ -41,7 +41,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
-  Shield, Video, Boxes, CheckCircle, 
+  Shield, Video, Boxes, CheckCircle, Info,
   MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
@@ -1533,6 +1533,22 @@ export default function Index() {
             <div className="tru-ai-steps-inner">
               <h2 className="tru-ai-steps-title">AI Inventory Analysis</h2>
               <p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
+              
+              {/* Demo Info Callout */}
+              <div className="tru-ai-demo-info">
+                <div className="tru-ai-demo-info-icon">
+                  <Info className="w-5 h-5" />
+                </div>
+                <div className="tru-ai-demo-info-content">
+                  <p className="tru-ai-demo-info-title">
+                    This is an interactive demo
+                  </p>
+                  <p className="tru-ai-demo-info-text">
+                    Experience how our AI scans a room and automatically detects furniture, boxes, and appliances. 
+                    The demo uses sample imagery — when you're ready, you can scan your own home.
+                  </p>
+                </div>
+              </div>
               
               {/* Primary CTA Button */}
               <button 
