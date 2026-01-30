@@ -1475,10 +1475,11 @@ export default function Index() {
               >
                 <div className="tru-why-card-premium-glow" />
                 <div className="tru-why-card-premium-content">
-                  <h3 className="tru-why-title-premium">
-                    Why TruMove?
+                  <h3 className="tru-ai-steps-title" style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    Why <span className="tru-ai-gradient-text">TruMove</span>?
                   </h3>
-                  <p className="tru-why-subtitle-premium tru-why-subtitle-bold-italic">
+                  <div className="tru-ai-accent-line" style={{ marginBottom: '12px' }} />
+                  <p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none' }}>
                     Skip the van line middleman. Get matched with vetted carriers who compete for your business.
                   </p>
                   
@@ -1553,21 +1554,6 @@ export default function Index() {
 
               <p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
               
-              {/* Demo Info Callout */}
-              <div className="tru-ai-demo-info">
-                <div className="tru-ai-demo-info-icon">
-                  <Info className="w-5 h-5" />
-                </div>
-                <div className="tru-ai-demo-info-content">
-                  <p className="tru-ai-demo-info-title">
-                    This is an interactive demo
-                  </p>
-                  <p className="tru-ai-demo-info-text">
-                    Experience how our AI scans a room and automatically detects furniture, boxes, and appliances. 
-                    The demo uses sample imagery — when you're ready, you can scan your own home.
-                  </p>
-                </div>
-              </div>
               
               {/* Primary CTA Button */}
               <button 
