@@ -1447,15 +1447,13 @@
   text-shadow: 0 1px 8px hsl(var(--background) / 0.5);
 }
 
-/* "Move" accent - gradient green with text shadow */
+/* "Move" accent - solid bright green matching logo */
 .tru-hero-headline-accent {
-  background: linear-gradient(135deg, hsl(145 70% 45%) 0%, hsl(145 80% 35%) 50%, hsl(145 70% 50%) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: hsl(var(--tm-green));
+  -webkit-text-fill-color: hsl(var(--tm-green));
   position: relative;
   display: inline-block;
-  filter: drop-shadow(0 2px 4px hsl(145 70% 35% / 0.3));
+  filter: drop-shadow(0 2px 8px hsl(var(--tm-green) / 0.4));
 }
 
 /* Text shadow for headline readability */
@@ -1761,11 +1759,10 @@
 }
 
 .tru-hero-headline-accent {
-  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(160 80% 40%) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: hsl(var(--tm-green));
+  -webkit-text-fill-color: hsl(var(--tm-green));
   font-weight: 900;
+  filter: drop-shadow(0 2px 8px hsl(var(--tm-green) / 0.4));
 }
 
 .tru-hero-subheadline {
