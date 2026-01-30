@@ -39,13 +39,13 @@ const features: Feature[] = [
   {
     title: "Inventory Builder",
     desc: "Build your item list room by room for accurate pricing estimates.",
-    image: previewAiScanner,
+    image: sampleRoomLiving,
     route: "/online-estimate",
   },
   {
     title: "AI Room Scanner",
     desc: "Point your camera and AI detects furniture instantly.",
-    image: sampleRoomLiving,
+    image: scanRoomPreview,
     route: "/scan-room",
   },
   {
@@ -69,7 +69,7 @@ const features: Feature[] = [
   {
     title: "FMCSA Verified",
     desc: "Real-time safety data checks from official databases.",
-    image: scanRoomPreview,
+    image: previewCarrierVetting,
     route: "/vetting",
   },
   {
