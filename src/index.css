@@ -24667,12 +24667,12 @@
   overflow: hidden;
 }
 
-/* Ensure hero content stays above particles */
+/* Ensure hero content stays above particles AND header backdrop */
 .tru-hero-top-section,
 .tru-hero-content-panel,
 .tru-hero-right-half {
   position: relative;
-  z-index: 1;
+  z-index: 15;
 }
 
 /* Subtle gradient overlay for better text readability */
