@@ -1,56 +1,95 @@
 
-# Fix: Remove Transparent Box on Homepage Hero Right Side
+# Restyle Black Trust Strip to Match Grey SAFER Bar
 
-## Problem Identified
-A semi-transparent white/grey box is appearing around the "Your Move. Your Terms." card on the right side of the homepage hero section. After thorough investigation of the CSS, the issue is caused by the combination of:
+## Overview
+Modify the black TrustStrip component to have a similar layout and styling as the grey SaferTrustStrip, including:
+- Spread items across the bar with consistent spacing
+- Icons positioned to the left of each text item
+- Thinner bar height (matching the grey strip's 8px padding)
+- Use CSS classes for styling consistency
 
-1. **backdrop-filter: blur(12px)** on `.tru-why-card-premium` (line 25351)
-2. **Semi-transparent gradient background** on the same element (lines 25339-25343)
-3. Browser rendering behavior that creates a visible stacking context box around elements with backdrop-filter
+## Changes Required
 
-The backdrop-filter effect, when combined with a partially transparent background gradient, causes the browser to render a visible bounding area around the card.
+### 1. Update TrustStrip.tsx Component
+Replace inline Tailwind classes with CSS class-based styling to match the SaferTrustStrip pattern:
+- Use `.trust-strip`, `.trust-strip-inner`, `.trust-strip-item`, `.trust-strip-dot` classes
+- Keep icon to the left of text (already correct)
+- Add dot separators between items like the SAFER strip
 
-## Solution
-
-### CSS Changes (src/index.css)
-
-1. **Remove backdrop-filter from `.tru-why-card-premium`** - The frosted glass effect is creating the visible box. Replace with an opaque background.
-
-2. **Make the background gradient fully opaque** - Remove transparency from the gradient background to eliminate the visual artifact.
-
-3. **Add explicit background overrides** for the wrapper containers (already added but may need reinforcement).
-
-Specific changes:
+### 2. Add CSS Styles to index.css
+Create new styles that mirror the grey SAFER strip but with the dark theme:
 
 ```css
-/* Remove backdrop-filter and make background opaque */
-.tru-why-card-premium {
-  position: relative;
-  background: linear-gradient(135deg, 
-    hsl(var(--background)) 0%, 
-    hsl(var(--muted)) 50%,   /* Remove the /0.8 transparency */
-    hsl(var(--background)) 100%
-  );
-  border: 1px solid hsl(var(--tm-ink) / 0.1);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 
-    0 4px 24px hsl(var(--tm-ink) / 0.08),
-    0 1px 3px hsl(var(--tm-ink) / 0.04),
-    inset 0 1px 0 hsl(0 0% 100% / 0.8);
-  /* REMOVE: backdrop-filter: blur(12px); */
-  /* REMOVE: -webkit-backdrop-filter: blur(12px); */
+/* BLACK TRUST STRIP - Compliance bar */
+.trust-strip {
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-bottom: 1px solid hsl(0 0% 100% / 0.1);
+  padding: 6px 24px;  /* Thinner than before (was py-[4px] with larger content) */
+  overflow-x: auto;
+}
+
+.trust-strip-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: max-content;
+  margin: 0 auto;
+}
+
+.trust-strip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 100% / 0.85);
+}
+
+.trust-strip-item svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Gold accent icons */
+.trust-strip-item.accent-gold svg {
+  color: hsl(45 90% 55%);
+}
+
+/* Green accent icons */
+.trust-strip-item.accent-green svg {
+  color: hsl(142 70% 55%);
+}
+
+.trust-strip-dot {
+  color: hsl(0 0% 100% / 0.3);
+  margin: 0 8px;
 }
 ```
 
-Also reinforce the container transparency:
-```css
-/* Ensure no stacking context issues on parent containers */
-.tru-hero-content-panel,
-.tru-hero-stacked-cards {
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+### 3. Updated TrustStrip.tsx Structure
+
+```tsx
+export default function TrustStrip() {
+  return (
+    <div className="trust-strip" aria-label="Compliance and authority">
+      <div className="trust-strip-inner">
+        {TRUST.map((t, idx) => (
+          <div key={t.text} className={`trust-strip-item accent-${t.accent}`}>
+            <t.icon />
+            <span>{t.text}</span>
+            {idx < TRUST.length - 1 && (
+              <span className="trust-strip-dot">•</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 ```
 
@@ -58,26 +97,18 @@ Also reinforce the container transparency:
 
 ## Technical Details
 
-### File to Modify
-- `src/index.css`
+### Files to Modify
+1. `src/components/layout/TrustStrip.tsx` - Update structure to use CSS classes
+2. `src/index.css` - Add `.trust-strip-*` styles
 
-### Implementation Steps
-1. Locate `.tru-why-card-premium` styling (around line 25337)
-2. Remove `backdrop-filter: blur(12px)` and `-webkit-backdrop-filter: blur(12px)` properties
-3. Change the gradient background from `hsl(var(--muted) / 0.8)` to `hsl(var(--muted))` (remove transparency)
-4. Add explicit `backdrop-filter: none` to wrapper containers to prevent inheritance issues
-5. Verify the fix works in both light and dark modes
+### Visual Changes
+| Aspect | Before | After |
+|--------|--------|-------|
+| Padding | py-[4px] (~8px total) | 6px top/bottom (12px total, but compact text) |
+| Font size | 10px | 11px (matches grey strip proportions) |
+| Icon size | 12px (w-3) | 14px |
+| Item gap | gap-8/gap-16 | gap-16px with 8px margin dots |
+| Structure | Inline flex spans | CSS class-driven divs |
 
-### Why This Works
-The `backdrop-filter` CSS property creates a new stacking context and requires the browser to composite the element separately. When combined with any transparency in the background, the browser renders a visible "box" representing the area affected by the blur. By:
-- Removing the backdrop-filter effect
-- Making the background fully opaque
-
-We eliminate the visual artifact while maintaining the card's polished appearance.
-
-### Verification
-- Navigate to the homepage
-- Confirm the transparent box is no longer visible on the right side
-- Ensure the "Your Move. Your Terms." card renders with proper styling
-- Test in both light and dark modes
-- Verify the form card on the left still looks correct
+### Result
+The black trust strip will have the same horizontal spread layout as the grey SAFER strip, with icons clearly to the left of each item, thinner overall height, and consistent visual language across both trust bars.
