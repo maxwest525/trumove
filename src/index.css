@@ -25263,6 +25263,39 @@
   font-weight: 500;
 }
 
+/* Eye-catching headline animation - gradient shimmer */
+.tru-headline-animated {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--tm-ink)) 0%,
+    hsl(var(--primary)) 25%,
+    hsl(var(--tm-ink)) 50%,
+    hsl(var(--primary)) 75%,
+    hsl(var(--tm-ink)) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: headline-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes headline-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Subheadline fade-in with subtle glow */
+.tru-subheadline-animated {
+  animation: subheadline-fade 1.5s ease-out forwards;
+  text-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+}
+
+@keyframes subheadline-fade {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 /* =============================================
    HERO HEADLINE & SUBHEADLINE - REFINED
    ============================================= */
@@ -25454,7 +25487,7 @@
 
 .tru-why-carousel-card-image {
   width: 100%;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   background: hsl(var(--muted));
 }
