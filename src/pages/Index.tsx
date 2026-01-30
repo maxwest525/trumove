@@ -1527,49 +1527,54 @@ export default function Index() {
 
               <p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
               
-              
-              {/* Primary CTA Button */}
-              <button 
-                type="button"
-                onClick={() => {
-                  setScanDemoRunning(true);
-                  // Scroll to preview smoothly
-                  setTimeout(() => {
-                    scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }, 100);
-                }}
-                className="tru-ai-start-btn"
-              >
-                <Scan className="w-5 h-5" />
-                {scanDemoRunning ? "Scanning..." : "Demo AI Analysis"}
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              {/* Live Scan Preview */}
-              <LiveScanPreview isRunning={scanDemoRunning} containerRef={scanPreviewRef} />
-              
-              {/* 3-step grid */}
-              <div className="tru-ai-steps-grid">
-                <div className="tru-ai-step">
-                  <div className="tru-ai-step-number">1</div>
-                  <div className="tru-ai-step-content">
-                    <h3 className="tru-ai-step-title">Video or Photos</h3>
-                    <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
+              {/* Two-column layout: Steps on left, Demo on right */}
+              <div className="tru-ai-two-column">
+                {/* Left column: Vertical steps + button */}
+                <div className="tru-ai-left-column">
+                  <div className="tru-ai-steps-vertical">
+                    <div className="tru-ai-step">
+                      <div className="tru-ai-step-number">1</div>
+                      <div className="tru-ai-step-content">
+                        <h3 className="tru-ai-step-title">Video or Photos</h3>
+                        <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
+                      </div>
+                    </div>
+                    <div className="tru-ai-step">
+                      <div className="tru-ai-step-number">2</div>
+                      <div className="tru-ai-step-content">
+                        <h3 className="tru-ai-step-title">AI Detection</h3>
+                        <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
+                      </div>
+                    </div>
+                    <div className="tru-ai-step">
+                      <div className="tru-ai-step-number">3</div>
+                      <div className="tru-ai-step-content">
+                        <h3 className="tru-ai-step-title">Agent Confirmation</h3>
+                        <p className="tru-ai-step-desc">A live specialist reviews to ensure accuracy.</p>
+                      </div>
+                    </div>
                   </div>
+                  
+                  {/* Primary CTA Button */}
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      setScanDemoRunning(true);
+                      setTimeout(() => {
+                        scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }, 100);
+                    }}
+                    className="tru-ai-start-btn tru-ai-start-btn-left"
+                  >
+                    <Scan className="w-5 h-5" />
+                    {scanDemoRunning ? "Scanning..." : "Demo AI Analysis"}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
-                <div className="tru-ai-step">
-                  <div className="tru-ai-step-number">2</div>
-                  <div className="tru-ai-step-content">
-                    <h3 className="tru-ai-step-title">AI Detection</h3>
-                    <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
-                  </div>
-                </div>
-                <div className="tru-ai-step">
-                  <div className="tru-ai-step-number">3</div>
-                  <div className="tru-ai-step-content">
-                    <h3 className="tru-ai-step-title">Agent Confirmation</h3>
-                    <p className="tru-ai-step-desc">A live specialist reviews to ensure accuracy.</p>
-                  </div>
+                
+                {/* Right column: Demo preview */}
+                <div className="tru-ai-right-column">
+                  <LiveScanPreview isRunning={scanDemoRunning} containerRef={scanPreviewRef} />
                 </div>
               </div>
               
