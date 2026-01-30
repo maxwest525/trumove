@@ -6,7 +6,7 @@ import { RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import ChatInput from "./ChatInput";
 import TypingIndicator from "./TypingIndicator";
-import { PageContext, QuickAction } from "./pageContextConfig";
+import { PageContext, QuickAction, detectKeywordContext } from "./pageContextConfig";
 import { cn } from "@/lib/utils";
 import trudyAvatar from "@/assets/trudy-avatar.png";
 
@@ -39,6 +39,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
+  const [contextualActions, setContextualActions] = useState<QuickAction[]>([]);
   const hasConnected = useRef(false);
   const pageContextRef = useRef(pageContext);
 
@@ -188,6 +189,16 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
       timestamp: new Date(),
     }]);
 
+    // Detect keywords and update contextual actions
+    const keywordContext = detectKeywordContext(text);
+    if (keywordContext) {
+      setContextualActions(keywordContext.quickReplies);
+      // Send contextual hint to agent
+      conversation.sendContextualUpdate?.(keywordContext.agentHint);
+    } else {
+      setContextualActions([]);
+    }
+
     // Show thinking indicator
     setIsThinking(true);
 
@@ -281,28 +292,61 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
         {/* Thinking Indicator */}
         {isThinking && <TypingIndicator />}
 
-        {/* Quick Actions - shown after initial connection */}
-        {isConnected && messages.length === 1 && !isThinking && pageContext.quickActions.length > 0 && (
-          <div className="flex flex-wrap gap-2 px-4 py-3">
-            {pageContext.quickActions.map((action, index) => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={action.id}
-                  onClick={() => handleQuickAction(action)}
-                  className={cn(
-                    "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
-                    index === 0 
-                      ? "bg-primary/10 text-primary hover:bg-primary/20" 
-                      : "bg-muted text-muted-foreground hover:bg-accent"
-                  )}
-                >
-                  <Icon className="w-3 h-3" />
-                  {action.label}
-                </button>
-              );
-            })}
-          </div>
+        {/* Quick Actions - shown after initial connection OR based on user message keywords */}
+        {isConnected && !isThinking && (
+          <>
+            {/* Initial page-context actions (only after first message) */}
+            {messages.length === 1 && pageContext.quickActions.length > 0 && contextualActions.length === 0 && (
+              <div className="flex flex-wrap gap-2 px-4 py-3">
+                {pageContext.quickActions.map((action, index) => {
+                  const Icon = action.icon;
+                  return (
+                    <button
+                      key={action.id}
+                      onClick={() => handleQuickAction(action)}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
+                        index === 0 
+                          ? "bg-primary/10 text-primary hover:bg-primary/20" 
+                          : "bg-muted text-muted-foreground hover:bg-accent"
+                      )}
+                    >
+                      <Icon className="w-3 h-3" />
+                      {action.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            
+            {/* Contextual actions based on detected keywords */}
+            {contextualActions.length > 0 && (
+              <div className="flex flex-wrap gap-2 px-4 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider w-full mb-1">Suggested for you</span>
+                {contextualActions.map((action, index) => {
+                  const Icon = action.icon;
+                  return (
+                    <button
+                      key={action.id}
+                      onClick={() => {
+                        handleQuickAction(action);
+                        setContextualActions([]); // Clear after selection
+                      }}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
+                        index === 0 
+                          ? "bg-primary/10 text-primary hover:bg-primary/20 ring-1 ring-primary/20" 
+                          : "bg-muted text-muted-foreground hover:bg-accent"
+                      )}
+                    >
+                      <Icon className="w-3 h-3" />
+                      {action.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
 
         <div ref={messagesEndRef} />
