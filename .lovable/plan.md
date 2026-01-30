@@ -1,57 +1,46 @@
 
-# Fix Trudy Martinez Face in Video Preview
 
-## Issue
-The `FakeAgentView` component in `src/pages/Book.tsx` uses a random Unsplash stock photo URL for Trudy Martinez instead of the actual Trudy model image that exists in the project assets.
+# Ungate "Build Inventory Manually" Button
 
-**Current (line 36):**
-```tsx
-src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop"
-```
-
-This shows a random professional woman from Unsplash, not Trudy.
-
-## Solution
-Replace the Unsplash URL with the `trudy-model.jpg` asset that already exists in the project and is used elsewhere (Index.tsx).
+## Overview
+Remove the lead capture gate from the "Build Inventory Manually" button so it navigates directly to `/online-estimate` without requiring contact information first.
 
 ---
 
-## Changes Required
+## Current Behavior
 
-### File: `src/pages/Book.tsx`
-
-#### 1. Update Import (line 19)
-
-Change from importing the avatar to importing the full model image:
-
-```tsx
-// BEFORE
-import trudyAvatar from "@/assets/trudy-avatar.png";
-
-// AFTER
-import trudyModel from "@/assets/trudy-model.jpg";
-import trudyAvatar from "@/assets/trudy-avatar.png";  // Keep if used elsewhere
-```
-
-#### 2. Update FakeAgentView Image (line 36)
-
-Replace the Unsplash URL with the Trudy model image:
+The button currently calls `handleInventoryClick("manual")` which:
+1. Checks if user has provided contact info
+2. If NO → Opens `LeadCaptureModal` to collect name/email/phone
+3. If YES → Navigates to `/online-estimate`
 
 ```tsx
-// BEFORE
-<img 
-  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop" 
-  alt="Trudy Martinez" 
-  className="w-full h-full object-cover"
-/>
-
-// AFTER
-<img 
-  src={trudyModel} 
-  alt="Trudy Martinez" 
-  className="w-full h-full object-cover"
-/>
+// Current (line 1622)
+onClick={() => handleInventoryClick("manual")}
 ```
+
+---
+
+## Proposed Change
+
+Replace the gated handler with direct navigation:
+
+```tsx
+// After
+onClick={() => navigate("/online-estimate")}
+```
+
+---
+
+## File Change
+
+### `src/pages/Index.tsx`
+
+**Line 1622** - Change the onClick handler:
+
+| Before | After |
+|--------|-------|
+| `onClick={() => handleInventoryClick("manual")}` | `onClick={() => navigate("/online-estimate")}` |
 
 ---
 
@@ -59,13 +48,8 @@ Replace the Unsplash URL with the Trudy model image:
 
 | Before | After |
 |--------|-------|
-| Random Unsplash stock photo | Actual Trudy Martinez model image |
-| Inconsistent branding | Consistent with Index.tsx Trudy appearance |
+| Clicks opens modal asking for contact info | Clicks navigates directly to estimate page |
+| User must fill form before seeing inventory builder | User can start building inventory immediately |
 
----
+This matches the "Video Consult" button next to it which also navigates directly without gating.
 
-## Summary
-
-| File | Change |
-|------|--------|
-| `src/pages/Book.tsx` | Add import for `trudy-model.jpg`, update `FakeAgentView` image src |
