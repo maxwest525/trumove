@@ -1,140 +1,53 @@
 
-
-# Expand AI Inventory Analysis to 550px with Horizontal Step Layout
+# Remove Green Accent Bar from Preview Card Summaries
 
 ## Summary
 
-Increase the AI Inventory Analysis section height from 350px to 550px and rearrange the 3 step items to display horizontally (side-by-side) instead of vertically, so all content is visible without being cut off.
+The preview card summaries use a green accent bar (`.tru-move-summary-accent`) at the top. This bar will be removed to give the cards a cleaner look.
 
 ---
 
 ## Current State
 
-- Section has `max-height: 350px` with `overflow: hidden`
-- Steps are in a vertical column layout (`.tru-ai-steps-vertical` with `flex-direction: column`)
-- Two-column grid: left column has vertical steps, right column has scanner preview
+The green accent bar is:
+1. Defined in `src/index.css` (lines 111-124) as `.tru-move-summary-accent`
+2. Used in `src/pages/Index.tsx` line 182 within the `MoveSummaryModal` component
 
 ---
 
 ## Implementation
 
-### File: `src/index.css`
+### File: `src/pages/Index.tsx` (Line 181-182)
 
-**1. Increase section height (Line 2274)**
+**Remove the accent stripe element:**
 
-```css
-/* Before */
-max-height: 350px;
-
-/* After */
-max-height: 550px;
+```tsx
+{/* Before */}
+<div className="tru-move-summary-modal" ref={ref}>
+  {/* Top Accent Stripe */}
+  <div className="tru-move-summary-accent" />
+  
+{/* After */}
+<div className="tru-move-summary-modal" ref={ref}>
 ```
 
-**2. Change two-column layout to single column (Lines 2577-2584)**
-
-Convert the grid to a stacked layout so steps can span the full width horizontally:
-
-```css
-.tru-ai-two-column {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: stretch;
-  margin-bottom: 0;
-  text-align: left;
-}
-```
-
-**3. Convert vertical steps to horizontal row (Lines 2661-2665)**
-
-```css
-.tru-ai-steps-vertical {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  justify-content: center;
-}
-```
-
-**4. Make each step card flex evenly (Lines 2638-2642)**
-
-```css
-.tru-ai-step-with-preview {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  text-align: center;
-}
-```
-
-**5. Increase thumbnail sizes for horizontal layout (Lines 2644-2652)**
-
-```css
-.tru-ai-step-preview {
-  width: 120px;
-  height: 90px;
-  border-radius: 10px;
-  overflow: hidden;
-  flex-shrink: 0;
-  border: 2px solid hsl(var(--tm-ink) / 0.12);
-  background: hsl(var(--muted) / 0.3);
-}
-```
-
-**6. Increase scanner preview height (Line 2605)**
-
-```css
-.tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 280px;
-}
-```
-
-**7. Increase inventory list height (Lines 2608-2611)**
-
-```css
-.tru-ai-preview-vertical .tru-ai-live-inventory {
-  min-height: 0;
-  max-height: 150px;
-}
-```
+Simply delete the comment and the `<div className="tru-move-summary-accent" />` element.
 
 ---
 
-## Visual Layout Change
+## Optional Cleanup
 
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                   AI Inventory Analysis                      │
-│              Subtitle text centered here                     │
-│              [Start Demo AI Analysis]                        │
-├─────────────────────────────────────────────────────────────┤
-│  ┌─────────┐     ┌─────────┐     ┌─────────┐                │
-│  │  Img 1  │     │  Img 2  │     │  Img 3  │   ← Steps now  │
-│  └─────────┘     └─────────┘     └─────────┘     horizontal │
-│   Step 1          Step 2          Step 3                     │
-│   Desc            Desc            Desc                       │
-├─────────────────────────────────────────────────────────────┤
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │            Live Scanner Preview (280px)               │  │
-│  └───────────────────────────────────────────────────────┘  │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │            Inventory List (150px max)                 │  │
-│  └───────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
+### File: `src/index.css` (Lines 111-124)
+
+The CSS class `.tru-move-summary-accent` can also be removed if it's no longer needed elsewhere, but this is optional since unused CSS doesn't affect functionality.
 
 ---
 
-## Summary Table
+## Summary
 
-| Element | Before | After |
-|---------|--------|-------|
-| Section max-height | 350px | 550px |
-| Steps layout | Vertical column | Horizontal row |
-| Step thumbnails | 80x60px | 120x90px |
-| Scanner height | 180px | 280px |
-| Inventory max-height | 100px | 150px |
-| Two-column grid | 0.6fr / 1.4fr | Single column stacked |
+| Change | File | Action |
+|--------|------|--------|
+| Remove accent div | `src/pages/Index.tsx` | Delete lines 181-182 |
+| Remove accent CSS (optional) | `src/index.css` | Delete lines 111-124 |
 
+The "Building your personalized move profile" modal will no longer have a green bar at the top.
