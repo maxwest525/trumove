@@ -288,7 +288,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
                   value={details.fromLocation}
                   onValueChange={(val) => updateDetails({ fromLocation: val })}
                   onLocationSelect={(displayAddr, zip, fullAddress) => updateDetails({ fromLocation: fullAddress || displayAddr })}
-                  placeholder="Enter your full address"
+                  placeholder="Address, City, or ZIP"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
                   mode="address"
@@ -433,7 +433,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
                   value={details.toLocation}
                   onValueChange={(val) => updateDetails({ toLocation: val })}
                   onLocationSelect={(displayAddr, zip, fullAddress) => updateDetails({ toLocation: fullAddress || displayAddr })}
-                  placeholder="Enter your full address"
+                  placeholder="Address, City, or ZIP"
                   onKeyDown={handleKeyDown}
                   className="tru-qb-input"
                   mode="address"
