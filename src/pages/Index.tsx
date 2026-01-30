@@ -145,6 +145,8 @@ const SCAN_DEMO_ITEMS = [
 ];
 
 // Move Summary Modal - Hero Right Side
+import { X } from "lucide-react";
+
 interface MoveSummaryModalProps {
   fromCity: string;
   toCity: string;
@@ -153,6 +155,7 @@ interface MoveSummaryModalProps {
   toCoords: [number, number] | null;
   moveDate?: Date | null;
   estimatedDuration?: string;
+  onClose?: () => void;
 }
 
 function MoveSummaryModal({ 
@@ -162,7 +165,8 @@ function MoveSummaryModal({
   fromCoords, 
   toCoords,
   moveDate,
-  estimatedDuration
+  estimatedDuration,
+  onClose
 }: MoveSummaryModalProps) {
   const hasData = fromCity || toCity;
   if (!hasData) return null;
@@ -171,9 +175,23 @@ function MoveSummaryModal({
 
   return (
     <div className="tru-move-summary-modal">
-      {/* Header */}
+      {/* Top Accent Stripe */}
+      <div className="tru-move-summary-accent" />
+      
+      {/* Close Button */}
+      {onClose && (
+        <button 
+          onClick={onClose} 
+          className="tru-move-summary-close"
+          aria-label="Close move summary"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
+      
+      {/* Header with Sparkle */}
       <div className="tru-move-summary-header">
-        <CheckCircle className="w-5 h-5" />
+        <Sparkles className="w-5 h-5" />
         <h3>Building your personalized move profile</h3>
       </div>
       
@@ -188,7 +206,7 @@ function MoveSummaryModal({
           <div className="tru-move-summary-map tru-move-summary-map-lg">
             {fromCoords ? (
               <img 
-                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/200x200@2x?access_token=${MAPBOX_TOKEN}`}
+                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},14,0/280x280@2x?access_token=${MAPBOX_TOKEN}`}
                 alt="Origin satellite view"
               />
             ) : (
@@ -216,7 +234,7 @@ function MoveSummaryModal({
           <div className="tru-move-summary-map tru-move-summary-map-lg">
             {toCoords ? (
               <img 
-                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/200x200@2x?access_token=${MAPBOX_TOKEN}`}
+                src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},14,0/280x280@2x?access_token=${MAPBOX_TOKEN}`}
                 alt="Destination satellite view"
               />
             ) : (
@@ -495,6 +513,16 @@ export default function Index() {
   
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
+  
+  // Move Summary Modal visibility state
+  const [showMoveSummary, setShowMoveSummary] = useState(true);
+  
+  // Reset Move Summary visibility when locations change
+  useEffect(() => {
+    if (fromCity || toCity) {
+      setShowMoveSummary(true);
+    }
+  }, [fromCity, toCity]);
   
   // Hero carousel auto-cycling state
   const [heroCarouselApi, setHeroCarouselApi] = useState<CarouselApi>();
@@ -1418,13 +1446,16 @@ export default function Index() {
             {/* RIGHT SIDE: Move Summary Modal + Why TruMove Card */}
             <div className="tru-hero-content-panel tru-hero-stacked-cards">
               {/* Move Summary Modal - appears when location data exists */}
-              <MoveSummaryModal 
-                fromCity={fromCity}
-                toCity={toCity}
-                distance={distance}
-                fromCoords={fromCoords}
-                toCoords={toCoords}
-              />
+              {showMoveSummary && (
+                <MoveSummaryModal 
+                  fromCity={fromCity}
+                  toCity={toCity}
+                  distance={distance}
+                  fromCoords={fromCoords}
+                  toCoords={toCoords}
+                  onClose={() => setShowMoveSummary(false)}
+                />
+              )}
               
               {/* CARD 1: Why TruMove - Premium Card */}
               <div className="tru-why-card-premium" ref={parallaxCardsRef}
