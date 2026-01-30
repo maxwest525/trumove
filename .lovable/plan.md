@@ -1,70 +1,91 @@
 
-
-# Change Trudy Carousel Image to a Professional Model
+# Remove Satellite Map Thumbnails from Homepage Form
 
 ## Overview
-Replace the current `trudy-avatar.png` used in the "Trudy AI Assistant" carousel card with a professional, polished image featuring a famous model or stock photo of a professional woman that better represents a high-end AI assistant.
+Remove the small satellite map preview images that appear below the "From" and "To" location inputs after an address/ZIP code is entered. These thumbnails are currently rendered using Mapbox satellite imagery.
 
 ---
 
-## Approach Options
+## Current State
+**File:** `src/pages/Index.tsx`
 
-Since we need an image of a "famous model," there are two approaches:
+### From Location Thumbnail (lines 824-832)
+```tsx
+{/* Satellite thumbnail after validation */}
+{fromCoords && (
+  <div className="tru-qb-satellite-thumb">
+    <img 
+      src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},13,0/200x80@2x?access_token=...`}
+      alt="Origin area"
+    />
+  </div>
+)}
+```
 
-### Option A: Use a High-Quality Stock Image (Recommended)
-Download a professional stock photo of an elegant, professional woman (like a customer service representative or virtual assistant aesthetic) and add it to the assets folder.
-
-### Option B: Use a Placeholder URL
-Temporarily use an external image URL from a stock photo site, though this isn't ideal for production.
+### To Location Thumbnail (lines 864-872)
+```tsx
+{/* Satellite thumbnail after validation */}
+{toCoords && (
+  <div className="tru-qb-satellite-thumb">
+    <img 
+      src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},13,0/200x80@2x?access_token=...`}
+      alt="Destination area"
+    />
+  </div>
+)}
+```
 
 ---
 
-## Implementation
+## Solution
+Delete both satellite thumbnail blocks entirely.
 
-### 1. Add New Image Asset
-**Action:** Upload a new professional model/assistant image to the project
+---
 
-**Location:** `src/assets/trudy-model.jpg` (or similar name)
+## Changes
 
-The image should convey:
-- Professional, friendly demeanor
-- Customer service/assistant vibe
-- High-quality, polished appearance
+### 1. Remove FROM Satellite Thumbnail
+**File:** `src/pages/Index.tsx` (lines 824-832)
 
-### 2. Update Import Statement
-**File:** `src/pages/Index.tsx` (line 32)
-
+Delete this entire block:
 ```tsx
-// FROM:
-import trudyAvatar from "@/assets/trudy-avatar.png";
-
-// TO:
-import trudyAvatar from "@/assets/trudy-model.jpg";
+{/* Satellite thumbnail after validation */}
+{fromCoords && (
+  <div className="tru-qb-satellite-thumb">
+    <img 
+      src={`https://api.mapbox.com/...`}
+      alt="Origin area"
+    />
+  </div>
+)}
 ```
 
-Or rename the import for clarity:
-```tsx
-import trudyModelImage from "@/assets/trudy-model.jpg";
-```
+### 2. Remove TO Satellite Thumbnail  
+**File:** `src/pages/Index.tsx` (lines 864-872)
 
-### 3. Update Carousel Reference (if import name changes)
-**File:** `src/pages/Index.tsx` (line 1273)
-
-If we change the import name:
+Delete this entire block:
 ```tsx
-{ title: "Trudy AI Assistant", desc: "Your virtual moving assistant, available 24/7.", image: trudyModelImage, route: "", action: "openChat" as const },
+{/* Satellite thumbnail after validation */}
+{toCoords && (
+  <div className="tru-qb-satellite-thumb">
+    <img 
+      src={`https://api.mapbox.com/...`}
+      alt="Destination area"
+    />
+  </div>
+)}
 ```
 
 ---
 
 ## Summary
 
-| Step | Action |
-|------|--------|
-| 1 | Upload new professional model image to `src/assets/` |
-| 2 | Update import statement in `Index.tsx` |
-| 3 | (Optional) Rename variable if desired |
+| Task | File | Lines | Action |
+|------|------|-------|--------|
+| Remove FROM satellite thumbnail | `src/pages/Index.tsx` | 824-832 | Delete block |
+| Remove TO satellite thumbnail | `src/pages/Index.tsx` | 864-872 | Delete block |
 
-## Note
-You'll need to provide or upload the image of the famous model you'd like to use. Once uploaded, I can update the code to reference the new image.
-
+## Visual Result
+- The form will be cleaner and more compact
+- Location inputs will only show the verified address text without satellite imagery
+- The full satellite/route analysis still appears during the "Analyzing Route" modal transition
