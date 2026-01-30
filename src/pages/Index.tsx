@@ -1026,7 +1026,7 @@ export default function Index() {
                   <div className="tru-qb-form-header tru-qb-form-header-clean">
                     <div className="tru-qb-form-header-brand">
                       <img src={logoImg} alt="TruMove" className="tru-qb-header-logo-clean" />
-                      <span className="tru-qb-header-tagline">A Smarter Way to Move</span>
+                      <span className="tru-qb-header-tagline">A SMARTER WAY TO MOVE</span>
                     </div>
                   </div>
 
