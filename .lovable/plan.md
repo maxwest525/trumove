@@ -1,210 +1,245 @@
 
 
-# Move AI Inventory Section Higher + Add Live Scan Preview
+# Convert Route Analysis to Hero-Side "Move Summary" Modal
 
 ## Overview
-Move the "Start Your AI Inventory Analysis" section significantly higher on the page (directly after the hero form ends) and add a small working preview showing a simulated room scan with items being detected and added to an inventory list in real-time.
+Transform the "Building your personalized move profile" section into a sleek popup modal that appears on the right side of the hero when location data is entered. This will rename it to "Move Summary", feature larger satellite maps, and style the mileage badge with green-on-black treatment for visual impact.
 
 ---
 
-## Current Layout
+## Current State
+- **RouteAnalysisSection** is a full-width section that appears below the hero/StatsStrip
+- It displays origin/destination with small 44x44px satellite thumbnails
+- The distance badge uses primary green on light background
+- Title says "Building your personalized move profile"
 
-```
-1. Hero Header (TruMove A Smarter Way To Move)
-2. Quote Form
-3. Why TruMove Card + Carousel
-4. </tru-hero-wrapper>
-5. AI Inventory Analysis Section ← TOO LOW
-6. Stats Strip (Black)
-7. Route Analysis Section
-8. Consult Section
-9. How It Works
-```
-
-## Proposed Layout
-
-```
-1. Hero Header
-2. Quote Form
-3. Why TruMove Card + Carousel
-4. </tru-hero-wrapper>
-5. AI Inventory Analysis Section ← MOVED UP (padding reduced)
-   + LIVE SCAN PREVIEW COMPONENT ← NEW
-6. Stats Strip (Black)
-7. Route Analysis Section
-...
-```
+## Target State
+- The component becomes a floating modal/card on the right side of the hero (beside the Why TruMove card)
+- It appears when `fromCoords` OR `toCoords` are set
+- Larger maps (100x100px or larger)
+- Green mileage text on a dark/black background badge
+- Title changed to "Move Summary"
 
 ---
 
 ## Changes
 
-### 1. Move AI Section Higher & Reduce Top Spacing
-**File:** `src/index.css`
-
-Reduce the padding on `.tru-ai-steps-section` to bring it closer to the hero wrapper:
-
-```css
-.tru-ai-steps-section {
-  padding: 24px 24px 48px; /* Reduced top padding from 48px to 24px */
-  margin-top: -32px; /* Pull up into hero area slightly */
-  background: hsl(var(--background));
-  position: relative;
-  z-index: 5;
-}
-```
-
-### 2. Add Live Scan Preview Component
+### 1. Create New MoveSummaryModal Component
 **File:** `src/pages/Index.tsx`
 
-Create a new inline component that shows:
-- A small room image (simulated camera view)
-- A scanning animation overlay
-- A live inventory list that items get added to progressively
-- Auto-starts when section is in view
-
-This will replace the static image preview with an interactive demo:
+Create an inline component that displays the move summary as a floating card:
 
 ```tsx
-// New component: LiveScanPreview
-// Shows a looping demo of items being detected:
-// - Room image with scanning indicator
-// - Items appear one by one with animations
-// - Running totals for weight/volume
-```
-
-### 3. Update Preview Block Structure
-**File:** `src/pages/Index.tsx` (lines 1294-1318)
-
-Replace the static preview block with the new interactive live scan preview:
-
-```tsx
-{/* Live Scan Preview Block */}
-<div className="tru-ai-preview-block tru-ai-preview-live">
-  <div className="tru-ai-live-scanner">
-    <img src={sampleRoomLiving} alt="Room being scanned" />
-    <div className="tru-ai-scanner-overlay">
-      <div className="tru-ai-scanner-line" /> {/* Animated scan line */}
-      <Camera className="w-6 h-6" />
-    </div>
-  </div>
-  <div className="tru-ai-live-inventory">
-    <div className="tru-ai-live-header">
-      <Sparkles className="w-4 h-4" />
-      <span>Live Detection</span>
-    </div>
-    <div className="tru-ai-live-items">
-      {/* Items animate in one by one */}
-      {demoItems.slice(0, visibleCount).map((item, i) => (
-        <div key={i} className="tru-ai-live-item animate-in">
-          <img src={item.image} alt={item.name} />
-          <span>{item.name}</span>
-          <span className="tru-ai-live-weight">{item.weight} lbs</span>
+function MoveSummaryModal({ 
+  fromCity, toCity, distance, fromCoords, toCoords, moveDate, estimatedDuration 
+}: MoveSummaryModalProps) {
+  const hasData = fromCity || toCity;
+  if (!hasData) return null;
+  
+  return (
+    <div className="tru-move-summary-modal">
+      <div className="tru-move-summary-header">
+        <CheckCircle className="w-5 h-5" />
+        <h3>Move Summary</h3>
+      </div>
+      
+      <div className="tru-move-summary-grid">
+        {/* Origin Card with larger map */}
+        <div className="tru-move-summary-location">
+          <div className="tru-move-summary-map">
+            {fromCoords ? (
+              <img src={`mapbox satellite URL with larger size`} />
+            ) : (
+              <MapPin placeholder />
+            )}
+          </div>
+          <div className="tru-move-summary-location-info">
+            <span className="label">Origin</span>
+            <span className="value">{fromCity || "Enter origin..."}</span>
+          </div>
         </div>
-      ))}
+        
+        {/* Distance Badge - Green on Black */}
+        <div className="tru-move-summary-distance">
+          <Route className="w-4 h-4" />
+          <span className="tru-move-summary-mileage">{distance} mi</span>
+        </div>
+        
+        {/* Destination Card with larger map */}
+        <div className="tru-move-summary-location">
+          {/* Similar structure */}
+        </div>
+      </div>
     </div>
-    <div className="tru-ai-live-totals">
-      <span>{totalItems} items</span>
-      <span>{totalWeight} lbs</span>
-      <span>{totalCuFt} cu ft</span>
-    </div>
-  </div>
-</div>
+  );
+}
 ```
 
-### 4. Add CSS Styles for Live Scan Preview
+### 2. Position Modal in Hero Right Panel
+**File:** `src/pages/Index.tsx` (lines ~1294)
+
+Add the MoveSummaryModal alongside the "Why TruMove" card in the right hero panel:
+
+```tsx
+{/* RIGHT SIDE: Why TruMove Card + Move Summary Modal */}
+<div className="tru-hero-content-panel tru-hero-stacked-cards">
+  
+  {/* NEW: Move Summary Modal - shows when location data exists */}
+  <MoveSummaryModal 
+    fromCity={fromCity}
+    toCity={toCity}
+    distance={distance}
+    fromCoords={fromCoords}
+    toCoords={toCoords}
+    moveDate={moveDate}
+    estimatedDuration={estimatedDuration}
+  />
+  
+  {/* CARD 1: Why TruMove - Premium Card */}
+  <div className="tru-why-card-premium" ... >
+```
+
+### 3. Remove Old RouteAnalysisSection from Page
+**File:** `src/pages/Index.tsx` (lines ~1424-1432)
+
+Delete the full-width RouteAnalysisSection since it's now integrated into the hero:
+
+```tsx
+// DELETE THIS BLOCK:
+{/* ROUTE ANALYSIS SECTION - Always visible */}
+<RouteAnalysisSection 
+  fromCity={fromCity}
+  ...
+/>
+```
+
+### 4. Add CSS for Move Summary Modal
 **File:** `src/index.css`
 
 ```css
-/* Live Scan Preview */
-.tru-ai-preview-live {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 32px;
+/* Move Summary Modal - Hero Right Side */
+.tru-move-summary-modal {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
+  animation: slideInRight 0.4s ease-out;
 }
 
-.tru-ai-live-scanner {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  aspect-ratio: 16/10;
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.tru-ai-scanner-overlay {
-  position: absolute;
-  inset: 0;
+.tru-move-summary-header {
   display: flex;
   align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tru-move-summary-header svg {
+  color: hsl(var(--primary));
+}
+
+.tru-move-summary-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+.tru-move-summary-grid {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   justify-content: center;
-  background: hsl(var(--primary) / 0.15);
 }
 
-.tru-ai-scanner-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
-  animation: scan-sweep 2s ease-in-out infinite;
-}
-
-@keyframes scan-sweep {
-  0%, 100% { top: 10%; }
-  50% { top: 90%; }
-}
-
-.tru-ai-live-inventory {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
+/* Larger Map Thumbnails */
+.tru-move-summary-map {
+  width: 80px;
+  height: 80px;
   border-radius: 12px;
-  padding: 16px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+}
+
+.tru-move-summary-map img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Distance Badge - Green on Black */
+.tru-move-summary-distance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  background: hsl(220 15% 8%); /* Near-black */
+  border-radius: 12px;
+  min-width: 80px;
+}
+
+.tru-move-summary-distance svg {
+  color: hsl(var(--primary)); /* Green */
+}
+
+.tru-move-summary-mileage {
+  font-size: 16px;
+  font-weight: 800;
+  color: hsl(var(--primary)); /* Green on black */
+}
+
+.tru-move-summary-location {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.tru-move-summary-location-info {
   display: flex;
   flex-direction: column;
 }
 
-.tru-ai-live-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px;
-  border-bottom: 1px solid hsl(var(--border) / 0.5);
-  animation: slideIn 0.3s ease-out;
+.tru-move-summary-location-info .label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--muted-foreground));
 }
 
-.tru-ai-live-totals {
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid hsl(var(--border));
-  display: flex;
-  justify-content: space-between;
-  font-weight: 700;
+.tru-move-summary-location-info .value {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-```
 
-### 5. Add State & Effect for Live Demo
-**File:** `src/pages/Index.tsx`
+/* Dark mode adjustments */
+.dark .tru-move-summary-modal {
+  background: hsl(220 15% 10%);
+  border-color: hsl(0 0% 100% / 0.1);
+}
 
-Add state to manage the live demo animation:
-
-```tsx
-// Demo items for live preview
-const SCAN_DEMO_ITEMS = [
-  { name: "3-Seat Sofa", weight: 350, cuft: 45, image: "/inventory/living-room/sofa-3-cushion.png" },
-  { name: "Coffee Table", weight: 45, cuft: 8, image: "/inventory/living-room/coffee-table.png" },
-  { name: "TV Stand", weight: 80, cuft: 12, image: "/inventory/living-room/tv-stand.png" },
-  { name: "Armchair", weight: 85, cuft: 18, image: "/inventory/living-room/armchair.png" },
-];
-
-const [liveDemoCount, setLiveDemoCount] = useState(0);
-
-// Auto-advance demo items
-useEffect(() => {
-  const interval = setInterval(() => {
-    setLiveDemoCount(prev => (prev + 1) % (SCAN_DEMO_ITEMS.length + 1));
-  }, 1500);
-  return () => clearInterval(interval);
-}, []);
+.dark .tru-move-summary-distance {
+  background: hsl(0 0% 0%);
+  border: 1px solid hsl(var(--primary) / 0.3);
+}
 ```
 
 ---
@@ -213,15 +248,15 @@ useEffect(() => {
 
 | Change | File | Description |
 |--------|------|-------------|
-| Reduce section spacing | `src/index.css` | Less top padding, pull section up |
-| Add live scanner component | `src/pages/Index.tsx` | Animated room scan with items appearing |
-| Add scanner CSS | `src/index.css` | Scan line animation, item slide-in effects |
-| Add demo state | `src/pages/Index.tsx` | useEffect to cycle through demo items |
+| Create MoveSummaryModal component | `src/pages/Index.tsx` | Inline component with larger maps and green-on-black mileage |
+| Position in hero right panel | `src/pages/Index.tsx` | Add above/alongside Why TruMove card |
+| Remove old RouteAnalysisSection | `src/pages/Index.tsx` | Delete full-width section call |
+| Add modal CSS styles | `src/index.css` | Floating card styling, 80px maps, black distance badge |
 
 ## Visual Result
-- The "Start Your AI Inventory Analysis" section appears immediately after the hero form
-- A split view shows a room being scanned on the left and items populating a list on the right
-- Items animate in one-by-one with weight/volume totals updating in real-time
-- The demo loops continuously to catch user attention
-- Creates an engaging preview of the AI scanning feature without requiring user action
+- When user enters origin or destination, a sleek "Move Summary" card slides in on the right side of the hero
+- Satellite maps are larger (80x80px vs 44x44px)
+- Mileage badge has a striking green-on-black appearance
+- Consistent naming ("Move Summary") matches other data cards in the flow
+- The card animates in with a subtle slide-from-right effect
 
