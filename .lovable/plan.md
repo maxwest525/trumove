@@ -1,20 +1,20 @@
 
 
-# Tighten Hero Header Spacing and Backdrop Width
+# Move Header and Subheader Closer Together
 
 ## Overview
-Make the headline and subtitle closer together, and reduce the backdrop width to fit closer to the text.
+Reduce the vertical gap between the headline and subtitle while keeping the backdrop the same size by adjusting margins and compensating with padding.
 
 ---
 
 ## Current State
 
-| Property | Current Value | Location |
-|----------|--------------|----------|
-| Headline margin-bottom | `16px` | Line 25956 |
-| Subtitle margin-top | `12px` | Line 25969 |
-| Backdrop padding | `12px 28px 14px` | Line 25907 |
-| Backdrop width | Full width (no max-width set) | - |
+| Property | Current Value |
+|----------|--------------|
+| Backdrop padding | `12px 20px 12px` (top/horizontal/bottom) |
+| Headline margin-bottom | `6px` |
+| Subtitle margin-top | `4px` |
+| **Total gap** | **10px** |
 
 ---
 
@@ -22,39 +22,34 @@ Make the headline and subtitle closer together, and reduce the backdrop width to
 
 ### File: `src/index.css`
 
-**1. Reduce headline-to-subtitle gap (line 25956):**
+**1. Remove headline bottom margin (line 25959):**
 
 ```css
 /* From */
-margin-bottom: 16px;
-
-/* To */
 margin-bottom: 6px;
+
+/* To */
+margin-bottom: 0;
 ```
 
-**2. Reduce subtitle top margin (line 25969):**
+**2. Remove subtitle top margin (line 25972):**
 
 ```css
 /* From */
-margin: 12px auto 0;
+margin: 4px auto 0;
 
 /* To */
-margin: 4px auto 0;
+margin: 0 auto 0;
 ```
 
-**3. Reduce horizontal padding and add width constraint (line 25905-25911):**
+**3. Increase backdrop padding to maintain same overall size (line 25907):**
 
 ```css
-.tru-hero-header-section.tru-hero-header-refined {
-  position: relative;
-  padding: 12px 20px 12px;  /* Reduced horizontal padding */
-  text-align: center;
-  z-index: 10;
-  margin-bottom: 12px;
-  width: fit-content;       /* Shrink to content width */
-  margin-left: auto;        /* Center horizontally */
-  margin-right: auto;       /* Center horizontally */
-}
+/* From */
+padding: 12px 20px 12px;
+
+/* To */
+padding: 16px 20px 16px;
 ```
 
 ---
@@ -63,9 +58,9 @@ margin: 4px auto 0;
 
 | Change | Before | After |
 |--------|--------|-------|
-| Gap between headline & subtitle | ~28px total | ~10px total |
-| Backdrop horizontal padding | 28px each side | 20px each side |
-| Backdrop width | Full container width | Fits content width |
+| Gap between headline & subtitle | 10px | 0px |
+| Backdrop padding (top/bottom) | 12px | 16px |
+| **Total backdrop size** | Same | Same |
 
-The backdrop will now hug the text more closely, and the headline and subtitle will be visually tighter together.
+The headline and subtitle will be flush against each other (or nearly touching), while the extra padding on the backdrop compensates to maintain its current visual size.
 
