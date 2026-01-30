@@ -1,79 +1,87 @@
 
 
-# Update Trudy Images for Video Conference Call Look
+# Resize Hero Backdrop to Match Red Box Reference
 
 ## Overview
-Generate a new AI image of Trudy that looks like she's on a professional video conference call, then update both the feature carousel preview and the demo video call screen to use this new image.
+Adjust the hero backdrop to be tighter and only cover the logo and headline "A Smarter Way To Move", excluding the subtitle from the backdrop area.
 
 ---
 
 ## Current State
 
-| Location | File | Current Image | Usage |
-|----------|------|---------------|-------|
-| Feature Carousel | `src/components/FeatureCarousel.tsx` | `preview-video-consult.jpg` | "TruMove Specialist" card preview |
-| Index Page Carousel | `src/pages/Index.tsx` | `previewVideoConsult` | Same carousel on home page |
-| Video Call Demo | `src/pages/Book.tsx` | `trudy-model.jpg` | Full-screen fake agent view |
+The backdrop currently wraps around both elements:
+- ✅ Logo + Headline: "A Smarter Way To Move"
+- ❌ Subtitle: "Moving. The Way Its Supposed To Be" (should be outside the backdrop)
+
+The CSS class `.tru-hero-header-section.tru-hero-header-refined` applies the backdrop to the entire container including the subtitle.
 
 ---
 
-## Implementation Plan
+## Proposed Changes
 
-### Step 1: Generate New Video Call Image
+### File: `src/pages/Index.tsx`
 
-Use AI image generation to create an image of a professional woman (Trudy) that looks like she's on a video conference call:
-
-- Professional headshot style, webcam-angle framing
-- Business casual attire
-- Warm, friendly expression
-- Blurred home office or professional background
-- Natural lighting like from a webcam/laptop screen
-
-The generated image will be saved to the project assets.
-
----
-
-### Step 2: Update File References
-
-**File: `src/pages/Book.tsx`**
-
-Update the `FakeAgentView` component to use the new video call image:
+**Move the subtitle outside the backdrop container:**
 
 ```tsx
-// Line 37: Replace trudyModel with the new image
-<img 
-  src={trudyVideoCall}  // New import
-  alt="Trudy Martinez" 
-  className="w-full h-full object-cover"
-/>
+{/* Before */}
+<div className="tru-hero-header-section tru-hero-header-refined">
+  <h1 className="tru-hero-headline-main tru-headline-animated">
+    <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
+    A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
+  </h1>
+  <p className="tru-hero-subheadline-refined tru-subheadline-animated">
+    Moving. The Way Its Supposed To Be
+  </p>
+</div>
+
+{/* After */}
+<div className="tru-hero-header-section tru-hero-header-refined">
+  <h1 className="tru-hero-headline-main tru-headline-animated">
+    <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
+    A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
+  </h1>
+</div>
+<p className="tru-hero-subheadline-refined tru-subheadline-animated">
+  Moving. The Way Its Supposed To Be
+</p>
 ```
 
-**File: `src/components/FeatureCarousel.tsx`**
+### File: `src/index.css`
 
-Update the "TruMove Specialist" feature to use the new image:
+**1. Reduce padding on the backdrop (line 25907):**
 
-```tsx
-// Line 41: Replace previewVideoConsult with new image
-{
-  title: "TruMove Specialist",
-  desc: "Live video consultation for personalized guidance.",
-  image: trudyVideoCall,  // New image
-  route: "/book",
+Make the backdrop fit more snugly around just the headline:
+
+```css
+/* From */
+padding: 20px 36px 24px;
+
+/* To */
+padding: 12px 28px 14px;
+```
+
+**2. Add styling adjustments for the now-external subtitle:**
+
+Ensure the subtitle (now outside the backdrop) has proper spacing and visibility:
+
+```css
+/* Add new styles for standalone subtitle */
+.tru-hero-subheadline-refined.tru-subheadline-animated {
+  margin-top: 12px;
+  /* existing styles continue to work */
 }
 ```
 
-**File: `src/pages/Index.tsx`**
-
-Update the inline carousel to use the new image:
-
-```tsx
-// Line 1505: Replace previewVideoConsult
-{ title: "TruMove Specialist", desc: "Live video consultation for personalized guidance.", image: trudyVideoCall, route: "/book", action: "navigate" as const }
-```
-
 ---
 
-## Result
+## Visual Result
 
-Both the preview card and the demo will show Trudy in a consistent video conference call appearance, making the experience feel more cohesive and realistic.
+| Element | Before | After |
+|---------|--------|-------|
+| Backdrop covers | Headline + Subtitle | Headline only |
+| Backdrop padding | `20px 36px 24px` | `12px 28px 14px` |
+| Subtitle position | Inside backdrop | Below backdrop, standalone |
+
+The backdrop will now match the approximate size of the red box in your screenshot - just around the logo and "A Smarter Way To Move" headline.
 
