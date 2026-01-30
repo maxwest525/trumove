@@ -5,7 +5,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
 import previewCarrierVetting from "@/assets/preview-carrier-vetting.jpg";
-import previewVideoConsult from "@/assets/preview-video-consult.jpg";
+import trudyVideoCall from "@/assets/trudy-video-call.jpg";
 import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
@@ -38,7 +38,7 @@ const features = [
   {
     title: "TruMove Specialist",
     desc: "Live video consultation for personalized guidance.",
-    image: previewVideoConsult,
+    image: trudyVideoCall,
     route: "/book",
   },
   {
