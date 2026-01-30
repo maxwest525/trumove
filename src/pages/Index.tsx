@@ -35,7 +35,7 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
 import FeatureCarousel from "@/components/FeatureCarousel";
 import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
@@ -292,6 +292,21 @@ export default function Index() {
   
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
+  
+  // Hero carousel auto-cycling state
+  const [heroCarouselApi, setHeroCarouselApi] = useState<CarouselApi>();
+  const [isHeroCarouselPaused, setIsHeroCarouselPaused] = useState(false);
+  
+  // Hero carousel autoplay effect (6-second interval)
+  useEffect(() => {
+    if (!heroCarouselApi || isHeroCarouselPaused) return;
+    
+    const intervalId = setInterval(() => {
+      heroCarouselApi.scrollNext();
+    }, 6000);
+    
+    return () => clearInterval(intervalId);
+  }, [heroCarouselApi, isHeroCarouselPaused]);
   
   // Why TruMove features data - Updated per plan
   const whyTruMoveFeatures = [
@@ -1286,8 +1301,13 @@ export default function Index() {
                   </p>
                   
                   {/* Inline 2-Card Feature Carousel */}
-                  <div className="tru-why-inline-carousel">
+                  <div 
+                    className="tru-why-inline-carousel"
+                    onMouseEnter={() => setIsHeroCarouselPaused(true)}
+                    onMouseLeave={() => setIsHeroCarouselPaused(false)}
+                  >
                     <Carousel
+                      setApi={setHeroCarouselApi}
                       opts={{ align: "start", loop: true }}
                       className="tru-why-carousel"
                     >
