@@ -821,15 +821,6 @@ export default function Index() {
                                 autoFocus
                               />
                             </div>
-                            {/* Satellite thumbnail after validation */}
-                            {fromCoords && (
-                              <div className="tru-qb-satellite-thumb">
-                                <img 
-                                  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${fromCoords[0]},${fromCoords[1]},13,0/200x80@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
-                                  alt="Origin area"
-                                />
-                              </div>
-                            )}
                           </div>
 
                           {/* Route Connector */}
@@ -861,15 +852,6 @@ export default function Index() {
                                 placeholder="City or ZIP"
                               />
                             </div>
-                            {/* Satellite thumbnail after validation */}
-                            {toCoords && (
-                              <div className="tru-qb-satellite-thumb">
-                                <img 
-                                  src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${toCoords[0]},${toCoords[1]},13,0/200x80@2x?access_token=pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g`}
-                                  alt="Destination area"
-                                />
-                              </div>
-                            )}
                           </div>
                         </div>
 
