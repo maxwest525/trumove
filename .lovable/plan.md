@@ -1,51 +1,71 @@
 
 
-# Fix Subtitle Position - Move Back Inside Backdrop
+# Tighten Hero Header Spacing and Backdrop Width
 
 ## Overview
-Revert the subtitle back inside the `.tru-hero-header-section` container so it stays directly under the headline within the backdrop, while keeping the reduced padding.
+Make the headline and subtitle closer together, and reduce the backdrop width to fit closer to the text.
 
 ---
 
-## The Problem
+## Current State
 
-When the subtitle was moved outside the backdrop container, the hero's flex layout pushed it to the bottom of the section instead of keeping it directly below the headline.
+| Property | Current Value | Location |
+|----------|--------------|----------|
+| Headline margin-bottom | `16px` | Line 25956 |
+| Subtitle margin-top | `12px` | Line 25969 |
+| Backdrop padding | `12px 28px 14px` | Line 25907 |
+| Backdrop width | Full width (no max-width set) | - |
 
 ---
 
-## Fix
+## Proposed Changes
 
-### File: `src/pages/Index.tsx`
+### File: `src/index.css`
 
-Move the subtitle `<p>` tag back inside the backdrop container:
+**1. Reduce headline-to-subtitle gap (line 25956):**
 
-```tsx
-{/* Current - BROKEN */}
-<div className="tru-hero-header-section tru-hero-header-refined">
-  <h1 className="tru-hero-headline-main tru-headline-animated">
-    <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
-    A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
-  </h1>
-</div>
-<p className="tru-hero-subheadline-refined tru-subheadline-animated">
-  Moving. The Way Its Supposed To Be
-</p>
+```css
+/* From */
+margin-bottom: 16px;
 
-{/* Fixed - Back inside container */}
-<div className="tru-hero-header-section tru-hero-header-refined">
-  <h1 className="tru-hero-headline-main tru-headline-animated">
-    <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo" />
-    A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
-  </h1>
-  <p className="tru-hero-subheadline-refined tru-subheadline-animated">
-    Moving. The Way Its Supposed To Be
-  </p>
-</div>
+/* To */
+margin-bottom: 6px;
+```
+
+**2. Reduce subtitle top margin (line 25969):**
+
+```css
+/* From */
+margin: 12px auto 0;
+
+/* To */
+margin: 4px auto 0;
+```
+
+**3. Reduce horizontal padding and add width constraint (line 25905-25911):**
+
+```css
+.tru-hero-header-section.tru-hero-header-refined {
+  position: relative;
+  padding: 12px 20px 12px;  /* Reduced horizontal padding */
+  text-align: center;
+  z-index: 10;
+  margin-bottom: 12px;
+  width: fit-content;       /* Shrink to content width */
+  margin-left: auto;        /* Center horizontally */
+  margin-right: auto;       /* Center horizontally */
+}
 ```
 
 ---
 
-## Result
+## Visual Result
 
-The subtitle will return to its position directly under the headline, both wrapped inside the backdrop container. The tighter padding we applied earlier (12px 28px 14px) will remain in effect.
+| Change | Before | After |
+|--------|--------|-------|
+| Gap between headline & subtitle | ~28px total | ~10px total |
+| Backdrop horizontal padding | 28px each side | 20px each side |
+| Backdrop width | Full container width | Fits content width |
+
+The backdrop will now hug the text more closely, and the headline and subtitle will be visually tighter together.
 
