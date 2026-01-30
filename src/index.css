@@ -7234,6 +7234,7 @@
 
 .tru-form-card {
   position: relative;
+  z-index: 20;
   width: 100%;
   max-width: 600px;
   min-height: 480px;
