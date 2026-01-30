@@ -19,7 +19,7 @@ export interface PageContext {
 const pageContexts: Record<string, PageContext> = {
   home: {
     key: 'home',
-    firstMessage: "Hi! I'm TruDy, your TruMove moving assistant. I can help you understand our services, answer moving questions, or connect you with a specialist for pricing. What can I help with today?",
+    firstMessage: "Hi! I'm Trudy, your TruMove moving assistant. I can help you understand our services, answer moving questions, or connect you with a specialist for pricing. What can I help with today?",
     quickActions: [
       { id: 'services', label: 'Our Services', icon: Truck, action: 'message', message: 'What moving services does TruMove offer?' },
       { id: 'video', label: 'Video Consult', icon: Video, action: 'navigate', target: '/book' },
@@ -79,7 +79,7 @@ const pageContexts: Record<string, PageContext> = {
   },
   info: {
     key: 'info',
-    firstMessage: "Have questions about TruMove? I'm TruDy, here to help! Ask me about our services or anything you'd like to know.",
+    firstMessage: "Have questions about TruMove? I'm Trudy, here to help! Ask me about our services or anything you'd like to know.",
     quickActions: [
       { id: 'services', label: 'Our Services', icon: Truck, action: 'message', message: 'What moving services does TruMove offer?' },
       { id: 'video', label: 'Video Consult', icon: Video, action: 'navigate', target: '/book' },
@@ -89,7 +89,7 @@ const pageContexts: Record<string, PageContext> = {
   },
   general: {
     key: 'general',
-    firstMessage: "Hi! I'm TruDy, your TruMove moving assistant. I can answer questions about our services, help you understand the moving process, or connect you with a specialist. How can I help?",
+    firstMessage: "Hi! I'm Trudy, your TruMove moving assistant. I can answer questions about our services, help you understand the moving process, or connect you with a specialist. How can I help?",
     quickActions: [
       { id: 'services', label: 'Our Services', icon: Truck, action: 'message', message: 'What moving services does TruMove offer?' },
       { id: 'video', label: 'Video Consult', icon: Video, action: 'navigate', target: '/book' },
