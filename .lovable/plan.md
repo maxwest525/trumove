@@ -1,125 +1,158 @@
 
 
-# Fix: Feature Carousel Not Rendered on Homepage
+# Fix Feature Carousel Hover Clipping + Add Trudy AI Card
 
-## Issue
-The `FeatureCarousel.tsx` component with all the requested features (135% hover scaling, click modal, 3px white border) exists but is **never imported or used** on any page.
+## Issues Identified
 
-The homepage (`Index.tsx`) uses a **different inline carousel** with class names `tru-why-carousel-*` that doesn't have these features.
+### Issue 1: Hover Clipping
+The `CarouselContent` component in `src/components/ui/carousel.tsx` has a **hardcoded wrapper div** with `overflow-hidden`:
+
+```tsx
+// Line 139 - this clips all hover expansion
+<div ref={carouselRef} className="overflow-hidden">
+```
+
+CSS `!important` rules cannot override this because the wrapper is a separate div. The component must be modified.
+
+### Issue 2: Missing Trudy AI Card
+Need a 7th feature carousel item for "Trudy AI Assistant" that opens the chat modal instead of navigating to a route.
 
 ---
 
-## Current State
+## Solution
 
-| Component | Location | Hover Scale | Click Modal | White Border |
-|-----------|----------|-------------|-------------|--------------|
-| `FeatureCarousel.tsx` | Unused | 135% | Yes | 3px white |
-| Inline carousel | `Index.tsx` line 1501 | 8% | No | No |
+### Step 1: Update Carousel Component to Support Overflow Prop
 
----
+**File: `src/components/ui/carousel.tsx`**
 
-## Solution: Replace Inline Carousel with FeatureCarousel Component
+Add an optional `allowOverflow` prop to `CarouselContent` that conditionally removes `overflow-hidden`:
 
-### Step 1: Import FeatureCarousel in Index.tsx
+```tsx
+// Update CarouselContent (lines 134-148)
+const CarouselContent = React.forwardRef<
+  HTMLDivElement, 
+  React.HTMLAttributes<HTMLDivElement> & { allowOverflow?: boolean }
+>(
+  ({ className, allowOverflow = false, ...props }, ref) => {
+    const { carouselRef, orientation } = useCarousel();
+
+    return (
+      <div ref={carouselRef} className={allowOverflow ? "" : "overflow-hidden"}>
+        <div
+          ref={ref}
+          className={cn("flex", orientation === "vertical" && "-mt-4 flex-col", className)}
+          {...props}
+        />
+      </div>
+    );
+  },
+);
+```
+
+### Step 2: Add Trudy AI Card + Handle Special Action
+
+**File: `src/components/FeatureCarousel.tsx`**
+
+1. Add `trudyAvatar` import (already exists in assets)
+2. Add 7th feature item with `action: "openChat"` instead of `route`
+3. Add `onOpenChat` callback prop
+4. Modify click handler to differentiate between navigation and chat open
+5. Use `allowOverflow` prop on CarouselContent
+
+```tsx
+// Feature type update
+type Feature = {
+  title: string;
+  desc: string;
+  image: string;
+  route?: string;
+  action?: "openChat";
+};
+
+// Add 7th item
+{
+  title: "Trudy AI Assistant",
+  desc: "Chat with our AI to get instant answers about your move.",
+  image: trudyAvatar,
+  action: "openChat",
+}
+
+// Props update
+interface FeatureCarouselProps {
+  onOpenChat?: () => void;
+}
+
+// Click handler update
+onClick={() => {
+  if (feature.action === "openChat") {
+    onOpenChat?.();
+  } else {
+    setSelectedFeature(feature);
+  }
+}}
+```
+
+### Step 3: Wire Up Chat Modal in Index.tsx
 
 **File: `src/pages/Index.tsx`**
 
-Add import near other component imports (around line 18):
+1. Import chat modal state management
+2. Pass `onOpenChat` callback to FeatureCarousel
+3. Trigger the floating chat to open when Trudy card is clicked
 
 ```tsx
-import FeatureCarousel from "@/components/FeatureCarousel";
+// In Index.tsx
+const [isTrudyChatOpen, setIsTrudyChatOpen] = useState(false);
+
+<FeatureCarousel onOpenChat={() => setIsTrudyChatOpen(true)} />
 ```
 
-### Step 2: Replace Inline Carousel with Component
+Or alternatively, dispatch a custom event that `FloatingTruckChat` listens for.
 
-**File: `src/pages/Index.tsx` (lines 1495-1538)**
+---
 
-Replace the entire inline carousel section:
+## File Changes Summary
 
+| File | Changes |
+|------|---------|
+| `src/components/ui/carousel.tsx` | Add `allowOverflow` prop to `CarouselContent` |
+| `src/components/FeatureCarousel.tsx` | Use `allowOverflow`, add Trudy card, add `onOpenChat` prop |
+| `src/pages/Index.tsx` | Pass `onOpenChat` handler to trigger chat modal |
+| `src/components/FloatingTruckChat.tsx` | Expose method or listen for event to open chat programmatically |
+
+---
+
+## Technical Details
+
+### Carousel Overflow Fix
+The key issue is that Embla carousel requires `overflow-hidden` on the scroll container for proper drag behavior. However, we can use CSS negative margins + padding trick to allow visual overflow while maintaining scroll bounds:
+
+```css
+/* Alternative approach if allowOverflow causes drag issues */
+.features-carousel-content {
+  overflow: visible !important;
+  margin: -40px;
+  padding: 40px;
+}
+```
+
+### Chat Modal Trigger Options
+
+**Option A: Props callback (simpler)**
+Pass a callback from parent that sets chat modal state
+
+**Option B: Custom event (decoupled)**
 ```tsx
-{/* From - inline carousel (lines 1495-1538) */}
-<div 
-  className="tru-why-inline-carousel"
-  onMouseEnter={() => setIsHeroCarouselPaused(true)}
-  onMouseLeave={() => setIsHeroCarouselPaused(false)}
->
-  <Carousel ... >
-    {/* ... inline card mapping ... */}
-  </Carousel>
-</div>
+// In FeatureCarousel
+window.dispatchEvent(new CustomEvent('openTrudyChat'));
 
-{/* To - FeatureCarousel component */}
-<FeatureCarousel />
+// In FloatingTruckChat
+useEffect(() => {
+  const handleOpen = () => setIsOpen(true);
+  window.addEventListener('openTrudyChat', handleOpen);
+  return () => window.removeEventListener('openTrudyChat', handleOpen);
+}, []);
 ```
 
-### Step 3: Clean Up Unused State (Optional)
-
-Since the inline carousel state is no longer needed, remove:
-- `heroCarouselApi` state (line 540)
-- `isHeroCarouselPaused` state (line 541)
-- Auto-cycling effect (lines 543-552)
-
----
-
-## Alternative: Apply Features to Existing Carousel
-
-If you prefer keeping the inline carousel structure:
-
-### Update CSS for `tru-why-carousel-*`
-
-**File: `src/index.css`**
-
-1. Add white border to card images:
-```css
-.tru-why-carousel-card-image {
-  border: 3px solid white;
-  box-shadow: 0 2px 12px hsl(var(--tm-ink) / 0.15);
-}
-```
-
-2. Increase hover scale:
-```css
-.tru-why-carousel-card:hover {
-  transform: scale(1.35) translateZ(0);
-  z-index: 100;
-}
-```
-
-3. Add overflow visible to containers:
-```css
-.tru-why-inline-carousel,
-.tru-why-carousel,
-.tru-why-carousel-content {
-  overflow: visible !important;
-}
-
-.tru-why-carousel-item {
-  overflow: visible !important;
-}
-```
-
-4. Add modal functionality would require:
-   - Adding state for `selectedFeature`
-   - Adding Dialog component to Index.tsx
-   - Updating click handlers
-
----
-
-## Recommended Approach
-
-**Use Option 1 (Replace with FeatureCarousel component)** because:
-- The component already has all features implemented and tested
-- Cleaner code - single source of truth
-- Modal functionality already works
-- Less code duplication
-
----
-
-## Summary
-
-| Task | Action |
-|------|--------|
-| Import FeatureCarousel | Add import to Index.tsx |
-| Replace inline carousel | Swap inline JSX for `<FeatureCarousel />` |
-| (Optional) Clean up | Remove unused carousel state |
+I recommend **Option B** (custom event) since FloatingTruckChat is already a global component in App.tsx and this avoids prop drilling through Index.tsx.
 
