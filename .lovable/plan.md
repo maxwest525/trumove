@@ -1,244 +1,128 @@
 
-
-# Convert Route Analysis to Hero-Side "Move Summary" Modal
+# AI Inventory Section Improvements
 
 ## Overview
-Transform the "Building your personalized move profile" section into a sleek popup modal that appears on the right side of the hero when location data is entered. This will rename it to "Move Summary", feature larger satellite maps, and style the mileage badge with green-on-black treatment for visual impact.
-
----
-
-## Current State
-- **RouteAnalysisSection** is a full-width section that appears below the hero/StatsStrip
-- It displays origin/destination with small 44x44px satellite thumbnails
-- The distance badge uses primary green on light background
-- Title says "Building your personalized move profile"
-
-## Target State
-- The component becomes a floating modal/card on the right side of the hero (beside the Why TruMove card)
-- It appears when `fromCoords` OR `toCoords` are set
-- Larger maps (100x100px or larger)
-- Green mileage text on a dark/black background badge
-- Title changed to "Move Summary"
+Make three improvements to the "Start Your AI Inventory Analysis" section:
+1. Move the section up by ~90 pixels
+2. Add a prominent "Start AI Analysis" button
+3. Put the Live Detection items in a scrollable box with fixed height
 
 ---
 
 ## Changes
 
-### 1. Create New MoveSummaryModal Component
-**File:** `src/pages/Index.tsx`
+### 1. Move Section Up by 90 Pixels
+**File:** `src/index.css` (lines 2115-2121)
 
-Create an inline component that displays the move summary as a floating card:
-
-```tsx
-function MoveSummaryModal({ 
-  fromCity, toCity, distance, fromCoords, toCoords, moveDate, estimatedDuration 
-}: MoveSummaryModalProps) {
-  const hasData = fromCity || toCity;
-  if (!hasData) return null;
-  
-  return (
-    <div className="tru-move-summary-modal">
-      <div className="tru-move-summary-header">
-        <CheckCircle className="w-5 h-5" />
-        <h3>Move Summary</h3>
-      </div>
-      
-      <div className="tru-move-summary-grid">
-        {/* Origin Card with larger map */}
-        <div className="tru-move-summary-location">
-          <div className="tru-move-summary-map">
-            {fromCoords ? (
-              <img src={`mapbox satellite URL with larger size`} />
-            ) : (
-              <MapPin placeholder />
-            )}
-          </div>
-          <div className="tru-move-summary-location-info">
-            <span className="label">Origin</span>
-            <span className="value">{fromCity || "Enter origin..."}</span>
-          </div>
-        </div>
-        
-        {/* Distance Badge - Green on Black */}
-        <div className="tru-move-summary-distance">
-          <Route className="w-4 h-4" />
-          <span className="tru-move-summary-mileage">{distance} mi</span>
-        </div>
-        
-        {/* Destination Card with larger map */}
-        <div className="tru-move-summary-location">
-          {/* Similar structure */}
-        </div>
-      </div>
-    </div>
-  );
-}
-```
-
-### 2. Position Modal in Hero Right Panel
-**File:** `src/pages/Index.tsx` (lines ~1294)
-
-Add the MoveSummaryModal alongside the "Why TruMove" card in the right hero panel:
-
-```tsx
-{/* RIGHT SIDE: Why TruMove Card + Move Summary Modal */}
-<div className="tru-hero-content-panel tru-hero-stacked-cards">
-  
-  {/* NEW: Move Summary Modal - shows when location data exists */}
-  <MoveSummaryModal 
-    fromCity={fromCity}
-    toCity={toCity}
-    distance={distance}
-    fromCoords={fromCoords}
-    toCoords={toCoords}
-    moveDate={moveDate}
-    estimatedDuration={estimatedDuration}
-  />
-  
-  {/* CARD 1: Why TruMove - Premium Card */}
-  <div className="tru-why-card-premium" ... >
-```
-
-### 3. Remove Old RouteAnalysisSection from Page
-**File:** `src/pages/Index.tsx` (lines ~1424-1432)
-
-Delete the full-width RouteAnalysisSection since it's now integrated into the hero:
-
-```tsx
-// DELETE THIS BLOCK:
-{/* ROUTE ANALYSIS SECTION - Always visible */}
-<RouteAnalysisSection 
-  fromCity={fromCity}
-  ...
-/>
-```
-
-### 4. Add CSS for Move Summary Modal
-**File:** `src/index.css`
+Update the margin-top from `-32px` to `-120px` (additional ~90px upward):
 
 ```css
-/* Move Summary Modal - Hero Right Side */
-.tru-move-summary-modal {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--primary) / 0.2);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
-  animation: slideInRight 0.4s ease-out;
+.tru-ai-steps-section {
+  padding: 24px 24px 48px;
+  margin-top: -120px; /* Changed from -32px to -120px */
+  background: hsl(var(--background));
+  position: relative;
+  z-index: 5;
 }
+```
 
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
+---
 
-.tru-move-summary-header {
-  display: flex;
+### 2. Add "Start AI Analysis" Button
+**File:** `src/pages/Index.tsx` (lines 1459-1462)
+
+Add a primary CTA button after the title and before the LiveScanPreview:
+
+```tsx
+<h2 className="tru-ai-steps-title">Start Your AI Inventory Analysis</h2>
+
+{/* NEW: Primary CTA Button */}
+<button 
+  type="button"
+  onClick={() => handleInventoryClick("scan")}
+  className="tru-ai-start-btn"
+>
+  <Scan className="w-5 h-5" />
+  Start AI Analysis
+  <ArrowRight className="w-4 h-4" />
+</button>
+
+{/* Live Scan Preview */}
+<LiveScanPreview />
+```
+
+**File:** `src/index.css`
+
+Add styling for the new button:
+
+```css
+.tru-ai-start-btn {
+  display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
-}
-
-.tru-move-summary-header svg {
-  color: hsl(var(--primary));
-}
-
-.tru-move-summary-header h3 {
-  font-size: 16px;
+  padding: 14px 28px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-size: 15px;
   font-weight: 700;
-  color: hsl(var(--foreground));
-  margin: 0;
-}
-
-.tru-move-summary-grid {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: center;
-}
-
-/* Larger Map Thumbnails */
-.tru-move-summary-map {
-  width: 80px;
-  height: 80px;
   border-radius: 12px;
-  overflow: hidden;
+  border: none;
+  cursor: pointer;
+  margin: 0 auto 24px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+}
+
+.tru-ai-start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px hsl(var(--primary) / 0.4);
+}
+```
+
+---
+
+### 3. Scrollable Live Detection Items Box
+**File:** `src/index.css` (lines 2196-2230)
+
+Update `.tru-ai-live-inventory` to have a fixed height and update `.tru-ai-live-items` to scroll:
+
+```css
+.tru-ai-live-inventory {
+  background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-}
-
-.tru-move-summary-map img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Distance Badge - Green on Black */
-.tru-move-summary-distance {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 12px 16px;
-  background: hsl(220 15% 8%); /* Near-black */
   border-radius: 12px;
-  min-width: 80px;
-}
-
-.tru-move-summary-distance svg {
-  color: hsl(var(--primary)); /* Green */
-}
-
-.tru-move-summary-mileage {
-  font-size: 16px;
-  font-weight: 800;
-  color: hsl(var(--primary)); /* Green on black */
-}
-
-.tru-move-summary-location {
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
+  height: 260px; /* Fixed height instead of min-height */
 }
 
-.tru-move-summary-location-info {
+.tru-ai-live-items {
+  flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 4px; /* Space for scrollbar */
 }
 
-.tru-move-summary-location-info .label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: hsl(var(--muted-foreground));
+/* Custom scrollbar for items list */
+.tru-ai-live-items::-webkit-scrollbar {
+  width: 4px;
 }
 
-.tru-move-summary-location-info .value {
-  font-size: 13px;
-  font-weight: 600;
-  color: hsl(var(--foreground));
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.tru-ai-live-items::-webkit-scrollbar-track {
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 4px;
 }
 
-/* Dark mode adjustments */
-.dark .tru-move-summary-modal {
-  background: hsl(220 15% 10%);
-  border-color: hsl(0 0% 100% / 0.1);
+.tru-ai-live-items::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+  border-radius: 4px;
 }
 
-.dark .tru-move-summary-distance {
-  background: hsl(0 0% 0%);
-  border: 1px solid hsl(var(--primary) / 0.3);
+.tru-ai-live-items::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
 }
 ```
 
@@ -248,15 +132,14 @@ Delete the full-width RouteAnalysisSection since it's now integrated into the he
 
 | Change | File | Description |
 |--------|------|-------------|
-| Create MoveSummaryModal component | `src/pages/Index.tsx` | Inline component with larger maps and green-on-black mileage |
-| Position in hero right panel | `src/pages/Index.tsx` | Add above/alongside Why TruMove card |
-| Remove old RouteAnalysisSection | `src/pages/Index.tsx` | Delete full-width section call |
-| Add modal CSS styles | `src/index.css` | Floating card styling, 80px maps, black distance badge |
+| Move section up 90px | `src/index.css` | Change margin-top from -32px to -120px |
+| Add Start AI Analysis button | `src/pages/Index.tsx` | Primary green CTA with Scan icon |
+| Style the new button | `src/index.css` | Premium button with hover effects |
+| Fixed-height items container | `src/index.css` | Set height: 260px on inventory box |
+| Scrollable items list | `src/index.css` | Add overflow-y: auto with custom scrollbar |
 
 ## Visual Result
-- When user enters origin or destination, a sleek "Move Summary" card slides in on the right side of the hero
-- Satellite maps are larger (80x80px vs 44x44px)
-- Mileage badge has a striking green-on-black appearance
-- Consistent naming ("Move Summary") matches other data cards in the flow
-- The card animates in with a subtle slide-from-right effect
-
+- The AI Inventory section moves significantly higher on the page
+- A prominent green "Start AI Analysis" button draws attention and provides clear action
+- The Live Detection box maintains a consistent height while items scroll smoothly inside it
+- Custom scrollbar matches the green accent color scheme
