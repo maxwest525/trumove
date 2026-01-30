@@ -1619,7 +1619,7 @@ export default function Index() {
                 <button 
                   type="button" 
                   className="tru-inventory-action-btn"
-                  onClick={() => handleInventoryClick("manual")}
+                  onClick={() => navigate("/online-estimate")}
                 >
                   <Boxes className="w-5 h-5" />
                   <span>Build Inventory Manually</span>
