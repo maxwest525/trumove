@@ -1566,7 +1566,7 @@ export default function Index() {
               {/* Primary CTA Button */}
               <button 
                 type="button"
-                onClick={() => handleInventoryClick("ai")}
+                onClick={() => navigate("/scan-room")}
                 className="tru-ai-start-btn"
               >
                 <Scan className="w-5 h-5" />
