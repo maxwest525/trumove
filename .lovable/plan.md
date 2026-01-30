@@ -1,37 +1,29 @@
 
-# Fix "Why TruMove" Card Clipping on Right Edge
 
-## Problem Analysis
+# Soften Header Backdrop Edge Fade
 
-The "Why TruMove" card's feature carousel is being clipped on the right side. After investigating the CSS hierarchy, I found the root causes:
+## Goal
 
-### Clipping Chain
+Make the floating header's edges fade seamlessly into the background without any noticeable lines or hard edges.
 
-1. **`.tru-hero-wrapper`** (line 1353)
-   - Has `overflow-x: hidden` to prevent horizontal scrolling
-   - This is the outermost container causing clipping
+---
 
-2. **`.tru-why-card-premium`** (line 26238)
-   - Has `overflow: hidden` to contain content
-   - This clips the carousel cards when they scale on hover
+## Current Implementation
 
-3. **`.features-carousel-card:hover`** (line 16691)
-   - Uses `transform: scale(1.22)` - a 22% scale increase
-   - When the rightmost card scales, it extends beyond the container bounds
+The `.header-main.header-floating` class (lines 11168-11180) currently has:
+- `border: 1px solid hsl(var(--tm-ink) / 0.06)` - creates a subtle but visible line
+- `box-shadow: 0 4px 24px hsl(var(--tm-ink) / 0.08)` - fairly soft but still defined
 
-4. **`.tru-hero-content-panel`** (lines 1559-1560)
-   - Has `padding-left: 24px; padding-right: 24px`
-   - Right edge cards have less room to expand into
+The dark mode variant (lines 11188-11193) has:
+- `border-color: hsl(0 0% 100% / 0.08)` - also creates visible lines
 
 ---
 
 ## Solution
 
-The fix requires allowing the carousel content to overflow visible while still containing it within proper bounds. We need to:
-
-1. **Change `.tru-why-card-premium` overflow** from `hidden` to `visible` to allow hover expansion
-2. **Add right-side margin/padding** to the carousel to create breathing room for scaled cards
-3. **Ensure parent containers don't clip** the visible overflow
+1. **Remove the solid border** - Replace with `border: none` or `border-color: transparent`
+2. **Use a softer, more diffused box-shadow** - Create multiple layered shadows that gradually fade out
+3. **Add a subtle radial gradient pseudo-element** - Create an edge fade mask effect
 
 ---
 
@@ -39,58 +31,101 @@ The fix requires allowing the carousel content to overflow visible while still c
 
 ### File: `src/index.css`
 
-#### Change 1: Allow visible overflow on Why TruMove card (line 26238)
-
-Change `overflow: hidden` to `overflow: visible` on `.tru-why-card-premium`:
+#### Change 1: Soften light mode floating header edges (lines 11168-11180)
 
 ```css
 /* Before */
-.tru-why-card-premium {
-  /* ... */
-  overflow: hidden;  /* Clip content in normal state */
-  /* ... */
+.header-main.header-floating {
+  position: sticky;
+  top: 8px;
+  margin: 8px 24px 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, 
+    hsl(0 0% 100% / 0.92), 
+    hsl(var(--primary) / 0.02));
+  backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--tm-ink) / 0.06);
+  box-shadow: 0 4px 24px hsl(var(--tm-ink) / 0.08);
+  transition: all 300ms ease;
 }
 
 /* After */
-.tru-why-card-premium {
-  /* ... */
-  overflow: visible;  /* Allow carousel cards to expand on hover */
-  /* ... */
+.header-main.header-floating {
+  position: sticky;
+  top: 8px;
+  margin: 8px 24px 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, 
+    hsl(0 0% 100% / 0.88), 
+    hsl(var(--primary) / 0.01));
+  backdrop-filter: blur(16px);
+  border: none;
+  box-shadow: 
+    0 2px 8px hsl(var(--tm-ink) / 0.03),
+    0 8px 24px hsl(var(--tm-ink) / 0.04),
+    0 16px 48px hsl(var(--tm-ink) / 0.02);
+  transition: all 300ms ease;
 }
 ```
 
-#### Change 2: Add right padding to carousel container for scaled cards (lines 16627-16628)
-
-Add right padding to `.features-carousel-content` to give the rightmost card room to scale:
+#### Change 2: Soften scrolled state (lines 11182-11185)
 
 ```css
 /* Before */
-.features-carousel-content {
-  display: flex;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding: 8px;  /* Minimal padding */
+.header-main.header-floating.is-scrolled {
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.12);
+  background: hsl(0 0% 100% / 0.98);
 }
 
 /* After */
-.features-carousel-content {
-  display: flex;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding: 8px 24px 8px 8px;  /* Extra right padding for scaled cards */
+.header-main.header-floating.is-scrolled {
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.04),
+    0 12px 32px hsl(var(--tm-ink) / 0.06),
+    0 24px 64px hsl(var(--tm-ink) / 0.03);
+  background: hsl(0 0% 100% / 0.95);
 }
 ```
 
-#### Change 3: Clip overflow on card content wrapper instead (line 26259)
-
-Move overflow clipping to the inner content wrapper to prevent background bleed while allowing card expansion:
+#### Change 3: Soften dark mode floating header edges (lines 11188-11193)
 
 ```css
-/* After (new rule) */
-.tru-why-card-premium-content {
-  /* ... existing styles ... */
-  overflow: hidden;
-  border-radius: 16px;  /* Match parent for clean clipping */
+/* Before */
+.dark .header-main.header-floating {
+  background: linear-gradient(135deg, 
+    hsl(var(--background) / 0.92), 
+    hsl(var(--primary) / 0.05));
+  border-color: hsl(0 0% 100% / 0.08);
+}
+
+/* After */
+.dark .header-main.header-floating {
+  background: linear-gradient(135deg, 
+    hsl(var(--background) / 0.85), 
+    hsl(var(--primary) / 0.03));
+  border: none;
+  box-shadow: 
+    0 2px 8px hsl(0 0% 0% / 0.1),
+    0 8px 24px hsl(0 0% 0% / 0.15),
+    0 16px 48px hsl(0 0% 0% / 0.08);
+}
+```
+
+#### Change 4: Soften dark mode scrolled state (lines 11195-11197)
+
+```css
+/* Before */
+.dark .header-main.header-floating.is-scrolled {
+  background: hsl(var(--background) / 0.98);
+}
+
+/* After */
+.dark .header-main.header-floating.is-scrolled {
+  background: hsl(var(--background) / 0.92);
+  box-shadow: 
+    0 4px 12px hsl(0 0% 0% / 0.12),
+    0 12px 32px hsl(0 0% 0% / 0.18),
+    0 24px 64px hsl(0 0% 0% / 0.1);
 }
 ```
 
@@ -100,15 +135,17 @@ Move overflow clipping to the inner content wrapper to prevent background bleed 
 
 | File | Lines | Change |
 |------|-------|--------|
-| `src/index.css` | 26238 | Change `overflow: hidden` to `overflow: visible` on `.tru-why-card-premium` |
-| `src/index.css` | 16627-16628 | Add extra right padding to `.features-carousel-content` |
-| `src/index.css` | 26259-26266 | Add overflow clipping to `.tru-why-card-premium-content` for clean containment |
+| `src/index.css` | 11168-11180 | Remove border, add multi-layered soft shadows, reduce background opacity |
+| `src/index.css` | 11182-11185 | Update scrolled state with softer layered shadows |
+| `src/index.css` | 11188-11193 | Remove dark mode border, add soft dark shadows |
+| `src/index.css` | 11195-11197 | Add dark mode scrolled state shadows |
 
 ---
 
 ## Expected Result
 
-- Carousel cards will no longer be clipped on the right side when hovering
-- The 1.22x scale hover effect will work fully on all cards including rightmost
-- Card content remains properly contained within rounded borders
-- No horizontal scrollbar introduced
+- Header edges will fade seamlessly into the background with no visible lines
+- Multi-layered shadows create a natural, gradient-like fade effect
+- Slightly reduced background opacity enhances the glassmorphism blend
+- Both light and dark modes will have smooth, edge-free transitions
+
