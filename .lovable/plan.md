@@ -1,130 +1,96 @@
 
 
-# Strengthen Hero Card Shadows for Visual Impact
+# Fix Stats Strip Layout
 
 ## Overview
-Increase the shadow intensity across all hero cards (form card, feature cards, Why TruMove premium card, and Why TruMove compact card) to create more visual depth and pop.
+Update the black stats strip to remove the dot separators between items and ensure icons appear to the left of their corresponding text (not above).
 
 ---
 
-## Current Shadow Values
-
-| Card | Current Shadow |
-|------|----------------|
-| `.tru-form-card` | `0 1px 3px ink/0.04, 0 16px 48px ink/0.1` |
-| `.tru-hero-feature-card` (hover) | `0 12px 32px primary/0.18` |
-| `.tru-why-card-premium` | `0 4px 12px ink/0.08, 0 8px 32px primary/0.06` |
-| `.tru-why-card-compact` | `0 2px 12px ink/0.06` |
-
----
-
-## Proposed Stronger Shadows
-
-| Card | New Shadow |
-|------|------------|
-| `.tru-form-card` | `0 2px 6px ink/0.06, 0 20px 56px ink/0.14` |
-| `.tru-hero-feature-card` (hover) | `0 16px 40px primary/0.24` |
-| `.tru-why-card-premium` | `0 6px 16px ink/0.12, 0 12px 40px primary/0.10` |
-| `.tru-why-card-premium:hover` | `0 16px 48px primary/0.22, 0 6px 20px ink/0.14` |
-| `.tru-why-card-compact` | `0 4px 16px ink/0.10` |
+## Current Issue
+Looking at the screenshot, the icons appear stacked above the text, and there are dot separators between items. The user wants:
+1. Remove the dots (`•`) between items
+2. Icons positioned to the left of the text in a horizontal layout
 
 ---
 
 ## Changes Required
 
+### File: `src/components/StatsStrip.tsx`
+
+Remove the dot separator spans from the component:
+
+**Before (lines 16-23):**
+```tsx
+{STATS.map((stat, idx) => (
+  <div key={stat.text} className="stats-strip-item">
+    <stat.icon className="w-4 h-4" />
+    <span>{stat.text}</span>
+    {idx < STATS.length - 1 && (
+      <span className="stats-strip-dot">•</span>
+    )}
+  </div>
+))}
+```
+
+**After:**
+```tsx
+{STATS.map((stat) => (
+  <div key={stat.text} className="stats-strip-item">
+    <stat.icon className="w-4 h-4" />
+    <span>{stat.text}</span>
+  </div>
+))}
+```
+
+---
+
 ### File: `src/index.css`
 
-#### 1. `.tru-form-card` (line 7245-7248)
-**Before:**
+Ensure the `.stats-strip-item` uses horizontal flex layout (icons left of text):
+
+**Lines 28633-28644 - Confirm/update flex direction:**
 ```css
-box-shadow:
-  0 1px 3px hsl(var(--tm-ink) / 0.04),
-  0 16px 48px hsl(var(--tm-ink) / 0.1),
-  0 0 0 1px hsl(var(--tm-ink) / 0.02);
+.stats-strip-item {
+  display: inline-flex;
+  flex-direction: row;  /* Explicit row direction */
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: hsl(0 0% 100% / 0.85);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 ```
 
-**After:**
-```css
-box-shadow:
-  0 2px 6px hsl(var(--tm-ink) / 0.06),
-  0 20px 56px hsl(var(--tm-ink) / 0.14),
-  0 0 0 1px hsl(var(--tm-ink) / 0.03);
-```
-
-#### 2. `.tru-hero-feature-card:hover` (line 6277)
-**Before:**
-```css
-box-shadow: 0 12px 32px hsl(var(--primary) / 0.18);
-```
-
-**After:**
-```css
-box-shadow: 0 16px 40px hsl(var(--primary) / 0.24);
-```
-
-#### 3. `.tru-why-card-premium` (lines 26087-26089)
-**Before:**
-```css
-box-shadow: 
-  0 4px 12px hsl(var(--tm-ink) / 0.08),
-  0 8px 32px hsl(var(--primary) / 0.06);
-```
-
-**After:**
-```css
-box-shadow: 
-  0 6px 16px hsl(var(--tm-ink) / 0.12),
-  0 12px 40px hsl(var(--primary) / 0.10);
-```
-
-#### 4. `.tru-why-card-premium:hover` (lines 26095-26097)
-**Before:**
-```css
-box-shadow: 
-  0 12px 40px hsl(var(--primary) / 0.15),
-  0 4px 16px hsl(var(--tm-ink) / 0.1);
-```
-
-**After:**
-```css
-box-shadow: 
-  0 16px 48px hsl(var(--primary) / 0.22),
-  0 6px 20px hsl(var(--tm-ink) / 0.14);
-```
-
-#### 5. `.tru-why-card-compact` (lines 27446-27448)
-**Before:**
-```css
-box-shadow: 
-  0 2px 12px hsl(var(--tm-ink) / 0.06),
-  inset 0 1px 0 hsl(0 0% 100% / 0.6);
-```
-
-**After:**
-```css
-box-shadow: 
-  0 4px 16px hsl(var(--tm-ink) / 0.10),
-  inset 0 1px 0 hsl(0 0% 100% / 0.6);
-```
+Optionally remove the `.stats-strip-dot` class (lines 28653-28656) since it will no longer be used.
 
 ---
 
 ## Visual Result
 
-The cards will have deeper, more pronounced shadows that:
-- Create more visual separation from the background
-- Increase the "floating" effect for a modern, elevated look
-- Enhance hover interactions with stronger lift shadows
+**Before:**
+```
+   📍            📈            🎧
+SERVING    50,000+ MOVES  •  24/7 SUPPORT  •  ...
+48 STATES     COMPLETED
+```
+
+**After:**
+```
+📍 SERVING 48 STATES   📈 50,000+ MOVES COMPLETED   🎧 24/7 SUPPORT   ...
+```
 
 ---
 
 ## Summary
 
-| File | Lines | Change |
-|------|-------|--------|
-| `src/index.css` | 7245-7248 | Stronger form card shadow |
-| `src/index.css` | 6277 | Stronger feature card hover shadow |
-| `src/index.css` | 26087-26089 | Stronger Why TruMove premium card shadow |
-| `src/index.css` | 26095-26097 | Stronger Why TruMove premium hover shadow |
-| `src/index.css` | 27446-27448 | Stronger Why TruMove compact card shadow |
+| File | Change |
+|------|--------|
+| `src/components/StatsStrip.tsx` | Remove dot separator spans (`{idx < STATS.length - 1 && ...}`) |
+| `src/index.css` | Add explicit `flex-direction: row` to `.stats-strip-item` |
+| `src/index.css` | Optionally remove unused `.stats-strip-dot` styles |
 
