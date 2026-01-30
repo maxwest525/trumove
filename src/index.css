@@ -6274,7 +6274,7 @@
   border-color: hsl(var(--primary));
   background: linear-gradient(135deg, hsl(var(--primary) / 0.06), hsl(var(--primary) / 0.02));
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px hsl(var(--primary) / 0.18);
+  box-shadow: 0 16px 40px hsl(var(--primary) / 0.24);
 }
 
 .tru-hero-feature-icon-wrap {
@@ -7243,9 +7243,9 @@
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid hsl(var(--tm-ink) / 0.08);
   box-shadow:
-    0 1px 3px hsl(var(--tm-ink) / 0.04),
-    0 16px 48px hsl(var(--tm-ink) / 0.1),
-    0 0 0 1px hsl(var(--tm-ink) / 0.02);
+    0 2px 6px hsl(var(--tm-ink) / 0.06),
+    0 20px 56px hsl(var(--tm-ink) / 0.14),
+    0 0 0 1px hsl(var(--tm-ink) / 0.03);
   padding: 36px 36px;
   overflow: hidden;
 }
@@ -26085,16 +26085,16 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 
-    0 4px 12px hsl(var(--tm-ink) / 0.08),
-    0 8px 32px hsl(var(--primary) / 0.06);
+    0 6px 16px hsl(var(--tm-ink) / 0.12),
+    0 12px 40px hsl(var(--primary) / 0.10);
   transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .tru-why-card-premium:hover {
   transform: translateY(-4px);
   box-shadow: 
-    0 12px 40px hsl(var(--primary) / 0.15),
-    0 4px 16px hsl(var(--tm-ink) / 0.1);
+    0 16px 48px hsl(var(--primary) / 0.22),
+    0 6px 20px hsl(var(--tm-ink) / 0.14);
   border: 1px solid hsl(var(--primary) / 0.2);
 }
 
@@ -27444,7 +27444,7 @@
   border: 1px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 16px;
   box-shadow: 
-    0 2px 12px hsl(var(--tm-ink) / 0.06),
+    0 4px 16px hsl(var(--tm-ink) / 0.10),
     inset 0 1px 0 hsl(0 0% 100% / 0.6);
 }
 
