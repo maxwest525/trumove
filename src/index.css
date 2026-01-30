@@ -26762,10 +26762,109 @@
    UI FIXES - Footer, Headers, Buttons, Spacing
    ============================================= */
 
-/* Footer dark mode visibility - always dark with green accents */
+/* Site Footer - IDENTICAL in light and dark mode */
+.footer-main {
+  background: hsl(220 15% 8%);
+  border-top: 1px solid hsl(142 76% 50% / 0.2);
+  position: relative;
+  z-index: 60;
+}
+
+.footer-inner {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 24px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-logo {
+  font-weight: 800;
+  font-size: 16px;
+  color: hsl(142 76% 50%);
+}
+
+.footer-tagline {
+  color: hsl(0 0% 100% / 0.6);
+  font-size: 13px;
+  max-width: 420px;
+  line-height: 1.4;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: hsl(0 0% 100% / 0.8);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 10px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.footer-link:hover {
+  background: hsl(142 76% 50% / 0.1);
+  color: hsl(142 76% 50%);
+}
+
+.footer-link-muted {
+  color: hsl(0 0% 100% / 0.5);
+}
+
+.footer-link-muted:hover {
+  color: hsl(0 0% 100% / 0.7);
+}
+
+/* Ensure footer looks EXACTLY the same in dark mode */
+.dark .footer-main {
+  background: hsl(220 15% 8%);
+  border-top-color: hsl(142 76% 50% / 0.2);
+}
+
+.dark .footer-logo {
+  color: hsl(142 76% 50%);
+}
+
+.dark .footer-tagline {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+.dark .footer-link {
+  color: hsl(0 0% 100% / 0.8);
+}
+
+.dark .footer-link:hover {
+  background: hsl(142 76% 50% / 0.1);
+  color: hsl(142 76% 50%);
+}
+
+.dark .footer-link-muted {
+  color: hsl(0 0% 100% / 0.5);
+}
+
+.dark .footer-link-muted:hover {
+  color: hsl(0 0% 100% / 0.7);
+}
+
+/* Legacy footer selector - remove theme switching */
 footer {
   background: hsl(220 15% 8%) !important;
-  border-top: 1px solid hsl(var(--primary) / 0.2) !important;
+  border-top: 1px solid hsl(142 76% 50% / 0.2) !important;
 }
 
 /* Go button on shipment tracker - ensure contrast */
