@@ -28665,7 +28665,7 @@ html.dark .tru-summary-header-large,
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -28673,8 +28673,8 @@ html.dark .tru-summary-header-large,
 }
 
 .safer-trust-item svg {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   color: hsl(142 70% 40%);
 }
 
