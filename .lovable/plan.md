@@ -1,151 +1,100 @@
 
 
-# Soften Header Backdrop Edge Fade
+# Position Agent Login at Absolute Far Right of Header
 
-## Goal
+## Problem Analysis
 
-Make the floating header's edges fade seamlessly into the background without any noticeable lines or hard edges.
+The Agent Login button is currently at the far right of the **header-inner container**, but this container has:
+- `max-width: 1480px` - constrains content width
+- `margin: 0 auto` - centers the container
+
+On wider screens (e.g., 1920px), this means there's ~200px of empty header space on each side. The Agent Login button sits at the right edge of the centered 1480px zone, not the actual right edge of the header bar.
 
 ---
 
-## Current Implementation
+## Current Structure
 
-The `.header-main.header-floating` class (lines 11168-11180) currently has:
-- `border: 1px solid hsl(var(--tm-ink) / 0.06)` - creates a subtle but visible line
-- `box-shadow: 0 4px 24px hsl(var(--tm-ink) / 0.08)` - fairly soft but still defined
-
-The dark mode variant (lines 11188-11193) has:
-- `border-color: hsl(0 0% 100% / 0.08)` - also creates visible lines
+```text
+.header-main.header-floating (full width with margins)
+  └── .header-inner (max-width: 1480px, centered)
+        ├── Logo
+        ├── Navigation
+        └── .header-actions
+              ├── Call button
+              ├── Theme Toggle
+              └── Agent Login (margin-left: auto - at right of 1480px container)
+```
 
 ---
 
 ## Solution
 
-1. **Remove the solid border** - Replace with `border: none` or `border-color: transparent`
-2. **Use a softer, more diffused box-shadow** - Create multiple layered shadows that gradually fade out
-3. **Add a subtle radial gradient pseudo-element** - Create an edge fade mask effect
+Move the Agent Login button outside of `header-inner` and position it absolutely at the far right edge of the header bar.
+
+### New Structure
+
+```text
+.header-main.header-floating (full width with margins, position: relative)
+  ├── .header-inner (max-width: 1480px, centered)
+  │     ├── Logo
+  │     ├── Navigation
+  │     └── .header-actions
+  │           ├── Call button
+  │           └── Theme Toggle
+  └── Agent Login (position: absolute, right: 24px)
+```
 
 ---
 
-## Implementation
+## Technical Implementation
+
+### File: `src/components/layout/Header.tsx`
+
+#### Change: Move Agent Login outside header-inner (lines 320-341)
+
+Move the Agent Login `<Link>` element to be a direct child of `<header>`, positioned after `header-inner` but before the mobile menu toggle.
 
 ### File: `src/index.css`
 
-#### Change 1: Soften light mode floating header edges (lines 11168-11180)
+#### Change 1: Add position relative to header-floating (line 11168)
+
+Add `position: relative` to `.header-main.header-floating` to create a positioning context.
+
+#### Change 2: Update Agent Login button positioning (lines 11407-11412)
+
+Change from `margin-left: auto` to absolute positioning:
 
 ```css
-/* Before */
-.header-main.header-floating {
-  position: sticky;
-  top: 8px;
-  margin: 8px 24px 0;
-  border-radius: 16px;
-  background: linear-gradient(135deg, 
-    hsl(0 0% 100% / 0.92), 
-    hsl(var(--primary) / 0.02));
-  backdrop-filter: blur(16px);
-  border: 1px solid hsl(var(--tm-ink) / 0.06);
-  box-shadow: 0 4px 24px hsl(var(--tm-ink) / 0.08);
-  transition: all 300ms ease;
-}
-
-/* After */
-.header-main.header-floating {
-  position: sticky;
-  top: 8px;
-  margin: 8px 24px 0;
-  border-radius: 16px;
-  background: linear-gradient(135deg, 
-    hsl(0 0% 100% / 0.88), 
-    hsl(var(--primary) / 0.01));
-  backdrop-filter: blur(16px);
-  border: none;
-  box-shadow: 
-    0 2px 8px hsl(var(--tm-ink) / 0.03),
-    0 8px 24px hsl(var(--tm-ink) / 0.04),
-    0 16px 48px hsl(var(--tm-ink) / 0.02);
-  transition: all 300ms ease;
+.header-btn-agent {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  /* ...existing styles... */
 }
 ```
 
-#### Change 2: Soften scrolled state (lines 11182-11185)
+#### Change 3: Hide Agent Login on mobile (new rule)
 
-```css
-/* Before */
-.header-main.header-floating.is-scrolled {
-  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.12);
-  background: hsl(0 0% 100% / 0.98);
-}
-
-/* After */
-.header-main.header-floating.is-scrolled {
-  box-shadow: 
-    0 4px 12px hsl(var(--tm-ink) / 0.04),
-    0 12px 32px hsl(var(--tm-ink) / 0.06),
-    0 24px 64px hsl(var(--tm-ink) / 0.03);
-  background: hsl(0 0% 100% / 0.95);
-}
-```
-
-#### Change 3: Soften dark mode floating header edges (lines 11188-11193)
-
-```css
-/* Before */
-.dark .header-main.header-floating {
-  background: linear-gradient(135deg, 
-    hsl(var(--background) / 0.92), 
-    hsl(var(--primary) / 0.05));
-  border-color: hsl(0 0% 100% / 0.08);
-}
-
-/* After */
-.dark .header-main.header-floating {
-  background: linear-gradient(135deg, 
-    hsl(var(--background) / 0.85), 
-    hsl(var(--primary) / 0.03));
-  border: none;
-  box-shadow: 
-    0 2px 8px hsl(0 0% 0% / 0.1),
-    0 8px 24px hsl(0 0% 0% / 0.15),
-    0 16px 48px hsl(0 0% 0% / 0.08);
-}
-```
-
-#### Change 4: Soften dark mode scrolled state (lines 11195-11197)
-
-```css
-/* Before */
-.dark .header-main.header-floating.is-scrolled {
-  background: hsl(var(--background) / 0.98);
-}
-
-/* After */
-.dark .header-main.header-floating.is-scrolled {
-  background: hsl(var(--background) / 0.92);
-  box-shadow: 
-    0 4px 12px hsl(0 0% 0% / 0.12),
-    0 12px 32px hsl(0 0% 0% / 0.18),
-    0 24px 64px hsl(0 0% 0% / 0.1);
-}
-```
+Add a responsive rule to hide the absolutely positioned button on smaller screens where it might overlap with the constrained content.
 
 ---
 
 ## Summary of Changes
 
-| File | Lines | Change |
-|------|-------|--------|
-| `src/index.css` | 11168-11180 | Remove border, add multi-layered soft shadows, reduce background opacity |
-| `src/index.css` | 11182-11185 | Update scrolled state with softer layered shadows |
-| `src/index.css` | 11188-11193 | Remove dark mode border, add soft dark shadows |
-| `src/index.css` | 11195-11197 | Add dark mode scrolled state shadows |
+| File | Change |
+|------|--------|
+| `src/components/layout/Header.tsx` | Move Agent Login button outside of `header-inner`, after `.header-actions` container |
+| `src/index.css` | Add `position: relative` to `.header-main.header-floating` |
+| `src/index.css` | Update `.header-btn-agent` with absolute positioning (`right: 24px`, `top: 50%`, `transform: translateY(-50%)`) |
+| `src/index.css` | Add responsive hiding for Agent Login below certain viewport widths |
 
 ---
 
 ## Expected Result
 
-- Header edges will fade seamlessly into the background with no visible lines
-- Multi-layered shadows create a natural, gradient-like fade effect
-- Slightly reduced background opacity enhances the glassmorphism blend
-- Both light and dark modes will have smooth, edge-free transitions
+- Agent Login button will sit at the absolute far right edge of the header bar (24px from right edge)
+- Other header content (logo, nav, call button, theme toggle) remains centered within the 1480px constraint
+- On narrower screens where overlap would occur, the button hides (mobile menu still shows Agent Login link)
+- Clean visual separation between main navigation cluster and the Agent Login utility
 
