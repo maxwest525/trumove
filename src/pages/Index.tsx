@@ -35,7 +35,7 @@ import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
 
 import { calculateDistance } from "@/lib/distanceCalculator";
@@ -1358,7 +1358,7 @@ export default function Index() {
 
               </div>
 
-              {/* SIDEBAR: Summary Pill + Nav Icons Pill */}
+              {/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill
               <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
                 <TooltipProvider delayDuration={0}>
                   <Tooltip>
@@ -1401,7 +1401,7 @@ export default function Index() {
                             </div>
                             <div className="tru-summary-pill-row">
                               <span className="tru-summary-pill-label">Property</span>
-                              <span className="tru-summary-pill-value">{propertyType ? propertyType.charAt(0).toUpperCase() + propertyType.slice(1) : '—'}</span>
+                              <span className="tru-summary-pill-value">{selectedPropertyType ? selectedPropertyType.charAt(0).toUpperCase() + selectedPropertyType.slice(1) : '—'}</span>
                             </div>
                           </div>
                         </div>
@@ -1440,6 +1440,7 @@ export default function Index() {
                   </div>
                 </TooltipProvider>
               </div>
+              */}
             </div>
 
             {/* RIGHT SIDE: Move Summary Modal + Why TruMove Card */}
