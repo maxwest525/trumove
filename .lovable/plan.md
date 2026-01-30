@@ -1,121 +1,110 @@
 
 
-# Make Why TruMove Card Text Black + Reduce Spacing
+# Add Unique Images for FMCSA Verified and Smart Carrier Match
 
-## Overview
-Update the Why TruMove card to use solid black text throughout (instead of muted grays) and reduce the vertical spacing between the subheadline and the mission paragraph below it.
+## Current Issue
 
----
+Both "Smart Carrier Match" and "FMCSA Verified" features use the same image (`previewCarrierVetting`), making them visually indistinguishable in the carousel.
 
-## Current State
+## Solution
 
-Looking at the JSX in `src/pages/Index.tsx` (lines 1469-1480):
-```tsx
-<h3 className="tru-ai-steps-title" style={{ fontSize: '24px', marginBottom: '8px' }}>
-  Why <span className="tru-ai-gradient-text">TruMove</span>?
-</h3>
-<div className="tru-ai-accent-line" style={{ marginBottom: '6px' }} />
-<p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none' }}>
-  Skip the van line middleman...
-</p>
-
-{/* Mission Paragraph - Larger font */}
-<p className="tru-why-mission-paragraph tru-why-mission-large">
-  We built TruMove to cut through...
-</p>
-```
-
-Current CSS colors:
-- `.tru-ai-steps-subtitle`: `color: hsl(var(--muted-foreground))` (gray)
-- `.tru-why-mission-paragraph`: `color: hsl(var(--muted-foreground))` (gray)
-- `.tru-ai-gradient-text`: animated green gradient
+Create custom icon components for each feature (similar to how Trudy AI Assistant has `TruckChatIcon`). This approach:
+- Creates unique, distinctive visuals for each feature
+- Uses lucide-react icons already in the project
+- Maintains consistent styling with the existing TruckChatIcon pattern
 
 ---
 
 ## Implementation Plan
 
-### Step 1: Make Subheadline Text Black
+### Step 1: Create Smart Carrier Match Icon Component
 
-**File: `src/index.css`** (lines 2275-2286)
+**File: `src/components/FeatureCarousel.tsx`**
 
-Add a scoped override for the subtitle when inside the Why TruMove card. Create new CSS rule after line 26279:
+Add a new component that visualizes "smart matching" with trucks and a connection/matching visual:
 
-```css
-/* Why TruMove card - force black text */
-.tru-why-card-premium .tru-ai-steps-subtitle {
-  color: hsl(var(--tm-ink));
-}
-```
-
-### Step 2: Make Mission Paragraph Text Black
-
-**File: `src/index.css`** (line 26269)
-
-Change `.tru-why-mission-paragraph` color from:
-```css
-color: hsl(var(--muted-foreground));
-```
-To:
-```css
-color: hsl(var(--tm-ink));
-```
-
-### Step 3: Remove Gradient from "TruMove" Text
-
-**File: `src/pages/Index.tsx`** (line 1470)
-
-Change from:
 ```tsx
-Why <span className="tru-ai-gradient-text">TruMove</span>?
+import { Truck, GitCompare, Star } from "lucide-react";
+
+const SmartMatchIcon = () => (
+  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
+    <div className="relative flex items-center gap-2">
+      <Truck className="w-10 h-10 text-foreground" />
+      <GitCompare className="w-8 h-8 text-primary" />
+      <Star className="w-6 h-6 text-primary fill-primary/30 absolute -top-2 right-0" />
+    </div>
+  </div>
+);
 ```
-To:
+
+### Step 2: Create FMCSA Verified Icon Component
+
+**File: `src/components/FeatureCarousel.tsx`**
+
+Add a component that visualizes "official verification" with a shield/badge and checkmark:
+
 ```tsx
-Why TruMove?
+import { ShieldCheck, FileCheck, BadgeCheck } from "lucide-react";
+
+const FMCSAVerifiedIcon = () => (
+  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
+    <div className="relative">
+      <ShieldCheck className="w-16 h-16 text-foreground" />
+      <BadgeCheck className="w-6 h-6 text-primary absolute -bottom-1 -right-1" />
+    </div>
+  </div>
+);
 ```
 
-Or if we want to keep the word "TruMove" as a span but just make it black:
+### Step 3: Update Features Array
+
+**File: `src/components/FeatureCarousel.tsx`**
+
+Replace the `image` property with `customIcon` for both features:
+
 ```tsx
-Why <span style={{ color: 'hsl(var(--tm-ink))' }}>TruMove</span>?
+{
+  title: "Smart Carrier Match",
+  desc: "Our algorithm finds the best carrier for your route.",
+  customIcon: <SmartMatchIcon />,
+  route: "/vetting",
+},
+// ...
+{
+  title: "FMCSA Verified",
+  desc: "Real-time safety data checks from official databases.",
+  customIcon: <FMCSAVerifiedIcon />,
+  route: "/vetting",
+},
 ```
 
-### Step 4: Reduce Spacing Between Subheadline and Mission Paragraph
+### Step 4: Update Imports
 
-**File: `src/pages/Index.tsx`** (line 1473)
+**File: `src/components/FeatureCarousel.tsx`**
 
-The subheadline uses `.tru-ai-steps-subtitle` which has `margin-bottom: 32px`. Override it inline to reduce spacing:
+Add new icon imports from lucide-react:
 
-Change from:
 ```tsx
-<p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none' }}>
-```
-To:
-```tsx
-<p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none', marginBottom: '8px' }}>
-```
-
-Also reduce the mission paragraph top margin in CSS (line 26278):
-```css
-margin: 0 0 8px 0;  /* Was: margin: 4px 0 8px 0 */
+import { X, Truck, MessageCircle, Sparkles, GitCompare, Star, ShieldCheck, BadgeCheck } from "lucide-react";
 ```
 
 ---
 
 ## Summary of Changes
 
-| File | Line(s) | Change |
-|------|---------|--------|
-| `src/pages/Index.tsx` | 1470 | Remove `tru-ai-gradient-text` class or add inline black color |
-| `src/pages/Index.tsx` | 1473 | Add `marginBottom: '8px'` to subheadline inline style |
-| `src/index.css` | 26269 | Change mission paragraph color to `hsl(var(--tm-ink))` |
-| `src/index.css` | 26278 | Reduce mission paragraph top margin to `0` |
-| `src/index.css` | ~26280 | Add scoped override for subtitle color inside Why TruMove card |
+| File | Change |
+|------|--------|
+| `src/components/FeatureCarousel.tsx` | Add `GitCompare`, `Star`, `ShieldCheck`, `BadgeCheck` imports |
+| `src/components/FeatureCarousel.tsx` | Create `SmartMatchIcon` component |
+| `src/components/FeatureCarousel.tsx` | Create `FMCSAVerifiedIcon` component |
+| `src/components/FeatureCarousel.tsx` | Update Smart Carrier Match to use `customIcon` |
+| `src/components/FeatureCarousel.tsx` | Update FMCSA Verified to use `customIcon` |
 
 ---
 
 ## Visual Result
 
-- **Title "Why TruMove?"**: All black text (no green gradient animation)
-- **Subheadline**: Black text instead of muted gray
-- **Mission paragraph**: Black text instead of muted gray  
-- **Spacing**: Tighter gap between subheadline and mission paragraph (reduced from ~36px to ~8px)
+- **Smart Carrier Match**: Shows a truck with matching/comparison arrows and a star, representing the algorithm finding the best carrier
+- **FMCSA Verified**: Shows a shield with checkmark badge, representing official government verification and safety
+- Both icons use the same gradient background styling as the Trudy AI icon for visual consistency
 
