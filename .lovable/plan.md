@@ -1,96 +1,130 @@
 
 
-# Add Empty State to InventoryShareModal Search
+# Strengthen Hero Card Shadows for Visual Impact
 
 ## Overview
-Add a friendly empty state message when searching for items in the InventoryShareModal returns no results. This provides clear feedback to users instead of showing a blank grid.
+Increase the shadow intensity across all hero cards (form card, feature cards, Why TruMove premium card, and Why TruMove compact card) to create more visual depth and pop.
 
 ---
 
-## Current State
+## Current Shadow Values
 
-The search filters items but shows nothing when no matches are found:
+| Card | Current Shadow |
+|------|----------------|
+| `.tru-form-card` | `0 1px 3px ink/0.04, 0 16px 48px ink/0.1` |
+| `.tru-hero-feature-card` (hover) | `0 12px 32px primary/0.18` |
+| `.tru-why-card-premium` | `0 4px 12px ink/0.08, 0 8px 32px primary/0.06` |
+| `.tru-why-card-compact` | `0 2px 12px ink/0.06` |
 
-```tsx
-// Lines 183-188
-const filteredItems = searchQuery.trim() 
-  ? roomItems.filter(item => 
-      item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  : roomItems;
-```
+---
 
-The grid/list views (lines 304-383) directly map over `filteredItems` without checking if the array is empty.
+## Proposed Stronger Shadows
+
+| Card | New Shadow |
+|------|------------|
+| `.tru-form-card` | `0 2px 6px ink/0.06, 0 20px 56px ink/0.14` |
+| `.tru-hero-feature-card` (hover) | `0 16px 40px primary/0.24` |
+| `.tru-why-card-premium` | `0 6px 16px ink/0.12, 0 12px 40px primary/0.10` |
+| `.tru-why-card-premium:hover` | `0 16px 48px primary/0.22, 0 6px 20px ink/0.14` |
+| `.tru-why-card-compact` | `0 4px 16px ink/0.10` |
 
 ---
 
 ## Changes Required
 
-### File: `src/pages/Book.tsx`
+### File: `src/index.css`
 
-**Lines 302-384** - Wrap the grid/list views with an empty state check:
+#### 1. `.tru-form-card` (line 7245-7248)
+**Before:**
+```css
+box-shadow:
+  0 1px 3px hsl(var(--tm-ink) / 0.04),
+  0 16px 48px hsl(var(--tm-ink) / 0.1),
+  0 0 0 1px hsl(var(--tm-ink) / 0.02);
+```
 
-```tsx
-{/* Item Grid */}
-<div className="flex-1 p-3 overflow-y-auto">
-  {filteredItems.length === 0 ? (
-    // Empty State
-    <div className="flex flex-col items-center justify-center h-full text-center py-8">
-      <Search className="w-8 h-8 text-slate-300 dark:text-slate-500 mb-3" />
-      <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-        No items found
-      </p>
-      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-        Try a different search term
-      </p>
-    </div>
-  ) : viewMode === 'grid' ? (
-    <div className="grid grid-cols-4 gap-2">
-      {/* ... existing grid items ... */}
-    </div>
-  ) : (
-    <div className="space-y-2">
-      {/* ... existing list items ... */}
-    </div>
-  )}
-</div>
+**After:**
+```css
+box-shadow:
+  0 2px 6px hsl(var(--tm-ink) / 0.06),
+  0 20px 56px hsl(var(--tm-ink) / 0.14),
+  0 0 0 1px hsl(var(--tm-ink) / 0.03);
+```
+
+#### 2. `.tru-hero-feature-card:hover` (line 6277)
+**Before:**
+```css
+box-shadow: 0 12px 32px hsl(var(--primary) / 0.18);
+```
+
+**After:**
+```css
+box-shadow: 0 16px 40px hsl(var(--primary) / 0.24);
+```
+
+#### 3. `.tru-why-card-premium` (lines 26087-26089)
+**Before:**
+```css
+box-shadow: 
+  0 4px 12px hsl(var(--tm-ink) / 0.08),
+  0 8px 32px hsl(var(--primary) / 0.06);
+```
+
+**After:**
+```css
+box-shadow: 
+  0 6px 16px hsl(var(--tm-ink) / 0.12),
+  0 12px 40px hsl(var(--primary) / 0.10);
+```
+
+#### 4. `.tru-why-card-premium:hover` (lines 26095-26097)
+**Before:**
+```css
+box-shadow: 
+  0 12px 40px hsl(var(--primary) / 0.15),
+  0 4px 16px hsl(var(--tm-ink) / 0.1);
+```
+
+**After:**
+```css
+box-shadow: 
+  0 16px 48px hsl(var(--primary) / 0.22),
+  0 6px 20px hsl(var(--tm-ink) / 0.14);
+```
+
+#### 5. `.tru-why-card-compact` (lines 27446-27448)
+**Before:**
+```css
+box-shadow: 
+  0 2px 12px hsl(var(--tm-ink) / 0.06),
+  inset 0 1px 0 hsl(0 0% 100% / 0.6);
+```
+
+**After:**
+```css
+box-shadow: 
+  0 4px 16px hsl(var(--tm-ink) / 0.10),
+  inset 0 1px 0 hsl(0 0% 100% / 0.6);
 ```
 
 ---
 
 ## Visual Result
 
-**Before (empty search):**
-```
-┌─────────────────────────────┐
-│ 🔍 Search: "piano"          │
-├─────────────────────────────┤
-│                             │
-│         (blank)             │
-│                             │
-└─────────────────────────────┘
-```
-
-**After (empty search):**
-```
-┌─────────────────────────────┐
-│ 🔍 Search: "piano"          │
-├─────────────────────────────┤
-│                             │
-│           🔍                │
-│     No items found          │
-│  Try a different search     │
-│                             │
-└─────────────────────────────┘
-```
+The cards will have deeper, more pronounced shadows that:
+- Create more visual separation from the background
+- Increase the "floating" effect for a modern, elevated look
+- Enhance hover interactions with stronger lift shadows
 
 ---
 
 ## Summary
 
-| File | Change |
-|------|--------|
-| `src/pages/Book.tsx` | Add empty state conditional before grid/list views (around line 303) |
-
-The empty state uses existing icons (`Search` from lucide-react) and matches the modal's styling conventions with appropriate dark mode support.
+| File | Lines | Change |
+|------|-------|--------|
+| `src/index.css` | 7245-7248 | Stronger form card shadow |
+| `src/index.css` | 6277 | Stronger feature card hover shadow |
+| `src/index.css` | 26087-26089 | Stronger Why TruMove premium card shadow |
+| `src/index.css` | 26095-26097 | Stronger Why TruMove premium hover shadow |
+| `src/index.css` | 27446-27448 | Stronger Why TruMove compact card shadow |
 
