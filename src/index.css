@@ -26125,25 +26125,34 @@
 .tru-hero-header-section.tru-hero-header-refined::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    hsl(0 0% 0% / 0.35) 0%,
-    hsl(0 0% 0% / 0.20) 100%
+  /* Expand beyond container for seamless edge fade */
+  inset: -40px -60px;
+  background: radial-gradient(
+    ellipse 70% 80% at 50% 50%,
+    hsl(0 0% 0% / 0.25) 0%,
+    hsl(0 0% 0% / 0.15) 30%,
+    hsl(0 0% 0% / 0.05) 60%,
+    transparent 85%
   );
-  border-radius: 16px;
   z-index: -1;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  /* Ultra-soft edge mask - fades to nothing */
   -webkit-mask-image: radial-gradient(
     ellipse 100% 100% at 50% 50%,
-    black 60%,
-    transparent 100%
+    black 0%,
+    black 20%,
+    rgba(0,0,0,0.5) 50%,
+    transparent 80%
   );
   mask-image: radial-gradient(
     ellipse 100% 100% at 50% 50%,
-    black 60%,
-    transparent 100%
+    black 0%,
+    black 20%,
+    rgba(0,0,0,0.5) 50%,
+    transparent 80%
   );
+  pointer-events: none;
 }
 
 /* Removed ::before pseudo-element - no grey box behind headline */
