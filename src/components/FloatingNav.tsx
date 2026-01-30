@@ -5,6 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import logoImg from "@/assets/logo.png";
 
 interface FloatingNavProps {
   onChatOpen?: () => void;
@@ -101,6 +102,22 @@ export default function FloatingNav({ onChatOpen, iconsOnly = false }: FloatingN
 
   return (
     <nav className={`tru-static-nav-menu ${iconsOnly ? 'icons-only' : ''}`}>
+      {/* TruMove Logo at top */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link to="/" className="tru-static-nav-logo" aria-label="TruMove Home">
+            <img src={logoImg} alt="TruMove" />
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent 
+          side="left" 
+          className="bg-card border border-border text-foreground text-xs font-medium px-3 py-1.5"
+        >
+          Home
+        </TooltipContent>
+      </Tooltip>
+      
+      {/* Navigation items */}
       {navItems.map(renderNavItem)}
     </nav>
   );
