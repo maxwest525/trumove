@@ -178,9 +178,6 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
 
   return (
     <div className="tru-move-summary-modal" ref={ref}>
-      {/* Top Accent Stripe */}
-      <div className="tru-move-summary-accent" />
-      
       {/* Close Button */}
       {onClose && (
         <button 
