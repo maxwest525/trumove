@@ -1466,11 +1466,11 @@ export default function Index() {
               >
                 <div className="tru-why-card-premium-glow" />
                 <div className="tru-why-card-premium-content">
-                  <h3 className="tru-ai-steps-title" style={{ fontSize: '24px', marginBottom: '8px' }}>
-                    Why <span className="tru-ai-gradient-text">TruMove</span>?
+                  <h3 className="tru-ai-steps-title" style={{ fontSize: '24px', marginBottom: '8px', color: 'hsl(var(--tm-ink))' }}>
+                    Why TruMove?
                   </h3>
                   <div className="tru-ai-accent-line" style={{ marginBottom: '6px' }} />
-                  <p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none' }}>
+                  <p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none', marginBottom: '8px' }}>
                     Skip the van line middleman. Get matched with vetted carriers who compete for your business.
                   </p>
                   
