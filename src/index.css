@@ -26130,9 +26130,9 @@
   inset: -40px -60px;
   background: radial-gradient(
     ellipse 70% 80% at 50% 50%,
-    hsl(0 0% 0% / 0.25) 0%,
-    hsl(0 0% 0% / 0.15) 30%,
-    hsl(0 0% 0% / 0.05) 60%,
+    hsl(0 0% 0% / 0.38) 0%,
+    hsl(0 0% 0% / 0.25) 30%,
+    hsl(0 0% 0% / 0.10) 60%,
     transparent 85%
   );
   z-index: -1;
