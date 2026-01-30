@@ -1280,41 +1280,46 @@ export default function Index() {
                     Skip the van line middleman. Get matched with vetted carriers who compete for your business.
                   </p>
                   
-                  {/* Mission Paragraph */}
-                  <p className="tru-why-mission-paragraph">
+                  {/* Mission Paragraph - Larger font */}
+                  <p className="tru-why-mission-paragraph tru-why-mission-large">
                     We built TruMove to cut through the complexity of the moving industry. Using AI-powered inventory scanning and live video consultations, we understand your move better than anyone. Then we vet carriers through verified FMCSA and DOT safety databases to match you with movers you can actually trust.
                   </p>
                   
-                  {/* Feature Grid - 2x3 */}
-                  <div className="tru-why-feature-grid-premium">
-                    {whyTruMoveFeatures.map((feature, index) => (
-                      <HoverCard key={feature.id} openDelay={100} closeDelay={100}>
-                        <HoverCardTrigger asChild>
-                          <div 
-                            className="tru-why-feature-cell-premium feature-row-enter"
-                            style={{ '--stagger-index': index } as React.CSSProperties}
-                          >
-                            <div className="tru-why-feature-icon-premium">
-                              <feature.icon className="w-5 h-5" />
+                  {/* Inline 2-Card Feature Carousel */}
+                  <div className="tru-why-inline-carousel">
+                    <Carousel
+                      opts={{ align: "start", loop: true }}
+                      className="tru-why-carousel"
+                    >
+                      <CarouselContent className="tru-why-carousel-content">
+                        {[
+                          { title: "Smart Carrier Match", desc: "Our algorithm finds the best carrier for your route.", image: previewCarrierVetting, route: "/vetting" },
+                          { title: "TruMove Specialist", desc: "Live video consultation for personalized guidance.", image: previewVideoConsult, route: "/book" },
+                          { title: "Inventory Builder", desc: "Build your item list room by room for accurate pricing.", image: previewAiScanner, route: "/online-estimate" },
+                          { title: "AI Room Scanner", desc: "Point your camera and AI detects furniture instantly.", image: sampleRoomLiving, route: "/scan-room" },
+                        ].map((feature, index) => (
+                          <CarouselItem key={index} className="tru-why-carousel-item basis-1/2">
+                            <div 
+                              className="tru-why-carousel-card"
+                              onClick={() => navigate(feature.route)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => e.key === 'Enter' && navigate(feature.route)}
+                            >
+                              <div className="tru-why-carousel-card-text">
+                                <h4 className="tru-why-carousel-card-title">{feature.title}</h4>
+                                <p className="tru-why-carousel-card-desc">{feature.desc}</p>
+                              </div>
+                              <div className="tru-why-carousel-card-image">
+                                <img src={feature.image} alt={feature.title} />
+                              </div>
                             </div>
-                            <span className="tru-why-feature-label-premium">{feature.title}</span>
-                          </div>
-                        </HoverCardTrigger>
-                        <HoverCardContent 
-                          side="top" 
-                          className="tru-why-feature-hover-card w-64 p-4"
-                          sideOffset={8}
-                        >
-                          <div className="flex flex-col gap-2">
-                            <div className="flex items-center gap-2">
-                              <feature.icon className="w-4 h-4 text-primary" />
-                              <span className="font-semibold text-sm">{feature.title}</span>
-                            </div>
-                            <p className="text-xs text-muted-foreground leading-relaxed">{feature.hoverTip}</p>
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
-                    ))}
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className="tru-why-carousel-prev" />
+                      <CarouselNext className="tru-why-carousel-next" />
+                    </Carousel>
                   </div>
                   
                   {/* Trust Badges */}
