@@ -1,86 +1,87 @@
 
-# Fix: Remove Opaque/Semi-Transparent Box Around Hero "Your Move. Your Terms." Card
 
-## Problem Root Cause Identified
+# Fix Hero Card Background + Expand Carousel Features + Add Smooth Animations
 
-After extensive investigation and taking a browser screenshot, I found the **actual** source of the transparent box:
+## Problems Identified
 
-The `.tru-why-card-premium` class has a gradient background that transitions between `--background` and `--muted`:
+1. **Card Background Issue**: Making `.tru-why-card-premium` fully transparent removed the visual container. The text is now floating on the hero image without any definition, making it hard to read.
 
-```css
-background: linear-gradient(135deg, 
-  hsl(var(--background)) 0%, 
-  hsl(var(--muted)) 50%,
-  hsl(var(--background)) 100%
-);
-```
+2. **Missing Features**: The hero carousel only has 4 features:
+   - Smart Carrier Match
+   - TruMove Specialist  
+   - Inventory Builder
+   - AI Room Scanner
 
-In light mode:
-- `--background` = white
-- `--muted` = 210 40% 96.1% (very light grey)
+   But the full FeatureCarousel has 6 features (plus you want to add TruDy):
+   - Inventory Builder
+   - AI Room Scanner
+   - Shipment Tracking (missing from hero)
+   - Smart Carrier Match
+   - TruMove Specialist
+   - FMCSA Verified (missing from hero)
+   - **TruDy AI Assistant** (new feature to add)
 
-This creates a **visible white/grey gradient box** with `border-radius: 20px` that stands out against the hero background image, creating the "transparent box" artifact you're seeing.
+3. **No Smooth Transitions**: Carousel snaps between slides without smooth animation
 
 ## Solution
 
-Replace the gradient background with a **fully transparent background** and rely on just a subtle border to define the card boundaries. The card content is already readable on its own.
-
-### CSS Changes (src/index.css)
-
-**Line ~25337-25352** - Change `.tru-why-card-premium`:
+### 1. Restore Card Background with Semi-Transparent Blur
+Instead of fully transparent OR fully opaque, use a **frosted glass effect** that maintains readability while letting the hero show through:
 
 ```css
 .tru-why-card-premium {
-  position: relative;
-  background: transparent;  /* REMOVE gradient, make fully transparent */
-  border: 1px solid hsl(var(--tm-ink) / 0.15);  /* Subtle border for definition */
+  background: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 20px;
-  overflow: hidden;
-  box-shadow: none;  /* REMOVE shadows that create the box effect */
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
 }
 ```
 
-Also remove the glow element that adds extra visual weight:
+### 2. Add All 7 Features to Hero Carousel
+Update the features array in Index.tsx to include all features:
 
-**Line ~25354-25362** - Change `.tru-why-card-premium-glow`:
+| Feature | Description | Image | Route |
+|---------|-------------|-------|-------|
+| Smart Carrier Match | Algorithm finds best carrier | previewCarrierVetting | /vetting |
+| TruMove Specialist | Live video consultation | previewVideoConsult | /book |
+| Inventory Builder | Room by room item list | previewAiScanner | /online-estimate |
+| AI Room Scanner | Camera detects furniture | sampleRoomLiving | /scan-room |
+| Shipment Tracking | Real-time live updates | previewPropertyLookup | /track |
+| FMCSA Verified | Safety data checks | scanRoomPreview | /vetting |
+| **TruDy AI Assistant** | Virtual moving assistant | trudyAvatar | /chat |
+
+### 3. Add Smooth Carousel Transition Animation
+Configure Embla carousel with smooth CSS transitions:
 
 ```css
-.tru-why-card-premium-glow {
-  display: none;  /* Hide the glow overlay */
+.tru-why-carousel-content {
+  transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.tru-why-carousel-item {
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 ```
 
-**Dark mode override (~line 26447-26458)** - Ensure dark mode also uses transparent:
-
-```css
-.dark .tru-why-card-premium {
-  background: transparent;
-  border-color: hsl(0 0% 100% / 0.1);
-  box-shadow: none;
-}
-```
+Also update the carousel options to use smoother scrolling behavior.
 
 ---
 
 ## Technical Details
 
 ### Files to Modify
-- `src/index.css` (3 locations)
+1. `src/index.css` - Restore frosted glass background, add carousel transitions
+2. `src/pages/Index.tsx` - Expand features array to 7 items, add TruDy
 
-### Implementation Steps
-1. Remove gradient background from `.tru-why-card-premium`, replace with `transparent`
-2. Remove box-shadow and inset-shadow that contribute to the box effect  
-3. Hide the `.tru-why-card-premium-glow` radial gradient overlay
-4. Update dark mode override to also use transparent background
-5. Keep a subtle border for visual definition if needed
+### CSS Changes Summary
+- `.tru-why-card-premium`: Semi-transparent background (85% opacity) with backdrop blur
+- `.tru-why-carousel-content`: Smooth transform transition
+- `.tru-why-carousel-item`: Opacity and scale transitions for polish
 
-### Visual Result
-The "Your Move. Your Terms." content will appear to float directly over the hero background image, without any visible white/grey box container around it. The text and feature carousel cards inside will still be clearly visible due to their own backgrounds.
+### Result
+- Hero card will have a subtle frosted glass effect - readable but not a solid opaque box
+- Carousel will cycle through all 7 features with smooth animations
+- TruDy AI Assistant will be prominently featured in the carousel
 
-### Alternative Approach (if content becomes hard to read)
-If removing the background makes text hard to read, we can add a very subtle backdrop blur with minimal opacity:
-```css
-background: hsl(var(--background) / 0.3);
-backdrop-filter: blur(8px);
-```
-But this was previously causing the artifact, so transparent is safer.
