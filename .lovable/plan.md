@@ -1,85 +1,151 @@
 
-# Add Visual Separator Between Action Buttons and Agent Login
+# Add Smooth Scroll Snap Behavior to Feature Carousel
 
 ## Goal
 
-Add a subtle vertical divider between the main header actions (Call, Theme Toggle) and the Agent Login button to create visual separation between the utility actions and the login CTA.
+Enhance the feature carousel with smoother, more refined scroll snap behavior that feels premium and responsive.
 
 ---
 
-## Approach
+## Current State
 
-Since the Agent Login button is absolutely positioned outside the header-inner container, I'll add a `::before` pseudo-element to the `.header-btn-agent` that creates a subtle vertical line to its left. This approach:
+The carousel uses Embla Carousel with these options:
+```javascript
+opts={{ align: "start", loop: true, dragFree: false, duration: 30, skipSnaps: false }}
+```
 
-- Keeps the separator tied to the Agent Login button
-- Automatically hides when the button hides on mobile
-- Maintains proper positioning without extra DOM elements
+- `dragFree: false` - Already snaps to slides
+- `skipSnaps: false` - Doesn't skip snap points during fast scrolling
+- `duration: 30` - Animation duration (relatively fast)
 
 ---
 
 ## Implementation
 
-### File: `src/index.css`
+### 1. Enhance Embla Options (FeatureCarousel.tsx)
 
-#### Add pseudo-element divider to Agent Login button (after line 11417)
+Update the carousel options for smoother snapping:
+
+| Option | Current | New | Effect |
+|--------|---------|-----|--------|
+| `duration` | 30 | 25 | Slightly faster snap animation for snappier feel |
+| `dragThreshold` | (default) | 10 | Lower threshold for more responsive drag detection |
+| `inViewThreshold` | (default) | 0.7 | Cards become "active" when 70% visible |
+
+### 2. Add CSS Scroll Snap Properties (index.css)
+
+Add native CSS scroll snap as a progressive enhancement for touch devices:
 
 ```css
-/* Subtle divider before Agent Login */
-.header-btn-agent::before {
-  content: '';
-  position: absolute;
-  left: -16px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1px;
-  height: 24px;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    hsl(var(--tm-ink) / 0.15) 20%,
-    hsl(var(--tm-ink) / 0.15) 80%,
-    transparent 100%
-  );
+/* Scroll snap enhancement */
+.features-carousel-container {
+  scroll-behavior: smooth;
 }
 
-.dark .header-btn-agent::before {
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    hsl(0 0% 100% / 0.12) 20%,
-    hsl(0 0% 100% / 0.12) 80%,
-    transparent 100%
-  );
+.features-carousel-content {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.features-carousel-item {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+```
+
+### 3. Add Smooth Deceleration Animation (index.css)
+
+Add a subtle animation class that Embla applies during settling:
+
+```css
+/* Smooth scroll deceleration */
+.features-carousel-content {
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 ```
 
 ---
 
-## Design Details
+## Technical Details
 
-| Property | Value | Rationale |
-|----------|-------|-----------|
-| Width | 1px | Subtle, non-intrusive line |
-| Height | 24px | Roughly matches button height without spanning full header |
-| Position | 16px left of button | Creates breathing room between divider and button |
-| Gradient fade | 20%-80% opacity | Soft edges that blend into the header, no harsh endpoints |
-| Light mode opacity | 15% | Visible but subtle |
-| Dark mode opacity | 12% | Slightly softer for dark backgrounds |
+### File Changes
+
+| File | Change |
+|------|--------|
+| `src/components/FeatureCarousel.tsx` | Update Embla opts with refined duration and thresholds |
+| `src/index.css` | Add CSS scroll-snap properties and smooth transitions |
+
+### Embla + CSS Scroll Snap
+
+Embla Carousel handles its own snapping via JavaScript transforms, but adding CSS scroll-snap properties provides:
+- Native momentum scrolling on touch devices
+- Fallback behavior if JavaScript is delayed
+- Smoother feel on mobile Safari/iOS
 
 ---
 
 ## Summary of Changes
 
-| File | Lines | Change |
-|------|-------|--------|
-| `src/index.css` | After 11417 | Add `::before` pseudo-element with vertical gradient line |
-| `src/index.css` | After dark mode rule | Add dark mode variant for divider color |
+### File: `src/components/FeatureCarousel.tsx`
+
+**Line 140**: Update carousel options
+
+```javascript
+// Before
+opts={{ align: "start", loop: true, dragFree: false, duration: 30, skipSnaps: false }}
+
+// After
+opts={{ 
+  align: "start", 
+  loop: true, 
+  dragFree: false, 
+  duration: 25, 
+  skipSnaps: false,
+  dragThreshold: 10,
+  inViewThreshold: 0.7
+}}
+```
+
+### File: `src/index.css`
+
+**After line 16682** (inside `.features-carousel-content`): Add scroll snap and smooth transition
+
+```css
+.features-carousel-content {
+  display: flex;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 8px 24px 8px 8px;
+  /* Smooth scroll snap enhancement */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+```
+
+**After line 16693** (inside `.features-carousel-item`): Add scroll snap alignment
+
+```css
+.features-carousel-item {
+  flex: 0 0 25% !important;
+  min-width: 0;
+  padding: 0 8px !important;
+  margin: 0 !important;
+  position: relative;
+  overflow: visible !important;
+  box-sizing: border-box;
+  z-index: 1;
+  /* Scroll snap point */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+```
 
 ---
 
 ## Expected Result
 
-- A subtle vertical line appears between the main action cluster and Agent Login
-- The line has soft faded edges (gradient) that blend into the header
-- Automatically hidden on mobile when Agent Login button is hidden
-- Consistent appearance in both light and dark modes
+- Cards snap smoothly to position with refined animation timing
+- Touch scrolling feels native with momentum deceleration
+- Faster, more responsive drag detection
+- Cards register as "active" sooner for better visual feedback
+- Mobile experience enhanced with native scroll-snap fallback
