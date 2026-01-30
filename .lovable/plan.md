@@ -1,59 +1,43 @@
 
 
-# Allow Demo AI Analysis Without Contact Info Requirement
+# Remove "Powered by AI" Pill from AI Inventory Analysis Section
 
 ## Overview
-Remove the lead capture gating from the "Demo AI Analysis" button on the homepage so users can experience the AI inventory analysis demo without entering their personal information first.
+Remove the "Powered by AI" header badge pill from the AI Inventory Analysis section on the homepage.
 
 ---
 
-## Current Behavior
-- Clicking "Demo AI Analysis" triggers `handleInventoryClick("ai")`
-- This function checks if user has provided contact info (name, email, phone)
-- If no contact info exists, it opens the lead capture modal
-- User must enter info before being allowed to navigate to `/scan-room`
-
-## Target Behavior
-- Clicking "Demo AI Analysis" navigates directly to `/scan-room`
-- No lead capture modal required for the demo
-- "Build Inventory Manually" can optionally keep the gating (or also be ungated)
-
----
-
-## Changes Required
-
-### File: `src/pages/Index.tsx`
-
-#### Option 1: Simple Direct Navigation (Recommended)
-Change the "Demo AI Analysis" button to navigate directly instead of using `handleInventoryClick`:
-
-**Line ~1567-1575** - Update the button onClick:
+## Current State
+The section has a header badge displaying "Powered by AI" with a sparkles icon:
 ```tsx
-{/* Before */}
-<button 
-  type="button"
-  onClick={() => handleInventoryClick("ai")}
-  className="tru-ai-start-btn"
->
-
-{/* After */}
-<button 
-  type="button"
-  onClick={() => navigate("/scan-room")}
-  className="tru-ai-start-btn"
->
+{/* Header Badge */}
+<div className="tru-ai-header-badge">
+  <Sparkles className="w-4 h-4" />
+  <span>Powered by AI</span>
+</div>
 ```
 
-#### Option 2: Also Ungate Manual Builder (if desired)
-Similarly update the "Build Inventory Manually" button:
+## Target State
+Remove the entire badge element. The section will still have:
+- Gradient header ("AI Inventory Analysis")
+- Accent line
+- Subtitle
+- All other content
 
-**Line ~1607-1614**:
+---
+
+## Change Required
+
+**File:** `src/pages/Index.tsx` (lines 1534-1538)
+
+Delete the header badge block:
 ```tsx
-{/* Before */}
-onClick={() => handleInventoryClick("manual")}
-
-{/* After */}
-onClick={() => navigate("/online-estimate")}
+{/* DELETE THIS BLOCK */}
+{/* Header Badge */}
+<div className="tru-ai-header-badge">
+  <Sparkles className="w-4 h-4" />
+  <span>Powered by AI</span>
+</div>
 ```
 
 ---
@@ -62,7 +46,7 @@ onClick={() => navigate("/online-estimate")}
 
 | Change | Effect |
 |--------|--------|
-| Direct navigation for AI demo | Users can click "Demo AI Analysis" and go straight to the scan room |
-| No lead capture modal | Removes friction for experiencing the demo |
-| Contact info collected later | Users can still be prompted on the actual scan page if needed |
+| Remove badge element | Cleaner section header with just the gradient title |
+| Keep gradient header | "AI Inventory Analysis" title remains prominent |
+| Keep accent line | Visual separator still present |
 
