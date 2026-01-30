@@ -1,60 +1,79 @@
 
 
-# Make Hero Backdrop Lighter & Tighter
+# Update Trudy Images for Video Conference Call Look
 
 ## Overview
-Further reduce the backdrop opacity to 35%/20% and decrease padding to make the box fit more snugly around the headline text.
+Generate a new AI image of Trudy that looks like she's on a professional video conference call, then update both the feature carousel preview and the demo video call screen to use this new image.
 
 ---
 
 ## Current State
 
-| Property | Current Value |
-|----------|---------------|
-| Background opacity | `45%` → `30%` (top to bottom gradient) |
-| Padding | `32px 56px 40px` (top, horizontal, bottom) |
+| Location | File | Current Image | Usage |
+|----------|------|---------------|-------|
+| Feature Carousel | `src/components/FeatureCarousel.tsx` | `preview-video-consult.jpg` | "TruMove Specialist" card preview |
+| Index Page Carousel | `src/pages/Index.tsx` | `previewVideoConsult` | Same carousel on home page |
+| Video Call Demo | `src/pages/Book.tsx` | `trudy-model.jpg` | Full-screen fake agent view |
 
 ---
 
-## Proposed Changes
+## Implementation Plan
 
-### File: `src/index.css`
+### Step 1: Generate New Video Call Image
 
-**1. Make backdrop lighter (lines 25917-25921):**
+Use AI image generation to create an image of a professional woman (Trudy) that looks like she's on a video conference call:
 
-Reduce opacity from 45%/30% to 35%/20%:
+- Professional headshot style, webcam-angle framing
+- Business casual attire
+- Warm, friendly expression
+- Blurred home office or professional background
+- Natural lighting like from a webcam/laptop screen
 
-```css
-background: linear-gradient(
-  180deg,
-  hsl(0 0% 0% / 0.35) 0%,
-  hsl(0 0% 0% / 0.20) 100%
-);
+The generated image will be saved to the project assets.
+
+---
+
+### Step 2: Update File References
+
+**File: `src/pages/Book.tsx`**
+
+Update the `FakeAgentView` component to use the new video call image:
+
+```tsx
+// Line 37: Replace trudyModel with the new image
+<img 
+  src={trudyVideoCall}  // New import
+  alt="Trudy Martinez" 
+  className="w-full h-full object-cover"
+/>
 ```
 
-**2. Tighten padding around text (line 25907):**
+**File: `src/components/FeatureCarousel.tsx`**
 
-Reduce padding to bring the box edges closer to the words:
+Update the "TruMove Specialist" feature to use the new image:
 
-```css
-/* From */
-padding: 32px 56px 40px;
+```tsx
+// Line 41: Replace previewVideoConsult with new image
+{
+  title: "TruMove Specialist",
+  desc: "Live video consultation for personalized guidance.",
+  image: trudyVideoCall,  // New image
+  route: "/book",
+}
+```
 
-/* To */
-padding: 20px 36px 24px;
+**File: `src/pages/Index.tsx`**
+
+Update the inline carousel to use the new image:
+
+```tsx
+// Line 1505: Replace previewVideoConsult
+{ title: "TruMove Specialist", desc: "Live video consultation for personalized guidance.", image: trudyVideoCall, route: "/book", action: "navigate" as const }
 ```
 
 ---
 
 ## Result
 
-| Property | Before | After |
-|----------|--------|-------|
-| Top opacity | 45% | 35% |
-| Bottom opacity | 30% | 20% |
-| Top padding | 32px | 20px |
-| Horizontal padding | 56px | 36px |
-| Bottom padding | 40px | 24px |
-
-The backdrop will be more transparent, allowing more of the hero image to show through, and the box will wrap more tightly around the headline text, reducing approximately 40px of total dead space.
+Both the preview card and the demo will show Trudy in a consistent video conference call appearance, making the experience feel more cohesive and realistic.
 
