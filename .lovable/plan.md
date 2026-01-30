@@ -10,8 +10,8 @@ Move the black stats strip from its current position (after AI Inventory Analysi
 ## Current Layout Order
 
 1. Hero Section (ends at line 1541)
-2. AI Inventory Analysis Section
-3. **StatsStrip** (currently here - line 1626)
+2. AI Inventory Analysis Section (lines 1544-1623)
+3. **StatsStrip** (currently here - lines 1625-1626)
 4. Consult Section
 
 ## New Layout Order
@@ -27,9 +27,9 @@ Move the black stats strip from its current position (after AI Inventory Analysi
 
 ### File: `src/pages/Index.tsx`
 
-**1. Remove StatsStrip from current position (line 1625-1626):**
+**1. Remove StatsStrip from current position (lines 1625-1626):**
 
-Delete:
+Delete these lines:
 ```tsx
 {/* BLACK STATS STRIP - Section Divider */}
 <StatsStrip />
@@ -37,21 +37,23 @@ Delete:
 
 **2. Add StatsStrip between hero and AI section (after line 1541):**
 
-After `</div> {/* End tru-hero-wrapper */}`:
+Insert after the hero wrapper closing tag:
 ```tsx
-</div> {/* End tru-hero-wrapper */}
+      </div> {/* End tru-hero-wrapper */}
 
-{/* BLACK STATS STRIP - Section Divider */}
-<StatsStrip />
+      {/* BLACK STATS STRIP - Section Divider */}
+      <StatsStrip />
 
-{/* START YOUR AI INVENTORY ANALYSIS ... */}
+      {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
 ```
 
 ---
 
 ### File: `src/index.css`
 
-**Adjust spacing between stats strip items (line 28629):**
+**Adjust spacing between stats strip items (line 28621):**
+
+Change gap from 16px to 28px for better visual separation:
 
 Current:
 ```css
@@ -60,14 +62,12 @@ Current:
 }
 ```
 
-Updated to wider spacing:
+Updated:
 ```css
 .stats-strip-inner {
   gap: 28px;
 }
 ```
-
-This increases the gap from 16px to 28px for better visual separation between the 6 stat items.
 
 ---
 
@@ -77,7 +77,7 @@ This increases the gap from 16px to 28px for better visual separation between th
 |------|---------|--------|
 | `src/pages/Index.tsx` | 1541 | Add `<StatsStrip />` after hero wrapper closing div |
 | `src/pages/Index.tsx` | 1625-1626 | Remove `<StatsStrip />` from after AI section |
-| `src/index.css` | 28629 | Change gap from `16px` to `28px` |
+| `src/index.css` | 28621 | Change gap from `16px` to `28px` |
 
 The stats strip will now appear as a visual divider between the hero and the AI Inventory Analysis section, with wider spacing between items for improved readability.
 
