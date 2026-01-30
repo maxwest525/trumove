@@ -16624,7 +16624,7 @@
   display: flex;
   margin-left: 0 !important;
   margin-right: 0 !important;
-  padding: 8px;  /* Minimal padding - overflow handled by :has() on parent */
+  padding: 8px 24px 8px 8px;  /* Extra right padding for scaled cards */
 }
 
 /* 4 cards visible - 25% each, padding creates gaps */
@@ -26235,7 +26235,7 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid transparent;
   border-radius: 20px;
-  overflow: hidden;  /* Clip content in normal state */
+  overflow: visible;  /* Allow carousel cards to expand on hover */
   box-shadow: 
     0 6px 16px hsl(var(--tm-ink) / 0.12),
     0 12px 40px hsl(var(--primary) / 0.10);
@@ -26263,6 +26263,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow: hidden;
+  border-radius: 16px;
 }
 
 .tru-why-title-premium {
