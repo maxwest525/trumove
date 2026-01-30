@@ -11316,6 +11316,7 @@
   justify-content: flex-end;
   gap: 10px;
   margin-left: auto;
+  padding-right: 140px; /* Space for Agent Login + divider */
 }
 
 .header-btn {
