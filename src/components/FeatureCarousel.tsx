@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogClose, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { X, Truck, MessageCircle, Sparkles, GitCompare, Star, ShieldCheck, BadgeCheck } from "lucide-react";
+import { X, Truck, MessageCircle, Sparkles } from "lucide-react";
 
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -35,26 +35,6 @@ const TruckChatIcon = () => (
   </div>
 );
 
-// Smart Carrier Match icon - truck with matching/comparison visual
-const SmartMatchIcon = () => (
-  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
-    <div className="relative flex items-center gap-2">
-      <Truck className="w-10 h-10 text-foreground" />
-      <GitCompare className="w-8 h-8 text-primary" />
-      <Star className="w-6 h-6 text-primary fill-primary/30 absolute -top-2 right-0" />
-    </div>
-  </div>
-);
-
-// FMCSA Verified icon - shield with verification badge
-const FMCSAVerifiedIcon = () => (
-  <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
-    <div className="relative">
-      <ShieldCheck className="w-16 h-16 text-foreground" />
-      <BadgeCheck className="w-6 h-6 text-primary absolute -bottom-1 -right-1" />
-    </div>
-  </div>
-);
 
 const features: Feature[] = [
   {
@@ -78,7 +58,7 @@ const features: Feature[] = [
   {
     title: "Smart Carrier Match",
     desc: "Our algorithm finds the best carrier for your route.",
-    customIcon: <SmartMatchIcon />,
+    image: previewCarrierVetting,
     route: "/vetting",
   },
   {
@@ -90,7 +70,7 @@ const features: Feature[] = [
   {
     title: "FMCSA Verified",
     desc: "Real-time safety data checks from official databases.",
-    customIcon: <FMCSAVerifiedIcon />,
+    image: previewCarrierVetting,
     route: "/vetting",
   },
   {
