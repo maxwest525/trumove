@@ -1314,21 +1314,21 @@ export default function Index() {
                     >
                       <CarouselContent className="tru-why-carousel-content">
                         {[
-                          { title: "Smart Carrier Match", desc: "Our algorithm finds the best carrier for your route.", image: previewCarrierVetting, route: "/vetting" },
-                          { title: "TruMove Specialist", desc: "Live video consultation for personalized guidance.", image: previewVideoConsult, route: "/book" },
-                          { title: "Inventory Builder", desc: "Build your item list room by room for accurate pricing.", image: previewAiScanner, route: "/online-estimate" },
-                          { title: "AI Room Scanner", desc: "Point your camera and AI detects furniture instantly.", image: sampleRoomLiving, route: "/scan-room" },
-                          { title: "Shipment Tracking", desc: "Track your shipment in real-time with live updates.", image: previewPropertyLookup, route: "/track" },
-                          { title: "FMCSA Verified", desc: "Real-time safety data checks from official databases.", image: scanRoomPreview, route: "/vetting" },
-                          { title: "TruDy AI Assistant", desc: "Your virtual moving assistant, available 24/7.", image: trudyAvatar, route: "/" },
+                          { title: "Smart Carrier Match", desc: "Our algorithm finds the best carrier for your route.", image: previewCarrierVetting, route: "/vetting", action: "navigate" as const },
+                          { title: "TruMove Specialist", desc: "Live video consultation for personalized guidance.", image: previewVideoConsult, route: "/book", action: "navigate" as const },
+                          { title: "Inventory Builder", desc: "Build your item list room by room for accurate pricing.", image: previewAiScanner, route: "/online-estimate", action: "navigate" as const },
+                          { title: "AI Room Scanner", desc: "Point your camera and AI detects furniture instantly.", image: sampleRoomLiving, route: "/scan-room", action: "navigate" as const },
+                          { title: "Shipment Tracking", desc: "Track your shipment in real-time with live updates.", image: previewPropertyLookup, route: "/track", action: "navigate" as const },
+                          { title: "FMCSA Verified", desc: "Real-time safety data checks from official databases.", image: scanRoomPreview, route: "/vetting", action: "navigate" as const },
+                          { title: "TruDy AI Assistant", desc: "Your virtual moving assistant, available 24/7.", image: trudyAvatar, route: "", action: "openChat" as const },
                         ].map((feature, index) => (
                           <CarouselItem key={index} className="tru-why-carousel-item basis-1/2">
                             <div 
                               className="tru-why-carousel-card"
-                              onClick={() => navigate(feature.route)}
+                              onClick={() => feature.action === "openChat" ? setChatOpen(true) : navigate(feature.route)}
                               role="button"
                               tabIndex={0}
-                              onKeyDown={(e) => e.key === 'Enter' && navigate(feature.route)}
+                              onKeyDown={(e) => e.key === 'Enter' && (feature.action === "openChat" ? setChatOpen(true) : navigate(feature.route))}
                             >
                               <div className="tru-why-carousel-card-text">
                                 <h4 className="tru-why-carousel-card-title">{feature.title}</h4>
