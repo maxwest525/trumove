@@ -1259,7 +1259,7 @@ export default function Index() {
                   >
                     <Carousel
                       setApi={setHeroCarouselApi}
-                      opts={{ align: "start", loop: true }}
+                      opts={{ align: "start", loop: true, duration: 35 }}
                       className="tru-why-carousel"
                     >
                       <CarouselContent className="tru-why-carousel-content">
