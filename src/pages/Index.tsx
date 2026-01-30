@@ -224,11 +224,11 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
           </div>
         </div>
         
-        {/* Distance Badge - Green on Black */}
+        {/* Distance Badge - Green on Black - Only show when both cities entered */}
         <div className="tru-move-summary-distance">
           <Route className="w-4 h-4" />
           <span className="tru-move-summary-mileage">
-            {distance > 0 ? `${distance.toLocaleString()} mi` : "— mi"}
+            {fromCity && toCity && distance > 0 ? `${distance.toLocaleString()} mi` : "— mi"}
           </span>
         </div>
         
@@ -277,7 +277,7 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
           <CheckCircle className="w-3.5 h-3.5" />
           <span>Cities validated</span>
         </div>
-        <div className={`tru-move-summary-status-item ${distance > 0 ? 'is-complete' : ''}`}>
+        <div className={`tru-move-summary-status-item ${fromCity && toCity && distance > 0 ? 'is-complete' : ''}`}>
           <CheckCircle className="w-3.5 h-3.5" />
           <span>Distance calculated</span>
         </div>
@@ -1041,15 +1041,7 @@ export default function Index() {
               <div className="tru-hero-form-panel" ref={quoteBuilderRef}>
                 {/* TOP ROW: Form Card */}
                 <div className="tru-floating-form-card">
-                  {/* Progress Bar - no accent stripe */}
-                  
-                  {/* Progress Bar */}
-                  <div className="tru-form-progress-bar">
-                    <div 
-                      className="tru-form-progress-fill" 
-                      style={{ width: `${(step / 3) * 100}%` }}
-                    />
-                  </div>
+                  {/* Progress bar removed per user request */}
                   
                   <div className="tru-qb-form-header tru-qb-form-header-pill">
                     <div className="tru-qb-form-title-group">
