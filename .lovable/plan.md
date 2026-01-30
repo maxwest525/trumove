@@ -1,24 +1,38 @@
 
+# Fix Hero Card Border Visibility
 
-# Update Floating Pill Label
+## Problem
+The "Your Move. Your Terms" card on the right side of the hero has a visible border outline. Looking at line 25342 in `src/index.css`:
 
-## Change
-Update the floating chat button's primary label from "Trudy Move Helper" to "Trudy The Move Specialist".
+```css
+border: 1px solid hsl(var(--tm-ink) / 0.1);
+```
 
-## File to Modify
-- `src/components/FloatingTruckChat.tsx`
+This creates a subtle but visible border around the entire card.
+
+## Solution
+Remove or hide the border by setting it to `transparent` or `none`.
 
 ## Technical Details
 
-**Line 91** - Change the text label:
+### File to Modify
+- `src/index.css`
 
-```tsx
-// From:
-<span className="text-sm font-bold leading-tight text-background">Trudy Move Helper</span>
+### Change (Line 25342)
+```css
+/* From: */
+border: 1px solid hsl(var(--tm-ink) / 0.1);
 
-// To:
-<span className="text-sm font-bold leading-tight text-background">Trudy The Move Specialist</span>
+/* To: */
+border: none;
 ```
 
-This is a single line text change. The secondary label "AI Chat Assistance" will remain unchanged.
+This single line change will remove the visible border around the premium card while keeping all other styling (backdrop blur, shadow, rounded corners) intact.
 
+---
+
+## Alternative Options
+
+If you want to keep a very subtle border for definition, you could use a more transparent value:
+- `border: 1px solid hsl(var(--tm-ink) / 0.03);` - Almost invisible
+- `border: 1px solid transparent;` - Invisible but maintains spacing
