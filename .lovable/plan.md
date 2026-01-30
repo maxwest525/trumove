@@ -1,88 +1,76 @@
 
-# Fix AI Inventory Analysis Section
+# Make Move Summary Modal Float Over Why TruMove
 
 ## Overview
-Update the AI Inventory Analysis section with corrected button styling, text, and header content.
+Change the Move Summary Modal from being in document flow (pushing content down) to floating/overlaying on top of the Why TruMove card.
+
+---
+
+## Current Behavior
+- Move Summary Modal and Why TruMove card are stacked vertically in a flex column
+- When Move Summary appears, it pushes Why TruMove down by its height + 16px gap
+- The layout shifts when location data is entered
+
+## Target Behavior
+- Move Summary Modal floats/overlays on top of Why TruMove card
+- Why TruMove stays in a fixed position regardless of Move Summary visibility
+- Move Summary appears as a floating card positioned at the top of the stacked cards area
 
 ---
 
 ## Changes
 
-### 1. Update Header & Subheader Text
-**File:** `src/pages/Index.tsx` (lines 1503)
+### 1. Update Stacked Cards Container
+**File:** `src/index.css` (lines 25831-25835)
 
-Change:
-- Header: "Start Your AI Inventory Analysis" → **"AI Inventory Analysis"**
-- Add subheader: **"Take a video or pictures of your room and let us do the rest"**
-
-```tsx
-<h2 className="tru-ai-steps-title">AI Inventory Analysis</h2>
-<p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
-```
-
-### 2. Update Button Text
-**File:** `src/pages/Index.tsx` (lines 1506-1514)
-
-Change button text from "Start AI Analysis" → **"Demo AI Analysis"**
-
-```tsx
-<button 
-  type="button"
-  onClick={() => handleInventoryClick("ai")}
-  className="tru-ai-start-btn"
->
-  <Scan className="w-5 h-5" />
-  Demo AI Analysis
-  <ArrowRight className="w-4 h-4" />
-</button>
-```
-
-### 3. Fix Button Colors (Premium Dark Style)
-**File:** `src/index.css` (lines 2190-2210)
-
-Change from all-green to premium dark style (dark background with green glow):
+Add `position: relative` to serve as the positioning context for the floating modal:
 
 ```css
-/* Start AI Analysis Button - Premium Dark Style */
-.tru-ai-start-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 28px;
-  background: hsl(var(--foreground));
-  color: hsl(var(--background));
-  font-size: 15px;
-  font-weight: 700;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  margin: 0 auto 24px;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
-}
-
-.tru-ai-start-btn:hover {
-  background: hsl(var(--primary));
-  color: hsl(var(--foreground));
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px hsl(var(--primary) / 0.5);
+.tru-hero-stacked-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative; /* Add positioning context */
 }
 ```
 
-### 4. Add Subtitle Style
+### 2. Update Move Summary Modal Positioning
+**File:** `src/index.css` (lines 83-91)
+
+Make the modal absolutely positioned to float over content:
+
+```css
+.tru-move-summary-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.15);
+  animation: slideInRight 0.4s ease-out;
+  margin-bottom: 0; /* Remove margin since it's floating */
+}
+```
+
+### 3. Add Backdrop/Overlay Effect (Optional Enhancement)
 **File:** `src/index.css`
 
-Add styling for the new subtitle below the header:
+Add a subtle backdrop blur effect behind the floating modal for better visual separation:
 
 ```css
-.tru-ai-steps-subtitle {
-  font-size: 16px;
-  color: hsl(var(--muted-foreground));
-  text-align: center;
-  margin-bottom: 24px;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+.tru-move-summary-modal::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: hsl(var(--background) / 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 18px;
+  z-index: -1;
 }
 ```
 
@@ -92,14 +80,14 @@ Add styling for the new subtitle below the header:
 
 | Change | File | Description |
 |--------|------|-------------|
-| Update header text | `src/pages/Index.tsx` | "AI Inventory Analysis" |
-| Add subtitle | `src/pages/Index.tsx` | "Take a video or pictures..." |
-| Change button text | `src/pages/Index.tsx` | "Demo AI Analysis" |
-| Premium dark button | `src/index.css` | Dark bg, green hover/glow |
-| Subtitle styling | `src/index.css` | Centered muted text |
+| Add position: relative | `src/index.css` | Stacked cards container becomes positioning context |
+| Change to position: absolute | `src/index.css` | Move Summary floats instead of pushing content |
+| Add z-index: 10 | `src/index.css` | Ensure modal stays on top |
+| Remove margin-bottom | `src/index.css` | No longer needed for floating element |
+| Enhanced shadow | `src/index.css` | Stronger shadow for floating appearance |
 
 ## Visual Result
-- Header is shorter and cleaner: "AI Inventory Analysis"
-- Subtitle explains the feature in simple terms
-- Button has premium dark styling (black background, green glow)
-- On hover, button transitions to green with enhanced shadow
+- Why TruMove card stays in its original position
+- Move Summary Modal floats elegantly on top when location data is entered
+- The modal has a slightly stronger shadow to indicate it's floating
+- Layout is stable - no content shifting when modal appears/disappears
