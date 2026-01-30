@@ -1,70 +1,59 @@
 
-# Add Subtle Hover Scale Effect to Navigation Links
+
+# Move Agent Login to Far Right of Navigation Strip
 
 ## Goal
 
-Add a subtle scale transform on hover to the navigation header links for a more interactive, premium feel.
+Position the Agent Login button at the absolute far right edge of the navigation header, visually separated from the other action buttons (Call and Theme Toggle).
 
 ---
 
-## Current Implementation
+## Current Structure
 
-The `.header-nav-link` hover state (lines 11248-11254) currently has:
-- Color change to full opacity
-- Box-shadow glow effect
-- Transition of `all 200ms ease`
+The `.header-actions` container currently contains:
+1. Call button
+2. Theme Toggle
+3. `flex-1` spacer div
+4. Agent Login button
 
-The base `.header-nav-link` (line 11241) already has `transition: all 200ms ease` which will handle the scale animation.
+The spacer approach isn't working effectively because the `.header-actions` container has a fixed gap and already uses `justify-content: flex-end`.
 
 ---
 
 ## Implementation
 
-### File: `src/index.css`
+### Approach: Use `margin-left: auto` on Agent Login button
 
-#### Change: Add scale transform to hover state (lines 11248-11254)
+Remove the spacer div and apply `margin-left: auto` directly to the Agent Login button, which will push it to the far right within the flex container.
 
-```css
-/* Before */
-.header-nav-link:hover {
-  color: hsl(var(--tm-ink));
-  background: transparent;
-  box-shadow: 
-    0 0 12px hsl(var(--primary) / 0.35),
-    0 0 24px hsl(var(--primary) / 0.15);
-}
+### File: `src/components/layout/Header.tsx`
 
-/* After */
-.header-nav-link:hover {
-  color: hsl(var(--tm-ink));
-  background: transparent;
-  box-shadow: 
-    0 0 12px hsl(var(--primary) / 0.35),
-    0 0 24px hsl(var(--primary) / 0.15);
-  transform: scale(1.05);
-}
+#### Change: Remove spacer div (lines 330-331)
+
+```tsx
+/* Remove this */
+{/* Spacer to push Agent Login to the right */}
+<div className="flex-1" />
 ```
 
-#### Change: Add scale transform to dark mode hover state (lines 11256-11262)
+### File: `src/index.css`
+
+#### Change: Add margin-left: auto to Agent Login button (lines 11392-11397)
 
 ```css
 /* Before */
-.dark .header-nav-link:hover {
-  color: hsl(var(--foreground));
+.header-btn-agent {
   background: transparent;
-  box-shadow: 
-    0 0 12px hsl(var(--primary) / 0.4),
-    0 0 24px hsl(var(--primary) / 0.2);
+  color: hsl(var(--tm-ink));
+  border: 1px solid hsl(var(--tm-ink) / 0.2);
 }
 
 /* After */
-.dark .header-nav-link:hover {
-  color: hsl(var(--foreground));
+.header-btn-agent {
   background: transparent;
-  box-shadow: 
-    0 0 12px hsl(var(--primary) / 0.4),
-    0 0 24px hsl(var(--primary) / 0.2);
-  transform: scale(1.05);
+  color: hsl(var(--tm-ink));
+  border: 1px solid hsl(var(--tm-ink) / 0.2);
+  margin-left: auto;
 }
 ```
 
@@ -74,14 +63,14 @@ The base `.header-nav-link` (line 11241) already has `transition: all 200ms ease
 
 | File | Lines | Change |
 |------|-------|--------|
-| `src/index.css` | 11248-11254 | Add `transform: scale(1.05)` to light mode hover |
-| `src/index.css` | 11256-11262 | Add `transform: scale(1.05)` to dark mode hover |
+| `src/components/layout/Header.tsx` | 330-331 | Remove the `flex-1` spacer div |
+| `src/index.css` | 11392-11397 | Add `margin-left: auto` to `.header-btn-agent` |
 
 ---
 
 ## Expected Result
 
-- Navigation links will subtly scale up by 5% on hover
-- Combined with the existing glow effect, creates a premium, interactive feel
-- The existing `transition: all 200ms ease` ensures smooth animation
-- Works in both light and dark modes
+- The Agent Login button will be pushed to the far right edge of the header
+- Clear visual separation between the Call/Theme Toggle buttons and Agent Login
+- Clean, elegant positioning without extra markup
+
