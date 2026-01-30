@@ -297,9 +297,10 @@ interface LiveScanPreviewProps {
   isRunning: boolean;
   containerRef: React.RefObject<HTMLDivElement>;
   onStartDemo?: () => void;
+  hideStartButton?: boolean;
 }
 
-function LiveScanPreview({ isRunning, containerRef, onStartDemo }: LiveScanPreviewProps) {
+function LiveScanPreview({ isRunning, containerRef, onStartDemo, hideStartButton }: LiveScanPreviewProps) {
   const [visibleCount, setVisibleCount] = useState(0);
 
   useEffect(() => {
@@ -336,7 +337,7 @@ function LiveScanPreview({ isRunning, containerRef, onStartDemo }: LiveScanPrevi
           <span>Scanning...</span>
         </div>
         {/* Demo pill overlay */}
-        {onStartDemo && (
+        {onStartDemo && !hideStartButton && (
           <button 
             onClick={onStartDemo}
             className="tru-ai-demo-pill"
@@ -1546,26 +1547,51 @@ export default function Index() {
 
               <p className="tru-ai-steps-subtitle">Take a video or pictures of your room and let us do the rest</p>
               
+              {/* Centered Demo Button */}
+              <div className="flex justify-center">
+                <button 
+                  className="tru-ai-demo-button-centered"
+                  onClick={() => {
+                    setScanDemoRunning(true);
+                    setTimeout(() => {
+                      scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                  }}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Start Demo AI Analysis
+                </button>
+              </div>
+              
               {/* Two-column layout: Steps on left, Demo on right */}
               <div className="tru-ai-two-column">
-                {/* Left column: Vertical steps */}
+                {/* Left column: Vertical steps with preview thumbnails */}
                 <div className="tru-ai-left-column">
                   <div className="tru-ai-steps-vertical">
-                    <div className="tru-ai-step">
+                    <div className="tru-ai-step tru-ai-step-with-preview">
+                      <div className="tru-ai-step-preview">
+                        <img src={sampleRoomLiving} alt="Room scanning" />
+                      </div>
                       <div className="tru-ai-step-number">1</div>
                       <div className="tru-ai-step-content">
                         <h3 className="tru-ai-step-title">Video or Photos</h3>
                         <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
                       </div>
                     </div>
-                    <div className="tru-ai-step">
+                    <div className="tru-ai-step tru-ai-step-with-preview">
+                      <div className="tru-ai-step-preview">
+                        <img src={previewAiScanner} alt="AI detection" />
+                      </div>
                       <div className="tru-ai-step-number">2</div>
                       <div className="tru-ai-step-content">
                         <h3 className="tru-ai-step-title">AI Detection</h3>
                         <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
                       </div>
                     </div>
-                    <div className="tru-ai-step">
+                    <div className="tru-ai-step tru-ai-step-with-preview">
+                      <div className="tru-ai-step-preview">
+                        <img src={trudyVideoCall} alt="Agent confirmation" />
+                      </div>
                       <div className="tru-ai-step-number">3</div>
                       <div className="tru-ai-step-content">
                         <h3 className="tru-ai-step-title">Agent Confirmation</h3>
@@ -1575,8 +1601,8 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Right column: Demo preview - horizontal layout with pill overlay */}
-                <div className="tru-ai-right-column">
+                {/* Right column: Demo preview - stacked vertically for maximum size */}
+                <div className="tru-ai-right-column tru-ai-preview-vertical">
                   <LiveScanPreview 
                     isRunning={scanDemoRunning} 
                     containerRef={scanPreviewRef}
@@ -1586,6 +1612,7 @@ export default function Index() {
                         scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                       }, 100);
                     }}
+                    hideStartButton={true}
                   />
                 </div>
               </div>
