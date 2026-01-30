@@ -25336,11 +25336,13 @@
    ============================================= */
 .tru-why-card-premium {
   position: relative;
-  background: transparent;
-  border: 1px solid hsl(var(--tm-ink) / 0.15);
+  background: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--tm-ink) / 0.1);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: none;
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.08);
 }
 
 .tru-why-card-premium-glow {
@@ -25406,11 +25408,13 @@
 
 .tru-why-carousel-content {
   margin-left: 0;
+  transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .tru-why-carousel-item {
   padding-left: 8px;
   padding-right: 8px;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .tru-why-carousel-item:first-child {
@@ -26431,8 +26435,11 @@
    DARK MODE STYLING FOR HERO CARDS
    ============================================= */
 .dark .tru-why-card-premium {
-  background: transparent;
+  background: hsl(220 15% 10% / 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-color: hsl(0 0% 100% / 0.1);
+  box-shadow: 0 8px 32px hsl(0 0% 0% / 0.3);
   box-shadow: none;
 }
 
