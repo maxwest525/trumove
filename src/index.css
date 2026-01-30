@@ -2250,7 +2250,7 @@
    AI STEPS SECTION
    ============================================= */
 .tru-ai-steps-section {
-  padding: 16px 24px 20px;
+  padding: 16px 0 20px;
   margin-top: 0;
   background: hsl(var(--background));
   position: relative;
@@ -2568,8 +2568,8 @@
 }
 
 .tru-ai-steps-inner {
-  max-width: 900px;
-  margin: 0 auto;
+  max-width: none;
+  padding: 0 48px;
   text-align: center;
 }
 
@@ -2585,8 +2585,8 @@
 /* Three-column layout for AI section */
 .tru-ai-two-column {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 24px;
+  grid-template-columns: 180px 1fr 300px;
+  gap: 32px;
   align-items: stretch;
   margin-bottom: 0;
   text-align: left;
@@ -2609,7 +2609,7 @@
 .tru-ai-right-column {
   display: flex;
   flex-direction: column;
-  min-width: 240px;
+  min-width: 280px;
   height: 100%;
 }
 
@@ -2657,8 +2657,8 @@
 }
 
 .tru-ai-step-preview {
-  width: 80px;
-  height: 60px;
+  width: 100px;
+  height: 75px;
   border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
