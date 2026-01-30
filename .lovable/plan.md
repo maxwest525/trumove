@@ -1,30 +1,30 @@
 
 
-# Fix Hero Backdrop Overlaying Cards
+# Fix Hero Backdrop Overlaying Quote Wizard and Why TruMove Card
 
 ## Problem
 
-The hero headline backdrop (`::before` pseudo-element) with the extended `inset: -150px -250px` is now large enough to overlap the form cards below it. Even though the pseudo-element has `z-index: -1`, the parent `.tru-hero-header-section.tru-hero-header-refined` has `z-index: 10`, creating a stacking context where the backdrop can appear over other elements.
+The hero headline backdrop (`::before` pseudo-element) with the extended `inset: -150px -250px` is large enough to overlap both the quote wizard form AND the "Why TruMove" card below it. While we added `z-index: 20` to `.tru-form-card`, the `.tru-why-card-premium` doesn't have an explicit z-index, so it's being overlaid by the backdrop.
 
 ---
 
 ## Solution
 
-Add `position: relative` and `z-index: 20` to the `.tru-form-card` so it explicitly stacks above the header section's stacking context.
+Add `z-index: 20` to the `.tru-why-card-premium` class so both the quote wizard and the Why TruMove card stack above the hero header's backdrop.
 
 ---
 
 ## Implementation
 
-### Change: Add z-index to form card
+### Change: Add z-index to Why TruMove card
 
 ```css
-/* Line 7235-7249 */
-.tru-form-card {
+/* Line 26323-26335 */
+.tru-why-card-premium {
   position: relative;
   z-index: 20;  /* ADD - Stack above hero backdrop */
-  width: 100%;
-  max-width: 600px;
+  background: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(12px);
   /* ... rest unchanged ... */
 }
 ```
@@ -35,21 +35,22 @@ Add `position: relative` and `z-index: 20` to the `.tru-form-card` so it explici
 
 | File | Line | Change |
 |------|------|--------|
-| `src/index.css` | 7237 | Add `z-index: 20;` after `position: relative;` to stack cards above backdrop |
+| `src/index.css` | 26324 | Add `z-index: 20;` after `position: relative;` to stack Why TruMove card above backdrop |
 
 ---
 
 ## Design Notes
 
-- **z-index: 20**: Higher than the hero header's `z-index: 10`, ensuring cards always appear above the backdrop
-- **position: relative**: Already exists, which is required for z-index to work
-- This is the minimal fix - only one line added
+- **z-index: 20**: Matches the form card's z-index, ensuring both cards appear above the hero header section (z-index: 10) and its backdrop
+- **position: relative**: Already exists on `.tru-why-card-premium`, which is required for z-index to work
+- This is a one-line fix
 
 ---
 
 ## Expected Result
 
-- Form cards will appear above the hero backdrop
-- The backdrop seamlessly fades behind the headline AND behind the cards
-- No visual overlap issues
+- Quote wizard form cards appear above the hero backdrop
+- Why TruMove card appears above the hero backdrop  
+- The backdrop seamlessly fades behind the headline AND behind all cards
+- No visual overlap issues with any card elements
 
