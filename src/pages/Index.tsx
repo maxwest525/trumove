@@ -29,6 +29,7 @@ import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import sampleRoomLiving from "@/assets/sample-room-living.jpg";
 import scanRoomPreview from "@/assets/scan-room-preview.jpg";
 import heroFamilyMove from "@/assets/hero-family-move.jpg";
+import trudyAvatar from "@/assets/trudy-avatar.png";
 
 import ChatModal from "@/components/chat/ChatModal";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -1317,6 +1318,9 @@ export default function Index() {
                           { title: "TruMove Specialist", desc: "Live video consultation for personalized guidance.", image: previewVideoConsult, route: "/book" },
                           { title: "Inventory Builder", desc: "Build your item list room by room for accurate pricing.", image: previewAiScanner, route: "/online-estimate" },
                           { title: "AI Room Scanner", desc: "Point your camera and AI detects furniture instantly.", image: sampleRoomLiving, route: "/scan-room" },
+                          { title: "Shipment Tracking", desc: "Track your shipment in real-time with live updates.", image: previewPropertyLookup, route: "/track" },
+                          { title: "FMCSA Verified", desc: "Real-time safety data checks from official databases.", image: scanRoomPreview, route: "/vetting" },
+                          { title: "TruDy AI Assistant", desc: "Your virtual moving assistant, available 24/7.", image: trudyAvatar, route: "/" },
                         ].map((feature, index) => (
                           <CarouselItem key={index} className="tru-why-carousel-item basis-1/2">
                             <div 
