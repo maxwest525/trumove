@@ -1,77 +1,59 @@
 
-# Fix Hover Enlarge Previews Being Cut Off
 
-## Problem Analysis
+# Replace Icon Components with Actual Page Preview Images
 
-The feature carousel cards have a 1.35x scale hover effect that expands beyond the card boundaries. However, the parent `.tru-why-card-premium` container has `overflow: hidden` which clips these enlarged previews.
+## Problem
 
-### Current CSS Structure
-
-```
-.tru-why-card-premium (overflow: hidden) ← CLIPS CONTENT
-  └── .tru-why-card-premium-content
-       └── .features-carousel (overflow: visible !important)
-            └── .features-carousel-container
-                 └── .features-carousel-content (overflow: visible !important)
-                      └── .features-carousel-card:hover (scale: 1.35) ← GETS CUT OFF
-```
-
-The carousel and its children have `overflow: visible !important` but this is negated by the parent card having `overflow: hidden`.
-
----
+The "Smart Carrier Match" and "FMCSA Verified" feature cards currently display custom icon components instead of actual preview images from the pages they link to. The user wants these to show real page previews for visual consistency with the other feature cards.
 
 ## Solution
 
-Remove `overflow: hidden` from `.tru-why-card-premium` so the hover-enlarged carousel cards can expand beyond the card boundaries as intended.
+Replace the `customIcon` properties with actual image previews:
+- **Smart Carrier Match** → Use `previewCarrierVetting` (shows carrier vetting dashboard)
+- **FMCSA Verified** → Use `previewCarrierVetting` (both link to `/vetting` page)
+
+Keep the **Trudy AI Assistant** using the custom `TruckChatIcon` since it opens a chat modal, not a page.
 
 ---
 
 ## Implementation
 
-### File: `src/index.css` (line 26216)
+### File: `src/components/FeatureCarousel.tsx`
 
-Remove the `overflow: hidden` property from `.tru-why-card-premium`:
+**Step 1: Remove unused icon imports**
 
-**Before:**
-```css
-.tru-why-card-premium {
-  position: relative;
-  background: hsl(var(--background) / 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid transparent;
-  border-radius: 20px;
-  overflow: hidden;  /* <-- This clips the hover previews */
-  box-shadow: ...
-}
-```
+Remove `GitCompare`, `Star`, `ShieldCheck`, `BadgeCheck` from imports since the custom icon components will be removed.
 
-**After:**
-```css
-.tru-why-card-premium {
-  position: relative;
-  background: hsl(var(--background) / 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid transparent;
-  border-radius: 20px;
-  /* overflow: hidden removed to allow carousel hover expansion */
-  box-shadow: ...
-}
-```
+**Step 2: Remove unused icon components**
+
+Delete the `SmartMatchIcon` and `FMCSAVerifiedIcon` component definitions.
+
+**Step 3: Update features array**
+
+Replace `customIcon` with `image` for both Smart Carrier Match and FMCSA Verified:
+
+| Feature | Current | Updated |
+|---------|---------|---------|
+| Smart Carrier Match | `customIcon: <SmartMatchIcon />` | `image: previewCarrierVetting` |
+| FMCSA Verified | `customIcon: <FMCSAVerifiedIcon />` | `image: previewCarrierVetting` |
+| Trudy AI Assistant | `customIcon: <TruckChatIcon />` | Keep as-is (opens chat, not a page) |
 
 ---
 
-## Summary
+## Summary of Changes
 
-| File | Line | Change |
-|------|------|--------|
-| `src/index.css` | 26216 | Remove `overflow: hidden` from `.tru-why-card-premium` |
+| Line Range | Change |
+|------------|--------|
+| Line 5 | Remove `GitCompare`, `Star`, `ShieldCheck`, `BadgeCheck` from imports |
+| Lines 38-57 | Delete `SmartMatchIcon` and `FMCSAVerifiedIcon` components |
+| Lines 79-83 | Change Smart Carrier Match from `customIcon` to `image: previewCarrierVetting` |
+| Lines 91-94 | Change FMCSA Verified from `customIcon` to `image: previewCarrierVetting` |
 
 ---
 
-## Expected Result
+## Result
 
-- Hover-enlarged carousel cards will now expand beyond the Why TruMove card boundaries
-- The dramatic 1.35x scale effect will be fully visible
-- The rounded corners of the card will still render correctly (handled by the inner content)
+- All feature cards that link to pages will display actual page preview images
+- Only Trudy AI Assistant retains a custom icon (appropriate since it opens chat, not a page)
+- Visual consistency across the feature carousel
+
