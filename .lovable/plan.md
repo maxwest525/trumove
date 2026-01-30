@@ -1,70 +1,54 @@
 
-# Fix Header Actions Overlapping Agent Login Button
 
-## Problem
+# Make Hero Headline Backdrop Slightly Darker
 
-The Call button and Theme Toggle (inside `.header-actions`) are positioned too far right, overlapping with the subtle divider and the absolutely positioned Agent Login button. This happens because:
+## Goal
 
-1. `.header-actions` uses `margin-left: auto` to push to the right edge of the `header-inner` container
-2. The Agent Login button is absolutely positioned at `right: 24px` from the full header
-3. On certain viewport widths, these elements collide
+Increase the opacity of the seamlessly blending backdrop behind the hero headline while maintaining the beautiful fade-to-nothing effect.
 
 ---
 
-## Solution
-
-Add right padding/margin to `.header-actions` to create clearance for the Agent Login button and its divider.
-
----
-
-## Implementation
-
-### File: `src/index.css`
-
-#### Update `.header-actions` styling (lines 11313-11319)
-
-Add `padding-right` to create space between the header actions cluster and the Agent Login button area:
+## Current Values
 
 ```css
-.header-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-left: auto;
-  padding-right: 140px; /* Space for Agent Login (~100px) + divider gap (~16px) + buffer */
-}
+background: radial-gradient(
+  ellipse 70% 80% at 50% 50%,
+  hsl(0 0% 0% / 0.25) 0%,    /* 25% at center */
+  hsl(0 0% 0% / 0.15) 30%,   /* 15% at 30% */
+  hsl(0 0% 0% / 0.05) 60%,   /* 5% at 60% */
+  transparent 85%
+);
 ```
 
 ---
 
-## Alternative Approach (if padding causes layout issues)
+## New Values
 
-Use `margin-right` instead:
+Increase each stop by ~10-12% opacity while keeping the same fade structure:
 
 ```css
-.header-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-left: auto;
-  margin-right: 140px;
-}
+background: radial-gradient(
+  ellipse 70% 80% at 50% 50%,
+  hsl(0 0% 0% / 0.38) 0%,    /* 38% at center (+13%) */
+  hsl(0 0% 0% / 0.25) 30%,   /* 25% at 30% (+10%) */
+  hsl(0 0% 0% / 0.10) 60%,   /* 10% at 60% (+5%) */
+  transparent 85%
+);
 ```
 
 ---
 
-## Summary
+## Summary of Changes
 
 | File | Lines | Change |
 |------|-------|--------|
-| `src/index.css` | 11313-11319 | Add `padding-right: 140px` or `margin-right: 140px` to `.header-actions` to create clearance for Agent Login button |
+| `src/index.css` | 26131-26137 | Increase radial-gradient opacity values for darker backdrop |
 
 ---
 
 ## Expected Result
 
-- Call button and Theme Toggle shift left, creating clear separation from the divider
-- Agent Login button and divider remain at the far right edge without overlap
-- Visual hierarchy is maintained: main actions cluster → divider → Agent Login
+- Backdrop is noticeably darker, improving text legibility
+- Seamless edge blending is preserved (no visible edges)
+- The gradient still fades smoothly to transparent
+
