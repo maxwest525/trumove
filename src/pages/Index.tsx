@@ -296,9 +296,10 @@ MoveSummaryModal.displayName = "MoveSummaryModal";
 interface LiveScanPreviewProps {
   isRunning: boolean;
   containerRef: React.RefObject<HTMLDivElement>;
+  onStartDemo?: () => void;
 }
 
-function LiveScanPreview({ isRunning, containerRef }: LiveScanPreviewProps) {
+function LiveScanPreview({ isRunning, containerRef, onStartDemo }: LiveScanPreviewProps) {
   const [visibleCount, setVisibleCount] = useState(0);
 
   useEffect(() => {
@@ -323,7 +324,8 @@ function LiveScanPreview({ isRunning, containerRef }: LiveScanPreviewProps) {
   const totalCuFt = visibleItems.reduce((sum, item) => sum + item.cuft, 0);
 
   return (
-    <div ref={containerRef} className={`tru-ai-preview-live ${isRunning ? 'is-running' : ''}`}>
+    <div ref={containerRef} className={`tru-ai-preview-horizontal ${isRunning ? 'is-running' : ''}`}>
+      {/* Room scan with overlay pill */}
       <div className="tru-ai-live-scanner">
         <img src={sampleRoomLiving} alt="Room being scanned" />
         <div className="tru-ai-scanner-overlay">
@@ -333,7 +335,18 @@ function LiveScanPreview({ isRunning, containerRef }: LiveScanPreviewProps) {
           <Scan className="w-4 h-4" />
           <span>Scanning...</span>
         </div>
+        {/* Demo pill overlay */}
+        {onStartDemo && (
+          <button 
+            onClick={onStartDemo}
+            className="tru-ai-demo-pill"
+          >
+            <Sparkles className="w-3 h-3" />
+            {isRunning ? "Running..." : "Demo"}
+          </button>
+        )}
       </div>
+      {/* Live detection list */}
       <div className="tru-ai-live-inventory">
         <div className="tru-ai-live-header">
           <Sparkles className="w-4 h-4" />
@@ -1535,7 +1548,7 @@ export default function Index() {
               
               {/* Two-column layout: Steps on left, Demo on right */}
               <div className="tru-ai-two-column">
-                {/* Left column: Vertical steps + button */}
+                {/* Left column: Vertical steps */}
                 <div className="tru-ai-left-column">
                   <div className="tru-ai-steps-vertical">
                     <div className="tru-ai-step">
@@ -1560,48 +1573,21 @@ export default function Index() {
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Primary CTA Button */}
-                  <button 
-                    type="button"
-                    onClick={() => {
+                </div>
+                
+                {/* Right column: Demo preview - horizontal layout with pill overlay */}
+                <div className="tru-ai-right-column">
+                  <LiveScanPreview 
+                    isRunning={scanDemoRunning} 
+                    containerRef={scanPreviewRef}
+                    onStartDemo={() => {
                       setScanDemoRunning(true);
                       setTimeout(() => {
                         scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                       }, 100);
                     }}
-                    className="tru-ai-start-btn tru-ai-start-btn-left"
-                  >
-                    <Scan className="w-5 h-5" />
-                    {scanDemoRunning ? "Scanning..." : "Demo AI Analysis"}
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
+                  />
                 </div>
-                
-                {/* Right column: Demo preview */}
-                <div className="tru-ai-right-column">
-                  <LiveScanPreview isRunning={scanDemoRunning} containerRef={scanPreviewRef} />
-                </div>
-              </div>
-              
-              {/* Inventory Action Buttons */}
-              <div className="tru-inventory-actions">
-                <button 
-                  type="button" 
-                  className="tru-inventory-action-btn"
-                  onClick={() => navigate("/online-estimate")}
-                >
-                  <Boxes className="w-5 h-5" />
-                  <span>Build Inventory Manually</span>
-                </button>
-                <button 
-                  type="button" 
-                  className="tru-inventory-action-btn"
-                  onClick={() => navigate("/book")}
-                >
-                  <Video className="w-5 h-5" />
-                  <span>Prefer to talk? Book Video Consult</span>
-                </button>
               </div>
             </div>
           </section>
