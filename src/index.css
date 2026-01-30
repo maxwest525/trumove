@@ -25975,22 +25975,14 @@
   letter-spacing: 0.02em;
 }
 
-/* Eye-catching headline animation - gradient shimmer (visible over hero) */
+/* Eye-catching headline - solid white text, always visible */
 .tru-headline-animated {
-  background: linear-gradient(
-    90deg,
-    hsl(0 0% 100%) 0%,
-    hsl(142 72% 65%) 25%,
-    hsl(0 0% 100%) 50%,
-    hsl(142 72% 65%) 75%,
-    hsl(0 0% 100%) 100%
-  );
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: headline-shimmer 2.5s ease-in-out infinite;
-  filter: drop-shadow(0 2px 12px hsl(0 0% 0% / 0.6)) drop-shadow(0 4px 20px hsl(0 0% 0% / 0.4));
+  color: hsl(0 0% 100%) !important;
+  -webkit-text-fill-color: hsl(0 0% 100%) !important;
+  text-shadow: 
+    0 2px 12px hsl(0 0% 0% / 0.7),
+    0 4px 24px hsl(0 0% 0% / 0.5),
+    0 0 40px hsl(142 72% 50% / 0.3);
 }
 
 @keyframes headline-shimmer {
