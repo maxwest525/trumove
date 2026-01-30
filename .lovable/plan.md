@@ -1,101 +1,121 @@
 
 
-# Fix Feature Carousel Image Mappings
+# Make Why TruMove Card Text Black + Reduce Spacing
 
-## Current Issues
-
-The feature-to-image mappings are misaligned:
-
-| Feature | Current Image | Issue |
-|---------|---------------|-------|
-| Inventory Builder | `preview-ai-scanner.jpg` | Shows AI scanner, not inventory building |
-| AI Room Scanner | `sample-room-living.jpg` | Shows static room, not scanner interface |
-| Shipment Tracking | `preview-property-lookup.jpg` | Shows property lookup, not shipment tracking |
-| Smart Carrier Match | `preview-carrier-vetting.jpg` | ✓ Correct |
-| TruMove Specialist | `trudy-video-call.jpg` | ✓ Correct |
-| FMCSA Verified | `scan-room-preview.jpg` | Shows room scan, irrelevant to FMCSA |
-| Trudy AI Assistant | TruckChatIcon | ✓ Correct |
+## Overview
+Update the Why TruMove card to use solid black text throughout (instead of muted grays) and reduce the vertical spacing between the subheadline and the mission paragraph below it.
 
 ---
 
-## Recommended Image Remapping
+## Current State
 
-Based on available assets in `src/assets/`:
-
-| Feature | Recommended Image | Reasoning |
-|---------|-------------------|-----------|
-| **Inventory Builder** | `sample-room-living.jpg` | Shows furniture items to inventory |
-| **AI Room Scanner** | `scan-room-preview.jpg` | Shows scanner interface preview |
-| **Shipment Tracking** | `preview-property-lookup.jpg` | Shows map/location (closest to tracking) |
-| **Smart Carrier Match** | `preview-carrier-vetting.jpg` | ✓ Keep - shows carrier search |
-| **TruMove Specialist** | `trudy-video-call.jpg` | ✓ Keep - shows video consult |
-| **FMCSA Verified** | `preview-carrier-vetting.jpg` | Shows carrier verification (FMCSA related) |
-| **Trudy AI Assistant** | TruckChatIcon | ✓ Keep - custom truck icon |
-
-**Note**: Some images will be shared (e.g., carrier vetting for both Smart Carrier Match and FMCSA Verified) since they're conceptually related. Alternatively, we could use the `preview-video-consult.jpg` for TruMove Specialist and `trudy-video-call.jpg` elsewhere.
-
----
-
-## Implementation
-
-**File: `src/components/FeatureCarousel.tsx`**
-
-Update the features array (lines 38-81):
-
+Looking at the JSX in `src/pages/Index.tsx` (lines 1469-1480):
 ```tsx
-const features: Feature[] = [
-  {
-    title: "Inventory Builder",
-    desc: "Build your item list room by room for accurate pricing estimates.",
-    image: sampleRoomLiving,  // Shows furniture to catalog
-    route: "/online-estimate",
-  },
-  {
-    title: "AI Room Scanner",
-    desc: "Point your camera and AI detects furniture instantly.",
-    image: scanRoomPreview,  // Shows scanner interface
-    route: "/scan-room",
-  },
-  {
-    title: "Shipment Tracking",
-    desc: "Track your shipment in real-time with live updates and notifications.",
-    image: previewPropertyLookup,  // Shows map/location view
-    route: "/track",
-  },
-  {
-    title: "Smart Carrier Match",
-    desc: "Our algorithm finds the best carrier for your route.",
-    image: previewCarrierVetting,  // Keep - carrier search UI
-    route: "/vetting",
-  },
-  {
-    title: "TruMove Specialist",
-    desc: "Live video consultation for personalized guidance.",
-    image: trudyVideoCall,  // Keep - video call preview
-    route: "/book",
-  },
-  {
-    title: "FMCSA Verified",
-    desc: "Real-time safety data checks from official databases.",
-    image: previewCarrierVetting,  // Carrier verification (FMCSA data)
-    route: "/vetting",
-  },
-  {
-    title: "Trudy AI Assistant",
-    desc: "Chat with our AI to get instant answers about your move.",
-    customIcon: <TruckChatIcon />,  // Keep - custom icon
-    action: "openChat",
-  },
-];
+<h3 className="tru-ai-steps-title" style={{ fontSize: '24px', marginBottom: '8px' }}>
+  Why <span className="tru-ai-gradient-text">TruMove</span>?
+</h3>
+<div className="tru-ai-accent-line" style={{ marginBottom: '6px' }} />
+<p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none' }}>
+  Skip the van line middleman...
+</p>
+
+{/* Mission Paragraph - Larger font */}
+<p className="tru-why-mission-paragraph tru-why-mission-large">
+  We built TruMove to cut through...
+</p>
+```
+
+Current CSS colors:
+- `.tru-ai-steps-subtitle`: `color: hsl(var(--muted-foreground))` (gray)
+- `.tru-why-mission-paragraph`: `color: hsl(var(--muted-foreground))` (gray)
+- `.tru-ai-gradient-text`: animated green gradient
+
+---
+
+## Implementation Plan
+
+### Step 1: Make Subheadline Text Black
+
+**File: `src/index.css`** (lines 2275-2286)
+
+Add a scoped override for the subtitle when inside the Why TruMove card. Create new CSS rule after line 26279:
+
+```css
+/* Why TruMove card - force black text */
+.tru-why-card-premium .tru-ai-steps-subtitle {
+  color: hsl(var(--tm-ink));
+}
+```
+
+### Step 2: Make Mission Paragraph Text Black
+
+**File: `src/index.css`** (line 26269)
+
+Change `.tru-why-mission-paragraph` color from:
+```css
+color: hsl(var(--muted-foreground));
+```
+To:
+```css
+color: hsl(var(--tm-ink));
+```
+
+### Step 3: Remove Gradient from "TruMove" Text
+
+**File: `src/pages/Index.tsx`** (line 1470)
+
+Change from:
+```tsx
+Why <span className="tru-ai-gradient-text">TruMove</span>?
+```
+To:
+```tsx
+Why TruMove?
+```
+
+Or if we want to keep the word "TruMove" as a span but just make it black:
+```tsx
+Why <span style={{ color: 'hsl(var(--tm-ink))' }}>TruMove</span>?
+```
+
+### Step 4: Reduce Spacing Between Subheadline and Mission Paragraph
+
+**File: `src/pages/Index.tsx`** (line 1473)
+
+The subheadline uses `.tru-ai-steps-subtitle` which has `margin-bottom: 32px`. Override it inline to reduce spacing:
+
+Change from:
+```tsx
+<p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none' }}>
+```
+To:
+```tsx
+<p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none', marginBottom: '8px' }}>
+```
+
+Also reduce the mission paragraph top margin in CSS (line 26278):
+```css
+margin: 0 0 8px 0;  /* Was: margin: 4px 0 8px 0 */
 ```
 
 ---
 
 ## Summary of Changes
 
-| File | Change |
-|------|--------|
-| `src/components/FeatureCarousel.tsx` | Swap image references for Inventory Builder, AI Room Scanner, and FMCSA Verified |
+| File | Line(s) | Change |
+|------|---------|--------|
+| `src/pages/Index.tsx` | 1470 | Remove `tru-ai-gradient-text` class or add inline black color |
+| `src/pages/Index.tsx` | 1473 | Add `marginBottom: '8px'` to subheadline inline style |
+| `src/index.css` | 26269 | Change mission paragraph color to `hsl(var(--tm-ink))` |
+| `src/index.css` | 26278 | Reduce mission paragraph top margin to `0` |
+| `src/index.css` | ~26280 | Add scoped override for subtitle color inside Why TruMove card |
 
-This ensures each feature card displays a relevant preview image that matches its functionality.
+---
+
+## Visual Result
+
+- **Title "Why TruMove?"**: All black text (no green gradient animation)
+- **Subheadline**: Black text instead of muted gray
+- **Mission paragraph**: Black text instead of muted gray  
+- **Spacing**: Tighter gap between subheadline and mission paragraph (reduced from ~36px to ~8px)
 
