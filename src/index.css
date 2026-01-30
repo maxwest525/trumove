@@ -2004,7 +2004,7 @@
 }
 
 .tru-route-analysis-permanent {
-  border: 1px solid hsl(var(--primary) / 0.15);
+  border: 1px solid hsl(var(--border));
   border-radius: 16px;
   margin: 0 auto;
   max-width: 900px;
