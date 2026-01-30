@@ -135,6 +135,83 @@ function getAiHint(step: number, fromCity: string, toCity: string, distance: num
   }
 }
 
+// Demo items for live scan preview
+const SCAN_DEMO_ITEMS = [
+  { name: "3-Seat Sofa", weight: 350, cuft: 45, image: "/inventory/living-room/sofa-3-cushion.png" },
+  { name: "Coffee Table", weight: 45, cuft: 8, image: "/inventory/living-room/coffee-table.png" },
+  { name: "TV Stand", weight: 80, cuft: 12, image: "/inventory/living-room/tv-stand.png" },
+  { name: "Armchair", weight: 85, cuft: 18, image: "/inventory/living-room/armchair.png" },
+  { name: "Floor Lamp", weight: 15, cuft: 4, image: "/inventory/living-room/lamp-floor.png" },
+];
+
+// Live Scan Preview Component
+function LiveScanPreview() {
+  const [visibleCount, setVisibleCount] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisibleCount(prev => {
+        if (prev >= SCAN_DEMO_ITEMS.length) {
+          // Reset after a pause
+          setTimeout(() => setVisibleCount(0), 500);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 1200);
+    return () => clearInterval(interval);
+  }, []);
+
+  const visibleItems = SCAN_DEMO_ITEMS.slice(0, visibleCount);
+  const totalWeight = visibleItems.reduce((sum, item) => sum + item.weight, 0);
+  const totalCuFt = visibleItems.reduce((sum, item) => sum + item.cuft, 0);
+
+  return (
+    <div className="tru-ai-preview-live">
+      <div className="tru-ai-live-scanner">
+        <img src={sampleRoomLiving} alt="Room being scanned" />
+        <div className="tru-ai-scanner-overlay">
+          <div className="tru-ai-scanner-line" />
+        </div>
+        <div className="tru-ai-scanner-badge">
+          <Scan className="w-4 h-4" />
+          <span>Scanning...</span>
+        </div>
+      </div>
+      <div className="tru-ai-live-inventory">
+        <div className="tru-ai-live-header">
+          <Sparkles className="w-4 h-4" />
+          <span>Live Detection</span>
+        </div>
+        <div className="tru-ai-live-items">
+          {visibleItems.map((item, i) => (
+            <div 
+              key={`${item.name}-${i}`} 
+              className="tru-ai-live-item"
+              style={{ animationDelay: `${i * 0.1}s` }}
+            >
+              <img src={item.image} alt={item.name} />
+              <span className="tru-ai-live-item-name">{item.name}</span>
+              <span className="tru-ai-live-item-weight">{item.weight} lbs</span>
+            </div>
+          ))}
+        </div>
+        <div className="tru-ai-live-totals">
+          <span>
+            <span className="tru-ai-total-label">Items:</span> {visibleCount}
+          </span>
+          <span>
+            <span className="tru-ai-total-label">Weight:</span> {totalWeight} lbs
+          </span>
+          <span>
+            <span className="tru-ai-total-label">Volume:</span> {totalCuFt} cu ft
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Trust Compact Section with scroll-triggered staggered reveal
 function TrustCompactSection() {
   const [sectionRef, isInView] = useScrollAnimation<HTMLElement>({
@@ -1291,31 +1368,8 @@ export default function Index() {
             <div className="tru-ai-steps-inner">
               <h2 className="tru-ai-steps-title">Start Your AI Inventory Analysis</h2>
               
-              {/* Preview Video/Image Block */}
-              <div className="tru-ai-preview-block">
-                <div className="tru-ai-preview-video">
-                  <img src={sampleRoomLiving} alt="AI scanning a room" />
-                  <div className="tru-ai-preview-overlay">
-                    <Camera className="w-8 h-8" />
-                    <span>See how it works</span>
-                  </div>
-                </div>
-                <div className="tru-ai-preview-content">
-                  <p className="tru-ai-preview-tagline">
-                    <strong>Walk through your home with your phone camera</strong> or snap photos of each room.
-                    Our neural network identifies furniture, boxes, and appliances automatically—calculating 
-                    weight, volume, and cubic footage in seconds.
-                  </p>
-                  <p className="tru-ai-preview-trust">
-                    <CheckCircle className="w-4 h-4" />
-                    <span>Every inventory is confirmed with a live TruMove specialist before your quote is finalized—so there are no surprises on move day.</span>
-                  </p>
-                  <p className="tru-ai-preview-privacy">
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>No strangers walking through your home. You control the camera, you control the process.</span>
-                  </p>
-                </div>
-              </div>
+{/* Live Scan Preview */}
+              <LiveScanPreview />
               
               {/* 3-step grid */}
               <div className="tru-ai-steps-grid">
