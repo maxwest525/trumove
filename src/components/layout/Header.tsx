@@ -327,8 +327,6 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
             {/* Theme Toggle */}
             <ThemeToggle />
             
-            {/* Spacer to push Agent Login to the right */}
-            <div className="flex-1" />
             
             {/* Agent Login Button - Far Right */}
             <Link 

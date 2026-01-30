@@ -11394,6 +11394,7 @@
   background: transparent;
   color: hsl(var(--tm-ink));
   border: 1px solid hsl(var(--tm-ink) / 0.2);
+  margin-left: auto;
 }
 
 .dark .header-btn-agent {
