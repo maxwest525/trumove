@@ -1,64 +1,63 @@
 
-# Add Auto-Cycling to Hero Box Carousel
+# Fix: Remove Opaque/Semi-Transparent Box Around Hero "Your Move. Your Terms." Card
 
-## Overview
-Enable the inline feature carousel in the "Your Move. Your Terms" hero card to cycle through all features slowly and continuously, following the same pattern used by the full-width FeatureCarousel.
+## Problem Root Cause Identified
 
-## Current State
-The hero box carousel (lines 1289-1322 in Index.tsx) currently:
-- Uses the standard Carousel component with `loop: true` option
-- Has 4 features displayed 2 at a time (basis-1/2)
-- Requires manual interaction (arrows or drag) to advance
-- No automatic cycling
+After extensive investigation and taking a browser screenshot, I found the **actual** source of the transparent box:
 
-## Changes Required
+The `.tru-why-card-premium` class has a gradient background that transitions between `--background` and `--muted`:
 
-### 1. Update Index.tsx - Add Autoplay Logic to Hero Carousel
-
-Add state and effect hooks to implement slow, continuous auto-scrolling:
-
-```tsx
-// Add state for hero carousel API
-const [heroCarouselApi, setHeroCarouselApi] = useState<CarouselApi>();
-const [isHeroCarouselPaused, setIsHeroCarouselPaused] = useState(false);
-
-// Add autoplay effect (6-second interval for slow cycling)
-useEffect(() => {
-  if (!heroCarouselApi || isHeroCarouselPaused) return;
-  
-  const intervalId = setInterval(() => {
-    heroCarouselApi.scrollNext();
-  }, 6000); // 6 seconds between transitions
-  
-  return () => clearInterval(intervalId);
-}, [heroCarouselApi, isHeroCarouselPaused]);
+```css
+background: linear-gradient(135deg, 
+  hsl(var(--background)) 0%, 
+  hsl(var(--muted)) 50%,
+  hsl(var(--background)) 100%
+);
 ```
 
-Update the Carousel component to:
-- Pass `setApi={setHeroCarouselApi}` to capture the API
-- Add hover handlers to pause/resume on interaction
+In light mode:
+- `--background` = white
+- `--muted` = 210 40% 96.1% (very light grey)
 
-```tsx
-<div 
-  className="tru-why-inline-carousel"
-  onMouseEnter={() => setIsHeroCarouselPaused(true)}
-  onMouseLeave={() => setIsHeroCarouselPaused(false)}
->
-  <Carousel
-    setApi={setHeroCarouselApi}
-    opts={{ align: "start", loop: true }}
-    className="tru-why-carousel"
-  >
-    {/* ... existing content ... */}
-  </Carousel>
-</div>
+This creates a **visible white/grey gradient box** with `border-radius: 20px` that stands out against the hero background image, creating the "transparent box" artifact you're seeing.
+
+## Solution
+
+Replace the gradient background with a **fully transparent background** and rely on just a subtle border to define the card boundaries. The card content is already readable on its own.
+
+### CSS Changes (src/index.css)
+
+**Line ~25337-25352** - Change `.tru-why-card-premium`:
+
+```css
+.tru-why-card-premium {
+  position: relative;
+  background: transparent;  /* REMOVE gradient, make fully transparent */
+  border: 1px solid hsl(var(--tm-ink) / 0.15);  /* Subtle border for definition */
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: none;  /* REMOVE shadows that create the box effect */
+}
 ```
 
-### 2. Import CarouselApi Type
+Also remove the glow element that adds extra visual weight:
 
-Add the `CarouselApi` type import:
-```tsx
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
+**Line ~25354-25362** - Change `.tru-why-card-premium-glow`:
+
+```css
+.tru-why-card-premium-glow {
+  display: none;  /* Hide the glow overlay */
+}
+```
+
+**Dark mode override (~line 26447-26458)** - Ensure dark mode also uses transparent:
+
+```css
+.dark .tru-why-card-premium {
+  background: transparent;
+  border-color: hsl(0 0% 100% / 0.1);
+  box-shadow: none;
+}
 ```
 
 ---
@@ -66,23 +65,22 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 ## Technical Details
 
 ### Files to Modify
-- `src/pages/Index.tsx`
+- `src/index.css` (3 locations)
 
 ### Implementation Steps
-1. Add `CarouselApi` type to the carousel import
-2. Add `heroCarouselApi` and `isHeroCarouselPaused` state variables
-3. Add `useEffect` for auto-scrolling with 6-second interval
-4. Wrap carousel in div with hover handlers to pause on interaction
-5. Pass `setApi={setHeroCarouselApi}` to the Carousel component
+1. Remove gradient background from `.tru-why-card-premium`, replace with `transparent`
+2. Remove box-shadow and inset-shadow that contribute to the box effect  
+3. Hide the `.tru-why-card-premium-glow` radial gradient overlay
+4. Update dark mode override to also use transparent background
+5. Keep a subtle border for visual definition if needed
 
-### Behavior
-| Aspect | Configuration |
-|--------|---------------|
-| Interval | 6 seconds (slow cycling) |
-| Direction | Forward (scrollNext) |
-| Loop | Continuous (loop: true already set) |
-| Pause | On hover/touch |
-| Resume | On mouse leave |
+### Visual Result
+The "Your Move. Your Terms." content will appear to float directly over the hero background image, without any visible white/grey box container around it. The text and feature carousel cards inside will still be clearly visible due to their own backgrounds.
 
-### Result
-The hero box carousel will smoothly cycle through all 4 features (Smart Carrier Match → TruMove Specialist → Inventory Builder → AI Room Scanner) at a comfortable 6-second pace, pausing when users hover to interact.
+### Alternative Approach (if content becomes hard to read)
+If removing the background makes text hard to read, we can add a very subtle backdrop blur with minimal opacity:
+```css
+background: hsl(var(--background) / 0.3);
+backdrop-filter: blur(8px);
+```
+But this was previously causing the artifact, so transparent is safer.
