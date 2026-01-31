@@ -1,69 +1,50 @@
 
 
-# Fix: Scanner and Detection Card Sizing Within 450px Section
+# Set Scanner Preview to Fixed 275px Height
 
-## Problem
+## Current State
 
-The scanner and detection card are not properly sizing within the 450px section height because:
+The scanner preview image in the AI Inventory Analysis section uses:
+- `aspect-ratio: 16/10` - which dynamically calculates height based on width
+- `height: 100%` with `flex: 1` in a parent override - which fills available container space
 
-1. **Duplicate `.tru-ai-two-column` rules** - Lines 2263-2267 have an incomplete definition that lacks `display: grid`, causing layout issues
-2. **Height override** - Line 2737-2740 sets `.tru-ai-right-column .tru-ai-live-inventory` to `height: auto` which breaks the `height: 100%` rule
-3. **Missing flex constraints** - The grid needs `flex: 1` and `min-height: 0` to properly fill the available space within the fixed 450px container
+The current rendered height is approximately 250-260px based on the 450px section height minus padding and other elements.
 
 ---
 
 ## Solution
 
+Set the scanner to a fixed 275px height by updating the CSS.
+
 ### File: `src/index.css`
 
-**1. Remove the incomplete duplicate `.tru-ai-two-column` (Lines 2263-2267)**
+**1. Update the base `.tru-ai-live-scanner` rule (Lines 2386-2392)**
 
-Delete this incomplete block:
+Change from:
 ```css
-.tru-ai-two-column {
-  flex: 1;
-  min-height: 0;
-  align-items: stretch;
+.tru-ai-live-scanner {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 16/10;
+  border: 1px solid hsl(var(--border));
 }
 ```
 
-**2. Add flex properties to the complete `.tru-ai-two-column` definition (Lines 2584-2591)**
-
-Update to include flex properties for proper height distribution:
-```css
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 24px;
-  align-items: stretch;
-  margin-bottom: 0;
-  text-align: left;
-  flex: 1;
-  min-height: 0;
-}
-```
-
-**3. Fix the inventory height override (Lines 2737-2740)**
-
-Change:
-```css
-.tru-ai-right-column .tru-ai-live-inventory {
-  height: auto;
-  min-height: 200px;
-}
-```
 To:
 ```css
-.tru-ai-right-column .tru-ai-live-inventory {
-  height: 100%;
-  flex: 1;
-  min-height: 0;
+.tru-ai-live-scanner {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 275px;
+  border: 1px solid hsl(var(--border));
 }
 ```
 
-**4. Ensure scanner fills its container (Lines 2638-2641)**
+**2. Update the `.tru-ai-preview-vertical .tru-ai-live-scanner` override (Lines 2636-2640)**
 
-Update to properly fill height:
+Change from:
 ```css
 .tru-ai-preview-vertical .tru-ai-live-scanner {
   height: 100%;
@@ -72,16 +53,23 @@ Update to properly fill height:
 }
 ```
 
+To:
+```css
+.tru-ai-preview-vertical .tru-ai-live-scanner {
+  height: 275px;
+  flex: none;
+}
+```
+
 ---
 
-## Summary Table
+## Summary
 
-| Issue | Location | Fix |
-|-------|----------|-----|
-| Duplicate incomplete CSS rule | Lines 2263-2267 | Delete entire block |
-| Missing flex properties on grid | Lines 2584-2591 | Add `flex: 1` and `min-height: 0` |
-| Inventory height override | Lines 2737-2740 | Change `height: auto` to `height: 100%` |
-| Scanner height constraint | Lines 2638-2641 | Add `min-height: 0` |
+| Property | Before | After |
+|----------|--------|-------|
+| Height | Dynamic (aspect-ratio: 16/10) | Fixed: 275px |
+| Flex | `flex: 1` | `flex: none` |
+| Aspect ratio | 16/10 | Removed |
 
-This ensures both the scanner and detection card properly fill the available space within the 450px section, with proper flex behavior for vertical sizing.
+This ensures the scanner preview is exactly 275px tall regardless of its container width or the available vertical space.
 
