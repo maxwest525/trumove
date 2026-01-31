@@ -1,69 +1,82 @@
 
-# Plan: Fix SAFER Database Search Button Visibility in Light Mode
+# Plan: Fix Video Consult Trust Strip Positioning
 
-## Problem Identified
+## Problem
 
-The `CarrierSearch` component has buttons and input elements with hardcoded white text colors that become invisible in light mode:
-
-1. **Search Type Toggle Buttons (Name, DOT, MC)** - Lines 151-153, 171-173, 191-193
-   - Active state: `text-white border-2 border-green-500`
-   - Inactive state: `text-white/60 hover:text-white hover:bg-white/10 border border-white/20`
-
-2. **Search Input** - Lines 227, 240
-   - Icon: `text-white/50`
-   - Input: `text-white placeholder:text-white/40`
+The `VideoConsultTrustStrip` on the `/book` page is being hidden behind the sticky `video-consult-header` because:
+1. The header uses `position: sticky` with `top: 103px`
+2. The trust strip uses `position: relative` - so it scrolls with the page and slides underneath the sticky header
 
 ## Solution
 
-Update the terminal-context styling to use theme-aware classes that work in both light and dark modes.
+Make the trust strip sticky as well, positioned directly below the video-consult-header, so both stay locked together when scrolling.
 
 ## Implementation
 
-**File**: `src/components/vetting/CarrierSearch.tsx`
+### File: `src/index.css`
 
-### Change 1: Name Button (Lines 151-153)
-```tsx
-// FROM:
-: (searchType === 'name' 
-    ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-    : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
+**Update the `.video-consult-trust-strip` styles (lines 29885-29891):**
 
-// TO:
-: (searchType === 'name' 
-    ? 'text-slate-900 dark:text-white border-2 border-green-500 bg-green-500/10 dark:bg-transparent shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-    : 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/20')
+| Property | Current | New |
+|----------|---------|-----|
+| `position` | `relative` | `sticky` |
+| `top` | *(none)* | `151px` (header top 103px + header height ~48px) |
+| `z-index` | `35` | `39` (below header z-40, but still above content) |
+
+**Update the `.video-consult-trust-strip-inner` styles (lines 29893-29900):**
+
+| Property | Current | New |
+|----------|---------|-----|
+| `gap` | `48px` | `28px` (to match SaferTrustStrip spacing) |
+
+### CSS Changes
+
+```css
+/* FROM */
+.video-consult-trust-strip {
+  position: relative;
+  z-index: 35;
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  padding: 8px 24px;
+}
+
+.video-consult-trust-strip-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  max-width: 1480px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+/* TO */
+.video-consult-trust-strip {
+  position: sticky;
+  top: 151px; /* Header (103px) + video-consult-header height (~48px) */
+  z-index: 39;
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  padding: 8px 24px;
+}
+
+.video-consult-trust-strip-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px; /* Match SaferTrustStrip spacing */
+  max-width: 1480px;
+  margin: 0 auto;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: max-content;
+}
 ```
-
-### Change 2: DOT Button (Lines 171-173)
-Same pattern as above.
-
-### Change 3: MC Button (Lines 191-193)
-Same pattern as above.
-
-### Change 4: Search Icon (Line 227)
-```tsx
-// FROM:
-<Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
-
-// TO:
-<Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-white/50" />
-```
-
-### Change 5: Search Input (Line 240)
-```tsx
-// FROM:
-className="pl-12 pr-12 h-12 text-base bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-primary/50 focus:ring-primary/20"
-
-// TO:
-className="pl-12 pr-12 h-12 text-base bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40 focus:border-primary/50 focus:ring-primary/20"
-```
-
-## Files to Modify
-
-| File | Changes |
-|------|---------|
-| `src/components/vetting/CarrierSearch.tsx` | Update button and input styling for theme-awareness |
 
 ## Result
 
-The SAFER database search buttons (Name, DOT, MC) and the search input will be fully visible in both light and dark modes, with appropriate contrast in each theme.
+- The Video Consult Trust Strip will now be sticky and locked directly below the Video Consult Center header
+- Both headers will scroll together as a unified sticky block
+- The trust item spacing (28px gap) will match the SaferTrustStrip used on other pages
+- The trust items (Secure Video, Licensed Broker, Screen Sharing, Quote Review, No Obligation) remain unchanged as they are already video-consult-specific
