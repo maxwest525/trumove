@@ -29105,21 +29105,21 @@ html.dark .tru-summary-header-large,
 }
 
 /* ========================================
-   GREY SAFER TRUST STRIP - Always under header
+   BLACK SAFER TRUST STRIP - Matches StatsStrip style
    ======================================== */
 .safer-trust-strip {
-  background: linear-gradient(to bottom, hsl(220 10% 94%), hsl(220 10% 96%));
-  border-bottom: 1px solid hsl(220 10% 88%);
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   padding: 8px 24px;
   overflow-x: auto;
-  margin-top: 12px;
+  margin-top: 0;
 }
 
 .safer-trust-strip-inner {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 48px;
+  gap: 28px;
   flex-wrap: nowrap;
   white-space: nowrap;
   min-width: max-content;
@@ -29130,42 +29130,28 @@ html.dark .tru-summary-header-large,
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: hsl(220 15% 35%);
+  color: hsl(0 0% 100% / 0.85);
 }
 
 .safer-trust-item svg {
-  width: 12px;
-  height: 12px;
-  color: hsl(142 70% 40%);
+  width: 16px;
+  height: 16px;
+  color: hsl(142 70% 50%);
 }
 
 /* "Official FMCSA Source" gets special emphasis */
 .safer-trust-item:last-child {
   font-weight: 800;
-  color: hsl(142 70% 35%);
+  color: hsl(142 70% 55%);
 }
 
 .safer-trust-dot {
-  color: hsl(220 10% 70%);
+  color: hsl(0 0% 100% / 0.4);
   margin: 0 8px;
-}
-
-/* Dark mode - SAFER trust strip */
-.dark .safer-trust-strip {
-  background: linear-gradient(to bottom, hsl(220 15% 12%), hsl(220 15% 10%));
-  border-bottom-color: hsl(0 0% 100% / 0.1);
-}
-
-.dark .safer-trust-item {
-  color: hsl(0 0% 100% / 0.8);
-}
-
-.dark .safer-trust-item svg {
-  color: hsl(142 70% 55%);
 }
 
 /* ========================================
