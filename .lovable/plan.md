@@ -1,88 +1,50 @@
 
+# Move Call Button and Dark Toggle Closer to Agent Login
 
-# Header Navigation Bar Updates
+## Current State
 
-## Changes Requested
+The header actions container (Call button + Dark toggle) has the following spacing:
 
-1. **Spread out nav bar links more** - Increase spacing between navigation items
-2. **Make font black** - Ensure link text is solid black
-3. **Remove dropdown arrow** - Hide the chevron icon on nav links with dropdowns
+```css
+.header-actions {
+  margin-left: 32px;
+  padding-right: 80px;  /* Creates 80px gap from Agent Login */
+}
+```
+
+The Agent Login button is absolutely positioned at `right: 24px`.
 
 ---
 
 ## Solution
 
+Reduce the `padding-right` on `.header-actions` to move the buttons closer to Agent Login.
+
 ### File: `src/index.css`
 
-**1. Increase gap between nav items (Line 11422)**
+**Update `.header-actions` (Lines 11513-11520)**
 
 Change from:
 ```css
-.header-nav {
+.header-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-left: auto;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: 32px;
+  padding-right: 80px;
 }
 ```
 
 To:
 ```css
-.header-nav {
+.header-actions {
   display: flex;
   align-items: center;
-  gap: 32px;
-  margin-left: auto;
-}
-```
-
-**2. Update divider position for larger gap (Line 11435)**
-
-Change:
-```css
-right: -10px;
-```
-
-To:
-```css
-right: -16px;
-```
-
-**3. Make nav link font solid black (Line 11456)**
-
-Change:
-```css
-color: hsl(var(--tm-ink));
-```
-
-To:
-```css
-color: hsl(0 0% 0%);
-```
-
-**4. Hide the dropdown chevron icon (Lines 11505-11512)**
-
-Change:
-```css
-.header-nav-chevron {
-  opacity: 0.5;
-  transition: transform 200ms ease;
-}
-
-.header-nav-item:hover .header-nav-chevron {
-  transform: rotate(180deg);
-  opacity: 1;
-}
-```
-
-To:
-```css
-.header-nav-chevron {
-  display: none;
-}
-
-.header-nav-item:hover .header-nav-chevron {
-  display: none;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: 32px;
+  padding-right: 24px;
 }
 ```
 
@@ -90,12 +52,8 @@ To:
 
 ## Summary
 
-| Change | Before | After |
-|--------|--------|-------|
-| Nav gap | 20px | 32px |
-| Divider position | -10px | -16px |
-| Link color | `hsl(var(--tm-ink))` | `hsl(0 0% 0%)` (solid black) |
-| Chevron visibility | Visible (opacity 0.5) | Hidden (display: none) |
+| Property | Before | After |
+|----------|--------|-------|
+| padding-right | 80px | 24px |
 
-This will create more breathing room between nav items, ensure text is solid black, and remove the dropdown arrows entirely.
-
+This reduces the gap between the Call/Theme buttons and the Agent Login button by 56px, positioning them much closer together on the right side of the header.
