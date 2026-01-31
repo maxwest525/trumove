@@ -1,128 +1,158 @@
 
-# Stack Step Cards Vertically on Left Side
+
+# Move Scanner Preview & Detection to Right of Centered Header
 
 ## Overview
-Change the step cards from horizontal row layout to vertical stack layout, while keeping the scanner demo and live inventory on the right side.
-
----
-
-## Current Layout
-
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│   Steps as 3 HORIZONTAL cards   │   Scanner + Detection stacked │
-│   ┌─────┐ ┌─────┐ ┌─────┐      │                               │
-│   │  1  │ │  2  │ │  3  │      │                               │
-│   └─────┘ └─────┘ └─────┘      │                               │
-└─────────────────────────────────┴───────────────────────────────┘
-```
+Reposition the scanner preview and live detection boxes to the right side of the AI Move Estimator section header, while keeping the title centered. The previews will sit in the same row as the header, aligned vertically.
 
 ---
 
 ## Target Layout
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│   Steps VERTICAL   │   Scanner + Detection stacked              │
-│   ┌─────────────┐  │   ┌─────────────────────────────────────┐  │
-│   │      1      │  │   │         Scanner Preview             │  │
-│   └─────────────┘  │   ├─────────────────────────────────────┤  │
-│   ┌─────────────┐  │   │         Live Detection List         │  │
-│   │      2      │  │   └─────────────────────────────────────┘  │
-│   └─────────────┘  │                                            │
-│   ┌─────────────┐  │                                            │
-│   │      3      │  │                                            │
-│   └─────────────┘  │                                            │
-└─────────────────────┴───────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                         │                                   │
+│       AI Move Estimator                 │  Scanner   │  Live Detection     │
+│       ────────────                      │  Preview   │       List          │
+│        (centered)                       │            │                     │
+│                                         │            │                     │
+├─────────────────────────────────────────┴────────────┴─────────────────────┤
+│              Steps 1, 2, 3 (unchanged - kept in current position)          │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## Technical Changes
 
-### File: `src/pages/Index.tsx`
+### File: `src/pages/Index.tsx` (Lines 1555-1611)
 
-Rename the class from `tru-ai-steps-horizontal` to `tru-ai-steps-vertical`:
+Restructure the section to create a header row:
 
+**Current Structure:**
 ```jsx
-<div className="tru-ai-steps-vertical">
+<section className="tru-ai-steps-section">
+  <div className="tru-ai-steps-inner">
+    <h2 className="tru-ai-steps-title">AI Move Estimator</h2>
+    <div className="tru-ai-accent-line" />
+    <div className="tru-ai-two-column">
+      {/* LEFT: Steps */}
+      {/* RIGHT: Scanner + Detection */}
+    </div>
+  </div>
+</section>
+```
+
+**New Structure:**
+```jsx
+<section className="tru-ai-steps-section">
+  <div className="tru-ai-steps-inner">
+    {/* Header row: centered title with previews on right */}
+    <div className="tru-ai-header-row" ref={scanPreviewRef}>
+      <div className="tru-ai-header-center">
+        <h2 className="tru-ai-steps-title">
+          <span className="tru-ai-gradient-text">AI</span> Move Estimator
+        </h2>
+        <div className="tru-ai-accent-line" />
+      </div>
+      <div className={`tru-ai-header-previews ${scanDemoRunning ? 'is-running' : ''}`}>
+        <ScannerPreview ... />
+        <DetectionList ... />
+      </div>
+    </div>
+    {/* Steps below - unchanged */}
+    <div className="tru-ai-steps-content">
+      <div className="tru-ai-steps-vertical">
+        {/* Step 1, 2, 3 cards - unchanged */}
+      </div>
+    </div>
+  </div>
+</section>
 ```
 
 ### File: `src/index.css`
 
-Update the steps container to use vertical layout:
+**Add new header row styling:**
 
-**Before:**
 ```css
-.tru-ai-steps-horizontal {
+/* Header row: centered title with previews on right */
+.tru-ai-header-row {
   display: flex;
-  flex-direction: row;
-  gap: 16px;
-  height: 100%;
+  align-items: center;
+  position: relative;
+  margin-bottom: 16px;
+  min-height: 280px;
 }
-```
 
-**After:**
-```css
-.tru-ai-steps-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  height: 100%;
-}
-```
-
-Update the step card styling for vertical layout:
-
-**Before:**
-```css
-.tru-ai-step-card {
+/* Centered title container - takes full width, text centered */
+.tru-ai-header-center {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-right: 700px; /* Offset for previews on right */
+}
+
+.tru-ai-header-center .tru-ai-steps-title {
   text-align: center;
-  padding: 24px 16px;
-  ...
+  margin-bottom: 8px;
+}
+
+.tru-ai-header-center .tru-ai-accent-line {
+  margin: 0 auto;
+}
+
+/* Previews container - absolute right */
+.tru-ai-header-previews {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.tru-ai-header-previews .tru-ai-live-scanner {
+  width: 350px;
+  height: 260px;
+}
+
+.tru-ai-header-previews .tru-ai-live-inventory {
+  width: 280px;
+  height: 260px;
 }
 ```
 
-**After:**
+**Update section height and adjust steps container:**
+
 ```css
-.tru-ai-step-card {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  text-align: left;
-  padding: 20px 24px;
-  gap: 16px;
-  ...
+.tru-ai-steps-section {
+  height: auto;
+  min-height: 500px;
 }
 
-.tru-ai-step-card .tru-ai-step-number {
-  margin-bottom: 0;
-  flex-shrink: 0;
-}
-
-.tru-ai-step-card .tru-ai-step-content {
-  text-align: left;
+.tru-ai-steps-content {
+  width: 100%;
 }
 ```
 
 ---
 
-## Summary
+## Summary of Changes
 
 | Element | Before | After |
 |---------|--------|-------|
-| Steps container | `flex-direction: row` | `flex-direction: column` |
-| Step card layout | Vertical (number on top) | Horizontal (number on left) |
-| Step card text | Centered | Left-aligned |
-| Step card padding | `24px 16px` | `20px 24px` |
+| Title position | Centered above grid | Centered in header row |
+| Accent line | Below centered title | Below centered title (unchanged) |
+| Scanner/Detection | Below title in grid right column | Absolute right side of header row |
+| Preview alignment | Stacked/horizontal in grid | Side-by-side, vertically centered with header |
+| Preview sizes | 340px height | 260px height (to fit header row) |
+| Steps | In left column of grid | Full-width container below header |
 
 ---
 
 ## Files Modified
-- `src/pages/Index.tsx` - Change class name to `tru-ai-steps-vertical`
-- `src/index.css` - Update flex direction and step card layout for vertical stacking
+- `src/pages/Index.tsx` - Restructure JSX to create header row with centered title and right-aligned previews
+- `src/index.css` - Add `.tru-ai-header-row`, `.tru-ai-header-center`, and `.tru-ai-header-previews` styling
+
