@@ -1066,11 +1066,11 @@ export default function Index() {
                   {/* Progress bar removed per user request */}
                   
                   <div className="tru-qb-form-header tru-qb-form-header-pill">
-                    <div className="tru-qb-form-title-group">
-                      <span className="tru-qb-form-title tru-qb-form-title-large">
+                    <div className="tru-qb-form-title-group animate-fade-in">
+                      <span className="tru-qb-form-title tru-qb-form-title-large" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
                         AI-powered <span className="tru-qb-title-accent">Moving</span>
                       </span>
-                      <span className="tru-qb-form-subtitle-compact">
+                      <span className="tru-qb-form-subtitle-compact" style={{ animationDelay: '0.25s', animationFillMode: 'both' }}>
                         FMCSA-vetted carriers, AI precision
                       </span>
                     </div>
