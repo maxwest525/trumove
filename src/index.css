@@ -25269,7 +25269,7 @@
 /* Dashboard Header - Darker for white logo visibility, sticky below global nav */
 .tracking-header {
   position: sticky;
-  top: 88px; /* Header 72px + margin 8px + buffer 8px */
+  top: 98px; /* Header 72px + margin 8px + buffer 18px */
   z-index: 40;
   display: flex;
   align-items: center;
