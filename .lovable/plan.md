@@ -1,87 +1,59 @@
 
-# Plan: Fix Light Mode Visibility in SAFER DATABASE QUERY Terminal
+# Plan: Match Video Consult Trust Strip to Homepage Stats Strip Style
 
-## Problem
+## Current Differences
 
-In light mode, the "SAFER DATABASE QUERY" terminal has visibility issues:
-1. **Terminal title** (`SAFER DATABASE QUERY`) uses `hsl(var(--muted-foreground))` which is a mid-gray on a light gray background - low contrast
-2. **Toggle buttons** (Name, DOT, MC) use `text-slate-600` for inactive state which also has insufficient contrast
-3. **Active buttons** have a subtle green border that's harder to distinguish in light mode
+| Property | Homepage StatsStrip | Video Consult Trust Strip |
+|----------|---------------------|---------------------------|
+| Text case | ALL CAPS in data | Title Case in data |
+| font-weight | 700 (bold) | 500 (medium) |
+| text-transform | uppercase | none |
+| letter-spacing | 0.06em | none |
 
-## Root Cause
+## Changes
 
-The CSS values are optimized for dark mode aesthetics but the light mode fallbacks don't provide enough contrast:
-- Terminal header background: `hsl(210 40% 96.1%)` (very light gray)
-- Terminal title: `hsl(215.4 16.3% 46.9%)` (mid gray - low contrast)
-- Button text: `slate-600` (mid gray)
+### 1. Update Trust Strip Text to ALL CAPS
 
-## Solution
+**File: `src/components/video-consult/VideoConsultTrustStrip.tsx`**
 
-Increase contrast for all text and interactive elements in light mode within the FMCSA terminal.
-
-## Implementation
-
-### File: `src/index.css`
-
-**1. Update `.fmcsa-terminal-title` (line 24726-24737):**
-
-Change light mode color from `hsl(var(--muted-foreground))` to a darker, high-contrast color.
-
-```css
-/* FROM */
-.fmcsa-terminal-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: hsl(var(--muted-foreground));
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-}
-
-/* TO */
-.fmcsa-terminal-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: hsl(220 15% 30%); /* Darker gray for light mode - high contrast */
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-}
-```
-
-### File: `src/components/vetting/CarrierSearch.tsx`
-
-**2. Update toggle button styling (lines 140-199):**
-
-Increase contrast for inactive buttons in light mode by using `text-slate-700` instead of `text-slate-600` and `border-slate-400` instead of `border-slate-300`.
-
-| Current | New |
-|---------|-----|
-| `text-slate-600` (inactive) | `text-slate-700` |
-| `border-slate-300` (inactive) | `border-slate-400` |
-| `hover:text-slate-900` | Keep as-is |
-| `text-slate-900` (active) | Keep as-is |
-
-The specific changes for each button's inactive state:
+Update the TRUST_ITEMS array to use all caps text:
 
 ```tsx
-// FROM (for all three buttons)
-: 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/20'
-
-// TO
-: 'text-slate-700 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-400 dark:border-white/20'
+const TRUST_ITEMS = [
+  { icon: Shield, text: "SECURE VIDEO" },
+  { icon: BadgeCheck, text: "LICENSED BROKER" },
+  { icon: Monitor, text: "SCREEN SHARING" },
+  { icon: FileText, text: "QUOTE REVIEW" },
+  { icon: Clock, text: "NO OBLIGATION" },
+];
 ```
 
-## Files to Modify
+### 2. Update CSS to Match Homepage Stats Strip Typography
 
-| File | Changes |
-|------|---------|
-| `src/index.css` | Update `.fmcsa-terminal-title` light mode color to `hsl(220 15% 30%)` |
-| `src/components/vetting/CarrierSearch.tsx` | Change inactive button `text-slate-600` → `text-slate-700` and `border-slate-300` → `border-slate-400` (3 buttons) |
+**File: `src/index.css`**
+
+Update `.video-consult-trust-item` to match `.stats-strip-item`:
+
+| Property | Current | New |
+|----------|---------|-----|
+| font-weight | 500 | 700 |
+| text-transform | (none) | uppercase |
+| letter-spacing | (none) | 0.06em |
+
+```css
+.video-consult-trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;           /* Changed from 500 */
+  text-transform: uppercase;   /* Added */
+  letter-spacing: 0.06em;      /* Added */
+  color: hsl(0 0% 100% / 0.85);
+  white-space: nowrap;
+}
+```
 
 ## Result
 
-- The "SAFER DATABASE QUERY" title will be clearly visible with high contrast in light mode
-- The Name, DOT, and MC toggle buttons will have darker text and borders for better visibility
-- Dark mode remains unchanged
-- Active button state (green border + glow) remains the same
+The Video Consult Trust Strip will have the same bold, all-caps, spaced typography as the homepage Stats Strip, creating visual consistency across the site.
