@@ -29884,7 +29884,7 @@ html.dark .tru-summary-header-large,
    ============================================= */
 .video-consult-trust-strip {
   position: sticky;
-  top: 151px; /* Header 103px + video-consult-header ~48px */
+  top: 155px; /* Header 103px + video-consult-header 52px */
   z-index: 39;
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
@@ -29894,8 +29894,7 @@ html.dark .tru-summary-header-large,
 .video-consult-trust-strip-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
+  justify-content: space-between;
   max-width: 1480px;
   margin: 0 auto;
   flex-wrap: wrap;
