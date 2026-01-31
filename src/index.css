@@ -29921,100 +29921,115 @@ html.dark .tru-summary-header-large,
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 24px 32px;
-  background: linear-gradient(to bottom, hsl(220 15% 22%), hsl(220 15% 20%));
+  gap: 10px;
+  padding: 16px 24px 18px;
+  background: linear-gradient(to bottom, hsl(220 15% 18%), hsl(220 15% 15%));
   border-radius: 12px;
-  border: 1px solid hsl(0 0% 100% / 0.25);
+  border: 1px solid hsl(0 0% 100% / 0.2);
+  max-width: 680px;
+  margin: 0 auto;
 }
 
 .video-consult-booking-inner {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  max-width: 600px;
 }
 
 .video-consult-booking-input {
   flex: 1;
-  height: 44px;
-  background: hsl(220 15% 28%) !important;
-  border: 1px solid hsl(0 0% 100% / 0.35) !important;
+  height: 48px;
+  background: hsl(220 15% 18%) !important;
+  border: 2px solid hsl(0 0% 100% / 0.4) !important;
+  border-radius: 10px !important;
   color: white !important;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
+  padding-left: 16px !important;
 }
 
 .video-consult-booking-input::placeholder {
-  color: hsl(0 0% 100% / 0.7) !important;
+  color: hsl(0 0% 100% / 0.5) !important;
   font-weight: 500;
 }
 
 .video-consult-booking-input:focus {
-  border-color: hsl(var(--primary) / 0.6) !important;
-  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.25) !important;
+  background: hsl(220 15% 14%) !important;
 }
 
-/* Join Room Button - Primary outline style (not solid green) */
+/* Join Room Button - Solid primary for visibility */
 .video-consult-booking-join-btn {
-  height: 44px;
-  padding: 0 24px;
+  height: 48px;
+  padding: 0 28px;
   font-weight: 700;
-  font-size: 14px;
-  background: transparent !important;
+  font-size: 15px;
+  background: hsl(var(--primary)) !important;
   border: 2px solid hsl(var(--primary)) !important;
-  color: hsl(var(--primary)) !important;
+  color: hsl(0 0% 0%) !important;
+  border-radius: 10px !important;
 }
 
 .video-consult-booking-join-btn:hover {
-  background: hsl(var(--primary) / 0.15) !important;
+  background: hsl(var(--primary) / 0.85) !important;
+  transform: translateY(-1px);
 }
 
 .video-consult-booking-join-btn:disabled {
+  background: hsl(0 0% 100% / 0.1) !important;
   border-color: hsl(0 0% 100% / 0.2) !important;
   color: hsl(0 0% 100% / 0.4) !important;
 }
 
-/* Screen Share Button */
+/* Screen Share Button - Higher contrast */
 .video-consult-booking-share-btn {
-  height: 44px;
-  padding: 0 20px;
+  height: 48px;
+  padding: 0 22px;
   font-size: 14px;
-  background: transparent !important;
-  border: 1px solid hsl(0 0% 100% / 0.3) !important;
-  color: hsl(0 0% 100% / 0.85) !important;
+  font-weight: 600;
+  background: hsl(220 15% 18%) !important;
+  border: 2px solid hsl(0 0% 100% / 0.35) !important;
+  color: hsl(0 0% 100%) !important;
+  border-radius: 10px 0 0 10px !important;
 }
 
 .video-consult-booking-share-btn:hover {
-  background: hsl(var(--primary) / 0.15) !important;
-  border-color: hsl(var(--primary) / 0.5) !important;
+  background: hsl(var(--primary) / 0.2) !important;
+  border-color: hsl(var(--primary)) !important;
   color: hsl(var(--primary)) !important;
 }
 
-/* Demo Button */
+/* Demo Button - Higher contrast */
 .video-consult-booking-demo-btn {
-  height: 44px;
-  padding: 0 20px;
+  height: 48px;
+  padding: 0 22px;
   font-size: 14px;
-  background: transparent !important;
-  border: 1px solid hsl(0 0% 100% / 0.3) !important;
-  color: hsl(0 0% 100% / 0.85) !important;
+  font-weight: 600;
+  background: hsl(220 15% 18%) !important;
+  border: 2px solid hsl(0 0% 100% / 0.35) !important;
+  color: hsl(0 0% 100%) !important;
+  border-radius: 10px !important;
 }
 
 .video-consult-booking-demo-btn:hover {
-  background: hsl(0 0% 100% / 0.1) !important;
-  border-color: hsl(0 0% 100% / 0.4) !important;
+  background: hsl(0 0% 100% / 0.15) !important;
+  border-color: hsl(0 0% 100% / 0.5) !important;
 }
 
-/* Virtual Video Controls Header */
+/* Virtual Video Controls Header - More Pronounced */
 .video-consult-booking-header {
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 16px;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   color: hsl(0 0% 100%);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid hsl(0 0% 100% / 0.15);
+  width: 100%;
+  text-align: center;
 }
 
 /* Screen Share Active State */
@@ -30031,31 +30046,28 @@ html.dark .tru-summary-header-large,
 
 /* Screen Share Audio Toggle Button */
 .video-consult-booking-audio-btn {
-  height: 44px !important;
-  width: 44px !important;
+  height: 48px !important;
+  width: 48px !important;
   padding: 0 !important;
-  background: transparent !important;
-  border: 1px solid hsl(0 0% 100% / 0.3) !important;
-  color: hsl(0 0% 100% / 0.85) !important;
+  background: hsl(220 15% 18%) !important;
+  border: 2px solid hsl(0 0% 100% / 0.35) !important;
+  color: hsl(0 0% 100%) !important;
   border-left: none !important;
-  border-radius: 0 8px 8px 0 !important;
-  margin-left: -1px !important;
+  border-radius: 0 10px 10px 0 !important;
+  margin-left: -2px !important;
 }
 
 .video-consult-booking-audio-btn:hover {
-  background: hsl(var(--primary) / 0.15) !important;
+  background: hsl(var(--primary) / 0.2) !important;
   color: hsl(var(--primary)) !important;
-  border-color: hsl(var(--primary) / 0.5) !important;
+  border-color: hsl(var(--primary)) !important;
 }
 
 .video-consult-booking-audio-btn--muted {
   color: hsl(0 0% 100% / 0.4) !important;
 }
 
-/* Adjust share button when paired with audio toggle */
-.video-consult-booking-share-btn {
-  border-radius: 8px 0 0 8px !important;
-}
+/* Share button radius when paired with audio toggle (applied in main declaration) */
 
 /* =============================================
    VIDEO CONSULT CHAT PANEL
@@ -30100,27 +30112,28 @@ html.dark .tru-summary-header-large,
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 16px 16px;
-  font-size: 13px;
+  padding: 14px 16px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: hsl(0 0% 100% / 0.6);
-  background: hsl(220 15% 12%);
+  letter-spacing: 0.08em;
+  color: hsl(0 0% 100% / 0.55);
+  background: hsl(220 15% 10%);
   border: none;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .video-consult-chat-tabs button:hover {
   color: hsl(0 0% 100% / 0.8);
-  background: hsl(220 15% 16%);
+  background: hsl(220 15% 14%);
 }
 
 .video-consult-chat-tabs button.active {
-  color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.15);
-  border-bottom: 3px solid hsl(var(--primary));
+  color: hsl(0 0% 100%);
+  background: hsl(220 15% 14%);
+  border-bottom: 2px solid hsl(var(--primary));
 }
 
 .video-consult-chat-content {
