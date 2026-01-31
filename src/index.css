@@ -2677,8 +2677,8 @@
 /* Three-column layout for AI section */
 .tru-ai-two-column {
   display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 32px;
+  grid-template-columns: 50px 1fr;
+  gap: 24px;
   align-items: stretch;
   margin-bottom: 0;
   text-align: left;
@@ -2695,35 +2695,34 @@
   padding-left: 0;
 }
 
-/* Horizontal steps layout */
+/* Vertical steps layout - narrow column */
 .tru-ai-steps-vertical {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   height: 100%;
 }
 
 .tru-ai-step-card {
   flex: 1;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  text-align: left;
-  padding: 20px 24px;
-  gap: 16px;
+  justify-content: center;
+  padding: 12px;
   background: hsl(var(--muted) / 0.3);
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid hsl(var(--border) / 0.5);
   transition: all 0.2s ease;
 }
 
 .tru-ai-step-card .tru-ai-step-number {
-  margin-bottom: 0;
-  flex-shrink: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
 }
 
 .tru-ai-step-card .tru-ai-step-content {
-  text-align: left;
+  display: none;
 }
 
 .tru-ai-step-card:hover {
@@ -2771,11 +2770,11 @@
   transform: scale(1);
 }
 
-/* Stacked vertical layout for scanner + inventory list */
+/* Horizontal layout for scanner + inventory list */
 .tru-ai-preview-vertical {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex-direction: row;
+  gap: 16px;
 }
 
 .tru-ai-preview-vertical .tru-ai-live-scanner {
