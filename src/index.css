@@ -29996,9 +29996,9 @@ html.dark .tru-summary-header-large,
 }
 
 .video-consult-booking-share-btn:hover {
-  background: hsl(var(--primary) / 0.2) !important;
-  border-color: hsl(var(--primary)) !important;
-  color: hsl(var(--primary)) !important;
+  background: hsl(0 0% 100% / 0.08) !important;
+  border-color: hsl(0 0% 100% / 0.5) !important;
+  color: hsl(0 0% 100%) !important;
 }
 
 /* Demo Button - Higher contrast */
@@ -30058,13 +30058,30 @@ html.dark .tru-summary-header-large,
 }
 
 .video-consult-booking-audio-btn:hover {
-  background: hsl(var(--primary) / 0.2) !important;
-  color: hsl(var(--primary)) !important;
-  border-color: hsl(var(--primary)) !important;
+  background: hsl(0 0% 100% / 0.08) !important;
+  color: hsl(0 0% 100%) !important;
+  border-color: hsl(0 0% 100% / 0.5) !important;
 }
 
 .video-consult-booking-audio-btn--muted {
   color: hsl(0 0% 100% / 0.4) !important;
+}
+
+/* Settings Button */
+.video-consult-booking-settings-btn {
+  height: 48px !important;
+  width: 48px !important;
+  padding: 0 !important;
+  background: hsl(220 15% 18%) !important;
+  border: 2px solid hsl(0 0% 100% / 0.35) !important;
+  color: hsl(0 0% 100%) !important;
+  border-radius: 10px !important;
+}
+
+.video-consult-booking-settings-btn:hover {
+  background: hsl(0 0% 100% / 0.08) !important;
+  color: hsl(0 0% 100%) !important;
+  border-color: hsl(0 0% 100% / 0.5) !important;
 }
 
 /* Share button radius when paired with audio toggle (applied in main declaration) */
