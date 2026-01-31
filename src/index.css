@@ -29892,11 +29892,11 @@ html.dark .tru-summary-header-large,
 .video-consult-header-trust-item {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 11px;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: hsl(0 0% 100% / 0.85);
   white-space: nowrap;
 }
@@ -29942,11 +29942,13 @@ html.dark .tru-summary-header-large,
   background: hsl(220 15% 28%) !important;
   border: 1px solid hsl(0 0% 100% / 0.35) !important;
   color: white !important;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .video-consult-booking-input::placeholder {
-  color: hsl(0 0% 100% / 0.65) !important;
+  color: hsl(0 0% 100% / 0.7) !important;
+  font-weight: 500;
 }
 
 .video-consult-booking-input:focus {
@@ -29959,6 +29961,7 @@ html.dark .tru-summary-header-large,
   height: 44px;
   padding: 0 24px;
   font-weight: 700;
+  font-size: 14px;
   background: transparent !important;
   border: 2px solid hsl(var(--primary)) !important;
   color: hsl(var(--primary)) !important;
@@ -29977,6 +29980,7 @@ html.dark .tru-summary-header-large,
 .video-consult-booking-share-btn {
   height: 44px;
   padding: 0 20px;
+  font-size: 14px;
   background: transparent !important;
   border: 1px solid hsl(0 0% 100% / 0.3) !important;
   color: hsl(0 0% 100% / 0.85) !important;
@@ -29992,6 +29996,7 @@ html.dark .tru-summary-header-large,
 .video-consult-booking-demo-btn {
   height: 44px;
   padding: 0 20px;
+  font-size: 14px;
   background: transparent !important;
   border: 1px solid hsl(0 0% 100% / 0.3) !important;
   color: hsl(0 0% 100% / 0.85) !important;
@@ -30000,6 +30005,16 @@ html.dark .tru-summary-header-large,
 .video-consult-booking-demo-btn:hover {
   background: hsl(0 0% 100% / 0.1) !important;
   border-color: hsl(0 0% 100% / 0.4) !important;
+}
+
+/* Virtual Video Controls Header */
+.video-consult-booking-header {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: hsl(0 0% 100%);
+  margin-bottom: 8px;
 }
 
 /* Screen Share Active State */
@@ -30048,8 +30063,8 @@ html.dark .tru-summary-header-large,
 .video-consult-chat-panel {
   display: flex;
   flex-direction: column;
-  /* Match video window aspect ratio on desktop */
-  height: calc((100vw - 380px - 48px - 380px) * 9 / 16 + 0px);
+  /* Fixed height to match video window */
+  height: 560px;
   min-height: 400px;
   max-height: 560px;
   background: linear-gradient(to bottom, hsl(220 15% 10%), hsl(220 15% 8%));
@@ -30085,27 +30100,27 @@ html.dark .tru-summary-header-large,
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 16px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 16px 16px;
+  font-size: 13px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: hsl(0 0% 100% / 0.5);
-  background: transparent;
+  letter-spacing: 0.06em;
+  color: hsl(0 0% 100% / 0.6);
+  background: hsl(220 15% 12%);
   border: none;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .video-consult-chat-tabs button:hover {
-  color: hsl(0 0% 100% / 0.7);
-  background: hsl(0 0% 100% / 0.05);
+  color: hsl(0 0% 100% / 0.8);
+  background: hsl(220 15% 16%);
 }
 
 .video-consult-chat-tabs button.active {
   color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.1);
-  border-bottom: 2px solid hsl(var(--primary));
+  background: hsl(var(--primary) / 0.15);
+  border-bottom: 3px solid hsl(var(--primary));
 }
 
 .video-consult-chat-content {
