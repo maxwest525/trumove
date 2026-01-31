@@ -2265,6 +2265,7 @@
   flex-direction: column;
   max-width: none;
   padding: 0 48px;
+  text-align: center;
 }
 
 .tru-ai-two-column {
@@ -2274,6 +2275,7 @@
   display: grid;
   grid-template-columns: 180px 1fr 300px;
   gap: 32px;
+  text-align: left;
 }
 
 /* Scanner Start Button Overlay */
@@ -2572,11 +2574,6 @@
   font-weight: 500;
 }
 
-.tru-ai-steps-inner {
-  max-width: none;
-  padding: 0 48px;
-  text-align: center;
-}
 
 .tru-ai-steps-title {
   font-size: 22px;
@@ -2587,15 +2584,6 @@
   text-align: center;
 }
 
-/* Three-column layout for AI section */
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: 180px 1fr 300px;
-  gap: 32px;
-  align-items: stretch;
-  margin-bottom: 0;
-  text-align: left;
-}
 
 .tru-ai-left-column {
   display: flex;
