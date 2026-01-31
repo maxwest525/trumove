@@ -1443,9 +1443,9 @@
 /* Text shadow for headline readability - dark underglow */
 .tru-hero-headline-main {
   text-shadow: 
-    0 2px 4px hsl(0 0% 0% / 0.7),
-    0 4px 12px hsl(0 0% 0% / 0.5),
-    0 8px 24px hsl(0 0% 0% / 0.35);
+    0 3px 8px hsl(0 0% 0% / 0.7),
+    0 6px 24px hsl(0 0% 0% / 0.5),
+    0 12px 48px hsl(0 0% 0% / 0.35);
 }
 
 .tru-hero-header-section .tru-hero-header-subheadline {
@@ -1756,9 +1756,9 @@
   line-height: 1.7;
   color: hsl(var(--tm-ink));
   text-shadow: 
-    0 2px 4px hsl(0 0% 0% / 0.6),
-    0 4px 12px hsl(0 0% 0% / 0.4),
-    0 8px 20px hsl(0 0% 0% / 0.25);
+    0 3px 8px hsl(0 0% 0% / 0.6),
+    0 6px 20px hsl(0 0% 0% / 0.4),
+    0 10px 40px hsl(0 0% 0% / 0.25);
   margin-bottom: 32px;
   font-weight: 500;
   max-width: 700px;
@@ -26375,9 +26375,9 @@
   margin: 0 auto 0;
   font-weight: 600;
   text-shadow: 
-    0 2px 4px hsl(0 0% 0% / 0.7),
-    0 4px 16px hsl(0 0% 0% / 0.5),
-    0 8px 24px hsl(0 0% 0% / 0.35);
+    0 3px 8px hsl(0 0% 0% / 0.7),
+    0 6px 28px hsl(0 0% 0% / 0.5),
+    0 12px 48px hsl(0 0% 0% / 0.35);
   letter-spacing: 0.02em;
   text-align: center;
 }
@@ -26387,9 +26387,9 @@
   color: hsl(0 0% 100%) !important;
   -webkit-text-fill-color: hsl(0 0% 100%) !important;
   text-shadow: 
-    0 2px 12px hsl(0 0% 0% / 0.7),
-    0 4px 24px hsl(0 0% 0% / 0.5),
-    0 0 40px hsl(142 72% 50% / 0.3);
+    0 3px 16px hsl(0 0% 0% / 0.7),
+    0 6px 40px hsl(0 0% 0% / 0.5),
+    0 0 60px hsl(142 72% 50% / 0.3);
 }
 
 @keyframes headline-shimmer {
