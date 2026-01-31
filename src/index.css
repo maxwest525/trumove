@@ -29892,11 +29892,11 @@ html.dark .tru-summary-header-large,
 .video-consult-header-trust-item {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 10px;
-  font-weight: 600;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: hsl(0 0% 100% / 0.85);
   white-space: nowrap;
 }
