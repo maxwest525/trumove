@@ -1071,7 +1071,7 @@ export default function Index() {
                         AI-powered <span className="tru-qb-title-accent">Moving</span>
                       </span>
                       <span className="tru-qb-form-subtitle-compact">
-                  Carriers vetted against FMCSA safety records
+                        FMCSA-vetted carriers, AI precision
                       </span>
                     </div>
                   </div>
