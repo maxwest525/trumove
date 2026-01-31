@@ -1036,11 +1036,13 @@ export default function Book() {
 
   return (
     <div className="video-consult-page">
-      {/* Site Header */}
-      <Header />
+      {/* Site Header - Sticky */}
+      <div className="sticky top-0 z-[100]">
+        <Header />
+      </div>
       
       {/* Sticky Header Block */}
-      <div className="sticky top-[107px] z-40">
+      <div className="sticky top-[72px] z-40">
         <header className="video-consult-header">
           {/* Left - Logo & Title */}
           <div className="flex items-center gap-3">
