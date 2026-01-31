@@ -11419,7 +11419,7 @@
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 32px;
   margin-left: auto;
 }
 
@@ -11432,7 +11432,7 @@
 .header-nav-item:not(:last-child)::after {
   content: '';
   position: absolute;
-  right: -10px;
+  right: -16px;
   top: 50%;
   transform: translateY(-50%);
   height: 16px;
@@ -11453,7 +11453,7 @@
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: hsl(var(--tm-ink));
+  color: hsl(0 0% 0%);
   text-decoration: none;
   border-radius: 20px;
   transition: all 200ms ease;
@@ -11503,13 +11503,11 @@
 }
 
 .header-nav-chevron {
-  opacity: 0.5;
-  transition: transform 200ms ease;
+  display: none;
 }
 
 .header-nav-item:hover .header-nav-chevron {
-  transform: rotate(180deg);
-  opacity: 1;
+  display: none;
 }
 
 .header-actions {
