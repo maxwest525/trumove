@@ -1,239 +1,113 @@
 
 
-# Plan: Video Consult Header Simplification & Styling
+# Plan: Video Consult Header Alignment & Booking Controls Update
 
 ## Overview
-Simplify the Video Consult header by removing the shipment search and call button, integrating trust strip items directly into the header, removing the separate trust strip component, and styling the booking controls below the video with a dark theme.
+This plan addresses the following changes:
+1. Delete the unused `VideoConsultTrustStrip` component file
+2. Add Shipment ID display to the header (matching tracking page style)
+3. Match the header dimensions/fonts to the tracking page header
+4. Brighten the booking controls strip below the video
+5. Remove the booking code input from inside the video window
 
 ## Changes
 
-### 1. Modify Header - Remove Search & Call, Add Trust Items
+### 1. Delete Unused Trust Strip Component
 
-**File: `src/pages/Book.tsx`**
+**File: `src/components/video-consult/VideoConsultTrustStrip.tsx`**
 
-Replace the current header content (lines 699-749) with a simplified structure:
+This file is no longer imported anywhere and can be deleted.
 
-```tsx
-<header className="video-consult-header">
-  {/* Left - Logo & Title */}
-  <div className="flex items-center gap-3">
-    <img 
-      src={logoImg} 
-      alt="TruMove" 
-      className="h-6 brightness-0 invert"
-    />
-    <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
-      Video Consult Center
-    </span>
-  </div>
+---
 
-  {/* Center - Trust Items (inline) */}
-  <div className="video-consult-header-trust">
-    <div className="video-consult-header-trust-item">
-      <Shield className="w-4 h-4" />
-      <span>SECURE VIDEO</span>
-    </div>
-    <span className="video-consult-trust-dot">•</span>
-    <div className="video-consult-header-trust-item">
-      <BadgeCheck className="w-4 h-4" />
-      <span>LICENSED BROKER</span>
-    </div>
-    <span className="video-consult-trust-dot">•</span>
-    <div className="video-consult-header-trust-item">
-      <Monitor className="w-4 h-4" />
-      <span>SCREEN SHARING</span>
-    </div>
-    <span className="video-consult-trust-dot">•</span>
-    <div className="video-consult-header-trust-item">
-      <FileText className="w-4 h-4" />
-      <span>QUOTE REVIEW</span>
-    </div>
-    <span className="video-consult-trust-dot">•</span>
-    <div className="video-consult-header-trust-item">
-      <Clock className="w-4 h-4" />
-      <span>NO OBLIGATION</span>
-    </div>
-  </div>
-
-  {/* Right - Empty spacer for balance */}
-  <div className="w-[120px]" />
-</header>
-```
-
-Remove `<VideoConsultTrustStrip />` from below the header.
-
-### 2. Update Imports
-
-**File: `src/pages/Book.tsx`**
-
-Add trust strip icons and remove unused imports:
-
-```tsx
-import { 
-  Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, 
-  Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package,
-  Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
-  Shield, BadgeCheck, FileText, Clock  // Add these
-} from "lucide-react";
-
-// Remove or keep VideoConsultTrustStrip import - can be deleted
-```
-
-### 3. Add CSS for Header Trust Items
+### 2. Update Header to Match Tracking Page Dimensions
 
 **File: `src/index.css`**
 
-Add new styles for the inline trust items in the header:
+The tracking header uses:
+- `padding: 12px 24px` ✓ (already matching)
+- `background: hsl(var(--foreground) / 0.95)` (tracking uses this, video consult uses different gradient)
 
-```css
-/* Trust items within header - centered */
-.video-consult-header-trust {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
+Update `.video-consult-header` to match `.tracking-header`:
 
-.video-consult-header-trust-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: hsl(0 0% 100% / 0.85);
-  white-space: nowrap;
-}
+| Property | Current (Video Consult) | Target (Tracking) |
+|----------|------------------------|-------------------|
+| background | `linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%))` | `hsl(var(--foreground) / 0.95)` |
+| padding | 12px 24px | 12px 24px ✓ |
 
-.video-consult-header-trust-item svg {
-  width: 14px;
-  height: 14px;
-  color: hsl(var(--primary));
-}
+---
 
-/* Responsive - hide trust items on smaller screens */
-@media (max-width: 1200px) {
-  .video-consult-header-trust {
-    display: none;
-  }
-}
-```
-
-### 4. Style Booking Controls with Dark Theme
+### 3. Add Shipment ID Display to Header (Right Side)
 
 **File: `src/pages/Book.tsx`**
 
-Update the booking controls section (lines 830-851) with dark styling:
+Add a Shipment ID display on the right side of the header, matching the tracking page pattern exactly:
 
 ```tsx
-{/* Booking Controls - Below Video - Dark themed */}
-<div className="video-consult-booking-controls">
-  <div className="video-consult-booking-inner">
-    <Input
-      value={bookingCode}
-      onChange={(e) => setBookingCode(e.target.value)}
-      placeholder="Enter booking code..."
-      className="video-consult-booking-input"
-      onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
-    />
-    <Button 
-      onClick={handleJoinRoom} 
-      disabled={!bookingCode.trim()}
-      className="video-consult-booking-btn"
-    >
-      Join
-    </Button>
-    <Button 
-      variant="outline" 
-      onClick={handleStartDemo}
-      className="video-consult-booking-demo-btn"
-    >
-      <Sparkles className="w-4 h-4 mr-2" />
-      Demo
-    </Button>
+{/* Right - Shipment ID (matching tracking page) */}
+<div className="flex items-center gap-4">
+  <div className="text-right">
+    <div className="text-[11px] text-white/80 uppercase tracking-wider">Shipment ID</div>
+    <div className="text-sm font-mono text-white">TM-2026-{String(Date.now()).slice(-8)}</div>
   </div>
-  <p className="text-xs text-white/50 mt-3">
-    Enter your booking code to join a scheduled session
-  </p>
 </div>
 ```
 
-### 5. Add CSS for Dark-Themed Booking Controls
+This replaces the empty spacer `<div className="w-[120px]" />`.
+
+---
+
+### 4. Brighten Booking Controls Below Video
 
 **File: `src/index.css`**
 
-```css
-/* Booking Controls - Below Video */
-.video-consult-booking-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 24px 32px;
-  background: linear-gradient(to bottom, hsl(220 15% 8%), hsl(220 15% 6%));
-  border-radius: 12px;
-  border: 1px solid hsl(0 0% 100% / 0.08);
-}
+Update `.video-consult-booking-controls` with brighter colors:
 
-.video-consult-booking-inner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 480px;
-}
+| Property | Current | New |
+|----------|---------|-----|
+| background | `hsl(220 15% 8%)` to `hsl(220 15% 6%)` | `hsl(220 15% 14%)` to `hsl(220 15% 12%)` |
+| border | `hsl(0 0% 100% / 0.08)` | `hsl(0 0% 100% / 0.15)` |
 
-.video-consult-booking-input {
-  flex: 1;
-  height: 44px;
-  background: hsl(220 15% 12%) !important;
-  border: 1px solid hsl(0 0% 100% / 0.15) !important;
-  color: white !important;
-  font-size: 14px;
-}
+Update `.video-consult-booking-input`:
 
-.video-consult-booking-input::placeholder {
-  color: hsl(0 0% 100% / 0.4) !important;
-}
+| Property | Current | New |
+|----------|---------|-----|
+| background | `hsl(220 15% 12%)` | `hsl(220 15% 18%)` |
+| border | `hsl(0 0% 100% / 0.15)` | `hsl(0 0% 100% / 0.25)` |
 
-.video-consult-booking-input:focus {
-  border-color: hsl(var(--primary) / 0.6) !important;
-  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
-}
+Update helper text:
 
-.video-consult-booking-btn {
-  height: 44px;
-  padding: 0 24px;
-  font-weight: 700;
-}
+| Property | Current | New |
+|----------|---------|-----|
+| color | `text-white/50` | `text-white/70` |
 
-.video-consult-booking-demo-btn {
-  height: 44px;
-  padding: 0 20px;
-  background: transparent !important;
-  border: 1px solid hsl(0 0% 100% / 0.2) !important;
-  color: hsl(0 0% 100% / 0.8) !important;
-}
+---
 
-.video-consult-booking-demo-btn:hover {
-  background: hsl(0 0% 100% / 0.1) !important;
-  border-color: hsl(0 0% 100% / 0.3) !important;
-}
-```
+### 5. Remove Booking Code Input from Video Window
+
+**File: `src/pages/Book.tsx`**
+
+In the "Ready to Connect" placeholder state (lines 765-814), remove:
+- The "Enter your booking code below..." paragraph text
+- The entire Join Form div containing the Input and Join Room button
+- Keep only the demo button/link and screen sharing info
+
+The booking controls are already duplicated in the section below the video, so removing from inside the video window streamlines the UI.
+
+---
 
 ## Summary of Changes
 
-| Element | Before | After |
-|---------|--------|-------|
-| Header center | Shipment ID search | Trust strip items inline |
-| Header right | Call Now button | Empty (balanced layout) |
-| Trust Strip | Separate component below header | Removed (items in header) |
-| Booking controls | Light themed | Dark themed card |
+| Item | Action |
+|------|--------|
+| `VideoConsultTrustStrip.tsx` | Delete file |
+| Header background | Match tracking header style |
+| Header right side | Add Shipment ID display |
+| Booking controls | Brighten colors (more contrast) |
+| Video window interior | Remove duplicate booking form |
 
 ## Files to Modify
-- `src/pages/Book.tsx` - Header restructure, booking controls styling
-- `src/index.css` - New CSS classes for header trust items and dark booking controls
+- `src/components/video-consult/VideoConsultTrustStrip.tsx` - DELETE
+- `src/pages/Book.tsx` - Header Shipment ID + remove video interior form
+- `src/index.css` - Booking controls brightened colors
 
