@@ -1068,7 +1068,7 @@ export default function Index() {
                   <div className="tru-qb-form-header tru-qb-form-header-pill">
                     <div className="tru-qb-form-title-group">
                       <span className="tru-qb-form-title tru-qb-form-title-large">
-                        A SMARTER WAY TO <span className="tru-qb-title-accent">MOVE</span>
+                        START YOUR <span className="tru-qb-title-accent">BUILD</span>
                       </span>
                       <span className="tru-qb-form-subtitle-compact">
                         Carriers vetted against FMCSA safety records
