@@ -2271,7 +2271,7 @@
   align-items: center;
   position: relative;
   margin-bottom: 16px;
-  min-height: 280px;
+  min-height: 320px;
 }
 
 /* Steps left container - absolute positioned */
@@ -2294,8 +2294,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-left: 250px; /* Account for left steps */
-  padding-right: 650px; /* Account for right previews */
+  padding-left: 250px;
+  padding-right: 760px;
 }
 
 .tru-ai-header-center .tru-ai-steps-title {
@@ -2307,27 +2307,28 @@
   margin: 0 auto;
 }
 
-/* Previews container - absolute right */
+/* Previews container - absolute right, full height */
 .tru-ai-header-previews {
   position: absolute;
   right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
   display: flex;
   flex-direction: row;
   gap: 16px;
+  align-items: stretch;
   opacity: 1;
   transition: all 0.4s ease;
 }
 
 .tru-ai-header-previews .tru-ai-live-scanner {
-  width: 350px;
-  height: 260px;
+  width: 420px;
+  height: 100%;
 }
 
 .tru-ai-header-previews .tru-ai-live-inventory {
-  width: 280px;
-  height: 260px;
+  width: 320px;
+  height: 100%;
 }
 
 /* Steps content container */
