@@ -29241,11 +29241,11 @@ html.dark .tru-summary-header-large,
 .trust-strip-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  justify-content: space-between;
   flex-wrap: nowrap;
   white-space: nowrap;
-  min-width: max-content;
+  max-width: 1480px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -29296,12 +29296,12 @@ html.dark .tru-summary-header-large,
 
 .stats-strip-inner {
   max-width: 1480px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-wrap: nowrap;
-  gap: 28px;
   overflow: hidden;
 }
 
