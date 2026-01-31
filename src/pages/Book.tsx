@@ -6,7 +6,7 @@ import {
   Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, 
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
-  Shield, BadgeCheck, FileText, Clock
+  Shield, BadgeCheck, FileText, Clock, Bot, Headphones
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
+import AIChatContainer from "@/components/chat/AIChatContainer";
+import { getPageContext } from "@/components/chat/pageContextConfig";
 // Trust strip items now inline in header
 
 // Preview images
@@ -30,20 +32,26 @@ const useScrollToTop = () => {
   }, []);
 };
 
-// Fake Agent View - Full-bleed video feed style like a real call
+// Fake Agent View - Full-bleed video feed style like a real call with subtle animation
 function FakeAgentView() {
   return (
     <div className="absolute inset-0">
       {/* Full-bleed agent "video" with professional background */}
       <div className="absolute inset-0">
-        {/* Trudy Martinez on video call - fills the space */}
+        {/* Trudy Martinez on video call - fills the space with subtle zoom animation */}
         <img 
           src={trudyVideoCall}
           alt="Trudy Martinez" 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover animate-subtle-zoom"
         />
         {/* Subtle gradient overlay for readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-slate-900/30" />
+      </div>
+      
+      {/* LIVE indicator - top left */}
+      <div className="absolute top-4 left-4 px-2 py-1 rounded bg-red-600 text-white text-xs font-bold flex items-center gap-1.5">
+        <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+        LIVE
       </div>
       
       {/* Name badge overlay - bottom left like real video calls */}
@@ -652,6 +660,10 @@ export default function Book() {
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
   const [bookingCode, setBookingCode] = useState("");
   const [isDemo, setIsDemo] = useState(false);
+  const [chatMode, setChatMode] = useState<'trudy' | 'specialist'>('trudy');
+  
+  // Get page context for AI chat
+  const pageContext = getPageContext('/book');
 
   // Handle join room with booking code
   const handleJoinRoom = () => {
@@ -749,59 +761,118 @@ export default function Book() {
 
       {/* Main Content */}
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
-        <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full max-w-6xl mx-auto">
 
-          {/* Main Video Window */}
-          <Card className="mb-8 overflow-hidden border-2 border-border/60 bg-gradient-to-b from-muted/30 to-background">
-            <CardContent className="p-0">
-              <div className="relative aspect-video min-h-[400px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-                {roomUrl ? (
-                  isDemo ? (
-                    <DemoVideoPlaceholder onLeave={handleLeaveRoom} />
+          {/* Two-Column Grid: Video + Chat Panel */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-6 mb-8">
+            {/* Main Video Window */}
+            <Card className="overflow-hidden border-2 border-border/60 bg-gradient-to-b from-muted/30 to-background">
+              <CardContent className="p-0">
+                <div className="relative aspect-video min-h-[400px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+                  {roomUrl ? (
+                    isDemo ? (
+                      <DemoVideoPlaceholder onLeave={handleLeaveRoom} />
+                    ) : (
+                      <DailyVideoRoom 
+                        roomUrl={roomUrl}
+                        userName="Guest"
+                        onLeave={handleLeaveRoom}
+                        className="w-full h-full"
+                      />
+                    )
                   ) : (
-                    <DailyVideoRoom 
-                      roomUrl={roomUrl}
-                      userName="Guest"
-                      onLeave={handleLeaveRoom}
-                      className="w-full h-full"
-                    />
-                  )
-                ) : (
-                  <div className="text-center p-8">
-                    {/* Placeholder video state */}
-                    <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
-                      <Users className="w-12 h-12 text-white/30" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white/90 mb-2">
-                      Ready to Connect
-                    </h3>
-                    <p className="text-white/50 text-sm mb-6 max-w-sm mx-auto">
-                      Use the booking controls below to join your scheduled session, or start a demo.
-                    </p>
-                    
-                    <button
-                      onClick={handleStartDemo}
-                      className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-primary transition-colors"
-                    >
-                      <Play className="w-4 h-4" />
-                      Try Demo Mode
-                    </button>
-                    
-                    {/* Screen sharing info */}
-                    <div className="mt-6 pt-6 border-t border-white/10 max-w-md mx-auto">
-                      <div className="flex items-center gap-3 text-white/60">
-                        <Monitor className="w-5 h-5 text-primary" />
-                        <p className="text-xs text-left">
-                          <span className="font-semibold text-white/80">Screen Sharing Available</span><br />
-                          Both you and support can share screens to collaborate on inventory, documents, and profiles.
-                        </p>
+                    <div className="text-center p-8">
+                      {/* Placeholder video state */}
+                      <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
+                        <Users className="w-12 h-12 text-white/30" />
                       </div>
+                      <h3 className="text-xl font-bold text-white/90 mb-2">
+                        Ready to Connect
+                      </h3>
+                      <p className="text-white/50 text-sm mb-6 max-w-sm mx-auto">
+                        Use the booking controls below to join your scheduled session, or start a demo.
+                      </p>
+                      
+                      <button
+                        onClick={handleStartDemo}
+                        className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-primary transition-colors"
+                      >
+                        <Play className="w-4 h-4" />
+                        Try Demo Mode
+                      </button>
+                      
+                      {/* Screen sharing info */}
+                      <div className="mt-6 pt-6 border-t border-white/10 max-w-md mx-auto">
+                        <div className="flex items-center gap-3 text-white/60">
+                          <Monitor className="w-5 h-5 text-primary" />
+                          <p className="text-xs text-left">
+                            <span className="font-semibold text-white/80">Screen Sharing Available</span><br />
+                            Both you and support can share screens to collaborate on inventory, documents, and profiles.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Chat Panel - Right Side */}
+            <div className="video-consult-chat-panel">
+              {/* Tab Selector */}
+              <div className="video-consult-chat-tabs">
+                <button 
+                  className={chatMode === 'trudy' ? 'active' : ''}
+                  onClick={() => setChatMode('trudy')}
+                >
+                  <Bot className="w-4 h-4" />
+                  Talk to Trudy
+                </button>
+                <button 
+                  className={chatMode === 'specialist' ? 'active' : ''}
+                  onClick={() => setChatMode('specialist')}
+                >
+                  <Headphones className="w-4 h-4" />
+                  Connect to Specialist
+                </button>
+              </div>
+              
+              {/* Chat Content */}
+              <div className="video-consult-chat-content">
+                {chatMode === 'trudy' ? (
+                  <AIChatContainer pageContext={pageContext} />
+                ) : (
+                  <div className="video-consult-specialist-panel">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                      <Headphones className="w-8 h-8 text-primary" />
+                    </div>
+                    <h4 className="text-white font-bold mb-2">Connect with a Specialist</h4>
+                    <p className="text-white/60 text-sm mb-6">
+                      Get personalized help from our licensed moving consultants.
+                    </p>
+                    <div className="flex flex-col gap-3 w-full max-w-xs">
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-primary/50 text-primary hover:bg-primary/10"
+                        onClick={() => window.location.href = "tel:+18001234567"}
+                      >
+                        <Phone className="w-4 h-4 mr-2" />
+                        Call Now
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-white/30 text-white/80 hover:bg-white/10"
+                        onClick={() => navigate('/book')}
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        Schedule Callback
+                      </Button>
                     </div>
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Booking Controls - Below Video - Dark themed */}
           <div className="video-consult-booking-controls">
@@ -816,9 +887,19 @@ export default function Book() {
               <Button 
                 onClick={handleJoinRoom} 
                 disabled={!bookingCode.trim()}
-                className="video-consult-booking-btn"
+                variant="outline"
+                className="video-consult-booking-join-btn"
               >
-                Join
+                <Video className="w-4 h-4 mr-2" />
+                Join Room
+              </Button>
+              <Button 
+                variant="outline" 
+                className="video-consult-booking-share-btn"
+                onClick={() => toast.info("Screen sharing available after joining a session")}
+              >
+                <Monitor className="w-4 h-4 mr-2" />
+                Screen Share
               </Button>
               <Button 
                 variant="outline" 
@@ -829,7 +910,7 @@ export default function Book() {
                 Demo
               </Button>
             </div>
-            <p className="text-xs text-white/70 mt-3">
+            <p className="text-xs text-white/85 mt-3">
               Enter your booking code to join a scheduled session
             </p>
           </div>

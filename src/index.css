@@ -29923,9 +29923,9 @@ html.dark .tru-summary-header-large,
   align-items: center;
   gap: 12px;
   padding: 24px 32px;
-  background: linear-gradient(to bottom, hsl(220 15% 14%), hsl(220 15% 12%));
+  background: linear-gradient(to bottom, hsl(220 15% 22%), hsl(220 15% 20%));
   border-radius: 12px;
-  border: 1px solid hsl(0 0% 100% / 0.15);
+  border: 1px solid hsl(0 0% 100% / 0.25);
 }
 
 .video-consult-booking-inner {
@@ -29933,20 +29933,20 @@ html.dark .tru-summary-header-large,
   align-items: center;
   gap: 12px;
   width: 100%;
-  max-width: 480px;
+  max-width: 600px;
 }
 
 .video-consult-booking-input {
   flex: 1;
   height: 44px;
-  background: hsl(220 15% 18%) !important;
-  border: 1px solid hsl(0 0% 100% / 0.25) !important;
+  background: hsl(220 15% 28%) !important;
+  border: 1px solid hsl(0 0% 100% / 0.35) !important;
   color: white !important;
   font-size: 14px;
 }
 
 .video-consult-booking-input::placeholder {
-  color: hsl(0 0% 100% / 0.5) !important;
+  color: hsl(0 0% 100% / 0.65) !important;
 }
 
 .video-consult-booking-input:focus {
@@ -29954,12 +29954,41 @@ html.dark .tru-summary-header-large,
   box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
 }
 
-.video-consult-booking-btn {
+/* Join Room Button - Primary outline style (not solid green) */
+.video-consult-booking-join-btn {
   height: 44px;
   padding: 0 24px;
   font-weight: 700;
+  background: transparent !important;
+  border: 2px solid hsl(var(--primary)) !important;
+  color: hsl(var(--primary)) !important;
 }
 
+.video-consult-booking-join-btn:hover {
+  background: hsl(var(--primary) / 0.15) !important;
+}
+
+.video-consult-booking-join-btn:disabled {
+  border-color: hsl(0 0% 100% / 0.2) !important;
+  color: hsl(0 0% 100% / 0.4) !important;
+}
+
+/* Screen Share Button */
+.video-consult-booking-share-btn {
+  height: 44px;
+  padding: 0 20px;
+  background: transparent !important;
+  border: 1px solid hsl(0 0% 100% / 0.3) !important;
+  color: hsl(0 0% 100% / 0.85) !important;
+}
+
+.video-consult-booking-share-btn:hover {
+  background: hsl(var(--primary) / 0.15) !important;
+  border-color: hsl(var(--primary) / 0.5) !important;
+  color: hsl(var(--primary)) !important;
+}
+
+/* Demo Button */
 .video-consult-booking-demo-btn {
   height: 44px;
   padding: 0 20px;
@@ -29971,4 +30000,84 @@ html.dark .tru-summary-header-large,
 .video-consult-booking-demo-btn:hover {
   background: hsl(0 0% 100% / 0.1) !important;
   border-color: hsl(0 0% 100% / 0.4) !important;
+}
+
+/* =============================================
+   VIDEO CONSULT CHAT PANEL
+   ============================================= */
+.video-consult-chat-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 400px;
+  background: linear-gradient(to bottom, hsl(220 15% 10%), hsl(220 15% 8%));
+  border: 1px solid hsl(0 0% 100% / 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.video-consult-chat-tabs {
+  display: flex;
+  border-bottom: 1px solid hsl(0 0% 100% / 0.1);
+}
+
+.video-consult-chat-tabs button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 100% / 0.5);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.video-consult-chat-tabs button:hover {
+  color: hsl(0 0% 100% / 0.7);
+  background: hsl(0 0% 100% / 0.05);
+}
+
+.video-consult-chat-tabs button.active {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+  border-bottom: 2px solid hsl(var(--primary));
+}
+
+.video-consult-chat-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Specialist connect panel */
+.video-consult-specialist-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  text-align: center;
+  height: 100%;
+}
+
+/* =============================================
+   VIDEO CONSULT DEMO ANIMATION
+   ============================================= */
+@keyframes subtle-zoom {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.animate-subtle-zoom {
+  animation: subtle-zoom 8s ease-in-out infinite;
 }
