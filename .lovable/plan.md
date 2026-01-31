@@ -1,47 +1,73 @@
 
-# Add Black Stroke on Hover to Why TruMove Card and Hero Quote Wizard
+# Add Dark Black Underglow to Hero Header and Subheadline
 
 ## Overview
-Add a consistent black stroke border effect on hover to both the "Why TruMove" card and the hero quote wizard form card for a cohesive interactive design.
+Add a dark black underglow shadow effect to the hero headline and subheadline text for enhanced visual depth and readability.
+
+---
+
+## Current State
+
+The headline currently uses a light background-based text shadow:
+```css
+.tru-hero-headline-main {
+  text-shadow: 
+    0 2px 8px hsl(var(--background) / 0.5),
+    0 4px 16px hsl(var(--background) / 0.3);
+}
+```
+
+The subheadline has no text shadow.
 
 ---
 
 ## Changes Required
 
-### 1. Add Hover Stroke to Why TruMove Card
-**File: `src/index.css` (After line 5420)**
+### 1. Update Headline Text Shadow with Dark Underglow
+**File: `src/index.css` (Lines 1443-1448)**
 
-Add hover state after the existing `.tru-why-trumove-card` styles:
+Replace the current text shadow with a dark black underglow:
 
 ```css
-.tru-why-trumove-card:hover {
-  border-color: hsl(var(--tm-ink));
+/* Before */
+.tru-hero-headline-main {
+  text-shadow: 
+    0 2px 8px hsl(var(--background) / 0.5),
+    0 4px 16px hsl(var(--background) / 0.3);
+}
+
+/* After */
+.tru-hero-headline-main {
+  text-shadow: 
+    0 2px 4px hsl(0 0% 0% / 0.15),
+    0 4px 12px hsl(0 0% 0% / 0.1),
+    0 8px 24px hsl(0 0% 0% / 0.08);
 }
 ```
 
-Also update the base border to be visible for smooth transition:
+### 2. Add Dark Underglow to Subheadline
+**File: `src/index.css` (Lines 1753-1762)**
 
-| Property | Before | After |
-|----------|--------|-------|
-| border | `1px solid hsl(var(--tm-ink) / 0.1)` | `1px solid hsl(var(--tm-ink) / 0.15)` |
-| transition | (none) | `border-color 0.2s ease` |
+Add text shadow to the subheadline for matching dark underglow:
 
----
-
-### 2. Add Matching Stroke to Hero Quote Wizard
-**File: `src/index.css` (Update `.tru-floating-form-card` around line 4300)**
-
-Update base styles and add hover state:
-
-| Property | Before | After |
-|----------|--------|-------|
-| border | `1px solid hsl(var(--tm-ink) / 0.08)` | `1px solid hsl(var(--tm-ink) / 0.15)` |
-| transition | `height 0.3s ease` | `height 0.3s ease, border-color 0.2s ease` |
-
-Add hover state:
 ```css
-.tru-floating-form-card:hover {
-  border-color: hsl(var(--tm-ink));
+/* Before */
+.tru-hero-subheadline {
+  font-size: 18px;
+  line-height: 1.7;
+  color: hsl(var(--tm-ink));
+  /* ... other properties */
+}
+
+/* After */
+.tru-hero-subheadline {
+  font-size: 18px;
+  line-height: 1.7;
+  color: hsl(var(--tm-ink));
+  text-shadow: 
+    0 1px 3px hsl(0 0% 0% / 0.1),
+    0 3px 8px hsl(0 0% 0% / 0.06);
+  /* ... other properties */
 }
 ```
 
@@ -49,14 +75,14 @@ Add hover state:
 
 ## Technical Summary
 
-```text
-┌─────────────────────────────────────────────────────────┐
-│  Card State        │  Border Color                      │
-├────────────────────┼────────────────────────────────────┤
-│  Default           │  hsl(var(--tm-ink) / 0.15)         │
-│  Hover             │  hsl(var(--tm-ink)) (solid black)  │
-└─────────────────────────────────────────────────────────┘
-```
+| Element | Shadow Type | Effect |
+|---------|-------------|--------|
+| Headline | Multi-layer dark shadow | Strong underglow with 3 layers at 15%, 10%, 8% opacity |
+| Subheadline | Subtle dark shadow | Lighter underglow with 2 layers at 10%, 6% opacity |
+
+The dark black shadows use pure black (`hsl(0 0% 0%)`) with low opacity to create a subtle but visible underglow effect that works in both light and dark modes.
+
+---
 
 ### Files Modified
-- `src/index.css` - Update both card classes with matching border and hover styles
+- `src/index.css` - Update headline and subheadline text shadows
