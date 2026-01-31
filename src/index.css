@@ -2260,8 +2260,64 @@
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
-  height: 450px;
+  height: auto;
+  min-height: 500px;
   overflow: hidden;
+}
+
+/* Header row: centered title with previews on right */
+.tru-ai-header-row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 16px;
+  min-height: 280px;
+}
+
+/* Centered title container - takes full width, text centered */
+.tru-ai-header-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 700px; /* Offset for previews on right */
+}
+
+.tru-ai-header-center .tru-ai-steps-title {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.tru-ai-header-center .tru-ai-accent-line {
+  margin: 0 auto;
+}
+
+/* Previews container - absolute right */
+.tru-ai-header-previews {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+
+.tru-ai-header-previews .tru-ai-live-scanner {
+  width: 350px;
+  height: 260px;
+}
+
+.tru-ai-header-previews .tru-ai-live-inventory {
+  width: 280px;
+  height: 260px;
+}
+
+/* Steps content container */
+.tru-ai-steps-content {
+  width: 100%;
 }
 
 
