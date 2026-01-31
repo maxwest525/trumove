@@ -2259,11 +2259,6 @@
   overflow: hidden;
 }
 
-.tru-ai-steps-inner {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
 
 .tru-ai-two-column {
   flex: 1;
@@ -2571,6 +2566,9 @@
   max-width: none;
   padding: 0 48px 0 24px;
   text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .tru-ai-steps-title {
@@ -2597,7 +2595,7 @@
   flex-direction: column;
   gap: 12px;
   justify-self: start;
-  align-self: start;
+  align-self: stretch;
   padding-left: 0;
 }
 
