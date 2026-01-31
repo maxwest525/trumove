@@ -1042,7 +1042,7 @@ export default function Book() {
       </div>
       
       {/* Sticky Header Block */}
-      <div className="sticky top-[72px] z-40">
+      <div className="sticky top-[92px] z-40">
         <header className="video-consult-header">
           {/* Left - Logo & Title */}
           <div className="flex items-center gap-3">
@@ -1216,7 +1216,7 @@ export default function Book() {
                     </p>
                     <div className="flex flex-col gap-3 w-full max-w-xs">
                       <Button 
-                        className="w-full bg-primary hover:bg-primary/85 text-black font-bold h-12 text-base shadow-[0_2px_8px_hsl(var(--primary)/0.3)]"
+                        className="w-full bg-foreground hover:bg-foreground/90 text-background font-bold h-12 text-base"
                         onClick={() => window.location.href = "tel:+18001234567"}
                       >
                         <Phone className="w-5 h-5 mr-2" />
@@ -1224,12 +1224,19 @@ export default function Book() {
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="w-full border-2 border-white/50 text-white hover:bg-white/10 hover:border-white/70 font-bold h-12 text-base bg-slate-800/50"
+                        className="w-full border border-white/40 text-white hover:bg-white/10 hover:border-white/60 font-bold h-12 text-base"
                         onClick={() => navigate('/book')}
                       >
                         <Calendar className="w-5 h-5 mr-2" />
                         Schedule Callback
                       </Button>
+                    </div>
+                    {/* Chat Input Field */}
+                    <div className="w-full max-w-xs mt-4">
+                      <Input 
+                        placeholder="Type a message..."
+                        className="bg-slate-800/60 border-white/30 text-white placeholder:text-white/50 h-11"
+                      />
                     </div>
                   </div>
                 )}
@@ -1237,45 +1244,56 @@ export default function Book() {
             </div>
           </div>
 
-          {/* Booking Controls - Below Video - Dark themed */}
+          {/* Booking Controls - Light themed card */}
           <div className="video-consult-booking-controls animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
-            <h3 className="video-consult-booking-header">Virtual Video Controls</h3>
-            <div className="video-consult-booking-inner">
-              <Input
-                value={bookingCode}
-                onChange={(e) => setBookingCode(e.target.value)}
-                placeholder="Enter booking code..."
-                className="video-consult-booking-input"
-                onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
-              />
-              <Button 
-                onClick={handleJoinRoom} 
-                disabled={!bookingCode.trim()}
-                variant="outline"
-                className="video-consult-booking-join-btn"
-              >
-                <Video className="w-4 h-4 mr-2" />
-                Join Room
-              </Button>
+            {/* Prominent Booking Code Section */}
+            <div className="w-full mb-4">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">
+                Enter Booking Code
+              </label>
+              <div className="flex gap-3">
+                <Input
+                  value={bookingCode}
+                  onChange={(e) => setBookingCode(e.target.value)}
+                  placeholder="e.g. TM-2026-XXXXXXXX"
+                  className="flex-1 h-14 text-lg font-mono bg-background border-2 border-border focus:border-primary"
+                  onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+                />
+                <Button 
+                  onClick={handleJoinRoom} 
+                  disabled={!bookingCode.trim()}
+                  className="h-14 px-8 bg-foreground text-background hover:bg-foreground/90 font-bold text-base"
+                >
+                  <Video className="w-5 h-5 mr-2" />
+                  Join
+                </Button>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="w-full border-t border-border my-2" />
+
+            {/* Secondary Controls Row */}
+            <div className="flex items-center gap-3 flex-wrap justify-center">
               {/* Screen Share with Audio Toggle */}
               <div className="flex items-center">
                 <Button 
                   variant="outline" 
                   className={cn(
-                    "video-consult-booking-share-btn",
-                    isScreenSharing && "video-consult-booking-share-btn--active"
+                    "h-11 px-4 border border-border bg-background hover:bg-muted",
+                    isScreenSharing && "border-primary bg-primary/10 text-primary"
                   )}
                   onClick={handleScreenShare}
                 >
                   <Monitor className="w-4 h-4 mr-2" />
-                  {isScreenSharing ? "Stop Sharing" : "Screen Share"}
+                  {isScreenSharing ? "Stop" : "Share"}
                 </Button>
                 <Button
                   variant="outline"
                   size="icon"
                   className={cn(
-                    "video-consult-booking-audio-btn",
-                    !shareAudio && "video-consult-booking-audio-btn--muted"
+                    "h-11 w-11 border border-border bg-background hover:bg-muted border-l-0 rounded-l-none",
+                    !shareAudio && "text-muted-foreground"
                   )}
                   onClick={() => setShareAudio(!shareAudio)}
                   title={shareAudio ? "System audio: ON" : "System audio: OFF"}
@@ -1283,48 +1301,47 @@ export default function Book() {
                   {shareAudio ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                 </Button>
               </div>
+              
               <Button 
                 variant="outline" 
                 onClick={handleStartDemo}
-                className="video-consult-booking-demo-btn"
+                className="h-11 px-4 border border-border bg-background hover:bg-muted"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Demo
               </Button>
+              
               {/* Settings Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
                     variant="outline" 
                     size="icon"
-                    className="video-consult-booking-settings-btn"
+                    className="h-11 w-11 border border-border bg-background hover:bg-muted"
                   >
                     <Settings className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-slate-800 border-slate-700 text-white">
-                  <DropdownMenuLabel className="text-white/80">Video Settings</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-slate-700" />
-                  <DropdownMenuItem className="text-white hover:bg-slate-700 cursor-pointer focus:bg-slate-700 focus:text-white">
+                <DropdownMenuContent align="end" className="w-56 bg-card border-border">
+                  <DropdownMenuLabel>Video Settings</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer">
                     Quality: Auto ✓
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-white hover:bg-slate-700 cursor-pointer focus:bg-slate-700 focus:text-white">
+                  <DropdownMenuItem className="cursor-pointer">
                     Quality: High
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-white hover:bg-slate-700 cursor-pointer focus:bg-slate-700 focus:text-white">
+                  <DropdownMenuItem className="cursor-pointer">
                     Quality: Medium
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-slate-700" />
-                  <DropdownMenuLabel className="text-white/80">Notifications</DropdownMenuLabel>
-                  <DropdownMenuItem className="text-white hover:bg-slate-700 cursor-pointer focus:bg-slate-700 focus:text-white">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                  <DropdownMenuItem className="cursor-pointer">
                     Sound Alerts: On ✓
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            <p className="text-xs text-white/70 mt-2">
-              Enter your booking code to join a scheduled session
-            </p>
           </div>
         </div>
       </div>
