@@ -5,7 +5,8 @@ import { DailyVideoRoom } from "@/components/video-consult/DailyVideoRoom";
 import { 
   Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, 
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search,
-  Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles
+  Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
+  Shield, BadgeCheck, FileText, Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
-import VideoConsultTrustStrip from "@/components/video-consult/VideoConsultTrustStrip";
+// Trust strip items now inline in header
 
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -693,10 +694,10 @@ export default function Book() {
       {/* Site Header */}
       <Header />
       
-      {/* Sticky Header Block - Both elements lock together */}
+      {/* Sticky Header Block */}
       <div className="sticky top-[107px] z-40">
-        {/* Video Consult Command Center Header */}
         <header className="video-consult-header">
+          {/* Left - Logo & Title */}
           <div className="flex items-center gap-3">
             <img 
               src={logoImg} 
@@ -708,48 +709,37 @@ export default function Book() {
             </span>
           </div>
 
-          {/* Centered Controls - Shipment ID Search */}
-          <div className="video-consult-header-controls">
-            <div className="video-consult-header-search">
-              <Search className="w-4 h-4 text-white/70" />
-              <input
-                type="text"
-                placeholder="Enter Shipment ID (try 12345)"
-                className="video-consult-header-input"
-                value={bookingCode}
-                onChange={(e) => setBookingCode(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    toast.info(`Looking up shipment ${bookingCode}...`);
-                  }
-                }}
-              />
-              <Button
-                variant="ghost"
-                size="sm"
-                className="video-consult-header-go-btn"
-                onClick={() => toast.info(`Looking up shipment ${bookingCode}...`)}
-                disabled={!bookingCode.trim()}
-              >
-                Go
-              </Button>
+          {/* Center - Trust Items (inline) */}
+          <div className="video-consult-header-trust">
+            <div className="video-consult-header-trust-item">
+              <Shield className="w-4 h-4" />
+              <span>SECURE VIDEO</span>
+            </div>
+            <span className="video-consult-trust-dot">•</span>
+            <div className="video-consult-header-trust-item">
+              <BadgeCheck className="w-4 h-4" />
+              <span>LICENSED BROKER</span>
+            </div>
+            <span className="video-consult-trust-dot">•</span>
+            <div className="video-consult-header-trust-item">
+              <Monitor className="w-4 h-4" />
+              <span>SCREEN SHARING</span>
+            </div>
+            <span className="video-consult-trust-dot">•</span>
+            <div className="video-consult-header-trust-item">
+              <FileText className="w-4 h-4" />
+              <span>QUOTE REVIEW</span>
+            </div>
+            <span className="video-consult-trust-dot">•</span>
+            <div className="video-consult-header-trust-item">
+              <Clock className="w-4 h-4" />
+              <span>NO OBLIGATION</span>
             </div>
           </div>
 
-          {/* Right Actions */}
-          <div className="flex items-center gap-4">
-            <a 
-              href="tel:+16097277647"
-              className="video-consult-header-call-btn"
-            >
-              <Phone className="w-4 h-4" />
-              <span className="hidden sm:inline">Call Now</span>
-            </a>
-          </div>
+          {/* Right - Empty spacer for balance */}
+          <div className="w-[120px]" />
         </header>
-        
-        {/* Trust Strip - Below Header */}
-        <VideoConsultTrustStrip />
       </div>
 
       {/* Main Content */}
@@ -827,25 +817,33 @@ export default function Book() {
             </CardContent>
           </Card>
 
-          {/* Booking Controls - Below Video */}
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex items-center gap-3 w-full max-w-md">
+          {/* Booking Controls - Below Video - Dark themed */}
+          <div className="video-consult-booking-controls">
+            <div className="video-consult-booking-inner">
               <Input
                 value={bookingCode}
                 onChange={(e) => setBookingCode(e.target.value)}
                 placeholder="Enter booking code..."
-                className="flex-1 h-11"
+                className="video-consult-booking-input"
                 onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
               />
-              <Button onClick={handleJoinRoom} disabled={!bookingCode.trim()}>
+              <Button 
+                onClick={handleJoinRoom} 
+                disabled={!bookingCode.trim()}
+                className="video-consult-booking-btn"
+              >
                 Join
               </Button>
-              <Button variant="outline" onClick={handleStartDemo}>
+              <Button 
+                variant="outline" 
+                onClick={handleStartDemo}
+                className="video-consult-booking-demo-btn"
+              >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Demo
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-white/50 mt-3">
               Enter your booking code to join a scheduled session
             </p>
           </div>
