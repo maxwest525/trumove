@@ -1,11 +1,11 @@
 import { Shield, BadgeCheck, Monitor, FileText, Clock } from "lucide-react";
 
 const TRUST_ITEMS = [
-  { icon: Shield, text: "Secure Video" },
-  { icon: BadgeCheck, text: "Licensed Broker" },
-  { icon: Monitor, text: "Screen Sharing" },
-  { icon: FileText, text: "Quote Review" },
-  { icon: Clock, text: "No Obligation" },
+  { icon: Shield, text: "SECURE VIDEO" },
+  { icon: BadgeCheck, text: "LICENSED BROKER" },
+  { icon: Monitor, text: "SCREEN SHARING" },
+  { icon: FileText, text: "QUOTE REVIEW" },
+  { icon: Clock, text: "NO OBLIGATION" },
 ];
 
 export default function VideoConsultTrustStrip() {
