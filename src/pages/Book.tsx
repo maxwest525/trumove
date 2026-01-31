@@ -695,9 +695,6 @@ export default function Book() {
       
       {/* Sticky Header Block - Both elements lock together */}
       <div className="sticky top-[107px] z-40">
-        {/* Trust Strip - Above Header */}
-        <VideoConsultTrustStrip />
-        
         {/* Video Consult Command Center Header */}
         <header className="video-consult-header">
           <div className="flex items-center gap-3">
@@ -711,37 +708,30 @@ export default function Book() {
             </span>
           </div>
 
-          {/* Centered Controls */}
+          {/* Centered Controls - Shipment ID Search */}
           <div className="video-consult-header-controls">
             <div className="video-consult-header-search">
-              <Video className="w-4 h-4 text-white/70" />
+              <Search className="w-4 h-4 text-white/70" />
               <input
                 type="text"
-                placeholder="Enter booking code..."
+                placeholder="Enter Shipment ID (try 12345)"
                 className="video-consult-header-input"
                 value={bookingCode}
                 onChange={(e) => setBookingCode(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    toast.info(`Looking up shipment ${bookingCode}...`);
+                  }
+                }}
               />
               <Button
                 variant="ghost"
                 size="sm"
                 className="video-consult-header-go-btn"
-                onClick={handleJoinRoom}
+                onClick={() => toast.info(`Looking up shipment ${bookingCode}...`)}
                 disabled={!bookingCode.trim()}
               >
-                Join
-              </Button>
-              
-              {/* Demo Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleStartDemo}
-                className="video-consult-header-demo-btn"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span className="hidden sm:inline text-[11px]">Demo</span>
+                Go
               </Button>
             </div>
           </div>
@@ -757,6 +747,9 @@ export default function Book() {
             </a>
           </div>
         </header>
+        
+        {/* Trust Strip - Below Header */}
+        <VideoConsultTrustStrip />
       </div>
 
       {/* Main Content */}
@@ -834,73 +827,27 @@ export default function Book() {
             </CardContent>
           </Card>
 
-          {/* Action Buttons Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {/* Quick Call */}
-            <a
-              href="tel:+16097277647"
-              className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all"
-            >
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <Phone className="w-5 h-5 text-primary" />
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-bold text-foreground">Quick Call</div>
-                <div className="text-xs text-muted-foreground">(609) 727-7647</div>
-              </div>
-            </a>
-
-            {/* Build Inventory Manually */}
-            <button
-              onClick={() => navigate("/online-estimate")}
-              className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
-            >
-              <div className="w-28 h-28 rounded-xl overflow-hidden border border-border/60">
-                <img 
-                  src={sampleRoomLiving} 
-                  alt="Manual inventory" 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                />
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-bold text-foreground">Build Inventory</div>
-                <div className="text-xs text-muted-foreground">Manual entry</div>
-              </div>
-            </button>
-
-            {/* AI Inventory Scanner */}
-            <button
-              onClick={() => navigate("/scan-room")}
-              className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
-            >
-              <div className="w-28 h-28 rounded-xl overflow-hidden border border-border/60">
-                <img 
-                  src={previewAiScanner} 
-                  alt="AI scanner" 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                />
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-bold text-foreground">AI Scanner</div>
-                <div className="text-xs text-muted-foreground">Snap & detect</div>
-              </div>
-            </button>
-
-            {/* Schedule New Consult */}
-            <a
-              href="https://calendly.com/trumove"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all"
-            >
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <Calendar className="w-5 h-5 text-primary" />
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-bold text-foreground">Schedule</div>
-                <div className="text-xs text-muted-foreground">Book a time</div>
-              </div>
-            </a>
+          {/* Booking Controls - Below Video */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-3 w-full max-w-md">
+              <Input
+                value={bookingCode}
+                onChange={(e) => setBookingCode(e.target.value)}
+                placeholder="Enter booking code..."
+                className="flex-1 h-11"
+                onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+              />
+              <Button onClick={handleJoinRoom} disabled={!bookingCode.trim()}>
+                Join
+              </Button>
+              <Button variant="outline" onClick={handleStartDemo}>
+                <Sparkles className="w-4 h-4 mr-2" />
+                Demo
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Enter your booking code to join a scheduled session
+            </p>
           </div>
         </div>
       </div>
