@@ -1,94 +1,114 @@
 
 
-# Fix Detection Box Height to Match Scanner Preview
+# Adjust AI Scanner Section: Spacing, Overlay, and Button Styling
 
 ## Overview
-Prevent the Live Detection box from elongating when the scanner demo runs by setting a fixed height that matches the scanner preview (340px), rather than using flex-grow behavior.
-
----
-
-## Current State
-
-| Property | Current Value | Issue |
-|----------|---------------|-------|
-| `.tru-ai-live-inventory` base height | 275px | Outdated - doesn't match new scanner height |
-| `.tru-ai-preview-vertical .tru-ai-live-inventory` | height: 100%, flex: 1 | Causes elongation |
-| `.tru-ai-right-column .tru-ai-live-inventory` | height: 100%, flex: 1 | Causes elongation |
+Make four visual adjustments to the AI Move Estimator section:
+1. Adjust spacing between section title and scanner/detection boxes
+2. Remove grey overlay from scanner preview
+3. Match scanner button color to "Start Demo" button styling
+4. Change button text to "Start AI Analysis Demo" with green text on hover
 
 ---
 
 ## Changes Required
 
-### 1. Update Base Detection Box Height
-**File: `src/index.css` (Lines 2448-2457)**
+### 1. Adjust Spacing Between Title and Boxes
+**File: `src/index.css`**
 
-Update the base height from 275px to 340px to match the scanner:
+Reduce the gap between the section title/accent line and the three-column grid by adjusting the `margin-top` on the center and right columns from -10px to a larger negative value:
 
 ```css
 /* Before */
-.tru-ai-live-inventory {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 12px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  width: 350px;
-  height: 275px;
+.tru-ai-center-column {
+  margin-top: -10px;
+}
+
+.tru-ai-right-column {
+  margin-top: -10px;
 }
 
 /* After */
-.tru-ai-live-inventory {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 12px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  width: 350px;
-  height: 340px;
+.tru-ai-center-column {
+  margin-top: -20px;
+}
+
+.tru-ai-right-column {
+  margin-top: -20px;
 }
 ```
 
-### 2. Fix Vertical Layout Override
-**File: `src/index.css` (Lines 2651-2655)**
+---
 
-Change from flex-grow to fixed height:
+### 2. Remove Grey Overlay from Scanner Preview
+**File: `src/index.css` (Lines 2406-2414)**
+
+Remove the background tint from the scanner overlay while keeping the scanning line visible:
 
 ```css
 /* Before */
-.tru-ai-preview-vertical .tru-ai-live-inventory {
-  height: 100%;
-  flex: 1;
-  max-height: none;
+.tru-ai-scanner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--primary) / 0.08);
+  pointer-events: none;
 }
 
 /* After */
-.tru-ai-preview-vertical .tru-ai-live-inventory {
-  height: 340px;
-  flex: none;
-  max-height: 340px;
+.tru-ai-scanner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  pointer-events: none;
 }
 ```
 
-### 3. Fix Right Column Override
-**File: `src/index.css` (Lines 2745-2749)**
+---
 
-Change from flex-grow to fixed height:
+### 3. Update Scanner Button to Match Start Demo Styling
+**File: `src/index.css` (Lines 2271-2295)**
+
+The button already uses `background: hsl(var(--foreground))` which matches the "Start Demo" button styling. No changes needed for base state.
+
+---
+
+### 4. Change Button Text and Hover Style
+**File: `src/pages/Index.tsx` (Line 315)**
+
+Update the button text from "Start Demo" to "Start AI Analysis Demo":
+
+```tsx
+/* Before */
+{isRunning ? "Running..." : "Start Demo"}
+
+/* After */
+{isRunning ? "Running..." : "Start AI Analysis Demo"}
+```
+
+**File: `src/index.css` (Lines 2291-2295)**
+
+Update hover state to keep black background but change font to green:
 
 ```css
 /* Before */
-.tru-ai-right-column .tru-ai-live-inventory {
-  height: 100%;
-  flex: 1;
-  min-height: 0;
+.tru-ai-scanner-start-btn:hover {
+  background: hsl(var(--primary));
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px hsl(var(--primary) / 0.5);
 }
 
 /* After */
-.tru-ai-right-column .tru-ai-live-inventory {
-  height: 340px;
-  flex: none;
-  min-height: 0;
+.tru-ai-scanner-start-btn:hover {
+  background: hsl(var(--foreground));
+  color: hsl(var(--primary));
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px hsl(var(--primary) / 0.5);
 }
 ```
 
@@ -96,17 +116,17 @@ Change from flex-grow to fixed height:
 
 ## Technical Summary
 
-| Element | Before | After |
-|---------|--------|-------|
-| Base inventory height | 275px | 340px |
-| Vertical layout flex | flex: 1 (grow) | flex: none (fixed) |
-| Right column flex | flex: 1 (grow) | flex: none (fixed) |
-| Height behavior | Dynamic (elongates) | Fixed at 340px |
-
-Both boxes will now maintain equal 340px heights regardless of content, with internal scrolling for overflow items.
+| Change | Before | After |
+|--------|--------|-------|
+| Column margin-top | -10px | -20px |
+| Overlay background | hsl(var(--primary) / 0.08) | transparent |
+| Button text | "Start Demo" | "Start AI Analysis Demo" |
+| Hover background | hsl(var(--primary)) | hsl(var(--foreground)) |
+| Hover text color | (inherited) | hsl(var(--primary)) (green) |
 
 ---
 
 ### Files Modified
-- `src/index.css` - Fix detection box height to match scanner dimensions
+- `src/index.css` - Spacing, overlay, and button hover changes
+- `src/pages/Index.tsx` - Button text update
 
