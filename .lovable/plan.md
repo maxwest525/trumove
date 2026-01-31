@@ -1,130 +1,68 @@
 
-# Improve Steps Section Readability and Layout
+# Adjust Furniture Bounding Box Positions
 
 ## Overview
-Redesign the vertical steps in the AI Move Estimator section to be more visually appealing and easier to read. The current design has small text, cramped spacing, and thin styling that makes it hard to scan quickly.
+Fine-tune the detection bounding box positions in the AI Move Estimator scanner demo to better align with the furniture in the sample living room image.
 
 ---
 
-## Current Issues
+## Current Positions
 
-| Problem | Current State |
-|---------|--------------|
-| Small text | Title 13px, description 11px |
-| Cramped layout | 12px gap between steps |
-| Thin step numbers | 32px circles with light borders |
-| Low contrast descriptions | 60% opacity text |
-| Preview thumbnails too small | 80x60px images |
+```text
+const FURNITURE_POSITIONS = [
+  { id: 0, name: "3-Seat Sofa",  top: "55%", left: "5%",  width: "40%", height: "32%" },
+  { id: 1, name: "Coffee Table", top: "72%", left: "35%", width: "22%", height: "14%" },
+  { id: 2, name: "TV Stand",     top: "28%", left: "50%", width: "28%", height: "28%" },
+  { id: 3, name: "Armchair",     top: "48%", left: "68%", width: "22%", height: "28%" },
+  { id: 4, name: "Floor Lamp",   top: "18%", left: "88%", width: "10%", height: "38%" },
+];
+```
 
 ---
 
-## Proposed Changes
+## Proposed Adjustments
 
-### 1. Card-Based Step Design
-Transform each step into a distinct card with subtle background and hover state:
+Based on typical living room layouts in the sample image, I'll adjust the positions to better frame each piece of furniture:
 
-```css
-.tru-ai-step-with-preview {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: hsl(var(--muted) / 0.3);
-  border-radius: 12px;
-  border: 1px solid hsl(var(--border) / 0.5);
-  transition: all 0.2s ease;
-}
-
-.tru-ai-step-with-preview:hover {
-  background: hsl(var(--muted) / 0.5);
-  border-color: hsl(var(--primary) / 0.3);
-}
-```
-
-### 2. Larger, Bolder Step Numbers
-Make step numbers more prominent with primary color accent:
-
-```css
-.tru-ai-step-number {
-  width: 36px;
-  height: 36px;
-  background: hsl(var(--foreground));
-  color: hsl(var(--background));
-  font-size: 16px;
-  font-weight: 800;
-  border: none;
-}
-```
-
-### 3. Improved Typography
-Increase text sizes and improve contrast:
-
-```css
-.tru-ai-step-title {
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.tru-ai-step-desc {
-  font-size: 13px;
-  color: hsl(var(--tm-ink) / 0.75);
-  line-height: 1.4;
-}
-```
-
-### 4. Larger Preview Thumbnails
-Increase thumbnail size for better visibility:
-
-```css
-.tru-ai-step-preview {
-  width: 72px;
-  height: 54px;
-  border-radius: 8px;
-  border: 2px solid hsl(var(--border));
-}
-```
-
-### 5. Better Spacing
-Increase gap between steps for breathing room:
-
-```css
-.tru-ai-steps-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-```
-
-### 6. Remove Preview Thumbnails (Optional Simplification)
-Given the steps are now on the right side with limited space, consider removing the preview thumbnails to simplify the layout and make it cleaner. This would require a JSX change as well.
+| Item | Current Position | Adjusted Position | Reason |
+|------|------------------|-------------------|--------|
+| 3-Seat Sofa | top: 55%, left: 5% | top: 52%, left: 8% | Shift slightly up and right for better centering |
+| Coffee Table | top: 72%, left: 35% | top: 68%, left: 38% | Move up slightly to align with table surface |
+| TV Stand | top: 28%, left: 50% | top: 25%, left: 48% | Adjust to frame the entertainment center area |
+| Armchair | top: 48%, left: 68% | top: 45%, left: 65% | Better alignment with chair in right portion |
+| Floor Lamp | top: 18%, left: 88% | top: 15%, left: 85% | Shift to capture full lamp including shade |
 
 ---
 
-## Visual Comparison
+## Technical Implementation
 
-| Element | Before | After |
-|---------|--------|-------|
-| Step background | None | Subtle muted card |
-| Step number size | 32px | 36px |
-| Step number style | Light border, transparent | Solid black fill |
-| Title font size | 13px | 15px |
-| Description size | 11px | 13px |
-| Description opacity | 60% | 75% |
-| Gap between steps | 12px | 16px |
-| Step padding | None | 16px |
+**File: `src/pages/Index.tsx` (Lines 293-299)**
+
+Update the `FURNITURE_POSITIONS` constant:
+
+```javascript
+const FURNITURE_POSITIONS = [
+  { id: 0, name: "3-Seat Sofa",  top: "52%", left: "8%",  width: "38%", height: "30%" },
+  { id: 1, name: "Coffee Table", top: "68%", left: "38%", width: "20%", height: "12%" },
+  { id: 2, name: "TV Stand",     top: "25%", left: "48%", width: "26%", height: "26%" },
+  { id: 3, name: "Armchair",     top: "45%", left: "65%", width: "24%", height: "30%" },
+  { id: 4, name: "Floor Lamp",   top: "15%", left: "85%", width: "12%", height: "40%" },
+];
+```
 
 ---
 
-## Technical Summary
+## Summary
+
+| Change | Details |
+|--------|---------|
+| Sofa | Moved up 3%, right 3%, slightly smaller box |
+| Coffee Table | Moved up 4%, right 3%, tighter box |
+| TV Stand | Moved up 3%, left 2%, slightly smaller |
+| Armchair | Moved up 3%, left 3%, taller box |
+| Floor Lamp | Moved up 3%, left 3%, wider/taller box |
+
+---
 
 ### Files Modified
-- `src/index.css` - Update step styling (card backgrounds, larger typography, better spacing)
-- `src/pages/Index.tsx` - Optionally simplify by removing preview thumbnails
-
-### Key CSS Changes
-1. Add card background and border to `.tru-ai-step-with-preview`
-2. Enlarge and style `.tru-ai-step-number` with solid fill
-3. Increase font sizes in `.tru-ai-step-title` and `.tru-ai-step-desc`
-4. Improve contrast on description text
-5. Increase vertical gap in `.tru-ai-steps-vertical`
+- `src/pages/Index.tsx` - Update FURNITURE_POSITIONS array with refined coordinates
