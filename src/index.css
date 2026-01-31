@@ -104,6 +104,7 @@
 .tru-hero-header-stacked .tru-hero-headline-main {
   display: block;
   text-align: center;
+  white-space: nowrap;
 }
 
 /* =============================================
