@@ -1443,9 +1443,9 @@
 /* Text shadow for headline readability - dark underglow */
 .tru-hero-headline-main {
   text-shadow: 
-    0 2px 4px hsl(0 0% 0% / 0.15),
-    0 4px 12px hsl(0 0% 0% / 0.1),
-    0 8px 24px hsl(0 0% 0% / 0.08);
+    0 2px 4px hsl(0 0% 0% / 0.3),
+    0 4px 12px hsl(0 0% 0% / 0.2),
+    0 8px 24px hsl(0 0% 0% / 0.15);
 }
 
 .tru-hero-header-section .tru-hero-header-subheadline {
@@ -1756,8 +1756,8 @@
   line-height: 1.7;
   color: hsl(var(--tm-ink));
   text-shadow: 
-    0 1px 3px hsl(0 0% 0% / 0.1),
-    0 3px 8px hsl(0 0% 0% / 0.06);
+    0 1px 3px hsl(0 0% 0% / 0.2),
+    0 3px 8px hsl(0 0% 0% / 0.12);
   margin-bottom: 32px;
   font-weight: 500;
   max-width: 700px;
