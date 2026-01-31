@@ -1082,7 +1082,7 @@ export default function Index() {
                     {/* Step 1: Route & Date */}
                     {step === 1 && (
                       <div className="tru-qb-step-content" key="step-1">
-                        <h1 className="tru-qb-question tru-qb-question-decorated">GET YOUR QUOTE NOW!</h1>
+                        <h1 className="tru-qb-question tru-qb-question-decorated">START YOUR BUILD</h1>
                         
                         {/* FROM + TO Row - Side by Side with Route Connector */}
                         <div className="tru-qb-location-row">
