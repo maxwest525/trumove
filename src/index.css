@@ -2677,7 +2677,7 @@
 /* Three-column layout for AI section */
 .tru-ai-two-column {
   display: grid;
-  grid-template-columns: auto 420px 350px;
+  grid-template-columns: 420px 420px auto;
   gap: 16px;
   align-items: stretch;
   margin-bottom: 0;
@@ -2708,7 +2708,7 @@
 .tru-ai-right-column {
   display: flex;
   flex-direction: column;
-  min-width: 350px;
+  min-width: 420px;
   height: 100%;
   margin-top: -20px;
 }
