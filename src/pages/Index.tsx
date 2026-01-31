@@ -1071,7 +1071,7 @@ export default function Index() {
                         START YOUR <span className="tru-qb-title-accent">BUILD</span>
                       </span>
                       <span className="tru-qb-form-subtitle-compact">
-                  Carriers vetted against FMCSA safety records
+                  AI-powered moving made simple
                       </span>
                     </div>
                   </div>
@@ -1082,7 +1082,7 @@ export default function Index() {
                     {/* Step 1: Route & Date */}
                     {step === 1 && (
                       <div className="tru-qb-step-content" key="step-1">
-                        <h1 className="tru-qb-question tru-qb-question-decorated">AI-powered moving made simple</h1>
+                        <h1 className="tru-qb-question tru-qb-question-decorated">START YOUR BUILD</h1>
                         
                         {/* FROM + TO Row - Side by Side with Route Connector */}
                         <div className="tru-qb-location-row">
