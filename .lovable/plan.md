@@ -1,77 +1,68 @@
 
+# Plan: Fix Page Headers Being Overlaid by Navigation Bar
 
-# Plan: Match "Move" Green to Logo & Update Subtitle
+## Problem Analysis
 
-## Summary
-This plan addresses two changes:
-1. **Align the "Move" accent color** in the hero headline with the TruMove logo green
-2. **Update the subtitle text** from "Carriers vetted against FMCSA safety records" to "AI-powered moving made simple"
+The navigation bar is overlaying the page-specific headers on both the **Carrier Vetting** (`/carrier-vetting`) and **Shipment Tracking** (`/track`) pages. This happens because the sticky positioning values don't account for the full header height including margins.
+
+### Current Header Structure
+- **Global Header**: Uses floating glassmorphism design with `position: sticky`, `top: 8px`, and `height: 72px`
+- **Total header offset needed**: 72px height + 8px top margin = **80px** (plus a bit of buffer)
+
+### Current Issues
+
+1. **CarrierVetting page** (`/carrier-vetting`):
+   - Uses `SiteShell` which applies a sticky container at `top: 0` for Header + TrustStrip
+   - The FMCSA header block has `sticky top-[72px]` but this doesn't account for the floating header's 8px margin
+   - Needs to be changed to approximately `top-[108px]` (header 72px + margin 8px + trust strip ~28px)
+
+2. **LiveTracking page** (`/track`):
+   - Uses `Header` component directly (no `SiteShell`)
+   - The `.tracking-header` is NOT sticky, so it scrolls away - this should be made sticky with proper offset
+   - Should be sticky at approximately `top: 88px` (header 72px + 8px margin + small gap)
 
 ---
 
-## Technical Details
+## Implementation Steps
 
-### 1. Color Correction for "Move" Accent
+### Step 1: Update CarrierVetting Sticky Header Position
+**File**: `src/pages/CarrierVetting.tsx`
 
-**Current Color Issue:**
-The word "Move" in the headline currently uses a hardcoded value that doesn't match the logo:
+Change the sticky header block from:
+```tsx
+<div className="sticky top-[72px] z-40">
+```
+To:
+```tsx
+<div className="sticky top-[88px] z-40">
+```
 
-| Element | Current Value | TruMove Logo Green |
-|---------|--------------|-------------------|
-| "Move" text | `hsl(142 72% 50%)` | `hsl(120 100% 54%)` |
-| Hue | 142 (teal-green) | 120 (pure green) |
-| Saturation | 72% | 100% |
-| Lightness | 50% | 54% |
+This accounts for:
+- Header height: 72px
+- Header top margin: 8px
+- Small buffer: 8px
 
-**Solution:**
-Update `.tru-hero-headline-accent` in `src/index.css` (around line 1792-1796) to use the logo's green color stored in the CSS variable `--tm-green` or `--primary`:
+### Step 2: Make LiveTracking Header Sticky with Correct Position
+**File**: `src/index.css`
+
+Update the `.tracking-header` styles to make it sticky and position it below the global nav:
 
 ```css
-/* From: */
-.tru-hero-headline-accent {
-  color: hsl(142 72% 50%) !important;
-  -webkit-text-fill-color: hsl(142 72% 50%) !important;
-  font-weight: 900;
+.tracking-header {
+  position: sticky;
+  top: 88px;  /* Header 72px + margin 8px + buffer 8px */
+  z-index: 40;
+  /* ... existing styles ... */
 }
-
-/* To: */
-.tru-hero-headline-accent {
-  color: hsl(var(--primary)) !important;
-  -webkit-text-fill-color: hsl(var(--primary)) !important;
-  font-weight: 900;
-}
-```
-
-This change ensures the "Move" text uses the same green (`120 100% 54%`) as the TruMove logo.
-
----
-
-### 2. Subtitle Text Update
-
-**Locations to update:**
-- `src/pages/Index.tsx` (line ~1074)
-
-**Change:**
-```text
-From: "Carriers vetted against FMCSA safety records"
-To:   "AI-powered moving made simple"
 ```
 
 ---
 
-## Files to Modify
+## Summary of Changes
 
 | File | Change |
 |------|--------|
-| `src/index.css` | Update `.tru-hero-headline-accent` color from `hsl(142 72% 50%)` to `hsl(var(--primary))` |
-| `src/pages/Index.tsx` | Change subtitle text to "AI-powered moving made simple" |
+| `src/pages/CarrierVetting.tsx` | Update sticky `top` value from `72px` to `88px` |
+| `src/index.css` | Add sticky positioning to `.tracking-header` with `top: 88px` |
 
----
-
-## Visual Result
-
-After these changes:
-- The word "Move" will match the exact bright pure green of the TruMove logo
-- The subtitle will read "AI-powered moving made simple"
-- Both light and dark mode will work correctly since `--primary` is defined for both modes
-
+Both page-specific headers will now appear just below the main navigation bar without being overlaid.
