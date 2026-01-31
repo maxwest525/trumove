@@ -1,68 +1,49 @@
 
-
-# Rename Section & Reposition Scanner with Matching Detection
+# Add Black Stroke on Hover to Why TruMove Card and Hero Quote Wizard
 
 ## Overview
-This plan renames "AI Inventory Analysis" to "AI Move Estimator" and repositions the scanner preview to sit on the right side of the layout, with the Live Detection panel matching the scanner dimensions exactly.
+Add a consistent black stroke border effect on hover to both the "Why TruMove" card and the hero quote wizard form card for a cohesive interactive design.
 
 ---
 
 ## Changes Required
 
-### 1. Rename Section Title
-**File: `src/pages/Index.tsx` (Line 1533)**
+### 1. Add Hover Stroke to Why TruMove Card
+**File: `src/index.css` (After line 5420)**
 
-Change:
-```jsx
-<span className="tru-ai-gradient-text">AI</span> Inventory Analysis
-```
-
-To:
-```jsx
-<span className="tru-ai-gradient-text">AI</span> Move Estimator
-```
-
----
-
-### 2. Reorder Grid Columns - Steps | Detection | Scanner
-**File: `src/pages/Index.tsx` (Lines 1541-1595)**
-
-Swap the center and right columns so the scanner sits on the far right:
-
-| Current Order | New Order |
-|---------------|-----------|
-| Steps (left) | Steps (left) |
-| Scanner (center) | Detection (center) |
-| Detection (right) | Scanner (right) |
-
----
-
-### 3. Update Grid Layout for Right-Aligned Scanner
-**File: `src/index.css` (Line 2583)**
-
-Change grid template to place scanner on right with fixed width:
+Add hover state after the existing `.tru-why-trumove-card` styles:
 
 ```css
-/* Before */
-grid-template-columns: auto 1fr auto;
-
-/* After */
-grid-template-columns: auto 1fr 350px;
+.tru-why-trumove-card:hover {
+  border-color: hsl(var(--tm-ink));
+}
 ```
 
-This ensures the scanner column is exactly 350px wide on the right.
-
----
-
-### 4. Match Live Detection Dimensions to Scanner
-**File: `src/index.css`**
-
-Update `.tru-ai-live-inventory` to match scanner dimensions (350x275):
+Also update the base border to be visible for smooth transition:
 
 | Property | Before | After |
 |----------|--------|-------|
-| width | (flexible) | 350px |
-| height | 200px | 275px |
+| border | `1px solid hsl(var(--tm-ink) / 0.1)` | `1px solid hsl(var(--tm-ink) / 0.15)` |
+| transition | (none) | `border-color 0.2s ease` |
+
+---
+
+### 2. Add Matching Stroke to Hero Quote Wizard
+**File: `src/index.css` (Update `.tru-floating-form-card` around line 4300)**
+
+Update base styles and add hover state:
+
+| Property | Before | After |
+|----------|--------|-------|
+| border | `1px solid hsl(var(--tm-ink) / 0.08)` | `1px solid hsl(var(--tm-ink) / 0.15)` |
+| transition | `height 0.3s ease` | `height 0.3s ease, border-color 0.2s ease` |
+
+Add hover state:
+```css
+.tru-floating-form-card:hover {
+  border-color: hsl(var(--tm-ink));
+}
+```
 
 ---
 
@@ -70,15 +51,12 @@ Update `.tru-ai-live-inventory` to match scanner dimensions (350x275):
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
-│                    AI Move Estimator                     │
-├──────────────┬────────────────────┬─────────────────────┤
-│   Steps      │   Live Detection   │   Scanner Preview   │
-│   (auto)     │      (1fr)         │      (350px)        │
-│              │   350 x 275px      │    350 x 275px      │
-└──────────────┴────────────────────┴─────────────────────┘
+│  Card State        │  Border Color                      │
+├────────────────────┼────────────────────────────────────┤
+│  Default           │  hsl(var(--tm-ink) / 0.15)         │
+│  Hover             │  hsl(var(--tm-ink)) (solid black)  │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ### Files Modified
-- `src/pages/Index.tsx` - Rename title, reorder columns
-- `src/index.css` - Update grid template, match detection dimensions
-
+- `src/index.css` - Update both card classes with matching border and hover styles
