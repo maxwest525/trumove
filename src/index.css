@@ -25530,6 +25530,178 @@
   }
 }
 
+/* =============================================
+   VIDEO CONSULT PAGE & COMMAND CENTER HEADER
+   ============================================= */
+.video-consult-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Video Consult Command Center Header - matches tracking header */
+.video-consult-header {
+  position: sticky;
+  top: 103px; /* Header 72px + margin 8px + buffer 23px */
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: hsl(var(--foreground) / 0.95);
+  border-bottom: 1px solid hsl(var(--border) / 0.3);
+  backdrop-filter: blur(12px);
+}
+
+.dark .video-consult-header {
+  background: rgba(15, 15, 15, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Centered Controls in Header */
+.video-consult-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.video-consult-header-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  border-radius: 10px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.video-consult-header-input {
+  width: 180px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+}
+
+.video-consult-header-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.video-consult-header-input:focus {
+  border-color: hsl(var(--primary) / 0.6);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3);
+}
+
+.video-consult-header-go-btn {
+  height: 28px;
+  padding: 0 14px;
+  background: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 6px;
+  border: none !important;
+  transition: all 0.2s;
+}
+
+.video-consult-header-go-btn:hover {
+  background: hsl(var(--primary) / 0.85) !important;
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.4);
+}
+
+.video-consult-header-go-btn:disabled {
+  background: hsl(var(--muted)) !important;
+  color: hsl(var(--muted-foreground)) !important;
+  opacity: 0.6;
+}
+
+/* Demo Button - Smaller, subtle outline styling */
+.video-consult-header-demo-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 10px;
+  background: transparent !important;
+  backdrop-filter: blur(12px);
+  color: hsl(var(--foreground) / 0.7) !important;
+  font-weight: 600;
+  font-size: 11px;
+  border-radius: 8px;
+  border: 1px solid hsl(var(--foreground) / 0.25) !important;
+  transition: all 0.2s;
+}
+
+.video-consult-header-demo-btn:hover {
+  background: hsl(var(--foreground) / 0.1) !important;
+  border-color: hsl(var(--foreground) / 0.4) !important;
+  color: hsl(var(--foreground) / 0.9) !important;
+}
+
+/* Force white icons in video consult header */
+.video-consult-header-demo-btn svg,
+.video-consult-header-search svg {
+  color: hsl(0 0% 100% / 0.7) !important;
+}
+
+/* Call Button - Right side action */
+.video-consult-header-call-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  background: hsl(var(--primary) / 0.15);
+  color: hsl(var(--primary));
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 1px solid hsl(var(--primary) / 0.3);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.video-consult-header-call-btn:hover {
+  background: hsl(var(--primary) / 0.25);
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.3);
+}
+
+.video-consult-header-call-btn svg {
+  color: hsl(var(--primary));
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .video-consult-header-controls {
+    position: static;
+    transform: none;
+  }
+  
+  .video-consult-header-input {
+    width: 140px;
+  }
+}
+
+@media (max-width: 768px) {
+  .video-consult-header-controls {
+    display: none;
+  }
+  
+  .video-consult-header-call-btn span {
+    display: none;
+  }
+}
+
 /* Main Content Layout - Symmetrical sidebars */
 .tracking-content {
   flex: 1;
