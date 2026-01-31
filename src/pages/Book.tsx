@@ -695,6 +695,9 @@ export default function Book() {
       
       {/* Sticky Header Block - Both elements lock together */}
       <div className="sticky top-[107px] z-40">
+        {/* Trust Strip - Above Header */}
+        <VideoConsultTrustStrip />
+        
         {/* Video Consult Command Center Header */}
         <header className="video-consult-header">
           <div className="flex items-center gap-3">
@@ -754,9 +757,6 @@ export default function Book() {
             </a>
           </div>
         </header>
-
-        {/* Trust Strip */}
-        <VideoConsultTrustStrip />
       </div>
 
       {/* Main Content */}
