@@ -11707,11 +11707,13 @@
   height: 64px;
   display: flex;
   align-items: center;
-  gap: 24px;
+  position: relative;
 }
 
 .header-logo {
   flex-shrink: 0;
+  position: absolute;
+  left: 24px;
 }
 
 .header-logo img {
@@ -11723,7 +11725,7 @@
   display: flex;
   align-items: center;
   gap: 32px;
-  margin-left: auto;
+  margin: 0 auto;
 }
 
 /* Nav Item Wrapper (for mega-menu positioning) */
