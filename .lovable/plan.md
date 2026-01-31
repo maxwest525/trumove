@@ -1,27 +1,21 @@
 
+# Fix AI Inventory Analysis - Content Not Filling 450px
 
-# Maximize Scanner & Detection Within 450px Section
+## Problem
 
-## Summary
+There are **duplicate CSS rules** that override each other. The later rules are removing the critical flex properties needed to fill the 450px height:
 
-The scanner and detection previews need to fill the available vertical space within the 450px section. Currently they're constrained by:
-1. Fixed `aspect-ratio: 16/10` on the scanner
-2. Fixed `height: 200px` on the detection list
-3. Content not filling the flex container properly
-
-We'll remove these constraints and ensure both columns stretch to fill the available height after the title.
+1. `.tru-ai-steps-inner` is defined twice - lines 2262-2268 have `height: 100%` and `display: flex`, but lines 2575-2578 override with just `max-width` and `padding`, losing the flex layout
+2. `.tru-ai-two-column` is defined twice - lines 2270-2277 have `flex: 1`, but lines 2591-2598 override with just grid properties, losing the flex growth
 
 ---
 
-## Layout Breakdown
+## Solution
 
-```text
-450px total section height
-├── 16px top padding
-├── ~40px title + accent line
-├── ~360px available for three-column grid ← MAXIMIZE THIS
-└── 20px bottom padding
-```
+Consolidate the duplicate rules into single complete definitions. The fix involves:
+
+1. **Delete duplicate rule blocks** (lines 2575-2578 and 2591-2598)
+2. **Ensure single, complete rules** that include all necessary properties
 
 ---
 
@@ -29,67 +23,8 @@ We'll remove these constraints and ensure both columns stretch to fill the avail
 
 ### File: `src/index.css`
 
-**1. Remove aspect-ratio constraint from scanner (Line 2399)**
+**1. Update the FIRST `.tru-ai-steps-inner` rule (Lines 2262-2268) to be complete:**
 
-Change:
-```css
-.tru-ai-live-scanner {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  aspect-ratio: 16/10;
-  border: 1px solid hsl(var(--border));
-}
-```
-To:
-```css
-.tru-ai-live-scanner {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  height: 100%;
-  border: 1px solid hsl(var(--border));
-}
-```
-
-**2. Remove fixed height from detection list (Line 2458)**
-
-Change:
-```css
-.tru-ai-live-inventory {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 12px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  height: 200px;
-}
-```
-To:
-```css
-.tru-ai-live-inventory {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 12px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-```
-
-**3. Update inner container to fill and flex properly (Lines 2262-2266)**
-
-Change:
-```css
-.tru-ai-steps-inner {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-```
-To:
 ```css
 .tru-ai-steps-inner {
   height: 100%;
@@ -97,100 +32,83 @@ To:
   flex-direction: column;
   max-width: none;
   padding: 0 48px;
+  text-align: center;
 }
 ```
 
-**4. Ensure the center and right columns fill height (Lines 2637-2646)**
+**2. Update the FIRST `.tru-ai-two-column` rule (Lines 2270-2277) to be complete:**
 
-Update:
-```css
-.tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 100%;
-  flex: 1;
-  min-height: 0;
-}
-
-.tru-ai-preview-vertical .tru-ai-live-inventory {
-  height: 100%;
-  flex: 1;
-  min-height: 0;
-  max-height: none;
-}
-```
-
-**5. Add explicit height calculation to the three-column grid (Lines 2268-2272)**
-
-Change:
 ```css
 .tru-ai-two-column {
   flex: 1;
   min-height: 0;
-  align-items: stretch;
-}
-```
-To:
-```css
-.tru-ai-two-column {
-  flex: 1;
-  min-height: 0;
-  align-items: stretch;
   display: grid;
   grid-template-columns: 180px 1fr 300px;
   gap: 32px;
+  align-items: stretch;
+  text-align: left;
 }
 ```
 
-**6. Make left column vertically centered (Lines 2595-2599)**
+**3. DELETE the duplicate `.tru-ai-steps-inner` rule (Lines 2575-2579)**
 
-Update:
+Remove:
 ```css
-.tru-ai-left-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  justify-content: center;
+.tru-ai-steps-inner {
+  max-width: none;
+  padding: 0 48px;
+  text-align: center;
 }
 ```
 
-**7. Reduce title margin to maximize content space (Line 2580)**
+**4. DELETE the duplicate `.tru-ai-two-column` rule (Lines 2590-2598)**
 
-Change:
+Remove:
 ```css
-.tru-ai-steps-title {
-  font-size: 24px;
-  font-weight: 800;
-  color: hsl(var(--foreground));
-  margin-bottom: 6px;
-  ...
+/* Three-column layout for AI section */
+.tru-ai-two-column {
+  display: grid;
+  grid-template-columns: 180px 1fr 300px;
+  gap: 32px;
+  align-items: stretch;
+  margin-bottom: 0;
+  text-align: left;
 }
 ```
-To:
-```css
-.tru-ai-steps-title {
-  font-size: 22px;
-  font-weight: 800;
-  color: hsl(var(--foreground));
-  margin-bottom: 4px;
-  ...
-}
-```
-
-**8. Reduce accent line margins**
-
-Update accent line to have minimal bottom margin (approximately 8px instead of larger).
 
 ---
 
-## Summary Table
+## Why This Fixes It
 
-| Element | Before | After |
-|---------|--------|-------|
-| Scanner aspect-ratio | `16/10` (constrained) | Removed (fills height) |
-| Detection list height | `200px` fixed | `100%` (fills column) |
-| Title font size | 24px | 22px |
-| Title margin-bottom | 6px | 4px |
-| Left column | Top-aligned | Vertically centered |
-| Grid | Flex with auto height | Explicit flex: 1 |
+```text
+BEFORE (broken cascade):
+┌─ Lines 2262-2268: height: 100%, display: flex ─┐
+│  └─ Lines 2575-2578: OVERRIDES with only max-width/padding │
+│     (loses height: 100% and display: flex!) ──────────────┘
+│
+└─ Lines 2270-2277: flex: 1 ─────────────────────┐
+   └─ Lines 2591-2598: OVERRIDES with only grid props │
+      (loses flex: 1 that makes it grow!) ──────────┘
 
-This maximizes the scanner and detection previews to fill all available vertical space within the 450px section.
+AFTER (single complete rules):
+┌─ Lines 2262-2268: ALL properties in one place ─┐
+│  height: 100%, display: flex, max-width: none, │
+│  padding: 0 48px, text-align: center           │
+└────────────────────────────────────────────────┘
+┌─ Lines 2270-2277: ALL properties in one place ─┐
+│  flex: 1, min-height: 0, display: grid,        │
+│  grid-template-columns, gap, align-items       │
+└────────────────────────────────────────────────┘
+```
 
+Now the grid will properly flex to fill the remaining height after the title.
+
+---
+
+## Summary
+
+| Issue | Before | After |
+|-------|--------|-------|
+| `.tru-ai-steps-inner` | Duplicate rules, flex lost | Single complete rule |
+| `.tru-ai-two-column` | Duplicate rules, flex: 1 lost | Single complete rule |
+| Grid fills height | No (flex properties overwritten) | Yes (flex: 1 preserved) |
