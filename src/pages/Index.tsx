@@ -1554,19 +1554,19 @@ export default function Index() {
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="tru-ai-steps-section">
             <div className="tru-ai-steps-inner">
-              {/* Main two-column layout: Header+Steps on left | Scanner+Detection on right */}
-              <div className="tru-ai-main-layout" ref={scanPreviewRef}>
-                {/* LEFT: Header + Steps */}
-                <div className="tru-ai-left-side">
-                  {/* Gradient Header */}
-                  <h2 className="tru-ai-steps-title">
-                    <span className="tru-ai-gradient-text">AI</span> Move Estimator
-                  </h2>
+              {/* Gradient Header */}
+              <h2 className="tru-ai-steps-title">
+                <span className="tru-ai-gradient-text">AI</span> Move Estimator
+              </h2>
 
-                  {/* Accent Line */}
-                  <div className="tru-ai-accent-line" />
+              {/* Accent Line */}
+              <div className="tru-ai-accent-line" />
 
-                  {/* Steps as vertical cards */}
+              
+              {/* Two-column layout: Steps | Scanner+Detection */}
+              <div className="tru-ai-two-column" ref={scanPreviewRef}>
+                {/* LEFT: Steps as horizontal cards */}
+                <div className="tru-ai-left-column">
                   <div className="tru-ai-steps-vertical">
                     <div className="tru-ai-step-card">
                       <div className="tru-ai-step-number">1</div>
@@ -1592,8 +1592,8 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* RIGHT: Scanner + Detection horizontal */}
-                <div className={`tru-ai-right-side ${scanDemoRunning ? 'is-running' : ''}`}>
+                {/* RIGHT: Scanner + Detection stacked */}
+                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
                   <ScannerPreview 
                     isRunning={scanDemoRunning} 
                     visibleCount={scanVisibleCount}
