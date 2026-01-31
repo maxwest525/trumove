@@ -150,7 +150,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                     : 'bg-transparent text-muted-foreground border border-border hover:bg-muted hover:text-foreground active:bg-muted')
                 : (searchType === 'name' 
                     ? 'text-slate-900 dark:text-white border-2 border-green-500 bg-green-500/10 dark:bg-transparent shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-                    : 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/20')
+                    : 'text-slate-700 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-400 dark:border-white/20')
             )}
             onClick={() => setSearchType('name')}
           >
@@ -170,7 +170,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                     : 'bg-transparent text-muted-foreground border border-border hover:bg-muted hover:text-foreground active:bg-muted')
                 : (searchType === 'dot' 
                     ? 'text-slate-900 dark:text-white border-2 border-green-500 bg-green-500/10 dark:bg-transparent shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-                    : 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/20')
+                    : 'text-slate-700 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-400 dark:border-white/20')
             )}
             onClick={() => setSearchType('dot')}
           >
@@ -190,7 +190,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                     : 'bg-transparent text-muted-foreground border border-border hover:bg-muted hover:text-foreground active:bg-muted')
                 : (searchType === 'mc' 
                     ? 'text-slate-900 dark:text-white border-2 border-green-500 bg-green-500/10 dark:bg-transparent shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-                    : 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/20')
+                    : 'text-slate-700 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-400 dark:border-white/20')
             )}
             onClick={() => setSearchType('mc')}
           >

@@ -24728,7 +24728,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: hsl(var(--muted-foreground));
+  color: hsl(220 15% 30%);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
