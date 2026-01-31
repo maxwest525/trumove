@@ -1069,6 +1069,17 @@ export default function Book() {
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-6xl mx-auto">
 
+          {/* Section Header - matches Build Your Move styling */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-2">
+              Virtual Video <span className="tru-qb-title-accent">Call</span>
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+              Connect face-to-face with our moving specialists for a personalized consultation. 
+              Share your screen to walk through your inventory together in real-time.
+            </p>
+          </div>
+
           {/* Two-Column Grid: Video + Chat Panel */}
           <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-6 mb-8">
             {/* Main Video Window */}
@@ -1088,8 +1099,10 @@ export default function Book() {
                         />
                         {/* Screen Share Preview Modal - when actively sharing */}
                         {showScreenSharePreview && isScreenSharing && (
-                          <div className="absolute inset-0 bg-black/80 z-10 flex items-center justify-center">
-                            <ScreenSharePreviewModal onClose={() => setShowScreenSharePreview(false)} />
+                          <div className="absolute inset-0 bg-black/80 z-10 flex items-center justify-center animate-fade-in">
+                            <div className="animate-scale-in">
+                              <ScreenSharePreviewModal onClose={() => setShowScreenSharePreview(false)} />
+                            </div>
                           </div>
                         )}
                       </>
