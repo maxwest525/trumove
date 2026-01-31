@@ -1,158 +1,114 @@
 
 
-# Move Scanner Preview & Detection to Right of Centered Header
+# Match Header Trust Strip to Stats Strip Style
 
 ## Overview
-Reposition the scanner preview and live detection boxes to the right side of the AI Move Estimator section header, while keeping the title centered. The previews will sit in the same row as the header, aligned vertically.
+Update the SaferTrustStrip (header) to match the styling of the StatsStrip (bottom of page) - black background, larger sizing, white text, and green icons.
 
 ---
 
-## Target Layout
+## Current vs Target
 
-```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                                         │                                   │
-│       AI Move Estimator                 │  Scanner   │  Live Detection     │
-│       ────────────                      │  Preview   │       List          │
-│        (centered)                       │            │                     │
-│                                         │            │                     │
-├─────────────────────────────────────────┴────────────┴─────────────────────┤
-│              Steps 1, 2, 3 (unchanged - kept in current position)          │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+| Property | SaferTrustStrip (Current) | StatsStrip (Target) |
+|----------|---------------------------|---------------------|
+| Background | Grey gradient | Black gradient |
+| Font size | 10px | 12px |
+| Icon size | 12px (w-3.5) | 16px (w-4) |
+| Text color | Grey | White (0.85 opacity) |
+| Icon color | Green | Green (brighter) |
+| Padding | 8px 24px | 8px 24px |
+| Gap | 48px | 28px |
 
 ---
 
 ## Technical Changes
 
-### File: `src/pages/Index.tsx` (Lines 1555-1611)
+### File: `src/components/SaferTrustStrip.tsx`
 
-Restructure the section to create a header row:
+Update icon size from `w-3.5 h-3.5` to `w-4 h-4` to match StatsStrip:
 
-**Current Structure:**
-```jsx
-<section className="tru-ai-steps-section">
-  <div className="tru-ai-steps-inner">
-    <h2 className="tru-ai-steps-title">AI Move Estimator</h2>
-    <div className="tru-ai-accent-line" />
-    <div className="tru-ai-two-column">
-      {/* LEFT: Steps */}
-      {/* RIGHT: Scanner + Detection */}
-    </div>
-  </div>
-</section>
+```tsx
+<item.icon className="w-4 h-4" />  // Was w-3.5 h-3.5
 ```
 
-**New Structure:**
-```jsx
-<section className="tru-ai-steps-section">
-  <div className="tru-ai-steps-inner">
-    {/* Header row: centered title with previews on right */}
-    <div className="tru-ai-header-row" ref={scanPreviewRef}>
-      <div className="tru-ai-header-center">
-        <h2 className="tru-ai-steps-title">
-          <span className="tru-ai-gradient-text">AI</span> Move Estimator
-        </h2>
-        <div className="tru-ai-accent-line" />
-      </div>
-      <div className={`tru-ai-header-previews ${scanDemoRunning ? 'is-running' : ''}`}>
-        <ScannerPreview ... />
-        <DetectionList ... />
-      </div>
-    </div>
-    {/* Steps below - unchanged */}
-    <div className="tru-ai-steps-content">
-      <div className="tru-ai-steps-vertical">
-        {/* Step 1, 2, 3 cards - unchanged */}
-      </div>
-    </div>
-  </div>
-</section>
-```
+### File: `src/index.css` (Lines 29108-29168)
 
-### File: `src/index.css`
-
-**Add new header row styling:**
+**Update `.safer-trust-strip` background to black:**
 
 ```css
-/* Header row: centered title with previews on right */
-.tru-ai-header-row {
-  display: flex;
-  align-items: center;
-  position: relative;
-  margin-bottom: 16px;
-  min-height: 280px;
-}
-
-/* Centered title container - takes full width, text centered */
-.tru-ai-header-center {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-right: 700px; /* Offset for previews on right */
-}
-
-.tru-ai-header-center .tru-ai-steps-title {
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-.tru-ai-header-center .tru-ai-accent-line {
-  margin: 0 auto;
-}
-
-/* Previews container - absolute right */
-.tru-ai-header-previews {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-}
-
-.tru-ai-header-previews .tru-ai-live-scanner {
-  width: 350px;
-  height: 260px;
-}
-
-.tru-ai-header-previews .tru-ai-live-inventory {
-  width: 280px;
-  height: 260px;
+.safer-trust-strip {
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  padding: 8px 24px;
+  overflow-x: auto;
+  margin-top: 0; /* Remove gap from header */
 }
 ```
 
-**Update section height and adjust steps container:**
+**Update `.safer-trust-strip-inner` gap:**
 
 ```css
-.tru-ai-steps-section {
-  height: auto;
-  min-height: 500px;
-}
-
-.tru-ai-steps-content {
-  width: 100%;
+.safer-trust-strip-inner {
+  gap: 28px; /* Match StatsStrip */
 }
 ```
+
+**Update `.safer-trust-item` to white text and larger font:**
+
+```css
+.safer-trust-item {
+  font-size: 12px;
+  color: hsl(0 0% 100% / 0.85);
+}
+```
+
+**Update `.safer-trust-item svg` to larger icons:**
+
+```css
+.safer-trust-item svg {
+  width: 16px;
+  height: 16px;
+  color: hsl(142 70% 50%);
+}
+```
+
+**Update special emphasis for last item:**
+
+```css
+.safer-trust-item:last-child {
+  font-weight: 800;
+  color: hsl(142 70% 55%);
+}
+```
+
+**Update dot separator color:**
+
+```css
+.safer-trust-dot {
+  color: hsl(0 0% 100% / 0.4);
+}
+```
+
+**Remove dark mode overrides** (no longer needed since base styling is already dark):
+
+Remove or simplify the `.dark .safer-trust-strip` rules since the strip will now always be dark.
 
 ---
 
-## Summary of Changes
+## Summary
 
 | Element | Before | After |
 |---------|--------|-------|
-| Title position | Centered above grid | Centered in header row |
-| Accent line | Below centered title | Below centered title (unchanged) |
-| Scanner/Detection | Below title in grid right column | Absolute right side of header row |
-| Preview alignment | Stacked/horizontal in grid | Side-by-side, vertically centered with header |
-| Preview sizes | 340px height | 260px height (to fit header row) |
-| Steps | In left column of grid | Full-width container below header |
+| Background | Grey gradient | Black gradient |
+| Text color | Grey (#35) | White (85% opacity) |
+| Font size | 10px | 12px |
+| Icon size | 12px | 16px |
+| Icon color | Green 40% | Green 50% (brighter) |
+| Gap | 48px | 28px |
 
 ---
 
 ## Files Modified
-- `src/pages/Index.tsx` - Restructure JSX to create header row with centered title and right-aligned previews
-- `src/index.css` - Add `.tru-ai-header-row`, `.tru-ai-header-center`, and `.tru-ai-header-previews` styling
+- `src/components/SaferTrustStrip.tsx` - Update icon size class
+- `src/index.css` - Update SaferTrustStrip styling to match StatsStrip
 
