@@ -1,21 +1,34 @@
 
-# Fix AI Inventory Analysis - Content Not Filling 450px
 
-## Problem
+# Maximize AI Inventory Analysis Width & Preview Sizes
 
-There are **duplicate CSS rules** that override each other. The later rules are removing the critical flex properties needed to fill the 450px height:
+## Summary
 
-1. `.tru-ai-steps-inner` is defined twice - lines 2262-2268 have `height: 100%` and `display: flex`, but lines 2575-2578 override with just `max-width` and `padding`, losing the flex layout
-2. `.tru-ai-two-column` is defined twice - lines 2270-2277 have `flex: 1`, but lines 2591-2598 override with just grid properties, losing the flex growth
+Expand the AI Inventory Analysis section to use the full page width and maximize the scanner preview and detection card sizes. Key changes:
+1. Remove the `max-width: 900px` constraint on `.tru-ai-steps-inner`
+2. Use horizontal padding instead to create breathing room from edges
+3. Increase the right column (detection list) minimum width
+4. Set more generous proportions for the three-column grid
 
 ---
 
-## Solution
+## Current State vs Target
 
-Consolidate the duplicate rules into single complete definitions. The fix involves:
+```text
+CURRENT (constrained to 900px):
+┌─────────────────────────────────────────────────────────────┐
+│      ╔═══════════════════════════════════════════╗          │
+│      ║  Steps | Scanner (small) | Detection      ║          │
+│      ╚═══════════════════════════════════════════╝          │
+│      ↑ max-width: 900px centered ↑                          │
+└─────────────────────────────────────────────────────────────┘
 
-1. **Delete duplicate rule blocks** (lines 2575-2578 and 2591-2598)
-2. **Ensure single, complete rules** that include all necessary properties
+TARGET (full width with padding):
+┌─────────────────────────────────────────────────────────────┐
+│   Steps  |   Scanner (LARGE)    |    Detection (LARGE)      │
+│          |   Fills available    |    Matches scanner        │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -23,49 +36,40 @@ Consolidate the duplicate rules into single complete definitions. The fix involv
 
 ### File: `src/index.css`
 
-**1. Update the FIRST `.tru-ai-steps-inner` rule (Lines 2262-2268) to be complete:**
+**1. Remove max-width constraint on inner container (Lines 2570-2574)**
 
+Change:
 ```css
 .tru-ai-steps-inner {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+```
+To:
+```css
+.tru-ai-steps-inner {
   max-width: none;
   padding: 0 48px;
   text-align: center;
 }
 ```
 
-**2. Update the FIRST `.tru-ai-two-column` rule (Lines 2270-2277) to be complete:**
+**2. Update three-column grid for better proportions (Lines 2586-2593)**
 
+Change:
 ```css
 .tru-ai-two-column {
-  flex: 1;
-  min-height: 0;
   display: grid;
-  grid-template-columns: 180px 1fr 300px;
-  gap: 32px;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
   align-items: stretch;
+  margin-bottom: 0;
   text-align: left;
 }
 ```
-
-**3. DELETE the duplicate `.tru-ai-steps-inner` rule (Lines 2575-2579)**
-
-Remove:
+To:
 ```css
-.tru-ai-steps-inner {
-  max-width: none;
-  padding: 0 48px;
-  text-align: center;
-}
-```
-
-**4. DELETE the duplicate `.tru-ai-two-column` rule (Lines 2590-2598)**
-
-Remove:
-```css
-/* Three-column layout for AI section */
 .tru-ai-two-column {
   display: grid;
   grid-template-columns: 180px 1fr 300px;
@@ -76,39 +80,75 @@ Remove:
 }
 ```
 
----
+**3. Increase right column minimum width (Lines 2609-2614)**
 
-## Why This Fixes It
-
-```text
-BEFORE (broken cascade):
-┌─ Lines 2262-2268: height: 100%, display: flex ─┐
-│  └─ Lines 2575-2578: OVERRIDES with only max-width/padding │
-│     (loses height: 100% and display: flex!) ──────────────┘
-│
-└─ Lines 2270-2277: flex: 1 ─────────────────────┐
-   └─ Lines 2591-2598: OVERRIDES with only grid props │
-      (loses flex: 1 that makes it grow!) ──────────┘
-
-AFTER (single complete rules):
-┌─ Lines 2262-2268: ALL properties in one place ─┐
-│  height: 100%, display: flex, max-width: none, │
-│  padding: 0 48px, text-align: center           │
-└────────────────────────────────────────────────┘
-┌─ Lines 2270-2277: ALL properties in one place ─┐
-│  flex: 1, min-height: 0, display: grid,        │
-│  grid-template-columns, gap, align-items       │
-└────────────────────────────────────────────────┘
+Change:
+```css
+.tru-ai-right-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+  height: 100%;
+}
+```
+To:
+```css
+.tru-ai-right-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+  height: 100%;
+}
 ```
 
-Now the grid will properly flex to fill the remaining height after the title.
+**4. Increase step preview thumbnail size (Lines 2659-2667)**
+
+Change:
+```css
+.tru-ai-step-preview {
+  width: 80px;
+  height: 60px;
+  ...
+}
+```
+To:
+```css
+.tru-ai-step-preview {
+  width: 100px;
+  height: 75px;
+  ...
+}
+```
+
+**5. Update section padding for full-width feel (Lines 2252-2260)**
+
+Change:
+```css
+.tru-ai-steps-section {
+  padding: 16px 24px 20px;
+  ...
+}
+```
+To:
+```css
+.tru-ai-steps-section {
+  padding: 16px 0 20px;
+  ...
+}
+```
 
 ---
 
-## Summary
+## Summary Table
 
-| Issue | Before | After |
-|-------|--------|-------|
-| `.tru-ai-steps-inner` | Duplicate rules, flex lost | Single complete rule |
-| `.tru-ai-two-column` | Duplicate rules, flex: 1 lost | Single complete rule |
-| Grid fills height | No (flex properties overwritten) | Yes (flex: 1 preserved) |
+| Element | Before | After |
+|---------|--------|-------|
+| Inner container max-width | 900px | none (full width) |
+| Horizontal padding | 24px on section | 48px on inner |
+| Grid columns | `auto 1fr auto` | `180px 1fr 300px` |
+| Column gap | 24px | 32px |
+| Right column min-width | 240px | 280px |
+| Step thumbnails | 80×60px | 100×75px |
+
+This spreads the content across the full viewport width while maintaining proper spacing, and maximizes the scanner preview and detection list sizes.
+
