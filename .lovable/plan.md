@@ -1,70 +1,41 @@
 
-# Center Header and Position Steps on Left
+
+# Enlarge Scanner Preview & Detection List to Full Height
 
 ## Overview
-Center the "AI Move Estimator" header in the section and position the steps 1, 2, 3 on the left side with fixed dimensions of 250px width and 60px height.
+Expand the scanner preview and live detection boxes to span the full height of the AI Move Estimator header row container, with adjusted widths for proper proportions.
 
 ---
 
-## Target Layout
+## Current vs Target
 
-```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                                                                             │
-│  ┌─────┐       AI Move Estimator         ┌──────────┐ ┌──────────────┐      │
-│  │  1  │       ────────────              │ Scanner  │ │    Live      │      │
-│  └─────┘        (centered)               │ Preview  │ │  Detection   │      │
-│  ┌─────┐                                 │          │ │              │      │
-│  │  2  │                                 │          │ │              │      │
-│  └─────┘                                 └──────────┘ └──────────────┘      │
-│  ┌─────┐                                                                    │
-│  │  3  │                                                                    │
-│  └─────┘                                                                    │
-│  250px                                                                      │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+| Property | Current | Target |
+|----------|---------|--------|
+| Header row min-height | 280px | 320px (increased for larger previews) |
+| Scanner preview height | 260px | 100% (full height) |
+| Scanner preview width | 350px | 420px |
+| Detection list height | 260px | 100% (full height) |
+| Detection list width | 280px | 320px |
 
 ---
 
 ## Technical Changes
 
-### File: `src/pages/Index.tsx` (Lines 1555-1605)
+### File: `src/index.css` (Lines 2269-2331)
 
-Restructure the section to place steps on the left side of the header row:
+**1. Increase header row height:**
 
-**Current Structure:**
-```jsx
-<div className="tru-ai-header-row">
-  <div className="tru-ai-header-center">...</div>
-  <div className="tru-ai-header-previews">...</div>
-</div>
-<div className="tru-ai-steps-content">
-  <div className="tru-ai-steps-vertical">...</div>
-</div>
+```css
+.tru-ai-header-row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 16px;
+  min-height: 320px; /* Increased from 280px */
+}
 ```
 
-**New Structure:**
-```jsx
-<div className="tru-ai-header-row">
-  {/* Steps on left */}
-  <div className="tru-ai-steps-left">
-    <div className="tru-ai-step-card">...</div>
-    <div className="tru-ai-step-card">...</div>
-    <div className="tru-ai-step-card">...</div>
-  </div>
-  {/* Centered title */}
-  <div className="tru-ai-header-center">
-    <h2>AI Move Estimator</h2>
-    <div className="tru-ai-accent-line" />
-  </div>
-  {/* Previews on right */}
-  <div className="tru-ai-header-previews">...</div>
-</div>
-```
-
-### File: `src/index.css`
-
-**Update header center to remove padding offset:**
+**2. Update header center padding for new widths:**
 
 ```css
 .tru-ai-header-center {
@@ -73,43 +44,44 @@ Restructure the section to place steps on the left side of the header row:
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Remove padding-right offset */
+  padding-left: 250px;
+  padding-right: 760px; /* Account for larger previews: 420 + 320 + 16 gap */
 }
 ```
 
-**Add steps left container:**
+**3. Update previews container to stretch full height:**
 
 ```css
-.tru-ai-steps-left {
+.tru-ai-header-previews {
   position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 0;
+  top: 0;
+  bottom: 0;
+  transform: none; /* Remove translateY */
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 250px;
+  flex-direction: row;
+  gap: 16px;
+  align-items: stretch;
+  opacity: 1;
+  transition: all 0.4s ease;
 }
 ```
 
-**Update step card dimensions:**
+**4. Update scanner preview size:**
 
 ```css
-.tru-ai-step-card {
-  width: 250px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 12px 16px;
-  gap: 12px;
-  background: hsl(var(--muted) / 0.3);
-  border-radius: 10px;
-  border: 1px solid hsl(var(--border) / 0.5);
+.tru-ai-header-previews .tru-ai-live-scanner {
+  width: 420px;
+  height: 100%; /* Full height of container */
 }
+```
 
-.tru-ai-step-card .tru-ai-step-content {
-  display: block; /* Show content */
+**5. Update detection list size:**
+
+```css
+.tru-ai-header-previews .tru-ai-live-inventory {
+  width: 320px;
+  height: 100%; /* Full height of container */
 }
 ```
 
@@ -119,14 +91,16 @@ Restructure the section to place steps on the left side of the header row:
 
 | Element | Before | After |
 |---------|--------|-------|
-| Header center | `padding-right: 700px` | No padding, truly centered |
-| Steps position | Below header row | Absolute left of header row |
-| Step card width | `flex: 1` | `250px` fixed |
-| Step card height | Variable | `60px` fixed |
-| Step content | Hidden | Visible |
+| Header row height | `min-height: 280px` | `min-height: 320px` |
+| Previews positioning | `top: 50%; transform: translateY(-50%)` | `top: 0; bottom: 0` |
+| Scanner width | `350px` | `420px` |
+| Scanner height | `260px` | `100%` |
+| Detection width | `280px` | `320px` |
+| Detection height | `260px` | `100%` |
+| Header center padding-right | `650px` | `760px` |
 
 ---
 
 ## Files Modified
-- `src/pages/Index.tsx` - Move steps into header row, position on left
-- `src/index.css` - Add `.tru-ai-steps-left`, update `.tru-ai-header-center`, update `.tru-ai-step-card` dimensions
+- `src/index.css` - Update `.tru-ai-header-row`, `.tru-ai-header-center`, `.tru-ai-header-previews`, `.tru-ai-live-scanner`, and `.tru-ai-live-inventory` dimensions
+
