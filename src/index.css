@@ -2696,9 +2696,9 @@
 }
 
 /* Horizontal steps layout */
-.tru-ai-steps-horizontal {
+.tru-ai-steps-vertical {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 16px;
   height: 100%;
 }
@@ -2706,14 +2706,24 @@
 .tru-ai-step-card {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  text-align: center;
-  padding: 24px 16px;
+  text-align: left;
+  padding: 20px 24px;
+  gap: 16px;
   background: hsl(var(--muted) / 0.3);
   border-radius: 12px;
   border: 1px solid hsl(var(--border) / 0.5);
   transition: all 0.2s ease;
+}
+
+.tru-ai-step-card .tru-ai-step-number {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.tru-ai-step-card .tru-ai-step-content {
+  text-align: left;
 }
 
 .tru-ai-step-card:hover {

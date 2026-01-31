@@ -1567,7 +1567,7 @@ export default function Index() {
               <div className="tru-ai-two-column" ref={scanPreviewRef}>
                 {/* LEFT: Steps as horizontal cards */}
                 <div className="tru-ai-left-column">
-                  <div className="tru-ai-steps-horizontal">
+                  <div className="tru-ai-steps-vertical">
                     <div className="tru-ai-step-card">
                       <div className="tru-ai-step-number">1</div>
                       <div className="tru-ai-step-content">
