@@ -2392,8 +2392,8 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  height: 275px;
-  width: 350px;
+  height: 340px;
+  width: 420px;
   border: 1px solid hsl(var(--border));
 }
 
@@ -2586,7 +2586,7 @@
 /* Three-column layout for AI section */
 .tru-ai-two-column {
   display: grid;
-  grid-template-columns: auto 350px 350px;
+  grid-template-columns: auto 420px 350px;
   gap: 16px;
   align-items: stretch;
   margin-bottom: 0;
@@ -2609,7 +2609,7 @@
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  min-width: 350px;
+  min-width: 420px;
   height: 100%;
 }
 
@@ -2642,7 +2642,7 @@
 }
 
 .tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 275px;
+  height: 340px;
   flex: none;
 }
 
