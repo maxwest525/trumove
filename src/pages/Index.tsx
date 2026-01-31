@@ -299,12 +299,14 @@ function ScannerPreview({ isRunning, onStartDemo }: ScannerPreviewProps) {
   return (
     <div className="tru-ai-live-scanner">
       <img src={sampleRoomLiving} alt="Room being scanned" />
-      <div className="tru-ai-scanner-overlay">
-        <div className="tru-ai-scanner-line" />
-      </div>
+      {isRunning && (
+        <div className="tru-ai-scanner-overlay">
+          <div className="tru-ai-scanner-line" />
+        </div>
+      )}
       <div className="tru-ai-scanner-badge">
         <Scan className="w-4 h-4" />
-        <span>Scanning...</span>
+        <span>{isRunning ? "Pause Scan" : "Ready to Scan"}</span>
       </div>
       {/* Start Demo button as overlay - top right */}
       <button 
