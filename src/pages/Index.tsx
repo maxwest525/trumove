@@ -1530,7 +1530,7 @@ export default function Index() {
             <div className="tru-ai-steps-inner">
               {/* Gradient Header */}
               <h2 className="tru-ai-steps-title">
-                <span className="tru-ai-gradient-text">AI</span> Inventory Analysis
+                <span className="tru-ai-gradient-text">AI</span> Move Estimator
               </h2>
 
               {/* Accent Line */}
@@ -1575,8 +1575,13 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Center column: Scanner preview */}
+                {/* Center column: Detection list */}
                 <div className={`tru-ai-center-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
+                  <DetectionList isRunning={scanDemoRunning} />
+                </div>
+                
+                {/* Right column: Scanner preview */}
+                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
                   <ScannerPreview 
                     isRunning={scanDemoRunning} 
                     onStartDemo={() => {
@@ -1586,11 +1591,6 @@ export default function Index() {
                       }, 100);
                     }} 
                   />
-                </div>
-                
-                {/* Right column: Detection list */}
-                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
-                  <DetectionList isRunning={scanDemoRunning} />
                 </div>
               </div>
             </div>

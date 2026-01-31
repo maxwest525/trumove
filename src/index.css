@@ -2447,7 +2447,8 @@
   padding: 12px;
   display: flex;
   flex-direction: column;
-  height: 200px;
+  width: 350px;
+  height: 275px;
 }
 
 .tru-ai-live-header {
@@ -2580,7 +2581,7 @@
 /* Three-column layout for AI section */
 .tru-ai-two-column {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr 350px;
   gap: 24px;
   align-items: stretch;
   margin-bottom: 0;
