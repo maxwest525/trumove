@@ -2263,12 +2263,17 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  max-width: none;
+  padding: 0 48px;
 }
 
 .tru-ai-two-column {
   flex: 1;
   min-height: 0;
   align-items: stretch;
+  display: grid;
+  grid-template-columns: 180px 1fr 300px;
+  gap: 32px;
 }
 
 /* Scanner Start Button Overlay */
@@ -2396,7 +2401,7 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 16/10;
+  height: 100%;
   border: 1px solid hsl(var(--border));
 }
 
@@ -2455,7 +2460,7 @@
   padding: 12px;
   display: flex;
   flex-direction: column;
-  height: 200px;
+  height: 100%;
 }
 
 .tru-ai-live-header {
@@ -2574,10 +2579,10 @@
 }
 
 .tru-ai-steps-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: hsl(var(--foreground));
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   letter-spacing: -0.02em;
   text-align: center;
 }
@@ -2596,6 +2601,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  justify-content: center;
 }
 
 .tru-ai-center-column {
@@ -2637,11 +2643,13 @@
 .tru-ai-preview-vertical .tru-ai-live-scanner {
   height: 100%;
   flex: 1;
+  min-height: 0;
 }
 
 .tru-ai-preview-vertical .tru-ai-live-inventory {
   height: 100%;
   flex: 1;
+  min-height: 0;
   max-height: none;
 }
 
