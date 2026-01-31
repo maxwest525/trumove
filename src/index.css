@@ -2453,7 +2453,7 @@
   display: flex;
   flex-direction: column;
   width: 350px;
-  height: 275px;
+  height: 340px;
 }
 
 .tru-ai-live-header {
@@ -2649,9 +2649,9 @@
 }
 
 .tru-ai-preview-vertical .tru-ai-live-inventory {
-  height: 100%;
-  flex: 1;
-  max-height: none;
+  height: 340px;
+  flex: none;
+  max-height: 340px;
 }
 
 /* Step with preview thumbnail - row layout for vertical steps */
@@ -2743,8 +2743,8 @@
 }
 
 .tru-ai-right-column .tru-ai-live-inventory {
-  height: 100%;
-  flex: 1;
+  height: 340px;
+  flex: none;
   min-height: 0;
 }
 
