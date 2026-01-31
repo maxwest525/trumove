@@ -1067,7 +1067,7 @@ export default function Book() {
             {/* Main Video Window */}
             <Card className="overflow-hidden border-2 border-border/60 bg-gradient-to-b from-muted/30 to-background">
               <CardContent className="p-0">
-                <div className="relative aspect-video min-h-[400px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+                <div className="relative min-h-[400px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
                   {roomUrl ? (
                     isDemo ? (
                       <DemoVideoPlaceholder onLeave={handleLeaveRoom} />
@@ -1160,7 +1160,7 @@ export default function Book() {
                     <div className="flex flex-col gap-3 w-full max-w-xs">
                       <Button 
                         variant="outline" 
-                        className="w-full border-primary/50 text-primary hover:bg-primary/10"
+                        className="w-full border-primary text-primary hover:bg-primary hover:text-background font-bold"
                         onClick={() => window.location.href = "tel:+18001234567"}
                       >
                         <Phone className="w-4 h-4 mr-2" />
@@ -1168,7 +1168,7 @@ export default function Book() {
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="w-full border-white/30 text-white/80 hover:bg-white/10"
+                        className="w-full border-white/50 text-white hover:bg-white/20 font-bold"
                         onClick={() => navigate('/book')}
                       >
                         <Calendar className="w-4 h-4 mr-2" />
@@ -1183,6 +1183,7 @@ export default function Book() {
 
           {/* Booking Controls - Below Video - Dark themed */}
           <div className="video-consult-booking-controls">
+            <h3 className="video-consult-booking-header">Virtual Video Controls</h3>
             <div className="video-consult-booking-inner">
               <Input
                 value={bookingCode}
@@ -1235,7 +1236,7 @@ export default function Book() {
                 Demo
               </Button>
             </div>
-            <p className="text-xs text-white/85 mt-3">
+            <p className="text-sm text-white mt-3">
               Enter your booking code to join a scheduled session
             </p>
           </div>
