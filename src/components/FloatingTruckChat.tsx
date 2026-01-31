@@ -124,7 +124,7 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
         
         {/* Text Label */}
         <div className="flex flex-col items-start">
-          <span className="text-sm font-bold leading-tight text-background">Trudy Your Move Specialist</span>
+          <span className="text-sm font-bold leading-tight text-background">Chat with Trudy</span>
           <span className="text-xs leading-tight text-primary font-semibold">Here to Help</span>
         </div>
         
