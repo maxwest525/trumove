@@ -2260,11 +2260,7 @@
 }
 
 
-.tru-ai-two-column {
-  flex: 1;
-  min-height: 0;
-  align-items: stretch;
-}
+/* Duplicate removed - see consolidated .tru-ai-two-column definition below */
 
 /* Scanner Start Button Overlay */
 .tru-ai-scanner-start-btn {
@@ -2588,6 +2584,8 @@
   align-items: stretch;
   margin-bottom: 0;
   text-align: left;
+  flex: 1;
+  min-height: 0;
 }
 
 .tru-ai-left-column {
@@ -2638,6 +2636,7 @@
 .tru-ai-preview-vertical .tru-ai-live-scanner {
   height: 100%;
   flex: 1;
+  min-height: 0;
 }
 
 .tru-ai-preview-vertical .tru-ai-live-inventory {
@@ -2735,8 +2734,9 @@
 }
 
 .tru-ai-right-column .tru-ai-live-inventory {
-  height: auto;
-  min-height: 200px;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 /* Legacy grid (keeping for reference) */
