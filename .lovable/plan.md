@@ -1,77 +1,27 @@
 
-# Make Scanner Preview Taller and Wider
+
+# Raise Scanner and Detection Boxes Up 10 Pixels
 
 ## Overview
-Increase the dimensions of the AI Scanner Preview component to make it more prominent and visually impactful in the AI Move Estimator section.
+Shift both the scanner preview and live detection box upward by 10 pixels without changing their dimensions, creating a slightly tighter alignment with the section title.
 
 ---
 
 ## Current State
 
-| Property | Current Value |
-|----------|---------------|
-| Scanner width | 350px |
-| Scanner height | 275px |
-| Grid column width | 350px |
+| Element | Current Positioning |
+|---------|-------------------|
+| Center column (Scanner) | No vertical offset |
+| Right column (Detection) | No vertical offset |
 
 ---
 
 ## Changes Required
 
-### 1. Increase Scanner Container Dimensions
-**File: `src/index.css` (Lines 2391-2398)**
+### 1. Add Negative Margin to Both Columns
+**File: `src/index.css` (Lines 2607-2621)**
 
-Increase both width and height for a larger scanner preview:
-
-```css
-/* Before */
-.tru-ai-live-scanner {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  height: 275px;
-  width: 350px;
-  border: 1px solid hsl(var(--border));
-}
-
-/* After */
-.tru-ai-live-scanner {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  height: 340px;
-  width: 420px;
-  border: 1px solid hsl(var(--border));
-}
-```
-
-### 2. Update Grid Column Width for Center Column
-**File: `src/index.css` (Lines 2586-2596)**
-
-Adjust the grid template to accommodate the wider scanner:
-
-```css
-/* Before */
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: auto 350px 350px;
-  gap: 16px;
-  /* ... */
-}
-
-/* After */
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: auto 420px 350px;
-  gap: 16px;
-  /* ... */
-}
-```
-
-### 3. Update Center Column Min-Width
-**File: `src/index.css` (Lines 2607-2614)**
-
-Match the center column minimum width to the new scanner width:
+Add `margin-top: -10px` to both the center and right columns to shift them upward:
 
 ```css
 /* Before */
@@ -80,6 +30,13 @@ Match the center column minimum width to the new scanner width:
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
+  min-width: 420px;
+  height: 100%;
+}
+
+.tru-ai-right-column {
+  display: flex;
+  flex-direction: column;
   min-width: 350px;
   height: 100%;
 }
@@ -92,25 +49,15 @@ Match the center column minimum width to the new scanner width:
   justify-content: flex-start;
   min-width: 420px;
   height: 100%;
-}
-```
-
-### 4. Update Vertical Layout Scanner Height Override
-**File: `src/index.css` (Lines 2644-2647)**
-
-Update the height override in the vertical layout context:
-
-```css
-/* Before */
-.tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 275px;
-  flex: none;
+  margin-top: -10px;
 }
 
-/* After */
-.tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 340px;
-  flex: none;
+.tru-ai-right-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 350px;
+  height: 100%;
+  margin-top: -10px;
 }
 ```
 
@@ -118,16 +65,16 @@ Update the height override in the vertical layout context:
 
 ## Technical Summary
 
-| Property | Before | After | Change |
-|----------|--------|-------|--------|
-| Scanner width | 350px | 420px | +70px (+20%) |
-| Scanner height | 275px | 340px | +65px (+24%) |
-| Center column grid | 350px | 420px | +70px |
-| Center column min-width | 350px | 420px | +70px |
+| Property | Before | After |
+|----------|--------|-------|
+| Center column margin-top | 0 | -10px |
+| Right column margin-top | 0 | -10px |
+| Box dimensions | Unchanged | Unchanged |
 
-The new dimensions (420x340px) provide a more prominent scanner preview while maintaining proper proportions and alignment with the detection list on the right.
+Both boxes will shift up equally by 10 pixels while maintaining their 420x340px (scanner) and 350px width (detection) dimensions.
 
 ---
 
 ### Files Modified
-- `src/index.css` - Update scanner dimensions and grid layout
+- `src/index.css` - Add negative top margin to center and right columns
+
