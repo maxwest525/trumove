@@ -373,10 +373,10 @@ export default function CarrierVetting() {
                     <Shield className="w-8 h-8" />
                   </div>
                   <div>
-                    <h1 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                    <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                       FMCSA Carrier Vetting
                     </h1>
-                    <p className="text-xs text-white/60">
+                    <p className="text-xs text-slate-600 dark:text-white/60">
                       Safety & Fitness Electronic Records System (SAFER)
                     </p>
                   </div>
@@ -384,11 +384,11 @@ export default function CarrierVetting() {
                 <div className="flex items-center gap-3">
                   <div className="fmcsa-badge">
                     <Database className="w-3.5 h-3.5" />
-                    <span>SAFER Web Services</span>
+                    <span className="text-slate-700 dark:text-slate-300">SAFER Web Services</span>
                   </div>
                   <div className="fmcsa-live-indicator">
                     <div className="fmcsa-live-dot" />
-                    <span>Live Data</span>
+                    <span className="text-slate-700 dark:text-primary">Live Data</span>
                   </div>
                 </div>
               </div>
@@ -448,9 +448,8 @@ export default function CarrierVetting() {
             <div className="fmcsa-terminal-body">
               <div className="mb-5 text-center">
                 <h3 
-                  className="text-xl md:text-2xl font-bold tracking-wide text-white/80"
+                  className="text-xl md:text-2xl font-bold tracking-wide text-slate-900 dark:text-white/80"
                   style={{ 
-                    textShadow: 'inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 2px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.3)',
                     letterSpacing: '0.05em'
                   }}
                 >
@@ -458,7 +457,7 @@ export default function CarrierVetting() {
                 </h3>
               </div>
               <CarrierSearch onSelect={handleAddCarrier} isLoading={isLoading} />
-              <p className="text-xs text-white/60 leading-relaxed mt-4 text-center">
+              <p className="text-xs text-slate-600 dark:text-white/60 leading-relaxed mt-4 text-center">
                 All carriers are filtered and continuously monitored per official FMCSA Safety Measurement System (SMS) criteria and federal compliance standards. Click any card for detailed report including Behavior Analysis and Safety Improvement Categories (BASICs), roadside inspection results, crash involvement, and safety fitness evaluation.
               </p>
             </div>
