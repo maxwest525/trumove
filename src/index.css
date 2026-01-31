@@ -2418,15 +2418,81 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent 0%, hsl(var(--primary)) 50%, transparent 100%);
-  box-shadow: 0 0 8px hsl(var(--primary) / 0.6);
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, hsl(var(--primary)) 20%, hsl(var(--primary)) 80%, transparent 100%);
+  box-shadow: 
+    0 0 12px hsl(var(--primary)),
+    0 0 24px hsl(var(--primary) / 0.6),
+    0 0 36px hsl(var(--primary) / 0.3);
   animation: scan-sweep 2.5s ease-in-out infinite;
+}
+
+/* Trailing glow effect */
+.tru-ai-scanner-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 20px;
+  top: -10px;
+  background: linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.15), transparent);
 }
 
 @keyframes scan-sweep {
   0%, 100% { top: 10%; }
   50% { top: 90%; }
+}
+
+/* Furniture detection box styling */
+.tru-ai-detection-box {
+  position: absolute;
+  border: 2px solid hsl(var(--primary));
+  border-radius: 8px;
+  background: hsl(var(--primary) / 0.1);
+  box-shadow: 
+    0 0 8px hsl(var(--primary) / 0.4),
+    inset 0 0 20px hsl(var(--primary) / 0.05);
+  animation: detection-pulse 2s ease-in-out infinite, detection-appear 0.3s ease-out;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes detection-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes detection-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 8px hsl(var(--primary) / 0.4),
+      inset 0 0 20px hsl(var(--primary) / 0.05);
+  }
+  50% {
+    box-shadow: 
+      0 0 16px hsl(var(--primary) / 0.6),
+      inset 0 0 30px hsl(var(--primary) / 0.1);
+  }
+}
+
+.tru-ai-detection-label {
+  position: absolute;
+  top: -24px;
+  left: 0;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.4);
 }
 
 .tru-ai-scanner-badge {
