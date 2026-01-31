@@ -29185,9 +29185,8 @@ html.dark .tru-summary-header-large,
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   padding: 8px 24px;
-  padding-top: 28px; /* Clear header nav overlap */
   overflow-x: auto;
-  margin-top: 0;
+  margin-top: 20px; /* Push down below header nav */
 }
 
 .safer-trust-strip-inner {
