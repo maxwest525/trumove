@@ -1,73 +1,101 @@
 
 
-# Set Scanner Preview to Fixed 350px Width
+# Header Navigation Bar Updates
 
-## Current State
+## Changes Requested
 
-The scanner preview currently has:
-- Fixed height: 275px ✓
-- Width: `1fr` (fills available space in the middle column)
-
-The grid layout uses `grid-template-columns: auto 1fr auto` where the center column (scanner) expands to fill remaining space.
+1. **Spread out nav bar links more** - Increase spacing between navigation items
+2. **Make font black** - Ensure link text is solid black
+3. **Remove dropdown arrow** - Hide the chevron icon on nav links with dropdowns
 
 ---
 
 ## Solution
 
-Set the scanner to a fixed 350px width and ensure the image fits within those dimensions.
-
 ### File: `src/index.css`
 
-**1. Update the base `.tru-ai-live-scanner` rule (Lines 2386-2392)**
+**1. Increase gap between nav items (Line 11422)**
 
-Add fixed width:
+Change from:
 ```css
-.tru-ai-live-scanner {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  height: 275px;
-  width: 350px;
-  border: 1px solid hsl(var(--border));
-}
-```
-
-**2. Update the center column to not force expansion (Lines 2600-2606)**
-
-Change from `flex: 1` to allow natural sizing:
-```css
-.tru-ai-center-column {
+.header-nav {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-width: 0;
-  height: 100%;
+  gap: 20px;
+  margin-left: auto;
 }
 ```
 
-**3. The image already has proper fit (Lines 2394-2398)**
-
-The existing CSS already handles the image:
+To:
 ```css
-.tru-ai-live-scanner img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-left: auto;
 }
 ```
 
-This will scale and crop the image to fit within the 350×275px container.
+**2. Update divider position for larger gap (Line 11435)**
+
+Change:
+```css
+right: -10px;
+```
+
+To:
+```css
+right: -16px;
+```
+
+**3. Make nav link font solid black (Line 11456)**
+
+Change:
+```css
+color: hsl(var(--tm-ink));
+```
+
+To:
+```css
+color: hsl(0 0% 0%);
+```
+
+**4. Hide the dropdown chevron icon (Lines 11505-11512)**
+
+Change:
+```css
+.header-nav-chevron {
+  opacity: 0.5;
+  transition: transform 200ms ease;
+}
+
+.header-nav-item:hover .header-nav-chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+```
+
+To:
+```css
+.header-nav-chevron {
+  display: none;
+}
+
+.header-nav-item:hover .header-nav-chevron {
+  display: none;
+}
+```
 
 ---
 
 ## Summary
 
-| Property | Before | After |
-|----------|--------|-------|
-| Width | Dynamic (1fr) | Fixed: 350px |
-| Height | 275px | 275px (unchanged) |
-| Image fit | object-fit: cover | object-fit: cover (unchanged) |
+| Change | Before | After |
+|--------|--------|-------|
+| Nav gap | 20px | 32px |
+| Divider position | -10px | -16px |
+| Link color | `hsl(var(--tm-ink))` | `hsl(0 0% 0%)` (solid black) |
+| Chevron visibility | Visible (opacity 0.5) | Hidden (display: none) |
 
-The scanner demo will now be exactly 350×275px with the image properly cropped to fit these dimensions.
+This will create more breathing room between nav items, ensure text is solid black, and remove the dropdown arrows entirely.
 
