@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
+import VideoConsultTrustStrip from "@/components/video-consult/VideoConsultTrustStrip";
 
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -751,6 +752,9 @@ export default function Book() {
           </a>
         </div>
       </header>
+
+      {/* Trust Strip */}
+      <VideoConsultTrustStrip />
 
       {/* Main Content */}
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">

@@ -29878,3 +29878,43 @@ html.dark .tru-summary-header-large,
   border-color: hsl(0 0% 100% / 0.15) !important;
   color: hsl(0 0% 100% / 0.6) !important;
 }
+
+/* =============================================
+   VIDEO CONSULT TRUST STRIP
+   ============================================= */
+.video-consult-trust-strip {
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  padding: 8px 24px;
+}
+
+.video-consult-trust-strip-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  max-width: 1480px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.video-consult-trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(0 0% 100% / 0.85);
+  white-space: nowrap;
+}
+
+.video-consult-trust-item svg {
+  width: 16px;
+  height: 16px;
+  color: hsl(142 70% 55%);
+}
+
+.video-consult-trust-dot {
+  color: hsl(0 0% 100% / 0.35);
+  margin-left: 16px;
+}
