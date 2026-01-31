@@ -77,6 +77,28 @@
   }
 }
 
+/* Stacked hero header layout - logo on top */
+.tru-hero-header-stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Logo when stacked - centered above headline */
+.tru-hero-logo-stacked {
+  display: block;
+  height: 96px;
+  width: auto;
+  margin: 0 auto;
+}
+
+/* Override headline to remove inline flex behavior */
+.tru-hero-header-stacked .tru-hero-headline-main {
+  display: block;
+  text-align: center;
+}
+
 /* =============================================
    MOVE SUMMARY MODAL - Hero Right Side
    ============================================= */
