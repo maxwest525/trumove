@@ -1,73 +1,88 @@
 
-# Add Dark Black Underglow to Hero Header and Subheadline
+
+# Make Hero Underglow Shadows More Intense
 
 ## Overview
-Add a dark black underglow shadow effect to the hero headline and subheadline text for enhanced visual depth and readability.
+Increase the opacity values on all hero text shadows to create a more dramatic, visible dark underglow effect.
 
 ---
 
 ## Current State
 
-The headline currently uses a light background-based text shadow:
-```css
-.tru-hero-headline-main {
-  text-shadow: 
-    0 2px 8px hsl(var(--background) / 0.5),
-    0 4px 16px hsl(var(--background) / 0.3);
-}
-```
+The headline and subheadline currently use these shadow values:
 
-The subheadline has no text shadow.
+| Element | Current Opacity Levels |
+|---------|----------------------|
+| `.tru-hero-headline-main` | 0.5, 0.35, 0.25 |
+| `.tru-hero-subheadline-refined` | 0.5, 0.35, 0.25 |
+| `.tru-hero-subheadline` | 0.35, 0.2 |
+| `.tru-headline-animated` | 0.7, 0.5 |
 
 ---
 
 ## Changes Required
 
-### 1. Update Headline Text Shadow with Dark Underglow
-**File: `src/index.css` (Lines 1443-1448)**
+### 1. Intensify Headline Shadow
+**File: `src/index.css` (Lines 1443-1449)**
 
-Replace the current text shadow with a dark black underglow:
+Increase opacity to near-maximum levels:
 
 ```css
 /* Before */
 .tru-hero-headline-main {
   text-shadow: 
-    0 2px 8px hsl(var(--background) / 0.5),
-    0 4px 16px hsl(var(--background) / 0.3);
+    0 2px 4px hsl(0 0% 0% / 0.5),
+    0 4px 12px hsl(0 0% 0% / 0.35),
+    0 8px 24px hsl(0 0% 0% / 0.25);
 }
 
 /* After */
 .tru-hero-headline-main {
   text-shadow: 
-    0 2px 4px hsl(0 0% 0% / 0.15),
-    0 4px 12px hsl(0 0% 0% / 0.1),
-    0 8px 24px hsl(0 0% 0% / 0.08);
+    0 2px 4px hsl(0 0% 0% / 0.7),
+    0 4px 12px hsl(0 0% 0% / 0.5),
+    0 8px 24px hsl(0 0% 0% / 0.35);
 }
 ```
 
-### 2. Add Dark Underglow to Subheadline
-**File: `src/index.css` (Lines 1753-1762)**
-
-Add text shadow to the subheadline for matching dark underglow:
+### 2. Intensify Subheadline Shadow
+**File: `src/index.css` (Lines 1754-1761)**
 
 ```css
 /* Before */
 .tru-hero-subheadline {
-  font-size: 18px;
-  line-height: 1.7;
-  color: hsl(var(--tm-ink));
-  /* ... other properties */
+  text-shadow: 
+    0 1px 3px hsl(0 0% 0% / 0.35),
+    0 3px 8px hsl(0 0% 0% / 0.2);
 }
 
 /* After */
 .tru-hero-subheadline {
-  font-size: 18px;
-  line-height: 1.7;
-  color: hsl(var(--tm-ink));
   text-shadow: 
-    0 1px 3px hsl(0 0% 0% / 0.1),
-    0 3px 8px hsl(0 0% 0% / 0.06);
-  /* ... other properties */
+    0 2px 4px hsl(0 0% 0% / 0.6),
+    0 4px 12px hsl(0 0% 0% / 0.4),
+    0 8px 20px hsl(0 0% 0% / 0.25);
+}
+```
+
+### 3. Intensify Refined Subheadline ("Moving. The Way Its Supposed To Be")
+**File: `src/index.css` (Lines 26369-26382)**
+
+```css
+/* Before */
+.tru-hero-subheadline-refined {
+  text-shadow: 
+    0 2px 4px hsl(0 0% 0% / 0.5),
+    0 4px 16px hsl(0 0% 0% / 0.35),
+    0 8px 24px hsl(0 0% 0% / 0.25);
+}
+
+/* After */
+.tru-hero-subheadline-refined {
+  text-shadow: 
+    0 2px 4px hsl(0 0% 0% / 0.7),
+    0 4px 16px hsl(0 0% 0% / 0.5),
+    0 8px 24px hsl(0 0% 0% / 0.35);
 }
 ```
 
@@ -75,14 +90,16 @@ Add text shadow to the subheadline for matching dark underglow:
 
 ## Technical Summary
 
-| Element | Shadow Type | Effect |
-|---------|-------------|--------|
-| Headline | Multi-layer dark shadow | Strong underglow with 3 layers at 15%, 10%, 8% opacity |
-| Subheadline | Subtle dark shadow | Lighter underglow with 2 layers at 10%, 6% opacity |
+| Element | Before | After |
+|---------|--------|-------|
+| Headline | 0.5 / 0.35 / 0.25 | 0.7 / 0.5 / 0.35 |
+| Subheadline | 0.35 / 0.2 | 0.6 / 0.4 / 0.25 (3 layers) |
+| Refined Subheadline | 0.5 / 0.35 / 0.25 | 0.7 / 0.5 / 0.35 |
 
-The dark black shadows use pure black (`hsl(0 0% 0%)`) with low opacity to create a subtle but visible underglow effect that works in both light and dark modes.
+The increased opacity values (up to 70%) will create a much more pronounced dark underglow effect while maintaining smooth layering for a natural shadow appearance.
 
 ---
 
 ### Files Modified
-- `src/index.css` - Update headline and subheadline text shadows
+- `src/index.css` - Update all hero text shadow opacity values
+
