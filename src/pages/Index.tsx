@@ -304,10 +304,13 @@ function ScannerPreview({ isRunning, onStartDemo }: ScannerPreviewProps) {
           <div className="tru-ai-scanner-line" />
         </div>
       )}
-      <div className="tru-ai-scanner-badge">
+      <button 
+        className="tru-ai-scanner-badge"
+        onClick={onStartDemo}
+      >
         <Scan className="w-4 h-4" />
         <span>{isRunning ? "Pause Scan" : "Ready to Scan"}</span>
-      </div>
+      </button>
       {/* Start Demo button as overlay - top right */}
       <button 
         className="tru-ai-scanner-start-btn"
