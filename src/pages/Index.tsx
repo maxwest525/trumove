@@ -1048,7 +1048,7 @@ export default function Index() {
             <div className="tru-hero-header-section tru-hero-header-refined tru-hero-header-stacked">
               <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo tru-hero-logo-stacked" />
               <h1 className="tru-hero-headline-main tru-headline-animated">
-                A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
+                The Smarter Way To <span className="tru-hero-headline-accent">Move</span>
               </h1>
             </div>
 
