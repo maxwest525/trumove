@@ -661,6 +661,8 @@ export default function Book() {
   const [bookingCode, setBookingCode] = useState("");
   const [isDemo, setIsDemo] = useState(false);
   const [chatMode, setChatMode] = useState<'trudy' | 'specialist'>('trudy');
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
@@ -695,10 +697,62 @@ export default function Book() {
 
   // Handle leaving room
   const handleLeaveRoom = () => {
+    // Stop screen sharing if active
+    if (screenStream) {
+      screenStream.getTracks().forEach(track => track.stop());
+      setScreenStream(null);
+      setIsScreenSharing(false);
+    }
     setRoomUrl(null);
     setIsDemo(false);
     setBookingCode("");
     toast("Session ended");
+  };
+
+  // Handle screen share toggle
+  const handleScreenShare = async () => {
+    if (!roomUrl) {
+      toast.info("Join a session first to share your screen");
+      return;
+    }
+
+    if (isScreenSharing && screenStream) {
+      // Stop screen sharing
+      screenStream.getTracks().forEach(track => track.stop());
+      setScreenStream(null);
+      setIsScreenSharing(false);
+      toast.success("Screen sharing stopped");
+    } else {
+      try {
+        // Request screen share
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: { 
+            displaySurface: "monitor",
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
+          audio: true
+        });
+        
+        setScreenStream(stream);
+        setIsScreenSharing(true);
+        toast.success("Screen sharing started!");
+        
+        // Listen for when user stops sharing via browser UI
+        stream.getVideoTracks()[0].onended = () => {
+          setScreenStream(null);
+          setIsScreenSharing(false);
+          toast.info("Screen sharing ended");
+        };
+      } catch (error) {
+        if ((error as Error).name === 'NotAllowedError') {
+          toast.info("Screen sharing was cancelled");
+        } else {
+          console.error("Screen share error:", error);
+          toast.error("Could not start screen sharing");
+        }
+      }
+    }
   };
 
   return (
@@ -895,11 +949,14 @@ export default function Book() {
               </Button>
               <Button 
                 variant="outline" 
-                className="video-consult-booking-share-btn"
-                onClick={() => toast.info("Screen sharing available after joining a session")}
+                className={cn(
+                  "video-consult-booking-share-btn",
+                  isScreenSharing && "video-consult-booking-share-btn--active"
+                )}
+                onClick={handleScreenShare}
               >
                 <Monitor className="w-4 h-4 mr-2" />
-                Screen Share
+                {isScreenSharing ? "Stop Sharing" : "Screen Share"}
               </Button>
               <Button 
                 variant="outline" 
