@@ -25543,9 +25543,7 @@
 
 /* Video Consult Command Center Header - matches tracking header */
 .video-consult-header {
-  position: sticky;
-  top: 103px; /* Header 72px + margin 8px + buffer 23px */
-  z-index: 40;
+  position: relative; /* Sticky handled by parent wrapper */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -29883,9 +29881,7 @@ html.dark .tru-summary-header-large,
    VIDEO CONSULT TRUST STRIP
    ============================================= */
 .video-consult-trust-strip {
-  position: sticky;
-  top: 151px; /* Header (103px) + video-consult-header height (~48px) */
-  z-index: 39;
+  position: relative; /* Sticky handled by parent wrapper */
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   padding: 8px 24px;
