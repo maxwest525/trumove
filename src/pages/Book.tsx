@@ -470,12 +470,12 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
     : roomItems;
 
   return (
-    <div className="w-full max-w-2xl mx-4">
+    <div className="w-full max-w-xl mx-4 max-h-[calc(100%-32px)]">
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-600">
         {/* Window Chrome with "Agent's View" indicator */}
         <div className="px-4 py-3 bg-slate-100 dark:bg-slate-700 flex items-center gap-2 border-b border-slate-200 dark:border-slate-600">
           <div className="flex gap-1.5">
-            <button onClick={onClose} className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors" />
+            <div className="w-3 h-3 rounded-full bg-red-500" />
             <div className="w-3 h-3 rounded-full bg-yellow-500" />
             <div className="w-3 h-3 rounded-full bg-green-500" />
           </div>
@@ -484,14 +484,21 @@ function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
               Agent's View - Your Inventory
             </span>
           </div>
-          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-green-500/20 text-green-600 flex items-center gap-1">
+          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-green-500/20 text-green-600 flex items-center gap-1 mr-2">
             <Monitor className="w-3 h-3" />
             Sharing
           </span>
+          <button 
+            onClick={onClose}
+            className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+            title="Close preview"
+          >
+            <X className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+          </button>
         </div>
         
         {/* Main Content - Sidebar + Grid */}
-        <div className="flex h-[360px]">
+        <div className="flex h-[280px]">
           {/* Left Sidebar - Room Navigation */}
           <div className="w-36 border-r border-slate-200 dark:border-slate-600 p-3 space-y-1 bg-slate-50 dark:bg-slate-800/50">
             <div className="text-[10px] font-black tracking-wider uppercase text-slate-400 mb-2 px-2">
