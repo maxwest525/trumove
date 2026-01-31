@@ -6,7 +6,7 @@ import {
   Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, 
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
-  Shield, BadgeCheck, FileText, Clock, Bot, Headphones
+  Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -420,6 +420,268 @@ function InventoryShareModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+// Screen Share Preview Modal - Shows inventory as "Agent's View"
+function ScreenSharePreviewModal({ onClose }: { onClose: () => void }) {
+  const [activeRoom, setActiveRoom] = useState('Living Room');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [quantities, setQuantities] = useState<Record<string, number>>({
+    'Living Room-3-Cushion Sofa': 1,
+    'Living Room-55" Plasma TV': 1,
+    'Living Room-Armchair': 2,
+    'Living Room-Coffee Table': 1,
+    'Bedroom-Queen Bed': 1,
+    'Bedroom-Dresser': 1,
+    'Bedroom-Nightstand': 2,
+    'Kitchen-Refrigerator': 1,
+  });
+
+  const updateQuantity = (room: string, itemName: string, delta: number) => {
+    const key = `${room}-${itemName}`;
+    setQuantities(prev => {
+      const newQty = Math.max(0, (prev[key] || 0) + delta);
+      if (newQty === 0) {
+        const { [key]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [key]: newQty };
+    });
+  };
+
+  const getRoomCount = (roomId: string) => {
+    return Object.entries(quantities)
+      .filter(([key]) => key.startsWith(`${roomId}-`))
+      .reduce((sum, [, qty]) => sum + qty, 0);
+  };
+
+  const totalItems = Object.values(quantities).reduce((sum, qty) => sum + qty, 0);
+  const totalWeight = Object.entries(quantities).reduce((sum, [key, qty]) => {
+    const [room, ...nameParts] = key.split('-');
+    const itemName = nameParts.join('-');
+    const item = inventoryItemsByRoom[room]?.find(i => i.name === itemName);
+    return sum + (item?.weight || 0) * qty;
+  }, 0);
+
+  const roomItems = inventoryItemsByRoom[activeRoom] || [];
+  const filteredItems = searchQuery.trim() 
+    ? roomItems.filter(item => 
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : roomItems;
+
+  return (
+    <div className="w-full max-w-2xl mx-4">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-600">
+        {/* Window Chrome with "Agent's View" indicator */}
+        <div className="px-4 py-3 bg-slate-100 dark:bg-slate-700 flex items-center gap-2 border-b border-slate-200 dark:border-slate-600">
+          <div className="flex gap-1.5">
+            <button onClick={onClose} className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500" />
+            <div className="w-3 h-3 rounded-full bg-green-500" />
+          </div>
+          <div className="flex-1 text-center">
+            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              Agent's View - Your Inventory
+            </span>
+          </div>
+          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-green-500/20 text-green-600 flex items-center gap-1">
+            <Monitor className="w-3 h-3" />
+            Sharing
+          </span>
+        </div>
+        
+        {/* Main Content - Sidebar + Grid */}
+        <div className="flex h-[360px]">
+          {/* Left Sidebar - Room Navigation */}
+          <div className="w-36 border-r border-slate-200 dark:border-slate-600 p-3 space-y-1 bg-slate-50 dark:bg-slate-800/50">
+            <div className="text-[10px] font-black tracking-wider uppercase text-slate-400 mb-2 px-2">
+              Rooms
+            </div>
+            {ROOM_CONFIG_DEMO.map((room) => {
+              const Icon = room.icon;
+              const count = getRoomCount(room.id);
+              const isActive = activeRoom === room.id;
+              return (
+                <button
+                  key={room.id}
+                  onClick={() => setActiveRoom(room.id)}
+                  className={cn(
+                    "w-full flex items-center gap-2 px-2 py-2 rounded-lg text-left text-xs font-semibold transition-all",
+                    isActive 
+                      ? "border-2 border-primary bg-primary/10 text-slate-800 dark:text-white" 
+                      : "border-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                  )}
+                >
+                  <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span className="truncate flex-1">{room.label}</span>
+                  {count > 0 && (
+                    <span className={cn(
+                      "text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center",
+                      isActive ? "bg-slate-800 dark:bg-white text-white dark:text-slate-800" : "bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300"
+                    )}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Content - Item Grid */}
+          <div className="flex-1 flex flex-col">
+            {/* Search Bar + View Toggle Header */}
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-800/30">
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search items..."
+                  className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
+                />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">{activeRoom}</span>
+              <div className="flex rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 p-0.5">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={cn(
+                    "p-1.5 rounded-md transition-all",
+                    viewMode === 'grid' 
+                      ? "bg-primary/20 text-primary" 
+                      : "text-slate-400 hover:text-slate-600"
+                  )}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={cn(
+                    "p-1.5 rounded-md transition-all",
+                    viewMode === 'list' 
+                      ? "bg-primary/20 text-primary" 
+                      : "text-slate-400 hover:text-slate-600"
+                  )}
+                >
+                  <List className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Item Grid */}
+            <div className="flex-1 p-3 overflow-y-auto">
+              {filteredItems.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                  <Search className="w-8 h-8 text-slate-300 dark:text-slate-500 mb-3" />
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                    No items found
+                  </p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                    Try a different search term
+                  </p>
+                </div>
+              ) : viewMode === 'grid' ? (
+                <div className="grid grid-cols-4 gap-2">
+                  {filteredItems.map((item) => {
+                    const qty = quantities[`${activeRoom}-${item.name}`] || 0;
+                    return (
+                      <div 
+                        key={item.name}
+                        className={cn(
+                          "flex flex-col items-center p-2 rounded-xl border-2 transition-all",
+                          qty > 0 
+                            ? "border-primary/40 bg-primary/5" 
+                            : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
+                        )}
+                      >
+                        <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center mb-1 border border-slate-100">
+                          <img src={item.image} alt={item.name} className="w-10 h-10 object-contain mix-blend-multiply" />
+                        </div>
+                        <span className="text-[10px] font-medium text-center line-clamp-2 h-7 text-slate-700 dark:text-slate-200">{item.name}</span>
+                        <div className="flex items-center gap-1 mt-1">
+                          <button
+                            onClick={() => updateQuantity(activeRoom, item.name, -1)}
+                            disabled={qty === 0}
+                            className="w-5 h-5 rounded flex items-center justify-center bg-slate-100 dark:bg-slate-600 hover:bg-slate-200 disabled:opacity-30 transition-colors"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="w-5 text-center text-xs font-bold text-slate-700 dark:text-white">{qty}</span>
+                          <button
+                            onClick={() => updateQuantity(activeRoom, item.name, 1)}
+                            className="w-5 h-5 rounded flex items-center justify-center bg-primary/20 hover:bg-primary/30 text-primary transition-colors"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {filteredItems.map((item) => {
+                    const qty = quantities[`${activeRoom}-${item.name}`] || 0;
+                    return (
+                      <div 
+                        key={item.name}
+                        className={cn(
+                          "flex items-center gap-3 p-2 rounded-lg border-2 transition-all",
+                          qty > 0 
+                            ? "border-primary/40 bg-primary/5" 
+                            : "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700"
+                        )}
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 border border-slate-100">
+                          <img src={item.image} alt={item.name} className="w-8 h-8 object-contain mix-blend-multiply" />
+                        </div>
+                        <span className="flex-1 text-xs font-medium text-slate-700 dark:text-slate-200">{item.name}</span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => updateQuantity(activeRoom, item.name, -1)}
+                            disabled={qty === 0}
+                            className="w-6 h-6 rounded bg-slate-100 dark:bg-slate-600 hover:bg-slate-200 flex items-center justify-center disabled:opacity-30 transition-colors"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="w-8 text-center text-sm font-bold text-slate-700 dark:text-white">{qty}</span>
+                          <button
+                            onClick={() => updateQuantity(activeRoom, item.name, 1)}
+                            className="w-6 h-6 rounded bg-primary/20 hover:bg-primary/30 flex items-center justify-center text-primary transition-colors"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer with Totals */}
+        <div className="px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-600 flex items-center justify-between">
+          <span className="text-xs text-slate-500 dark:text-slate-400">{totalItems} items • Est. {totalWeight.toLocaleString()} lbs</span>
+          <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            Agent can see your screen
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Trudy's contextual responses
 const trudyResponses = [
   "Great question! I'm checking that for you now.",
@@ -564,30 +826,7 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
           </div>
         </div>
 
-        {/* Chat panel */}
-        <div className="absolute top-4 right-4 w-72 bg-black/70 backdrop-blur-sm rounded-lg overflow-hidden border border-white/10">
-          <div className="p-2 border-b border-white/10 flex items-center gap-2">
-            <MessageSquare className="w-4 h-4 text-white/60" />
-            <span className="text-xs font-medium text-white/80">Chat with Trudy</span>
-          </div>
-          <div className="h-32 overflow-y-auto p-2 space-y-1.5">
-            {chatMessages.map((msg, i) => (
-              <div key={i} className={`text-xs ${msg.from === "You" ? "text-primary" : "text-white/80"}`}>
-                <span className="font-bold">{msg.from}:</span> {msg.text}
-              </div>
-            ))}
-            {isTyping && <ChatTypingIndicator />}
-          </div>
-          <div className="p-2 border-t border-white/10 flex gap-1">
-            <input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-              placeholder="Type a message..."
-              className="flex-1 text-xs bg-white/10 border-0 rounded px-2 py-1 text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-        </div>
+        {/* Chat removed - available in right side panel */}
 
         {/* Connection status - looks like a real call */}
         <div className="absolute top-4 left-4 flex items-center gap-2">
@@ -663,6 +902,8 @@ export default function Book() {
   const [chatMode, setChatMode] = useState<'trudy' | 'specialist'>('trudy');
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
+  const [showScreenSharePreview, setShowScreenSharePreview] = useState(false);
+  const [shareAudio, setShareAudio] = useState(true);
   
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
@@ -702,6 +943,7 @@ export default function Book() {
       screenStream.getTracks().forEach(track => track.stop());
       setScreenStream(null);
       setIsScreenSharing(false);
+      setShowScreenSharePreview(false);
     }
     setRoomUrl(null);
     setIsDemo(false);
@@ -721,27 +963,30 @@ export default function Book() {
       screenStream.getTracks().forEach(track => track.stop());
       setScreenStream(null);
       setIsScreenSharing(false);
+      setShowScreenSharePreview(false);
       toast.success("Screen sharing stopped");
     } else {
       try {
-        // Request screen share
+        // Request screen share with audio toggle
         const stream = await navigator.mediaDevices.getDisplayMedia({
           video: { 
             displaySurface: "monitor",
             width: { ideal: 1920 },
             height: { ideal: 1080 }
           },
-          audio: true
+          audio: shareAudio
         });
         
         setScreenStream(stream);
         setIsScreenSharing(true);
+        setShowScreenSharePreview(true);
         toast.success("Screen sharing started!");
         
         // Listen for when user stops sharing via browser UI
         stream.getVideoTracks()[0].onended = () => {
           setScreenStream(null);
           setIsScreenSharing(false);
+          setShowScreenSharePreview(false);
           toast.info("Screen sharing ended");
         };
       } catch (error) {
@@ -827,12 +1072,20 @@ export default function Book() {
                     isDemo ? (
                       <DemoVideoPlaceholder onLeave={handleLeaveRoom} />
                     ) : (
-                      <DailyVideoRoom 
-                        roomUrl={roomUrl}
-                        userName="Guest"
-                        onLeave={handleLeaveRoom}
-                        className="w-full h-full"
-                      />
+                      <>
+                        <DailyVideoRoom 
+                          roomUrl={roomUrl}
+                          userName="Guest"
+                          onLeave={handleLeaveRoom}
+                          className="w-full h-full"
+                        />
+                        {/* Screen Share Preview Modal - when actively sharing */}
+                        {showScreenSharePreview && isScreenSharing && (
+                          <div className="absolute inset-0 bg-black/80 z-10 flex items-center justify-center">
+                            <ScreenSharePreviewModal onClose={() => setShowScreenSharePreview(false)} />
+                          </div>
+                        )}
+                      </>
                     )
                   ) : (
                     <div className="text-center p-8">
@@ -947,17 +1200,32 @@ export default function Book() {
                 <Video className="w-4 h-4 mr-2" />
                 Join Room
               </Button>
-              <Button 
-                variant="outline" 
-                className={cn(
-                  "video-consult-booking-share-btn",
-                  isScreenSharing && "video-consult-booking-share-btn--active"
-                )}
-                onClick={handleScreenShare}
-              >
-                <Monitor className="w-4 h-4 mr-2" />
-                {isScreenSharing ? "Stop Sharing" : "Screen Share"}
-              </Button>
+              {/* Screen Share with Audio Toggle */}
+              <div className="flex items-center">
+                <Button 
+                  variant="outline" 
+                  className={cn(
+                    "video-consult-booking-share-btn",
+                    isScreenSharing && "video-consult-booking-share-btn--active"
+                  )}
+                  onClick={handleScreenShare}
+                >
+                  <Monitor className="w-4 h-4 mr-2" />
+                  {isScreenSharing ? "Stop Sharing" : "Screen Share"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={cn(
+                    "video-consult-booking-audio-btn",
+                    !shareAudio && "video-consult-booking-audio-btn--muted"
+                  )}
+                  onClick={() => setShareAudio(!shareAudio)}
+                  title={shareAudio ? "System audio: ON" : "System audio: OFF"}
+                >
+                  {shareAudio ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                </Button>
+              </div>
               <Button 
                 variant="outline" 
                 onClick={handleStartDemo}
