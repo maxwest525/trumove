@@ -2387,7 +2387,7 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 16/10;
+  height: 275px;
   border: 1px solid hsl(var(--border));
 }
 
@@ -2634,9 +2634,8 @@
 }
 
 .tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 100%;
-  flex: 1;
-  min-height: 0;
+  height: 275px;
+  flex: none;
 }
 
 .tru-ai-preview-vertical .tru-ai-live-inventory {
