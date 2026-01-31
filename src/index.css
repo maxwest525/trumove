@@ -25548,13 +25548,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 24px;
-  background: hsl(var(--foreground) / 0.95);
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-bottom: 1px solid hsl(var(--border) / 0.3);
   backdrop-filter: blur(12px);
 }
 
 .dark .video-consult-header {
-  background: rgba(15, 15, 15, 0.95);
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
@@ -29883,15 +29883,15 @@ html.dark .tru-summary-header-large,
 .video-consult-trust-strip {
   position: relative; /* Sticky handled by parent wrapper */
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
-  border-bottom: 1px solid hsl(0 0% 100% / 0.15);
-  padding: 8px 24px;
+  border-bottom: 2px solid hsl(0 0% 100% / 0.25);
+  padding: 10px 24px;
 }
 
 .video-consult-trust-strip-inner {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 48px; /* Increased spacing between items */
+  gap: 72px; /* Further increased spacing between items */
   max-width: 1480px;
   margin: 0 auto;
   flex-wrap: nowrap;
@@ -29917,5 +29917,5 @@ html.dark .tru-summary-header-large,
 
 .video-consult-trust-dot {
   color: hsl(0 0% 100% / 0.35);
-  margin-left: 24px; /* Increased from 16px */
+  margin-left: 36px; /* Increased for wider separation */
 }
