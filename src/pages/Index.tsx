@@ -1563,10 +1563,37 @@ export default function Index() {
               <div className="tru-ai-accent-line" />
 
               
-              {/* Three-column layout: Scanner | Detection | Steps */}
+              {/* Two-column layout: Steps | Scanner+Detection */}
               <div className="tru-ai-two-column" ref={scanPreviewRef}>
-                {/* First column: Scanner preview */}
-                <div className={`tru-ai-center-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
+                {/* LEFT: Steps as horizontal cards */}
+                <div className="tru-ai-left-column">
+                  <div className="tru-ai-steps-horizontal">
+                    <div className="tru-ai-step-card">
+                      <div className="tru-ai-step-number">1</div>
+                      <div className="tru-ai-step-content">
+                        <h3 className="tru-ai-step-title">Video or Photos</h3>
+                        <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
+                      </div>
+                    </div>
+                    <div className="tru-ai-step-card">
+                      <div className="tru-ai-step-number">2</div>
+                      <div className="tru-ai-step-content">
+                        <h3 className="tru-ai-step-title">AI Detection</h3>
+                        <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
+                      </div>
+                    </div>
+                    <div className="tru-ai-step-card">
+                      <div className="tru-ai-step-number">3</div>
+                      <div className="tru-ai-step-content">
+                        <h3 className="tru-ai-step-title">Agent Confirmation</h3>
+                        <p className="tru-ai-step-desc">A live specialist reviews to ensure accuracy.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* RIGHT: Scanner + Detection stacked */}
+                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
                   <ScannerPreview 
                     isRunning={scanDemoRunning} 
                     visibleCount={scanVisibleCount}
@@ -1577,47 +1604,7 @@ export default function Index() {
                       }, 100);
                     }} 
                   />
-                </div>
-                
-                {/* Second column: Detection list */}
-                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
                   <DetectionList visibleCount={scanVisibleCount} />
-                </div>
-                
-                {/* Third column: Vertical steps with preview thumbnails */}
-                <div className="tru-ai-left-column">
-                  <div className="tru-ai-steps-vertical">
-                    <div className="tru-ai-step tru-ai-step-with-preview">
-                      <div className="tru-ai-step-preview">
-                        <img src={sampleRoomLiving} alt="Room scanning" />
-                      </div>
-                      <div className="tru-ai-step-number">1</div>
-                      <div className="tru-ai-step-content">
-                        <h3 className="tru-ai-step-title">Video or Photos</h3>
-                        <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
-                      </div>
-                    </div>
-                    <div className="tru-ai-step tru-ai-step-with-preview">
-                      <div className="tru-ai-step-preview">
-                        <img src={previewAiScanner} alt="AI detection" />
-                      </div>
-                      <div className="tru-ai-step-number">2</div>
-                      <div className="tru-ai-step-content">
-                        <h3 className="tru-ai-step-title">AI Detection</h3>
-                        <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
-                      </div>
-                    </div>
-                    <div className="tru-ai-step tru-ai-step-with-preview">
-                      <div className="tru-ai-step-preview">
-                        <img src={trudyVideoCall} alt="Agent confirmation" />
-                      </div>
-                      <div className="tru-ai-step-number">3</div>
-                      <div className="tru-ai-step-content">
-                        <h3 className="tru-ai-step-title">Agent Confirmation</h3>
-                        <p className="tru-ai-step-desc">A live specialist reviews to ensure accuracy.</p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
