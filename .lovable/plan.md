@@ -1,113 +1,87 @@
 
-# Plan: Fix Video Consult Trust Strip - Lock Below Header
+# Plan: Fix Light Mode Visibility in SAFER DATABASE QUERY Terminal
 
-## Root Cause Analysis
+## Problem
 
-The trust strip is hidden behind the video-consult-header because:
+In light mode, the "SAFER DATABASE QUERY" terminal has visibility issues:
+1. **Terminal title** (`SAFER DATABASE QUERY`) uses `hsl(var(--muted-foreground))` which is a mid-gray on a light gray background - low contrast
+2. **Toggle buttons** (Name, DOT, MC) use `text-slate-600` for inactive state which also has insufficient contrast
+3. **Active buttons** have a subtle green border that's harder to distinguish in light mode
 
-1. **Both elements are independently sticky** - They each have their own `position: sticky`
-2. **The trust strip has a lower z-index** - Header is `z-index: 40`, trust strip is `z-index: 39`
-3. **Sticky elements compete** - When scrolling, the header "wins" and covers the trust strip
+## Root Cause
 
-Looking at how the main site handles this in `SiteShell.tsx`:
-```tsx
-<div className="sticky top-0 z-[90]">
-  <Header />
-  {!hideTrustStrip && <SaferTrustStrip />}
-</div>
-```
-
-The Header and SaferTrustStrip are wrapped in a **single sticky container**, so they move together as one unit.
+The CSS values are optimized for dark mode aesthetics but the light mode fallbacks don't provide enough contrast:
+- Terminal header background: `hsl(210 40% 96.1%)` (very light gray)
+- Terminal title: `hsl(215.4 16.3% 46.9%)` (mid gray - low contrast)
+- Button text: `slate-600` (mid gray)
 
 ## Solution
 
-Apply the same pattern to the Book page: wrap the video-consult-header and VideoConsultTrustStrip in a single sticky container.
+Increase contrast for all text and interactive elements in light mode within the FMCSA terminal.
 
 ## Implementation
 
-### File: `src/pages/Book.tsx`
-
-**Wrap header and trust strip in a sticky container (around lines 696-757):**
-
-```tsx
-// FROM:
-{/* Video Consult Command Center Header */}
-<header className="video-consult-header">
-  ...
-</header>
-
-{/* Trust Strip */}
-<VideoConsultTrustStrip />
-
-// TO:
-{/* Sticky Header Block - Both elements lock together */}
-<div className="sticky top-[72px] z-40">
-  {/* Video Consult Command Center Header */}
-  <header className="video-consult-header-inner">
-    ...
-  </header>
-
-  {/* Trust Strip */}
-  <VideoConsultTrustStrip />
-</div>
-```
-
 ### File: `src/index.css`
 
-**Update `.video-consult-header` to remove sticky positioning (it's now handled by the wrapper):**
+**1. Update `.fmcsa-terminal-title` (line 24726-24737):**
 
-| Property | Current | New |
-|----------|---------|-----|
-| `position` | `sticky` | `relative` |
-| `top` | `103px` | *(remove)* |
-| `z-index` | `40` | *(remove)* |
-
-**Update `.video-consult-trust-strip` to remove sticky positioning:**
-
-| Property | Current | New |
-|----------|---------|-----|
-| `position` | `sticky` | `relative` |
-| `top` | `151px` | *(remove)* |
-| `z-index` | `39` | *(remove)* |
-
-### CSS Changes
+Change light mode color from `hsl(var(--muted-foreground))` to a darker, high-contrast color.
 
 ```css
-/* Video Consult Command Center Header */
-.video-consult-header {
-  position: relative; /* Changed from sticky */
-  /* top: 103px; - REMOVED */
-  /* z-index: 40; - REMOVED */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 24px;
-  background: hsl(var(--foreground) / 0.95);
-  border-bottom: 1px solid hsl(var(--border) / 0.3);
-  backdrop-filter: blur(12px);
+/* FROM */
+.fmcsa-terminal-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
-/* Video Consult Trust Strip */
-.video-consult-trust-strip {
-  position: relative; /* Changed from sticky */
-  /* top: 151px; - REMOVED */
-  /* z-index: 39; - REMOVED */
-  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
-  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
-  padding: 8px 24px;
+/* TO */
+.fmcsa-terminal-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(220 15% 30%); /* Darker gray for light mode - high contrast */
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
+```
+
+### File: `src/components/vetting/CarrierSearch.tsx`
+
+**2. Update toggle button styling (lines 140-199):**
+
+Increase contrast for inactive buttons in light mode by using `text-slate-700` instead of `text-slate-600` and `border-slate-400` instead of `border-slate-300`.
+
+| Current | New |
+|---------|-----|
+| `text-slate-600` (inactive) | `text-slate-700` |
+| `border-slate-300` (inactive) | `border-slate-400` |
+| `hover:text-slate-900` | Keep as-is |
+| `text-slate-900` (active) | Keep as-is |
+
+The specific changes for each button's inactive state:
+
+```tsx
+// FROM (for all three buttons)
+: 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/20'
+
+// TO
+: 'text-slate-700 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-400 dark:border-white/20'
 ```
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/pages/Book.tsx` | Wrap header + trust strip in single sticky container |
-| `src/index.css` | Remove individual sticky positioning from both elements |
+| `src/index.css` | Update `.fmcsa-terminal-title` light mode color to `hsl(220 15% 30%)` |
+| `src/components/vetting/CarrierSearch.tsx` | Change inactive button `text-slate-600` → `text-slate-700` and `border-slate-300` → `border-slate-400` (3 buttons) |
 
 ## Result
 
-- The Video Consult Header and Trust Strip will be wrapped in a single sticky container
-- Both elements will scroll together as one unified block
-- The trust strip will always be visible directly below the header
-- This matches the pattern used in `SiteShell.tsx` for the main site header
+- The "SAFER DATABASE QUERY" title will be clearly visible with high contrast in light mode
+- The Name, DOT, and MC toggle buttons will have darker text and borders for better visibility
+- Dark mode remains unchanged
+- Active button state (green border + glow) remains the same
