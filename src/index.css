@@ -2271,7 +2271,7 @@
   align-items: center;
   position: relative;
   margin-bottom: 16px;
-  min-height: 320px;
+  min-height: 450px;
 }
 
 /* Steps left container - absolute positioned */
@@ -2295,7 +2295,7 @@
   align-items: center;
   justify-content: center;
   padding-left: 250px;
-  padding-right: 760px;
+  padding-right: 820px;
 }
 
 .tru-ai-header-center .tru-ai-steps-title {
@@ -2322,13 +2322,15 @@
 }
 
 .tru-ai-header-previews .tru-ai-live-scanner {
-  width: 420px;
-  height: 100%;
+  width: 400px;
+  height: 100% !important;
+  min-height: 100% !important;
 }
 
 .tru-ai-header-previews .tru-ai-live-inventory {
-  width: 320px;
-  height: 100%;
+  width: 400px;
+  height: 100% !important;
+  min-height: 100% !important;
 }
 
 /* Steps content container */
