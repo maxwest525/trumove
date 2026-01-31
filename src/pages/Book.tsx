@@ -6,7 +6,8 @@ import {
   Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, 
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
-  Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX
+  Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
+  Maximize2, Minimize2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -806,7 +807,7 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
         )}
 
         {/* Self view (picture-in-picture) - Larger and more realistic */}
-        <div className="absolute bottom-20 right-4 w-36 h-28 rounded-xl overflow-hidden border-2 border-white/30 bg-slate-800 shadow-xl">
+        <div className="absolute bottom-4 right-4 w-36 h-28 rounded-xl overflow-hidden border-2 border-white/30 bg-slate-800 shadow-xl">
           {isVideoOff ? (
             <div className="w-full h-full flex items-center justify-center bg-slate-800">
               <VideoOff className="w-6 h-6 text-white/40" />
@@ -911,9 +912,27 @@ export default function Book() {
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [showScreenSharePreview, setShowScreenSharePreview] = useState(false);
   const [shareAudio, setShareAudio] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
+
+  // Fullscreen toggle handler
+  const toggleFullscreen = () => {
+    const container = document.getElementById('video-consult-container');
+    if (!isFullscreen && container) {
+      container.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  };
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', handleChange);
+    return () => document.removeEventListener('fullscreenchange', handleChange);
+  }, []);
 
   // Handle join room with booking code
   const handleJoinRoom = () => {
@@ -1083,9 +1102,17 @@ export default function Book() {
           {/* Two-Column Grid: Video + Chat Panel */}
           <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-6 mb-8">
             {/* Main Video Window */}
-            <Card className="overflow-hidden border-2 border-border/60 bg-gradient-to-b from-muted/30 to-background">
+            <Card id="video-consult-container" className="overflow-hidden border-2 border-border/60 bg-gradient-to-b from-muted/30 to-background">
               <CardContent className="p-0">
                 <div className="relative min-h-[400px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+                  {/* Fullscreen toggle button - top right */}
+                  <button
+                    onClick={toggleFullscreen}
+                    className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+                    title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                  >
+                    {isFullscreen ? <Minimize2 className="w-4 h-4 text-white" /> : <Maximize2 className="w-4 h-4 text-white" />}
+                  </button>
                   {roomUrl ? (
                     isDemo ? (
                       <DemoVideoPlaceholder onLeave={handleLeaveRoom} />
@@ -1153,14 +1180,14 @@ export default function Book() {
                   onClick={() => setChatMode('trudy')}
                 >
                   <Bot className="w-4 h-4" />
-                  Talk to Trudy
+                  AI Assistant
                 </button>
                 <button 
                   className={chatMode === 'specialist' ? 'active' : ''}
                   onClick={() => setChatMode('specialist')}
                 >
                   <Headphones className="w-4 h-4" />
-                  Connect to Specialist
+                  Live Support
                 </button>
               </div>
               
@@ -1179,19 +1206,18 @@ export default function Book() {
                     </p>
                     <div className="flex flex-col gap-3 w-full max-w-xs">
                       <Button 
-                        variant="outline" 
-                        className="w-full border-primary text-primary hover:bg-primary hover:text-background font-bold"
+                        className="w-full bg-primary hover:bg-primary/90 text-background font-bold h-12 text-base"
                         onClick={() => window.location.href = "tel:+18001234567"}
                       >
-                        <Phone className="w-4 h-4 mr-2" />
+                        <Phone className="w-5 h-5 mr-2" />
                         Call Now
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="w-full border-white/50 text-white hover:bg-white/20 font-bold"
+                        className="w-full border-2 border-white/60 text-white hover:bg-white/15 hover:border-white font-bold h-12 text-base"
                         onClick={() => navigate('/book')}
                       >
-                        <Calendar className="w-4 h-4 mr-2" />
+                        <Calendar className="w-5 h-5 mr-2" />
                         Schedule Callback
                       </Button>
                     </div>
@@ -1202,7 +1228,7 @@ export default function Book() {
           </div>
 
           {/* Booking Controls - Below Video - Dark themed */}
-          <div className="video-consult-booking-controls">
+          <div className="video-consult-booking-controls animate-fade-in">
             <h3 className="video-consult-booking-header">Virtual Video Controls</h3>
             <div className="video-consult-booking-inner">
               <Input
@@ -1256,7 +1282,7 @@ export default function Book() {
                 Demo
               </Button>
             </div>
-            <p className="text-sm text-white mt-3">
+            <p className="text-xs text-white/70 mt-2">
               Enter your booking code to join a scheduled session
             </p>
           </div>
