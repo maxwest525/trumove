@@ -694,7 +694,7 @@ export default function Book() {
       <Header />
       
       {/* Sticky Header Block - Both elements lock together */}
-      <div className="sticky top-[72px] z-40">
+      <div className="sticky top-[87px] z-40">
         {/* Video Consult Command Center Header */}
         <header className="video-consult-header">
           <div className="flex items-center gap-3">
