@@ -1042,7 +1042,7 @@ export default function Book() {
       </div>
       
       {/* Sticky Header Block */}
-      <div className="sticky top-[92px] z-40">
+      <div className="sticky top-[102px] z-40">
         <header className="video-consult-header">
           {/* Left - Logo & Title */}
           <div className="flex items-center gap-3">
@@ -1246,35 +1246,31 @@ export default function Book() {
 
           {/* Booking Controls - Light themed card */}
           <div className="video-consult-booking-controls animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
-            {/* Prominent Booking Code Section */}
-            <div className="w-full mb-4">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 block">
-                Enter Booking Code
-              </label>
-              <div className="flex gap-3">
-                <Input
-                  value={bookingCode}
-                  onChange={(e) => setBookingCode(e.target.value)}
-                  placeholder="e.g. TM-2026-XXXXXXXX"
-                  className="flex-1 h-14 text-lg font-mono bg-background border-2 border-border focus:border-primary"
-                  onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
-                />
-                <Button 
-                  onClick={handleJoinRoom} 
-                  disabled={!bookingCode.trim()}
-                  className="h-14 px-8 bg-foreground text-background hover:bg-foreground/90 font-bold text-base"
-                >
-                  <Video className="w-5 h-5 mr-2" />
-                  Join
-                </Button>
-              </div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3 w-full text-center">
+              Virtual Video Controls
+            </h3>
+            
+            {/* Booking Code Row */}
+            <div className="flex items-center gap-3 w-full">
+              <Input
+                value={bookingCode}
+                onChange={(e) => setBookingCode(e.target.value)}
+                placeholder="Enter booking code..."
+                className="flex-1 h-11 bg-background border border-border"
+                onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+              />
+              <Button 
+                onClick={handleJoinRoom} 
+                disabled={!bookingCode.trim()}
+                className="h-11 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
+              >
+                <Video className="w-4 h-4 mr-2" />
+                Join
+              </Button>
             </div>
 
-            {/* Divider */}
-            <div className="w-full border-t border-border my-2" />
-
             {/* Secondary Controls Row */}
-            <div className="flex items-center gap-3 flex-wrap justify-center">
+            <div className="flex items-center gap-2 flex-wrap justify-center mt-2">
               {/* Screen Share with Audio Toggle */}
               <div className="flex items-center">
                 <Button 
