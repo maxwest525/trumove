@@ -2295,7 +2295,7 @@
   align-items: center;
   justify-content: center;
   padding-left: 250px;
-  padding-right: 820px;
+  padding-right: 860px;
 }
 
 .tru-ai-header-center .tru-ai-steps-title {
@@ -2322,13 +2322,13 @@
 }
 
 .tru-ai-header-previews .tru-ai-live-scanner {
-  width: 400px;
+  width: 420px;
   height: 100% !important;
   min-height: 100% !important;
 }
 
 .tru-ai-header-previews .tru-ai-live-inventory {
-  width: 400px;
+  width: 420px;
   height: 100% !important;
   min-height: 100% !important;
 }
