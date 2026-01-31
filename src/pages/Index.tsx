@@ -1563,9 +1563,28 @@ export default function Index() {
               <div className="tru-ai-accent-line" />
 
               
-              {/* Three-column layout: Steps | Scanner | Detection */}
+              {/* Three-column layout: Scanner | Detection | Steps */}
               <div className="tru-ai-two-column" ref={scanPreviewRef}>
-                {/* Left column: Vertical steps with preview thumbnails */}
+                {/* First column: Scanner preview */}
+                <div className={`tru-ai-center-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
+                  <ScannerPreview 
+                    isRunning={scanDemoRunning} 
+                    visibleCount={scanVisibleCount}
+                    onStartDemo={() => {
+                      setScanDemoRunning(prev => !prev);
+                      setTimeout(() => {
+                        scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }, 100);
+                    }} 
+                  />
+                </div>
+                
+                {/* Second column: Detection list */}
+                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
+                  <DetectionList visibleCount={scanVisibleCount} />
+                </div>
+                
+                {/* Third column: Vertical steps with preview thumbnails */}
                 <div className="tru-ai-left-column">
                   <div className="tru-ai-steps-vertical">
                     <div className="tru-ai-step tru-ai-step-with-preview">
@@ -1599,25 +1618,6 @@ export default function Index() {
                       </div>
                     </div>
                   </div>
-                </div>
-                
-                {/* Center column: Scanner preview (moved from right) */}
-                <div className={`tru-ai-center-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
-                  <ScannerPreview 
-                    isRunning={scanDemoRunning} 
-                    visibleCount={scanVisibleCount}
-                    onStartDemo={() => {
-                      setScanDemoRunning(prev => !prev);
-                      setTimeout(() => {
-                        scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      }, 100);
-                    }} 
-                  />
-                </div>
-                
-                {/* Right column: Detection list (moved from center) */}
-                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
-                  <DetectionList visibleCount={scanVisibleCount} />
                 </div>
               </div>
             </div>
