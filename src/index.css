@@ -29883,7 +29883,7 @@ html.dark .tru-summary-header-large,
 .video-consult-trust-strip {
   position: relative; /* Sticky handled by parent wrapper */
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
-  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  border-bottom: 1px solid hsl(0 0% 100% / 0.15);
   padding: 8px 24px;
 }
 
@@ -29891,7 +29891,7 @@ html.dark .tru-summary-header-large,
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 28px; /* Match SaferTrustStrip spacing */
+  gap: 48px; /* Increased spacing between items */
   max-width: 1480px;
   margin: 0 auto;
   flex-wrap: nowrap;
@@ -29917,5 +29917,5 @@ html.dark .tru-summary-header-large,
 
 .video-consult-trust-dot {
   color: hsl(0 0% 100% / 0.35);
-  margin-left: 16px;
+  margin-left: 24px; /* Increased from 16px */
 }
