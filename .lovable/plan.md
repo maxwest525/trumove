@@ -1,65 +1,63 @@
 
 
-# Set Scanner Preview to Fixed 275px Height
+# Set Scanner Preview to Fixed 350px Width
 
 ## Current State
 
-The scanner preview image in the AI Inventory Analysis section uses:
-- `aspect-ratio: 16/10` - which dynamically calculates height based on width
-- `height: 100%` with `flex: 1` in a parent override - which fills available container space
+The scanner preview currently has:
+- Fixed height: 275px ✓
+- Width: `1fr` (fills available space in the middle column)
 
-The current rendered height is approximately 250-260px based on the 450px section height minus padding and other elements.
+The grid layout uses `grid-template-columns: auto 1fr auto` where the center column (scanner) expands to fill remaining space.
 
 ---
 
 ## Solution
 
-Set the scanner to a fixed 275px height by updating the CSS.
+Set the scanner to a fixed 350px width and ensure the image fits within those dimensions.
 
 ### File: `src/index.css`
 
 **1. Update the base `.tru-ai-live-scanner` rule (Lines 2386-2392)**
 
-Change from:
-```css
-.tru-ai-live-scanner {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  aspect-ratio: 16/10;
-  border: 1px solid hsl(var(--border));
-}
-```
-
-To:
+Add fixed width:
 ```css
 .tru-ai-live-scanner {
   position: relative;
   border-radius: 12px;
   overflow: hidden;
   height: 275px;
+  width: 350px;
   border: 1px solid hsl(var(--border));
 }
 ```
 
-**2. Update the `.tru-ai-preview-vertical .tru-ai-live-scanner` override (Lines 2636-2640)**
+**2. Update the center column to not force expansion (Lines 2600-2606)**
 
-Change from:
+Change from `flex: 1` to allow natural sizing:
 ```css
-.tru-ai-preview-vertical .tru-ai-live-scanner {
+.tru-ai-center-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
   height: 100%;
-  flex: 1;
-  min-height: 0;
 }
 ```
 
-To:
+**3. The image already has proper fit (Lines 2394-2398)**
+
+The existing CSS already handles the image:
 ```css
-.tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 275px;
-  flex: none;
+.tru-ai-live-scanner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 ```
+
+This will scale and crop the image to fit within the 350×275px container.
 
 ---
 
@@ -67,9 +65,9 @@ To:
 
 | Property | Before | After |
 |----------|--------|-------|
-| Height | Dynamic (aspect-ratio: 16/10) | Fixed: 275px |
-| Flex | `flex: 1` | `flex: none` |
-| Aspect ratio | 16/10 | Removed |
+| Width | Dynamic (1fr) | Fixed: 350px |
+| Height | 275px | 275px (unchanged) |
+| Image fit | object-fit: cover | object-fit: cover (unchanged) |
 
-This ensures the scanner preview is exactly 275px tall regardless of its container width or the available vertical space.
+The scanner demo will now be exactly 350×275px with the image properly cropped to fit these dimensions.
 
