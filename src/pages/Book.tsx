@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import SiteShell from "@/components/layout/SiteShell";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { DailyVideoRoom } from "@/components/video-consult/DailyVideoRoom";
 import { 
   Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, 
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search,
-  Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List
+  Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import logoImg from "@/assets/logo.png";
 
 // Preview images
 import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
@@ -686,22 +688,73 @@ export default function Book() {
   };
 
   return (
-    <SiteShell>
+    <div className="video-consult-page">
+      {/* Site Header */}
+      <Header />
+      
+      {/* Video Consult Command Center Header */}
+      <header className="video-consult-header">
+        <div className="flex items-center gap-3">
+          <img 
+            src={logoImg} 
+            alt="TruMove" 
+            className="h-6 brightness-0 invert"
+          />
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
+            Video Consult Center
+          </span>
+        </div>
+
+        {/* Centered Controls */}
+        <div className="video-consult-header-controls">
+          <div className="video-consult-header-search">
+            <Video className="w-4 h-4 text-white/70" />
+            <input
+              type="text"
+              placeholder="Enter booking code..."
+              className="video-consult-header-input"
+              value={bookingCode}
+              onChange={(e) => setBookingCode(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="video-consult-header-go-btn"
+              onClick={handleJoinRoom}
+              disabled={!bookingCode.trim()}
+            >
+              Join
+            </Button>
+            
+            {/* Demo Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleStartDemo}
+              className="video-consult-header-demo-btn"
+            >
+              <Sparkles className="w-3 h-3" />
+              <span className="hidden sm:inline text-[11px]">Demo</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* Right Actions */}
+        <div className="flex items-center gap-4">
+          <a 
+            href="tel:+16097277647"
+            className="video-consult-header-call-btn"
+          >
+            <Phone className="w-4 h-4" />
+            <span className="hidden sm:inline">Call Now</span>
+          </a>
+        </div>
+      </header>
+
+      {/* Main Content */}
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-wide uppercase mb-4">
-              <Video className="w-3.5 h-3.5" />
-              Live Session
-            </div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3">
-              TruMove Video Consult
-            </h1>
-            <p className="text-muted-foreground max-w-lg mx-auto">
-              Connect with a specialist for personalized move guidance, quote review, or inventory walkthrough.
-            </p>
-          </div>
 
           {/* Main Video Window */}
           <Card className="mb-8 overflow-hidden border-2 border-border/60 bg-gradient-to-b from-muted/30 to-background">
@@ -844,6 +897,9 @@ export default function Book() {
           </div>
         </div>
       </div>
-    </SiteShell>
+      
+      {/* Footer */}
+      <Footer />
+    </div>
   );
 }
