@@ -1,128 +1,105 @@
 
-# Reposition AI Scanner and Detection List Layout
+# Maximize Hero Shadow Drama with 80px Blur Values
 
 ## Overview
-Reorganize the AI Inventory Analysis section to place the scanner preview directly below the "AI Move Estimator" title, with the Live Detection box positioned to the right of the scanner.
+Push the hero text shadow blur values to their maximum dramatic effect by increasing the outermost blur layers up to 80px, creating an expansive, cinematic dark underglow.
 
 ---
 
-## Current Layout
+## Current State
 
-```text
-+----------------------------------------------------------+
-|              AI Move Estimator (Title)                   |
-|                  ─────────────── (accent line)           |
-+----------------------------------------------------------+
-| Steps Column   |   Detection List   |   Scanner Preview  |
-| (Left)         |   (Center)         |   (Right)          |
-+----------------------------------------------------------+
-```
-
----
-
-## Target Layout
-
-```text
-+----------------------------------------------------------+
-|       AI Move Estimator    |                             |
-|           ───────          |                             |
-+----------------------------------------------------------+
-| Steps Column   |   Scanner Preview  |   Detection List   |
-| (Left)         |   (Center)         |   (Right)          |
-+----------------------------------------------------------+
-```
-
-The scanner will be positioned right after the title/accent line, with the detection list immediately to its right.
+| Element | Current Blur Radii |
+|---------|-------------------|
+| `.tru-hero-headline-main` | 8px, 24px, 48px |
+| `.tru-hero-subheadline` | 8px, 20px, 40px |
+| `.tru-hero-subheadline-refined` | 8px, 28px, 48px |
+| `.tru-headline-animated` | 16px, 40px, 60px (green glow) |
 
 ---
 
 ## Changes Required
 
-### 1. Update Three-Column Grid Order in Index.tsx
-**File: `src/pages/Index.tsx` (Lines 1540-1595)**
-
-Swap the order of the center and right columns so:
-- Left column: Steps (unchanged)
-- Center column: Scanner Preview (was right)
-- Right column: Detection List (was center)
-
-```tsx
-{/* Three-column layout: Steps | Scanner | Detection */}
-<div className="tru-ai-two-column" ref={scanPreviewRef}>
-  {/* Left column: Vertical steps with preview thumbnails */}
-  <div className="tru-ai-left-column">
-    {/* ...existing steps content... */}
-  </div>
-  
-  {/* Center column: Scanner preview (moved from right) */}
-  <div className={`tru-ai-center-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
-    <ScannerPreview 
-      isRunning={scanDemoRunning} 
-      onStartDemo={() => {
-        setScanDemoRunning(true);
-        setTimeout(() => {
-          scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
-      }} 
-    />
-  </div>
-  
-  {/* Right column: Detection list (moved from center) */}
-  <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
-    <DetectionList isRunning={scanDemoRunning} />
-  </div>
-</div>
-```
-
-### 2. Update CSS Grid Column Widths
-**File: `src/index.css` (Lines 2586-2596)**
-
-Adjust the grid template to give appropriate widths for the scanner and detection list:
+### 1. Maximize Headline Shadow
+**File: `src/index.css` (Lines 1444-1449)**
 
 ```css
 /* Before */
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: auto 1fr 350px;
-  /* ... */
+.tru-hero-headline-main {
+  text-shadow: 
+    0 3px 8px hsl(0 0% 0% / 0.7),
+    0 6px 24px hsl(0 0% 0% / 0.5),
+    0 12px 48px hsl(0 0% 0% / 0.35);
 }
 
 /* After */
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: auto 350px 350px;
-  gap: 16px;
-  /* ... */
+.tru-hero-headline-main {
+  text-shadow: 
+    0 4px 12px hsl(0 0% 0% / 0.75),
+    0 8px 32px hsl(0 0% 0% / 0.55),
+    0 16px 80px hsl(0 0% 0% / 0.4);
 }
 ```
 
-### 3. Update Center Column Styles
-**File: `src/index.css` (Lines 2607-2614)**
-
-Adjust center column to properly contain the scanner:
+### 2. Maximize Subheadline Shadow
+**File: `src/index.css` (Lines 1754-1761)**
 
 ```css
-.tru-ai-center-column {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  min-width: 350px;
-  height: 100%;
+/* Before */
+.tru-hero-subheadline {
+  text-shadow: 
+    0 3px 8px hsl(0 0% 0% / 0.6),
+    0 6px 20px hsl(0 0% 0% / 0.4),
+    0 10px 40px hsl(0 0% 0% / 0.25);
+}
+
+/* After */
+.tru-hero-subheadline {
+  text-shadow: 
+    0 4px 12px hsl(0 0% 0% / 0.65),
+    0 8px 28px hsl(0 0% 0% / 0.45),
+    0 14px 64px hsl(0 0% 0% / 0.3);
 }
 ```
 
-### 4. Update Right Column Styles
-**File: `src/index.css` (Lines 2616-2621)**
-
-Ensure right column properly contains the detection list:
+### 3. Maximize Refined Subheadline Shadow
+**File: `src/index.css` (Lines 26370-26383)**
 
 ```css
-.tru-ai-right-column {
-  display: flex;
-  flex-direction: column;
-  min-width: 350px;
-  height: 100%;
+/* Before */
+.tru-hero-subheadline-refined {
+  text-shadow: 
+    0 3px 8px hsl(0 0% 0% / 0.7),
+    0 6px 28px hsl(0 0% 0% / 0.5),
+    0 12px 48px hsl(0 0% 0% / 0.35);
+}
+
+/* After */
+.tru-hero-subheadline-refined {
+  text-shadow: 
+    0 4px 12px hsl(0 0% 0% / 0.75),
+    0 8px 36px hsl(0 0% 0% / 0.55),
+    0 16px 80px hsl(0 0% 0% / 0.4);
+}
+```
+
+### 4. Maximize Animated Headline Shadow
+**File: `src/index.css` (Lines 26386-26393)**
+
+```css
+/* Before */
+.tru-headline-animated {
+  text-shadow: 
+    0 3px 16px hsl(0 0% 0% / 0.7),
+    0 6px 40px hsl(0 0% 0% / 0.5),
+    0 0 60px hsl(142 72% 50% / 0.3);
+}
+
+/* After */
+.tru-headline-animated {
+  text-shadow: 
+    0 4px 20px hsl(0 0% 0% / 0.75),
+    0 10px 56px hsl(0 0% 0% / 0.55),
+    0 0 80px hsl(142 72% 50% / 0.35);
 }
 ```
 
@@ -130,14 +107,16 @@ Ensure right column properly contains the detection list:
 
 ## Technical Summary
 
-| Change | Before | After |
-|--------|--------|-------|
-| Center column content | Detection List | Scanner Preview |
-| Right column content | Scanner Preview | Detection List |
-| Grid template | `auto 1fr 350px` | `auto 350px 350px` |
+| Element | Before (max blur) | After (max blur) | Opacity Bump |
+|---------|-------------------|------------------|--------------|
+| Headline | 48px | 80px | +0.05 each layer |
+| Subheadline | 40px | 64px | +0.05 each layer |
+| Refined Subheadline | 48px | 80px | +0.05 each layer |
+| Animated Headline | 60px | 80px | +0.05 each layer |
+
+The 80px maximum blur creates an expansive dark "halo" beneath text that extends dramatically across the background, with slightly increased opacity values to compensate for the larger spread area.
 
 ---
 
-## Files Modified
-- `src/pages/Index.tsx` - Swap component order in grid columns
-- `src/index.css` - Update grid template columns and column widths
+### Files Modified
+- `src/index.css` - Update all hero text shadow blur values to maximum drama levels
