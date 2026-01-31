@@ -7,7 +7,7 @@ import {
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
   Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
-  Maximize2, Minimize2
+  Maximize2, Minimize2, Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,14 @@ import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
 import AIChatContainer from "@/components/chat/AIChatContainer";
 import { getPageContext } from "@/components/chat/pageContextConfig";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 // Trust strip items now inline in header
 
 // Preview images
@@ -1206,7 +1214,7 @@ export default function Book() {
                     </p>
                     <div className="flex flex-col gap-3 w-full max-w-xs">
                       <Button 
-                        className="w-full bg-primary hover:bg-primary/90 text-background font-bold h-12 text-base"
+                        className="w-full bg-primary hover:bg-primary/85 text-black font-bold h-12 text-base shadow-[0_2px_8px_hsl(var(--primary)/0.3)]"
                         onClick={() => window.location.href = "tel:+18001234567"}
                       >
                         <Phone className="w-5 h-5 mr-2" />
@@ -1214,7 +1222,7 @@ export default function Book() {
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="w-full border-2 border-white/60 text-white hover:bg-white/15 hover:border-white font-bold h-12 text-base"
+                        className="w-full border-2 border-white/50 text-white hover:bg-white/10 hover:border-white/70 font-bold h-12 text-base bg-slate-800/50"
                         onClick={() => navigate('/book')}
                       >
                         <Calendar className="w-5 h-5 mr-2" />
@@ -1228,7 +1236,7 @@ export default function Book() {
           </div>
 
           {/* Booking Controls - Below Video - Dark themed */}
-          <div className="video-consult-booking-controls animate-fade-in">
+          <div className="video-consult-booking-controls animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
             <h3 className="video-consult-booking-header">Virtual Video Controls</h3>
             <div className="video-consult-booking-inner">
               <Input
@@ -1281,6 +1289,36 @@ export default function Book() {
                 <Sparkles className="w-4 h-4 mr-2" />
                 Demo
               </Button>
+              {/* Settings Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    className="video-consult-booking-settings-btn"
+                  >
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-slate-800 border-slate-700 text-white">
+                  <DropdownMenuLabel className="text-white/80">Video Settings</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-slate-700" />
+                  <DropdownMenuItem className="text-white hover:bg-slate-700 cursor-pointer focus:bg-slate-700 focus:text-white">
+                    Quality: Auto ✓
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-white hover:bg-slate-700 cursor-pointer focus:bg-slate-700 focus:text-white">
+                    Quality: High
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-white hover:bg-slate-700 cursor-pointer focus:bg-slate-700 focus:text-white">
+                    Quality: Medium
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-slate-700" />
+                  <DropdownMenuLabel className="text-white/80">Notifications</DropdownMenuLabel>
+                  <DropdownMenuItem className="text-white hover:bg-slate-700 cursor-pointer focus:bg-slate-700 focus:text-white">
+                    Sound Alerts: On ✓
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <p className="text-xs text-white/70 mt-2">
               Enter your booking code to join a scheduled session
