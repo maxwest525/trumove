@@ -1,58 +1,44 @@
 
 
-# Move Logo Up & Update Headline Text
+# Fix Headline Word Wrapping
 
 ## Overview
-Move the hero logo and headline up by 50 pixels and update the headline text from "A Smarter Way To Move" to "The Smarter Way To Move".
+Prevent the headline "The Smarter Way To Move" from wrapping "Move" to a new line. The entire headline should stay on a single line.
 
 ---
 
 ## Technical Changes
 
-### 1. File: `src/index.css` (Line 89)
+### File: `src/index.css` (Lines 104-107)
 
-**Update the `top` position from `48px` to `-2px`:**
+**Add `white-space: nowrap` to prevent word wrapping:**
 
 ```css
 /* Before */
-top: 48px;
+.tru-hero-header-stacked .tru-hero-headline-main {
+  display: block;
+  text-align: center;
+}
 
 /* After */
-top: -2px;
-```
-
-This moves the entire stacked header (logo + headline) up by exactly 50 pixels.
-
----
-
-### 2. File: `src/pages/Index.tsx` (Line 1050-1052)
-
-**Update the headline text:**
-
-```jsx
-/* Before */
-<h1 className="tru-hero-headline-main tru-headline-animated">
-  A Smarter Way To <span className="tru-hero-headline-accent">Move</span>
-</h1>
-
-/* After */
-<h1 className="tru-hero-headline-main tru-headline-animated">
-  The Smarter Way To <span className="tru-hero-headline-accent">Move</span>
-</h1>
+.tru-hero-header-stacked .tru-hero-headline-main {
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+}
 ```
 
 ---
 
-## Summary
+## Result
 
-| Change | Before | After |
-|--------|--------|-------|
-| Header vertical position | `top: 48px` | `top: -2px` (50px higher) |
-| Headline text | "A Smarter Way To Move" | "The Smarter Way To Move" |
+| Line | Content |
+|------|---------|
+| 1 | TruMove logo |
+| 2 | "The Smarter Way To Move" (all on one line) |
 
 ---
 
 ## Files Modified
-- `src/index.css` - Adjust top position
-- `src/pages/Index.tsx` - Update headline text
+- `src/index.css` - Add white-space: nowrap to headline
 
