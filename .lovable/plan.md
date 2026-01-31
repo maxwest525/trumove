@@ -1,42 +1,71 @@
 
 
-# Enlarge Scanner Preview & Detection List to Full Height
+# Full-Height Scanner & Detection Boxes (Same Size)
 
 ## Overview
-Expand the scanner preview and live detection boxes to span the full height of the AI Move Estimator header row container, with adjusted widths for proper proportions.
+Make both the scanner preview and live detection boxes span the full height of the AI Move Estimator section, with both boxes the same width for visual balance.
 
 ---
 
-## Current vs Target
+## Current Issues
 
-| Property | Current | Target |
-|----------|---------|--------|
-| Header row min-height | 280px | 320px (increased for larger previews) |
-| Scanner preview height | 260px | 100% (full height) |
-| Scanner preview width | 350px | 420px |
-| Detection list height | 260px | 100% (full height) |
-| Detection list width | 280px | 320px |
+1. **Conflicting CSS definitions**: Base `.tru-ai-live-scanner` has `height: 340px` which overrides the `100%` in header previews
+2. **Conflicting CSS definitions**: Base `.tru-ai-live-inventory` has `height: 340px` and `width: 350px` which override header previews
+3. **Different widths**: Scanner is 420px, Detection is 320px - should be equal
+4. **Header row height**: Currently 320px min-height, but section is 500px min-height
 
 ---
 
 ## Technical Changes
 
-### File: `src/index.css` (Lines 2269-2331)
+### File: `src/index.css`
 
-**1. Increase header row height:**
+**1. Increase header row to match section height:**
 
+Update `.tru-ai-header-row` (line 2269):
 ```css
 .tru-ai-header-row {
   display: flex;
   align-items: center;
   position: relative;
   margin-bottom: 16px;
-  min-height: 320px; /* Increased from 280px */
+  min-height: 450px; /* Match section height minus padding */
 }
 ```
 
-**2. Update header center padding for new widths:**
+**2. Make both preview boxes same width (400px each):**
 
+Update lines 2324-2332:
+```css
+.tru-ai-header-previews .tru-ai-live-scanner {
+  width: 400px;
+  height: 100%;
+  min-height: 100%; /* Override base definition */
+}
+
+.tru-ai-header-previews .tru-ai-live-inventory {
+  width: 400px;
+  height: 100%;
+  min-height: 100%; /* Override base definition */
+}
+```
+
+**3. Override base definitions with !important for header context:**
+
+Add specificity to override base `.tru-ai-live-scanner` (line 2464-2471) and `.tru-ai-live-inventory` (line 2611-2620):
+
+```css
+/* Override base dimensions when in header previews context */
+.tru-ai-header-previews .tru-ai-live-scanner,
+.tru-ai-header-previews .tru-ai-live-inventory {
+  height: 100% !important;
+  min-height: 100% !important;
+}
+```
+
+**4. Adjust header center padding for new widths:**
+
+Update `.tru-ai-header-center` (line 2291-2299):
 ```css
 .tru-ai-header-center {
   flex: 1;
@@ -45,43 +74,7 @@ Expand the scanner preview and live detection boxes to span the full height of t
   align-items: center;
   justify-content: center;
   padding-left: 250px;
-  padding-right: 760px; /* Account for larger previews: 420 + 320 + 16 gap */
-}
-```
-
-**3. Update previews container to stretch full height:**
-
-```css
-.tru-ai-header-previews {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  transform: none; /* Remove translateY */
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  align-items: stretch;
-  opacity: 1;
-  transition: all 0.4s ease;
-}
-```
-
-**4. Update scanner preview size:**
-
-```css
-.tru-ai-header-previews .tru-ai-live-scanner {
-  width: 420px;
-  height: 100%; /* Full height of container */
-}
-```
-
-**5. Update detection list size:**
-
-```css
-.tru-ai-header-previews .tru-ai-live-inventory {
-  width: 320px;
-  height: 100%; /* Full height of container */
+  padding-right: 820px; /* 400 + 400 + 16 gap + buffer */
 }
 ```
 
@@ -91,16 +84,15 @@ Expand the scanner preview and live detection boxes to span the full height of t
 
 | Element | Before | After |
 |---------|--------|-------|
-| Header row height | `min-height: 280px` | `min-height: 320px` |
-| Previews positioning | `top: 50%; transform: translateY(-50%)` | `top: 0; bottom: 0` |
-| Scanner width | `350px` | `420px` |
-| Scanner height | `260px` | `100%` |
-| Detection width | `280px` | `320px` |
-| Detection height | `260px` | `100%` |
-| Header center padding-right | `650px` | `760px` |
+| Header row min-height | 320px | 450px |
+| Scanner width | 420px | 400px |
+| Scanner height | 340px / 100% | 100% (full height) |
+| Detection width | 320px | 400px (same as scanner) |
+| Detection height | 340px | 100% (full height) |
+| Header center padding-right | 760px | 820px |
 
 ---
 
 ## Files Modified
-- `src/index.css` - Update `.tru-ai-header-row`, `.tru-ai-header-center`, `.tru-ai-header-previews`, `.tru-ai-live-scanner`, and `.tru-ai-live-inventory` dimensions
+- `src/index.css` - Update `.tru-ai-header-row`, `.tru-ai-header-previews` children, `.tru-ai-header-center` dimensions, and add override rules
 
