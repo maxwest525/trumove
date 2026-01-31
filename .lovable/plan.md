@@ -1,95 +1,70 @@
 
 
-# Move AI Inventory Analysis Steps 1-2-3 to the Left
+# Fix: Restore Scanner Size After Left Alignment Change
 
-## Summary
+## Problem
 
-Adjust the left column containing the steps (1, 2, 3) to align flush left within the section, removing any centering or extra spacing that pushes it toward the center.
+The CSS file has **two separate `.tru-ai-steps-inner` definitions** that are conflicting:
+- Lines 2262-2266: Sets `height: 100%` and flex properties
+- Lines 2570-2574: Sets `max-width: none` and padding (added in last change)
 
----
-
-## Current State
-
-The three-column grid uses `auto 1fr auto` which sizes the left column based on its content width. The section has horizontal padding and the inner container has `margin: 0 auto` which can create visual centering.
+These duplicate rules are causing unexpected layout behavior. Additionally, the `align-self: start` added to `.tru-ai-left-column` may have disrupted the grid's vertical distribution.
 
 ---
 
-## Implementation
+## Solution
+
+Consolidate the `.tru-ai-steps-inner` rules into one definition and ensure the left column alignment doesn't affect the scanner sizing.
 
 ### File: `src/index.css`
 
-**1. Ensure left column aligns to the start (Line 2595-2599)**
+**1. Remove duplicate `.tru-ai-steps-inner` (Lines 2262-2266)**
 
-Add `justify-self: start` to the left column to ensure it hugs the left edge:
-
+Delete:
 ```css
-/* Before */
-.tru-ai-left-column {
+.tru-ai-steps-inner {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
+```
 
-/* After */
+**2. Update the remaining `.tru-ai-steps-inner` (Lines 2570-2574)**
+
+Combine both definitions into one:
+```css
+.tru-ai-steps-inner {
+  max-width: none;
+  padding: 0 48px 0 24px;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+```
+
+**3. Fix left column alignment without affecting height (Lines 2595-2602)**
+
+Change `align-self: start` to `align-self: stretch` so it doesn't collapse vertically:
+```css
 .tru-ai-left-column {
   display: flex;
   flex-direction: column;
   gap: 12px;
   justify-self: start;
-  align-self: start;
+  align-self: stretch;  /* Changed from 'start' to maintain height */
   padding-left: 0;
 }
 ```
 
-**2. Reduce left padding on inner container (Lines 2570-2574)**
-
-Remove or reduce left padding to move content closer to the edge:
-
-```css
-/* Before */
-.tru-ai-steps-inner {
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* After */
-.tru-ai-steps-inner {
-  max-width: none;
-  padding: 0 48px 0 24px;
-  text-align: center;
-}
-```
-
-This uses asymmetric padding: 24px on the left (closer to edge) and 48px on the right.
-
-**3. Update section padding for left alignment (Lines 2252-2260)**
-
-Adjust section padding to reduce left spacing:
-
-```css
-/* Before */
-.tru-ai-steps-section {
-  padding: 16px 24px 20px;
-  ...
-}
-
-/* After */
-.tru-ai-steps-section {
-  padding: 16px 24px 20px 16px;
-  ...
-}
-```
+This keeps the steps aligned to the left horizontally while allowing the scanner and detection columns to maintain their full height.
 
 ---
 
-## Summary Table
+## Summary
 
-| Element | Before | After |
-|---------|--------|-------|
-| Left column alignment | Default (auto) | `justify-self: start` |
-| Inner container left padding | 48px (or margin centered) | 24px |
-| Section left padding | 24px | 16px |
-
-This shifts the entire steps column toward the left edge of the section while maintaining the center and right columns' positions.
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| Scanner shrunk | Duplicate CSS rules for `.tru-ai-steps-inner` | Consolidate into single definition |
+| Grid height affected | `align-self: start` on left column | Change to `align-self: stretch` |
 
