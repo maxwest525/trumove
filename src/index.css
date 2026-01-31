@@ -29883,8 +29883,9 @@ html.dark .tru-summary-header-large,
    VIDEO CONSULT TRUST STRIP
    ============================================= */
 .video-consult-trust-strip {
-  position: relative;
-  z-index: 35;
+  position: sticky;
+  top: 151px; /* Header (103px) + video-consult-header height (~48px) */
+  z-index: 39;
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   padding: 8px 24px;
@@ -29894,10 +29895,12 @@ html.dark .tru-summary-header-large,
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 48px;
+  gap: 28px; /* Match SaferTrustStrip spacing */
   max-width: 1480px;
   margin: 0 auto;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: max-content;
 }
 
 .video-consult-trust-item {
