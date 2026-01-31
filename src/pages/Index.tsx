@@ -1071,7 +1071,7 @@ export default function Index() {
                         START YOUR <span className="tru-qb-title-accent">BUILD</span>
                       </span>
                       <span className="tru-qb-form-subtitle-compact">
-                        Carriers vetted against FMCSA safety records
+                        AI-powered moving made simple
                       </span>
                     </div>
                   </div>

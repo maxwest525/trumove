@@ -1790,8 +1790,8 @@
 }
 
 .tru-hero-headline-accent {
-  color: hsl(142 72% 50%) !important;
-  -webkit-text-fill-color: hsl(142 72% 50%) !important;
+  color: hsl(var(--primary)) !important;
+  -webkit-text-fill-color: hsl(var(--primary)) !important;
   font-weight: 900;
 }
 
