@@ -2289,7 +2289,8 @@
 }
 
 .tru-ai-scanner-start-btn:hover {
-  background: hsl(var(--primary));
+  background: hsl(var(--foreground));
+  color: hsl(var(--primary));
   transform: scale(1.05);
   box-shadow: 0 6px 20px hsl(var(--primary) / 0.5);
 }
@@ -2409,7 +2410,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--primary) / 0.08);
+  background: transparent;
   pointer-events: none;
 }
 
@@ -2611,7 +2612,7 @@
   justify-content: flex-start;
   min-width: 420px;
   height: 100%;
-  margin-top: -10px;
+  margin-top: -20px;
 }
 
 .tru-ai-right-column {
@@ -2619,7 +2620,7 @@
   flex-direction: column;
   min-width: 350px;
   height: 100%;
-  margin-top: -10px;
+  margin-top: -20px;
 }
 
 /* Inactive state for scanner and detection columns */

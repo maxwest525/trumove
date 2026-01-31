@@ -312,7 +312,7 @@ function ScannerPreview({ isRunning, onStartDemo }: ScannerPreviewProps) {
         onClick={onStartDemo}
       >
         <Sparkles className="w-3.5 h-3.5" />
-        {isRunning ? "Running..." : "Start Demo"}
+        {isRunning ? "Running..." : "Start AI Analysis Demo"}
       </button>
     </div>
   );
