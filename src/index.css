@@ -29275,9 +29275,13 @@ html.dark .tru-summary-header-large,
   color: hsl(142 70% 55%);
 }
 
-.trust-strip-dot {
-  color: hsl(0 0% 100% / 0.3);
-  margin: 0 8px;
+.trust-strip-dot,
+.stats-strip-dot {
+  color: hsl(0 0% 100% / 0.35);
+  font-size: 8px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* ========================================
@@ -29309,7 +29313,7 @@ html.dark .tru-summary-header-large,
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -29317,6 +29321,10 @@ html.dark .tru-summary-header-large,
   color: hsl(0 0% 100% / 0.85);
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+.stats-strip-dot {
+  margin-left: 8px;
 }
 
 .stats-strip-item svg {
