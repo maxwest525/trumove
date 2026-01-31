@@ -1,20 +1,20 @@
 
-# Reorganize AI Move Estimator Section Layout
+# Stack Step Cards Vertically on Left Side
 
 ## Overview
-Restructure the AI Move Estimator section to place the steps on the left side as horizontal cards, and move the scanner preview with live detection to the right side.
+Change the step cards from horizontal row layout to vertical stack layout, while keeping the scanner demo and live inventory on the right side.
 
 ---
 
-## Current Layout Structure
+## Current Layout
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
-│                     AI Move Estimator                           │
-├─────────────────┬─────────────────┬─────────────────────────────┤
-│  Scanner (col1) │  Detection (col2)│  Steps 1,2,3 vertical (col3)│
-│    420px        │     420px        │       auto                  │
-└─────────────────┴─────────────────┴─────────────────────────────┘
+│   Steps as 3 HORIZONTAL cards   │   Scanner + Detection stacked │
+│   ┌─────┐ ┌─────┐ ┌─────┐      │                               │
+│   │  1  │ │  2  │ │  3  │      │                               │
+│   └─────┘ └─────┘ └─────┘      │                               │
+└─────────────────────────────────┴───────────────────────────────┘
 ```
 
 ---
@@ -23,103 +23,36 @@ Restructure the AI Move Estimator section to place the steps on the left side as
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
-│                     AI Move Estimator                           │
-├─────────────────────────────────┬───────────────────────────────┤
-│   Steps as 3 horizontal cards   │   Scanner + Detection stacked │
-│   (left side, full width row)   │   (right side, vertical)      │
-│                                 │                               │
-│   ┌─────┐ ┌─────┐ ┌─────┐      │   ┌─────────────────────────┐ │
-│   │  1  │ │  2  │ │  3  │      │   │   Scanner Preview       │ │
-│   └─────┘ └─────┘ └─────┘      │   ├─────────────────────────┤ │
-│                                 │   │   Live Detection List   │ │
-│                                 │   └─────────────────────────┘ │
-└─────────────────────────────────┴───────────────────────────────┘
+│   Steps VERTICAL   │   Scanner + Detection stacked              │
+│   ┌─────────────┐  │   ┌─────────────────────────────────────┐  │
+│   │      1      │  │   │         Scanner Preview             │  │
+│   └─────────────┘  │   ├─────────────────────────────────────┤  │
+│   ┌─────────────┐  │   │         Live Detection List         │  │
+│   │      2      │  │   └─────────────────────────────────────┘  │
+│   └─────────────┘  │                                            │
+│   ┌─────────────┐  │                                            │
+│   │      3      │  │                                            │
+│   └─────────────┘  │                                            │
+└─────────────────────┴───────────────────────────────────────────┘
 ```
 
 ---
 
-## Changes Required
+## Technical Changes
 
-### 1. Update JSX Layout (`src/pages/Index.tsx`)
+### File: `src/pages/Index.tsx`
 
-**Reorder columns:**
-- Move steps column to be FIRST (left side)
-- Change steps from vertical stack to horizontal row
-- Remove preview thumbnail images from steps
-- Keep scanner + detection stacked together on the RIGHT
-
-### 2. Update CSS Grid (`src/index.css`)
-
-**Grid changes:**
-- Change from `grid-template-columns: 420px 420px auto` 
-- To `grid-template-columns: 1fr 420px` (steps take flexible space, scanner fixed)
-
-**Steps layout:**
-- Change `.tru-ai-steps-vertical` from `flex-direction: column` to `flex-direction: row`
-- Make steps wider cards with equal flex distribution
-- Remove preview thumbnail styling dependency
-
----
-
-## Technical Implementation
-
-### File: `src/pages/Index.tsx` (Lines 1567-1622)
-
-Restructure the grid layout:
+Rename the class from `tru-ai-steps-horizontal` to `tru-ai-steps-vertical`:
 
 ```jsx
-{/* Two-column layout: Steps | Scanner+Detection */}
-<div className="tru-ai-two-column" ref={scanPreviewRef}>
-  {/* LEFT: Steps as horizontal cards */}
-  <div className="tru-ai-left-column">
-    <div className="tru-ai-steps-horizontal">
-      <div className="tru-ai-step-card">
-        <div className="tru-ai-step-number">1</div>
-        <div className="tru-ai-step-content">
-          <h3 className="tru-ai-step-title">Video or Photos</h3>
-          <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
-        </div>
-      </div>
-      <div className="tru-ai-step-card">
-        <div className="tru-ai-step-number">2</div>
-        <div className="tru-ai-step-content">
-          <h3 className="tru-ai-step-title">AI Detection</h3>
-          <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
-        </div>
-      </div>
-      <div className="tru-ai-step-card">
-        <div className="tru-ai-step-number">3</div>
-        <div className="tru-ai-step-content">
-          <h3 className="tru-ai-step-title">Agent Confirmation</h3>
-          <p className="tru-ai-step-desc">A live specialist reviews to ensure accuracy.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  {/* RIGHT: Scanner + Detection stacked */}
-  <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
-    <ScannerPreview ... />
-    <DetectionList ... />
-  </div>
-</div>
+<div className="tru-ai-steps-vertical">
 ```
 
 ### File: `src/index.css`
 
-**Update grid layout:**
+Update the steps container to use vertical layout:
 
-```css
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: 1fr 420px;  /* Steps flexible, scanner fixed */
-  gap: 32px;
-  align-items: stretch;
-}
-```
-
-**Add horizontal steps layout:**
-
+**Before:**
 ```css
 .tru-ai-steps-horizontal {
   display: flex;
@@ -127,7 +60,22 @@ Restructure the grid layout:
   gap: 16px;
   height: 100%;
 }
+```
 
+**After:**
+```css
+.tru-ai-steps-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+```
+
+Update the step card styling for vertical layout:
+
+**Before:**
+```css
 .tru-ai-step-card {
   flex: 1;
   display: flex;
@@ -135,42 +83,46 @@ Restructure the grid layout:
   align-items: center;
   text-align: center;
   padding: 24px 16px;
-  background: hsl(var(--muted) / 0.3);
-  border-radius: 12px;
-  border: 1px solid hsl(var(--border) / 0.5);
-  transition: all 0.2s ease;
+  ...
 }
+```
 
-.tru-ai-step-card:hover {
-  background: hsl(var(--muted) / 0.5);
-  border-color: hsl(var(--primary) / 0.3);
+**After:**
+```css
+.tru-ai-step-card {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: left;
+  padding: 20px 24px;
+  gap: 16px;
+  ...
 }
 
 .tru-ai-step-card .tru-ai-step-number {
-  margin-bottom: 12px;
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
 .tru-ai-step-card .tru-ai-step-content {
-  text-align: center;
+  text-align: left;
 }
 ```
 
 ---
 
-## Summary of Changes
+## Summary
 
 | Element | Before | After |
 |---------|--------|-------|
-| Grid columns | `420px 420px auto` | `1fr 420px` |
-| Steps position | Right side (3rd column) | Left side (1st column) |
-| Steps direction | Vertical stack | Horizontal row |
-| Preview thumbnails | Present in each step | Removed |
-| Scanner/Detection | Two separate columns | Stacked in single right column |
-| Step card width | Auto (compressed) | Equal flex (1/3 each) |
+| Steps container | `flex-direction: row` | `flex-direction: column` |
+| Step card layout | Vertical (number on top) | Horizontal (number on left) |
+| Step card text | Centered | Left-aligned |
+| Step card padding | `24px 16px` | `20px 24px` |
 
 ---
 
 ## Files Modified
-
-- `src/pages/Index.tsx` - Restructure column order and remove thumbnail images
-- `src/index.css` - Update grid template and add horizontal step card styling
+- `src/pages/Index.tsx` - Change class name to `tru-ai-steps-vertical`
+- `src/index.css` - Update flex direction and step card layout for vertical stacking
