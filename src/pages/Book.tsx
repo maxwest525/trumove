@@ -693,68 +693,71 @@ export default function Book() {
       {/* Site Header */}
       <Header />
       
-      {/* Video Consult Command Center Header */}
-      <header className="video-consult-header">
-        <div className="flex items-center gap-3">
-          <img 
-            src={logoImg} 
-            alt="TruMove" 
-            className="h-6 brightness-0 invert"
-          />
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
-            Video Consult Center
-          </span>
-        </div>
-
-        {/* Centered Controls */}
-        <div className="video-consult-header-controls">
-          <div className="video-consult-header-search">
-            <Video className="w-4 h-4 text-white/70" />
-            <input
-              type="text"
-              placeholder="Enter booking code..."
-              className="video-consult-header-input"
-              value={bookingCode}
-              onChange={(e) => setBookingCode(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+      {/* Sticky Header Block - Both elements lock together */}
+      <div className="sticky top-[72px] z-40">
+        {/* Video Consult Command Center Header */}
+        <header className="video-consult-header">
+          <div className="flex items-center gap-3">
+            <img 
+              src={logoImg} 
+              alt="TruMove" 
+              className="h-6 brightness-0 invert"
             />
-            <Button
-              variant="ghost"
-              size="sm"
-              className="video-consult-header-go-btn"
-              onClick={handleJoinRoom}
-              disabled={!bookingCode.trim()}
-            >
-              Join
-            </Button>
-            
-            {/* Demo Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleStartDemo}
-              className="video-consult-header-demo-btn"
-            >
-              <Sparkles className="w-3 h-3" />
-              <span className="hidden sm:inline text-[11px]">Demo</span>
-            </Button>
+            <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
+              Video Consult Center
+            </span>
           </div>
-        </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-4">
-          <a 
-            href="tel:+16097277647"
-            className="video-consult-header-call-btn"
-          >
-            <Phone className="w-4 h-4" />
-            <span className="hidden sm:inline">Call Now</span>
-          </a>
-        </div>
-      </header>
+          {/* Centered Controls */}
+          <div className="video-consult-header-controls">
+            <div className="video-consult-header-search">
+              <Video className="w-4 h-4 text-white/70" />
+              <input
+                type="text"
+                placeholder="Enter booking code..."
+                className="video-consult-header-input"
+                value={bookingCode}
+                onChange={(e) => setBookingCode(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="video-consult-header-go-btn"
+                onClick={handleJoinRoom}
+                disabled={!bookingCode.trim()}
+              >
+                Join
+              </Button>
+              
+              {/* Demo Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleStartDemo}
+                className="video-consult-header-demo-btn"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span className="hidden sm:inline text-[11px]">Demo</span>
+              </Button>
+            </div>
+          </div>
 
-      {/* Trust Strip */}
-      <VideoConsultTrustStrip />
+          {/* Right Actions */}
+          <div className="flex items-center gap-4">
+            <a 
+              href="tel:+16097277647"
+              className="video-consult-header-call-btn"
+            >
+              <Phone className="w-4 h-4" />
+              <span className="hidden sm:inline">Call Now</span>
+            </a>
+          </div>
+        </header>
+
+        {/* Trust Strip */}
+        <VideoConsultTrustStrip />
+      </div>
 
       {/* Main Content */}
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
