@@ -11713,7 +11713,7 @@
 .header-logo {
   flex-shrink: 0;
   position: absolute;
-  left: -76px; /* Moved 100px further left from original 24px */
+  left: 20px;
 }
 
 .header-logo img {
