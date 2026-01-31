@@ -1,118 +1,130 @@
 
-# Move Scanner & Detection to Left, Match Widths
+# Improve Steps Section Readability and Layout
 
 ## Overview
-Reorganize the AI Move Estimator section to place the scanner and detection list on the left side, with both elements sharing the same 420px width.
+Redesign the vertical steps in the AI Move Estimator section to be more visually appealing and easier to read. The current design has small text, cramped spacing, and thin styling that makes it hard to scan quickly.
 
 ---
 
-## Current Layout
+## Current Issues
 
-```text
-| Steps (auto) | Scanner (420px) | Detection (350px) |
-```
-
-## Target Layout
-
-```text
-| Scanner (420px) | Detection (420px) | Steps (auto) |
-```
+| Problem | Current State |
+|---------|--------------|
+| Small text | Title 13px, description 11px |
+| Cramped layout | 12px gap between steps |
+| Thin step numbers | 32px circles with light borders |
+| Low contrast descriptions | 60% opacity text |
+| Preview thumbnails too small | 80x60px images |
 
 ---
 
-## Changes Required
+## Proposed Changes
 
-### 1. Update Grid Column Order
-**File: `src/index.css` (Lines 2678-2687)**
-
-Change the grid template to place scanner and detection first, steps last:
+### 1. Card-Based Step Design
+Transform each step into a distinct card with subtle background and hover state:
 
 ```css
-/* Before */
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: auto 420px 350px;
-  ...
+.tru-ai-step-with-preview {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 12px;
+  border: 1px solid hsl(var(--border) / 0.5);
+  transition: all 0.2s ease;
 }
 
-/* After */
-.tru-ai-two-column {
-  display: grid;
-  grid-template-columns: 420px 420px auto;
-  ...
+.tru-ai-step-with-preview:hover {
+  background: hsl(var(--muted) / 0.5);
+  border-color: hsl(var(--primary) / 0.3);
 }
 ```
 
-### 2. Update Detection Column Width
-**File: `src/index.css` (Lines 2708-2714)**
-
-Match the right column width to the scanner width:
+### 2. Larger, Bolder Step Numbers
+Make step numbers more prominent with primary color accent:
 
 ```css
-/* Before */
-.tru-ai-right-column {
-  min-width: 350px;
-  ...
-}
-
-/* After */
-.tru-ai-right-column {
-  min-width: 420px;
-  ...
+.tru-ai-step-number {
+  width: 36px;
+  height: 36px;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  font-size: 16px;
+  font-weight: 800;
+  border: none;
 }
 ```
 
-### 3. Update Live Inventory Width
-**File: `src/index.css`**
-
-Ensure the inventory list fills the new 420px column:
+### 3. Improved Typography
+Increase text sizes and improve contrast:
 
 ```css
-.tru-ai-live-inventory {
-  width: 420px;
+.tru-ai-step-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.tru-ai-step-desc {
+  font-size: 13px;
+  color: hsl(var(--tm-ink) / 0.75);
+  line-height: 1.4;
 }
 ```
 
-### 4. Reorder JSX Elements
-**File: `src/pages/Index.tsx` (Lines 1567-1621)**
+### 4. Larger Preview Thumbnails
+Increase thumbnail size for better visibility:
 
-Move the scanner and detection columns before the steps column in the JSX:
-
-```tsx
-{/* Before order: Steps | Scanner | Detection */}
-{/* After order: Scanner | Detection | Steps */}
-
-<div className="tru-ai-two-column" ref={scanPreviewRef}>
-  {/* First: Scanner preview */}
-  <div className={`tru-ai-center-column ...`}>
-    <ScannerPreview ... />
-  </div>
-  
-  {/* Second: Detection list */}
-  <div className={`tru-ai-right-column ...`}>
-    <DetectionList ... />
-  </div>
-  
-  {/* Third: Vertical steps */}
-  <div className="tru-ai-left-column">
-    ...steps...
-  </div>
-</div>
+```css
+.tru-ai-step-preview {
+  width: 72px;
+  height: 54px;
+  border-radius: 8px;
+  border: 2px solid hsl(var(--border));
+}
 ```
+
+### 5. Better Spacing
+Increase gap between steps for breathing room:
+
+```css
+.tru-ai-steps-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+```
+
+### 6. Remove Preview Thumbnails (Optional Simplification)
+Given the steps are now on the right side with limited space, consider removing the preview thumbnails to simplify the layout and make it cleaner. This would require a JSX change as well.
+
+---
+
+## Visual Comparison
+
+| Element | Before | After |
+|---------|--------|-------|
+| Step background | None | Subtle muted card |
+| Step number size | 32px | 36px |
+| Step number style | Light border, transparent | Solid black fill |
+| Title font size | 13px | 15px |
+| Description size | 11px | 13px |
+| Description opacity | 60% | 75% |
+| Gap between steps | 12px | 16px |
+| Step padding | None | 16px |
 
 ---
 
 ## Technical Summary
 
-| Element | Before | After |
-|---------|--------|-------|
-| Column order | Steps → Scanner → Detection | Scanner → Detection → Steps |
-| Scanner width | 420px | 420px (unchanged) |
-| Detection width | 350px | 420px |
-| Grid template | `auto 420px 350px` | `420px 420px auto` |
-
----
-
 ### Files Modified
-- `src/pages/Index.tsx` - Reorder JSX columns
-- `src/index.css` - Update grid template and column widths
+- `src/index.css` - Update step styling (card backgrounds, larger typography, better spacing)
+- `src/pages/Index.tsx` - Optionally simplify by removing preview thumbnails
+
+### Key CSS Changes
+1. Add card background and border to `.tru-ai-step-with-preview`
+2. Enlarge and style `.tru-ai-step-number` with solid fill
+3. Increase font sizes in `.tru-ai-step-title` and `.tru-ai-step-desc`
+4. Improve contrast on description text
+5. Increase vertical gap in `.tru-ai-steps-vertical`
