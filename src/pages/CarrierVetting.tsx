@@ -361,7 +361,7 @@ export default function CarrierVetting() {
 
   return (
     <SiteShell hideTrustStrip>
-      <div className="min-h-screen bg-slate-950 carrier-vetting-dark">
+      <div className="min-h-screen carrier-vetting-page">
         {/* Combined Sticky Header Block - locks below TruMove nav (72px + 8px margin + 8px buffer) */}
         <div className="sticky top-[88px] z-40">
           {/* Government-style Header */}

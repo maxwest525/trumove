@@ -24549,12 +24549,45 @@
 }
 
 /* ========================================
-   FMCSA CARRIER VETTING - Dark Terminal Style
+   FMCSA CARRIER VETTING - Theme-Aware Styles
    ======================================== */
 
+/* Main page container */
+.carrier-vetting-page {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.dark .carrier-vetting-page {
+  background: linear-gradient(180deg, hsl(222 47% 5%) 0%, hsl(222 47% 8%) 100%);
+}
+
+/* Header */
 .fmcsa-header {
+  background: linear-gradient(135deg, hsl(220 15% 95%) 0%, hsl(220 15% 90%) 100%);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.dark .fmcsa-header {
   background: linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(222 50% 12%) 100%);
   border-bottom: 1px solid hsl(var(--primary) / 0.2);
+}
+
+/* Header title */
+.fmcsa-header h1 {
+  color: hsl(var(--foreground));
+}
+
+.dark .fmcsa-header h1 {
+  color: hsl(0 0% 100%);
+}
+
+.fmcsa-header p {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .fmcsa-header p {
+  color: hsl(0 0% 100% / 0.6);
 }
 
 .fmcsa-shield {
@@ -24563,10 +24596,14 @@
   justify-content: center;
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.2) 0%, hsl(var(--primary) / 0.1) 100%);
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.08) 100%);
   border: 1px solid hsl(var(--primary) / 0.3);
   border-radius: 12px;
   color: hsl(var(--primary));
+}
+
+.dark .fmcsa-shield {
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.2) 0%, hsl(var(--primary) / 0.1) 100%);
 }
 
 .fmcsa-badge {
@@ -24574,13 +24611,19 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background: hsl(220 20% 15%);
-  border: 1px solid hsl(220 20% 25%);
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
   border-radius: 6px;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .fmcsa-badge {
+  background: hsl(220 20% 15%);
+  border: 1px solid hsl(220 20% 25%);
   color: hsl(0 0% 70%);
 }
 
@@ -24593,7 +24636,7 @@
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  background: hsl(var(--primary) / 0.15);
+  background: hsl(var(--primary) / 0.1);
   border: 1px solid hsl(var(--primary) / 0.3);
   border-radius: 100px;
   font-size: 11px;
@@ -24601,6 +24644,10 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: hsl(var(--primary));
+}
+
+.dark .fmcsa-live-indicator {
+  background: hsl(var(--primary) / 0.15);
 }
 
 .fmcsa-live-dot {
@@ -24617,12 +24664,18 @@
   50% { opacity: 0.6; transform: scale(0.9); }
 }
 
-/* Terminal Search Box */
+/* Terminal Search Box - Light Mode */
 .fmcsa-terminal {
-  background: hsl(222 47% 8%);
-  border: 1px solid hsl(220 20% 20%);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 8px 24px hsl(var(--foreground) / 0.08);
+}
+
+.dark .fmcsa-terminal {
+  background: hsl(222 47% 8%);
+  border: 1px solid hsl(220 20% 20%);
   box-shadow: 
     0 20px 50px hsl(222 47% 5% / 0.5),
     0 0 0 1px hsl(var(--primary) / 0.05);
@@ -24633,6 +24686,11 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
+  background: hsl(var(--muted));
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.dark .fmcsa-terminal-header {
   background: hsl(220 20% 12%);
   border-bottom: 1px solid hsl(220 20% 18%);
 }
@@ -24646,6 +24704,10 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  background: hsl(220 20% 75%);
+}
+
+.dark .fmcsa-terminal-dots span {
   background: hsl(220 20% 25%);
 }
 
@@ -24666,28 +24728,77 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: hsl(0 0% 50%);
+  color: hsl(var(--muted-foreground));
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.dark .fmcsa-terminal-title {
+  color: hsl(0 0% 50%);
 }
 
 .fmcsa-terminal-body {
   padding: 20px;
 }
 
-/* Override search input in terminal - HIGH VISIBILITY */
+/* Terminal heading */
+.fmcsa-terminal-body h3 {
+  color: hsl(var(--foreground));
+}
+
+.dark .fmcsa-terminal-body h3 {
+  color: hsl(0 0% 100% / 0.8);
+}
+
+/* Terminal description text */
+.fmcsa-terminal-body > p {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .fmcsa-terminal-body > p {
+  color: hsl(0 0% 100% / 0.6);
+}
+
+/* FMCSA logo in terminal - Light mode: dark, Dark mode: inverted */
+.fmcsa-terminal-header img {
+  filter: brightness(0);
+  opacity: 0.5;
+}
+
+.dark .fmcsa-terminal-header img {
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
+}
+
+/* Override search input in terminal - Light Mode */
 .fmcsa-terminal input,
 .fmcsa-terminal .relative input,
 .fmcsa-terminal-body input {
+  background: hsl(var(--background)) !important;
+  border: 2px solid hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
+  font-size: 16px !important;
+  caret-color: hsl(var(--primary));
+}
+
+.dark .fmcsa-terminal input,
+.dark .fmcsa-terminal .relative input,
+.dark .fmcsa-terminal-body input {
   background: hsl(220 15% 22%) !important;
   border: 2px solid hsl(220 15% 40%) !important;
   color: #ffffff !important;
-  font-size: 16px !important;
   caret-color: hsl(142 76% 50%);
 }
 
 .fmcsa-terminal input::placeholder,
 .fmcsa-terminal .relative input::placeholder,
 .fmcsa-terminal-body input::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
+  opacity: 1 !important;
+}
+
+.dark .fmcsa-terminal input::placeholder,
+.dark .fmcsa-terminal .relative input::placeholder,
+.dark .fmcsa-terminal-body input::placeholder {
   color: hsl(220 10% 65%) !important;
   opacity: 1 !important;
 }
@@ -24695,10 +24806,15 @@
 .fmcsa-terminal input:focus,
 .fmcsa-terminal .relative input:focus {
   border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2) !important;
+}
+
+.dark .fmcsa-terminal input:focus,
+.dark .fmcsa-terminal .relative input:focus {
   box-shadow: 0 0 0 3px hsl(var(--primary) / 0.25), inset 0 1px 8px hsl(var(--primary) / 0.1) !important;
 }
 
-/* Feature Cards - Horizontal Layout */
+/* Feature Cards */
 .fmcsa-feature-card {
   padding: 20px 24px;
   background: hsl(var(--card));
@@ -24713,18 +24829,37 @@
   transform: translateY(-2px);
 }
 
-/* Carrier Snapshot Card Enhancements */
+.dark .fmcsa-feature-card {
+  background: hsl(222 40% 8%);
+  border-color: hsl(220 20% 18%);
+}
+
+/* Carrier Snapshot Card - Light Mode */
 .carrier-snapshot-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.dark .carrier-snapshot-card {
   background: linear-gradient(135deg, hsl(222 47% 10%) 0%, hsl(222 50% 8%) 100%);
   border: 1px solid hsl(220 20% 18%);
   color: white;
 }
 
 .carrier-snapshot-card .text-foreground {
+  color: hsl(var(--foreground));
+}
+
+.dark .carrier-snapshot-card .text-foreground {
   color: white;
 }
 
 .carrier-snapshot-card .text-muted-foreground {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .carrier-snapshot-card .text-muted-foreground {
   color: hsl(0 0% 60%);
 }
 
@@ -24797,159 +24932,117 @@
 }
 
 /* ========================================
-   CARRIER VETTING DARK THEME - Command Center
+   CARRIER VETTING DARK MODE OVERRIDES
    ======================================== */
-.carrier-vetting-dark {
-  --cv-bg: hsl(222 47% 5%);
-  --cv-card: hsl(222 40% 8%);
-  --cv-border: hsl(220 20% 18%);
-  --cv-text: hsl(0 0% 95%);
-  --cv-muted: hsl(220 10% 60%);
+
+/* Trust strip in carrier vetting page */
+.carrier-vetting-page .bg-muted\/95 {
+  background: hsl(var(--muted) / 0.95);
+  border-color: hsl(var(--border));
 }
 
-.carrier-vetting-dark .bg-muted\/95 {
-  background: hsl(222 40% 10% / 0.98) !important;
-  border-color: var(--cv-border) !important;
-}
-
-.carrier-vetting-dark .text-foreground {
-  color: var(--cv-text) !important;
-}
-
-.carrier-vetting-dark .text-muted-foreground {
-  color: var(--cv-muted) !important;
-}
-
-.carrier-vetting-dark .container {
-  color: var(--cv-text);
+.dark .carrier-vetting-page .bg-muted\/95 {
+  background: hsl(222 40% 10% / 0.98);
+  border-color: hsl(220 20% 18%);
 }
 
 /* Cards in dark mode */
-.carrier-vetting-dark .fmcsa-feature-card,
-.carrier-vetting-dark [class*="bg-card"],
-.carrier-vetting-dark .rounded-lg.border {
-  background: var(--cv-card) !important;
-  border-color: var(--cv-border) !important;
+.dark .carrier-vetting-page .fmcsa-feature-card,
+.dark .carrier-vetting-page [class*="bg-card"],
+.dark .carrier-vetting-page .rounded-lg.border {
+  background: hsl(222 40% 8%);
+  border-color: hsl(220 20% 18%);
 }
 
 /* Headers in dark mode */
-.carrier-vetting-dark h2,
-.carrier-vetting-dark h3,
-.carrier-vetting-dark h4 {
-  color: var(--cv-text);
-}
-
-/* Comparison cards */
-.carrier-vetting-dark .carrier-snapshot-card {
-  background: var(--cv-card);
-  border-color: var(--cv-border);
+.dark .carrier-vetting-page h2,
+.dark .carrier-vetting-page h3,
+.dark .carrier-vetting-page h4 {
+  color: hsl(0 0% 95%);
 }
 
 /* Empty state placeholders */
-.carrier-vetting-dark .border-dashed {
-  border-color: hsl(220 15% 25%) !important;
-  background: hsl(222 40% 7% / 0.5) !important;
+.dark .carrier-vetting-page .border-dashed {
+  border-color: hsl(220 15% 25%);
+  background: hsl(222 40% 7% / 0.5);
 }
 
-/* Action buttons */
-.carrier-vetting-dark .border-border {
-  border-color: var(--cv-border) !important;
+/* Text adjustments for dark mode */
+.dark .carrier-vetting-page .text-slate-900 {
+  color: hsl(0 0% 95%);
 }
 
-/* Text adjustments */
-.carrier-vetting-dark .text-slate-900 {
-  color: var(--cv-text) !important;
+.dark .carrier-vetting-page .text-slate-800 {
+  color: hsl(220 10% 85%);
 }
 
-.carrier-vetting-dark .text-slate-800 {
-  color: hsl(220 10% 85%) !important;
+.dark .carrier-vetting-page .bg-slate-50,
+.dark .carrier-vetting-page .bg-slate-100 {
+  background: hsl(222 30% 12%);
 }
 
-.carrier-vetting-dark .bg-slate-50,
-.carrier-vetting-dark .bg-slate-100 {
-  background: hsl(222 30% 12%) !important;
+/* Table styles for dark mode */
+.dark .carrier-vetting-page table {
+  background: hsl(222 40% 8%);
 }
 
-/* Comparison summary table */
-.carrier-vetting-dark [class*="bg-muted"] {
-  background: hsl(222 30% 12%) !important;
+.dark .carrier-vetting-page th,
+.dark .carrier-vetting-page td {
+  border-color: hsl(220 20% 18%);
+  color: hsl(0 0% 95%);
 }
 
-/* Override standard table styles */
-.carrier-vetting-dark table {
-  background: var(--cv-card);
-}
-
-.carrier-vetting-dark th,
-.carrier-vetting-dark td {
-  border-color: var(--cv-border);
-  color: var(--cv-text);
-}
-
-.carrier-vetting-dark th {
+.dark .carrier-vetting-page th {
   background: hsl(222 30% 10%);
 }
 
-/* Demo mode dropdown */
-.carrier-vetting-dark .fixed.bottom-6.right-6 button {
-  background: hsl(222 40% 15%) !important;
-  border-color: var(--cv-border) !important;
+/* Muted backgrounds in dark mode */
+.dark .carrier-vetting-page [class*="bg-muted"] {
+  background: hsl(222 30% 12%);
 }
 
-/* Fix outline buttons in carrier vetting dark mode - prevent white-on-white */
-.carrier-vetting-dark button[data-slot="button"],
-.carrier-vetting-dark [class*="Button"] {
-  --tw-text-opacity: 1;
+/* Button styles for dark mode */
+.dark .carrier-vetting-page button[class*="outline"],
+.dark .carrier-vetting-page .gap-2[class*="border-green"],
+.dark .carrier-vetting-page .gap-2[class*="border-red"],
+.dark .carrier-vetting-page .gap-2[class*="border-amber"] {
+  background: hsl(222 30% 12%);
+  color: hsl(220 10% 90%);
+  border-width: 1.5px;
 }
 
-.carrier-vetting-dark button[class*="outline"],
-.carrier-vetting-dark .gap-2[class*="border-green"],
-.carrier-vetting-dark .gap-2[class*="border-red"],
-.carrier-vetting-dark .gap-2[class*="border-amber"] {
-  background: hsl(222 30% 12%) !important;
-  color: hsl(220 10% 90%) !important;
-  border-width: 1.5px !important;
-}
-
-.carrier-vetting-dark button[class*="outline"]:hover,
-.carrier-vetting-dark .gap-2[class*="border-green"]:hover,
-.carrier-vetting-dark .gap-2[class*="border-red"]:hover,
-.carrier-vetting-dark .gap-2[class*="border-amber"]:hover {
-  background: hsl(222 30% 18%) !important;
-  color: white !important;
+.dark .carrier-vetting-page button[class*="outline"]:hover,
+.dark .carrier-vetting-page .gap-2[class*="border-green"]:hover,
+.dark .carrier-vetting-page .gap-2[class*="border-red"]:hover,
+.dark .carrier-vetting-page .gap-2[class*="border-amber"]:hover {
+  background: hsl(222 30% 18%);
+  color: white;
 }
 
 /* Carrier Safety Comparison header buttons */
-.carrier-vetting-dark .gap-2.border-border,
-.carrier-vetting-dark button.gap-2 {
-  background: hsl(222 30% 14%) !important;
-  border: 1.5px solid hsl(220 20% 30%) !important;
-  color: hsl(220 10% 85%) !important;
+.dark .carrier-vetting-page .gap-2.border-border,
+.dark .carrier-vetting-page button.gap-2 {
+  background: hsl(222 30% 14%);
+  border: 1.5px solid hsl(220 20% 30%);
+  color: hsl(220 10% 85%);
 }
 
-.carrier-vetting-dark .gap-2.border-border:hover,
-.carrier-vetting-dark button.gap-2:hover {
-  background: hsl(222 30% 20%) !important;
-  border-color: hsl(var(--primary) / 0.5) !important;
-  color: white !important;
+.dark .carrier-vetting-page .gap-2.border-border:hover,
+.dark .carrier-vetting-page button.gap-2:hover {
+  background: hsl(222 30% 20%);
+  border-color: hsl(var(--primary) / 0.5);
+  color: white;
 }
 
 /* Ensure button text in carrier vetting is always visible */
-.carrier-vetting-dark button span {
-  color: inherit !important;
+.dark .carrier-vetting-page button span {
+  color: inherit;
 }
 
-/* Sections in dark theme */
-.carrier-vetting-dark .py-8,
-.carrier-vetting-dark .py-12,
-.carrier-vetting-dark .py-16 {
-  background: transparent;
-}
-
-/* Trust strip dark override */
-.carrier-vetting-dark .bg-muted\/95 .text-foreground,
-.carrier-vetting-dark .bg-muted\/95 p {
-  color: hsl(220 10% 80%) !important;
+/* Trust strip text in dark mode */
+.dark .carrier-vetting-page .bg-muted\/95 .text-foreground,
+.dark .carrier-vetting-page .bg-muted\/95 p {
+  color: hsl(220 10% 80%);
 }
 
 /* =============================================
