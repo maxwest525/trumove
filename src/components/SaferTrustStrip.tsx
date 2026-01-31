@@ -15,7 +15,7 @@ export default function SaferTrustStrip() {
       <div className="safer-trust-strip-inner">
         {SAFER_TRUST_ITEMS.map((item, idx) => (
           <div key={item.text} className="safer-trust-item">
-            <item.icon className="w-3.5 h-3.5" />
+            <item.icon className="w-4 h-4" />
             <span>{item.text}</span>
             {idx < SAFER_TRUST_ITEMS.length - 1 && (
               <span className="safer-trust-dot">•</span>
