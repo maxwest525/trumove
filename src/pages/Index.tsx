@@ -1554,14 +1554,42 @@ export default function Index() {
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="tru-ai-steps-section">
             <div className="tru-ai-steps-inner">
-              {/* Header row: centered title with previews on right */}
+              {/* Header row: steps on left, centered title, previews on right */}
               <div className="tru-ai-header-row" ref={scanPreviewRef}>
+                {/* Steps on left */}
+                <div className="tru-ai-steps-left">
+                  <div className="tru-ai-step-card">
+                    <div className="tru-ai-step-number">1</div>
+                    <div className="tru-ai-step-content">
+                      <h3 className="tru-ai-step-title">Video or Photos</h3>
+                      <p className="tru-ai-step-desc">Walk through rooms with your camera.</p>
+                    </div>
+                  </div>
+                  <div className="tru-ai-step-card">
+                    <div className="tru-ai-step-number">2</div>
+                    <div className="tru-ai-step-content">
+                      <h3 className="tru-ai-step-title">AI Detection</h3>
+                      <p className="tru-ai-step-desc">Computer vision identifies items.</p>
+                    </div>
+                  </div>
+                  <div className="tru-ai-step-card">
+                    <div className="tru-ai-step-number">3</div>
+                    <div className="tru-ai-step-content">
+                      <h3 className="tru-ai-step-title">Agent Confirmation</h3>
+                      <p className="tru-ai-step-desc">A live specialist reviews accuracy.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Centered title */}
                 <div className="tru-ai-header-center">
                   <h2 className="tru-ai-steps-title">
                     <span className="tru-ai-gradient-text">AI</span> Move Estimator
                   </h2>
                   <div className="tru-ai-accent-line" />
                 </div>
+                
+                {/* Previews on right */}
                 <div className={`tru-ai-header-previews ${scanDemoRunning ? 'is-running' : ''}`}>
                   <ScannerPreview 
                     isRunning={scanDemoRunning} 
@@ -1574,33 +1602,6 @@ export default function Index() {
                     }} 
                   />
                   <DetectionList visibleCount={scanVisibleCount} />
-                </div>
-              </div>
-              
-              {/* Steps below - unchanged */}
-              <div className="tru-ai-steps-content">
-                <div className="tru-ai-steps-vertical">
-                  <div className="tru-ai-step-card">
-                    <div className="tru-ai-step-number">1</div>
-                    <div className="tru-ai-step-content">
-                      <h3 className="tru-ai-step-title">Video or Photos</h3>
-                      <p className="tru-ai-step-desc">Walk through rooms with your camera or upload photos.</p>
-                    </div>
-                  </div>
-                  <div className="tru-ai-step-card">
-                    <div className="tru-ai-step-number">2</div>
-                    <div className="tru-ai-step-content">
-                      <h3 className="tru-ai-step-title">AI Detection</h3>
-                      <p className="tru-ai-step-desc">Computer vision identifies items and estimates weight/volume.</p>
-                    </div>
-                  </div>
-                  <div className="tru-ai-step-card">
-                    <div className="tru-ai-step-number">3</div>
-                    <div className="tru-ai-step-content">
-                      <h3 className="tru-ai-step-title">Agent Confirmation</h3>
-                      <p className="tru-ai-step-desc">A live specialist reviews to ensure accuracy.</p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

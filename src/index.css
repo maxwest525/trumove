@@ -2274,13 +2274,28 @@
   min-height: 280px;
 }
 
-/* Centered title container - takes full width, text centered */
+/* Steps left container - absolute positioned */
+.tru-ai-steps-left {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 250px;
+  z-index: 5;
+}
+
+/* Centered title container - truly centered */
 .tru-ai-header-center {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-right: 700px; /* Offset for previews on right */
+  justify-content: center;
+  padding-left: 250px; /* Account for left steps */
+  padding-right: 650px; /* Account for right previews */
 }
 
 .tru-ai-header-center .tru-ai-steps-title {
@@ -2760,11 +2775,13 @@
 }
 
 .tru-ai-step-card {
-  flex: 1;
+  width: 250px;
+  height: 60px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 12px;
+  justify-content: flex-start;
+  padding: 12px 16px;
+  gap: 12px;
   background: hsl(var(--muted) / 0.3);
   border-radius: 10px;
   border: 1px solid hsl(var(--border) / 0.5);
@@ -2772,26 +2789,49 @@
 }
 
 .tru-ai-step-card .tru-ai-step-number {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: hsl(var(--primary));
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--primary) / 0.1);
+  border-radius: 50%;
 }
 
 .tru-ai-step-card .tru-ai-step-content {
-  display: none;
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+.tru-ai-step-card .tru-ai-step-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tru-ai-step-card .tru-ai-step-desc {
+  font-size: 10px;
+  color: hsl(var(--muted-foreground));
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .tru-ai-step-card:hover {
   background: hsl(var(--muted) / 0.5);
   border-color: hsl(var(--primary) / 0.3);
-}
-
-.tru-ai-step-card .tru-ai-step-number {
-  margin-bottom: 12px;
-}
-
-.tru-ai-step-card .tru-ai-step-content {
-  text-align: center;
 }
 
 .tru-ai-center-column {
