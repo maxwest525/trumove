@@ -737,8 +737,13 @@ export default function Book() {
             </div>
           </div>
 
-          {/* Right - Empty spacer for balance */}
-          <div className="w-[120px]" />
+          {/* Right - Shipment ID (matching tracking page) */}
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <div className="text-[11px] text-white/80 uppercase tracking-wider">Shipment ID</div>
+              <div className="text-sm font-mono text-white">TM-2026-{String(Date.now()).slice(-8)}</div>
+            </div>
+          </div>
         </header>
       </div>
 
@@ -771,27 +776,8 @@ export default function Book() {
                       Ready to Connect
                     </h3>
                     <p className="text-white/50 text-sm mb-6 max-w-sm mx-auto">
-                      Enter your booking code below to join your scheduled session, or start a demo.
+                      Use the booking controls below to join your scheduled session, or start a demo.
                     </p>
-                    
-                    {/* Join Form */}
-                    <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-4">
-                      <Input
-                        value={bookingCode}
-                        onChange={(e) => setBookingCode(e.target.value)}
-                        placeholder="Enter booking code..."
-                        className="flex-1 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-primary"
-                        onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
-                      />
-                      <Button 
-                        onClick={handleJoinRoom}
-                        className="h-12 px-6 font-bold"
-                        disabled={!bookingCode.trim()}
-                      >
-                        Join Room
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </div>
                     
                     <button
                       onClick={handleStartDemo}
@@ -843,7 +829,7 @@ export default function Book() {
                 Demo
               </Button>
             </div>
-            <p className="text-xs text-white/50 mt-3">
+            <p className="text-xs text-white/70 mt-3">
               Enter your booking code to join a scheduled session
             </p>
           </div>
