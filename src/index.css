@@ -29883,9 +29883,8 @@ html.dark .tru-summary-header-large,
    VIDEO CONSULT TRUST STRIP
    ============================================= */
 .video-consult-trust-strip {
-  position: sticky;
-  top: 155px; /* Header 103px + video-consult-header 52px */
-  z-index: 39;
+  position: relative;
+  z-index: 35;
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   padding: 8px 24px;
@@ -29894,7 +29893,8 @@ html.dark .tru-summary-header-large,
 .video-consult-trust-strip-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 48px;
   max-width: 1480px;
   margin: 0 auto;
   flex-wrap: wrap;
