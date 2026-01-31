@@ -1,82 +1,113 @@
 
-# Plan: Fix Video Consult Trust Strip Positioning
+# Plan: Fix Video Consult Trust Strip - Lock Below Header
 
-## Problem
+## Root Cause Analysis
 
-The `VideoConsultTrustStrip` on the `/book` page is being hidden behind the sticky `video-consult-header` because:
-1. The header uses `position: sticky` with `top: 103px`
-2. The trust strip uses `position: relative` - so it scrolls with the page and slides underneath the sticky header
+The trust strip is hidden behind the video-consult-header because:
+
+1. **Both elements are independently sticky** - They each have their own `position: sticky`
+2. **The trust strip has a lower z-index** - Header is `z-index: 40`, trust strip is `z-index: 39`
+3. **Sticky elements compete** - When scrolling, the header "wins" and covers the trust strip
+
+Looking at how the main site handles this in `SiteShell.tsx`:
+```tsx
+<div className="sticky top-0 z-[90]">
+  <Header />
+  {!hideTrustStrip && <SaferTrustStrip />}
+</div>
+```
+
+The Header and SaferTrustStrip are wrapped in a **single sticky container**, so they move together as one unit.
 
 ## Solution
 
-Make the trust strip sticky as well, positioned directly below the video-consult-header, so both stay locked together when scrolling.
+Apply the same pattern to the Book page: wrap the video-consult-header and VideoConsultTrustStrip in a single sticky container.
 
 ## Implementation
 
+### File: `src/pages/Book.tsx`
+
+**Wrap header and trust strip in a sticky container (around lines 696-757):**
+
+```tsx
+// FROM:
+{/* Video Consult Command Center Header */}
+<header className="video-consult-header">
+  ...
+</header>
+
+{/* Trust Strip */}
+<VideoConsultTrustStrip />
+
+// TO:
+{/* Sticky Header Block - Both elements lock together */}
+<div className="sticky top-[72px] z-40">
+  {/* Video Consult Command Center Header */}
+  <header className="video-consult-header-inner">
+    ...
+  </header>
+
+  {/* Trust Strip */}
+  <VideoConsultTrustStrip />
+</div>
+```
+
 ### File: `src/index.css`
 
-**Update the `.video-consult-trust-strip` styles (lines 29885-29891):**
+**Update `.video-consult-header` to remove sticky positioning (it's now handled by the wrapper):**
 
 | Property | Current | New |
 |----------|---------|-----|
-| `position` | `relative` | `sticky` |
-| `top` | *(none)* | `151px` (header top 103px + header height ~48px) |
-| `z-index` | `35` | `39` (below header z-40, but still above content) |
+| `position` | `sticky` | `relative` |
+| `top` | `103px` | *(remove)* |
+| `z-index` | `40` | *(remove)* |
 
-**Update the `.video-consult-trust-strip-inner` styles (lines 29893-29900):**
+**Update `.video-consult-trust-strip` to remove sticky positioning:**
 
 | Property | Current | New |
 |----------|---------|-----|
-| `gap` | `48px` | `28px` (to match SaferTrustStrip spacing) |
+| `position` | `sticky` | `relative` |
+| `top` | `151px` | *(remove)* |
+| `z-index` | `39` | *(remove)* |
 
 ### CSS Changes
 
 ```css
-/* FROM */
+/* Video Consult Command Center Header */
+.video-consult-header {
+  position: relative; /* Changed from sticky */
+  /* top: 103px; - REMOVED */
+  /* z-index: 40; - REMOVED */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: hsl(var(--foreground) / 0.95);
+  border-bottom: 1px solid hsl(var(--border) / 0.3);
+  backdrop-filter: blur(12px);
+}
+
+/* Video Consult Trust Strip */
 .video-consult-trust-strip {
-  position: relative;
-  z-index: 35;
+  position: relative; /* Changed from sticky */
+  /* top: 151px; - REMOVED */
+  /* z-index: 39; - REMOVED */
   background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
   border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   padding: 8px 24px;
-}
-
-.video-consult-trust-strip-inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 48px;
-  max-width: 1480px;
-  margin: 0 auto;
-  flex-wrap: wrap;
-}
-
-/* TO */
-.video-consult-trust-strip {
-  position: sticky;
-  top: 151px; /* Header (103px) + video-consult-header height (~48px) */
-  z-index: 39;
-  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
-  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
-  padding: 8px 24px;
-}
-
-.video-consult-trust-strip-inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 28px; /* Match SaferTrustStrip spacing */
-  max-width: 1480px;
-  margin: 0 auto;
-  flex-wrap: nowrap;
-  white-space: nowrap;
-  min-width: max-content;
 }
 ```
 
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `src/pages/Book.tsx` | Wrap header + trust strip in single sticky container |
+| `src/index.css` | Remove individual sticky positioning from both elements |
+
 ## Result
 
-- The Video Consult Trust Strip will now be sticky and locked directly below the Video Consult Center header
-- Both headers will scroll together as a unified sticky block
-- The trust item spacing (28px gap) will match the SaferTrustStrip used on other pages
-- The trust items (Secure Video, Licensed Broker, Screen Sharing, Quote Review, No Obligation) remain unchanged as they are already video-consult-specific
+- The Video Consult Header and Trust Strip will be wrapped in a single sticky container
+- Both elements will scroll together as one unified block
+- The trust strip will always be visible directly below the header
+- This matches the pattern used in `SiteShell.tsx` for the main site header
