@@ -289,20 +289,47 @@ const MoveSummaryModal = React.forwardRef<HTMLDivElement, MoveSummaryModalProps>
 
 MoveSummaryModal.displayName = "MoveSummaryModal";
 
+// Furniture positions for detection overlay on sample living room image
+const FURNITURE_POSITIONS = [
+  { id: 0, name: "3-Seat Sofa", top: "55%", left: "5%", width: "40%", height: "32%" },
+  { id: 1, name: "Coffee Table", top: "72%", left: "35%", width: "22%", height: "14%" },
+  { id: 2, name: "TV Stand", top: "28%", left: "50%", width: "28%", height: "28%" },
+  { id: 3, name: "Armchair", top: "48%", left: "68%", width: "22%", height: "28%" },
+  { id: 4, name: "Floor Lamp", top: "18%", left: "88%", width: "10%", height: "38%" },
+];
+
 // Scanner Component - Center column
 interface ScannerPreviewProps {
   isRunning: boolean;
   onStartDemo: () => void;
+  visibleCount: number;
 }
 
-function ScannerPreview({ isRunning, onStartDemo }: ScannerPreviewProps) {
+function ScannerPreview({ isRunning, onStartDemo, visibleCount }: ScannerPreviewProps) {
   return (
     <div className="tru-ai-live-scanner">
       <img src={sampleRoomLiving} alt="Room being scanned" />
       {isRunning && (
-        <div className="tru-ai-scanner-overlay">
-          <div className="tru-ai-scanner-line" />
-        </div>
+        <>
+          <div className="tru-ai-scanner-overlay">
+            <div className="tru-ai-scanner-line" />
+          </div>
+          {/* Furniture detection boxes */}
+          {FURNITURE_POSITIONS.slice(0, visibleCount).map((item) => (
+            <div 
+              key={item.id}
+              className="tru-ai-detection-box"
+              style={{ 
+                top: item.top, 
+                left: item.left, 
+                width: item.width, 
+                height: item.height 
+              }}
+            >
+              <span className="tru-ai-detection-label">{item.name}</span>
+            </div>
+          ))}
+        </>
       )}
       <button 
         className="tru-ai-scanner-badge"
@@ -325,29 +352,10 @@ function ScannerPreview({ isRunning, onStartDemo }: ScannerPreviewProps) {
 
 // Detection List Component - Right column
 interface DetectionListProps {
-  isRunning: boolean;
+  visibleCount: number;
 }
 
-function DetectionList({ isRunning }: DetectionListProps) {
-  const [visibleCount, setVisibleCount] = useState(0);
-
-  useEffect(() => {
-    if (!isRunning) {
-      setVisibleCount(0);
-      return;
-    }
-    
-    const interval = setInterval(() => {
-      setVisibleCount(prev => {
-        if (prev >= SCAN_DEMO_ITEMS.length) {
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, 800);
-    return () => clearInterval(interval);
-  }, [isRunning]);
-
+function DetectionList({ visibleCount }: DetectionListProps) {
   const visibleItems = SCAN_DEMO_ITEMS.slice(0, visibleCount);
   const totalWeight = visibleItems.reduce((sum, item) => sum + item.weight, 0);
   const totalCuFt = visibleItems.reduce((sum, item) => sum + item.cuft, 0);
@@ -518,7 +526,20 @@ export default function Index() {
   
   // AI Scan Demo state
   const [scanDemoRunning, setScanDemoRunning] = useState(false);
+  const [scanVisibleCount, setScanVisibleCount] = useState(0);
   const scanPreviewRef = useRef<HTMLDivElement>(null);
+  
+  // Sync visibleCount with scan running state
+  useEffect(() => {
+    if (!scanDemoRunning) {
+      setScanVisibleCount(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setScanVisibleCount(prev => prev >= SCAN_DEMO_ITEMS.length ? prev : prev + 1);
+    }, 800);
+    return () => clearInterval(interval);
+  }, [scanDemoRunning]);
   
   // Form state
   const [fromZip, setFromZip] = useState("");
@@ -1584,8 +1605,9 @@ export default function Index() {
                 <div className={`tru-ai-center-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
                   <ScannerPreview 
                     isRunning={scanDemoRunning} 
+                    visibleCount={scanVisibleCount}
                     onStartDemo={() => {
-                      setScanDemoRunning(true);
+                      setScanDemoRunning(prev => !prev);
                       setTimeout(() => {
                         scanPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                       }, 100);
@@ -1595,7 +1617,7 @@ export default function Index() {
                 
                 {/* Right column: Detection list (moved from center) */}
                 <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
-                  <DetectionList isRunning={scanDemoRunning} />
+                  <DetectionList visibleCount={scanVisibleCount} />
                 </div>
               </div>
             </div>
