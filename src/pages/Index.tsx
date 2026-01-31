@@ -1575,13 +1575,8 @@ export default function Index() {
                   </div>
                 </div>
                 
-                {/* Center column: Detection list */}
+                {/* Center column: Scanner preview (moved from right) */}
                 <div className={`tru-ai-center-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
-                  <DetectionList isRunning={scanDemoRunning} />
-                </div>
-                
-                {/* Right column: Scanner preview */}
-                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
                   <ScannerPreview 
                     isRunning={scanDemoRunning} 
                     onStartDemo={() => {
@@ -1591,6 +1586,11 @@ export default function Index() {
                       }, 100);
                     }} 
                   />
+                </div>
+                
+                {/* Right column: Detection list (moved from center) */}
+                <div className={`tru-ai-right-column tru-ai-preview-vertical ${scanDemoRunning ? 'is-running' : ''}`}>
+                  <DetectionList isRunning={scanDemoRunning} />
                 </div>
               </div>
             </div>
