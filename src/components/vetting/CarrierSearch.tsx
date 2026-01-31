@@ -149,8 +149,8 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                     ? 'bg-foreground text-background border-2 border-foreground font-semibold shadow-sm' 
                     : 'bg-transparent text-muted-foreground border border-border hover:bg-muted hover:text-foreground active:bg-muted')
                 : (searchType === 'name' 
-                    ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-                    : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
+                    ? 'text-slate-900 dark:text-white border-2 border-green-500 bg-green-500/10 dark:bg-transparent shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
+                    : 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/20')
             )}
             onClick={() => setSearchType('name')}
           >
@@ -169,8 +169,8 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                     ? 'bg-foreground text-background border-2 border-foreground font-semibold shadow-sm' 
                     : 'bg-transparent text-muted-foreground border border-border hover:bg-muted hover:text-foreground active:bg-muted')
                 : (searchType === 'dot' 
-                    ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-                    : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
+                    ? 'text-slate-900 dark:text-white border-2 border-green-500 bg-green-500/10 dark:bg-transparent shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
+                    : 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/20')
             )}
             onClick={() => setSearchType('dot')}
           >
@@ -189,8 +189,8 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                     ? 'bg-foreground text-background border-2 border-foreground font-semibold shadow-sm' 
                     : 'bg-transparent text-muted-foreground border border-border hover:bg-muted hover:text-foreground active:bg-muted')
                 : (searchType === 'mc' 
-                    ? 'text-white border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
-                    : 'text-white/60 hover:text-white hover:bg-white/10 border border-white/20 active:bg-white/20')
+                    ? 'text-slate-900 dark:text-white border-2 border-green-500 bg-green-500/10 dark:bg-transparent shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
+                    : 'text-slate-600 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-300 dark:border-white/20')
             )}
             onClick={() => setSearchType('mc')}
           >
@@ -224,7 +224,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
             </>
           ) : (
             <>
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-white/50" />
               <Input
                 type="text"
                 placeholder={
@@ -237,7 +237,7 @@ export function CarrierSearch({ onSelect, className, isLoading: externalLoading 
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => results.length > 0 && setShowResults(true)}
-                className="pl-12 pr-12 h-12 text-base bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-primary/50 focus:ring-primary/20"
+                className="pl-12 pr-12 h-12 text-base bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40 focus:border-primary/50 focus:ring-primary/20"
               />
               {isLoading && (
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
