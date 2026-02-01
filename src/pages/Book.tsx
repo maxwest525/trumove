@@ -7,7 +7,7 @@ import {
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
   Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
-  Maximize2, Minimize2, Settings
+  Maximize2, Minimize2, Settings, CalendarDays, PenTool
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { BookingCalendar } from "@/components/video-consult/BookingCalendar";
 // Trust strip items now inline in header
 
 // Preview images
@@ -921,6 +929,7 @@ export default function Book() {
   const [showScreenSharePreview, setShowScreenSharePreview] = useState(false);
   const [shareAudio, setShareAudio] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
   
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
@@ -1246,64 +1255,76 @@ export default function Book() {
 
           {/* Booking Controls - Light themed card */}
           <div className="video-consult-booking-controls animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3 w-full text-center">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 w-full text-center">
               Virtual Video Controls
             </h3>
             
-            {/* Booking Code Row */}
-            <div className="flex items-center gap-3 w-full">
-              <Input
-                value={bookingCode}
-                onChange={(e) => setBookingCode(e.target.value)}
-                placeholder="Enter booking code..."
-                className="flex-1 h-11 bg-background border border-border"
-                onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
-              />
-              <Button 
-                onClick={handleJoinRoom} 
-                disabled={!bookingCode.trim()}
-                className="h-11 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
-              >
-                <Video className="w-4 h-4 mr-2" />
-                Join
-              </Button>
-            </div>
-
-            {/* Secondary Controls Row */}
-            <div className="flex items-center gap-2 flex-wrap justify-center mt-2">
+            {/* Top Row: All Control Buttons */}
+            <div className="flex items-center gap-2 flex-wrap justify-center mb-4">
               {/* Screen Share with Audio Toggle */}
               <div className="flex items-center">
                 <Button 
                   variant="outline" 
                   className={cn(
-                    "h-11 px-4 border border-border bg-background hover:bg-muted",
-                    isScreenSharing && "border-primary bg-primary/10 text-primary"
+                    "h-10 px-3 border border-border bg-background hover:bg-muted rounded-r-none",
+                    isScreenSharing && "border-foreground/50 bg-foreground/10"
                   )}
                   onClick={handleScreenShare}
                 >
-                  <Monitor className="w-4 h-4 mr-2" />
+                  <Monitor className="w-4 h-4 mr-1.5" />
                   {isScreenSharing ? "Stop" : "Share"}
                 </Button>
                 <Button
                   variant="outline"
                   size="icon"
                   className={cn(
-                    "h-11 w-11 border border-border bg-background hover:bg-muted border-l-0 rounded-l-none",
+                    "h-10 w-10 border border-border bg-background hover:bg-muted border-l-0 rounded-l-none",
                     !shareAudio && "text-muted-foreground"
                   )}
                   onClick={() => setShareAudio(!shareAudio)}
-                  title={shareAudio ? "System audio: ON" : "System audio: OFF"}
+                  title={shareAudio ? "Audio: ON" : "Audio: OFF"}
                 >
                   {shareAudio ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                 </Button>
               </div>
               
+              {/* Schedule Time */}
+              <Button 
+                variant="outline"
+                className="h-10 px-3 border border-border bg-background hover:bg-muted"
+                onClick={() => setShowScheduleModal(true)}
+              >
+                <CalendarDays className="w-4 h-4 mr-1.5" />
+                Schedule
+              </Button>
+              
+              {/* Trudy AI Service */}
+              <Button 
+                variant="outline"
+                className="h-10 px-3 border border-border bg-background hover:bg-muted"
+                onClick={() => toast.info("Trudy AI is available in the chat panel")}
+              >
+                <Bot className="w-4 h-4 mr-1.5" />
+                Trudy AI
+              </Button>
+              
+              {/* Virtual Whiteboard */}
+              <Button 
+                variant="outline"
+                className="h-10 px-3 border border-border bg-background hover:bg-muted"
+                onClick={() => toast.info("Whiteboard feature coming soon")}
+              >
+                <PenTool className="w-4 h-4 mr-1.5" />
+                Whiteboard
+              </Button>
+              
+              {/* Demo */}
               <Button 
                 variant="outline" 
                 onClick={handleStartDemo}
-                className="h-11 px-4 border border-border bg-background hover:bg-muted"
+                className="h-10 px-3 border border-border bg-background hover:bg-muted"
               >
-                <Sparkles className="w-4 h-4 mr-2" />
+                <Sparkles className="w-4 h-4 mr-1.5" />
                 Demo
               </Button>
               
@@ -1313,7 +1334,7 @@ export default function Book() {
                   <Button 
                     variant="outline" 
                     size="icon"
-                    className="h-11 w-11 border border-border bg-background hover:bg-muted"
+                    className="h-10 w-10 border border-border bg-background hover:bg-muted"
                   >
                     <Settings className="w-4 h-4" />
                   </Button>
@@ -1338,9 +1359,64 @@ export default function Book() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            
+            {/* Divider */}
+            <div className="w-full border-t border-border mb-4" />
+            
+            {/* Bottom Section: Booking Input + Actions */}
+            <div className="w-full space-y-3">
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Enter Booking Code or Shipment ID
+              </label>
+              <div className="flex items-center gap-2">
+                <Input
+                  value={bookingCode}
+                  onChange={(e) => setBookingCode(e.target.value)}
+                  placeholder="e.g. TM-2026-XXXXXXXX"
+                  className="flex-1 h-11 bg-background border border-border"
+                  onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+                />
+                <Button 
+                  onClick={handleJoinRoom} 
+                  disabled={!bookingCode.trim()}
+                  className="h-11 px-4 bg-foreground text-background hover:bg-foreground/90 font-semibold"
+                >
+                  <Video className="w-4 h-4 mr-2" />
+                  Join Video
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="h-11 px-4 border border-border bg-background hover:bg-muted font-semibold"
+                  onClick={() => window.location.href = "tel:+16097277647"}
+                >
+                  <Phone className="w-4 h-4 mr-2" />
+                  Call
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      
+      {/* Schedule Time Modal */}
+      <Dialog open={showScheduleModal} onOpenChange={setShowScheduleModal}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Schedule a Call with Your Agent</DialogTitle>
+          </DialogHeader>
+          <BookingCalendar 
+            onSelect={(date, time) => {
+              toast.success(`Scheduled for ${time} on ${date.toLocaleDateString()}`);
+              setShowScheduleModal(false);
+            }} 
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowScheduleModal(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       {/* Footer */}
       <Footer />
