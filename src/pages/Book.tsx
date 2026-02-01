@@ -7,7 +7,7 @@ import {
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search, Send, Mail,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
   Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
-  Maximize2, Minimize2, Settings, CalendarDays, PenTool, User
+  Maximize2, Minimize2, Settings, CalendarDays, PenTool, User, Headset
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,12 +74,12 @@ function FakeAgentView() {
         LIVE
       </div>
       
-      {/* Name badge overlay - bottom left like real video calls */}
-      <div className="absolute bottom-20 left-4 flex items-center gap-3 px-3 py-2 rounded-lg bg-black/50 backdrop-blur-sm">
-        <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
-        <div>
-          <p className="text-white font-bold text-sm">Trudy Martinez</p>
-          <p className="text-white/60 text-xs">Senior Moving Specialist</p>
+      {/* Name badge overlay - top right, next to LIVE indicator */}
+      <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm">
+        <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+        <div className="text-right">
+          <p className="text-white font-bold text-xs">Trudy Martinez</p>
+          <p className="text-white/60 text-[10px]">Senior Moving Specialist</p>
         </div>
       </div>
     </div>
@@ -751,11 +751,11 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
     setHasRunTimeline(true);
 
     const timeline: { delay: number; text?: string; typing?: boolean }[] = [
-      { delay: 300, text: "Hi there! Thanks for calling TruMove! 👋" },
+      { delay: 300, text: "Welcome to TruMove! I'm Trudy, your personal moving consultant. 👋" },
       { delay: 3500, typing: true },
-      { delay: 5500, text: "I'm Trudy, your dedicated moving specialist. How can I help you today?" },
+      { delay: 5500, text: "I see you're exploring your options - great timing! I can help you get an accurate quote, explain our services, or walk you through the moving process." },
       { delay: 10000, typing: true },
-      { delay: 12000, text: "Feel free to share your screen if you'd like me to review your inventory!" },
+      { delay: 12000, text: "Want to share your screen so I can see your inventory? Or I can answer any questions you have about pricing, timelines, or logistics!" },
     ];
 
     const timeouts: NodeJS.Timeout[] = [];
@@ -935,6 +935,7 @@ export default function Book() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showWhiteboardModal, setShowWhiteboardModal] = useState(false);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<string>("default");
   
   // Schedule form state
   const [scheduleName, setScheduleName] = useState("");
@@ -1234,7 +1235,58 @@ export default function Book() {
               {/* Chat Content */}
               <div className="video-consult-chat-content">
                 {chatMode === 'trudy' && (
-                  <AIChatContainer pageContext={pageContext} />
+                  <div className="video-consult-specialist-panel h-full flex flex-col">
+                    {/* Header */}
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/30">
+                        <img src={trudyAvatar} alt="Trudy" className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <h4 className="text-white font-bold text-sm">Trudy AI Assistant</h4>
+                        <p className="text-primary text-xs font-medium">Available 24/7</p>
+                      </div>
+                    </div>
+                    
+                    {/* Sample Questions */}
+                    <div className="flex-1 space-y-3">
+                      <p className="text-white/60 text-sm">
+                        Trudy can help you with:
+                      </p>
+                      <ul className="space-y-2 text-sm text-white/80">
+                        <li className="flex items-start gap-2">
+                          <span className="text-primary">•</span>
+                          "How much will my move cost?"
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-primary">•</span>
+                          "What's included in full-service packing?"
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-primary">•</span>
+                          "Can you explain the insurance options?"
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-primary">•</span>
+                          "Do you offer storage between moves?"
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    {/* CTA Button with Arrow */}
+                    <div className="mt-auto pt-4">
+                      <Button 
+                        className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-base group"
+                        onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
+                      >
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        Chat with Trudy Now
+                        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                      <p className="text-center text-white/40 text-[10px] mt-2">
+                        Opens in floating chat window
+                      </p>
+                    </div>
+                  </div>
                 )}
                 
                 {chatMode === 'support' && (
@@ -1280,14 +1332,55 @@ export default function Book() {
                       <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                         <MessageSquare className="w-5 h-5 text-primary" />
                       </div>
-                      <div>
+                      <div className="flex-1">
                         <h4 className="text-white font-bold text-sm">Live Video Chat</h4>
                         <p className="text-white/50 text-xs">
                           {roomUrl ? "Connected to call" : "Join a video call to chat"}
                         </p>
                       </div>
+                      
+                      {/* Speaker Device Selector */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10">
+                            <Headset className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-white/20 text-white">
+                          <DropdownMenuLabel className="text-white/60 text-xs">Audio Output</DropdownMenuLabel>
+                          <DropdownMenuSeparator className="bg-white/10" />
+                          <DropdownMenuItem 
+                            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+                            onClick={() => {
+                              setSelectedSpeaker("default");
+                              toast.info("Using default speaker");
+                            }}
+                          >
+                            {selectedSpeaker === "default" && "✓ "}Default Speaker
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+                            onClick={() => {
+                              setSelectedSpeaker("headphones");
+                              toast.info("Using headphones");
+                            }}
+                          >
+                            {selectedSpeaker === "headphones" && "✓ "}Headphones
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+                            onClick={() => {
+                              setSelectedSpeaker("external");
+                              toast.info("Using external speakers");
+                            }}
+                          >
+                            {selectedSpeaker === "external" && "✓ "}External Speakers
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      
                       {roomUrl && (
-                        <span className="ml-auto px-2 py-1 rounded bg-green-600/20 text-green-400 text-xs font-bold">
+                        <span className="px-2 py-1 rounded bg-green-600/20 text-green-400 text-xs font-bold">
                           LIVE
                         </span>
                       )}
@@ -1375,22 +1468,6 @@ export default function Book() {
                 </Button>
               </div>
               
-              {/* Mute Microphone */}
-              <Button
-                variant="outline"
-                size="icon"
-                className={cn(
-                  "h-10 w-10 border border-border bg-background hover:bg-muted",
-                  isMicMuted && "border-destructive/50 bg-destructive/10 text-destructive"
-                )}
-                onClick={() => {
-                  setIsMicMuted(!isMicMuted);
-                  toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
-                }}
-                title={isMicMuted ? "Unmute" : "Mute"}
-              >
-                {isMicMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-              </Button>
               
               {/* Schedule Time */}
               <Button 
@@ -1458,32 +1535,29 @@ export default function Book() {
             <div className="w-full border-t border-border mb-4" />
             
             {/* Bottom Section: Booking Input + Actions */}
-            <div className="w-full space-y-3">
-              <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Booking Code or Shipment ID
-              </label>
+            <div className="w-full space-y-2">
               <div className="flex items-center gap-2">
                 <Input
                   value={bookingCode}
                   onChange={(e) => setBookingCode(e.target.value)}
-                  placeholder="e.g. TM-2026-XXXXXXXX"
-                  className="flex-1 h-9 text-sm bg-background border border-border"
+                  placeholder="Booking Code or Shipment ID"
+                  className="flex-1 h-8 text-xs bg-background border border-border placeholder:text-muted-foreground/60"
                   onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
                 />
                 <Button 
                   onClick={handleJoinRoom} 
                   disabled={!bookingCode.trim()}
-                  className="h-9 px-3 text-sm bg-foreground text-background hover:bg-foreground/90 font-semibold"
+                  className="h-8 px-2.5 text-xs bg-foreground text-background hover:bg-foreground/90 font-semibold"
                 >
-                  <Video className="w-3.5 h-3.5 mr-1.5" />
+                  <Video className="w-3 h-3 mr-1" />
                   Join
                 </Button>
                 <Button 
                   variant="outline"
-                  className="h-9 px-3 text-sm border border-border bg-background hover:bg-muted font-semibold"
+                  className="h-8 px-2.5 text-xs border border-border bg-background hover:bg-muted font-semibold"
                   onClick={() => window.location.href = "tel:+16097277647"}
                 >
-                  <Phone className="w-3.5 h-3.5 mr-1.5" />
+                  <Phone className="w-3 h-3 mr-1" />
                   Call
                 </Button>
               </div>
@@ -1500,11 +1574,29 @@ export default function Book() {
           </DialogHeader>
           <BookingCalendar 
             onSelect={(date, time) => {
-              // Validate required fields
-              if (!scheduleName.trim() || !schedulePhone.trim() || !scheduleTcpaConsent) {
-                toast.error("Please fill out all required fields and consent to be contacted");
+              // Validate ALL required fields
+              if (!date || !time) {
+                toast.error("Please select both a date and time");
                 return;
               }
+              if (!scheduleName.trim()) {
+                toast.error("Please enter your name");
+                return;
+              }
+              if (!schedulePhone.trim()) {
+                toast.error("Please enter your phone number");
+                return;
+              }
+              if (!scheduleEmail.trim()) {
+                toast.error("Please enter your email address");
+                return;
+              }
+              if (!scheduleTcpaConsent) {
+                toast.error("Please consent to be contacted to continue");
+                return;
+              }
+              
+              // All fields valid - submit
               toast.success(`Scheduled for ${time} on ${date.toLocaleDateString()}`);
               // Reset form
               setScheduleName("");
@@ -1545,7 +1637,7 @@ export default function Book() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="schedule-email" className="text-xs">
-                Email (optional)
+                Email <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="schedule-email"
