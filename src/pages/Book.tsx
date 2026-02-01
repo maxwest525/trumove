@@ -1228,22 +1228,10 @@ export default function Book() {
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
 
-  // Fullscreen toggle handler
+  // Video modal toggle handler (opens expanded video in a modal)
   const toggleFullscreen = () => {
-    const container = document.getElementById('video-consult-container');
-    if (!isFullscreen && container) {
-      container.requestFullscreen?.();
-    } else {
-      document.exitFullscreen?.();
-    }
+    setIsFullscreen(!isFullscreen);
   };
-
-  // Listen for fullscreen changes
-  useEffect(() => {
-    const handleChange = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener('fullscreenchange', handleChange);
-    return () => document.removeEventListener('fullscreenchange', handleChange);
-  }, []);
 
   // Enumerate audio output devices
   useEffect(() => {
@@ -2166,6 +2154,57 @@ export default function Book() {
             </div>
           </DialogHeader>
           <WhiteboardCanvas />
+        </DialogContent>
+      </Dialog>
+      
+      {/* Expanded Video Modal */}
+      <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
+        <DialogContent className="sm:max-w-5xl h-[85vh] p-0 overflow-hidden">
+          <DialogHeader className="absolute top-0 left-0 right-0 z-20 p-4 bg-gradient-to-b from-black/80 to-transparent">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-white flex items-center gap-2">
+                <Video className="w-5 h-5" />
+                Video Consultation
+              </DialogTitle>
+              <span className="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 mr-8">
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                LIVE
+              </span>
+            </div>
+          </DialogHeader>
+          
+          <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+            {roomUrl ? (
+              isDemo ? (
+                <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsFullscreen(false); }} />
+              ) : (
+                <DailyVideoRoom 
+                  roomUrl={roomUrl}
+                  userName="Guest"
+                  onLeave={() => { handleLeaveRoom(); setIsFullscreen(false); }}
+                  className="w-full h-full"
+                />
+              )
+            ) : (
+              <div className="text-center p-8">
+                <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
+                  <Users className="w-12 h-12 text-white/30" />
+                </div>
+                <h3 className="text-xl font-bold text-white/90 mb-2">
+                  No Active Session
+                </h3>
+                <p className="text-white/50 text-sm mb-6">
+                  Close this window and join a session first.
+                </p>
+                <button
+                  onClick={() => setIsFullscreen(false)}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
       
