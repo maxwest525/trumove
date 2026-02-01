@@ -7,7 +7,8 @@ import {
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search, Send, Mail,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles, Truck,
   Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
-  Maximize2, Minimize2, Settings, CalendarDays, PenTool, User, Headset
+  Maximize2, Minimize2, Settings, CalendarDays, PenTool, User, Headset,
+  PhoneCall, PictureInPicture2, PictureInPictureIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -224,11 +225,11 @@ function ChatTypingIndicator() {
 function AgentQueueIndicator({ 
   position, 
   waitSeconds,
-  onPositionChange 
+  onRequestCallback
 }: { 
   position: number; 
   waitSeconds: number;
-  onPositionChange?: (newPosition: number) => void;
+  onRequestCallback?: () => void;
 }) {
   const [displayPosition, setDisplayPosition] = useState(position);
   const [isHighlighted, setIsHighlighted] = useState(false);
@@ -277,13 +278,14 @@ function AgentQueueIndicator({
             </span>
           </div>
         </div>
-        {/* Compact progress indicator */}
-        <div className="w-12 h-1.5 bg-white/10 rounded-full overflow-hidden flex-shrink-0">
-          <div 
-            className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-1000"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
+        {/* Skip queue button */}
+        <button
+          onClick={onRequestCallback}
+          className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded transition-colors"
+        >
+          <PhoneCall className="w-3 h-3" />
+          Callback
+        </button>
       </div>
     </div>
   );
@@ -1179,6 +1181,14 @@ export default function Book() {
   const [queueWaitSeconds, setQueueWaitSeconds] = useState(120);
   const [agentConnected, setAgentConnected] = useState(false);
   
+  // Callback request modal state
+  const [showCallbackModal, setShowCallbackModal] = useState(false);
+  const [callbackPhone, setCallbackPhone] = useState('');
+  const [callbackSubmitted, setCallbackSubmitted] = useState(false);
+  
+  // Picture-in-picture state
+  const [isPiP, setIsPiP] = useState(false);
+  
   // Simulate agent availability changes
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1421,14 +1431,25 @@ export default function Book() {
             <Card id="video-consult-container" className="overflow-hidden border-2 border-border/60 bg-gradient-to-b from-muted/30 to-background">
               <CardContent className="p-0">
                 <div className="relative min-h-[400px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-                  {/* Fullscreen toggle button - top right */}
-                  <button
-                    onClick={toggleFullscreen}
-                    className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
-                    title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
-                  >
-                    {isFullscreen ? <Minimize2 className="w-4 h-4 text-white" /> : <Maximize2 className="w-4 h-4 text-white" />}
-                  </button>
+                  {/* Top controls - Fullscreen and PiP */}
+                  <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+                    {roomUrl && (
+                      <button
+                        onClick={() => setIsPiP(!isPiP)}
+                        className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+                        title={isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}
+                      >
+                        <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
+                      </button>
+                    )}
+                    <button
+                      onClick={toggleFullscreen}
+                      className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+                      title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+                    >
+                      {isFullscreen ? <Minimize2 className="w-4 h-4 text-white" /> : <Maximize2 className="w-4 h-4 text-white" />}
+                    </button>
+                  </div>
                   {roomUrl ? (
                     isDemo ? (
                       <DemoVideoPlaceholder onLeave={handleLeaveRoom} />
@@ -1606,6 +1627,7 @@ export default function Book() {
                       <AgentQueueIndicator 
                         position={queuePosition} 
                         waitSeconds={queueWaitSeconds}
+                        onRequestCallback={() => setShowCallbackModal(true)}
                       />
                     )}
                     
@@ -2198,6 +2220,118 @@ export default function Book() {
           </div>
         </DialogContent>
       </Dialog>
+      
+      {/* Callback Request Modal */}
+      <Dialog open={showCallbackModal} onOpenChange={setShowCallbackModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <PhoneCall className="w-5 h-5 text-primary" />
+              Request a Callback
+            </DialogTitle>
+          </DialogHeader>
+          
+          {callbackSubmitted ? (
+            <div className="text-center py-6">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <Phone className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">Callback Requested!</h3>
+              <p className="text-muted-foreground text-sm mb-4">
+                An agent will call you at <span className="font-semibold">{callbackPhone}</span> within 5 minutes.
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setShowCallbackModal(false);
+                  setCallbackSubmitted(false);
+                  setCallbackPhone('');
+                }}
+              >
+                Done
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-muted-foreground text-sm">
+                Skip the queue! Enter your phone number and an agent will call you back shortly.
+              </p>
+              
+              <div className="space-y-2">
+                <Label htmlFor="callback-phone">Phone Number</Label>
+                <Input
+                  id="callback-phone"
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                  value={callbackPhone}
+                  onChange={(e) => setCallbackPhone(e.target.value)}
+                  className="h-11"
+                />
+              </div>
+              
+              <DialogFooter className="gap-2 sm:gap-0">
+                <Button variant="ghost" onClick={() => setShowCallbackModal(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={() => {
+                    if (callbackPhone.trim().length >= 10) {
+                      setCallbackSubmitted(true);
+                      toast.success("Callback requested! An agent will call you shortly.");
+                    } else {
+                      toast.error("Please enter a valid phone number");
+                    }
+                  }}
+                  disabled={!callbackPhone.trim()}
+                >
+                  <PhoneCall className="w-4 h-4 mr-2" />
+                  Request Callback
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Picture-in-Picture Floating Video */}
+      {isPiP && roomUrl && (
+        <div className="fixed bottom-24 right-6 z-50 w-80 rounded-xl overflow-hidden shadow-2xl border-2 border-border/60 bg-slate-900 animate-in slide-in-from-right-4 duration-300">
+          <div className="relative aspect-video">
+            {isDemo ? (
+              <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsPiP(false); }} />
+            ) : (
+              <DailyVideoRoom 
+                roomUrl={roomUrl}
+                userName="Guest"
+                onLeave={() => { handleLeaveRoom(); setIsPiP(false); }}
+                className="w-full h-full"
+              />
+            )}
+            {/* PiP controls overlay */}
+            <div className="absolute top-2 right-2 flex items-center gap-1">
+              <button
+                onClick={() => { setIsPiP(false); toggleFullscreen(); }}
+                className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors"
+                title="Expand"
+              >
+                <Maximize2 className="w-3.5 h-3.5 text-white" />
+              </button>
+              <button
+                onClick={() => setIsPiP(false)}
+                className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors"
+                title="Close PiP"
+              >
+                <X className="w-3.5 h-3.5 text-white" />
+              </button>
+            </div>
+            {/* LIVE badge */}
+            <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-red-600 text-white text-[10px] font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              LIVE
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Footer */}
       <Footer />
