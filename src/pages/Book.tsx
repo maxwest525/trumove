@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { DailyVideoRoom } from "@/components/video-consult/DailyVideoRoom";
@@ -1188,6 +1188,55 @@ export default function Book() {
   
   // Picture-in-picture state
   const [isPiP, setIsPiP] = useState(false);
+  const [pipPosition, setPipPosition] = useState({ x: 0, y: 0 }); // 0,0 = default position (bottom-right)
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
+  const pipRef = useRef<HTMLDivElement>(null);
+  
+  // PiP drag handlers
+  const handlePipMouseDown = useCallback((e: React.MouseEvent) => {
+    // Only start drag from the header area (not buttons)
+    if ((e.target as HTMLElement).closest('button')) return;
+    
+    e.preventDefault();
+    setIsDragging(true);
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startPosX: pipPosition.x,
+      startPosY: pipPosition.y
+    };
+  }, [pipPosition]);
+  
+  useEffect(() => {
+    if (!isDragging) return;
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!dragRef.current) return;
+      
+      const deltaX = e.clientX - dragRef.current.startX;
+      const deltaY = e.clientY - dragRef.current.startY;
+      
+      // Invert X because we're positioned from right, invert Y because we're from bottom
+      setPipPosition({
+        x: dragRef.current.startPosX - deltaX,
+        y: dragRef.current.startPosY - deltaY
+      });
+    };
+    
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      dragRef.current = null;
+    };
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
   
   // Queue opt-in state (user must click to join queue)
   const [hasJoinedQueue, setHasJoinedQueue] = useState(false);
@@ -2323,9 +2372,47 @@ export default function Book() {
         </DialogContent>
       </Dialog>
       
-      {/* Picture-in-Picture Floating Video */}
+      {/* Picture-in-Picture Floating Video - Draggable */}
       {isPiP && roomUrl && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 rounded-xl overflow-hidden shadow-2xl border-2 border-border/60 bg-slate-900 animate-in slide-in-from-right-4 duration-300">
+        <div 
+          ref={pipRef}
+          className={cn(
+            "fixed z-50 w-80 rounded-xl overflow-hidden shadow-2xl border-2 border-border/60 bg-slate-900",
+            !isDragging && "animate-in slide-in-from-right-4 duration-300",
+            isDragging && "cursor-grabbing"
+          )}
+          style={{
+            right: Math.max(24, pipPosition.x),
+            bottom: Math.max(96, pipPosition.y)
+          }}
+        >
+          {/* Draggable header */}
+          <div 
+            className="h-6 bg-slate-800/80 flex items-center justify-between px-2 cursor-grab active:cursor-grabbing"
+            onMouseDown={handlePipMouseDown}
+          >
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-red-500" />
+              <span className="text-[10px] text-white/60 font-medium select-none">Video Call</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => { setIsPiP(false); toggleFullscreen(); }}
+                className="w-5 h-5 rounded flex items-center justify-center hover:bg-white/10 transition-colors"
+                title="Expand"
+              >
+                <Maximize2 className="w-3 h-3 text-white/70" />
+              </button>
+              <button
+                onClick={() => { setIsPiP(false); setPipPosition({ x: 0, y: 0 }); }}
+                className="w-5 h-5 rounded flex items-center justify-center hover:bg-white/10 transition-colors"
+                title="Close"
+              >
+                <X className="w-3 h-3 text-white/70" />
+              </button>
+            </div>
+          </div>
+          
           <div className="relative aspect-video">
             {isDemo ? (
               <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsPiP(false); }} />
@@ -2337,23 +2424,6 @@ export default function Book() {
                 className="w-full h-full"
               />
             )}
-            {/* PiP controls overlay */}
-            <div className="absolute top-2 right-2 flex items-center gap-1">
-              <button
-                onClick={() => { setIsPiP(false); toggleFullscreen(); }}
-                className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors"
-                title="Expand"
-              >
-                <Maximize2 className="w-3.5 h-3.5 text-white" />
-              </button>
-              <button
-                onClick={() => setIsPiP(false)}
-                className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors"
-                title="Close PiP"
-              >
-                <X className="w-3.5 h-3.5 text-white" />
-              </button>
-            </div>
             {/* LIVE badge */}
             <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-red-600 text-white text-[10px] font-bold flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
