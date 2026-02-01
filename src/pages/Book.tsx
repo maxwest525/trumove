@@ -1189,6 +1189,9 @@ export default function Book() {
   // Picture-in-picture state
   const [isPiP, setIsPiP] = useState(false);
   
+  // Queue opt-in state (user must click to join queue)
+  const [hasJoinedQueue, setHasJoinedQueue] = useState(false);
+  
   // Simulate agent availability changes
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1201,9 +1204,9 @@ export default function Book() {
     return () => clearInterval(interval);
   }, []);
   
-  // Dynamic queue countdown timer
+  // Dynamic queue countdown timer (only runs when user has joined queue)
   useEffect(() => {
-    if (!roomUrl || agentConnected || liveChatMessages.length > 0) return;
+    if (!hasJoinedQueue || agentConnected || liveChatMessages.length > 0) return;
     
     const interval = setInterval(() => {
       setQueueWaitSeconds(prev => {
@@ -1622,24 +1625,51 @@ export default function Book() {
                       </div>
                     </div>
                     
-                    {/* Queue Indicator - shown when waiting for agent */}
-                    {roomUrl && liveChatMessages.length === 0 && !isAgentTyping && !agentConnected && (
-                      <AgentQueueIndicator 
-                        position={queuePosition} 
-                        waitSeconds={queueWaitSeconds}
-                        onRequestCallback={() => setShowCallbackModal(true)}
-                      />
+                    {/* Connect to Agent / Queue Section */}
+                    {liveChatMessages.length === 0 && !isAgentTyping && !agentConnected && (
+                      <>
+                        {!hasJoinedQueue ? (
+                          // Show connect button before joining queue
+                          <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-3">
+                            <p className="text-white/70 text-sm text-center mb-3">
+                              Ready to chat with a live agent?
+                            </p>
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={() => setHasJoinedQueue(true)}
+                                className="flex-1 bg-primary hover:bg-primary/90"
+                                size="sm"
+                              >
+                                <Users className="w-4 h-4 mr-2" />
+                                Join Queue
+                              </Button>
+                              <Button
+                                onClick={() => setShowCallbackModal(true)}
+                                variant="outline"
+                                className="flex-1 border-white/20 text-white hover:bg-white/10"
+                                size="sm"
+                              >
+                                <PhoneCall className="w-4 h-4 mr-2" />
+                                Request Callback
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          // Show queue indicator after joining
+                          <AgentQueueIndicator 
+                            position={queuePosition} 
+                            waitSeconds={queueWaitSeconds}
+                            onRequestCallback={() => setShowCallbackModal(true)}
+                          />
+                        )}
+                      </>
                     )}
                     
                     {/* Messages Area */}
                     <div className="flex-1 overflow-y-auto space-y-2 mb-3 min-h-[200px] bg-white/5 rounded-lg p-3">
-                      {!roomUrl ? (
-                        <p className="text-white/40 text-sm text-center py-8">
-                          Join a video call to chat live with an agent
-                        </p>
-                      ) : liveChatMessages.length === 0 && !isAgentTyping ? (
+                      {liveChatMessages.length === 0 && !isAgentTyping ? (
                         <p className="text-white/40 text-sm text-center py-4">
-                          Send a message to connect with an agent
+                          {hasJoinedQueue ? "Waiting for agent..." : "Connect with an agent to start chatting"}
                         </p>
                       ) : (
                         <>
