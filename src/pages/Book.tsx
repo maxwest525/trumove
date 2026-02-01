@@ -7,7 +7,7 @@ import {
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search, Send, Mail,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
   Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
-  Maximize2, Minimize2, Settings, CalendarDays, PenTool
+  Maximize2, Minimize2, Settings, CalendarDays, PenTool, User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,9 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { BookingCalendar } from "@/components/video-consult/BookingCalendar";
+import { WhiteboardCanvas } from "@/components/video-consult/WhiteboardCanvas";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 // Trust strip items now inline in header
 
 // Preview images
@@ -931,6 +934,13 @@ export default function Book() {
   const [shareAudio, setShareAudio] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [showWhiteboardModal, setShowWhiteboardModal] = useState(false);
+  
+  // Schedule form state
+  const [scheduleName, setScheduleName] = useState("");
+  const [schedulePhone, setSchedulePhone] = useState("");
+  const [scheduleEmail, setScheduleEmail] = useState("");
+  const [scheduleTcpaConsent, setScheduleTcpaConsent] = useState(false);
   
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
@@ -1327,9 +1337,14 @@ export default function Book() {
 
           {/* Booking Controls - Light themed card */}
           <div className="video-consult-booking-controls animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 w-full text-center">
-              Virtual Video Controls
-            </h3>
+            {/* Header with decorative lines */}
+            <div className="flex items-center gap-3 w-full mb-4">
+              <div className="flex-1 h-px bg-border" />
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground px-2">
+                Virtual Video Controls
+              </h3>
+              <div className="flex-1 h-px bg-border" />
+            </div>
             
             {/* Top Row: All Control Buttons */}
             <div className="flex items-center gap-2 flex-wrap justify-center mb-4">
@@ -1387,11 +1402,11 @@ export default function Book() {
                 Schedule
               </Button>
               
-              {/* Trudy AI Service */}
+              {/* Trudy AI Service - Opens global chat */}
               <Button 
                 variant="outline"
                 className="h-10 px-3 border border-border bg-background hover:bg-muted"
-                onClick={() => toast.info("Trudy AI is available in the chat panel")}
+                onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
               >
                 <Bot className="w-4 h-4 mr-1.5" />
                 Trudy AI
@@ -1401,7 +1416,7 @@ export default function Book() {
               <Button 
                 variant="outline"
                 className="h-10 px-3 border border-border bg-background hover:bg-muted"
-                onClick={() => toast.info("Whiteboard feature coming soon")}
+                onClick={() => setShowWhiteboardModal(true)}
               >
                 <PenTool className="w-4 h-4 mr-1.5" />
                 Whiteboard
@@ -1444,31 +1459,31 @@ export default function Book() {
             
             {/* Bottom Section: Booking Input + Actions */}
             <div className="w-full space-y-3">
-              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Enter Booking Code or Shipment ID
+              <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Booking Code or Shipment ID
               </label>
               <div className="flex items-center gap-2">
                 <Input
                   value={bookingCode}
                   onChange={(e) => setBookingCode(e.target.value)}
                   placeholder="e.g. TM-2026-XXXXXXXX"
-                  className="flex-1 h-11 bg-background border border-border"
+                  className="flex-1 h-9 text-sm bg-background border border-border"
                   onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
                 />
                 <Button 
                   onClick={handleJoinRoom} 
                   disabled={!bookingCode.trim()}
-                  className="h-11 px-4 bg-foreground text-background hover:bg-foreground/90 font-semibold"
+                  className="h-9 px-3 text-sm bg-foreground text-background hover:bg-foreground/90 font-semibold"
                 >
-                  <Video className="w-4 h-4 mr-2" />
-                  Join Video
+                  <Video className="w-3.5 h-3.5 mr-1.5" />
+                  Join
                 </Button>
                 <Button 
                   variant="outline"
-                  className="h-11 px-4 border border-border bg-background hover:bg-muted font-semibold"
+                  className="h-9 px-3 text-sm border border-border bg-background hover:bg-muted font-semibold"
                   onClick={() => window.location.href = "tel:+16097277647"}
                 >
-                  <Phone className="w-4 h-4 mr-2" />
+                  <Phone className="w-3.5 h-3.5 mr-1.5" />
                   Call
                 </Button>
               </div>
@@ -1477,7 +1492,7 @@ export default function Book() {
         </div>
       </div>
       
-      {/* Schedule Time Modal */}
+      {/* Schedule Time Modal with Contact Form */}
       <Dialog open={showScheduleModal} onOpenChange={setShowScheduleModal}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
@@ -1485,15 +1500,99 @@ export default function Book() {
           </DialogHeader>
           <BookingCalendar 
             onSelect={(date, time) => {
+              // Validate required fields
+              if (!scheduleName.trim() || !schedulePhone.trim() || !scheduleTcpaConsent) {
+                toast.error("Please fill out all required fields and consent to be contacted");
+                return;
+              }
               toast.success(`Scheduled for ${time} on ${date.toLocaleDateString()}`);
+              // Reset form
+              setScheduleName("");
+              setSchedulePhone("");
+              setScheduleEmail("");
+              setScheduleTcpaConsent(false);
               setShowScheduleModal(false);
             }} 
           />
+          
+          {/* Contact Information Fields */}
+          <div className="space-y-4 pt-4 border-t border-border">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="schedule-name" className="text-xs">
+                  Name <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="schedule-name"
+                  value={scheduleName}
+                  onChange={(e) => setScheduleName(e.target.value)}
+                  placeholder="Your name"
+                  className="h-9"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="schedule-phone" className="text-xs">
+                  Phone <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="schedule-phone"
+                  value={schedulePhone}
+                  onChange={(e) => setSchedulePhone(e.target.value)}
+                  placeholder="(555) 123-4567"
+                  className="h-9"
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="schedule-email" className="text-xs">
+                Email (optional)
+              </Label>
+              <Input
+                id="schedule-email"
+                type="email"
+                value={scheduleEmail}
+                onChange={(e) => setScheduleEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="h-9"
+              />
+            </div>
+            
+            {/* TCPA Consent */}
+            <div className="flex items-start gap-2">
+              <Checkbox
+                id="tcpa-consent"
+                checked={scheduleTcpaConsent}
+                onCheckedChange={(checked) => setScheduleTcpaConsent(checked === true)}
+                className="mt-0.5"
+              />
+              <Label htmlFor="tcpa-consent" className="text-[11px] text-muted-foreground leading-tight cursor-pointer">
+                I consent to receive calls and texts at the phone number provided, including by autodialer. 
+                Consent is not a condition of purchase. Message and data rates may apply. <span className="text-destructive">*</span>
+              </Label>
+            </div>
+          </div>
+          
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowScheduleModal(false)}>
               Cancel
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Whiteboard Modal */}
+      <Dialog open={showWhiteboardModal} onOpenChange={setShowWhiteboardModal}>
+        <DialogContent className="sm:max-w-4xl h-[80vh]">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <DialogTitle>Virtual Whiteboard</DialogTitle>
+              <span className="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 mr-8">
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                LIVE
+              </span>
+            </div>
+          </DialogHeader>
+          <WhiteboardCanvas />
         </DialogContent>
       </Dialog>
       
