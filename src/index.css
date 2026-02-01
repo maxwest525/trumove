@@ -25711,10 +25711,10 @@
 .tracking-content {
   flex: 1;
   display: grid;
-  grid-template-columns: 480px minmax(180px, 1fr) 480px;
-  gap: 10px;
-  padding: 12px;
-  padding-top: 20px; /* Gap from header */
+  grid-template-columns: 400px minmax(140px, 1fr) 400px;
+  gap: 8px;
+  padding: 10px;
+  padding-top: 16px; /* Gap from header */
   overflow: auto;
   min-height: 0;
   height: 100%;
@@ -25722,39 +25722,39 @@
 
 /* 2-Column Layout - Map + Dashboard (no left sidebar) */
 .tracking-content.tracking-content-2col {
-  grid-template-columns: minmax(400px, 1fr) 360px;
+  grid-template-columns: minmax(300px, 1fr) 280px;
 }
 
 @media (max-width: 1600px) {
   .tracking-content {
-    grid-template-columns: 400px minmax(160px, 1fr) 400px;
-    gap: 8px;
+    grid-template-columns: 340px minmax(120px, 1fr) 340px;
+    gap: 6px;
   }
   
   .tracking-content.tracking-content-2col {
-    grid-template-columns: minmax(360px, 1fr) 340px;
+    grid-template-columns: minmax(280px, 1fr) 260px;
   }
 }
 
 @media (max-width: 1400px) {
   .tracking-content {
-    grid-template-columns: 360px minmax(140px, 1fr) 360px;
-    gap: 8px;
+    grid-template-columns: 300px minmax(100px, 1fr) 300px;
+    gap: 6px;
   }
   
   .tracking-content.tracking-content-2col {
-    grid-template-columns: minmax(320px, 1fr) 320px;
+    grid-template-columns: minmax(240px, 1fr) 240px;
   }
 }
 
 @media (max-width: 1280px) {
   .tracking-content {
-    grid-template-columns: 320px 1fr 320px;
-    gap: 6px;
+    grid-template-columns: 260px 1fr 260px;
+    gap: 5px;
   }
   
   .tracking-content.tracking-content-2col {
-    grid-template-columns: minmax(280px, 1fr) 300px;
+    grid-template-columns: minmax(220px, 1fr) 220px;
   }
 }
 
@@ -25762,7 +25762,7 @@
   .tracking-content,
   .tracking-content.tracking-content-2col {
     grid-template-columns: 1fr;
-    padding: 12px;
+    padding: 10px;
   }
   
   .tracking-sidebar {
@@ -25771,14 +25771,14 @@
   
   .tracking-map-container {
     order: 1;
-    min-height: 350px;
+    min-height: 280px;
   }
   
   .tracking-dashboard {
     order: 2;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 6px;
   }
 }
 
@@ -25792,17 +25792,18 @@
 .tracking-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   overflow-y: auto;
-  min-width: 280px;
+  min-width: 220px;
 }
 
-/* Map Container - Expands to fill vertical space */
+/* Map Container - Reduced height to 75% */
 .tracking-map-container {
-  min-height: 400px;
+  min-height: 300px;
+  max-height: calc(100vh - 280px);
   height: 100%;
   flex: 1;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   border: 1px solid hsl(var(--border));
 }
@@ -25873,15 +25874,15 @@
 .tracking-dashboard {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   overflow-y: auto;
-  min-width: 260px;
+  min-width: 200px;
 }
 
 /* Collapsed Dashboard State */
 .tracking-dashboard-collapsed {
-  min-width: 48px !important;
-  width: 48px !important;
+  min-width: 40px !important;
+  width: 40px !important;
   padding: 0 !important;
   overflow: hidden;
 }
@@ -25891,12 +25892,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   height: 100%;
-  padding: 16px 8px;
+  padding: 12px 6px;
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
 .dark .tracking-sidebar-collapsed {
@@ -25905,10 +25906,10 @@
 }
 
 .tracking-dashboard > div {
-  padding: 10px !important;
+  padding: 8px !important;
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .dark .tracking-dashboard > div {
@@ -25917,25 +25918,62 @@
 }
 
 .tracking-dashboard .text-sm {
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .tracking-dashboard .text-xs {
-  font-size: 11px;
+  font-size: 9px;
+}
+
+.tracking-dashboard .text-base {
+  font-size: 12px;
+}
+
+.tracking-dashboard .text-lg {
+  font-size: 13px;
+}
+
+.tracking-dashboard .text-xl {
+  font-size: 14px;
+}
+
+.tracking-dashboard .text-2xl {
+  font-size: 16px;
+}
+
+/* Compact icons in dashboard */
+.tracking-dashboard [class*="w-3"] {
+  width: 0.6rem;
+  height: 0.6rem;
+}
+
+.tracking-dashboard [class*="w-4"] {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.tracking-dashboard [class*="w-5"] {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.tracking-dashboard [class*="w-6"] {
+  width: 1rem;
+  height: 1rem;
 }
 
 /* Unified Stats Card */
 .unified-stats-card {
-  padding: 10px !important;
+  padding: 8px !important;
 }
 
 .unified-stats-card .tracking-progress-bar {
-  height: 5px;
+  height: 4px;
 }
 
 /* Collapsible Card Styling */
 .collapsible-card {
-  padding: 10px !important;
+  padding: 8px !important;
 }
 
 .collapsible-card [data-state="closed"] + div {
@@ -25944,15 +25982,15 @@
 
 /* Street View Compact Variant */
 .street-view-compact {
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
 /* Glass Card Style - Themed, compact */
 .tracking-info-card {
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border) / 0.6);
-  border-radius: 10px;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 8px;
   backdrop-filter: blur(12px);
   box-shadow: 0 1px 4px hsl(var(--foreground) / 0.02);
 }
