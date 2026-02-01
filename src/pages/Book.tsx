@@ -1225,6 +1225,29 @@ export default function Book() {
     };
     
     const handleMouseUp = () => {
+      // Snap to nearest corner
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const pipWidth = 320; // w-80 = 320px
+      const pipHeight = 220; // approximate height with header
+      
+      // Calculate current center position
+      const currentRight = pipPosition.x;
+      const currentBottom = pipPosition.y;
+      const centerX = windowWidth - currentRight - pipWidth / 2;
+      const centerY = windowHeight - currentBottom - pipHeight / 2;
+      
+      // Determine which corner is closest
+      const isLeft = centerX < windowWidth / 2;
+      const isTop = centerY < windowHeight / 2;
+      
+      // Snap to corner with padding
+      const padding = 24;
+      setPipPosition({
+        x: isLeft ? windowWidth - pipWidth - padding : padding,
+        y: isTop ? windowHeight - pipHeight - padding : padding + 72 // Account for footer
+      });
+      
       setIsDragging(false);
       dragRef.current = null;
     };
@@ -1480,9 +1503,9 @@ export default function Book() {
           {/* Two-Column Grid: Video + Chat Panel */}
           <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-6 mb-8">
             {/* Main Video Window */}
-            <Card id="video-consult-container" className="overflow-hidden border-2 border-border/60 bg-gradient-to-b from-muted/30 to-background">
+            <Card id="video-consult-container" className="overflow-hidden border-2 border-primary/20 bg-gradient-to-b from-muted/30 to-background shadow-lg shadow-primary/5 ring-1 ring-white/5">
               <CardContent className="p-0">
-                <div className="relative min-h-[400px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+                <div className="relative min-h-[400px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
                   {/* Top controls - Fullscreen and PiP */}
                   <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                     {roomUrl && (
@@ -1562,7 +1585,7 @@ export default function Book() {
             </Card>
 
             {/* Chat Panel - Right Side */}
-            <div className="video-consult-chat-panel">
+            <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5">
               {/* Tab Selector - 3 Options */}
               <div className="video-consult-chat-tabs">
                 <button 
@@ -1655,20 +1678,20 @@ export default function Book() {
                 {chatMode === 'liveagent' && (
                   <div className="video-consult-specialist-panel h-full flex flex-col">
                     {/* Header with Status Badge */}
-                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
                       <div className="w-12 h-12 rounded-full bg-muted border-2 border-border flex items-center justify-center relative">
                         <User className="w-6 h-6 text-foreground" />
                         <span className={cn(
-                          "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-slate-900",
+                          "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-background",
                           agentStatus === 'available' ? "bg-green-500" : "bg-amber-400"
                         )} />
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-white font-bold text-sm">Live Agent Chat</h4>
+                        <h4 className="font-bold text-sm text-foreground">Live Agent Chat</h4>
                         <div className="flex items-center gap-2">
                           <AgentStatusBadge status={agentStatus} />
                           {agentStatus === 'busy' && (
-                            <span className="text-white/50 text-[10px]">~3 min wait</span>
+                            <span className="text-muted-foreground text-[10px]">~3 min wait</span>
                           )}
                         </div>
                       </div>
@@ -1679,14 +1702,14 @@ export default function Book() {
                       <>
                         {!hasJoinedQueue ? (
                           // Show connect button before joining queue
-                          <div className="bg-white/5 border border-white/10 rounded-lg p-4 mb-3">
-                            <p className="text-white/70 text-sm text-center mb-3">
+                          <div className="bg-muted/50 border border-border rounded-lg p-4 mb-4">
+                            <p className="text-muted-foreground text-sm text-center mb-3">
                               Ready to chat with a live agent?
                             </p>
                             <div className="flex gap-2">
                               <Button
                                 onClick={() => setHasJoinedQueue(true)}
-                                className="flex-1 bg-primary hover:bg-primary/90"
+                                className="flex-1"
                                 size="sm"
                               >
                                 <Users className="w-4 h-4 mr-2" />
@@ -1695,11 +1718,11 @@ export default function Book() {
                               <Button
                                 onClick={() => setShowCallbackModal(true)}
                                 variant="outline"
-                                className="flex-1 border-white/20 text-white hover:bg-white/10"
+                                className="flex-1"
                                 size="sm"
                               >
                                 <PhoneCall className="w-4 h-4 mr-2" />
-                                Request Callback
+                                Callback
                               </Button>
                             </div>
                           </div>
@@ -1714,12 +1737,15 @@ export default function Book() {
                       </>
                     )}
                     
-                    {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto space-y-2 mb-3 min-h-[200px] bg-white/5 rounded-lg p-3">
+                    {/* Messages Area - Expanded */}
+                    <div className="flex-1 overflow-y-auto space-y-3 mb-4 min-h-[280px] bg-muted/30 border border-border rounded-lg p-4">
                       {liveChatMessages.length === 0 && !isAgentTyping ? (
-                        <p className="text-white/40 text-sm text-center py-4">
-                          {hasJoinedQueue ? "Waiting for agent..." : "Connect with an agent to start chatting"}
-                        </p>
+                        <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                          <MessageSquare className="w-10 h-10 text-muted-foreground/40 mb-3" />
+                          <p className="text-muted-foreground text-sm">
+                            {hasJoinedQueue ? "Waiting for agent..." : "Connect with an agent to start chatting"}
+                          </p>
+                        </div>
                       ) : (
                         <>
                           {liveChatMessages.map((msg) => (
@@ -1731,13 +1757,13 @@ export default function Book() {
                               )}
                             >
                               <div className={cn(
-                                "max-w-[85%] px-3 py-2 rounded-lg text-sm",
+                                "max-w-[85%] px-4 py-3 rounded-xl text-sm shadow-sm",
                                 msg.isUser 
                                   ? "bg-primary text-primary-foreground rounded-br-sm" 
-                                  : "bg-white/10 text-white rounded-bl-sm"
+                                  : "bg-card border border-border text-card-foreground rounded-bl-sm"
                               )}>
                                 <p>{msg.text}</p>
-                                <span className="text-[10px] opacity-60 mt-1 block">
+                                <span className="text-[10px] opacity-60 mt-1.5 block">
                                   {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                               </div>
@@ -1748,14 +1774,14 @@ export default function Book() {
                       )}
                     </div>
                     
-                    {/* Chat Input */}
-                    <div className="flex items-center gap-2 mt-auto">
+                    {/* Chat Input - Larger */}
+                    <div className="flex items-center gap-3 mt-auto pt-3 border-t border-border">
                       <Input 
                         value={liveChatInput}
                         onChange={(e) => setLiveChatInput(e.target.value)}
-                        placeholder={roomUrl ? "Type a message..." : "Join call to chat"}
+                        placeholder={roomUrl ? "Type your message..." : "Join call to chat"}
                         disabled={!roomUrl}
-                        className="flex-1 bg-slate-800/60 border-white/30 text-white placeholder:text-white/50 h-10 disabled:opacity-50"
+                        className="flex-1 h-12 text-base"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && liveChatInput.trim() && roomUrl) {
                             const newMsg = {
@@ -1789,7 +1815,7 @@ export default function Book() {
                       <Button
                         size="icon"
                         disabled={!roomUrl || !liveChatInput.trim()}
-                        className="h-10 w-10 bg-primary hover:bg-primary/90 text-primary-foreground shrink-0 disabled:opacity-50"
+                        className="h-12 w-12 shrink-0"
                         onClick={() => {
                           if (liveChatInput.trim() && roomUrl) {
                             const newMsg = {
@@ -2377,7 +2403,7 @@ export default function Book() {
         <div 
           ref={pipRef}
           className={cn(
-            "fixed z-50 w-80 rounded-xl overflow-hidden shadow-2xl border-2 border-border/60 bg-slate-900",
+            "fixed z-50 w-80 rounded-xl overflow-hidden shadow-2xl border-2 border-primary/30 bg-card ring-1 ring-white/10",
             !isDragging && "animate-in slide-in-from-right-4 duration-300",
             isDragging && "cursor-grabbing"
           )}
@@ -2388,27 +2414,27 @@ export default function Book() {
         >
           {/* Draggable header */}
           <div 
-            className="h-6 bg-slate-800/80 flex items-center justify-between px-2 cursor-grab active:cursor-grabbing"
+            className="h-7 bg-muted flex items-center justify-between px-2.5 cursor-grab active:cursor-grabbing border-b border-border"
             onMouseDown={handlePipMouseDown}
           >
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-red-500" />
-              <span className="text-[10px] text-white/60 font-medium select-none">Video Call</span>
+              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-[10px] text-muted-foreground font-medium select-none">Video Call</span>
             </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => { setIsPiP(false); toggleFullscreen(); }}
-                className="w-5 h-5 rounded flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-5 h-5 rounded flex items-center justify-center hover:bg-accent transition-colors"
                 title="Expand"
               >
-                <Maximize2 className="w-3 h-3 text-white/70" />
+                <Maximize2 className="w-3 h-3 text-muted-foreground" />
               </button>
               <button
                 onClick={() => { setIsPiP(false); setPipPosition({ x: 0, y: 0 }); }}
-                className="w-5 h-5 rounded flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-5 h-5 rounded flex items-center justify-center hover:bg-accent transition-colors"
                 title="Close"
               >
-                <X className="w-3 h-3 text-white/70" />
+                <X className="w-3 h-3 text-muted-foreground" />
               </button>
             </div>
           </div>
