@@ -10591,8 +10591,9 @@
 .chat-container {
   position: relative;
   width: 100%;
-  max-width: 440px;
-  height: 580px;
+  max-width: 100%;
+  height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   border-radius: 24px;
@@ -10678,6 +10679,7 @@
 /* Chat Messages Area */
 .chat-messages {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 20px;
   display: flex;
@@ -12712,9 +12714,9 @@
   top: auto;
   bottom: 100px;
   right: 24px;
-  width: 680px;
+  width: 780px;
   max-width: calc(100vw - 48px);
-  height: 520px;
+  height: 600px;
   max-height: calc(100vh - 140px);
   background: #ffffff;
   border-radius: 20px;
