@@ -1308,7 +1308,7 @@ export default function Book() {
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="w-full border border-white/40 text-white hover:bg-white/10 hover:border-white/60 font-bold h-12 text-base"
+                        className="w-full border-2 border-border bg-background text-foreground hover:bg-muted font-bold h-12 text-base"
                         onClick={() => setShowScheduleModal(true)}
                       >
                         <Calendar className="w-5 h-5 mr-2" />
@@ -1316,7 +1316,7 @@ export default function Book() {
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="w-full border border-white/40 text-white hover:bg-white/10 hover:border-white/60 h-11"
+                        className="w-full border-2 border-border bg-background text-foreground hover:bg-muted h-11"
                         onClick={() => window.open('mailto:support@trumove.com')}
                       >
                         <Mail className="w-4 h-4 mr-2" />
