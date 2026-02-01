@@ -1300,21 +1300,13 @@ export default function Book() {
                   <Bot className="w-4 h-4" />
                   Trudy AI
                 </button>
-                <button 
+<button 
                   className={chatMode === 'support' ? 'active' : ''}
                   onClick={() => setChatMode('support')}
-                  title="Contact Support Team"
+                  title="Live Support - Call, Chat, or Schedule"
                 >
-                  <Phone className="w-4 h-4" />
-                  Support
-                </button>
-                <button 
-                  className={chatMode === 'livechat' ? 'active' : ''}
-                  onClick={() => setChatMode('livechat')}
-                  title="Live Chat During Video Call"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  Live Chat
+                  <Headphones className="w-4 h-4" />
+                  Live Support
                 </button>
               </div>
               

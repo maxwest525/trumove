@@ -10612,6 +10612,9 @@
   padding: 16px 20px;
   background: #ffffff;
   border-bottom: 1px solid hsl(var(--tm-ink) / 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .chat-header-left {
@@ -10808,22 +10811,22 @@
 .chat-input-area {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 16px 20px;
+  gap: 12px;
+  padding: 20px;
   background: #ffffff;
   border-top: 1px solid hsl(var(--tm-ink) / 0.08);
 }
 
 .chat-input {
   flex: 1;
-  height: 44px;
-  padding: 0 16px;
-  font-size: 14px;
+  height: 52px;
+  padding: 0 20px;
+  font-size: 15px;
   font-weight: 500;
   color: hsl(var(--tm-ink));
   background: hsl(var(--tm-ink) / 0.04);
   border: 1px solid transparent;
-  border-radius: 22px;
+  border-radius: 26px;
   outline: none;
   transition: all 200ms ease;
 }
