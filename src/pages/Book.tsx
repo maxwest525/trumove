@@ -53,7 +53,11 @@ const useScrollToTop = () => {
 };
 
 // Fake Agent View - Full-bleed video feed style like a real call with subtle animation
-function FakeAgentView() {
+function FakeAgentView({ isMicMuted, setIsMicMuted, audioOutputDevices }: { 
+  isMicMuted: boolean; 
+  setIsMicMuted: (val: boolean) => void;
+  audioOutputDevices: MediaDeviceInfo[];
+}) {
   return (
     <div className="absolute inset-0">
       {/* Full-bleed agent "video" with professional background */}
@@ -74,13 +78,59 @@ function FakeAgentView() {
         LIVE
       </div>
       
-      {/* Name badge overlay - top right, next to LIVE indicator */}
-      <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm">
+      {/* Name badge overlay - bottom left */}
+      <div className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm">
         <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-        <div className="text-right">
+        <div>
           <p className="text-white font-bold text-xs">Trudy Martinez</p>
           <p className="text-white/60 text-[10px]">Senior Moving Specialist</p>
         </div>
+      </div>
+      
+      {/* Bottom Right Audio Controls */}
+      <div className="absolute bottom-4 right-4 flex items-center gap-2">
+        {/* Speaker Toggle with Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-full bg-black/50 border border-white/30 text-white hover:bg-black/70 backdrop-blur-sm"
+              title="Speaker settings"
+            >
+              <Volume2 className="w-5 h-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel className="text-xs">Select Speaker</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {audioOutputDevices.length > 0 ? (
+              audioOutputDevices.map((device) => (
+                <DropdownMenuItem key={device.deviceId} className="text-xs">
+                  {device.label || 'Default Speaker'}
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem disabled className="text-xs">
+                Default Speaker
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
+        {/* Mic Toggle */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "h-10 w-10 rounded-full bg-black/50 border border-white/30 text-white hover:bg-black/70 backdrop-blur-sm",
+            isMicMuted && "bg-destructive/60 border-destructive/50 text-white"
+          )}
+          onClick={() => setIsMicMuted(!isMicMuted)}
+          title={isMicMuted ? "Unmute microphone" : "Mute microphone"}
+        >
+          {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+        </Button>
       </div>
     </div>
   );
@@ -729,6 +779,21 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
   const [isTyping, setIsTyping] = useState(false);
   const [hasRunTimeline, setHasRunTimeline] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
+  const [audioOutputDevices, setAudioOutputDevices] = useState<MediaDeviceInfo[]>([]);
+
+  // Fetch audio output devices
+  useEffect(() => {
+    const getAudioDevices = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
+        setAudioOutputDevices(audioOutputs);
+      } catch (error) {
+        console.log('Could not enumerate audio devices:', error);
+      }
+    };
+    getAudioDevices();
+  }, []);
 
   // Call duration timer
   useEffect(() => {
@@ -817,7 +882,7 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
       <div className="flex-1 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         {/* Agent always visible (dimmed when screen sharing) */}
         <div className={`absolute inset-0 transition-opacity duration-300 ${isScreenSharing ? 'opacity-30' : 'opacity-100'}`}>
-          <FakeAgentView />
+          <FakeAgentView isMicMuted={isMuted} setIsMicMuted={setIsMuted} audioOutputDevices={audioOutputDevices} />
         </div>
         
         {/* Screen share modal overlay */}
@@ -1264,8 +1329,8 @@ export default function Book() {
                   <div className="video-consult-specialist-panel h-full flex flex-col">
                     {/* Header */}
                     <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
-                      <div className="w-12 h-12 rounded-full bg-primary/20 border-2 border-primary/30 flex items-center justify-center relative">
-                        <Truck className="w-6 h-6 text-primary" />
+                      <div className="w-12 h-12 rounded-full bg-muted border-2 border-border flex items-center justify-center relative">
+                        <Truck className="w-6 h-6 text-foreground" />
                         <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 text-primary" />
                       </div>
                       <div>
