@@ -936,6 +936,7 @@ export default function Book() {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showWhiteboardModal, setShowWhiteboardModal] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState<string>("default");
+  const [audioOutputDevices, setAudioOutputDevices] = useState<MediaDeviceInfo[]>([]);
   
   // Schedule form state
   const [scheduleName, setScheduleName] = useState("");
@@ -961,6 +962,30 @@ export default function Book() {
     const handleChange = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener('fullscreenchange', handleChange);
     return () => document.removeEventListener('fullscreenchange', handleChange);
+  }, []);
+
+  // Enumerate audio output devices
+  useEffect(() => {
+    const enumerateDevices = async () => {
+      try {
+        // Request permission first (needed for full device labels)
+        await navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+          stream.getTracks().forEach(track => track.stop());
+        }).catch(() => {});
+        
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
+        setAudioOutputDevices(audioOutputs);
+      } catch (error) {
+        console.log('Could not enumerate audio devices:', error);
+      }
+    };
+    
+    enumerateDevices();
+    
+    // Listen for device changes
+    navigator.mediaDevices.addEventListener('devicechange', enumerateDevices);
+    return () => navigator.mediaDevices.removeEventListener('devicechange', enumerateDevices);
   }, []);
 
   // Handle join room with booking code
@@ -1275,10 +1300,10 @@ export default function Book() {
                     {/* CTA Button with Arrow */}
                     <div className="mt-auto pt-4">
                       <Button 
-                        className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-base group"
+                        className="w-full h-12 bg-foreground hover:bg-foreground/90 text-background font-bold text-base group"
                         onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
                       >
-                        <Sparkles className="w-5 h-5 mr-2" />
+                        <Sparkles className="w-5 h-5 mr-2 text-primary" />
                         Chat with Trudy Now
                         <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                       </Button>
@@ -1346,36 +1371,39 @@ export default function Book() {
                             <Headset className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-white/20 text-white">
-                          <DropdownMenuLabel className="text-white/60 text-xs">Audio Output</DropdownMenuLabel>
+                        <DropdownMenuContent align="end" className="w-56 bg-slate-800 border-white/20 text-white">
+                          <DropdownMenuLabel className="text-white/60 text-xs">Audio Output Device</DropdownMenuLabel>
                           <DropdownMenuSeparator className="bg-white/10" />
-                          <DropdownMenuItem 
-                            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
-                            onClick={() => {
-                              setSelectedSpeaker("default");
-                              toast.info("Using default speaker");
-                            }}
-                          >
-                            {selectedSpeaker === "default" && "✓ "}Default Speaker
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
-                            onClick={() => {
-                              setSelectedSpeaker("headphones");
-                              toast.info("Using headphones");
-                            }}
-                          >
-                            {selectedSpeaker === "headphones" && "✓ "}Headphones
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
-                            onClick={() => {
-                              setSelectedSpeaker("external");
-                              toast.info("Using external speakers");
-                            }}
-                          >
-                            {selectedSpeaker === "external" && "✓ "}External Speakers
-                          </DropdownMenuItem>
+                          {audioOutputDevices.length > 0 ? (
+                            audioOutputDevices.map((device) => (
+                              <DropdownMenuItem 
+                                key={device.deviceId}
+                                className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+                                onClick={() => {
+                                  setSelectedSpeaker(device.deviceId);
+                                  toast.info(`Using ${device.label || 'Audio Device'}`);
+                                }}
+                              >
+                                {selectedSpeaker === device.deviceId && "✓ "}
+                                {device.label || `Speaker ${audioOutputDevices.indexOf(device) + 1}`}
+                              </DropdownMenuItem>
+                            ))
+                          ) : (
+                            <>
+                              <DropdownMenuItem 
+                                className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+                                onClick={() => {
+                                  setSelectedSpeaker("default");
+                                  toast.info("Using default speaker");
+                                }}
+                              >
+                                {selectedSpeaker === "default" && "✓ "}Default Speaker
+                              </DropdownMenuItem>
+                              <p className="text-white/40 text-[10px] px-2 py-1">
+                                Grant audio permission to see all devices
+                              </p>
+                            </>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                       
