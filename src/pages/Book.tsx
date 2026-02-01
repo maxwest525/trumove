@@ -4,7 +4,7 @@ import Footer from "@/components/layout/Footer";
 import { DailyVideoRoom } from "@/components/video-consult/DailyVideoRoom";
 import { 
   Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, 
-  Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search,
+  Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search, Send, Mail,
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
   Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
   Maximize2, Minimize2, Settings, CalendarDays, PenTool
@@ -923,7 +923,8 @@ export default function Book() {
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
   const [bookingCode, setBookingCode] = useState("");
   const [isDemo, setIsDemo] = useState(false);
-  const [chatMode, setChatMode] = useState<'trudy' | 'specialist'>('trudy');
+  const [chatMode, setChatMode] = useState<'trudy' | 'support' | 'livechat'>('trudy');
+  const [isMicMuted, setIsMicMuted] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [showScreenSharePreview, setShowScreenSharePreview] = useState(false);
@@ -1192,34 +1193,46 @@ export default function Book() {
 
             {/* Chat Panel - Right Side */}
             <div className="video-consult-chat-panel">
-              {/* Tab Selector */}
+              {/* Tab Selector - 3 Options */}
               <div className="video-consult-chat-tabs">
                 <button 
                   className={chatMode === 'trudy' ? 'active' : ''}
                   onClick={() => setChatMode('trudy')}
+                  title="Talk to Trudy AI Assistant"
                 >
                   <Bot className="w-4 h-4" />
-                  AI Assistant
+                  Trudy AI
                 </button>
                 <button 
-                  className={chatMode === 'specialist' ? 'active' : ''}
-                  onClick={() => setChatMode('specialist')}
+                  className={chatMode === 'support' ? 'active' : ''}
+                  onClick={() => setChatMode('support')}
+                  title="Contact Support Team"
                 >
-                  <Headphones className="w-4 h-4" />
-                  Live Support
+                  <Phone className="w-4 h-4" />
+                  Support
+                </button>
+                <button 
+                  className={chatMode === 'livechat' ? 'active' : ''}
+                  onClick={() => setChatMode('livechat')}
+                  title="Live Chat During Video Call"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Live Chat
                 </button>
               </div>
               
               {/* Chat Content */}
               <div className="video-consult-chat-content">
-                {chatMode === 'trudy' ? (
+                {chatMode === 'trudy' && (
                   <AIChatContainer pageContext={pageContext} />
-                ) : (
+                )}
+                
+                {chatMode === 'support' && (
                   <div className="video-consult-specialist-panel">
                     <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                       <Headphones className="w-8 h-8 text-primary" />
                     </div>
-                    <h4 className="text-white font-bold mb-2">Connect with a Specialist</h4>
+                    <h4 className="text-white font-bold mb-2">Contact Support</h4>
                     <p className="text-white/60 text-sm mb-6">
                       Get personalized help from our licensed moving consultants.
                     </p>
@@ -1234,18 +1247,77 @@ export default function Book() {
                       <Button 
                         variant="outline" 
                         className="w-full border border-white/40 text-white hover:bg-white/10 hover:border-white/60 font-bold h-12 text-base"
-                        onClick={() => navigate('/book')}
+                        onClick={() => setShowScheduleModal(true)}
                       >
                         <Calendar className="w-5 h-5 mr-2" />
                         Schedule Callback
                       </Button>
+                      <Button 
+                        variant="outline" 
+                        className="w-full border border-white/40 text-white hover:bg-white/10 hover:border-white/60 h-11"
+                        onClick={() => window.open('mailto:support@trumove.com')}
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        Email Support
+                      </Button>
                     </div>
-                    {/* Chat Input Field */}
-                    <div className="w-full max-w-xs mt-4">
-                      <Input 
-                        placeholder="Type a message..."
-                        className="bg-slate-800/60 border-white/30 text-white placeholder:text-white/50 h-11"
-                      />
+                  </div>
+                )}
+                
+                {chatMode === 'livechat' && (
+                  <div className="video-consult-specialist-panel h-full flex flex-col">
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                        <MessageSquare className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="text-white font-bold text-sm">Live Video Chat</h4>
+                        <p className="text-white/50 text-xs">
+                          {roomUrl ? "Connected to call" : "Join a video call to chat"}
+                        </p>
+                      </div>
+                      {roomUrl && (
+                        <span className="ml-auto px-2 py-1 rounded bg-green-600/20 text-green-400 text-xs font-bold">
+                          LIVE
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Chat Messages Area */}
+                    <div className="flex-1 overflow-y-auto space-y-3 mb-4 min-h-[200px]">
+                      {!roomUrl ? (
+                        <div className="text-center text-white/40 text-sm py-8">
+                          Join a video call to start live chat
+                        </div>
+                      ) : (
+                        <div className="text-center text-white/40 text-sm py-8">
+                          Chat messages with your agent will appear here
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Chat Input */}
+                    <div className="mt-auto">
+                      <div className="flex items-center gap-2">
+                        <Input 
+                          placeholder={roomUrl ? "Type a message..." : "Join call to chat"}
+                          disabled={!roomUrl}
+                          className="flex-1 bg-slate-800/60 border-white/30 text-white placeholder:text-white/50 h-10 disabled:opacity-50"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim() && roomUrl) {
+                              toast.info("Message sent to agent!");
+                              (e.target as HTMLInputElement).value = '';
+                            }
+                          }}
+                        />
+                        <Button 
+                          size="icon"
+                          disabled={!roomUrl}
+                          className="h-10 w-10 bg-primary hover:bg-primary/90 disabled:opacity-50"
+                        >
+                          <Send className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1288,6 +1360,23 @@ export default function Book() {
                 </Button>
               </div>
               
+              {/* Mute Microphone */}
+              <Button
+                variant="outline"
+                size="icon"
+                className={cn(
+                  "h-10 w-10 border border-border bg-background hover:bg-muted",
+                  isMicMuted && "border-destructive/50 bg-destructive/10 text-destructive"
+                )}
+                onClick={() => {
+                  setIsMicMuted(!isMicMuted);
+                  toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
+                }}
+                title={isMicMuted ? "Unmute" : "Mute"}
+              >
+                {isMicMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              </Button>
+              
               {/* Schedule Time */}
               <Button 
                 variant="outline"
@@ -1316,16 +1405,6 @@ export default function Book() {
               >
                 <PenTool className="w-4 h-4 mr-1.5" />
                 Whiteboard
-              </Button>
-              
-              {/* Demo */}
-              <Button 
-                variant="outline" 
-                onClick={handleStartDemo}
-                className="h-10 px-3 border border-border bg-background hover:bg-muted"
-              >
-                <Sparkles className="w-4 h-4 mr-1.5" />
-                Demo
               </Button>
               
               {/* Settings Dropdown */}
