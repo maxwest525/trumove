@@ -931,7 +931,7 @@ const trudyResponses = [
 ];
 
 // Demo Video Placeholder Component - shows fake video call experience
-function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
+function DemoVideoPlaceholder({ onLeave, isPiP = false }: { onLeave: () => void; isPiP?: boolean }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -1051,81 +1051,114 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
           <InventoryShareModal onClose={() => setIsScreenSharing(false)} />
         )}
 
-        {/* Self view (picture-in-picture) - Larger and more realistic */}
-        <div className="absolute bottom-4 right-4 w-36 h-28 rounded-xl overflow-hidden border-2 border-white/30 bg-slate-800 shadow-xl">
+        {/* Self view (picture-in-picture) - Scaled for PiP mode */}
+        <div className={cn(
+          "absolute rounded-xl overflow-hidden border-2 border-white/30 bg-slate-800 shadow-xl",
+          isPiP ? "bottom-2 right-2 w-16 h-12 rounded-lg border" : "bottom-4 right-4 w-36 h-28"
+        )}>
           {isVideoOff ? (
             <div className="w-full h-full flex items-center justify-center bg-slate-800">
-              <VideoOff className="w-6 h-6 text-white/40" />
+              <VideoOff className={isPiP ? "w-3 h-3 text-white/40" : "w-6 h-6 text-white/40"} />
             </div>
           ) : (
             <div className="w-full h-full relative">
               {/* Simulated webcam with gradient - looks like real video feed */}
               <div className="absolute inset-0 bg-gradient-to-br from-slate-600 via-slate-500 to-slate-600" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-14 h-14 rounded-full bg-primary/20 border-2 border-white/30 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">You</span>
+                <div className={cn(
+                  "rounded-full bg-primary/20 border border-white/30 flex items-center justify-center",
+                  isPiP ? "w-6 h-6" : "w-14 h-14 border-2"
+                )}>
+                  <span className={cn("text-white font-bold", isPiP ? "text-[8px]" : "text-lg")}>You</span>
                 </div>
               </div>
               {/* Muted indicator */}
               {isMuted && (
-                <div className="absolute bottom-2 right-2 p-1.5 rounded-full bg-red-500">
-                  <MicOff className="w-3 h-3 text-white" />
+                <div className={cn(
+                  "absolute rounded-full bg-red-500",
+                  isPiP ? "bottom-0.5 right-0.5 p-0.5" : "bottom-2 right-2 p-1.5"
+                )}>
+                  <MicOff className={isPiP ? "w-1.5 h-1.5 text-white" : "w-3 h-3 text-white"} />
                 </div>
               )}
             </div>
           )}
-          <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] font-medium">
-            You
-          </div>
+          {!isPiP && (
+            <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] font-medium">
+              You
+            </div>
+          )}
         </div>
 
         {/* Chat removed - available in right side panel */}
 
-        {/* Connection status - looks like a real call */}
-        <div className="absolute top-4 left-4 flex items-center gap-2">
-          <div className="px-3 py-1.5 rounded-full bg-green-500/90 text-white text-xs font-bold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            Connected • {formatDuration(callDuration)}
+        {/* Connection status - looks like a real call - hide in PiP */}
+        {!isPiP && (
+          <div className="absolute top-4 left-4 flex items-center gap-2">
+            <div className="px-3 py-1.5 rounded-full bg-green-500/90 text-white text-xs font-bold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              Connected • {formatDuration(callDuration)}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Call quality indicator */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm">
-          <div className="flex gap-0.5">
-            <div className="w-1 h-3 rounded-sm bg-green-400" />
-            <div className="w-1 h-3 rounded-sm bg-green-400" />
-            <div className="w-1 h-3 rounded-sm bg-green-400" />
-            <div className="w-1 h-2 rounded-sm bg-green-400/50" />
+        {/* PiP compact status badge */}
+        {isPiP && (
+          <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-red-600 text-white text-[9px] font-bold flex items-center gap-1">
+            <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
+            LIVE • {formatDuration(callDuration)}
           </div>
-          <span className="text-[10px] text-white/70 font-medium">HD</span>
-        </div>
+        )}
+
+        {/* Call quality indicator - hide in PiP */}
+        {!isPiP && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm">
+            <div className="flex gap-0.5">
+              <div className="w-1 h-3 rounded-sm bg-green-400" />
+              <div className="w-1 h-3 rounded-sm bg-green-400" />
+              <div className="w-1 h-3 rounded-sm bg-green-400" />
+              <div className="w-1 h-2 rounded-sm bg-green-400/50" />
+            </div>
+            <span className="text-[10px] text-white/70 font-medium">HD</span>
+          </div>
+        )}
       </div>
 
-      {/* Control bar */}
-      <div className="h-16 bg-slate-900 border-t border-white/10 flex items-center justify-center gap-3 px-4">
+      {/* Control bar - compact in PiP */}
+      <div className={cn(
+        "bg-slate-900 border-t border-white/10 flex items-center justify-center px-2",
+        isPiP ? "h-10 gap-2" : "h-16 gap-3 px-4"
+      )}>
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${
+          className={cn(
+            "rounded-full flex items-center justify-center transition-colors",
+            isPiP ? "w-7 h-7" : "w-11 h-11",
             isMuted ? "bg-red-500 text-white" : "bg-white/10 text-white hover:bg-white/20"
-          }`}
+          )}
         >
-          {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          {isMuted ? <MicOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Mic className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
         </button>
         
         <button
           onClick={() => setIsVideoOff(!isVideoOff)}
-          className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${
+          className={cn(
+            "rounded-full flex items-center justify-center transition-colors",
+            isPiP ? "w-7 h-7" : "w-11 h-11",
             isVideoOff ? "bg-red-500 text-white" : "bg-white/10 text-white hover:bg-white/20"
-          }`}
+          )}
         >
-          {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
+          {isVideoOff ? <VideoOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Video className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
         </button>
 
         <button
           onClick={onLeave}
-          className="w-11 h-11 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+          className={cn(
+            "rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors",
+            isPiP ? "w-7 h-7" : "w-11 h-11"
+          )}
         >
-          <Phone className="w-5 h-5 rotate-[135deg]" />
+          <Phone className={cn("rotate-[135deg]", isPiP ? "w-3.5 h-3.5" : "w-5 h-5")} />
         </button>
       </div>
     </div>
@@ -2599,7 +2632,7 @@ export default function Book() {
           
           <div className="relative" style={{ height: pipSize.height }}>
             {isDemo ? (
-              <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsPiP(false); }} />
+              <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsPiP(false); }} isPiP />
             ) : (
               <DailyVideoRoom 
                 roomUrl={roomUrl}
@@ -2608,11 +2641,6 @@ export default function Book() {
                 className="w-full h-full"
               />
             )}
-            {/* LIVE badge */}
-            <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-red-600 text-white text-[10px] font-bold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              LIVE
-            </div>
           </div>
           
           {/* Resize handles - all four corners */}
