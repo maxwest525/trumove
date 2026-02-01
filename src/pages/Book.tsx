@@ -1121,19 +1121,6 @@ function DemoVideoPlaceholder({ onLeave }: { onLeave: () => void }) {
           {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
         </button>
 
-        {/* Share Screen Button - Prominent */}
-        <button
-          onClick={handleShareScreen}
-          className={`h-11 px-5 rounded-full flex items-center justify-center gap-2 font-bold text-sm transition-all ${
-            isScreenSharing 
-              ? "bg-primary text-primary-foreground ring-2 ring-primary/50" 
-              : "bg-white/10 text-white hover:bg-primary/80 hover:text-white"
-          }`}
-        >
-          <Monitor className="w-5 h-5" />
-          {isScreenSharing ? "Stop Sharing" : "Share Screen"}
-        </button>
-
         <button
           onClick={onLeave}
           className="w-11 h-11 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
