@@ -88,6 +88,29 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
 
   const canSubmit = originAddress.trim() && destAddress.trim();
 
+  // Keyboard shortcuts: Escape to close, Enter to submit
+  useEffect(() => {
+    if (!open) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      } else if (e.key === 'Enter' && canSubmit && !e.shiftKey) {
+        // Don't submit if user is typing in an input with suggestions
+        const activeElement = document.activeElement;
+        const isInAutocomplete = activeElement?.closest('[data-autocomplete]');
+        if (!isInAutocomplete) {
+          e.preventDefault();
+          handleSubmit();
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open, canSubmit, onClose]);
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="sm:max-w-lg">
