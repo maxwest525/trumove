@@ -1,279 +1,393 @@
 
 
-# Plan: Video Consult Enhancements - Whiteboard, Trudy Chat, UI Polish
+# Plan: Video Consult UI Enhancements - Chat UX, Controls Cleanup, Schedule Form, and Layout Polish
 
 ## Overview
-This plan addresses 5 enhancements to the Video Consult page:
+This plan addresses 7 specific enhancements to the Video Consult page (/book):
 
-1. **Full whiteboard functionality** with drawing tools and real-time collaboration
-2. **Trudy AI button opens the chat modal** (dispatch custom event)
-3. **Improve Virtual Video Controls header** to look more like a proper header
-4. **Add input field to chat panel** for Trudy AI communication
-5. **Shrink booking/shipment ID input field** to be less prominent
+1. **Trudy AI tab enhancement** - Add arrow/icon that opens the actual chatbot via custom event, update sample messages
+2. **Shrink booking/shipment ID input** - Make the input field more compact
+3. **Schedule modal validation** - Require name, phone, email, date AND time for form completion
+4. **Add TCPA consent** - Already exists, but ensure it's required for submission
+5. **Remove mute/speaker buttons from Virtual Video Controls** - They already exist in the live video window
+6. **Add speaker selection to Live Chat panel** - Device selector dropdown for audio output
+7. **Move name/specialist badge in video preview** - Relocate from bottom-left to top-right area
 
 ---
 
-## Visual Layout Changes
+## Visual Changes
 
 ```text
-VIRTUAL VIDEO CONTROLS HEADER (Enhanced):
-+------------------------------------------------------------------+
-|  ═══════════════  VIRTUAL VIDEO CONTROLS  ═══════════════        |
-+------------------------------------------------------------------+
+TRUDY AI TAB (Updated):
++----------------------------------------------------------+
+|  Click the chat icon below to talk with Trudy →          |
+|                                                          |
+|  [🤖 Open Trudy Chat]  (Arrow/sparkle animation)         |
+|                                                          |
+|  Sample questions:                                       |
+|  • "How much will my move cost?"                         |
+|  • "What's included in full-service packing?"            |
+|  • "Can you explain the insurance options?"              |
++----------------------------------------------------------+
 
-WHITEBOARD MODAL:
-+------------------------------------------------------------------+
-|  [X] Virtual Whiteboard                                    LIVE  |
-+------------------------------------------------------------------+
-|  TOOLS: [✏️ Pen] [🧹 Eraser] | COLORS: [● ● ● ● ● ● ● ●]        |
-|  SIZES: [○ ○ ○ ○] | ACTIONS: [↩ Undo] [↪ Redo] [🗑 Clear]        |
-+------------------------------------------------------------------+
-|                                                                   |
-|                         CANVAS AREA                               |
-|                                                                   |
-+------------------------------------------------------------------+
+LIVE CHAT TAB (Add Speaker Device Selector):
++----------------------------------------------------------+
+|  Live Video Chat                            [🔊 Speaker ▼]|
+|  Connected to call                                 LIVE  |
++----------------------------------------------------------+
 
-BOOKING INPUT (Compact):
-+------------------------------------------------------------------+
-|  Booking Code: [TM-2026-XXXX____] [Join] [Call]                  |
-+------------------------------------------------------------------+
+VIDEO PREVIEW (Name Badge Moved):
++----------------------------------------------------------+
+|  [LIVE]           [Trudy Martinez - Sr. Moving Spec.]    |
+|                                                          |
+|                   (video content)                        |
+|                                                          |
+|                                              [YOU] 📹    |
++----------------------------------------------------------+
+
+VIRTUAL VIDEO CONTROLS (Simplified - No Mute/Volume):
++----------------------------------------------------------+
+|  [Share][🔊] [📅 Schedule] [🤖 Trudy] [📋 Whiteboard] [⚙️] |
++----------------------------------------------------------+
 ```
 
 ---
 
-## Changes
+## Technical Changes
 
-### 1. NEW FILE: `src/components/video-consult/WhiteboardCanvas.tsx`
+### File: `src/pages/Book.tsx`
 
-Create a full-featured whiteboard component with:
-
-**Features:**
-- Pen and Eraser tools
-- 8-color palette (black, red, orange, green, blue, purple, pink, white)
-- 4 brush sizes (2, 4, 8, 16px)
-- Undo/Redo functionality with stroke history stacks
-- Clear canvas action
-- Real-time drawing with smooth strokes
-
-**Implementation:**
+#### 1. Add `ExternalLink` to Imports (Line 6-11)
 ```tsx
-// State management
-const [strokes, setStrokes] = useState<Stroke[]>([]);
-const [currentStroke, setCurrentStroke] = useState<Point[]>([]);
-const [undoStack, setUndoStack] = useState<Stroke[][]>([]);
-const [redoStack, setRedoStack] = useState<Stroke[][]>([]);
-const [tool, setTool] = useState<'pen' | 'eraser'>('pen');
-const [color, setColor] = useState("#000000");
-const [brushSize, setBrushSize] = useState(4);
-
-// Canvas rendering via useEffect
-// Mouse event handlers for drawing
+import { 
+  ..., ExternalLink, Headset,
+} from "lucide-react";
 ```
 
----
-
-### 2. FILE: `src/pages/Book.tsx` - Add Whiteboard Modal State & Import
-
-**Add new state variable** (near line 934):
-```tsx
-const [showWhiteboardModal, setShowWhiteboardModal] = useState(false);
-```
-
-**Add import** at top:
-```tsx
-import { WhiteboardCanvas } from "@/components/video-consult/WhiteboardCanvas";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-```
-
-**Add `User` to lucide imports:**
-```tsx
-import { User } from "lucide-react"; // Add to existing imports
-```
-
----
-
-### 3. FILE: `src/pages/Book.tsx` - Update Trudy AI Button (lines 1390-1398)
+#### 2. Update Trudy's Sample Messages (Lines 753-759)
+Replace the timeline messages with more helpful, action-oriented content:
 
 **BEFORE:**
 ```tsx
-<Button 
-  variant="outline"
-  className="h-10 px-3 border border-border bg-background hover:bg-muted"
-  onClick={() => toast.info("Trudy AI is available in the chat panel")}
->
-  <Bot className="w-4 h-4 mr-1.5" />
-  Trudy AI
-</Button>
+const timeline: { delay: number; text?: string; typing?: boolean }[] = [
+  { delay: 300, text: "Hi there! Thanks for calling TruMove! 👋" },
+  { delay: 3500, typing: true },
+  { delay: 5500, text: "I'm Trudy, your dedicated moving specialist. How can I help you today?" },
+  { delay: 10000, typing: true },
+  { delay: 12000, text: "Feel free to share your screen if you'd like me to review your inventory!" },
+];
 ```
 
 **AFTER:**
 ```tsx
-<Button 
-  variant="outline"
-  className="h-10 px-3 border border-border bg-background hover:bg-muted"
-  onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
->
-  <Bot className="w-4 h-4 mr-1.5" />
-  Trudy AI
-</Button>
+const timeline: { delay: number; text?: string; typing?: boolean }[] = [
+  { delay: 300, text: "Welcome to TruMove! I'm Trudy, your personal moving consultant. 👋" },
+  { delay: 3500, typing: true },
+  { delay: 5500, text: "I see you're exploring your options - great timing! I can help you get an accurate quote, explain our services, or walk you through the moving process." },
+  { delay: 10000, typing: true },
+  { delay: 12000, text: "Want to share your screen so I can see your inventory? Or I can answer any questions you have about pricing, timelines, or logistics!" },
+];
 ```
 
-This dispatches the `openTrudyChat` custom event that `FloatingTruckChat` already listens for.
-
----
-
-### 4. FILE: `src/pages/Book.tsx` - Update Whiteboard Button (lines 1400-1408)
+#### 3. Move Name Badge in FakeAgentView (Lines 77-85)
+Move from bottom-left to top-right (next to LIVE badge):
 
 **BEFORE:**
 ```tsx
-<Button 
-  variant="outline"
-  className="h-10 px-3 border border-border bg-background hover:bg-muted"
-  onClick={() => toast.info("Whiteboard feature coming soon")}
->
-  <PenTool className="w-4 h-4 mr-1.5" />
-  Whiteboard
-</Button>
-```
-
-**AFTER:**
-```tsx
-<Button 
-  variant="outline"
-  className="h-10 px-3 border border-border bg-background hover:bg-muted"
-  onClick={() => setShowWhiteboardModal(true)}
->
-  <PenTool className="w-4 h-4 mr-1.5" />
-  Whiteboard
-</Button>
-```
-
----
-
-### 5. FILE: `src/pages/Book.tsx` - Improve Controls Header (lines 1329-1332)
-
-**BEFORE:**
-```tsx
-<h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 w-full text-center">
-  Virtual Video Controls
-</h3>
-```
-
-**AFTER:**
-```tsx
-{/* Header with decorative lines */}
-<div className="flex items-center gap-3 w-full mb-4">
-  <div className="flex-1 h-px bg-border" />
-  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground px-2">
-    Virtual Video Controls
-  </h3>
-  <div className="flex-1 h-px bg-border" />
+{/* Name badge overlay - bottom left like real video calls */}
+<div className="absolute bottom-20 left-4 flex items-center gap-3 px-3 py-2 rounded-lg bg-black/50 backdrop-blur-sm">
+  ...
 </div>
 ```
 
-This creates a centered header with horizontal lines on each side for a more polished look.
+**AFTER:**
+```tsx
+{/* Name badge overlay - top right, next to LIVE indicator */}
+<div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm">
+  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+  <div className="text-right">
+    <p className="text-white font-bold text-xs">Trudy Martinez</p>
+    <p className="text-white/60 text-[10px]">Senior Moving Specialist</p>
+  </div>
+</div>
+```
 
----
-
-### 6. FILE: `src/pages/Book.tsx` - Shrink Booking Input (lines 1445-1475)
-
-**Key changes:**
-- Reduce input height from `h-11` to `h-9`
-- Reduce button heights from `h-11` to `h-9`
-- Shrink button text and padding
-- Condense the label
+#### 4. Update Trudy AI Chat Tab Content (Lines 1236-1238)
+Replace `AIChatContainer` with a CTA panel that triggers the global chat:
 
 **BEFORE:**
 ```tsx
-<label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-  Enter Booking Code or Shipment ID
-</label>
-<Input className="flex-1 h-11 bg-background border border-border" ... />
-<Button className="h-11 px-4 bg-foreground ..." ... >
+{chatMode === 'trudy' && (
+  <AIChatContainer pageContext={pageContext} />
+)}
 ```
 
 **AFTER:**
 ```tsx
-<label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-  Booking Code or Shipment ID
-</label>
-<Input className="flex-1 h-9 text-sm bg-background border border-border" ... />
-<Button className="h-9 px-3 text-sm bg-foreground ..." ... >
-  <Video className="w-3.5 h-3.5 mr-1.5" />
-  Join
-</Button>
-<Button className="h-9 px-3 text-sm ..." ... >
-  <Phone className="w-3.5 h-3.5 mr-1.5" />
-  Call
-</Button>
+{chatMode === 'trudy' && (
+  <div className="video-consult-specialist-panel h-full flex flex-col">
+    {/* Header */}
+    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/30">
+        <img src={trudyAvatar} alt="Trudy" className="w-full h-full object-cover" />
+      </div>
+      <div>
+        <h4 className="text-white font-bold text-sm">Trudy AI Assistant</h4>
+        <p className="text-primary text-xs font-medium">Available 24/7</p>
+      </div>
+    </div>
+    
+    {/* Sample Questions */}
+    <div className="flex-1 space-y-3">
+      <p className="text-white/60 text-sm">
+        Trudy can help you with:
+      </p>
+      <ul className="space-y-2 text-sm text-white/80">
+        <li className="flex items-start gap-2">
+          <span className="text-primary">•</span>
+          "How much will my move cost?"
+        </li>
+        <li className="flex items-start gap-2">
+          <span className="text-primary">•</span>
+          "What's included in full-service packing?"
+        </li>
+        <li className="flex items-start gap-2">
+          <span className="text-primary">•</span>
+          "Can you explain the insurance options?"
+        </li>
+        <li className="flex items-start gap-2">
+          <span className="text-primary">•</span>
+          "Do you offer storage between moves?"
+        </li>
+      </ul>
+    </div>
+    
+    {/* CTA Button with Arrow */}
+    <div className="mt-auto pt-4">
+      <Button 
+        className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-base group"
+        onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
+      >
+        <Sparkles className="w-5 h-5 mr-2" />
+        Chat with Trudy Now
+        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+      </Button>
+      <p className="text-center text-white/40 text-[10px] mt-2">
+        Opens in floating chat window
+      </p>
+    </div>
+  </div>
+)}
 ```
 
----
+#### 5. Add Speaker Device Selector to Live Chat Panel (Lines 1277-1294)
+Add a dropdown for speaker selection in the Live Chat header:
 
-### 7. FILE: `src/pages/Book.tsx` - Add Whiteboard Modal (after line 1498)
-
-Add new modal dialog before the closing Footer:
-
+**Add state variable** (around line 930):
 ```tsx
-{/* Whiteboard Modal */}
-<Dialog open={showWhiteboardModal} onOpenChange={setShowWhiteboardModal}>
-  <DialogContent className="sm:max-w-4xl h-[80vh]">
-    <DialogHeader>
-      <div className="flex items-center justify-between">
-        <DialogTitle>Virtual Whiteboard</DialogTitle>
-        <span className="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+const [selectedSpeaker, setSelectedSpeaker] = useState<string>("default");
+```
+
+**Update Live Chat header:**
+```tsx
+{chatMode === 'livechat' && (
+  <div className="video-consult-specialist-panel h-full flex flex-col">
+    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+        <MessageSquare className="w-5 h-5 text-primary" />
+      </div>
+      <div className="flex-1">
+        <h4 className="text-white font-bold text-sm">Live Video Chat</h4>
+        <p className="text-white/50 text-xs">
+          {roomUrl ? "Connected to call" : "Join a video call to chat"}
+        </p>
+      </div>
+      
+      {/* Speaker Device Selector */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10">
+            <Headset className="w-4 h-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-white/20 text-white">
+          <DropdownMenuLabel className="text-white/60 text-xs">Audio Output</DropdownMenuLabel>
+          <DropdownMenuSeparator className="bg-white/10" />
+          <DropdownMenuItem 
+            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+            onClick={() => {
+              setSelectedSpeaker("default");
+              toast.info("Using default speaker");
+            }}
+          >
+            {selectedSpeaker === "default" && "✓ "}Default Speaker
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+            onClick={() => {
+              setSelectedSpeaker("headphones");
+              toast.info("Using headphones");
+            }}
+          >
+            {selectedSpeaker === "headphones" && "✓ "}Headphones
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+            onClick={() => {
+              setSelectedSpeaker("external");
+              toast.info("Using external speakers");
+            }}
+          >
+            {selectedSpeaker === "external" && "✓ "}External Speakers
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      
+      {roomUrl && (
+        <span className="px-2 py-1 rounded bg-green-600/20 text-green-400 text-xs font-bold">
           LIVE
         </span>
-      </div>
-    </DialogHeader>
-    <WhiteboardCanvas />
-  </DialogContent>
-</Dialog>
+      )}
+    </div>
+    ...
+  </div>
+)}
 ```
 
----
+#### 6. Remove Mute Button from Virtual Video Controls (Lines 1378-1393)
+Delete the mute button section entirely since it already exists in the video window control bar.
 
-### 8. FILE: `src/pages/Book.tsx` - Enhanced Schedule Modal with Contact Form
-
-Update the schedule modal (lines 1480-1498) to include contact fields and TCPA consent:
-
-**Add state variables** (near line 934):
+**DELETE this block:**
 ```tsx
-const [scheduleDate, setScheduleDate] = useState<Date | null>(null);
-const [scheduleTime, setScheduleTime] = useState<string>("");
-const [scheduleName, setScheduleName] = useState("");
-const [schedulePhone, setSchedulePhone] = useState("");
-const [scheduleEmail, setScheduleEmail] = useState("");
-const [scheduleTcpaConsent, setScheduleTcpaConsent] = useState(false);
+{/* Mute Microphone */}
+<Button
+  variant="outline"
+  size="icon"
+  className={cn(
+    "h-10 w-10 border border-border bg-background hover:bg-muted",
+    isMicMuted && "border-destructive/50 bg-destructive/10 text-destructive"
+  )}
+  onClick={() => {
+    setIsMicMuted(!isMicMuted);
+    toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
+  }}
+  title={isMicMuted ? "Unmute" : "Mute"}
+>
+  {isMicMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+</Button>
 ```
 
-**Enhanced modal content:**
-- Calendar date/time selection triggers form reveal
-- Contact fields: Name, Phone, Email
-- TCPA consent checkbox with legal text
-- Validation before submission
-- Form reset on successful submission
+#### 7. Update Schedule Modal Validation (Lines 1502-1515)
+Ensure the form validates that date AND time are selected before allowing submission:
+
+**Update the BookingCalendar onSelect handler:**
+```tsx
+<BookingCalendar 
+  onSelect={(date, time) => {
+    // Validate ALL required fields
+    if (!date || !time) {
+      toast.error("Please select both a date and time");
+      return;
+    }
+    if (!scheduleName.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
+    if (!schedulePhone.trim()) {
+      toast.error("Please enter your phone number");
+      return;
+    }
+    if (!scheduleEmail.trim()) {
+      toast.error("Please enter your email address");
+      return;
+    }
+    if (!scheduleTcpaConsent) {
+      toast.error("Please consent to be contacted to continue");
+      return;
+    }
+    
+    // All fields valid - submit
+    toast.success(`Scheduled for ${time} on ${date.toLocaleDateString()}`);
+    // Reset form
+    setScheduleName("");
+    setSchedulePhone("");
+    setScheduleEmail("");
+    setScheduleTcpaConsent(false);
+    setShowScheduleModal(false);
+  }} 
+/>
+```
+
+#### 8. Make Email Required in Schedule Form (Lines 1546-1558)
+Change email from optional to required:
+
+**BEFORE:**
+```tsx
+<Label htmlFor="schedule-email" className="text-xs">
+  Email (optional)
+</Label>
+```
+
+**AFTER:**
+```tsx
+<Label htmlFor="schedule-email" className="text-xs">
+  Email <span className="text-destructive">*</span>
+</Label>
+```
+
+#### 9. Shrink Booking Input Further (Lines 1461-1489)
+Make the entire booking section more compact:
+
+**Update the booking section:**
+```tsx
+{/* Bottom Section: Booking Input + Actions */}
+<div className="w-full space-y-2">
+  <div className="flex items-center gap-2">
+    <Input
+      value={bookingCode}
+      onChange={(e) => setBookingCode(e.target.value)}
+      placeholder="Booking Code or Shipment ID"
+      className="flex-1 h-8 text-xs bg-background border border-border placeholder:text-muted-foreground/60"
+      onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+    />
+    <Button 
+      onClick={handleJoinRoom} 
+      disabled={!bookingCode.trim()}
+      className="h-8 px-2.5 text-xs bg-foreground text-background hover:bg-foreground/90 font-semibold"
+    >
+      <Video className="w-3 h-3 mr-1" />
+      Join
+    </Button>
+    <Button 
+      variant="outline"
+      className="h-8 px-2.5 text-xs border border-border bg-background hover:bg-muted font-semibold"
+      onClick={() => window.location.href = "tel:+16097277647"}
+    >
+      <Phone className="w-3 h-3 mr-1" />
+      Call
+    </Button>
+  </div>
+</div>
+```
 
 ---
 
-## Summary of Changes
+## Summary of All Changes
 
-| Component | Change |
-|-----------|--------|
-| **WhiteboardCanvas.tsx** | NEW - Full drawing canvas with tools, colors, sizes, undo/redo |
-| **Trudy AI button** | Opens FloatingTruckChat via custom event dispatch |
-| **Whiteboard button** | Opens whiteboard modal |
-| **Controls header** | Decorative style with horizontal lines and bold typography |
-| **Booking input** | Reduced to h-9, compact buttons, shorter label |
-| **Schedule modal** | Added contact form fields + TCPA consent |
-| **Whiteboard modal** | NEW - Dialog with WhiteboardCanvas and LIVE badge |
+| Change | Description |
+|--------|-------------|
+| **Trudy AI tab** | Replaced with CTA panel + sample questions + arrow button that opens floating chat |
+| **Sample messages** | Updated Trudy's demo conversation to be more helpful and action-oriented |
+| **Name badge** | Moved from bottom-left to top-right in video preview |
+| **Speaker selector** | Added device dropdown in Live Chat panel header |
+| **Mute button** | Removed from Virtual Video Controls (exists in video window) |
+| **Schedule validation** | All fields (name, phone, email, date, time, TCPA) now required |
+| **Email field** | Changed from optional to required |
+| **Booking input** | Reduced height from h-9 to h-8, removed label, more compact |
 
 ---
 
-## Files to Create/Modify
+## Files Modified
 
-1. **CREATE**: `src/components/video-consult/WhiteboardCanvas.tsx`
-2. **MODIFY**: `src/pages/Book.tsx`
+- `src/pages/Book.tsx` - All UI changes consolidated in single file
 
