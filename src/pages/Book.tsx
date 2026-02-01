@@ -1229,54 +1229,6 @@ export default function Book() {
                     </div>
                   )}
                   
-                  {/* Bottom Audio Control Bar */}
-                  <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-center gap-2 z-10">
-                    {/* Speaker Toggle - Icon Only with Dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
-                          title="Speaker settings"
-                        >
-                          <Volume2 className="w-5 h-5" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuLabel className="text-xs">Select Speaker</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {audioOutputDevices.length > 0 ? (
-                          audioOutputDevices.map((device) => (
-                            <DropdownMenuItem key={device.deviceId} className="text-xs">
-                              {device.label || 'Default Speaker'}
-                            </DropdownMenuItem>
-                          ))
-                        ) : (
-                          <DropdownMenuItem disabled className="text-xs">
-                            Default Speaker
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    
-                    {/* Mic Toggle - Icon Only */}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={cn(
-                        "h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm",
-                        isMicMuted && "bg-destructive/20 border-destructive/50 text-destructive"
-                      )}
-                      onClick={() => {
-                        setIsMicMuted(!isMicMuted);
-                        toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
-                      }}
-                      title={isMicMuted ? "Unmute microphone" : "Mute microphone"}
-                    >
-                      {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-                    </Button>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -1312,8 +1264,9 @@ export default function Book() {
                   <div className="video-consult-specialist-panel h-full flex flex-col">
                     {/* Header */}
                     <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
-                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/30">
-                        <img src={trudyAvatar} alt="Trudy" className="w-full h-full object-cover" />
+                      <div className="w-12 h-12 rounded-full bg-primary/20 border-2 border-primary/30 flex items-center justify-center relative">
+                        <Truck className="w-6 h-6 text-primary" />
+                        <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 text-primary" />
                       </div>
                       <div>
                         <h4 className="text-white font-bold text-sm">Trudy AI Assistant</h4>
