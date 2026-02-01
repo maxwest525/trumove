@@ -238,7 +238,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
           <div className="chat-header-info">
             <span className="chat-header-name">Trudy with TruMove</span>
             <span className="chat-header-status">
-              <span className={cn("chat-status-dot", isConnected && "bg-primary")}></span>
+              <span className={cn("chat-status-dot", isConnected && "bg-sky-500")}></span>
               {isConnecting ? "Connecting..." : isConnected ? "Online" : "Offline"}
             </span>
           </div>
@@ -263,7 +263,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
             <p className="text-destructive text-sm">{error}</p>
             <button
               onClick={connectToAgent}
-              className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              className="px-4 py-2 text-sm bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors"
             >
               Try Again
             </button>
@@ -307,7 +307,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
                       className={cn(
                         "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
                         index === 0 
-                          ? "bg-primary/10 text-primary hover:bg-primary/20" 
+                          ? "bg-foreground/10 text-foreground hover:bg-foreground/20" 
                           : "bg-muted text-muted-foreground hover:bg-accent"
                       )}
                     >
@@ -335,7 +335,7 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
                       className={cn(
                         "inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors",
                         index === 0 
-                          ? "bg-primary/10 text-primary hover:bg-primary/20 ring-1 ring-primary/20" 
+                          ? "bg-foreground/10 text-foreground hover:bg-foreground/20 ring-1 ring-foreground/20" 
                           : "bg-muted text-muted-foreground hover:bg-accent"
                       )}
                     >

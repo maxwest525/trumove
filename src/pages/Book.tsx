@@ -298,13 +298,13 @@ function AgentStatusBadge({ status }: { status: 'available' | 'busy' }) {
     <div className={cn(
       "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
       status === 'available' 
-        ? "bg-primary/20 text-primary" 
+        ? "bg-sky-500/20 text-sky-500" 
         : "bg-amber-500/20 text-amber-400"
     )}>
       <span className={cn(
         "w-1.5 h-1.5 rounded-full",
         status === 'available' 
-          ? "bg-primary animate-pulse" 
+          ? "bg-sky-500 animate-pulse" 
           : "bg-amber-400 animate-pulse"
       )} />
       {status === 'available' ? 'Available' : 'Busy'}
@@ -1854,7 +1854,7 @@ export default function Book() {
                         <User className="w-4 h-4 text-foreground" />
                         <span className={cn(
                           "absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-background",
-                          agentStatus === 'available' ? "bg-green-500" : "bg-amber-400"
+                          agentStatus === 'available' ? "bg-sky-500" : "bg-amber-400"
                         )} />
                       </div>
                       <div className="flex-1 min-w-0">
