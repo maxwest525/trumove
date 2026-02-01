@@ -947,6 +947,7 @@ export default function Book() {
   // Live Support chat state
   const [liveChatMessages, setLiveChatMessages] = useState<{id: string; text: string; isUser: boolean; time: Date}[]>([]);
   const [liveChatInput, setLiveChatInput] = useState('');
+  const [isAgentTyping, setIsAgentTyping] = useState(false);
   
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
@@ -1228,6 +1229,54 @@ export default function Book() {
                     </div>
                   )}
                   
+                  {/* Bottom Audio Control Bar */}
+                  <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-center gap-2 z-10">
+                    {/* Speaker Toggle - Icon Only with Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+                          title="Speaker settings"
+                        >
+                          <Volume2 className="w-5 h-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuLabel className="text-xs">Select Speaker</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {audioOutputDevices.length > 0 ? (
+                          audioOutputDevices.map((device) => (
+                            <DropdownMenuItem key={device.deviceId} className="text-xs">
+                              {device.label || 'Default Speaker'}
+                            </DropdownMenuItem>
+                          ))
+                        ) : (
+                          <DropdownMenuItem disabled className="text-xs">
+                            Default Speaker
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    
+                    {/* Mic Toggle - Icon Only */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={cn(
+                        "h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm",
+                        isMicMuted && "bg-destructive/20 border-destructive/50 text-destructive"
+                      )}
+                      onClick={() => {
+                        setIsMicMuted(!isMicMuted);
+                        toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
+                      }}
+                      title={isMicMuted ? "Unmute microphone" : "Mute microphone"}
+                    >
+                      {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -1391,6 +1440,8 @@ export default function Book() {
                             </div>
                           ))
                         )}
+                        {/* Typing Indicator */}
+                        {isAgentTyping && <ChatTypingIndicator />}
                       </div>
                       
                       {/* Chat Input */}
@@ -1412,8 +1463,14 @@ export default function Book() {
                               setLiveChatMessages(prev => [...prev, newMsg]);
                               setLiveChatInput('');
                               
-                              // Simulate agent response after 1-2 seconds
+                              // Show typing indicator after 500ms
                               setTimeout(() => {
+                                setIsAgentTyping(true);
+                              }, 500);
+                              
+                              // Hide typing and show response after 1.5-2.5 seconds
+                              setTimeout(() => {
+                                setIsAgentTyping(false);
                                 const agentResponses = [
                                   "Thanks for your message! I'm reviewing your inventory now.",
                                   "Got it! Let me check on that for you.",
@@ -1427,7 +1484,7 @@ export default function Book() {
                                   isUser: false,
                                   time: new Date()
                                 }]);
-                              }, 1500);
+                              }, 2000 + Math.random() * 500);
                             }
                           }}
                         />
@@ -1446,8 +1503,14 @@ export default function Book() {
                               setLiveChatMessages(prev => [...prev, newMsg]);
                               setLiveChatInput('');
                               
-                              // Simulate agent response
+                              // Show typing indicator after 500ms
                               setTimeout(() => {
+                                setIsAgentTyping(true);
+                              }, 500);
+                              
+                              // Hide typing and show response after 1.5-2.5 seconds
+                              setTimeout(() => {
+                                setIsAgentTyping(false);
                                 const agentResponses = [
                                   "Thanks for your message! I'm reviewing your inventory now.",
                                   "Got it! Let me check on that for you.",
@@ -1461,7 +1524,7 @@ export default function Book() {
                                   isUser: false,
                                   time: new Date()
                                 }]);
-                              }, 1500);
+                              }, 2000 + Math.random() * 500);
                             }
                           }}
                         >
