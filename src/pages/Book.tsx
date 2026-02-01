@@ -220,31 +220,100 @@ function ChatTypingIndicator() {
   );
 }
 
-// Queue position indicator for live agent
-function AgentQueueIndicator({ position, estimatedWait }: { position: number; estimatedWait: string }) {
+// Queue position indicator for live agent with dynamic countdown
+function AgentQueueIndicator({ 
+  position, 
+  waitSeconds,
+  onPositionChange 
+}: { 
+  position: number; 
+  waitSeconds: number;
+  onPositionChange?: (newPosition: number) => void;
+}) {
+  const [displayPosition, setDisplayPosition] = useState(position);
+  const [isHighlighted, setIsHighlighted] = useState(false);
+  
+  // Format seconds to mm:ss
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+  
+  // Update display position when prop changes
+  useEffect(() => {
+    if (position !== displayPosition) {
+      setIsHighlighted(true);
+      setTimeout(() => {
+        setDisplayPosition(position);
+        setIsHighlighted(false);
+      }, 300);
+    }
+  }, [position, displayPosition]);
+  
+  const progressPercent = Math.max(10, Math.min(90, 100 - (waitSeconds / 180) * 100));
+
   return (
-    <div className="bg-gradient-to-r from-amber-900/30 to-orange-900/20 border border-amber-500/30 rounded-lg p-4 mb-4">
+    <div className={cn(
+      "bg-gradient-to-r from-amber-900/30 to-orange-900/20 border border-amber-500/30 rounded-lg p-4 mb-4 transition-all duration-300",
+      isHighlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+    )}>
       <div className="flex items-center gap-3 mb-2">
         <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
           <Users className="w-5 h-5 text-amber-400" />
         </div>
-        <div>
-          <p className="text-white font-bold text-sm">Queue Position: #{position}</p>
-          <p className="text-amber-300/80 text-xs">Estimated wait: {estimatedWait}</p>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <p className="text-white font-bold text-sm">Queue Position:</p>
+            <span className={cn(
+              "text-lg font-black transition-all",
+              isHighlighted ? "text-primary scale-110" : "text-white"
+            )}>
+              #{displayPosition}
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-amber-300/80 text-xs">Estimated wait:</span>
+            <span className="text-amber-300 font-mono text-sm font-bold">
+              {formatTime(waitSeconds)}
+            </span>
+          </div>
         </div>
       </div>
       
-      {/* Progress bar */}
-      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mt-3">
+      {/* Animated Progress bar */}
+      <div className="h-2 bg-white/10 rounded-full overflow-hidden mt-3">
         <div 
-          className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full animate-pulse"
-          style={{ width: `${Math.max(20, 100 - position * 20)}%` }}
-        />
+          className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-1000 ease-out"
+          style={{ width: `${progressPercent}%` }}
+        >
+          <div className="h-full w-full bg-white/20 animate-pulse" />
+        </div>
       </div>
       
       <p className="text-white/50 text-[10px] mt-2 text-center">
         An agent will be with you shortly. You can start typing your question.
       </p>
+    </div>
+  );
+}
+
+// Agent status badge component
+function AgentStatusBadge({ status }: { status: 'available' | 'busy' }) {
+  return (
+    <div className={cn(
+      "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+      status === 'available' 
+        ? "bg-primary/20 text-primary" 
+        : "bg-amber-500/20 text-amber-400"
+    )}>
+      <span className={cn(
+        "w-1.5 h-1.5 rounded-full",
+        status === 'available' 
+          ? "bg-primary animate-pulse" 
+          : "bg-amber-400 animate-pulse"
+      )} />
+      {status === 'available' ? 'Available' : 'Busy'}
     </div>
   );
 }
@@ -1113,6 +1182,49 @@ export default function Book() {
   const [liveChatInput, setLiveChatInput] = useState('');
   const [isAgentTyping, setIsAgentTyping] = useState(false);
   
+  // Agent status and queue state
+  const [agentStatus, setAgentStatus] = useState<'available' | 'busy'>('available');
+  const [queuePosition, setQueuePosition] = useState(2);
+  const [queueWaitSeconds, setQueueWaitSeconds] = useState(120);
+  const [agentConnected, setAgentConnected] = useState(false);
+  
+  // Simulate agent availability changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Random chance to toggle between available and busy
+      if (Math.random() > 0.7) {
+        setAgentStatus(prev => prev === 'available' ? 'busy' : 'available');
+      }
+    }, 30000 + Math.random() * 30000); // Every 30-60 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Dynamic queue countdown timer
+  useEffect(() => {
+    if (!roomUrl || agentConnected || liveChatMessages.length > 0) return;
+    
+    const interval = setInterval(() => {
+      setQueueWaitSeconds(prev => {
+        if (prev <= 1) {
+          // Agent connected!
+          setAgentConnected(true);
+          setQueuePosition(0);
+          return 0;
+        }
+        
+        // Decrement position when crossing thresholds
+        if (prev === 60 && queuePosition > 1) {
+          setQueuePosition(p => Math.max(1, p - 1));
+        }
+        
+        return prev - 1;
+      });
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [roomUrl, agentConnected, liveChatMessages.length, queuePosition]);
+  
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
 
@@ -1490,24 +1602,32 @@ export default function Book() {
                 
                 {chatMode === 'liveagent' && (
                   <div className="video-consult-specialist-panel h-full flex flex-col">
-                    {/* Header */}
+                    {/* Header with Status Badge */}
                     <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
                       <div className="w-12 h-12 rounded-full bg-muted border-2 border-border flex items-center justify-center relative">
                         <User className="w-6 h-6 text-foreground" />
-                        <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-500 border-2 border-slate-900" />
+                        <span className={cn(
+                          "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-slate-900",
+                          agentStatus === 'available' ? "bg-green-500" : "bg-amber-400"
+                        )} />
                       </div>
-                      <div>
+                      <div className="flex-1">
                         <h4 className="text-white font-bold text-sm">Live Agent Chat</h4>
-                        <p className="text-green-400 text-xs font-medium flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                          {roomUrl ? 'Connected' : 'Available'}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <AgentStatusBadge status={agentStatus} />
+                          {agentStatus === 'busy' && (
+                            <span className="text-white/50 text-[10px]">~3 min wait</span>
+                          )}
+                        </div>
                       </div>
                     </div>
                     
                     {/* Queue Indicator - shown when waiting for agent */}
-                    {roomUrl && liveChatMessages.length === 0 && !isAgentTyping && (
-                      <AgentQueueIndicator position={2} estimatedWait="~2 minutes" />
+                    {roomUrl && liveChatMessages.length === 0 && !isAgentTyping && !agentConnected && (
+                      <AgentQueueIndicator 
+                        position={queuePosition} 
+                        waitSeconds={queueWaitSeconds}
+                      />
                     )}
                     
                     {/* Messages Area */}

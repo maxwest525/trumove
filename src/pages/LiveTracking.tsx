@@ -14,6 +14,7 @@ import { RouteWeather } from "@/components/tracking/RouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
 import { type MultiStopTruckStatus } from "@/components/tracking/CheckMyTruckModal";
 import { MultiStopSummaryCard } from "@/components/tracking/MultiStopSummaryCard";
+import { RouteSetupModal } from "@/components/tracking/RouteSetupModal";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import Header from "@/components/layout/Header";
@@ -154,6 +155,9 @@ export default function LiveTracking() {
   // Current truck bearing for 3D view
   const [truckBearing, setTruckBearing] = useState(0);
   
+  // Route setup modal state
+  const [showRouteModal, setShowRouteModal] = useState(true);
+  
   // Checkpoint notifications tracking
   const passedCheckpoints = useRef<Set<number>>(new Set());
 
@@ -241,6 +245,28 @@ export default function LiveTracking() {
         }
       } catch (e) {
         localStorage.removeItem('trumove_last_tracking');
+      }
+    }
+    
+    // Check for pending route from cross-page navigation
+    const pendingRoute = localStorage.getItem('trumove_pending_route');
+    if (pendingRoute) {
+      try {
+        const data = JSON.parse(pendingRoute);
+        if (data.originAddress && data.destAddress) {
+          setShowRouteModal(false); // Skip modal since we have route data
+          // Geocode and populate
+          if (data.originAddress) {
+            handleOriginSelect('', '', data.originAddress);
+          }
+          if (data.destAddress) {
+            handleDestSelect('', '', data.destAddress);
+          }
+          localStorage.removeItem('trumove_pending_route');
+          toast.success('📍 Route loaded from estimate!');
+        }
+      } catch (e) {
+        console.error('Failed to parse pending route:', e);
       }
     }
   }, []);
@@ -483,6 +509,22 @@ export default function LiveTracking() {
 
   const canTrack = !!originCoords && !!destCoords && !!routeData;
 
+  // Handle route modal submit
+  const handleRouteModalSubmit = async (data: {
+    originAddress: string;
+    destAddress: string;
+    moveDate?: Date;
+    bookingNumber?: string;
+  }) => {
+    await handleOriginSelect('', '', data.originAddress);
+    await handleDestSelect('', '', data.destAddress);
+    if (data.moveDate) {
+      setMoveDate(data.moveDate);
+    }
+    setShowRouteModal(false);
+    toast.success('📍 Route configured!');
+  };
+
   return (
     <div className="live-tracking-page">
       {/* Site Header - White logo for tracking page */}
@@ -620,143 +662,16 @@ export default function LiveTracking() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="tracking-content">
-        {/* Left: Address Inputs + Street Views */}
-        <div className="tracking-sidebar">
-          <div className="tracking-info-card">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Route Setup</h3>
-            
-            {/* Origin Input */}
-            <div className="mb-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Navigation className="w-3.5 h-3.5 text-primary" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/70">
-                  Origin
-                </span>
-              </div>
-              <LocationAutocomplete
-                value={originAddress}
-                onValueChange={setOriginAddress}
-                onLocationSelect={handleOriginSelect}
-                placeholder="Enter pickup address..."
-                mode="address"
-                className="tracking-input"
-              />
-              {/* Compact Street View Preview - Origin */}
-              <div className="mt-2">
-                <StreetViewPreview
-                  coordinates={originCoords}
-                  label="Origin"
-                  locationName={originName}
-                  variant="origin"
-                  googleApiKey={GOOGLE_MAPS_API_KEY}
-                  compact
-                />
-              </div>
-            </div>
+      {/* Route Setup Modal */}
+      <RouteSetupModal 
+        open={showRouteModal} 
+        onClose={() => setShowRouteModal(false)}
+        onSubmit={handleRouteModalSubmit}
+      />
 
-            {/* Destination Input */}
-            <div className="mb-3">
-              <div className="flex items-center gap-2 mb-2">
-                <MapPin className="w-3.5 h-3.5 text-foreground/60" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/70">
-                  Destination
-                </span>
-              </div>
-              <LocationAutocomplete
-                value={destAddress}
-                onValueChange={setDestAddress}
-                onLocationSelect={handleDestSelect}
-                placeholder="Enter delivery address..."
-                mode="address"
-                className="tracking-input"
-              />
-              {/* Compact Street View Preview - Destination */}
-              <div className="mt-2">
-                <StreetViewPreview
-                  coordinates={destCoords}
-                  label="Destination"
-                  locationName={destName}
-                  variant="destination"
-                  googleApiKey={GOOGLE_MAPS_API_KEY}
-                  compact
-                />
-              </div>
-            </div>
-
-            {/* Move Date */}
-            <div className="mb-4 pt-3 border-t border-border">
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar className="w-3.5 h-3.5 text-foreground/60" />
-                <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/70">
-                  Move Date
-                </span>
-              </div>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal tracking-input",
-                      !moveDate && "text-muted-foreground"
-                    )}
-                  >
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {moveDate ? format(moveDate, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={moveDate}
-                    onSelect={(date) => date && setMoveDate(date)}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                    className={cn("p-3 pointer-events-auto")}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-
-            {/* Control Buttons */}
-            <div className="flex gap-2">
-              {!isTracking ? (
-                <Button
-                  onClick={startTracking}
-                  disabled={!canTrack}
-                  className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-semibold"
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  {progress > 0 ? "Resume" : "Start"} Tracking
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    onClick={isPaused ? resumeTracking : pauseTracking}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    {isPaused ? <Play className="w-4 h-4 mr-2" /> : <Pause className="w-4 h-4 mr-2" />}
-                    {isPaused ? "Resume" : "Pause"}
-                  </Button>
-                  <Button
-                    onClick={resetTracking}
-                    variant="outline"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                  </Button>
-                </>
-              )}
-            </div>
-
-            {/* Playback Speed Control - Hidden for production appearance */}
-          </div>
-
-        </div>
-
-        {/* Center: Map - Auto-select based on WebGL capabilities */}
+      {/* Main Content - 2 Column Layout */}
+      <div className="tracking-content tracking-content-2col">
+        {/* Left: Map - Auto-select based on WebGL capabilities */}
         <div className="tracking-map-container">
           {/* WebGL warning banner when using static fallback */}
           {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (

@@ -1,9 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import { 
   ArrowRight, ChevronLeft, MapPin, Home, Building2, 
   ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Sparkles,
-  Car, Package, Route
+  Car, Package, Route, Truck
 } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -75,11 +76,23 @@ const FLOOR_OPTIONS = [
 
 
 export default function EstimateWizard({ onComplete, initialDetails }: EstimateWizardProps) {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [showMultiStopWizard, setShowMultiStopWizard] = useState(false);
   const prevStep = useRef(1);
+  
+  // Handle "View Route" navigation to tracking page
+  const handleViewRoute = () => {
+    if (details.fromLocation && details.toLocation) {
+      localStorage.setItem('trumove_pending_route', JSON.stringify({
+        originAddress: details.fromLocation,
+        destAddress: details.toLocation,
+      }));
+      navigate('/track');
+    }
+  };
 
   useEffect(() => {
     prevStep.current = step;
@@ -533,6 +546,18 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
                 <span>Next Step</span>
                 <ArrowRight className="w-5 h-5" />
               </button>
+              
+              {/* View Route Button - Navigate to tracking page */}
+              {details.fromLocation && details.toLocation && (
+                <button
+                  type="button"
+                  className="w-full py-2.5 text-sm text-muted-foreground hover:text-primary border border-dashed border-border/50 hover:border-primary/50 rounded-lg transition-colors flex items-center justify-center gap-2 mt-2"
+                  onClick={handleViewRoute}
+                >
+                  <Truck className="w-4 h-4" />
+                  <span>View Route on Map</span>
+                </button>
+              )}
 
               <button type="button" className="tru-qb-back" onClick={goBack}>
                 <ChevronLeft className="w-4 h-4" />
