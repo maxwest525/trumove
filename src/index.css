@@ -25957,6 +25957,51 @@
   box-shadow: 0 1px 4px hsl(var(--foreground) / 0.02);
 }
 
+.tracking-info-card h3,
+.tracking-info-card .card-title {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--foreground) / 0.5);
+}
+
+/* Compact text and icons for tracking cards */
+.tracking-info-card .text-xs {
+  font-size: 0.65rem;
+}
+
+.tracking-info-card .text-sm {
+  font-size: 0.7rem;
+}
+
+.tracking-info-card .text-lg {
+  font-size: 0.95rem;
+}
+
+.tracking-info-card .text-xl {
+  font-size: 1.1rem;
+}
+
+.tracking-info-card .text-2xl {
+  font-size: 1.25rem;
+}
+
+.tracking-info-card [class*="w-3"] {
+  width: 0.65rem;
+  height: 0.65rem;
+}
+
+.tracking-info-card [class*="w-4"] {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.tracking-info-card [class*="w-5"] {
+  width: 1rem;
+  height: 1rem;
+}
+
 .dark .tracking-info-card {
   background: rgba(255, 255, 255, 0.03);
   border-color: rgba(255, 255, 255, 0.08);
