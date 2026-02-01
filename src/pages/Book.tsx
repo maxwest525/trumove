@@ -136,7 +136,77 @@ function FakeAgentView({ isMicMuted, setIsMicMuted, audioOutputDevices }: {
   );
 }
 
-// Typing indicator for Trudy chat
+// Play typing sound effect using Web Audio API
+function playTypingSound() {
+  try {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
+    
+    const ctx = new AudioContext();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    
+    // Soft click-like sound
+    oscillator.frequency.setValueAtTime(800, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.05);
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.03, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.08);
+  } catch (e) {
+    // Silently fail if audio isn't available
+  }
+}
+
+// Enhanced typing indicator with sound and ripple effect
+function LiveAgentTypingIndicator({ withSound = true }: { withSound?: boolean }) {
+  useEffect(() => {
+    if (!withSound) return;
+    
+    // Play typing sounds at intervals
+    const interval = setInterval(() => {
+      playTypingSound();
+    }, 400);
+    
+    // Play first sound immediately
+    playTypingSound();
+    
+    return () => clearInterval(interval);
+  }, [withSound]);
+
+  return (
+    <div className="flex items-start gap-2 py-2">
+      {/* Avatar with ripple effect */}
+      <div className="relative">
+        <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center">
+          <User className="w-4 h-4 text-foreground" />
+        </div>
+        {/* Pulsing ripple */}
+        <span className="absolute inset-0 rounded-full border-2 border-primary/60 animate-ping" />
+      </div>
+      
+      {/* Typing bubble */}
+      <div className="bg-white/10 rounded-lg rounded-bl-sm px-3 py-2.5">
+        <div className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }} />
+          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
+          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+      
+      {/* Typing status */}
+      <span className="text-[10px] text-white/50 self-center">typing...</span>
+    </div>
+  );
+}
+
+// Typing indicator for Trudy chat (simpler version)
 function ChatTypingIndicator() {
   return (
     <div className="flex items-center gap-1 text-xs text-white/50 py-1">
@@ -146,6 +216,35 @@ function ChatTypingIndicator() {
         <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
         <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
       </span>
+    </div>
+  );
+}
+
+// Queue position indicator for live agent
+function AgentQueueIndicator({ position, estimatedWait }: { position: number; estimatedWait: string }) {
+  return (
+    <div className="bg-gradient-to-r from-amber-900/30 to-orange-900/20 border border-amber-500/30 rounded-lg p-4 mb-4">
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
+          <Users className="w-5 h-5 text-amber-400" />
+        </div>
+        <div>
+          <p className="text-white font-bold text-sm">Queue Position: #{position}</p>
+          <p className="text-amber-300/80 text-xs">Estimated wait: {estimatedWait}</p>
+        </div>
+      </div>
+      
+      {/* Progress bar */}
+      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mt-3">
+        <div 
+          className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full animate-pulse"
+          style={{ width: `${Math.max(20, 100 - position * 20)}%` }}
+        />
+      </div>
+      
+      <p className="text-white/50 text-[10px] mt-2 text-center">
+        An agent will be with you shortly. You can start typing your question.
+      </p>
     </div>
   );
 }
@@ -1406,40 +1505,47 @@ export default function Book() {
                       </div>
                     </div>
                     
+                    {/* Queue Indicator - shown when waiting for agent */}
+                    {roomUrl && liveChatMessages.length === 0 && !isAgentTyping && (
+                      <AgentQueueIndicator position={2} estimatedWait="~2 minutes" />
+                    )}
+                    
                     {/* Messages Area */}
                     <div className="flex-1 overflow-y-auto space-y-2 mb-3 min-h-[200px] bg-white/5 rounded-lg p-3">
                       {!roomUrl ? (
                         <p className="text-white/40 text-sm text-center py-8">
                           Join a video call to chat live with an agent
                         </p>
-                      ) : liveChatMessages.length === 0 ? (
-                        <p className="text-white/40 text-sm text-center py-8">
-                          Send a message to start chatting
+                      ) : liveChatMessages.length === 0 && !isAgentTyping ? (
+                        <p className="text-white/40 text-sm text-center py-4">
+                          Send a message to connect with an agent
                         </p>
                       ) : (
-                        liveChatMessages.map((msg) => (
-                          <div 
-                            key={msg.id} 
-                            className={cn(
-                              "flex",
-                              msg.isUser ? "justify-end" : "justify-start"
-                            )}
-                          >
-                            <div className={cn(
-                              "max-w-[85%] px-3 py-2 rounded-lg text-sm",
-                              msg.isUser 
-                                ? "bg-primary text-primary-foreground rounded-br-sm" 
-                                : "bg-white/10 text-white rounded-bl-sm"
-                            )}>
-                              <p>{msg.text}</p>
-                              <span className="text-[10px] opacity-60 mt-1 block">
-                                {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </span>
+                        <>
+                          {liveChatMessages.map((msg) => (
+                            <div 
+                              key={msg.id} 
+                              className={cn(
+                                "flex",
+                                msg.isUser ? "justify-end" : "justify-start"
+                              )}
+                            >
+                              <div className={cn(
+                                "max-w-[85%] px-3 py-2 rounded-lg text-sm",
+                                msg.isUser 
+                                  ? "bg-primary text-primary-foreground rounded-br-sm" 
+                                  : "bg-white/10 text-white rounded-bl-sm"
+                              )}>
+                                <p>{msg.text}</p>
+                                <span className="text-[10px] opacity-60 mt-1 block">
+                                  {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        ))
+                          ))}
+                          {isAgentTyping && <LiveAgentTypingIndicator withSound={true} />}
+                        </>
                       )}
-                      {isAgentTyping && <ChatTypingIndicator />}
                     </div>
                     
                     {/* Chat Input */}
@@ -1476,7 +1582,7 @@ export default function Book() {
                                 isUser: false,
                                 time: new Date()
                               }]);
-                            }, 1500 + Math.random() * 1000);
+                            }, 2000 + Math.random() * 1500);
                           }
                         }}
                       />
@@ -1509,7 +1615,7 @@ export default function Book() {
                                 isUser: false,
                                 time: new Date()
                               }]);
-                            }, 1500 + Math.random() * 1000);
+                            }, 2000 + Math.random() * 1500);
                           }
                         }}
                       >
