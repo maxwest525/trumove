@@ -1,215 +1,239 @@
 
-
-# Plan: Typing Indicators, Video Controls, and Weather Widget Relocation
+# Implementation Plan: Shipment Command Center Modal + Live Agent Enhancements
 
 ## Overview
-Three improvements:
-1. Add typing indicators to Live Support chat when agent is composing a response
-2. Add volume and mic buttons to the bottom of the video preview
-3. Remove weather widget from AI Move Estimator (OnlineEstimate page) - the Shipment Tracking page already has route weather
+
+This plan addresses multiple feature requests across two pages:
+
+1. **Book.tsx (Video Consult)**: Live Agent status indicator and dynamic queue countdown
+2. **LiveTracking.tsx (Shipment Command Center)**: Entry modal for route setup, layout improvements, and cross-page navigation
 
 ---
 
-## Visual Changes
+## Part 1: Live Agent Enhancements (Book.tsx)
+
+### 1.1 Agent Availability Status System
+
+Add a simulated "Busy" vs "Available" status to the Live Agent header that changes dynamically:
 
 ```text
-LIVE SUPPORT CHAT (Typing Indicator):
-+--------------------------------+
-| [User message bubble]          |
-|--------------------------------|
-| Trudy ● ● ●                    |  <- Shows while agent is "typing"
-|--------------------------------|
-| [Agent response bubble]        |
-+--------------------------------+
-
-VIDEO PREVIEW (Bottom Controls):
-+--------------------------------+
-|                                |
-|     [Video Content]            |
-|                                |
-+--------------------------------+
-| [Speaker] [Mic]                |  <- Bottom overlay with icon-only buttons
-+--------------------------------+
-
-WEATHER WIDGET:
-- REMOVED from OnlineEstimate page
-- ALREADY EXISTS in LiveTracking page (RouteWeather component)
++---------------------------+
+| [Avatar]                  |
+| Live Agent Chat           |
+| [Status Badge] Available  | <-- Dynamic status indicator
++---------------------------+
 ```
+
+**Implementation Details:**
+- Add state: `agentStatus: 'available' | 'busy'`
+- Add `useEffect` to simulate random availability changes (e.g., every 30-60 seconds toggle between states)
+- Update header to show colored badge:
+  - Green dot + "Available" when available
+  - Amber/orange dot + "Busy" when busy
+- When busy, show estimated wait time in the header subtitle
+
+### 1.2 Dynamic Queue Countdown Timer
+
+Enhance `AgentQueueIndicator` with a real-time countdown:
+
+**Current State:**
+```
+Queue Position: #2
+Estimated wait: ~2 minutes
+[Progress bar]
+```
+
+**New State:**
+```
+Queue Position: #2 → #1 (updates)
+Estimated wait: 1:45 (countdown timer)
+[Animated progress bar]
+```
+
+**Implementation Details:**
+- Add state for `queuePosition` and `queueWaitSeconds`
+- Add `useEffect` with `setInterval` to:
+  - Decrement `queueWaitSeconds` every second
+  - Occasionally decrement `queuePosition` (when timer hits certain thresholds)
+  - Clear queue when position reaches 0 (agent "connected")
+- Update `AgentQueueIndicator` to accept dynamic props
+- Add visual feedback when queue position changes (brief highlight/animation)
 
 ---
 
-## Technical Changes
+## Part 2: Shipment Command Center Modal (LiveTracking.tsx)
 
-### File: `src/pages/Book.tsx`
+### 2.1 Route Setup Entry Modal
 
-#### 1. Add Typing Indicator State (Around line 583)
+Create a new modal that appears on page load, replacing the sidebar-based route setup:
 
-Add state to track when agent is "typing":
-
-```tsx
-const [isAgentTyping, setIsAgentTyping] = useState(false);
+```text
++---------------------------------------+
+|          Track Your Shipment          |
+|                                       |
+| [Origin Address Input         ]       |
+| [Destination Address Input    ]       |
+|                                       |
+| --- OR ---                            |
+|                                       |
+| [Booking/Shipping Number      ]       |
+|                                       |
+| [Cancel]              [View Route]    |
++---------------------------------------+
 ```
 
-#### 2. Update Message Sending Logic (Lines 1404-1430 and 1450-1465)
+**Implementation Details:**
+- Add state: `showRouteModal: boolean` (default: `true` on mount)
+- Create `RouteSetupModal` component with:
+  - `LocationAutocomplete` for origin address
+  - `LocationAutocomplete` for destination address
+  - Divider with "OR" text
+  - Input for booking/shipping number (auto-populates addresses when valid)
+  - Date picker (only shown when booking number is entered)
+  - "View Route" button to close modal and start tracking
+  - Optional "Cancel" or close button
+- When booking number entered (e.g., 12345), auto-fill origin/destination and show date
+- On "View Route" click: close modal, populate route, center map
 
-Modify the simulated agent response to show typing indicator first:
+### 2.2 Remove Left Sidebar Route Setup
 
-```tsx
-// When user sends a message
-onKeyDown={(e) => {
-  if (e.key === 'Enter' && liveChatInput.trim() && roomUrl) {
-    const newMsg = {
-      id: `msg-${Date.now()}`,
-      text: liveChatInput.trim(),
-      isUser: true,
-      time: new Date()
-    };
-    setLiveChatMessages(prev => [...prev, newMsg]);
-    setLiveChatInput('');
-    
-    // Show typing indicator after 500ms
-    setTimeout(() => {
-      setIsAgentTyping(true);
-    }, 500);
-    
-    // Hide typing and show response after 1.5-2.5 seconds
-    setTimeout(() => {
-      setIsAgentTyping(false);
-      const agentResponses = [
-        "Thanks for your message! I'm reviewing your inventory now.",
-        "Got it! Let me check on that for you.",
-        "Great question! Based on what I see, I can help with that.",
-        "I'm here to help! Let me look into this.",
-      ];
-      const response = agentResponses[Math.floor(Math.random() * agentResponses.length)];
-      setLiveChatMessages(prev => [...prev, {
-        id: `msg-${Date.now()}`,
-        text: response,
-        isUser: false,
-        time: new Date()
-      }]);
-    }, 2000 + Math.random() * 500);
-  }
-}}
+Since the modal now handles route entry:
+- Remove the entire `<div className="tracking-sidebar">` section containing:
+  - Origin input with Street View preview
+  - Destination input with Street View preview
+  - Move Date picker
+  - Start/Pause/Reset buttons
+
+### 2.3 Layout Recentering
+
+With the left sidebar removed, update the layout:
+
+**Current CSS Grid:**
+```css
+grid-template-columns: 480px minmax(180px, 1fr) 480px;
 ```
 
-Apply the same logic to the onClick handler for the Send button.
-
-#### 3. Display Typing Indicator in Messages Area (After line 1392)
-
-Add the typing indicator display before the closing div of messages area:
-
-```tsx
-{/* Typing Indicator */}
-{isAgentTyping && <ChatTypingIndicator />}
+**New CSS Grid (2-column):**
+```css
+grid-template-columns: minmax(400px, 1fr) 400px;
 ```
 
-#### 4. Add Bottom Audio Controls to Video Preview (Around line 1231)
+- Map takes the larger left column
+- Dashboard (stats, weather, route info) takes the right column
+- Content properly padded below the sticky header
 
-Add mic and speaker controls at the bottom of the video preview container:
+### 2.4 Lower Content Below Header
 
-```tsx
-{/* Bottom Audio Control Bar */}
-<div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-center gap-2">
-  {/* Speaker Toggle - Icon Only with Dropdown */}
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
-        title="Speaker settings"
-      >
-        <Volume2 className="w-5 h-5" />
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent>
-      <DropdownMenuLabel className="text-xs">Select Speaker</DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      {audioOutputDevices.length > 0 ? (
-        audioOutputDevices.map((device) => (
-          <DropdownMenuItem key={device.deviceId} className="text-xs">
-            {device.label || 'Default Speaker'}
-          </DropdownMenuItem>
-        ))
-      ) : (
-        <DropdownMenuItem disabled className="text-xs">
-          Default Speaker
-        </DropdownMenuItem>
-      )}
-    </DropdownMenuContent>
-  </DropdownMenu>
-  
-  {/* Mic Toggle - Icon Only */}
-  <Button
-    variant="ghost"
-    size="icon"
-    className={cn(
-      "h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm",
-      isMicMuted && "bg-destructive/20 border-destructive/50 text-destructive"
-    )}
-    onClick={() => {
-      setIsMicMuted(!isMicMuted);
-      toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
-    }}
-    title={isMicMuted ? "Unmute microphone" : "Mute microphone"}
-  >
-    {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-  </Button>
-</div>
+Add proper top padding/margin to `.tracking-content` to prevent content from being hidden behind the sticky header:
+
+```css
+.tracking-content {
+  margin-top: 12px; /* Add spacing below header */
+  /* existing styles... */
+}
 ```
+
+The tracking header is already sticky at `top: 103px` offset, so the content grid needs to start below it.
+
+### 2.5 Cross-Page "View Route" Navigation
+
+Add a "View Route" button to relevant forms that navigates to the tracking page with pre-populated data:
+
+**Target Forms:**
+- `EstimateWizard.tsx` - After entering origin/destination
+- `OnlineEstimate.tsx` - Quote result screen
+- `Index.tsx` - Hero form (if applicable)
+
+**Implementation:**
+- Use `useNavigate` from `react-router-dom`
+- Store route data in localStorage before navigation:
+  ```typescript
+  localStorage.setItem('trumove_pending_route', JSON.stringify({
+    originAddress: '...',
+    destAddress: '...',
+    originCoords: [...],
+    destCoords: [...]
+  }));
+  navigate('/track');
+  ```
+- In `LiveTracking.tsx`, check for pending route on mount and auto-populate
 
 ---
 
-### File: `src/pages/OnlineEstimate.tsx`
+## Technical Details
 
-#### 5. Remove Weather Forecast Import (Line 21)
-
-Remove the import:
-```tsx
-// DELETE: import MoveWeatherForecast from "@/components/estimate/MoveWeatherForecast";
+### New State Variables (LiveTracking.tsx)
+```typescript
+const [showRouteModal, setShowRouteModal] = useState(true);
+const [modalOriginAddress, setModalOriginAddress] = useState("");
+const [modalDestAddress, setModalDestAddress] = useState("");
+const [modalBookingNumber, setModalBookingNumber] = useState("");
 ```
 
-#### 6. Remove Weather Forecast Component (Lines 425-432)
-
-Remove the weather widget from the right sidebar:
-```tsx
-// DELETE this entire block:
-{/* Weather Forecast along route */}
-{extendedDetails && extendedDetails.fromLocation && extendedDetails.toLocation && (
-  <MoveWeatherForecast
-    originLocation={extendedDetails.fromLocation}
-    destLocation={extendedDetails.toLocation}
-    moveDate={extendedDetails.moveDate}
-  />
-)}
+### New State Variables (Book.tsx)
+```typescript
+const [agentStatus, setAgentStatus] = useState<'available' | 'busy'>('available');
+const [queuePosition, setQueuePosition] = useState(2);
+const [queueWaitSeconds, setQueueWaitSeconds] = useState(120);
 ```
 
+### CSS Updates (index.css)
+```css
+/* Updated 2-column tracking layout */
+.tracking-content {
+  grid-template-columns: minmax(400px, 1fr) 400px;
+  padding-top: 16px;
+}
+
+/* Route Setup Modal */
+.route-setup-modal {
+  /* Modal overlay and card styles */
+}
+
+/* Agent status badge styles */
+.agent-status-badge {
+  /* Available/Busy badge variants */
+}
+```
+
+### Files Modified
+1. **src/pages/LiveTracking.tsx**
+   - Add `RouteSetupModal` component
+   - Add modal state management
+   - Remove left sidebar
+   - Check for pending route data on mount
+   - Update layout structure
+
+2. **src/pages/Book.tsx**
+   - Add agent status state and simulation
+   - Add queue countdown state and timer
+   - Update `AgentQueueIndicator` to use dynamic values
+   - Update Live Agent header with status badge
+
+3. **src/index.css**
+   - Update `.tracking-content` grid to 2 columns
+   - Add top padding for header clearance
+   - Add modal styles
+   - Add status badge styles
+   - Update responsive breakpoints
+
+4. **src/components/estimate/EstimateWizard.tsx**
+   - Add "View Route" button after address entry
+   - Add navigation logic with data persistence
+
+5. **src/pages/OnlineEstimate.tsx**
+   - Add "View Route" button to quote results
+
 ---
 
-## Summary
+## Summary of Changes
 
-| Change | File | Description |
-|--------|------|-------------|
-| Typing indicator state | Book.tsx | Add `isAgentTyping` state |
-| Typing indicator logic | Book.tsx | Show indicator during "agent typing" simulation |
-| Typing indicator display | Book.tsx | Render `ChatTypingIndicator` in messages area |
-| Audio controls | Book.tsx | Add Volume/Mic buttons to video preview bottom |
-| Remove weather import | OnlineEstimate.tsx | Remove unused import |
-| Remove weather widget | OnlineEstimate.tsx | Remove MoveWeatherForecast from sidebar |
-
----
-
-## Notes
-
-- The Shipment Tracking page (`/track`) already has the `RouteWeather` component displaying weather conditions along the route
-- The `ChatTypingIndicator` component already exists in Book.tsx (lines 89-101) with animated bouncing dots
-- The typing indicator will show for ~1.5 seconds before the agent "response" appears
-
----
-
-## Files Modified
-
-- `src/pages/Book.tsx` - Typing indicator + audio controls
-- `src/pages/OnlineEstimate.tsx` - Remove weather widget
-
+| Feature | File(s) | Complexity |
+|---------|---------|------------|
+| Agent Busy/Available status | Book.tsx | Low |
+| Dynamic queue countdown | Book.tsx | Medium |
+| Route Setup Entry Modal | LiveTracking.tsx | Medium |
+| Remove left sidebar | LiveTracking.tsx | Low |
+| Recenter layout (2-column) | LiveTracking.tsx, index.css | Medium |
+| Lower content below header | index.css | Low |
+| "View Route" cross-navigation | EstimateWizard.tsx, OnlineEstimate.tsx, LiveTracking.tsx | Medium |
