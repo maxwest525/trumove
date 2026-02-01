@@ -12707,12 +12707,12 @@
 .chat-modal-panel {
   position: fixed;
   top: auto;
-  bottom: 120px;
+  bottom: 100px;
   right: 24px;
-  width: 560px;
+  width: 680px;
   max-width: calc(100vw - 48px);
-  height: 480px;
-  max-height: calc(100vh - 160px);
+  height: 520px;
+  max-height: calc(100vh - 140px);
   background: #ffffff;
   border-radius: 20px;
   box-shadow: 0 24px 80px hsl(var(--tm-ink) / 0.25);

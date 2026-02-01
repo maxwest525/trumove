@@ -1223,6 +1223,67 @@ export default function Book() {
                       </div>
                     </div>
                   )}
+                  
+                  {/* Bottom Audio Control Bar */}
+                  <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={cn(
+                        "h-9 px-4 bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm",
+                        isMicMuted && "border-destructive/50 bg-destructive/20 text-destructive"
+                      )}
+                      onClick={() => {
+                        setIsMicMuted(!isMicMuted);
+                        toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
+                      }}
+                    >
+                      {isMicMuted ? <MicOff className="w-4 h-4 mr-1.5" /> : <Mic className="w-4 h-4 mr-1.5" />}
+                      {isMicMuted ? "Unmute" : "Mute"}
+                    </Button>
+                    
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-9 px-4 bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+                        >
+                          <Volume2 className="w-4 h-4 mr-1.5" />
+                          Speaker
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="center" className="w-56 bg-slate-800 border-white/20 text-white">
+                        <DropdownMenuLabel className="text-white/60 text-xs">Audio Output Device</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-white/10" />
+                        {audioOutputDevices.length > 0 ? (
+                          audioOutputDevices.map((device) => (
+                            <DropdownMenuItem 
+                              key={device.deviceId}
+                              className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+                              onClick={() => {
+                                setSelectedSpeaker(device.deviceId);
+                                toast.info(`Using ${device.label || 'Audio Device'}`);
+                              }}
+                            >
+                              {selectedSpeaker === device.deviceId && "✓ "}
+                              {device.label || `Speaker ${audioOutputDevices.indexOf(device) + 1}`}
+                            </DropdownMenuItem>
+                          ))
+                        ) : (
+                          <DropdownMenuItem 
+                            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
+                            onClick={() => {
+                              setSelectedSpeaker("default");
+                              toast.info("Using default speaker");
+                            }}
+                          >
+                            {selectedSpeaker === "default" && "✓ "}Default Speaker
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -1469,32 +1530,18 @@ export default function Book() {
             
             {/* Top Row: All Control Buttons */}
             <div className="flex items-center gap-2 flex-wrap justify-center mb-4">
-              {/* Screen Share with Audio Toggle */}
-              <div className="flex items-center">
-                <Button 
-                  variant="outline" 
-                  className={cn(
-                    "h-10 px-3 border border-border bg-background hover:bg-muted rounded-r-none",
-                    isScreenSharing && "border-foreground/50 bg-foreground/10"
-                  )}
-                  onClick={handleScreenShare}
-                >
-                  <Monitor className="w-4 h-4 mr-1.5" />
-                  {isScreenSharing ? "Stop" : "Share"}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className={cn(
-                    "h-10 w-10 border border-border bg-background hover:bg-muted border-l-0 rounded-l-none",
-                    !shareAudio && "text-muted-foreground"
-                  )}
-                  onClick={() => setShareAudio(!shareAudio)}
-                  title={shareAudio ? "Audio: ON" : "Audio: OFF"}
-                >
-                  {shareAudio ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                </Button>
-              </div>
+              {/* Screen Share */}
+              <Button 
+                variant="outline" 
+                className={cn(
+                  "h-10 px-3 border border-border bg-background hover:bg-muted",
+                  isScreenSharing && "border-foreground/50 bg-foreground/10"
+                )}
+                onClick={handleScreenShare}
+              >
+                <Monitor className="w-4 h-4 mr-1.5" />
+                {isScreenSharing ? "Stop Share" : "Share Screen"}
+              </Button>
               
               
               {/* Schedule Time */}

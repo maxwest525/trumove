@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useConversation } from "@elevenlabs/react";
 import ReactMarkdown from "react-markdown";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Bot } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import ChatInput from "./ChatInput";
 import TypingIndicator from "./TypingIndicator";
@@ -232,8 +232,8 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
       {/* Header */}
       <div className="chat-header">
         <div className="chat-header-left">
-          <div className="chat-avatar-small bg-primary/10">
-            <img src={trudyAvatar} alt="Trudy" className="w-6 h-6 rounded-full object-cover" />
+          <div className="chat-avatar-small bg-foreground flex items-center justify-center">
+            <Bot className="w-5 h-5 text-background" />
           </div>
           <div className="chat-header-info">
             <span className="chat-header-name">Trudy with TruMove</span>
@@ -277,8 +277,8 @@ export default function AIChatContainer({ agentId, onSwitchToQuickQuote, pageCon
             className={cn("chat-message", msg.role === "assistant" ? "is-bot" : "is-user")}
           >
             {msg.role === "assistant" && (
-              <div className="chat-avatar">
-                <img src={trudyAvatar} alt="Trudy" className="w-8 h-8 rounded-full object-cover" />
+              <div className="chat-avatar bg-foreground flex items-center justify-center">
+                <Bot className="w-5 h-5 text-background" />
               </div>
             )}
             <div className="chat-bubble">
