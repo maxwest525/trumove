@@ -30140,8 +30140,8 @@ html.dark .tru-summary-header-large,
   height: 560px;
   min-height: 400px;
   max-height: 560px;
-  background: linear-gradient(to bottom, hsl(220 15% 10%), hsl(220 15% 8%));
-  border: 1px solid hsl(0 0% 100% / 0.1);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 12px;
   overflow: hidden;
 }
@@ -30164,7 +30164,7 @@ html.dark .tru-summary-header-large,
 
 .video-consult-chat-tabs {
   display: flex;
-  border-bottom: 1px solid hsl(0 0% 100% / 0.1);
+  border-bottom: 1px solid hsl(var(--border));
 }
 
 .video-consult-chat-tabs button {
@@ -30178,8 +30178,8 @@ html.dark .tru-summary-header-large,
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: hsl(0 0% 100% / 0.55);
-  background: hsl(220 15% 10%);
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--card));
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
@@ -30187,13 +30187,13 @@ html.dark .tru-summary-header-large,
 }
 
 .video-consult-chat-tabs button:hover {
-  color: hsl(0 0% 100% / 0.8);
-  background: hsl(220 15% 14%);
+  color: hsl(var(--foreground));
+  background: hsl(var(--muted));
 }
 
 .video-consult-chat-tabs button.active {
-  color: hsl(0 0% 100%);
-  background: hsl(220 15% 14%);
+  color: hsl(var(--foreground));
+  background: hsl(var(--muted));
   border-bottom: 2px solid hsl(var(--primary));
 }
 
