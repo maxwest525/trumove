@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { X, Sparkles, Zap } from "lucide-react";
+import { X, Sparkles, Zap, Maximize2, Minimize2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ChatContainer from "./ChatContainer";
 import AIChatContainer from "./AIChatContainer";
-import { getPageContext, PageContext } from "./pageContextConfig";
+import { getPageContext } from "./pageContextConfig";
 import { cn } from "@/lib/utils";
 
 type ChatMode = "ai" | "quick-quote";
@@ -27,6 +27,7 @@ export default function ChatModal({
 }: ChatModalProps) {
   const navigate = useNavigate();
   const [mode, setMode] = useState<ChatMode>(defaultMode);
+  const [isMaximized, setIsMaximized] = useState(false);
   const pageContext = getPageContext(pagePath);
 
   if (!isOpen) return null;
@@ -41,7 +42,12 @@ export default function ChatModal({
       />
       
       {/* Modal Panel */}
-      <div className="chat-modal-panel" role="dialog" aria-modal="true" aria-label="AI Chat Assistant">
+      <div 
+        className={cn("chat-modal-panel", isMaximized && "chat-modal-maximized")} 
+        role="dialog" 
+        aria-modal="true" 
+        aria-label="AI Chat Assistant"
+      >
         <div className="chat-modal-header">
           {/* Mode Toggle */}
           <div className="flex items-center gap-1 p-0.5 bg-muted rounded-lg">
@@ -73,14 +79,30 @@ export default function ChatModal({
             </button>
           </div>
           
-          <button 
-            type="button" 
-            className="chat-modal-close"
-            onClick={onClose}
-            aria-label="Close chat"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            {/* Maximize/Minimize Button */}
+            <button 
+              type="button" 
+              className="chat-modal-close"
+              onClick={() => setIsMaximized(!isMaximized)}
+              aria-label={isMaximized ? "Minimize chat" : "Maximize chat"}
+            >
+              {isMaximized ? (
+                <Minimize2 className="w-4 h-4" />
+              ) : (
+                <Maximize2 className="w-4 h-4" />
+              )}
+            </button>
+            
+            <button 
+              type="button" 
+              className="chat-modal-close"
+              onClick={onClose}
+              aria-label="Close chat"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
         
         <div className="chat-modal-body">
