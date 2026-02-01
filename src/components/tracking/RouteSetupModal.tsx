@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,10 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { MapPin, Navigation, Truck, CalendarIcon, Search } from "lucide-react";
+import { MapPin, Navigation, Truck, CalendarIcon, Search, Loader2, Globe, Eye } from "lucide-react";
 import { format } from "date-fns";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
+import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
 
 interface RouteSetupModalProps {
   open: boolean;
@@ -36,6 +39,123 @@ const MOCK_BOOKINGS: Record<string, { origin: string; destination: string; date:
   },
 };
 
+// Geocode address to coordinates
+async function geocodeAddress(address: string): Promise<[number, number] | null> {
+  if (!address || address.length < 5) return null;
+  
+  try {
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_TOKEN}&country=US&types=address,place&limit=1`
+    );
+    const data = await response.json();
+    
+    if (data.features && data.features.length > 0) {
+      return data.features[0].center as [number, number];
+    }
+    return null;
+  } catch (error) {
+    console.error("Geocoding error:", error);
+    return null;
+  }
+}
+
+// Compact Street View Preview Component
+function AddressPreview({ 
+  address, 
+  variant,
+  coordinates 
+}: { 
+  address: string; 
+  variant: "origin" | "destination";
+  coordinates: [number, number] | null;
+}) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  // Reset states when address changes
+  useEffect(() => {
+    setIsLoading(true);
+    setHasError(false);
+  }, [address, coordinates]);
+
+  // Google Street View Static API URL
+  const streetViewUrl = coordinates
+    ? `https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${coordinates[1]},${coordinates[0]}&fov=90&heading=0&pitch=10&key=${GOOGLE_MAPS_API_KEY}`
+    : null;
+
+  // Google Static Maps satellite fallback
+  const satelliteUrl = coordinates
+    ? `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates[1]},${coordinates[0]}&zoom=17&size=400x200&maptype=hybrid&key=${GOOGLE_MAPS_API_KEY}`
+    : null;
+
+  const Icon = variant === "origin" ? Navigation : MapPin;
+  const iconColor = variant === "origin" ? "text-primary" : "text-destructive";
+
+  if (!coordinates) {
+    return null;
+  }
+
+  return (
+    <div className="relative w-full h-[100px] rounded-lg overflow-hidden border border-border bg-muted animate-in fade-in slide-in-from-bottom-2 duration-300">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
+          <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+        </div>
+      )}
+      
+      {hasError ? (
+        // Fallback to satellite view
+        <img
+          src={satelliteUrl || ""}
+          alt={`Satellite view of ${address}`}
+          className={cn(
+            "w-full h-full object-cover transition-opacity duration-300",
+            isLoading ? "opacity-0" : "opacity-100"
+          )}
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false);
+          }}
+        />
+      ) : (
+        <img
+          src={streetViewUrl || ""}
+          alt={`Street view of ${address}`}
+          className={cn(
+            "w-full h-full object-cover transition-opacity duration-300",
+            isLoading ? "opacity-0" : "opacity-100"
+          )}
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setHasError(true);
+            setIsLoading(true);
+          }}
+        />
+      )}
+
+      {/* Location badge overlay */}
+      <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center gap-1.5 px-2 py-1 rounded bg-background/90 backdrop-blur-sm border border-border">
+        <Icon className={cn("w-3 h-3 flex-shrink-0", iconColor)} />
+        <span className="text-[10px] font-medium text-foreground truncate">
+          {address}
+        </span>
+      </div>
+
+      {/* View type badge */}
+      <div className="absolute top-1.5 right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded bg-background/80 backdrop-blur-sm">
+        {hasError ? (
+          <Globe className="w-2.5 h-2.5 text-muted-foreground" />
+        ) : (
+          <Eye className="w-2.5 h-2.5 text-muted-foreground" />
+        )}
+        <span className="text-[8px] font-medium text-muted-foreground uppercase">
+          {hasError ? "Satellite" : "Street"}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProps) {
   const [originAddress, setOriginAddress] = useState("");
   const [destAddress, setDestAddress] = useState("");
@@ -43,6 +163,38 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
   const [moveDate, setMoveDate] = useState<Date | undefined>(undefined);
   const [showDate, setShowDate] = useState(false);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  
+  // Coordinates for Street View previews
+  const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
+  const [destCoords, setDestCoords] = useState<[number, number] | null>(null);
+
+  // Geocode origin address when it changes
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (originAddress && originAddress.length > 5) {
+        const coords = await geocodeAddress(originAddress);
+        setOriginCoords(coords);
+      } else {
+        setOriginCoords(null);
+      }
+    }, 500); // Debounce
+    
+    return () => clearTimeout(timer);
+  }, [originAddress]);
+
+  // Geocode destination address when it changes
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (destAddress && destAddress.length > 5) {
+        const coords = await geocodeAddress(destAddress);
+        setDestCoords(coords);
+      } else {
+        setDestCoords(null);
+      }
+    }, 500); // Debounce
+    
+    return () => clearTimeout(timer);
+  }, [destAddress]);
 
   // Auto-populate from booking number
   useEffect(() => {
@@ -113,7 +265,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Truck className="w-5 h-5 text-primary" />
@@ -138,6 +290,14 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
               mode="address"
               className="w-full"
             />
+            {/* Street View Preview for Origin */}
+            {originCoords && (
+              <AddressPreview 
+                address={originAddress} 
+                variant="origin" 
+                coordinates={originCoords}
+              />
+            )}
           </div>
 
           {/* Destination Address */}
@@ -156,6 +316,14 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
               mode="address"
               className="w-full"
             />
+            {/* Street View Preview for Destination */}
+            {destCoords && (
+              <AddressPreview 
+                address={destAddress} 
+                variant="destination" 
+                coordinates={destCoords}
+              />
+            )}
           </div>
 
           {/* OR Divider */}
