@@ -12706,11 +12706,13 @@
 
 .chat-modal-panel {
   position: fixed;
-  top: 80px;
+  top: auto;
+  bottom: 120px;
   right: 24px;
-  bottom: 24px;
-  width: 420px;
+  width: 560px;
   max-width: calc(100vw - 48px);
+  height: 480px;
+  max-height: calc(100vh - 160px);
   background: #ffffff;
   border-radius: 20px;
   box-shadow: 0 24px 80px hsl(var(--tm-ink) / 0.25);
