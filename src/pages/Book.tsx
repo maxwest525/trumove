@@ -11,6 +11,7 @@ import {
   PhoneCall, PictureInPicture2, PictureInPictureIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -1153,15 +1154,22 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false }: { onLeave: () => void;
 
         {/* Screen share button - hide in PiP */}
         {!isPiP && (
-          <button
-            onClick={handleShareScreen}
-            className={cn(
-              "w-11 h-11 rounded-full flex items-center justify-center transition-colors",
-              isScreenSharing ? "bg-primary text-primary-foreground" : "bg-white/10 text-white hover:bg-white/20"
-            )}
-          >
-            <Monitor className="w-5 h-5" />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleShareScreen}
+                className={cn(
+                  "w-11 h-11 rounded-full flex items-center justify-center transition-colors",
+                  isScreenSharing ? "bg-primary text-primary-foreground" : "bg-white/10 text-white hover:bg-white/20"
+                )}
+              >
+                <Monitor className="w-5 h-5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>{isScreenSharing ? "Stop Sharing" : "Share Screen"}</p>
+            </TooltipContent>
+          </Tooltip>
         )}
 
         <button
