@@ -113,7 +113,7 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
           ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
         `}
-        aria-label="TruDy AI Moving Helper"
+        aria-label="Trudy AI Moving Helper"
       >
         {/* Truck Icon Container */}
         <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-background/20 border border-background/30">
