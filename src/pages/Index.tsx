@@ -1179,6 +1179,24 @@ export default function Index() {
                           <span>{isSearchingCarriers || isAnalyzing ? 'Analyzing...' : 'Analyze Route'}</span>
                           {!isSearchingCarriers && !isAnalyzing && <ArrowRight className="w-5 h-5 tru-btn-arrow" />}
                         </button>
+                        
+                        {/* Track My Move Button */}
+                        {fromLocationDisplay && toLocationDisplay && (
+                          <button
+                            type="button"
+                            className="w-full py-2.5 text-sm text-muted-foreground hover:text-primary border border-dashed border-border/50 hover:border-primary/50 rounded-lg transition-colors flex items-center justify-center gap-2 mt-2"
+                            onClick={() => {
+                              localStorage.setItem('trumove_pending_route', JSON.stringify({
+                                originAddress: fromLocationDisplay,
+                                destAddress: toLocationDisplay,
+                              }));
+                              navigate('/track');
+                            }}
+                          >
+                            <Truck className="w-4 h-4" />
+                            <span>Track My Move</span>
+                          </button>
+                        )}
                       </div>
                     )}
 
