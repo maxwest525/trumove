@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { X, Sparkles, Zap, Maximize2, Minimize2 } from "lucide-react";
+import { X, Sparkles, Zap, Maximize2, Minimize2, PanelRight, Square } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ChatContainer from "./ChatContainer";
 import AIChatContainer from "./AIChatContainer";
 import { getPageContext } from "./pageContextConfig";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type ChatMode = "ai" | "quick-quote";
+type ViewMode = "panel" | "modal";
 
 interface ChatModalProps {
   isOpen: boolean;
@@ -27,6 +29,7 @@ export default function ChatModal({
 }: ChatModalProps) {
   const navigate = useNavigate();
   const [mode, setMode] = useState<ChatMode>(defaultMode);
+  const [viewMode, setViewMode] = useState<ViewMode>("panel");
   const [isMaximized, setIsMaximized] = useState(false);
   const pageContext = getPageContext(pagePath);
 
@@ -43,7 +46,11 @@ export default function ChatModal({
       
       {/* Modal Panel */}
       <div 
-        className={cn("chat-modal-panel", isMaximized && "chat-modal-maximized")} 
+        className={cn(
+          "chat-modal-panel", 
+          viewMode === "modal" && "chat-modal-centered",
+          isMaximized && "chat-modal-maximized"
+        )} 
         role="dialog" 
         aria-modal="true" 
         aria-label="AI Chat Assistant"
@@ -80,28 +87,63 @@ export default function ChatModal({
           </div>
           
           <div className="flex items-center gap-1">
-            {/* Maximize/Minimize Button */}
-            <button 
-              type="button" 
-              className="chat-modal-close"
-              onClick={() => setIsMaximized(!isMaximized)}
-              aria-label={isMaximized ? "Minimize chat" : "Maximize chat"}
-            >
-              {isMaximized ? (
-                <Minimize2 className="w-4 h-4" />
-              ) : (
-                <Maximize2 className="w-4 h-4" />
-              )}
-            </button>
+            {/* View Mode Toggle */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button 
+                  type="button" 
+                  className="chat-modal-close"
+                  onClick={() => setViewMode(viewMode === "panel" ? "modal" : "panel")}
+                  aria-label={viewMode === "panel" ? "Center modal" : "Side panel"}
+                >
+                  {viewMode === "panel" ? (
+                    <Square className="w-4 h-4" />
+                  ) : (
+                    <PanelRight className="w-4 h-4" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>{viewMode === "panel" ? "Center Modal" : "Side Panel"}</p>
+              </TooltipContent>
+            </Tooltip>
             
-            <button 
-              type="button" 
-              className="chat-modal-close"
-              onClick={onClose}
-              aria-label="Close chat"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            {/* Maximize/Minimize Button */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button 
+                  type="button" 
+                  className="chat-modal-close"
+                  onClick={() => setIsMaximized(!isMaximized)}
+                  aria-label={isMaximized ? "Minimize chat" : "Maximize chat"}
+                >
+                  {isMaximized ? (
+                    <Minimize2 className="w-4 h-4" />
+                  ) : (
+                    <Maximize2 className="w-4 h-4" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>{isMaximized ? "Minimize" : "Maximize"}</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button 
+                  type="button" 
+                  className="chat-modal-close"
+                  onClick={onClose}
+                  aria-label="Close chat"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Close</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
         
