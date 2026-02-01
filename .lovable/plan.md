@@ -1,221 +1,241 @@
 
-
-# Plan: Video Consult UI Fixes & Settings Dropdown
+# Plan: Reorganize Video Controls Card
 
 ## Overview
-Address 5 issues on the Video Consult page (/book):
-1. Add a settings dropdown to the video controls
-2. Fix the booking controls animation (already has `animate-fade-in` but may need delay)
-3. Fix chat buttons - Call Now is all green, needs better contrast (reference image shows this)
-4. Reduce green hover effect on Screen Share and Volume buttons
-5. Improve overall button visibility and readability
+Restructure the video controls card to have:
+1. **Top row**: All control buttons (Share Screen, Volume, Schedule Time, Trudy AI Service, Virtual Whiteboard, Demo, Settings)
+2. **Bottom section**: Booking/Shipment ID input with Join Video and Call options
+3. **Fix**: Remove all-green active states from buttons
+
+---
+
+## Layout Structure
+
+```text
++----------------------------------------------------------+
+|              VIRTUAL VIDEO CONTROLS                       |
++----------------------------------------------------------+
+|  [Share] [🔊] [📅 Schedule] [🤖 Trudy AI] [📋 Whiteboard] [Demo] [⚙️] |
++----------------------------------------------------------+
+|  Enter Booking Code or Shipment ID                        |
+|  [________________________] [📹 Join Video] [📞 Call]     |
++----------------------------------------------------------+
+```
 
 ---
 
 ## Changes
 
-### 1. Add Settings Dropdown to Video Controls
+### File: `src/pages/Book.tsx`
 
-Add a Settings button with dropdown for quality and notification preferences.
-
-**File: `src/pages/Book.tsx`**
-
-Add to imports:
+#### 1. Add State for Schedule Modal
+Add state near existing state declarations (around line 1010):
 ```tsx
-import { Settings } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+const [showScheduleModal, setShowScheduleModal] = useState(false);
 ```
 
-Add state for settings:
-```tsx
-const [videoQuality, setVideoQuality] = useState<'auto' | 'high' | 'medium' | 'low'>('auto');
-const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-```
+#### 2. Add Import for Calendar Icon
+Ensure `CalendarDays`, `Bot`, `PenTool`, `Phone` icons are imported from lucide-react.
 
-Add settings dropdown button after the Demo button (around line 1283):
+#### 3. Restructure Controls Card (lines 1247-1340)
+
+Replace the entire booking controls section with new layout:
+
 ```tsx
-{/* Settings Dropdown */}
-<DropdownMenu>
-  <DropdownMenuTrigger asChild>
+{/* Booking Controls - Light themed card */}
+<div className="video-consult-booking-controls animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
+  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 w-full text-center">
+    Virtual Video Controls
+  </h3>
+  
+  {/* Top Row: All Control Buttons */}
+  <div className="flex items-center gap-2 flex-wrap justify-center mb-4">
+    {/* Screen Share with Audio Toggle */}
+    <div className="flex items-center">
+      <Button 
+        variant="outline" 
+        className={cn(
+          "h-10 px-3 border border-border bg-background hover:bg-muted rounded-r-none",
+          isScreenSharing && "border-foreground/50 bg-foreground/10"
+        )}
+        onClick={handleScreenShare}
+      >
+        <Monitor className="w-4 h-4 mr-1.5" />
+        {isScreenSharing ? "Stop" : "Share"}
+      </Button>
+      <Button
+        variant="outline"
+        size="icon"
+        className={cn(
+          "h-10 w-10 border border-border bg-background hover:bg-muted border-l-0 rounded-l-none",
+          !shareAudio && "text-muted-foreground"
+        )}
+        onClick={() => setShareAudio(!shareAudio)}
+        title={shareAudio ? "Audio: ON" : "Audio: OFF"}
+      >
+        {shareAudio ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+      </Button>
+    </div>
+    
+    {/* Schedule Time */}
+    <Button 
+      variant="outline"
+      className="h-10 px-3 border border-border bg-background hover:bg-muted"
+      onClick={() => setShowScheduleModal(true)}
+    >
+      <CalendarDays className="w-4 h-4 mr-1.5" />
+      Schedule
+    </Button>
+    
+    {/* Trudy AI Service */}
+    <Button 
+      variant="outline"
+      className="h-10 px-3 border border-border bg-background hover:bg-muted"
+      onClick={() => {/* Could trigger AI chat or modal */}}
+    >
+      <Bot className="w-4 h-4 mr-1.5" />
+      Trudy AI
+    </Button>
+    
+    {/* Virtual Whiteboard */}
+    <Button 
+      variant="outline"
+      className="h-10 px-3 border border-border bg-background hover:bg-muted"
+      onClick={() => {/* Whiteboard functionality */}}
+    >
+      <PenTool className="w-4 h-4 mr-1.5" />
+      Whiteboard
+    </Button>
+    
+    {/* Demo */}
     <Button 
       variant="outline" 
-      size="icon"
-      className="video-consult-booking-settings-btn"
+      onClick={handleStartDemo}
+      className="h-10 px-3 border border-border bg-background hover:bg-muted"
     >
-      <Settings className="w-4 h-4" />
+      <Sparkles className="w-4 h-4 mr-1.5" />
+      Demo
     </Button>
-  </DropdownMenuTrigger>
-  <DropdownMenuContent align="end" className="w-56 bg-slate-800 border-slate-700 text-white">
-    <DropdownMenuLabel className="text-white/80">Video Settings</DropdownMenuLabel>
-    <DropdownMenuSeparator className="bg-slate-700" />
-    <DropdownMenuItem 
-      className="text-white hover:bg-slate-700 cursor-pointer"
-      onClick={() => setVideoQuality('auto')}
-    >
-      Quality: Auto {videoQuality === 'auto' && '✓'}
-    </DropdownMenuItem>
-    <DropdownMenuItem 
-      className="text-white hover:bg-slate-700 cursor-pointer"
-      onClick={() => setVideoQuality('high')}
-    >
-      Quality: High {videoQuality === 'high' && '✓'}
-    </DropdownMenuItem>
-    <DropdownMenuItem 
-      className="text-white hover:bg-slate-700 cursor-pointer"
-      onClick={() => setVideoQuality('medium')}
-    >
-      Quality: Medium {videoQuality === 'medium' && '✓'}
-    </DropdownMenuItem>
-    <DropdownMenuSeparator className="bg-slate-700" />
-    <DropdownMenuLabel className="text-white/80">Notifications</DropdownMenuLabel>
-    <DropdownMenuItem 
-      className="text-white hover:bg-slate-700 cursor-pointer"
-      onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-    >
-      Sound Alerts: {notificationsEnabled ? 'On ✓' : 'Off'}
-    </DropdownMenuItem>
-  </DropdownMenuContent>
-</DropdownMenu>
+    
+    {/* Settings Dropdown */}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button 
+          variant="outline" 
+          size="icon"
+          className="h-10 w-10 border border-border bg-background hover:bg-muted"
+        >
+          <Settings className="w-4 h-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56 bg-card border-border">
+        {/* Settings content stays the same */}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>
+  
+  {/* Divider */}
+  <div className="w-full border-t border-border mb-4" />
+  
+  {/* Bottom Section: Booking Input + Actions */}
+  <div className="w-full space-y-3">
+    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      Enter Booking Code or Shipment ID
+    </label>
+    <div className="flex items-center gap-2">
+      <Input
+        value={bookingCode}
+        onChange={(e) => setBookingCode(e.target.value)}
+        placeholder="e.g. TM-2026-XXXXXXXX"
+        className="flex-1 h-11 bg-background border border-border"
+        onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
+      />
+      <Button 
+        onClick={handleJoinRoom} 
+        disabled={!bookingCode.trim()}
+        className="h-11 px-4 bg-foreground text-background hover:bg-foreground/90 font-semibold"
+      >
+        <Video className="w-4 h-4 mr-2" />
+        Join Video
+      </Button>
+      <Button 
+        variant="outline"
+        className="h-11 px-4 border border-border bg-background hover:bg-muted font-semibold"
+        onClick={() => window.location.href = "tel:+16097277647"}
+      >
+        <Phone className="w-4 h-4 mr-2" />
+        Call
+      </Button>
+    </div>
+  </div>
+</div>
 ```
 
----
-
-### 2. Add Animation Delay to Booking Controls
-
-Add a slight delay to the entrance animation for a staggered effect.
-
-**File: `src/pages/Book.tsx`** (line 1231)
+#### 4. Add Schedule Time Modal (after the controls card, before Footer)
 
 ```tsx
-// BEFORE:
-<div className="video-consult-booking-controls animate-fade-in">
-
-// AFTER:
-<div className="video-consult-booking-controls animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
+{/* Schedule Time Modal */}
+<Dialog open={showScheduleModal} onOpenChange={setShowScheduleModal}>
+  <DialogContent className="sm:max-w-lg">
+    <DialogHeader>
+      <DialogTitle>Schedule a Call with Your Agent</DialogTitle>
+    </DialogHeader>
+    <BookingCalendar 
+      onSelect={(date, time) => {
+        console.log('Selected:', date, time);
+        // Handle scheduling logic
+        setShowScheduleModal(false);
+      }} 
+    />
+    <DialogFooter>
+      <Button variant="outline" onClick={() => setShowScheduleModal(false)}>
+        Cancel
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
 ```
 
 ---
 
-### 3. Fix Chat Buttons - Not All Green
+### File: `src/index.css`
 
-The "Call Now" button should be solid primary (green) but "Schedule Callback" needs a white/neutral color scheme per the user's screenshot showing the buttons with too much green.
+#### 5. Fix Active Button States (no all-green)
 
-**File: `src/pages/Book.tsx`** (lines 1208-1222)
-
-```tsx
-// BEFORE:
-<Button 
-  className="w-full bg-primary hover:bg-primary/90 text-background font-bold h-12 text-base"
-  onClick={() => window.location.href = "tel:+18001234567"}
->
-  <Phone className="w-5 h-5 mr-2" />
-  Call Now
-</Button>
-<Button 
-  variant="outline" 
-  className="w-full border-2 border-white/60 text-white hover:bg-white/15 hover:border-white font-bold h-12 text-base"
-
-// AFTER - Higher contrast, no green hover on Schedule:
-<Button 
-  className="w-full bg-primary hover:bg-primary/85 text-black font-bold h-12 text-base shadow-[0_2px_8px_hsl(var(--primary)/0.3)]"
-  onClick={() => window.location.href = "tel:+18001234567"}
->
-  <Phone className="w-5 h-5 mr-2" />
-  Call Now
-</Button>
-<Button 
-  variant="outline" 
-  className="w-full border-2 border-white/50 text-white hover:bg-white/10 hover:border-white/70 font-bold h-12 text-base bg-slate-800/50"
-```
-
----
-
-### 4. Reduce Green Hover on Screen Share and Volume Buttons
-
-The hover states have too much green. Change to a subtle white highlight instead.
-
-**File: `src/index.css`** (lines 29998-30002, 30060-30064)
+Update active state classes to use neutral/foreground colors instead of primary green:
 
 ```css
-/* BEFORE - Screen Share hover: */
-.video-consult-booking-share-btn:hover {
-  background: hsl(var(--primary) / 0.2) !important;
-  border-color: hsl(var(--primary)) !important;
-  color: hsl(var(--primary)) !important;
+/* Screen Share Active State - neutral instead of green */
+.video-consult-booking-share-btn--active {
+  background: hsl(var(--foreground) / 0.1) !important;
+  border-color: hsl(var(--foreground) / 0.5) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
-/* AFTER - Subtle white hover: */
-.video-consult-booking-share-btn:hover {
-  background: hsl(0 0% 100% / 0.08) !important;
-  border-color: hsl(0 0% 100% / 0.5) !important;
-  color: hsl(0 0% 100%) !important;
-}
-
-/* BEFORE - Audio button hover: */
-.video-consult-booking-audio-btn:hover {
-  background: hsl(var(--primary) / 0.2) !important;
-  color: hsl(var(--primary)) !important;
-  border-color: hsl(var(--primary)) !important;
-}
-
-/* AFTER - Subtle white hover: */
-.video-consult-booking-audio-btn:hover {
-  background: hsl(0 0% 100% / 0.08) !important;
-  color: hsl(0 0% 100%) !important;
-  border-color: hsl(0 0% 100% / 0.5) !important;
+.video-consult-booking-share-btn--active:hover {
+  background: hsl(var(--foreground) / 0.15) !important;
 }
 ```
 
----
-
-### 5. Add Settings Button CSS
-
-**File: `src/index.css`** (after line 30068)
-
-```css
-/* Settings Button */
-.video-consult-booking-settings-btn {
-  height: 48px !important;
-  width: 48px !important;
-  padding: 0 !important;
-  background: hsl(220 15% 18%) !important;
-  border: 2px solid hsl(0 0% 100% / 0.35) !important;
-  color: hsl(0 0% 100%) !important;
-  border-radius: 10px !important;
-}
-
-.video-consult-booking-settings-btn:hover {
-  background: hsl(0 0% 100% / 0.08) !important;
-  color: hsl(0 0% 100%) !important;
-  border-color: hsl(0 0% 100% / 0.5) !important;
-}
-```
+Also update inline active states in Book.tsx to use `border-foreground/50 bg-foreground/10` instead of `border-primary bg-primary/10 text-primary`.
 
 ---
 
-## Summary of Changes
+## Summary
 
-| Component | Issue | Fix |
-|-----------|-------|-----|
-| Settings dropdown | Missing | Add dropdown with quality + notification options |
-| Booking controls animation | May need delay | Add `animationDelay: '0.15s'` for staggered entrance |
-| Call Now button | Hard to see text | Keep green bg, ensure black text |
-| Schedule Callback button | Too much green | White/neutral scheme, no green hover |
-| Screen Share hover | Too much green | Change to subtle white highlight |
-| Volume button hover | Too much green | Change to subtle white highlight |
-| Settings button | New | Style to match other control buttons |
+| Item | Change |
+|------|--------|
+| Control buttons row | Share, Volume, Schedule, Trudy AI, Whiteboard, Demo, Settings - all in one row |
+| Booking input | Moved to bottom with prominent label "Enter Booking Code or Shipment ID" |
+| Join Video button | Dark `bg-foreground` button for high contrast |
+| Call button | New outline button to call agent directly |
+| Schedule modal | Uses existing BookingCalendar component with time slot selection |
+| Active button states | Changed from green to neutral dark (foreground) tones |
 
 ---
 
 ## Files to Modify
 
-- `src/pages/Book.tsx` - Add settings dropdown, fix button classes, add animation delay
-- `src/index.css` - Update hover states, add settings button styles
+- `src/pages/Book.tsx` - Restructure controls layout, add Schedule modal, add new buttons
+- `src/index.css` - Update active button state styles to remove green
 
