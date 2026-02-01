@@ -255,45 +255,36 @@ function AgentQueueIndicator({
 
   return (
     <div className={cn(
-      "bg-gradient-to-r from-amber-900/30 to-orange-900/20 border border-amber-500/30 rounded-lg p-4 mb-4 transition-all duration-300",
-      isHighlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+      "bg-gradient-to-r from-amber-900/30 to-orange-900/20 border border-amber-500/30 rounded-lg px-3 py-2 mb-3 transition-all duration-300",
+      isHighlighted && "ring-1 ring-primary"
     )}>
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
-          <Users className="w-5 h-5 text-amber-400" />
+      <div className="flex items-center gap-2">
+        <div className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center flex-shrink-0">
+          <Users className="w-3.5 h-3.5 text-amber-400" />
         </div>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <p className="text-white font-bold text-sm">Queue Position:</p>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-white/80 text-xs">Position</span>
             <span className={cn(
-              "text-lg font-black transition-all",
-              isHighlighted ? "text-primary scale-110" : "text-white"
+              "text-sm font-bold transition-all",
+              isHighlighted ? "text-primary" : "text-white"
             )}>
               #{displayPosition}
             </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="text-amber-300/80 text-xs">Estimated wait:</span>
-            <span className="text-amber-300 font-mono text-sm font-bold">
-              {formatTime(waitSeconds)}
+            <span className="text-white/40 text-xs">•</span>
+            <span className="text-amber-300 font-mono text-xs font-medium">
+              ~{formatTime(waitSeconds)}
             </span>
           </div>
         </div>
-      </div>
-      
-      {/* Animated Progress bar */}
-      <div className="h-2 bg-white/10 rounded-full overflow-hidden mt-3">
-        <div 
-          className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-1000 ease-out"
-          style={{ width: `${progressPercent}%` }}
-        >
-          <div className="h-full w-full bg-white/20 animate-pulse" />
+        {/* Compact progress indicator */}
+        <div className="w-12 h-1.5 bg-white/10 rounded-full overflow-hidden flex-shrink-0">
+          <div 
+            className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-1000"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
       </div>
-      
-      <p className="text-white/50 text-[10px] mt-2 text-center">
-        An agent will be with you shortly. You can start typing your question.
-      </p>
     </div>
   );
 }
