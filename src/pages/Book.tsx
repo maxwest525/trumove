@@ -1826,74 +1826,67 @@ export default function Book() {
                 )}
                 
                 {chatMode === 'liveagent' && (
-                  <div className="video-consult-specialist-panel h-full flex flex-col">
-                    {/* Header with Status Badge */}
-                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
-                      <div className="w-12 h-12 rounded-full bg-muted border-2 border-border flex items-center justify-center relative">
-                        <User className="w-6 h-6 text-foreground" />
+                  <div className="video-consult-specialist-panel live-agent-panel h-full flex flex-col">
+                    {/* Compact Header with Status Badge */}
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center relative shrink-0">
+                        <User className="w-4 h-4 text-foreground" />
                         <span className={cn(
-                          "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-background",
+                          "absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-background",
                           agentStatus === 'available' ? "bg-green-500" : "bg-amber-400"
                         )} />
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-sm text-foreground">Live Agent Chat</h4>
-                        <div className="flex items-center gap-2">
-                          <AgentStatusBadge status={agentStatus} />
-                          {agentStatus === 'busy' && (
-                            <span className="text-muted-foreground text-[10px]">~3 min wait</span>
-                          )}
-                        </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-xs text-foreground">Live Agent Chat</h4>
+                        <AgentStatusBadge status={agentStatus} />
                       </div>
                     </div>
                     
-                    {/* Connect to Agent / Queue Section */}
+                    {/* Connect to Agent / Queue Section - Compact */}
                     {liveChatMessages.length === 0 && !isAgentTyping && !agentConnected && (
-                      <>
+                      <div className="shrink-0 mb-2">
                         {!hasJoinedQueue ? (
-                          // Show connect button before joining queue
-                          <div className="bg-muted/50 border border-border rounded-lg p-4 mb-4">
-                            <p className="text-muted-foreground text-sm text-center mb-3">
+                          <div className="bg-muted/50 border border-border rounded-lg p-3">
+                            <p className="text-muted-foreground text-xs text-center mb-2">
                               Ready to chat with a live agent?
                             </p>
                             <div className="flex gap-2">
                               <Button
                                 onClick={() => setHasJoinedQueue(true)}
-                                className="flex-1"
+                                className="flex-1 h-8 text-xs"
                                 size="sm"
                               >
-                                <Users className="w-4 h-4 mr-2" />
+                                <Users className="w-3 h-3 mr-1.5" />
                                 Join Queue
                               </Button>
                               <Button
                                 onClick={() => setShowCallbackModal(true)}
                                 variant="outline"
-                                className="flex-1"
+                                className="flex-1 h-8 text-xs"
                                 size="sm"
                               >
-                                <PhoneCall className="w-4 h-4 mr-2" />
+                                <PhoneCall className="w-3 h-3 mr-1.5" />
                                 Callback
                               </Button>
                             </div>
                           </div>
                         ) : (
-                          // Show queue indicator after joining
                           <AgentQueueIndicator 
                             position={queuePosition} 
                             waitSeconds={queueWaitSeconds}
                             onRequestCallback={() => setShowCallbackModal(true)}
                           />
                         )}
-                      </>
+                      </div>
                     )}
                     
-                    {/* Messages Area - Expanded */}
-                    <div className="flex-1 overflow-y-auto space-y-3 mb-4 min-h-[280px] bg-muted/30 border border-border rounded-lg p-4">
+                    {/* Messages Area - Flexible height */}
+                    <div className="flex-1 overflow-y-auto space-y-2 mb-2 min-h-0 bg-muted/30 border border-border rounded-lg p-3">
                       {liveChatMessages.length === 0 && !isAgentTyping ? (
-                        <div className="flex flex-col items-center justify-center h-full text-center py-8">
-                          <MessageSquare className="w-10 h-10 text-muted-foreground/40 mb-3" />
-                          <p className="text-muted-foreground text-sm">
-                            {hasJoinedQueue ? "Waiting for agent..." : "Connect with an agent to start chatting"}
+                        <div className="flex flex-col items-center justify-center h-full text-center py-4">
+                          <MessageSquare className="w-8 h-8 text-muted-foreground/40 mb-2" />
+                          <p className="text-muted-foreground text-xs">
+                            {hasJoinedQueue ? "Waiting for agent..." : "Connect to start chatting"}
                           </p>
                         </div>
                       ) : (
@@ -1907,13 +1900,13 @@ export default function Book() {
                               )}
                             >
                               <div className={cn(
-                                "max-w-[85%] px-4 py-3 rounded-xl text-sm shadow-sm",
+                                "max-w-[85%] px-3 py-2 rounded-lg text-xs shadow-sm",
                                 msg.isUser 
                                   ? "bg-primary text-primary-foreground rounded-br-sm" 
                                   : "bg-card border border-border text-card-foreground rounded-bl-sm"
                               )}>
                                 <p>{msg.text}</p>
-                                <span className="text-[10px] opacity-60 mt-1.5 block">
+                                <span className="text-[9px] opacity-60 mt-1 block">
                                   {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                               </div>
@@ -1924,14 +1917,14 @@ export default function Book() {
                       )}
                     </div>
                     
-                    {/* Chat Input - Larger */}
-                    <div className="flex items-center gap-3 mt-auto pt-3 border-t border-border">
+                    {/* Chat Input - Compact */}
+                    <div className="flex items-center gap-2 mt-auto pt-2 shrink-0">
                       <Input 
                         value={liveChatInput}
                         onChange={(e) => setLiveChatInput(e.target.value)}
                         placeholder={roomUrl ? "Type your message..." : "Join call to chat"}
                         disabled={!roomUrl}
-                        className="flex-1 h-12 text-base"
+                        className="flex-1 h-9 text-sm"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && liveChatInput.trim() && roomUrl) {
                             const newMsg = {
@@ -1965,7 +1958,7 @@ export default function Book() {
                       <Button
                         size="icon"
                         disabled={!roomUrl || !liveChatInput.trim()}
-                        className="h-12 w-12 shrink-0"
+                        className="h-9 w-9 shrink-0"
                         onClick={() => {
                           if (liveChatInput.trim() && roomUrl) {
                             const newMsg = {
@@ -1995,42 +1988,42 @@ export default function Book() {
                           }
                         }}
                       >
-                        <Send className="w-4 h-4" />
+                        <Send className="w-3.5 h-3.5" />
                       </Button>
                     </div>
                   </div>
                 )}
                 
                 {chatMode === 'support' && (
-                  <div className="video-consult-specialist-panel h-full flex flex-col">
-                    {/* Contact Options Header */}
-                    <div className="pb-4 border-b border-white/10 mb-4">
-                      <h4 className="text-white font-bold text-sm mb-3">Contact Support</h4>
-                      <div className="flex gap-2">
+                  <div className="video-consult-specialist-panel live-agent-panel h-full flex flex-col">
+                    {/* Contact Options Header - Compact */}
+                    <div className="pb-2 border-b border-white/10 mb-3 shrink-0">
+                      <h4 className="text-white font-bold text-xs mb-2">Contact Support</h4>
+                      <div className="flex gap-1.5">
                         <Button 
                           size="sm"
-                          className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-bold"
+                          className="flex-1 h-7 text-[10px] bg-foreground hover:bg-foreground/90 text-background font-bold"
                           onClick={() => window.location.href = "tel:+18001234567"}
                         >
-                          <Phone className="w-4 h-4 mr-1.5" />
+                          <Phone className="w-3 h-3 mr-1" />
                           Call
                         </Button>
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="flex-1 border-border bg-background text-foreground hover:bg-muted font-semibold"
+                          className="flex-1 h-7 text-[10px] border-border bg-background text-foreground hover:bg-muted font-semibold"
                           onClick={() => setShowScheduleModal(true)}
                         >
-                          <Calendar className="w-4 h-4 mr-1.5" />
+                          <Calendar className="w-3 h-3 mr-1" />
                           Schedule
                         </Button>
                         <Button 
                           size="sm"
                           variant="outline" 
-                          className="flex-1 border-border bg-background text-foreground hover:bg-muted font-semibold"
+                          className="flex-1 h-7 text-[10px] border-border bg-background text-foreground hover:bg-muted font-semibold"
                           onClick={() => window.open('mailto:support@trumove.com')}
                         >
-                          <Mail className="w-4 h-4 mr-1.5" />
+                          <Mail className="w-3 h-3 mr-1" />
                           Email
                         </Button>
                       </div>
@@ -2038,25 +2031,25 @@ export default function Book() {
                     
                     {/* Live Chat Section */}
                     <div className="flex-1 flex flex-col min-h-0">
-                      <div className="flex items-center gap-2 mb-3">
-                        <MessageSquare className="w-4 h-4 text-primary" />
-                        <span className="text-white/80 text-sm font-medium">Live Chat</span>
+                      <div className="flex items-center gap-2 mb-2 shrink-0">
+                        <MessageSquare className="w-3.5 h-3.5 text-primary" />
+                        <span className="text-white/80 text-xs font-medium">Live Chat</span>
                         {roomUrl && (
-                          <span className="px-1.5 py-0.5 rounded bg-green-600/20 text-green-400 text-[10px] font-bold">
+                          <span className="px-1.5 py-0.5 rounded bg-green-600/20 text-green-400 text-[9px] font-bold">
                             LIVE
                           </span>
                         )}
                       </div>
                       
-                      {/* Messages Area */}
-                      <div className="flex-1 overflow-y-auto space-y-2 mb-3 min-h-[150px] bg-white/5 rounded-lg p-3">
+                      {/* Messages Area - Flexible */}
+                      <div className="flex-1 overflow-y-auto space-y-2 mb-2 min-h-0 bg-white/5 rounded-lg p-2">
                         {!roomUrl ? (
-                          <p className="text-white/40 text-sm text-center py-4">
-                            Join a video call to chat live with support
+                          <p className="text-white/40 text-xs text-center py-3">
+                            Join a video call to chat live
                           </p>
                         ) : liveChatMessages.length === 0 ? (
-                          <p className="text-white/40 text-sm text-center py-4">
-                            Send a message to start chatting with your agent
+                          <p className="text-white/40 text-xs text-center py-3">
+                            Send a message to start chatting
                           </p>
                         ) : (
                           liveChatMessages.map((msg) => (
@@ -2068,13 +2061,13 @@ export default function Book() {
                               )}
                             >
                               <div className={cn(
-                                "max-w-[80%] px-3 py-2 rounded-lg text-sm",
+                                "max-w-[80%] px-2 py-1.5 rounded-lg text-xs",
                                 msg.isUser 
                                   ? "bg-primary text-primary-foreground rounded-br-sm" 
                                   : "bg-white/10 text-white rounded-bl-sm"
                               )}>
                                 <p>{msg.text}</p>
-                                <span className="text-[10px] opacity-60 mt-1 block">
+                                <span className="text-[9px] opacity-60 mt-0.5 block">
                                   {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                               </div>
@@ -2085,14 +2078,14 @@ export default function Book() {
                         {isAgentTyping && <ChatTypingIndicator />}
                       </div>
                       
-                      {/* Chat Input */}
-                      <div className="flex items-center gap-2 mt-auto">
+                      {/* Chat Input - Compact */}
+                      <div className="flex items-center gap-2 shrink-0">
                         <Input 
                           value={liveChatInput}
                           onChange={(e) => setLiveChatInput(e.target.value)}
                           placeholder={roomUrl ? "Type a message..." : "Join call to chat"}
                           disabled={!roomUrl}
-                          className="flex-1 bg-slate-800/60 border-white/30 text-white placeholder:text-white/50 h-10 disabled:opacity-50"
+                          className="flex-1 bg-slate-800/60 border-white/30 text-white placeholder:text-white/50 h-8 text-xs disabled:opacity-50"
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' && liveChatInput.trim() && roomUrl) {
                               const newMsg = {
@@ -2132,7 +2125,7 @@ export default function Book() {
                         <Button 
                           size="icon"
                           disabled={!roomUrl || !liveChatInput.trim()}
-                          className="h-10 w-10 bg-primary hover:bg-primary/90 disabled:opacity-50"
+                          className="h-8 w-8 bg-primary hover:bg-primary/90 disabled:opacity-50"
                           onClick={() => {
                             if (liveChatInput.trim() && roomUrl) {
                               const newMsg = {
