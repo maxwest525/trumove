@@ -1,6 +1,13 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { Truck, Loader2, MapPin, Eye, Navigation, Maximize2, Minimize2, X } from "lucide-react";
+import { Truck, Loader2, MapPin, Eye, Navigation, Maximize2, Minimize2, X, Move } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 interface TruckAerialViewProps {
   routeCoordinates: [number, number][];
@@ -13,6 +20,14 @@ interface TruckAerialViewProps {
   onToggleExpand?: () => void;
 }
 
+type PreviewSize = 'compact' | 'default' | 'large';
+
+const SIZE_CONFIGS: Record<PreviewSize, { height: number; label: string }> = {
+  compact: { height: 120, label: 'Compact' },
+  default: { height: 180, label: 'Default' },
+  large: { height: 280, label: 'Large' },
+};
+
 export function TruckAerialView({
   routeCoordinates,
   progress,
@@ -23,6 +38,7 @@ export function TruckAerialView({
   expanded = false,
   onToggleExpand
 }: TruckAerialViewProps) {
+  const [previewSize, setPreviewSize] = useState<PreviewSize>('default');
   const [isLoading, setIsLoading] = useState(true);
   const [hasStreetViewError, setHasStreetViewError] = useState(false);
   const [imageTransition, setImageTransition] = useState(false);
@@ -146,35 +162,68 @@ export function TruckAerialView({
             {headerLabel}
           </span>
           {isTracking && progress > 0 && (
-            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-500/20 text-red-600 text-[9px] font-bold">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-destructive/20 text-destructive text-[9px] font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse" />
               LIVE
             </span>
           )}
         </div>
         
-        {/* Expand/Remote View Button - neutral styling */}
-        <button
-          onClick={onToggleExpand}
-          className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-all text-[10px] font-semibold border",
-            expanded 
-              ? "bg-destructive/10 hover:bg-destructive/20 text-destructive border-destructive/30" 
-              : "bg-background/80 hover:bg-muted text-foreground border-border"
+        {/* Controls row */}
+        <div className="flex items-center gap-1.5">
+          {/* Size selector dropdown - only show when not expanded */}
+          {!expanded && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-[10px] font-medium gap-1 border border-border"
+                >
+                  <Move className="w-3 h-3" />
+                  {SIZE_CONFIGS[previewSize].label}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[100px]">
+                {(Object.keys(SIZE_CONFIGS) as PreviewSize[]).map((size) => (
+                  <DropdownMenuItem
+                    key={size}
+                    onClick={() => setPreviewSize(size)}
+                    className={cn(
+                      "text-xs",
+                      previewSize === size && "bg-primary/10 text-primary"
+                    )}
+                  >
+                    {SIZE_CONFIGS[size].label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
-        >
-          {expanded ? (
-            <>
-              <X className="w-3.5 h-3.5" />
-              <span>Exit View</span>
-            </>
-          ) : (
-            <>
-              <Eye className="w-3.5 h-3.5" />
-              <span>Remote View</span>
-            </>
-          )}
-        </button>
+          
+          {/* Expand/Remote View Button */}
+          <button
+            onClick={onToggleExpand}
+            className={cn(
+              "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-all text-[10px] font-semibold border",
+              expanded 
+                ? "bg-destructive/10 hover:bg-destructive/20 text-destructive border-destructive/30" 
+                : "bg-background/80 hover:bg-muted text-foreground border-border"
+            )}
+          >
+            {expanded ? (
+              <>
+                <Minimize2 className="w-3.5 h-3.5" />
+                <span>Exit</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 className="w-3.5 h-3.5" />
+                <span>Fullscreen</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Expanded Interactive Street View */}
@@ -254,8 +303,11 @@ export function TruckAerialView({
         </div>
       ) : (
         <>
-          {/* Collapsed Static Street View Image */}
-          <div className="relative w-full h-[180px] rounded-lg overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border">
+          {/* Collapsed Static Street View Image - Dynamic Height */}
+          <div 
+            className="relative w-full rounded-lg overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border transition-all duration-300"
+            style={{ height: SIZE_CONFIGS[previewSize].height }}
+          >
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
                 <Loader2 className="w-6 h-6 animate-spin text-primary" />

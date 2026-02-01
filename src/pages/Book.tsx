@@ -1189,9 +1189,21 @@ export default function Book() {
   // Picture-in-picture state
   const [isPiP, setIsPiP] = useState(false);
   const [pipPosition, setPipPosition] = useState({ x: 0, y: 0 }); // 0,0 = default position (bottom-right)
+  const [pipSize, setPipSize] = useState({ width: 320, height: 200 }); // Default PiP size
   const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizeCorner, setResizeCorner] = useState<'tl' | 'tr' | 'bl' | 'br' | null>(null);
   const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
+  const resizeRef = useRef<{ startX: number; startY: number; startWidth: number; startHeight: number; startPosX: number; startPosY: number } | null>(null);
   const pipRef = useRef<HTMLDivElement>(null);
+  
+  // Expanded video modal state (draggable + resizable)
+  const [expandedVideoPosition, setExpandedVideoPosition] = useState({ x: 0, y: 0 });
+  const [expandedVideoSize, setExpandedVideoSize] = useState({ width: 900, height: 600 });
+  const [isExpandedDragging, setIsExpandedDragging] = useState(false);
+  const [isExpandedResizing, setIsExpandedResizing] = useState(false);
+  const expandedDragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
+  const expandedResizeRef = useRef<{ startX: number; startY: number; startWidth: number; startHeight: number } | null>(null);
   
   // PiP drag handlers
   const handlePipMouseDown = useCallback((e: React.MouseEvent) => {
@@ -1208,48 +1220,103 @@ export default function Book() {
     };
   }, [pipPosition]);
   
+  // PiP resize handlers
+  const handlePipResizeStart = useCallback((e: React.MouseEvent, corner: 'tl' | 'tr' | 'bl' | 'br') => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    setResizeCorner(corner);
+    resizeRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startWidth: pipSize.width,
+      startHeight: pipSize.height,
+      startPosX: pipPosition.x,
+      startPosY: pipPosition.y
+    };
+  }, [pipSize, pipPosition]);
+  
+  // Combined PiP drag and resize effect
   useEffect(() => {
-    if (!isDragging) return;
+    if (!isDragging && !isResizing) return;
     
     const handleMouseMove = (e: MouseEvent) => {
-      if (!dragRef.current) return;
+      if (isDragging && dragRef.current) {
+        const deltaX = e.clientX - dragRef.current.startX;
+        const deltaY = e.clientY - dragRef.current.startY;
+        
+        setPipPosition({
+          x: dragRef.current.startPosX - deltaX,
+          y: dragRef.current.startPosY - deltaY
+        });
+      }
       
-      const deltaX = e.clientX - dragRef.current.startX;
-      const deltaY = e.clientY - dragRef.current.startY;
-      
-      // Invert X because we're positioned from right, invert Y because we're from bottom
-      setPipPosition({
-        x: dragRef.current.startPosX - deltaX,
-        y: dragRef.current.startPosY - deltaY
-      });
+      if (isResizing && resizeRef.current && resizeCorner) {
+        const deltaX = e.clientX - resizeRef.current.startX;
+        const deltaY = e.clientY - resizeRef.current.startY;
+        
+        const minWidth = 240;
+        const maxWidth = 560;
+        const minHeight = 150;
+        const maxHeight = 400;
+        
+        let newWidth = resizeRef.current.startWidth;
+        let newHeight = resizeRef.current.startHeight;
+        let newPosX = resizeRef.current.startPosX;
+        let newPosY = resizeRef.current.startPosY;
+        
+        // Handle each corner differently
+        if (resizeCorner === 'br') {
+          // Bottom-right: expand towards bottom-right (decrease position)
+          newWidth = Math.min(maxWidth, Math.max(minWidth, resizeRef.current.startWidth + deltaX));
+          newHeight = Math.min(maxHeight, Math.max(minHeight, resizeRef.current.startHeight + deltaY));
+        } else if (resizeCorner === 'bl') {
+          // Bottom-left: expand towards bottom-left
+          newWidth = Math.min(maxWidth, Math.max(minWidth, resizeRef.current.startWidth - deltaX));
+          newHeight = Math.min(maxHeight, Math.max(minHeight, resizeRef.current.startHeight + deltaY));
+          newPosX = resizeRef.current.startPosX + (resizeRef.current.startWidth - newWidth);
+        } else if (resizeCorner === 'tr') {
+          // Top-right: expand towards top-right
+          newWidth = Math.min(maxWidth, Math.max(minWidth, resizeRef.current.startWidth + deltaX));
+          newHeight = Math.min(maxHeight, Math.max(minHeight, resizeRef.current.startHeight - deltaY));
+          newPosY = resizeRef.current.startPosY + (resizeRef.current.startHeight - newHeight);
+        } else if (resizeCorner === 'tl') {
+          // Top-left: expand towards top-left
+          newWidth = Math.min(maxWidth, Math.max(minWidth, resizeRef.current.startWidth - deltaX));
+          newHeight = Math.min(maxHeight, Math.max(minHeight, resizeRef.current.startHeight - deltaY));
+          newPosX = resizeRef.current.startPosX + (resizeRef.current.startWidth - newWidth);
+          newPosY = resizeRef.current.startPosY + (resizeRef.current.startHeight - newHeight);
+        }
+        
+        setPipSize({ width: newWidth, height: newHeight });
+        setPipPosition({ x: newPosX, y: newPosY });
+      }
     };
     
     const handleMouseUp = () => {
-      // Snap to nearest corner
-      const windowWidth = window.innerWidth;
-      const windowHeight = window.innerHeight;
-      const pipWidth = 320; // w-80 = 320px
-      const pipHeight = 220; // approximate height with header
-      
-      // Calculate current center position
-      const currentRight = pipPosition.x;
-      const currentBottom = pipPosition.y;
-      const centerX = windowWidth - currentRight - pipWidth / 2;
-      const centerY = windowHeight - currentBottom - pipHeight / 2;
-      
-      // Determine which corner is closest
-      const isLeft = centerX < windowWidth / 2;
-      const isTop = centerY < windowHeight / 2;
-      
-      // Snap to corner with padding
-      const padding = 24;
-      setPipPosition({
-        x: isLeft ? windowWidth - pipWidth - padding : padding,
-        y: isTop ? windowHeight - pipHeight - padding : padding + 72 // Account for footer
-      });
+      if (isDragging) {
+        // Snap to nearest corner
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        const centerX = windowWidth - pipPosition.x - pipSize.width / 2;
+        const centerY = windowHeight - pipPosition.y - pipSize.height / 2;
+        
+        const isLeft = centerX < windowWidth / 2;
+        const isTop = centerY < windowHeight / 2;
+        
+        const padding = 24;
+        setPipPosition({
+          x: isLeft ? windowWidth - pipSize.width - padding : padding,
+          y: isTop ? windowHeight - pipSize.height - padding : padding + 72
+        });
+      }
       
       setIsDragging(false);
+      setIsResizing(false);
+      setResizeCorner(null);
       dragRef.current = null;
+      resizeRef.current = null;
     };
     
     document.addEventListener('mousemove', handleMouseMove);
@@ -1259,7 +1326,70 @@ export default function Book() {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, isResizing, resizeCorner, pipPosition, pipSize]);
+  
+  // Expanded video modal drag handlers
+  const handleExpandedDragStart = useCallback((e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('button')) return;
+    e.preventDefault();
+    setIsExpandedDragging(true);
+    expandedDragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startPosX: expandedVideoPosition.x,
+      startPosY: expandedVideoPosition.y
+    };
+  }, [expandedVideoPosition]);
+  
+  const handleExpandedResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsExpandedResizing(true);
+    expandedResizeRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startWidth: expandedVideoSize.width,
+      startHeight: expandedVideoSize.height
+    };
+  }, [expandedVideoSize]);
+  
+  useEffect(() => {
+    if (!isExpandedDragging && !isExpandedResizing) return;
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isExpandedDragging && expandedDragRef.current) {
+        const deltaX = e.clientX - expandedDragRef.current.startX;
+        const deltaY = e.clientY - expandedDragRef.current.startY;
+        setExpandedVideoPosition({
+          x: expandedDragRef.current.startPosX + deltaX,
+          y: expandedDragRef.current.startPosY + deltaY
+        });
+      }
+      
+      if (isExpandedResizing && expandedResizeRef.current) {
+        const deltaX = e.clientX - expandedResizeRef.current.startX;
+        const deltaY = e.clientY - expandedResizeRef.current.startY;
+        const newWidth = Math.min(1400, Math.max(500, expandedResizeRef.current.startWidth + deltaX));
+        const newHeight = Math.min(900, Math.max(350, expandedResizeRef.current.startHeight + deltaY));
+        setExpandedVideoSize({ width: newWidth, height: newHeight });
+      }
+    };
+    
+    const handleMouseUp = () => {
+      setIsExpandedDragging(false);
+      setIsExpandedResizing(false);
+      expandedDragRef.current = null;
+      expandedResizeRef.current = null;
+    };
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isExpandedDragging, isExpandedResizing]);
   
   // Queue opt-in state (user must click to join queue)
   const [hasJoinedQueue, setHasJoinedQueue] = useState(false);
@@ -2275,56 +2405,96 @@ export default function Book() {
         </DialogContent>
       </Dialog>
       
-      {/* Expanded Video Modal */}
-      <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-        <DialogContent className="sm:max-w-5xl h-[85vh] p-0 overflow-hidden">
-          <DialogHeader className="absolute top-0 left-0 right-0 z-20 p-4 bg-gradient-to-b from-black/80 to-transparent">
-            <div className="flex items-center justify-between">
-              <DialogTitle className="text-white flex items-center gap-2">
-                <Video className="w-5 h-5" />
-                Video Consultation
-              </DialogTitle>
-              <span className="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 mr-8">
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                LIVE
-              </span>
-            </div>
-          </DialogHeader>
-          
-          <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-            {roomUrl ? (
-              isDemo ? (
-                <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsFullscreen(false); }} />
-              ) : (
-                <DailyVideoRoom 
-                  roomUrl={roomUrl}
-                  userName="Guest"
-                  onLeave={() => { handleLeaveRoom(); setIsFullscreen(false); }}
-                  className="w-full h-full"
-                />
-              )
-            ) : (
-              <div className="text-center p-8">
-                <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
-                  <Users className="w-12 h-12 text-white/30" />
-                </div>
-                <h3 className="text-xl font-bold text-white/90 mb-2">
-                  No Active Session
-                </h3>
-                <p className="text-white/50 text-sm mb-6">
-                  Close this window and join a session first.
-                </p>
-                <button
-                  onClick={() => setIsFullscreen(false)}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors"
-                >
-                  Close
-                </button>
-              </div>
+      {/* Expanded Video Modal - Custom Draggable/Resizable Window */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div 
+            className={cn(
+              "relative rounded-xl overflow-hidden shadow-2xl border border-border bg-card",
+              (isExpandedDragging || isExpandedResizing) && "select-none"
             )}
+            style={{
+              width: expandedVideoSize.width,
+              height: expandedVideoSize.height,
+              transform: `translate(${expandedVideoPosition.x}px, ${expandedVideoPosition.y}px)`
+            }}
+          >
+            {/* Draggable header */}
+            <div 
+              className="h-10 bg-muted flex items-center justify-between px-4 cursor-grab active:cursor-grabbing border-b border-border"
+              onMouseDown={handleExpandedDragStart}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-destructive cursor-pointer hover:opacity-80" onClick={() => setIsFullscreen(false)} />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500 cursor-pointer hover:opacity-80" onClick={() => setExpandedVideoSize({ width: 640, height: 400 })} />
+                  <div className="w-3 h-3 rounded-full bg-green-500 cursor-pointer hover:opacity-80" onClick={() => setExpandedVideoSize({ width: 1200, height: 750 })} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Video className="w-4 h-4 text-foreground" />
+                  <span className="text-sm font-semibold text-foreground select-none">Video Consultation</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-1 rounded bg-red-600 text-white text-[10px] font-bold flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  LIVE
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => setIsFullscreen(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            
+            {/* Video content */}
+            <div className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center" style={{ height: expandedVideoSize.height - 40 }}>
+              {roomUrl ? (
+                isDemo ? (
+                  <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsFullscreen(false); }} />
+                ) : (
+                  <DailyVideoRoom 
+                    roomUrl={roomUrl}
+                    userName="Guest"
+                    onLeave={() => { handleLeaveRoom(); setIsFullscreen(false); }}
+                    className="w-full h-full"
+                  />
+                )
+              ) : (
+                <div className="text-center p-8">
+                  <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
+                    <Users className="w-12 h-12 text-white/30" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white/90 mb-2">
+                    No Active Session
+                  </h3>
+                  <p className="text-white/50 text-sm mb-6">
+                    Close this window and join a session first.
+                  </p>
+                  <button
+                    onClick={() => setIsFullscreen(false)}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {/* Resize handle - bottom right */}
+            <div 
+              className="absolute bottom-0 right-0 w-5 h-5 cursor-se-resize group"
+              onMouseDown={handleExpandedResizeStart}
+            >
+              <div className="absolute bottom-1 right-1 w-3 h-3 border-b-2 border-r-2 border-primary/50 group-hover:border-primary transition-colors" />
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
       
       {/* Callback Request Modal */}
       <Dialog open={showCallbackModal} onOpenChange={setShowCallbackModal}>
@@ -2398,18 +2568,19 @@ export default function Book() {
         </DialogContent>
       </Dialog>
       
-      {/* Picture-in-Picture Floating Video - Draggable */}
+      {/* Picture-in-Picture Floating Video - Draggable & Resizable */}
       {isPiP && roomUrl && (
         <div 
           ref={pipRef}
           className={cn(
-            "fixed z-50 w-80 rounded-xl overflow-hidden shadow-2xl border-2 border-primary/30 bg-card ring-1 ring-white/10",
-            !isDragging && "animate-in slide-in-from-right-4 duration-300",
-            isDragging && "cursor-grabbing"
+            "fixed z-50 rounded-xl overflow-hidden shadow-2xl border-2 border-primary/30 bg-card ring-1 ring-white/10",
+            !isDragging && !isResizing && "animate-in slide-in-from-right-4 duration-300",
+            (isDragging || isResizing) && "select-none"
           )}
           style={{
             right: Math.max(24, pipPosition.x),
-            bottom: Math.max(96, pipPosition.y)
+            bottom: Math.max(96, pipPosition.y),
+            width: pipSize.width,
           }}
         >
           {/* Draggable header */}
@@ -2430,7 +2601,7 @@ export default function Book() {
                 <Maximize2 className="w-3 h-3 text-muted-foreground" />
               </button>
               <button
-                onClick={() => { setIsPiP(false); setPipPosition({ x: 0, y: 0 }); }}
+                onClick={() => { setIsPiP(false); setPipPosition({ x: 0, y: 0 }); setPipSize({ width: 320, height: 200 }); }}
                 className="w-5 h-5 rounded flex items-center justify-center hover:bg-accent transition-colors"
                 title="Close"
               >
@@ -2439,7 +2610,7 @@ export default function Book() {
             </div>
           </div>
           
-          <div className="relative aspect-video">
+          <div className="relative" style={{ height: pipSize.height }}>
             {isDemo ? (
               <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsPiP(false); }} />
             ) : (
@@ -2455,6 +2626,32 @@ export default function Book() {
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               LIVE
             </div>
+          </div>
+          
+          {/* Resize handles - all four corners */}
+          <div 
+            className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize group z-10"
+            onMouseDown={(e) => handlePipResizeStart(e, 'tl')}
+          >
+            <div className="absolute top-1 left-1 w-2 h-2 border-t-2 border-l-2 border-primary/50 group-hover:border-primary transition-colors" />
+          </div>
+          <div 
+            className="absolute top-0 right-0 w-4 h-4 cursor-ne-resize group z-10"
+            onMouseDown={(e) => handlePipResizeStart(e, 'tr')}
+          >
+            <div className="absolute top-1 right-1 w-2 h-2 border-t-2 border-r-2 border-primary/50 group-hover:border-primary transition-colors" />
+          </div>
+          <div 
+            className="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize group z-10"
+            onMouseDown={(e) => handlePipResizeStart(e, 'bl')}
+          >
+            <div className="absolute bottom-1 left-1 w-2 h-2 border-b-2 border-l-2 border-primary/50 group-hover:border-primary transition-colors" />
+          </div>
+          <div 
+            className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize group z-10"
+            onMouseDown={(e) => handlePipResizeStart(e, 'br')}
+          >
+            <div className="absolute bottom-1 right-1 w-2 h-2 border-b-2 border-r-2 border-primary/50 group-hover:border-primary transition-colors" />
           </div>
         </div>
       )}
