@@ -1,240 +1,279 @@
 
 
-# Plan: Refine Video Consult Controls & Chat Options
+# Plan: Video Consult Enhancements - Whiteboard, Trudy Chat, UI Polish
 
 ## Overview
-This plan addresses 3 specific changes:
-1. **Remove Demo button** from Virtual Video Controls (keep only in video window)
-2. **Restructure Chat Module** to have 3 clear tabs: Trudy AI, Contact Support, Live Video Chat
-3. **Add Mute button** to Virtual Video Controls
+This plan addresses 5 enhancements to the Video Consult page:
+
+1. **Full whiteboard functionality** with drawing tools and real-time collaboration
+2. **Trudy AI button opens the chat modal** (dispatch custom event)
+3. **Improve Virtual Video Controls header** to look more like a proper header
+4. **Add input field to chat panel** for Trudy AI communication
+5. **Shrink booking/shipment ID input field** to be less prominent
 
 ---
 
 ## Visual Layout Changes
 
 ```text
-CHAT MODULE - 3 Tabs:
-+----------------------------------------------------------+
-|  [🤖 Trudy AI]  [📞 Support]  [💬 Live Chat]             |
-+----------------------------------------------------------+
-|                                                          |
-|  (Tab content based on selection)                        |
-|                                                          |
-+----------------------------------------------------------+
+VIRTUAL VIDEO CONTROLS HEADER (Enhanced):
++------------------------------------------------------------------+
+|  ═══════════════  VIRTUAL VIDEO CONTROLS  ═══════════════        |
++------------------------------------------------------------------+
 
-VIRTUAL VIDEO CONTROLS (Demo removed, Mute added):
-+----------------------------------------------------------+
-|  [Share][🔊] [🔇 Mute] [📅 Schedule] [🤖 Trudy] [📋 Whiteboard] [⚙️] |
-+----------------------------------------------------------+
+WHITEBOARD MODAL:
++------------------------------------------------------------------+
+|  [X] Virtual Whiteboard                                    LIVE  |
++------------------------------------------------------------------+
+|  TOOLS: [✏️ Pen] [🧹 Eraser] | COLORS: [● ● ● ● ● ● ● ●]        |
+|  SIZES: [○ ○ ○ ○] | ACTIONS: [↩ Undo] [↪ Redo] [🗑 Clear]        |
++------------------------------------------------------------------+
+|                                                                   |
+|                         CANVAS AREA                               |
+|                                                                   |
++------------------------------------------------------------------+
+
+BOOKING INPUT (Compact):
++------------------------------------------------------------------+
+|  Booking Code: [TM-2026-XXXX____] [Join] [Call]                  |
++------------------------------------------------------------------+
 ```
 
 ---
 
 ## Changes
 
-### File: `src/pages/Book.tsx`
+### 1. NEW FILE: `src/components/video-consult/WhiteboardCanvas.tsx`
 
-#### 1. Add State for Microphone Mute
-Add near existing state variables (around line 930):
+Create a full-featured whiteboard component with:
 
+**Features:**
+- Pen and Eraser tools
+- 8-color palette (black, red, orange, green, blue, purple, pink, white)
+- 4 brush sizes (2, 4, 8, 16px)
+- Undo/Redo functionality with stroke history stacks
+- Clear canvas action
+- Real-time drawing with smooth strokes
+
+**Implementation:**
 ```tsx
-const [isMicMuted, setIsMicMuted] = useState(false);
+// State management
+const [strokes, setStrokes] = useState<Stroke[]>([]);
+const [currentStroke, setCurrentStroke] = useState<Point[]>([]);
+const [undoStack, setUndoStack] = useState<Stroke[][]>([]);
+const [redoStack, setRedoStack] = useState<Stroke[][]>([]);
+const [tool, setTool] = useState<'pen' | 'eraser'>('pen');
+const [color, setColor] = useState("#000000");
+const [brushSize, setBrushSize] = useState(4);
+
+// Canvas rendering via useEffect
+// Mouse event handlers for drawing
 ```
 
-#### 2. Update Chat Tab Types & State
-Update `chatMode` to support 3 modes (around line 934):
+---
 
+### 2. FILE: `src/pages/Book.tsx` - Add Whiteboard Modal State & Import
+
+**Add new state variable** (near line 934):
 ```tsx
-const [chatMode, setChatMode] = useState<'trudy' | 'support' | 'livechat'>('trudy');
+const [showWhiteboardModal, setShowWhiteboardModal] = useState(false);
 ```
 
-#### 3. Restructure Chat Panel Tabs (lines 1196-1211)
-Change from 2 tabs to 3 tabs with clearer labels:
-
+**Add import** at top:
 ```tsx
-{/* Tab Selector - 3 Options */}
-<div className="video-consult-chat-tabs">
-  <button 
-    className={chatMode === 'trudy' ? 'active' : ''}
-    onClick={() => setChatMode('trudy')}
-    title="Talk to Trudy AI Assistant"
-  >
-    <Bot className="w-4 h-4" />
-    Trudy AI
-  </button>
-  <button 
-    className={chatMode === 'support' ? 'active' : ''}
-    onClick={() => setChatMode('support')}
-    title="Contact Support Team"
-  >
-    <Phone className="w-4 h-4" />
-    Support
-  </button>
-  <button 
-    className={chatMode === 'livechat' ? 'active' : ''}
-    onClick={() => setChatMode('livechat')}
-    title="Live Chat During Video Call"
-  >
-    <MessageSquare className="w-4 h-4" />
-    Live Chat
-  </button>
-</div>
+import { WhiteboardCanvas } from "@/components/video-consult/WhiteboardCanvas";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 ```
 
-#### 4. Update Chat Content to Handle 3 Modes (lines 1214-1251)
-Replace the chat content section with:
-
+**Add `User` to lucide imports:**
 ```tsx
-{/* Chat Content */}
-<div className="video-consult-chat-content">
-  {chatMode === 'trudy' && (
-    <AIChatContainer pageContext={pageContext} />
-  )}
-  
-  {chatMode === 'support' && (
-    <div className="video-consult-specialist-panel">
-      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-        <Headphones className="w-8 h-8 text-primary" />
-      </div>
-      <h4 className="text-white font-bold mb-2">Contact Support</h4>
-      <p className="text-white/60 text-sm mb-6">
-        Get personalized help from our licensed moving consultants.
-      </p>
-      <div className="flex flex-col gap-3 w-full max-w-xs">
-        <Button 
-          className="w-full bg-foreground hover:bg-foreground/90 text-background font-bold h-12 text-base"
-          onClick={() => window.location.href = "tel:+18001234567"}
-        >
-          <Phone className="w-5 h-5 mr-2" />
-          Call Now
-        </Button>
-        <Button 
-          variant="outline" 
-          className="w-full border border-white/40 text-white hover:bg-white/10 hover:border-white/60 font-bold h-12 text-base"
-          onClick={() => setShowScheduleModal(true)}
-        >
-          <Calendar className="w-5 h-5 mr-2" />
-          Schedule Callback
-        </Button>
-        <Button 
-          variant="outline" 
-          className="w-full border border-white/40 text-white hover:bg-white/10 hover:border-white/60 h-11"
-          onClick={() => window.open('mailto:support@trumove.com')}
-        >
-          <Mail className="w-4 h-4 mr-2" />
-          Email Support
-        </Button>
-      </div>
-    </div>
-  )}
-  
-  {chatMode === 'livechat' && (
-    <div className="video-consult-specialist-panel h-full flex flex-col">
-      <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
-        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-          <MessageSquare className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h4 className="text-white font-bold text-sm">Live Video Chat</h4>
-          <p className="text-white/50 text-xs">
-            {roomUrl ? "Connected to call" : "Join a video call to chat"}
-          </p>
-        </div>
-        {roomUrl && (
-          <span className="ml-auto px-2 py-1 rounded bg-green-600/20 text-green-400 text-xs font-bold">
-            LIVE
-          </span>
-        )}
-      </div>
-      
-      {/* Chat Messages Area */}
-      <div className="flex-1 overflow-y-auto space-y-3 mb-4 min-h-[200px]">
-        {!roomUrl ? (
-          <div className="text-center text-white/40 text-sm py-8">
-            Join a video call to start live chat
-          </div>
-        ) : (
-          <div className="text-center text-white/40 text-sm py-8">
-            Chat messages with your agent will appear here
-          </div>
-        )}
-      </div>
-      
-      {/* Chat Input */}
-      <div className="mt-auto">
-        <div className="flex items-center gap-2">
-          <Input 
-            placeholder={roomUrl ? "Type a message..." : "Join call to chat"}
-            disabled={!roomUrl}
-            className="flex-1 bg-slate-800/60 border-white/30 text-white placeholder:text-white/50 h-10 disabled:opacity-50"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim() && roomUrl) {
-                toast.info("Message sent to agent!");
-                (e.target as HTMLInputElement).value = '';
-              }
-            }}
-          />
-          <Button 
-            size="icon"
-            disabled={!roomUrl}
-            className="h-10 w-10 bg-primary hover:bg-primary/90 disabled:opacity-50"
-          >
-            <Send className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-    </div>
-  )}
-</div>
+import { User } from "lucide-react"; // Add to existing imports
 ```
 
-#### 5. Remove Demo Button from Controls (lines 1321-1329)
-Delete the Demo button section entirely from Virtual Video Controls.
+---
 
-#### 6. Add Mute Button to Controls (after Screen Share, before Schedule)
-Insert after the Screen Share button group:
+### 3. FILE: `src/pages/Book.tsx` - Update Trudy AI Button (lines 1390-1398)
 
+**BEFORE:**
 ```tsx
-{/* Mute Microphone */}
-<Button
+<Button 
   variant="outline"
-  size="icon"
-  className={cn(
-    "h-10 w-10 border border-border bg-background hover:bg-muted",
-    isMicMuted && "border-destructive/50 bg-destructive/10 text-destructive"
-  )}
-  onClick={() => {
-    setIsMicMuted(!isMicMuted);
-    toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
-  }}
-  title={isMicMuted ? "Unmute" : "Mute"}
+  className="h-10 px-3 border border-border bg-background hover:bg-muted"
+  onClick={() => toast.info("Trudy AI is available in the chat panel")}
 >
-  {isMicMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+  <Bot className="w-4 h-4 mr-1.5" />
+  Trudy AI
 </Button>
 ```
 
-#### 7. Add New Icon Imports
-Add to lucide-react imports:
-
+**AFTER:**
 ```tsx
-import { Mic, MicOff, Send, Mail } from "lucide-react";
+<Button 
+  variant="outline"
+  className="h-10 px-3 border border-border bg-background hover:bg-muted"
+  onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
+>
+  <Bot className="w-4 h-4 mr-1.5" />
+  Trudy AI
+</Button>
+```
+
+This dispatches the `openTrudyChat` custom event that `FloatingTruckChat` already listens for.
+
+---
+
+### 4. FILE: `src/pages/Book.tsx` - Update Whiteboard Button (lines 1400-1408)
+
+**BEFORE:**
+```tsx
+<Button 
+  variant="outline"
+  className="h-10 px-3 border border-border bg-background hover:bg-muted"
+  onClick={() => toast.info("Whiteboard feature coming soon")}
+>
+  <PenTool className="w-4 h-4 mr-1.5" />
+  Whiteboard
+</Button>
+```
+
+**AFTER:**
+```tsx
+<Button 
+  variant="outline"
+  className="h-10 px-3 border border-border bg-background hover:bg-muted"
+  onClick={() => setShowWhiteboardModal(true)}
+>
+  <PenTool className="w-4 h-4 mr-1.5" />
+  Whiteboard
+</Button>
 ```
 
 ---
 
-## Summary
+### 5. FILE: `src/pages/Book.tsx` - Improve Controls Header (lines 1329-1332)
 
-| Item | Change |
-|------|--------|
-| Demo button | Removed from Virtual Video Controls (stays in video window placeholder) |
-| Chat tabs | Now 3 options: **Trudy AI**, **Support**, **Live Chat** |
-| Live Chat tab | Shows chat interface connected to current video call |
-| Support tab | Call Now, Schedule Callback, Email Support options |
-| Mute button | Added to Virtual Video Controls with muted/unmuted states |
+**BEFORE:**
+```tsx
+<h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 w-full text-center">
+  Virtual Video Controls
+</h3>
+```
+
+**AFTER:**
+```tsx
+{/* Header with decorative lines */}
+<div className="flex items-center gap-3 w-full mb-4">
+  <div className="flex-1 h-px bg-border" />
+  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground px-2">
+    Virtual Video Controls
+  </h3>
+  <div className="flex-1 h-px bg-border" />
+</div>
+```
+
+This creates a centered header with horizontal lines on each side for a more polished look.
 
 ---
 
-## Files Modified
+### 6. FILE: `src/pages/Book.tsx` - Shrink Booking Input (lines 1445-1475)
 
-- `src/pages/Book.tsx` - Remove Demo button, add Mute button, restructure chat to 3 tabs
+**Key changes:**
+- Reduce input height from `h-11` to `h-9`
+- Reduce button heights from `h-11` to `h-9`
+- Shrink button text and padding
+- Condense the label
+
+**BEFORE:**
+```tsx
+<label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+  Enter Booking Code or Shipment ID
+</label>
+<Input className="flex-1 h-11 bg-background border border-border" ... />
+<Button className="h-11 px-4 bg-foreground ..." ... >
+```
+
+**AFTER:**
+```tsx
+<label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+  Booking Code or Shipment ID
+</label>
+<Input className="flex-1 h-9 text-sm bg-background border border-border" ... />
+<Button className="h-9 px-3 text-sm bg-foreground ..." ... >
+  <Video className="w-3.5 h-3.5 mr-1.5" />
+  Join
+</Button>
+<Button className="h-9 px-3 text-sm ..." ... >
+  <Phone className="w-3.5 h-3.5 mr-1.5" />
+  Call
+</Button>
+```
+
+---
+
+### 7. FILE: `src/pages/Book.tsx` - Add Whiteboard Modal (after line 1498)
+
+Add new modal dialog before the closing Footer:
+
+```tsx
+{/* Whiteboard Modal */}
+<Dialog open={showWhiteboardModal} onOpenChange={setShowWhiteboardModal}>
+  <DialogContent className="sm:max-w-4xl h-[80vh]">
+    <DialogHeader>
+      <div className="flex items-center justify-between">
+        <DialogTitle>Virtual Whiteboard</DialogTitle>
+        <span className="px-2 py-1 rounded bg-red-600 text-white text-xs font-bold flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+          LIVE
+        </span>
+      </div>
+    </DialogHeader>
+    <WhiteboardCanvas />
+  </DialogContent>
+</Dialog>
+```
+
+---
+
+### 8. FILE: `src/pages/Book.tsx` - Enhanced Schedule Modal with Contact Form
+
+Update the schedule modal (lines 1480-1498) to include contact fields and TCPA consent:
+
+**Add state variables** (near line 934):
+```tsx
+const [scheduleDate, setScheduleDate] = useState<Date | null>(null);
+const [scheduleTime, setScheduleTime] = useState<string>("");
+const [scheduleName, setScheduleName] = useState("");
+const [schedulePhone, setSchedulePhone] = useState("");
+const [scheduleEmail, setScheduleEmail] = useState("");
+const [scheduleTcpaConsent, setScheduleTcpaConsent] = useState(false);
+```
+
+**Enhanced modal content:**
+- Calendar date/time selection triggers form reveal
+- Contact fields: Name, Phone, Email
+- TCPA consent checkbox with legal text
+- Validation before submission
+- Form reset on successful submission
+
+---
+
+## Summary of Changes
+
+| Component | Change |
+|-----------|--------|
+| **WhiteboardCanvas.tsx** | NEW - Full drawing canvas with tools, colors, sizes, undo/redo |
+| **Trudy AI button** | Opens FloatingTruckChat via custom event dispatch |
+| **Whiteboard button** | Opens whiteboard modal |
+| **Controls header** | Decorative style with horizontal lines and bold typography |
+| **Booking input** | Reduced to h-9, compact buttons, shorter label |
+| **Schedule modal** | Added contact form fields + TCPA consent |
+| **Whiteboard modal** | NEW - Dialog with WhiteboardCanvas and LIVE badge |
+
+---
+
+## Files to Create/Modify
+
+1. **CREATE**: `src/components/video-consult/WhiteboardCanvas.tsx`
+2. **MODIFY**: `src/pages/Book.tsx`
 
