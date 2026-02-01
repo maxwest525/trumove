@@ -1224,33 +1224,35 @@ export default function Book() {
                     </div>
                   )}
                   
-                  {/* Bottom Audio Control Bar */}
-                  <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-center gap-3">
+                  {/* Bottom Audio Control Bar - Icon Only */}
+                  <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-center gap-2">
+                    {/* Mic Toggle - Icon Only */}
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant="ghost"
+                      size="icon"
                       className={cn(
-                        "h-9 px-4 bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm",
-                        isMicMuted && "border-destructive/50 bg-destructive/20 text-destructive"
+                        "h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm",
+                        isMicMuted && "bg-destructive/20 border-destructive/50 text-destructive"
                       )}
                       onClick={() => {
                         setIsMicMuted(!isMicMuted);
                         toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
                       }}
+                      title={isMicMuted ? "Unmute microphone" : "Mute microphone"}
                     >
-                      {isMicMuted ? <MicOff className="w-4 h-4 mr-1.5" /> : <Mic className="w-4 h-4 mr-1.5" />}
-                      {isMicMuted ? "Unmute" : "Mute"}
+                      {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
                     </Button>
                     
+                    {/* Speaker Toggle - Icon Only with Dropdown */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-9 px-4 bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+                          title="Speaker settings"
                         >
-                          <Volume2 className="w-4 h-4 mr-1.5" />
-                          Speaker
+                          <Volume2 className="w-5 h-5" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="center" className="w-56 bg-slate-800 border-white/20 text-white">
@@ -1368,121 +1370,67 @@ export default function Book() {
                 )}
                 
                 {chatMode === 'support' && (
-                  <div className="video-consult-specialist-panel">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <Headphones className="w-8 h-8 text-primary" />
-                    </div>
-                    <h4 className="text-white font-bold mb-2">Contact Support</h4>
-                    <p className="text-white/60 text-sm mb-6">
-                      Get personalized help from our licensed moving consultants.
-                    </p>
-                    <div className="flex flex-col gap-3 w-full max-w-xs">
-                      <Button 
-                        className="w-full bg-foreground hover:bg-foreground/90 text-background font-bold h-12 text-base"
-                        onClick={() => window.location.href = "tel:+18001234567"}
-                      >
-                        <Phone className="w-5 h-5 mr-2" />
-                        Call Now
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="w-full border-2 border-border bg-background text-foreground hover:bg-muted font-bold h-12 text-base"
-                        onClick={() => setShowScheduleModal(true)}
-                      >
-                        <Calendar className="w-5 h-5 mr-2" />
-                        Schedule Callback
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="w-full border-2 border-border bg-background text-foreground hover:bg-muted h-11"
-                        onClick={() => window.open('mailto:support@trumove.com')}
-                      >
-                        <Mail className="w-4 h-4 mr-2" />
-                        Email Support
-                      </Button>
-                    </div>
-                  </div>
-                )}
-                
-                {chatMode === 'livechat' && (
                   <div className="video-consult-specialist-panel h-full flex flex-col">
-                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                        <MessageSquare className="w-5 h-5 text-primary" />
+                    {/* Contact Options Header */}
+                    <div className="pb-4 border-b border-white/10 mb-4">
+                      <h4 className="text-white font-bold text-sm mb-3">Contact Support</h4>
+                      <div className="flex gap-2">
+                        <Button 
+                          size="sm"
+                          className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-bold"
+                          onClick={() => window.location.href = "tel:+18001234567"}
+                        >
+                          <Phone className="w-4 h-4 mr-1.5" />
+                          Call
+                        </Button>
+                        <Button 
+                          size="sm"
+                          variant="outline" 
+                          className="flex-1 border-border bg-background text-foreground hover:bg-muted font-semibold"
+                          onClick={() => setShowScheduleModal(true)}
+                        >
+                          <Calendar className="w-4 h-4 mr-1.5" />
+                          Schedule
+                        </Button>
+                        <Button 
+                          size="sm"
+                          variant="outline" 
+                          className="flex-1 border-border bg-background text-foreground hover:bg-muted font-semibold"
+                          onClick={() => window.open('mailto:support@trumove.com')}
+                        >
+                          <Mail className="w-4 h-4 mr-1.5" />
+                          Email
+                        </Button>
                       </div>
-                      <div className="flex-1">
-                        <h4 className="text-white font-bold text-sm">Live Video Chat</h4>
-                        <p className="text-white/50 text-xs">
-                          {roomUrl ? "Connected to call" : "Join a video call to chat"}
-                        </p>
-                      </div>
-                      
-                      {/* Speaker Device Selector */}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10">
-                            <Headset className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56 bg-slate-800 border-white/20 text-white">
-                          <DropdownMenuLabel className="text-white/60 text-xs">Audio Output Device</DropdownMenuLabel>
-                          <DropdownMenuSeparator className="bg-white/10" />
-                          {audioOutputDevices.length > 0 ? (
-                            audioOutputDevices.map((device) => (
-                              <DropdownMenuItem 
-                                key={device.deviceId}
-                                className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
-                                onClick={() => {
-                                  setSelectedSpeaker(device.deviceId);
-                                  toast.info(`Using ${device.label || 'Audio Device'}`);
-                                }}
-                              >
-                                {selectedSpeaker === device.deviceId && "✓ "}
-                                {device.label || `Speaker ${audioOutputDevices.indexOf(device) + 1}`}
-                              </DropdownMenuItem>
-                            ))
-                          ) : (
-                            <>
-                              <DropdownMenuItem 
-                                className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
-                                onClick={() => {
-                                  setSelectedSpeaker("default");
-                                  toast.info("Using default speaker");
-                                }}
-                              >
-                                {selectedSpeaker === "default" && "✓ "}Default Speaker
-                              </DropdownMenuItem>
-                              <p className="text-white/40 text-[10px] px-2 py-1">
-                                Grant audio permission to see all devices
-                              </p>
-                            </>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      
-                      {roomUrl && (
-                        <span className="px-2 py-1 rounded bg-green-600/20 text-green-400 text-xs font-bold">
-                          LIVE
-                        </span>
-                      )}
                     </div>
                     
-                    {/* Chat Messages Area */}
-                    <div className="flex-1 overflow-y-auto space-y-3 mb-4 min-h-[200px]">
-                      {!roomUrl ? (
-                        <div className="text-center text-white/40 text-sm py-8">
-                          Join a video call to start live chat
-                        </div>
-                      ) : (
-                        <div className="text-center text-white/40 text-sm py-8">
-                          Chat messages with your agent will appear here
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Chat Input */}
-                    <div className="mt-auto">
-                      <div className="flex items-center gap-2">
+                    {/* Live Chat Section */}
+                    <div className="flex-1 flex flex-col min-h-0">
+                      <div className="flex items-center gap-2 mb-3">
+                        <MessageSquare className="w-4 h-4 text-primary" />
+                        <span className="text-white/80 text-sm font-medium">Live Chat</span>
+                        {roomUrl && (
+                          <span className="px-1.5 py-0.5 rounded bg-green-600/20 text-green-400 text-[10px] font-bold">
+                            LIVE
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Messages Area */}
+                      <div className="flex-1 overflow-y-auto space-y-2 mb-3 min-h-[150px] bg-white/5 rounded-lg p-3">
+                        {!roomUrl ? (
+                          <p className="text-white/40 text-sm text-center py-4">
+                            Join a video call to chat live with support
+                          </p>
+                        ) : (
+                          <p className="text-white/40 text-sm text-center py-4">
+                            Send a message to start chatting with your agent
+                          </p>
+                        )}
+                      </div>
+                      
+                      {/* Chat Input */}
+                      <div className="flex items-center gap-2 mt-auto">
                         <Input 
                           placeholder={roomUrl ? "Type a message..." : "Join call to chat"}
                           disabled={!roomUrl}
