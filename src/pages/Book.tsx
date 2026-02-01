@@ -991,7 +991,7 @@ export default function Book() {
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
   const [bookingCode, setBookingCode] = useState("");
   const [isDemo, setIsDemo] = useState(false);
-  const [chatMode, setChatMode] = useState<'trudy' | 'support' | 'livechat'>('trudy');
+  const [chatMode, setChatMode] = useState<'trudy' | 'liveagent' | 'support'>('trudy');
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
@@ -1313,13 +1313,21 @@ export default function Book() {
                   </span>
                   Trudy AI
                 </button>
-<button 
+                <button 
+                  className={chatMode === 'liveagent' ? 'active' : ''}
+                  onClick={() => setChatMode('liveagent')}
+                  title="Chat with a live person"
+                >
+                  <User className="w-4 h-4" />
+                  Live Agent
+                </button>
+                <button 
                   className={chatMode === 'support' ? 'active' : ''}
                   onClick={() => setChatMode('support')}
-                  title="Live Support - Call, Chat, or Schedule"
+                  title="Call, Email, or Schedule"
                 >
                   <Headphones className="w-4 h-4" />
-                  Live Support
+                  Support
                 </button>
               </div>
               
@@ -1377,6 +1385,136 @@ export default function Book() {
                       <p className="text-center text-white/40 text-[10px] mt-2">
                         Opens in floating chat window
                       </p>
+                    </div>
+                  </div>
+                )}
+                
+                {chatMode === 'liveagent' && (
+                  <div className="video-consult-specialist-panel h-full flex flex-col">
+                    {/* Header */}
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+                      <div className="w-12 h-12 rounded-full bg-muted border-2 border-border flex items-center justify-center relative">
+                        <User className="w-6 h-6 text-foreground" />
+                        <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-500 border-2 border-slate-900" />
+                      </div>
+                      <div>
+                        <h4 className="text-white font-bold text-sm">Live Agent Chat</h4>
+                        <p className="text-green-400 text-xs font-medium flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                          {roomUrl ? 'Connected' : 'Available'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Messages Area */}
+                    <div className="flex-1 overflow-y-auto space-y-2 mb-3 min-h-[200px] bg-white/5 rounded-lg p-3">
+                      {!roomUrl ? (
+                        <p className="text-white/40 text-sm text-center py-8">
+                          Join a video call to chat live with an agent
+                        </p>
+                      ) : liveChatMessages.length === 0 ? (
+                        <p className="text-white/40 text-sm text-center py-8">
+                          Send a message to start chatting
+                        </p>
+                      ) : (
+                        liveChatMessages.map((msg) => (
+                          <div 
+                            key={msg.id} 
+                            className={cn(
+                              "flex",
+                              msg.isUser ? "justify-end" : "justify-start"
+                            )}
+                          >
+                            <div className={cn(
+                              "max-w-[85%] px-3 py-2 rounded-lg text-sm",
+                              msg.isUser 
+                                ? "bg-primary text-primary-foreground rounded-br-sm" 
+                                : "bg-white/10 text-white rounded-bl-sm"
+                            )}>
+                              <p>{msg.text}</p>
+                              <span className="text-[10px] opacity-60 mt-1 block">
+                                {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                      {isAgentTyping && <ChatTypingIndicator />}
+                    </div>
+                    
+                    {/* Chat Input */}
+                    <div className="flex items-center gap-2 mt-auto">
+                      <Input 
+                        value={liveChatInput}
+                        onChange={(e) => setLiveChatInput(e.target.value)}
+                        placeholder={roomUrl ? "Type a message..." : "Join call to chat"}
+                        disabled={!roomUrl}
+                        className="flex-1 bg-slate-800/60 border-white/30 text-white placeholder:text-white/50 h-10 disabled:opacity-50"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && liveChatInput.trim() && roomUrl) {
+                            const newMsg = {
+                              id: `msg-${Date.now()}`,
+                              text: liveChatInput.trim(),
+                              isUser: true,
+                              time: new Date()
+                            };
+                            setLiveChatMessages(prev => [...prev, newMsg]);
+                            setLiveChatInput('');
+                            
+                            setTimeout(() => setIsAgentTyping(true), 500);
+                            setTimeout(() => {
+                              setIsAgentTyping(false);
+                              const responses = [
+                                "Thanks for reaching out! How can I help you today?",
+                                "Got it! Let me look into that for you.",
+                                "Great question - I'm happy to assist with that.",
+                                "I'm here to help! Let me check on this.",
+                              ];
+                              setLiveChatMessages(prev => [...prev, {
+                                id: `msg-${Date.now()}`,
+                                text: responses[Math.floor(Math.random() * responses.length)],
+                                isUser: false,
+                                time: new Date()
+                              }]);
+                            }, 1500 + Math.random() * 1000);
+                          }
+                        }}
+                      />
+                      <Button
+                        size="icon"
+                        disabled={!roomUrl || !liveChatInput.trim()}
+                        className="h-10 w-10 bg-primary hover:bg-primary/90 text-primary-foreground shrink-0 disabled:opacity-50"
+                        onClick={() => {
+                          if (liveChatInput.trim() && roomUrl) {
+                            const newMsg = {
+                              id: `msg-${Date.now()}`,
+                              text: liveChatInput.trim(),
+                              isUser: true,
+                              time: new Date()
+                            };
+                            setLiveChatMessages(prev => [...prev, newMsg]);
+                            setLiveChatInput('');
+                            
+                            setTimeout(() => setIsAgentTyping(true), 500);
+                            setTimeout(() => {
+                              setIsAgentTyping(false);
+                              const responses = [
+                                "Thanks for reaching out! How can I help you today?",
+                                "Got it! Let me look into that for you.",
+                                "Great question - I'm happy to assist with that.",
+                              ];
+                              setLiveChatMessages(prev => [...prev, {
+                                id: `msg-${Date.now()}`,
+                                text: responses[Math.floor(Math.random() * responses.length)],
+                                isUser: false,
+                                time: new Date()
+                              }]);
+                            }, 1500 + Math.random() * 1000);
+                          }
+                        }}
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 )}
