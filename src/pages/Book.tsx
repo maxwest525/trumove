@@ -5,7 +5,7 @@ import { DailyVideoRoom } from "@/components/video-consult/DailyVideoRoom";
 import { 
   Video, Phone, Boxes, Camera, Calendar, ArrowRight, Play, Users, Monitor, 
   Mic, MicOff, VideoOff, MessageSquare, Plus, Minus, X, Package, Search, Send, Mail,
-  Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles,
+  Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles, Truck,
   Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
   Maximize2, Minimize2, Settings, CalendarDays, PenTool, User, Headset
 } from "lucide-react";
@@ -1290,7 +1290,10 @@ export default function Book() {
                   onClick={() => setChatMode('trudy')}
                   title="Talk to Trudy AI Assistant"
                 >
-                  <Bot className="w-4 h-4" />
+                  <span className="relative inline-flex">
+                    <Truck className="w-4 h-4" />
+                    <Sparkles className="absolute -top-1 -right-1.5 w-2.5 h-2.5 text-primary" />
+                  </span>
                   Trudy AI
                 </button>
 <button 
