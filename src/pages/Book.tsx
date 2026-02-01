@@ -944,6 +944,10 @@ export default function Book() {
   const [scheduleEmail, setScheduleEmail] = useState("");
   const [scheduleTcpaConsent, setScheduleTcpaConsent] = useState(false);
   
+  // Live Support chat state
+  const [liveChatMessages, setLiveChatMessages] = useState<{id: string; text: string; isUser: boolean; time: Date}[]>([]);
+  const [liveChatInput, setLiveChatInput] = useState('');
+  
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
 
@@ -1224,68 +1228,6 @@ export default function Book() {
                     </div>
                   )}
                   
-                  {/* Bottom Audio Control Bar - Icon Only */}
-                  <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-center gap-2">
-                    {/* Mic Toggle - Icon Only */}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={cn(
-                        "h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm",
-                        isMicMuted && "bg-destructive/20 border-destructive/50 text-destructive"
-                      )}
-                      onClick={() => {
-                        setIsMicMuted(!isMicMuted);
-                        toast.info(isMicMuted ? "Microphone unmuted" : "Microphone muted");
-                      }}
-                      title={isMicMuted ? "Unmute microphone" : "Mute microphone"}
-                    >
-                      {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-                    </Button>
-                    
-                    {/* Speaker Toggle - Icon Only with Dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-10 w-10 rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
-                          title="Speaker settings"
-                        >
-                          <Volume2 className="w-5 h-5" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="center" className="w-56 bg-slate-800 border-white/20 text-white">
-                        <DropdownMenuLabel className="text-white/60 text-xs">Audio Output Device</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-white/10" />
-                        {audioOutputDevices.length > 0 ? (
-                          audioOutputDevices.map((device) => (
-                            <DropdownMenuItem 
-                              key={device.deviceId}
-                              className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
-                              onClick={() => {
-                                setSelectedSpeaker(device.deviceId);
-                                toast.info(`Using ${device.label || 'Audio Device'}`);
-                              }}
-                            >
-                              {selectedSpeaker === device.deviceId && "✓ "}
-                              {device.label || `Speaker ${audioOutputDevices.indexOf(device) + 1}`}
-                            </DropdownMenuItem>
-                          ))
-                        ) : (
-                          <DropdownMenuItem 
-                            className="cursor-pointer text-white/80 hover:text-white focus:text-white focus:bg-white/10"
-                            onClick={() => {
-                              setSelectedSpeaker("default");
-                              toast.info("Using default speaker");
-                            }}
-                          >
-                            {selectedSpeaker === "default" && "✓ "}Default Speaker
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -1422,30 +1364,106 @@ export default function Book() {
                           <p className="text-white/40 text-sm text-center py-4">
                             Join a video call to chat live with support
                           </p>
-                        ) : (
+                        ) : liveChatMessages.length === 0 ? (
                           <p className="text-white/40 text-sm text-center py-4">
                             Send a message to start chatting with your agent
                           </p>
+                        ) : (
+                          liveChatMessages.map((msg) => (
+                            <div 
+                              key={msg.id} 
+                              className={cn(
+                                "flex",
+                                msg.isUser ? "justify-end" : "justify-start"
+                              )}
+                            >
+                              <div className={cn(
+                                "max-w-[80%] px-3 py-2 rounded-lg text-sm",
+                                msg.isUser 
+                                  ? "bg-primary text-primary-foreground rounded-br-sm" 
+                                  : "bg-white/10 text-white rounded-bl-sm"
+                              )}>
+                                <p>{msg.text}</p>
+                                <span className="text-[10px] opacity-60 mt-1 block">
+                                  {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                            </div>
+                          ))
                         )}
                       </div>
                       
                       {/* Chat Input */}
                       <div className="flex items-center gap-2 mt-auto">
                         <Input 
+                          value={liveChatInput}
+                          onChange={(e) => setLiveChatInput(e.target.value)}
                           placeholder={roomUrl ? "Type a message..." : "Join call to chat"}
                           disabled={!roomUrl}
                           className="flex-1 bg-slate-800/60 border-white/30 text-white placeholder:text-white/50 h-10 disabled:opacity-50"
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim() && roomUrl) {
-                              toast.info("Message sent to agent!");
-                              (e.target as HTMLInputElement).value = '';
+                            if (e.key === 'Enter' && liveChatInput.trim() && roomUrl) {
+                              const newMsg = {
+                                id: `msg-${Date.now()}`,
+                                text: liveChatInput.trim(),
+                                isUser: true,
+                                time: new Date()
+                              };
+                              setLiveChatMessages(prev => [...prev, newMsg]);
+                              setLiveChatInput('');
+                              
+                              // Simulate agent response after 1-2 seconds
+                              setTimeout(() => {
+                                const agentResponses = [
+                                  "Thanks for your message! I'm reviewing your inventory now.",
+                                  "Got it! Let me check on that for you.",
+                                  "Great question! Based on what I see, I can help with that.",
+                                  "I'm here to help! Let me look into this.",
+                                ];
+                                const response = agentResponses[Math.floor(Math.random() * agentResponses.length)];
+                                setLiveChatMessages(prev => [...prev, {
+                                  id: `msg-${Date.now()}`,
+                                  text: response,
+                                  isUser: false,
+                                  time: new Date()
+                                }]);
+                              }, 1500);
                             }
                           }}
                         />
                         <Button 
                           size="icon"
-                          disabled={!roomUrl}
+                          disabled={!roomUrl || !liveChatInput.trim()}
                           className="h-10 w-10 bg-primary hover:bg-primary/90 disabled:opacity-50"
+                          onClick={() => {
+                            if (liveChatInput.trim() && roomUrl) {
+                              const newMsg = {
+                                id: `msg-${Date.now()}`,
+                                text: liveChatInput.trim(),
+                                isUser: true,
+                                time: new Date()
+                              };
+                              setLiveChatMessages(prev => [...prev, newMsg]);
+                              setLiveChatInput('');
+                              
+                              // Simulate agent response
+                              setTimeout(() => {
+                                const agentResponses = [
+                                  "Thanks for your message! I'm reviewing your inventory now.",
+                                  "Got it! Let me check on that for you.",
+                                  "Great question! Based on what I see, I can help with that.",
+                                  "I'm here to help! Let me look into this.",
+                                ];
+                                const response = agentResponses[Math.floor(Math.random() * agentResponses.length)];
+                                setLiveChatMessages(prev => [...prev, {
+                                  id: `msg-${Date.now()}`,
+                                  text: response,
+                                  isUser: false,
+                                  time: new Date()
+                                }]);
+                              }, 1500);
+                            }
+                          }}
                         >
                           <Send className="w-4 h-4" />
                         </Button>
