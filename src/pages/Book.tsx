@@ -1770,55 +1770,55 @@ export default function Book() {
               {/* Chat Content */}
               <div className="video-consult-chat-content">
                 {chatMode === 'trudy' && (
-                  <div className="video-consult-specialist-panel h-full flex flex-col">
-                    {/* Header */}
-                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
-                      <div className="w-12 h-12 rounded-full bg-muted border-2 border-border flex items-center justify-center relative">
-                        <Truck className="w-6 h-6 text-foreground" />
-                        <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 text-primary" />
+                  <div className="video-consult-specialist-panel live-agent-panel h-full flex flex-col">
+                    {/* Compact Header */}
+                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10 shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center relative shrink-0">
+                        <Truck className="w-4 h-4 text-foreground" />
+                        <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-primary" />
                       </div>
-                      <div>
-                        <h4 className="text-white font-bold text-sm">Trudy AI Assistant</h4>
-                        <p className="text-primary text-xs font-medium">Available 24/7</p>
+                      <div className="min-w-0">
+                        <h4 className="text-white font-bold text-xs">Trudy AI Assistant</h4>
+                        <p className="text-primary text-[10px] font-medium">Available 24/7</p>
                       </div>
                     </div>
                     
-                    {/* Sample Questions */}
-                    <div className="flex-1 space-y-3">
-                      <p className="text-white/60 text-sm">
+                    {/* Sample Questions - Compact */}
+                    <div className="flex-1 overflow-y-auto min-h-0">
+                      <p className="text-white/60 text-xs mb-2">
                         Trudy can help you with:
                       </p>
-                      <ul className="space-y-2 text-sm text-white/80">
-                        <li className="flex items-start gap-2">
+                      <ul className="space-y-1.5 text-xs text-white/80">
+                        <li className="flex items-start gap-1.5">
                           <span className="text-primary">•</span>
                           "How much will my move cost?"
                         </li>
-                        <li className="flex items-start gap-2">
+                        <li className="flex items-start gap-1.5">
                           <span className="text-primary">•</span>
                           "What's included in full-service packing?"
                         </li>
-                        <li className="flex items-start gap-2">
+                        <li className="flex items-start gap-1.5">
                           <span className="text-primary">•</span>
                           "Can you explain the insurance options?"
                         </li>
-                        <li className="flex items-start gap-2">
+                        <li className="flex items-start gap-1.5">
                           <span className="text-primary">•</span>
                           "Do you offer storage between moves?"
                         </li>
                       </ul>
                     </div>
                     
-                    {/* CTA Button with Arrow */}
-                    <div className="mt-auto pt-4">
+                    {/* CTA Button - Compact */}
+                    <div className="mt-auto pt-2 shrink-0">
                       <Button 
-                        className="w-full h-12 bg-foreground hover:bg-foreground/90 text-background font-bold text-base group"
+                        className="w-full h-9 bg-foreground hover:bg-foreground/90 text-background font-bold text-xs group"
                         onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
                       >
-                        <Sparkles className="w-5 h-5 mr-2 text-primary" />
+                        <Sparkles className="w-3.5 h-3.5 mr-1.5 text-primary" />
                         Chat with Trudy Now
-                        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1 transition-transform" />
                       </Button>
-                      <p className="text-center text-white/40 text-[10px] mt-2">
+                      <p className="text-center text-white/40 text-[9px] mt-1">
                         Opens in floating chat window
                       </p>
                     </div>
