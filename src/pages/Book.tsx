@@ -1151,6 +1151,19 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false }: { onLeave: () => void;
           {isVideoOff ? <VideoOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Video className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
         </button>
 
+        {/* Screen share button - hide in PiP */}
+        {!isPiP && (
+          <button
+            onClick={handleShareScreen}
+            className={cn(
+              "w-11 h-11 rounded-full flex items-center justify-center transition-colors",
+              isScreenSharing ? "bg-primary text-primary-foreground" : "bg-white/10 text-white hover:bg-white/20"
+            )}
+          >
+            <Monitor className="w-5 h-5" />
+          </button>
+        )}
+
         <button
           onClick={onLeave}
           className={cn(
