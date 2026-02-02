@@ -26028,14 +26028,22 @@
   font-weight: 700;
 }
 
-/* Booking Input Group in Header - Center */
-.tracking-header-booking {
+/* Search Bar - Below Header */
+.tracking-search-bar {
+  background: hsl(var(--foreground) / 0.9);
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark .tracking-search-bar {
+  background: rgba(20, 20, 20, 0.95);
+}
+
+.tracking-search-bar-inner {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 .tracking-booking-input-group {
