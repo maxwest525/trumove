@@ -30294,10 +30294,10 @@ html.dark .tru-summary-header-large,
 .video-consult-chat-panel {
   display: flex;
   flex-direction: column;
-  /* Fixed height to match video window */
-  height: 560px;
+  /* Fixed height to match video window (550px) */
+  height: 550px;
   min-height: 400px;
-  max-height: 560px;
+  max-height: 550px;
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: 12px;

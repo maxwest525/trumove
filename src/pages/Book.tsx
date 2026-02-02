@@ -103,87 +103,6 @@ function FakeAgentView({
         LIVE
       </div>
       
-      {/* Top Right - Settings Dropdown for Camera/Speaker */}
-      <div className="absolute top-4 right-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 rounded-full bg-black/50 border border-white/30 text-white hover:bg-black/70 backdrop-blur-sm"
-            >
-              <Settings className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-64 bg-popover border border-border shadow-xl z-50">
-            {/* Camera Selection */}
-            <DropdownMenuLabel className="text-xs font-semibold flex items-center gap-2">
-              <Camera className="w-3.5 h-3.5" />
-              Camera
-            </DropdownMenuLabel>
-            {videoInputDevices.length > 0 ? (
-              videoInputDevices.map((device) => (
-                <DropdownMenuItem 
-                  key={device.deviceId} 
-                  className={cn(
-                    "text-xs cursor-pointer",
-                    selectedCamera === device.deviceId && "bg-accent"
-                  )}
-                  onClick={() => {
-                    setSelectedCamera(device.deviceId);
-                    toast.success(`Camera: ${device.label || 'Camera'}`);
-                  }}
-                >
-                  <div className="flex items-center gap-2 w-full">
-                    {selectedCamera === device.deviceId && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
-                    )}
-                    <span className="truncate">{device.label || 'Default Camera'}</span>
-                  </div>
-                </DropdownMenuItem>
-              ))
-            ) : (
-              <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                No cameras found
-              </DropdownMenuItem>
-            )}
-            
-            <DropdownMenuSeparator />
-            
-            {/* Speaker Selection */}
-            <DropdownMenuLabel className="text-xs font-semibold flex items-center gap-2">
-              <Volume2 className="w-3.5 h-3.5" />
-              Speaker
-            </DropdownMenuLabel>
-            {audioOutputDevices.length > 0 ? (
-              audioOutputDevices.map((device) => (
-                <DropdownMenuItem 
-                  key={device.deviceId} 
-                  className={cn(
-                    "text-xs cursor-pointer",
-                    selectedSpeaker === device.deviceId && "bg-accent"
-                  )}
-                  onClick={() => {
-                    setSelectedSpeaker(device.deviceId);
-                    toast.success(`Speaker: ${device.label || 'Speaker'}`);
-                  }}
-                >
-                  <div className="flex items-center gap-2 w-full">
-                    {selectedSpeaker === device.deviceId && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
-                    )}
-                    <span className="truncate">{device.label || 'Default Speaker'}</span>
-                  </div>
-                </DropdownMenuItem>
-              ))
-            ) : (
-              <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                Default Speaker
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
       
       {/* Name badge overlay - bottom left */}
       <div className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm">
@@ -1976,25 +1895,16 @@ export default function Book() {
             <Card id="video-consult-container" className="overflow-hidden border-2 border-primary/20 bg-gradient-to-b from-muted/30 to-background shadow-lg shadow-primary/5 ring-1 ring-white/5 w-[700px]">
               <CardContent className="p-0">
                 <div className="relative h-[550px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
-                  {/* Top controls - Fullscreen, PiP, and Whiteboard */}
+                  {/* Top controls - Fullscreen and PiP */}
                   <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                     {roomUrl && (
-                      <>
-                        <button
-                          onClick={() => setShowWhiteboardModal(true)}
-                          className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
-                          title="Open Whiteboard"
-                        >
-                          <PenTool className="w-4 h-4 text-white" />
-                        </button>
-                        <button
-                          onClick={() => setIsPiP(!isPiP)}
-                          className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
-                          title={isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}
-                        >
-                          <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
-                        </button>
-                      </>
+                      <button
+                        onClick={() => setIsPiP(!isPiP)}
+                        className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+                        title={isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}
+                      >
+                        <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
+                      </button>
                     )}
                     <button
                       onClick={toggleFullscreen}
