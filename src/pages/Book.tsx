@@ -1846,14 +1846,13 @@ export default function Book() {
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-6xl mx-auto">
 
-          {/* Section Header - matches Build Your Move styling */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-2">
+          {/* Section Header - centered */}
+          <div className="flex flex-col items-center justify-center text-center mb-10 max-w-xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3">
               Connect <span className="tru-qb-title-accent">With Us</span>
             </h2>
-            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-              Reach out to our moving specialists by video, phone, email, or text. 
-              Schedule a call or connect instantly for personalized assistance.
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Reach out to our moving specialists by video, phone, email, or text. Schedule a call or connect instantly for personalized assistance.
             </p>
           </div>
 
@@ -1927,19 +1926,17 @@ export default function Book() {
                 </CardContent>
               </Card>
 
-              {/* Quick Tools - Compact cards with less height */}
+              {/* Quick Tools - Sleek pill buttons */}
               {!roomUrl && (
-                <div className="flex items-center justify-center gap-3">
+                <div className="flex items-center justify-center gap-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
                         onClick={() => setShowScheduleModal(true)}
-                        className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+                        className="group flex items-center gap-2 h-9 px-4 rounded-full bg-muted/80 border border-border hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-200"
                       >
-                        <div className="w-7 h-7 rounded-md bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-                          <CalendarDays className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} />
-                        </div>
-                        <span className="text-xs font-bold text-white">Schedule a Call</span>
+                        <CalendarDays className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" strokeWidth={2} />
+                        <span className="text-xs font-semibold">Schedule</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent><p>Schedule a Call</p></TooltipContent>
@@ -1949,12 +1946,10 @@ export default function Book() {
                     <TooltipTrigger asChild>
                       <button
                         onClick={() => setShowWhiteboardModal(true)}
-                        className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+                        className="group flex items-center gap-2 h-9 px-4 rounded-full bg-muted/80 border border-border hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-200"
                       >
-                        <div className="w-7 h-7 rounded-md bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-                          <PenTool className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} />
-                        </div>
-                        <span className="text-xs font-bold text-white">Whiteboard</span>
+                        <PenTool className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" strokeWidth={2} />
+                        <span className="text-xs font-semibold">Whiteboard</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent><p>Open Whiteboard</p></TooltipContent>
@@ -1964,12 +1959,10 @@ export default function Book() {
                     <TooltipTrigger asChild>
                       <button
                         onClick={handleScreenShare}
-                        className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+                        className="group flex items-center gap-2 h-9 px-4 rounded-full bg-muted/80 border border-border hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-200"
                       >
-                        <div className="w-7 h-7 rounded-md bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-                          <Monitor className="w-3.5 h-3.5 text-emerald-400" strokeWidth={2} />
-                        </div>
-                        <span className="text-xs font-bold text-white">Share Screen</span>
+                        <Monitor className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" strokeWidth={2} />
+                        <span className="text-xs font-semibold">Share Screen</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent><p>Share Your Screen</p></TooltipContent>
