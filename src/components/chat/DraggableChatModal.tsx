@@ -2,6 +2,33 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { X, Minimize2, Maximize2, GripHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const STORAGE_KEY = "tm_popout_chat_modal";
+
+interface StoredModalState {
+  position: { x: number; y: number };
+  size: { width: number; height: number };
+}
+
+const getStoredState = (): StoredModalState | null => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (e) {
+    console.warn("Failed to load modal state from localStorage");
+  }
+  return null;
+};
+
+const saveState = (position: { x: number; y: number }, size: { width: number; height: number }) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ position, size }));
+  } catch (e) {
+    console.warn("Failed to save modal state to localStorage");
+  }
+};
+
 interface DraggableChatModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -15,24 +42,45 @@ export default function DraggableChatModal({
   title,
   children 
 }: DraggableChatModalProps) {
-  const [position, setPosition] = useState({ x: 100, y: 100 });
-  const [size, setSize] = useState({ width: 380, height: 500 });
+  const [position, setPosition] = useState(() => {
+    const stored = getStoredState();
+    return stored?.position ?? { x: 100, y: 100 };
+  });
+  const [size, setSize] = useState(() => {
+    const stored = getStoredState();
+    return stored?.size ?? { width: 380, height: 500 };
+  });
   const [isMaximized, setIsMaximized] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const resizeStart = useRef({ x: 0, y: 0, width: 0, height: 0 });
   const modalRef = useRef<HTMLDivElement>(null);
   const prevSize = useRef({ width: 380, height: 500, x: 100, y: 100 });
 
-  // Center on open
+  // Initialize position on first open - use stored or center
   useEffect(() => {
-    if (isOpen && !isMaximized) {
-      const centerX = (window.innerWidth - size.width) / 2;
-      const centerY = (window.innerHeight - size.height) / 2;
-      setPosition({ x: Math.max(20, centerX), y: Math.max(20, centerY) });
+    if (isOpen && !hasInitialized && !isMaximized) {
+      const stored = getStoredState();
+      if (stored) {
+        // Validate stored position is still within viewport
+        const maxX = window.innerWidth - stored.size.width;
+        const maxY = window.innerHeight - 50;
+        setPosition({
+          x: Math.max(0, Math.min(maxX, stored.position.x)),
+          y: Math.max(0, Math.min(maxY, stored.position.y))
+        });
+        setSize(stored.size);
+      } else {
+        // Center if no stored state
+        const centerX = (window.innerWidth - size.width) / 2;
+        const centerY = (window.innerHeight - size.height) / 2;
+        setPosition({ x: Math.max(20, centerX), y: Math.max(20, centerY) });
+      }
+      setHasInitialized(true);
     }
-  }, [isOpen]);
+  }, [isOpen, hasInitialized, isMaximized, size.width, size.height]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (isMaximized) return;
@@ -58,22 +106,31 @@ export default function DraggableChatModal({
   }, [size, isMaximized]);
 
   useEffect(() => {
+    let currentPosition = position;
+    let currentSize = size;
+    
     const handleMouseMove = (e: MouseEvent) => {
       if (isDragging) {
         const newX = Math.max(0, Math.min(window.innerWidth - size.width, e.clientX - dragOffset.current.x));
         const newY = Math.max(0, Math.min(window.innerHeight - 50, e.clientY - dragOffset.current.y));
-        setPosition({ x: newX, y: newY });
+        currentPosition = { x: newX, y: newY };
+        setPosition(currentPosition);
       }
       if (isResizing) {
         const deltaX = e.clientX - resizeStart.current.x;
         const deltaY = e.clientY - resizeStart.current.y;
         const newWidth = Math.max(300, Math.min(800, resizeStart.current.width + deltaX));
         const newHeight = Math.max(400, Math.min(800, resizeStart.current.height + deltaY));
-        setSize({ width: newWidth, height: newHeight });
+        currentSize = { width: newWidth, height: newHeight };
+        setSize(currentSize);
       }
     };
 
     const handleMouseUp = () => {
+      // Save to localStorage when drag/resize ends
+      if (isDragging || isResizing) {
+        saveState(currentPosition, currentSize);
+      }
       setIsDragging(false);
       setIsResizing(false);
     };
