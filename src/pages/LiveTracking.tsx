@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
@@ -547,82 +547,22 @@ export default function LiveTracking() {
           </span>
         </div>
 
-        {/* Centered Search & Satellite Button */}
-        <div className="tracking-header-controls">
-          <div className="tracking-header-search">
-            <Search className="w-4 h-4 text-white/70" />
-            <input
-              type="text"
-              placeholder="Enter Booking # (try 12345)"
-              className="tracking-header-input"
-              value={bookingInput}
-              onChange={(e) => setBookingInput(e.target.value)}
-              onKeyDown={async (e) => {
-                if (e.key === 'Enter') {
-                  const value = bookingInput.trim();
-                if (value === '12345' || value === '00000') {
-                    await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-                    await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
-                    setMoveDate(new Date());
-                    // Default to 2D satellite view with follow mode for demos
-                    setShow3DView(false);
-                    setFollowMode(true);
-                    toast.success('📦 Booking loaded!', { description: 'Jacksonville → Miami' });
-                  } else if (value) {
-                    toast.error('Booking not found', { description: 'Try #12345 or #00000' });
-                  }
-                }
-              }}
-            />
-            <Button
-              variant="ghost"
-              size="sm"
-              className="tracking-header-go-btn"
-              onClick={async () => {
-                const value = bookingInput.trim() || '12345';
-                await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-                await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
-                setMoveDate(new Date());
-                // Default to 2D satellite view with follow mode for demos
-                setShow3DView(false);
-                setFollowMode(true);
-                setBookingInput(value);
-                toast.success('📦 Booking loaded!');
-              }}
-            >
-              Go
-            </Button>
-            
-            {/* Demo Button - Smaller, subtle outline style */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={async () => {
-                // Set booking input to 12345
-                setBookingInput('12345');
-                await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
-                await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
-                setMoveDate(new Date());
-                setShow3DView(false);
-                setFollowMode(true);
-                setIsDemoMode(true);
-                // Real-time speed will be set automatically when routeData loads
-                // Auto-start tracking after a brief delay
-                setTimeout(() => {
-                  if (canTrack) startTracking();
-                }, 1500);
-                toast.success('🚚 Demo mode started!', {
-                  description: 'Jacksonville → Miami Beach • Real-time tracking'
-                });
-              }}
-              className="tracking-header-demo-btn"
-            >
-              <Sparkles className="w-3 h-3" />
-              <span className="hidden sm:inline text-[11px]">Demo</span>
-            </Button>
-          </div>
-          
-          {/* Map view is fixed to hybrid - no user toggle */}
+        {/* Trust Indicators - Center */}
+        <div className="tracking-header-trust">
+          <span className="tracking-header-trust-item">
+            <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+            FMCSA VERIFIED
+          </span>
+          <span className="tracking-header-trust-dot">•</span>
+          <span className="tracking-header-trust-item">
+            <Truck className="w-3.5 h-3.5 text-primary" />
+            LIVE GPS
+          </span>
+          <span className="tracking-header-trust-dot">•</span>
+          <span className="tracking-header-trust-item">
+            <Navigation className="w-3.5 h-3.5 text-primary" />
+            REAL-TIME ETA
+          </span>
         </div>
 
         <div className="flex items-center gap-4">
