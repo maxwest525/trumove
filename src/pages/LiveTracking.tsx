@@ -138,8 +138,8 @@ export default function LiveTracking() {
   // Follow mode state - default to true for better UX
   const [followMode, setFollowMode] = useState(true);
   
-  // 3D view mode toggle - default to true (photorealistic 3D is primary)
-  const [show3DView, setShow3DView] = useState(true);
+  // 3D view mode toggle - default to false (2D satellite is primary, 3D is unreliable)
+  const [show3DView, setShow3DView] = useState(false);
   
   // Map view type for 2D maps (satellite, hybrid, roadmap)
   const [mapViewType, setMapViewType] = useState<'satellite' | 'hybrid' | 'roadmap'>('hybrid');
@@ -222,10 +222,10 @@ export default function LiveTracking() {
       setShow3DView(false);
       console.log('WebGL diagnostics: Using static map fallback', diagnostics);
     } else {
-      // WebGL supported - default to 3D photorealistic view
-      setShow3DView(true);
+      // WebGL supported - default to 2D satellite view (3D is unreliable)
+      setShow3DView(false);
       setFollowMode(true);
-      console.log('WebGL diagnostics: 3D photorealistic view enabled by default', diagnostics);
+      console.log('WebGL diagnostics: 2D satellite view enabled by default', diagnostics);
     }
   }, []);
 
@@ -563,8 +563,8 @@ export default function LiveTracking() {
                     await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                     await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
                     setMoveDate(new Date());
-                    // Default to 3D photorealistic view with follow mode for demos
-                    setShow3DView(true);
+                    // Default to 2D satellite view with follow mode for demos
+                    setShow3DView(false);
                     setFollowMode(true);
                     toast.success('📦 Booking loaded!', { description: 'Jacksonville → Miami' });
                   } else if (value) {
@@ -582,8 +582,8 @@ export default function LiveTracking() {
                 await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                 await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
                 setMoveDate(new Date());
-                // Default to 3D photorealistic view with follow mode for demos
-                setShow3DView(true);
+                // Default to 2D satellite view with follow mode for demos
+                setShow3DView(false);
                 setFollowMode(true);
                 setBookingInput(value);
                 toast.success('📦 Booking loaded!');
@@ -602,7 +602,7 @@ export default function LiveTracking() {
                 await handleOriginSelect('Jacksonville', '32207', '4520 Atlantic Blvd, Jacksonville, FL 32207');
                 await handleDestSelect('Miami Beach', '33139', '1000 Ocean Dr, Miami Beach, FL 33139');
                 setMoveDate(new Date());
-                setShow3DView(true);
+                setShow3DView(false);
                 setFollowMode(true);
                 setIsDemoMode(true);
                 // Real-time speed will be set automatically when routeData loads
