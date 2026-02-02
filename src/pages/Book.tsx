@@ -1852,133 +1852,126 @@ export default function Book() {
             </p>
           </div>
 
-          {/* Two/Three-Column Grid: Tools | Video | Chat - adjusts when on call */}
-          <div className={cn(
-            "grid grid-cols-1 gap-4 mb-8",
-            roomUrl 
-              ? "lg:grid-cols-[1fr,380px]" // 2 columns when on call (no toolbar)
-              : "lg:grid-cols-[auto,1fr,380px]" // 3 columns with toolbar
-          )}>
+          {/* Two-Column Grid: Video+Tools | Chat */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-4 mb-8">
 
-            {/* Left Toolbar - Only when not on call, responsive */}
-            {!roomUrl && (
-              <div className="flex flex-col gap-2 p-3 lg:p-4 rounded-xl bg-muted/50 border border-border h-fit">
-                {/* Toolbar Header - hidden on small screens */}
-                <div className="hidden lg:flex items-center gap-2 pb-2 border-b border-border mb-1">
-                  <Settings className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm font-semibold text-foreground">Quick Tools</span>
-                </div>
-                
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowScheduleModal(true)}
-                      className="h-10 lg:px-4 px-3 gap-2 lg:justify-start justify-center"
-                    >
-                      <CalendarDays className="w-4 h-4 shrink-0" />
-                      <span className="hidden lg:inline">Schedule</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="lg:hidden"><p>Schedule</p></TooltipContent>
-                </Tooltip>
-                
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowWhiteboardModal(true)}
-                      className="h-10 lg:px-4 px-3 gap-2 lg:justify-start justify-center"
-                    >
-                      <PenTool className="w-4 h-4 shrink-0" />
-                      <span className="hidden lg:inline">Whiteboard</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="lg:hidden"><p>Whiteboard</p></TooltipContent>
-                </Tooltip>
-                
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      onClick={handleScreenShare}
-                      className="h-10 lg:px-4 px-3 gap-2 lg:justify-start justify-center"
-                    >
-                      <Monitor className="w-4 h-4 shrink-0" />
-                      <span className="hidden lg:inline">Screen Share</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="lg:hidden"><p>Screen Share</p></TooltipContent>
-                </Tooltip>
-                
-                {/* Demo button removed from here - moved to page footer */}
-              </div>
-            )}
-
-            {/* Main Video Window - 700x550 fixed dimensions with premium frame */}
-            <Card id="video-consult-container" className="overflow-hidden border-[3px] border-slate-800 bg-gradient-to-b from-muted/30 to-background shadow-2xl shadow-black/20 ring-1 ring-white/5 w-[700px]">
-              <CardContent className="p-0">
-                <div className="relative h-[550px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
-                  {/* Top controls - Fullscreen and PiP */}
-                  <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-                    {roomUrl && (
+            {/* Video Window + Quick Tools Column */}
+            <div className="flex flex-col items-center gap-4">
+              {/* Main Video Window - 700x550 fixed dimensions with premium frame */}
+              <Card id="video-consult-container" className="overflow-hidden border-[3px] border-slate-800 bg-gradient-to-b from-muted/30 to-background shadow-2xl shadow-black/20 ring-1 ring-white/5 w-[700px]">
+                <CardContent className="p-0">
+                  <div className="relative h-[550px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
+                    {/* Top controls - Fullscreen and PiP */}
+                    <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+                      {roomUrl && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => setIsPiP(!isPiP)}
+                              className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+                            >
+                              <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="left"><p>{isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}</p></TooltipContent>
+                        </Tooltip>
+                      )}
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => setIsPiP(!isPiP)}
+                            onClick={toggleFullscreen}
                             className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
                           >
-                            <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
+                            {isFullscreen ? <Minimize2 className="w-4 h-4 text-white" /> : <Maximize2 className="w-4 h-4 text-white" />}
                           </button>
                         </TooltipTrigger>
-                        <TooltipContent side="left"><p>{isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}</p></TooltipContent>
+                        <TooltipContent side="left"><p>{isFullscreen ? "Exit Fullscreen" : "Fullscreen"}</p></TooltipContent>
                       </Tooltip>
-                    )}
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={toggleFullscreen}
-                          className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
-                        >
-                          {isFullscreen ? <Minimize2 className="w-4 h-4 text-white" /> : <Maximize2 className="w-4 h-4 text-white" />}
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="left"><p>{isFullscreen ? "Exit Fullscreen" : "Fullscreen"}</p></TooltipContent>
-                    </Tooltip>
-                  </div>
-                  {roomUrl ? (
-                    isDemo ? (
-                      <DemoVideoPlaceholder onLeave={handleLeaveRoom} onWhiteboardOpen={() => setShowWhiteboardModal(true)} />
-                    ) : (
-                      <>
-                        <DailyVideoRoom 
-                          roomUrl={roomUrl}
-                          userName="Guest"
-                          onLeave={handleLeaveRoom}
-                          className="w-full h-full"
-                        />
-                        {/* Screen Share Preview Modal - when actively sharing */}
-                        {showScreenSharePreview && isScreenSharing && (
-                          <div className="absolute inset-0 bg-black/80 z-10 flex items-center justify-center animate-fade-in">
-                            <div className="animate-scale-in">
-                              <ScreenSharePreviewModal onClose={() => setShowScreenSharePreview(false)} />
+                    </div>
+                    {roomUrl ? (
+                      isDemo ? (
+                        <DemoVideoPlaceholder onLeave={handleLeaveRoom} onWhiteboardOpen={() => setShowWhiteboardModal(true)} />
+                      ) : (
+                        <>
+                          <DailyVideoRoom 
+                            roomUrl={roomUrl}
+                            userName="Guest"
+                            onLeave={handleLeaveRoom}
+                            className="w-full h-full"
+                          />
+                          {/* Screen Share Preview Modal - when actively sharing */}
+                          {showScreenSharePreview && isScreenSharing && (
+                            <div className="absolute inset-0 bg-black/80 z-10 flex items-center justify-center animate-fade-in">
+                              <div className="animate-scale-in">
+                                <ScreenSharePreviewModal onClose={() => setShowScreenSharePreview(false)} />
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </>
-                    )
-                  ) : (
-                    <ContactHub
-                      onStartVideoCall={handleStartDemo}
-                      bookingCode={bookingCode}
-                      setBookingCode={setBookingCode}
-                      onJoinRoom={handleJoinRoom}
-                    />
-                  )}
+                          )}
+                        </>
+                      )
+                    ) : (
+                      <ContactHub
+                        onStartVideoCall={handleStartDemo}
+                        bookingCode={bookingCode}
+                        setBookingCode={setBookingCode}
+                        onJoinRoom={handleJoinRoom}
+                      />
+                    )}
+                    
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Tools - Horizontal row underneath video */}
+              {!roomUrl && (
+                <div className="flex items-center justify-center gap-3">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => setShowScheduleModal(true)}
+                        className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-900/80 border border-slate-700/50 hover:border-slate-600 hover:bg-slate-800 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-colors">
+                          <CalendarDays className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                        </div>
+                        <span className="text-[11px] font-medium text-slate-400 group-hover:text-white text-center transition-colors">Schedule</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>Schedule a Call</p></TooltipContent>
+                  </Tooltip>
                   
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => setShowWhiteboardModal(true)}
+                        className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-900/80 border border-slate-700/50 hover:border-slate-600 hover:bg-slate-800 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-colors">
+                          <PenTool className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                        </div>
+                        <span className="text-[11px] font-medium text-slate-400 group-hover:text-white text-center transition-colors">Whiteboard</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>Open Whiteboard</p></TooltipContent>
+                  </Tooltip>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={handleScreenShare}
+                        className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-900/80 border border-slate-700/50 hover:border-slate-600 hover:bg-slate-800 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-colors">
+                          <Monitor className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                        </div>
+                        <span className="text-[11px] font-medium text-slate-400 group-hover:text-white text-center transition-colors">Share</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent><p>Share Your Screen</p></TooltipContent>
+                  </Tooltip>
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
 
             {/* Chat Panel - Right Side - Resizable when on call */}
             <div className={cn(
