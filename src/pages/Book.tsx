@@ -406,20 +406,20 @@ function AgentQueueIndicator({
 // Agent status badge component
 function AgentStatusBadge({ status }: { status: 'available' | 'busy' }) {
   return (
-    <div className={cn(
-      "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+    <span className={cn(
+      "inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wide",
       status === 'available' 
-        ? "bg-emerald-900 text-emerald-300" 
-        : "bg-amber-900 text-amber-300"
+        ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400" 
+        : "bg-amber-500/20 text-amber-600 dark:text-amber-400"
     )}>
       <span className={cn(
-        "w-1.5 h-1.5 rounded-full",
+        "w-1.5 h-1.5 rounded-full shrink-0",
         status === 'available' 
-          ? "bg-emerald-400 animate-pulse" 
-          : "bg-amber-400 animate-pulse"
+          ? "bg-emerald-500 animate-pulse" 
+          : "bg-amber-500 animate-pulse"
       )} />
       {status === 'available' ? 'Available' : 'Busy'}
-    </div>
+    </span>
   );
 }
 
@@ -1989,16 +1989,16 @@ export default function Book() {
                 {chatMode === 'liveagent' && (
                   <div className="video-consult-specialist-panel live-agent-panel h-full flex flex-col">
                     {/* Compact Header with Status Badge */}
-                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border shrink-0">
-                      <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center relative shrink-0">
-                        <User className="w-4 h-4 text-foreground" />
+                    <div className="flex items-center gap-3 mb-3 pb-2 border-b border-border shrink-0">
+                      <div className="w-9 h-9 rounded-full bg-muted border border-border flex items-center justify-center relative shrink-0">
+                        <Headset className="w-4 h-4 text-muted-foreground" />
                         <span className={cn(
                           "absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-background",
-                          agentStatus === 'available' ? "bg-sky-500" : "bg-amber-400"
+                          agentStatus === 'available' ? "bg-emerald-500" : "bg-amber-500"
                         )} />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-xs text-foreground">Live Agent Chat</h4>
+                      <div className="flex-1 min-w-0 flex items-center gap-2">
+                        <h4 className="font-semibold text-sm text-foreground">Live Agent Chat</h4>
                         <AgentStatusBadge status={agentStatus} />
                       </div>
                     </div>
