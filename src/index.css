@@ -26582,6 +26582,14 @@
   min-width: 220px;
 }
 
+/* Map Area - Contains map + below-map panel */
+.tracking-map-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 850px;
+}
+
 /* Map Container - Fixed size 850x550 */
 .tracking-map-container {
   width: 850px;
@@ -26589,12 +26597,26 @@
   min-height: 550px;
   max-height: 550px;
   flex: none;
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
   overflow: hidden;
   border: 1px solid hsl(var(--border));
+  border-bottom: none;
+  position: relative;
 }
 
 .dark .tracking-map-container {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Below Map Panel positions directly under map */
+.tracking-map-area .tracking-below-map-wrapper {
+  width: 850px;
+  border-radius: 0 0 10px 10px;
+  border: 1px solid hsl(var(--border));
+  border-top: none;
+}
+
+.dark .tracking-map-area .tracking-below-map-wrapper {
   border-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -26602,14 +26624,13 @@
 .tracking-map-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 16px;
   width: 850px;
-  padding: 12px 16px;
-  margin-top: 10px;
+  padding: 10px 16px;
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: 10px;
+  border-top: none;
 }
 
 .dark .tracking-map-controls {
