@@ -3,9 +3,9 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
 import { cn } from "@/lib/utils";
 
-// Fast tooltips with enhanced styling
+// Ultra-fast tooltips with enhanced styling
 const TooltipProvider = ({ children, ...props }: React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Provider>) => (
-  <TooltipPrimitive.Provider delayDuration={100} skipDelayDuration={0} {...props}>
+  <TooltipPrimitive.Provider delayDuration={50} skipDelayDuration={0} {...props}>
     {children}
   </TooltipPrimitive.Provider>
 );
