@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Search, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
-import { Google3DTrackingView } from "@/components/tracking/Google3DTrackingView";
+// Google3DTrackingView removed - unreliable
 import { Google2DTrackingMap } from "@/components/tracking/Google2DTrackingMap";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
@@ -622,39 +622,6 @@ export default function LiveTracking() {
           </div>
           
           {/* Map view is fixed to hybrid - no user toggle */}
-          
-          {/* Recenter Button - Centers map back on truck */}
-          {routeData && (
-            <Button
-              variant="ghost"
-              onClick={() => setFollowMode(true)}
-              className="tracking-header-satellite-btn"
-              title="Center map on truck"
-            >
-              <Crosshair className="w-4 h-4" />
-              <span className="hidden sm:inline">Recenter</span>
-            </Button>
-          )}
-          
-          {/* Follow Mode Toggle - Header version with distinct active/inactive states */}
-          {routeData && (
-            <Button
-              variant="ghost"
-              onClick={() => setFollowMode(!followMode)}
-              className={cn(
-                "tracking-header-satellite-btn",
-                followMode ? "tracking-follow-active" : "tracking-follow-inactive"
-              )}
-            >
-              <Navigation2 className={cn(
-                "w-4 h-4 transition-all",
-                followMode && "text-primary animate-pulse"
-              )} />
-              <span className="hidden sm:inline">
-                {followMode ? "Following" : "Follow"}
-              </span>
-            </Button>
-          )}
         </div>
 
         <div className="flex items-center gap-4">
@@ -696,16 +663,6 @@ export default function LiveTracking() {
               originName={originName}
               destName={destName}
             />
-          ) : show3DView ? (
-            <Google3DTrackingView
-              coordinates={currentTruckPosition}
-              bearing={truckBearing}
-              isTracking={isTracking}
-              followMode={followMode}
-              googleApiKey={GOOGLE_MAPS_API_KEY}
-              trafficSeverity={routeInfo?.traffic?.severity || googleRouteData.trafficInfo?.severity || 'low'}
-              trafficDelayMinutes={routeInfo?.traffic?.delayMinutes || googleRouteData.trafficInfo?.delayMinutes || 0}
-            />
           ) : (
             <Google2DTrackingMap
               originCoords={originCoords}
@@ -713,8 +670,8 @@ export default function LiveTracking() {
               progress={progress}
               isTracking={isTracking}
               onRouteCalculated={handleRouteCalculated}
-              followMode={followMode}
-              onFollowModeChange={setFollowMode}
+              followMode={true}
+              onFollowModeChange={() => {}}
               mapType={mapViewType}
               googleApiKey={GOOGLE_MAPS_API_KEY}
             />
