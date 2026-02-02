@@ -246,22 +246,50 @@ export function Google2DTrackingMap({
             duration: durationInSeconds
           });
 
-          // Remove previous animated polyline and outline if exists
+          // Remove previous animated polyline and shadows if exists
           if (animatedPolylineRef.current) {
-            // Also remove the outline polyline if it exists
+            // Remove all shadow polylines
+            if ((animatedPolylineRef.current as any)._shadowPolyline) {
+              (animatedPolylineRef.current as any)._shadowPolyline.setMap(null);
+            }
+            if ((animatedPolylineRef.current as any)._midShadowPolyline) {
+              (animatedPolylineRef.current as any)._midShadowPolyline.setMap(null);
+            }
             if ((animatedPolylineRef.current as any)._outlinePolyline) {
               (animatedPolylineRef.current as any)._outlinePolyline.setMap(null);
             }
             animatedPolylineRef.current.setMap(null);
           }
 
-          // Create black outline polyline for better visibility
+          // Create soft shadow polyline (widest, most transparent)
+          const shadowPolyline = new window.google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#000000',
+            strokeOpacity: 0.15,
+            strokeWeight: 18,
+            map: mapRef.current,
+            zIndex: 2
+          });
+
+          // Create mid shadow polyline for depth
+          const midShadowPolyline = new window.google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#000000',
+            strokeOpacity: 0.3,
+            strokeWeight: 12,
+            map: mapRef.current,
+            zIndex: 3
+          });
+
+          // Create black outline polyline for crisp edge
           const outlinePolyline = new window.google.maps.Polyline({
             path: path,
             geodesic: true,
             strokeColor: '#000000',
-            strokeOpacity: 0.8,
-            strokeWeight: 10,
+            strokeOpacity: 0.7,
+            strokeWeight: 8,
             map: mapRef.current,
             zIndex: 4
           });
@@ -272,13 +300,15 @@ export function Google2DTrackingMap({
             geodesic: true,
             strokeColor: '#22c55e',
             strokeOpacity: 0,
-            strokeWeight: 6,
+            strokeWeight: 5,
             map: mapRef.current,
             zIndex: 5
           });
           animatedPolylineRef.current = polyline;
           
-          // Store outline ref for cleanup
+          // Store shadow refs for cleanup
+          (animatedPolylineRef.current as any)._shadowPolyline = shadowPolyline;
+          (animatedPolylineRef.current as any)._midShadowPolyline = midShadowPolyline;
           (animatedPolylineRef.current as any)._outlinePolyline = outlinePolyline;
 
           // Animate the polyline opacity
