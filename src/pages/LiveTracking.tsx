@@ -491,15 +491,18 @@ export default function LiveTracking() {
 
   // Calculate current truck position for 3D view
   const currentTruckPosition = (() => {
-    if (routeCoordinates.length < 2) return originCoords;
+    if (!routeCoordinates || routeCoordinates.length < 2) return originCoords;
     const totalPoints = routeCoordinates.length;
     const exactIndex = (progress / 100) * (totalPoints - 1);
-    const lowerIndex = Math.floor(exactIndex);
-    const upperIndex = Math.min(lowerIndex + 1, totalPoints - 1);
+    const lowerIndex = Math.max(0, Math.min(Math.floor(exactIndex), totalPoints - 1));
+    const upperIndex = Math.max(0, Math.min(lowerIndex + 1, totalPoints - 1));
     const fraction = exactIndex - lowerIndex;
     
     const lowerPoint = routeCoordinates[lowerIndex];
     const upperPoint = routeCoordinates[upperIndex];
+    
+    // Safety check - ensure points exist before accessing properties
+    if (!lowerPoint || !upperPoint) return originCoords;
     
     const lng = lowerPoint[0] + (upperPoint[0] - lowerPoint[0]) * fraction;
     const lat = lowerPoint[1] + (upperPoint[1] - lowerPoint[1]) * fraction;
