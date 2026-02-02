@@ -8,7 +8,7 @@ import {
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles, Truck,
   Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
   Maximize2, Minimize2, Settings, CalendarDays, PenTool, User, Headset,
-  PhoneCall, PictureInPicture2, PictureInPictureIcon, ExternalLink
+  PhoneCall, PictureInPicture2, PictureInPictureIcon, ExternalLink, Hand, ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -1901,14 +1901,15 @@ export default function Book() {
             <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative">
               {/* Popout Button - Styled like Trudy pill hand button */}
               <button 
-                className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-colors group"
+                className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-background border border-border flex items-center justify-center gap-0.5 hover:bg-primary/20 hover:border-primary/40 transition-colors group shadow-md"
                 onClick={() => {
                   setPopoutChatMode(chatMode);
                   setShowPopoutChat(true);
                 }}
                 title="Pop out chat"
               >
-                <ExternalLink className="w-3 h-3 text-muted-foreground group-hover:text-foreground transition-colors" />
+                <Hand className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground group-hover:animate-wave" />
+                <ChevronRight className="w-3 h-3 text-muted-foreground group-hover:text-foreground" />
               </button>
               
               {/* Tab Selector - 3 Options Equal Width */}
