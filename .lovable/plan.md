@@ -1,136 +1,180 @@
 
-
-# Chat Modal & Tracking Page UI Improvements
+# UI Improvements: Shipment Tracking, Chat Modal, and Readability Fixes
 
 ## Summary
-This plan addresses multiple UI/UX improvements across the `/book` video consult page and the `/track` shipment tracking page, focusing on modal accessibility, styling consistency, and layout adjustments.
+This plan addresses 8 key UI/UX improvements:
+1. Center the map on shipment tracking with stats to the right
+2. Remove modal expansion capability when popped out
+3. Remove duplicate "Connect with a live support agent" text
+4. Fix unreadable neon green text colors
+5. Reduce pop-out button size and give chat tabs more room
+6. Fix queue box colors (still unreadable)
+7. Make fullscreen popout 25% smaller on shipment tracking
+8. Apply fixes consistently across light and dark modes
 
 ---
 
 ## Changes Overview
 
-### 1. Non-Blocking Chat Modal (Travels Across Pages)
-**Current Issue:** The `DraggableChatModal` has a backdrop overlay (`bg-black/30 backdrop-blur-sm`) that greys out the page and blocks interaction. Also, the modal is local to `/book` page.
+### 1. Center Map with Stats to the Right (Shipment Tracking)
+**Current Issue:** The 2-column grid layout (`minmax(300px, 1fr) 280px`) positions the map on the left and stats on the right, but the map isn't centered on the page.
 
 **Solution:**
-- Remove the backdrop overlay entirely so users can still interact with the website
-- Move the `DraggableChatModal` state management to `App.tsx` so it persists across page navigation
-- Use React Router's location to maintain modal visibility during navigation
+- Change the `.tracking-content-2col` grid to use `auto` columns with `justify-content: center`
+- Use the fixed 850px map width and let the dashboard sit to its right
+- Wrap map and dashboard in a centered flex container
 
-### 2. Queue Position Colors to Match Company Theme
-**Current Issue:** The `AgentQueueIndicator` uses amber/orange colors (`bg-amber-900/30`, `border-amber-500/30`, `text-amber-400`) which doesn't match the company's primary green theme.
-
-**Solution:**
-- Update queue indicator to use primary theme colors (green-based instead of amber)
-- Change from amber to primary/muted color scheme for consistency
-
-### 3. Smaller Pop-Out Button
-**Current Issue:** The pop-out button in the chat tabs uses `<ExternalLink className="w-4 h-4" />` which is the same size as other tab icons.
+### 2. Disable Modal Expansion When Popped Out
+**Current Issue:** The `DraggableChatModal` allows maximize/resize even when already in popout mode, which can be confusing.
 
 **Solution:**
-- Reduce the icon size to `w-3 h-3`
-- Add `!px-1` class for tighter horizontal padding
+- Add a prop `isPopout={true}` to `DraggableChatModal`
+- When `isPopout` is true, hide the maximize button and disable resizing
+- Keep only the close button visible
 
-### 4. "Connect with live support agent" Button Text
-**Current Issue:** Button says "Chat Now" with an icon prefix.
-
-**Solution:**
-- Change button text to "Connect with live support agent"
-- Keep the button functional and styled the same
-
-### 5. In-Call Chat Always Accessible
-**Current Issue:** The In-Call Chat tab is disabled when not on a call (`disabled={!roomUrl}`).
+### 3. Remove Duplicate "Connect with live support agent" Text
+**Current Issue:** Lines 2180-2181 show "Connect with a live support agent" as a paragraph, then the button below also says the same thing.
 
 **Solution:**
-- Remove the `disabled` attribute from the tab
-- Keep the subtle "Not on video call" banner inside the content
-- Tab is always clickable
+- Remove the `<p>` tag on line 2181 that duplicates the button text
+- Keep only the button with the text
 
-### 6. Expanded Video Modal Size Limits
-**Current Issue:** When maximized via the green macOS button, the modal expands to `1200x750` which can cover header controls. The max resize limit is `1400x900`.
-
-**Solution:**
-- Reduce the "large" preset from `1200x750` to `900x550`
-- Reduce maximum resize dimensions from `1400x900` to `1100x700`
-- Add `top: 80px` offset so the modal can't overlap the header
-
-### 7. Shipment Tracking - Lower Map & Stats by 50px + Fixed Map Size
-**Current Issue:** User wants the map and stats pushed down by 50px without touching the navbar or header. Also wants the map to be exactly 850px by 550px.
+### 4. Fix Unreadable Neon Green Text
+**Current Issue:** The primary color (`hsl(120 100% 54%)`) is extremely bright neon green and unreadable when used as text, especially on light backgrounds or with light-tinted backgrounds.
 
 **Solution:**
-- Increase `padding-top` in `.tracking-content` from `16px` to `66px` (adding 50px)
-- Set fixed map dimensions: width 850px, height 550px
-- Apply same padding adjustment to responsive breakpoints
+- Create a new CSS variable `--primary-text` with a darker, more readable green
+- Light mode: `--primary-text: 142 76% 36%` (forest green, readable)
+- Dark mode: `--primary-text: 142 76% 55%` (slightly brighter for dark backgrounds)
+- Add a utility class `.text-primary-readable` that uses `--primary-text`
+- Update specific problematic areas to use `text-foreground` or the new readable green
+
+### 5. Reduce Pop-Out Button Size & Give Tabs More Room
+**Current Issue:** The pop-out button in the video consult chat header is the same size as other icons, making the tab area cramped.
+
+**Solution:**
+- Reduce the ExternalLink icon to `w-2.5 h-2.5`
+- Reduce the button padding to `!p-0.5`
+- Add a small margin between the tabs and the pop-out button
+
+### 6. Fix Queue Box Colors (Still Unreadable)
+**Current Issue:** Even after the previous fix, the queue indicator uses `text-primary` which is the bright neon green that's unreadable.
+
+**Solution:**
+- Change queue position number from `text-primary` to `text-foreground`
+- Change wait time from `text-primary` to `text-emerald-600 dark:text-emerald-400` (readable emerald)
+- Change Clock icon from `text-primary` to `text-emerald-600 dark:text-emerald-400`
+- Keep the background and border using primary color (subtle backgrounds are fine)
+
+### 7. Make Fullscreen Popout 25% Smaller on Tracking
+**Current Issue:** When maximized, the popout takes `window.innerWidth - 40` and `window.innerHeight - 40` which is too large.
+
+**Solution:**
+- Calculate 75% of available space instead of near-full screen
+- Change from `width: window.innerWidth - 40` to `width: (window.innerWidth - 40) * 0.75`
+- Change from `height: window.innerHeight - 40` to `height: (window.innerHeight - 40) * 0.75`
+- Center the maximized modal on screen
+
+### 8. Apply Consistent Dark Mode Fixes
+**Current Issue:** Some green text is even harder to read in dark mode.
+
+**Solution:**
+- Ensure the `--primary-text` variable has appropriate values for both light and dark modes
+- Apply `text-emerald-600 dark:text-emerald-400` pattern consistently for status indicators
 
 ---
 
 ## Technical Details
 
+### File: `src/index.css`
+
+**Add Readable Primary Text Variable (after line 1228):**
+```css
+/* Light mode */
+--primary: 120 100% 54%;
+--primary-text: 142 76% 36%; /* Readable forest green for text */
+--primary-foreground: 222 47% 11%;
+
+/* Dark mode (after line 1274) */
+--primary: 120 100% 54%;
+--primary-text: 142 76% 55%; /* Slightly brighter for dark backgrounds */
+--primary-foreground: 222 47% 11%;
+```
+
+**Center Map Layout - Update `.tracking-content-2col` (lines 25819-25822):**
+```css
+.tracking-content.tracking-content-2col {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
+}
+```
+
 ### File: `src/components/chat/DraggableChatModal.tsx`
-Remove the backdrop div (lines 162-166):
+
+**Add isPopout prop and conditional UI:**
+- Add `isPopout?: boolean` prop (default false)
+- When `isPopout` is true:
+  - Hide the maximize button (lines 193-203)
+  - Hide the resize handle (lines 219-234)
+  - Set a max size constraint
+
+**Reduce maximized size by 25% (lines 154-156):**
 ```tsx
-{/* Remove this backdrop entirely */}
-<div 
-  className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm"
-  onClick={onClose}
-/>
+const maxWidth = (window.innerWidth - 40) * 0.75;
+const maxHeight = (window.innerHeight - 40) * 0.75;
+setPosition({ 
+  x: (window.innerWidth - maxWidth) / 2, 
+  y: (window.innerHeight - maxHeight) / 2 
+});
+setSize({ width: maxWidth, height: maxHeight });
 ```
 
 ### File: `src/pages/Book.tsx`
 
-**Queue Indicator Colors (lines 377-404):**
-Change from amber/orange to primary theme colors:
-- `from-amber-900/30 to-orange-900/20` → `from-primary/20 to-primary/10`
-- `border-amber-500/30` → `border-primary/30`
-- `bg-amber-500/20 border-amber-500/40` → `bg-primary/20 border-primary/40`
-- `text-amber-400` → `text-primary`
-- `text-amber-300` → `text-primary`
-
-**Pop-Out Button (line 1947):**
+**Remove duplicate text (line 2180-2181):**
+Remove:
 ```tsx
-<ExternalLink className="w-3 h-3" />  {/* Reduced from w-4 h-4 */}
+<p className="text-muted-foreground text-xs mb-3">
+  Connect with a live support agent
+</p>
 ```
-Also change `!px-2` to `!px-1` on line 1940.
 
-**In-Call Chat Tab (lines 1918-1926):**
-Remove `disabled={!roomUrl}` from line 1922.
+**Fix Queue Indicator Colors (lines 377-404):**
+Change:
+- Line 388-391: `text-primary` → `text-foreground`
+- Line 397: `text-primary` → `text-emerald-600 dark:text-emerald-400`
+- Line 398: `text-primary` → `text-emerald-600 dark:text-emerald-400`
 
-**Live Support Button Text (lines 2184-2191):**
+**Reduce Pop-Out Button (lines 1936-1952):**
 ```tsx
-<Button onClick={() => setHasJoinedQueue(true)} className="...">
-  <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
-  Connect with live support agent  {/* Changed from "Chat Now" */}
-</Button>
+<button 
+  className="ml-auto !p-0.5"
+  onClick={() => {
+    setPopoutChatMode(chatMode);
+    setShowPopoutChat(true);
+  }}
+  title="Open in movable window"
+>
+  <ExternalLink className="w-2.5 h-2.5" />
+</button>
 ```
 
-**Expanded Video Modal Size (lines 2558, 2590):**
-- Line 1558: Change max width from `1400` to `1100`
-- Line 1559: Change max height from `900` to `700`
-- Line 2590: Change large preset from `{ width: 1200, height: 750 }` to `{ width: 900, height: 550 }`
-
-**Add minimum top offset for modal positioning:**
-Update modal transform logic to ensure `y` position is at least 80px from top.
-
-### File: `src/index.css`
-
-**Tracking Content Padding (line 25813):**
-```css
-padding-top: 66px; /* Changed from 16px - added 50px */
+**Add isPopout prop when rendering DraggableChatModal:**
+```tsx
+<DraggableChatModal
+  isOpen={showPopoutChat}
+  onClose={() => setShowPopoutChat(false)}
+  title="Chat"
+  isPopout={true}  // Add this prop
+>
 ```
 
-**Fixed Map Size (lines 25897-25905):**
-```css
-.tracking-map-container {
-  width: 850px;
-  height: 550px;
-  min-height: 550px;
-  max-height: 550px;
-  flex: none;
-  /* ... rest of styles ... */
-}
-```
+### File: `src/pages/LiveTracking.tsx`
 
-Apply same padding adjustment to responsive breakpoints in lines 25857-25862.
+**Update layout structure for centered map (around lines 673-720):**
+The current grid-based layout will be updated to use flexbox for centering while maintaining the fixed map size and sidebar.
 
 ---
 
@@ -138,9 +182,10 @@ Apply same padding adjustment to responsive breakpoints in lines 25857-25862.
 
 | File | Changes |
 |------|---------|
-| `src/components/chat/DraggableChatModal.tsx` | Remove backdrop overlay for non-blocking modal |
-| `src/pages/Book.tsx` | Queue colors, pop-out button size, button text, tab disabled state, modal size limits |
-| `src/index.css` | Add 50px to tracking page padding-top, set fixed map dimensions 850x550 |
+| `src/index.css` | Add `--primary-text` variable, update `.tracking-content-2col` for centered layout |
+| `src/components/chat/DraggableChatModal.tsx` | Add `isPopout` prop, reduce maximize size by 25%, conditional maximize/resize UI |
+| `src/pages/Book.tsx` | Remove duplicate text, fix queue colors, reduce pop-out button, pass `isPopout` prop |
+| `src/pages/LiveTracking.tsx` | Update layout structure for centered map with stats on right |
 
 ---
 
@@ -148,12 +193,11 @@ Apply same padding adjustment to responsive breakpoints in lines 25857-25862.
 
 | Element | Before | After |
 |---------|--------|-------|
-| Modal backdrop | Greys out page | No backdrop - page fully interactive |
-| Queue indicator | Amber/orange theme | Primary green theme |
-| Pop-out icon | 16x16px | 12x12px |
-| Chat Now button | "Chat Now" | "Connect with live support agent" |
-| In-Call tab | Disabled when no call | Always enabled |
-| Expanded video max | 1200x750 / 1400x900 | 900x550 / 1100x700 |
-| Tracking content top | 16px padding | 66px padding (+50px) |
-| Tracking map size | Dynamic (75% height) | Fixed 850x550px |
-
+| Map position | Left-aligned in grid | Centered with stats on right |
+| Popout maximize | Full screen minus 40px | 75% of available space |
+| Popout when expanded | Can maximize/resize | Maximize/resize disabled |
+| Duplicate text | Shows twice | Shows only in button |
+| Queue position number | Bright neon green | Regular foreground color |
+| Queue wait time | Bright neon green | Readable emerald green |
+| Pop-out button | 12x12px (w-3 h-3) | 10x10px (w-2.5 h-2.5) |
+| Chat tabs | Cramped | More breathing room |
