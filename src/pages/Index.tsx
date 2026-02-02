@@ -1606,7 +1606,7 @@ export default function Index() {
                     style={{ animationDelay: '350ms' }}
                   >
                     <Camera className="w-4 h-4" />
-                    Try AI Scanner
+                    Scan Your Home
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
