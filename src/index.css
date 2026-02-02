@@ -25455,7 +25455,6 @@
   color: hsl(var(--foreground));
   display: flex;
   flex-direction: column;
-  padding-top: 30px;
 }
 
 /* Dark mode overrides for tracking page */
@@ -25466,7 +25465,7 @@
 /* Dashboard Header - Darker for white logo visibility, sticky below global nav */
 .tracking-header {
   position: sticky;
-  top: 133px; /* Header 72px + margin 8px + buffer 23px + 30px offset */
+  top: 103px; /* Header 72px + margin 8px + buffer 23px */
   z-index: 40;
   display: flex;
   align-items: center;
