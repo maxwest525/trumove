@@ -1927,7 +1927,7 @@ export default function Book() {
                   title="Chat with a live person"
                 >
                   <User className="w-4 h-4" />
-                  Live Agent
+                  Live AI Agent
                 </button>
                 <button 
                   className={chatMode === 'support' ? 'active' : ''}
