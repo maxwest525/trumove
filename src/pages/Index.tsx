@@ -1571,58 +1571,65 @@ export default function Index() {
             <div className="tru-ai-steps-inner">
               {/* Header row: info on left, previews on right */}
               <div className="tru-ai-header-row" ref={scanPreviewRef}>
-                {/* Left side: Title, description, steps, features */}
+                {/* Left side: Premium marketing content */}
                 <div className="tru-ai-steps-left">
-                  {/* Title with stagger */}
-                  <div className="animate-fade-in" style={{ animationDelay: '0ms' }}>
-                    <h2 className="text-3xl font-black text-foreground mb-3">
-                      <span className="text-primary">AI</span> Inventory Analysis
+                  {/* Premium headline block */}
+                  <div className="tru-ai-headline-block animate-fade-in" style={{ animationDelay: '0ms' }}>
+                    <span className="tru-ai-eyebrow">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Computer Vision Technology
+                    </span>
+                    <h2 className="tru-ai-main-headline">
+                      Scan. Catalog.<br />
+                      <span className="tru-ai-headline-accent">Estimate.</span>
                     </h2>
-                    <p className="text-sm text-muted-foreground mb-8 max-w-md leading-relaxed">
-                      Our computer vision technology scans your rooms and automatically catalogs every item for an accurate moving estimate.
+                    <p className="tru-ai-subheadline">
+                      Point your camera at any room. Our AI identifies every item and calculates your move in seconds—not hours.
                     </p>
                   </div>
                   
-                  {/* How it works steps - staggered */}
-                  <div className="space-y-5 mb-8">
+                  {/* Compact step indicators */}
+                  <div className="tru-ai-step-pills animate-fade-in" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
                     {[
-                      { num: 1, title: "Point Your Camera", desc: "Walk through each room with your phone or upload photos" },
-                      { num: 2, title: "AI Identifies Items", desc: "Computer vision detects furniture, appliances & boxes" },
-                      { num: 3, title: "Get Your Estimate", desc: "Review, edit, and receive an instant quote" }
+                      { num: "01", label: "Scan rooms" },
+                      { num: "02", label: "AI catalogs" },
+                      { num: "03", label: "Get quote" }
                     ].map((step, idx) => (
-                      <div 
-                        key={step.num}
-                        className="flex items-start gap-4 animate-fade-in"
-                        style={{ animationDelay: `${100 + idx * 100}ms`, animationFillMode: 'both' }}
-                      >
-                        <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center shrink-0 shadow-md">
-                          {step.num}
-                        </div>
-                        <div className="pt-0.5">
-                          <h4 className="text-base font-semibold text-foreground mb-1">{step.title}</h4>
-                          <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
-                        </div>
+                      <div key={step.num} className="tru-ai-step-pill">
+                        <span className="tru-ai-step-num">{step.num}</span>
+                        <span className="tru-ai-step-label">{step.label}</span>
                       </div>
                     ))}
                   </div>
                   
-                  {/* Feature badges - staggered */}
-                  <div className="flex flex-wrap gap-3">
-                    {[
-                      { icon: Sparkles, label: "95% Accuracy" },
-                      { icon: Camera, label: "Video or Photo" },
-                      { icon: Clock, label: "Under 2 Minutes" }
-                    ].map((badge, idx) => (
-                      <span 
-                        key={badge.label}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/80 text-sm font-medium text-foreground border border-border shadow-sm animate-fade-in hover:border-primary/40 transition-colors"
-                        style={{ animationDelay: `${400 + idx * 80}ms`, animationFillMode: 'both' }}
-                      >
-                        <badge.icon className="w-4 h-4 text-primary" />
-                        {badge.label}
-                      </span>
-                    ))}
+                  {/* Trust stats row */}
+                  <div className="tru-ai-trust-row animate-fade-in" style={{ animationDelay: '250ms', animationFillMode: 'both' }}>
+                    <div className="tru-ai-stat">
+                      <span className="tru-ai-stat-value">95%</span>
+                      <span className="tru-ai-stat-label">Accuracy</span>
+                    </div>
+                    <div className="tru-ai-stat-divider" />
+                    <div className="tru-ai-stat">
+                      <span className="tru-ai-stat-value">&lt;2min</span>
+                      <span className="tru-ai-stat-label">Per Room</span>
+                    </div>
+                    <div className="tru-ai-stat-divider" />
+                    <div className="tru-ai-stat">
+                      <span className="tru-ai-stat-value">500+</span>
+                      <span className="tru-ai-stat-label">Item Types</span>
+                    </div>
                   </div>
+                  
+                  {/* CTA Button */}
+                  <button 
+                    onClick={() => navigate("/scan-room")}
+                    className="tru-ai-cta-btn animate-fade-in"
+                    style={{ animationDelay: '350ms', animationFillMode: 'both' }}
+                  >
+                    <Camera className="w-4 h-4" />
+                    Try AI Scanner
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
                 
                 {/* Previews on right - UNCHANGED */}
