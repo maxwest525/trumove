@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { MapPin, Navigation, Truck, CalendarIcon, Search, Loader2, Globe, Eye } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { MapPin, Navigation, Truck, CalendarIcon, Search, Loader2, Globe, Eye, X, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
@@ -57,6 +58,57 @@ async function geocodeAddress(address: string): Promise<[number, number] | null>
     console.error("Geocoding error:", error);
     return null;
   }
+}
+
+// Skeleton Preview Component for empty states
+function PreviewSkeleton({ variant }: { variant: "origin" | "destination" }) {
+  const Icon = variant === "origin" ? Navigation : MapPin;
+  const iconColor = variant === "origin" ? "text-primary" : "text-destructive";
+  
+  return (
+    <div className="relative w-full h-[220px] rounded-lg overflow-hidden border border-dashed border-border bg-muted/30">
+      {/* Animated skeleton background */}
+      <div className="absolute inset-0">
+        <Skeleton className="w-full h-full rounded-none" />
+      </div>
+      
+      {/* Decorative grid pattern overlay */}
+      <div className="absolute inset-0 opacity-30">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id={`grid-${variant}`} width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-muted-foreground/30" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#grid-${variant})`} />
+        </svg>
+      </div>
+      
+      {/* Center icon and text */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+        <div className={cn(
+          "w-12 h-12 rounded-full border-2 border-dashed flex items-center justify-center",
+          variant === "origin" ? "border-primary/40 bg-primary/5" : "border-destructive/40 bg-destructive/5"
+        )}>
+          <Icon className={cn("w-5 h-5", iconColor, "opacity-50")} />
+        </div>
+        <div className="text-center">
+          <p className="text-xs font-medium text-muted-foreground">
+            {variant === "origin" ? "Origin Preview" : "Destination Preview"}
+          </p>
+          <p className="text-[10px] text-muted-foreground/70 mt-0.5">
+            Enter address to see location
+          </p>
+        </div>
+      </div>
+      
+      {/* Skeleton address bar at bottom */}
+      <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center gap-1.5 px-2 py-1.5 rounded bg-background/60 backdrop-blur-sm border border-border/50">
+        <Skeleton className="w-3 h-3 rounded-full" />
+        <Skeleton className="h-2 flex-1 max-w-[140px]" />
+      </div>
+    </div>
+  );
 }
 
 // Compact Street View Preview Component
@@ -301,7 +353,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
               />
             </div>
             
-            {/* Origin Preview - Larger */}
+            {/* Origin Preview - Skeleton or actual preview */}
             <div className="hidden md:block">
               <Label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-1.5">
                 <Eye className="w-3 h-3" />
@@ -314,9 +366,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                   coordinates={originCoords}
                 />
               ) : (
-                <div className="w-full h-[220px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground">Enter origin to preview</span>
-                </div>
+                <PreviewSkeleton variant="origin" />
               )}
             </div>
           </div>
@@ -340,7 +390,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
               />
             </div>
             
-            {/* Destination Preview - Larger */}
+            {/* Destination Preview - Skeleton or actual preview */}
             <div className="hidden md:block">
               <Label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-1.5">
                 <Eye className="w-3 h-3" />
@@ -353,9 +403,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                   coordinates={destCoords}
                 />
               ) : (
-                <div className="w-full h-[220px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground">Enter destination to preview</span>
-                </div>
+                <PreviewSkeleton variant="destination" />
               )}
             </div>
           </div>
@@ -367,18 +415,33 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
             <Separator className="flex-1" />
           </div>
 
-          {/* Booking/Shipping Number - Full width */}
-          <div className="space-y-2 max-w-md">
+          {/* Booking/Shipping Number with inline buttons */}
+          <div className="space-y-2">
             <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
               <Search className="w-3.5 h-3.5" />
               Booking / Shipping Number
             </Label>
-            <Input
-              value={bookingNumber}
-              onChange={(e) => setBookingNumber(e.target.value)}
-              placeholder="Enter booking code (try 12345)"
-              className="w-full"
-            />
+            <div className="flex items-center gap-2">
+              <Input
+                value={bookingNumber}
+                onChange={(e) => setBookingNumber(e.target.value)}
+                placeholder="Enter booking code (try 12345)"
+                className="flex-1 max-w-xs"
+              />
+              <Button variant="outline" size="sm" onClick={onClose} className="h-10 px-4">
+                <X className="w-3.5 h-3.5 mr-1.5" />
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSubmit} 
+                disabled={!canSubmit}
+                size="sm"
+                className="h-10 px-4 bg-foreground text-background hover:bg-foreground/90"
+              >
+                <ArrowRight className="w-3.5 h-3.5 mr-1.5" />
+                View Route
+              </Button>
+            </div>
             <p className="text-[10px] text-muted-foreground">
               Enter your booking number to auto-populate route details
             </p>
@@ -421,20 +484,6 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
             </div>
           )}
         </div>
-
-        <DialogFooter className="gap-2 sm:gap-0">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSubmit} 
-            disabled={!canSubmit}
-            className="bg-foreground text-background hover:bg-foreground/90"
-          >
-            <MapPin className="w-4 h-4 mr-2" />
-            View Route
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
