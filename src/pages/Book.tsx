@@ -1179,8 +1179,8 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             onClick={() => onWhiteboardOpen?.()}
             className="flex flex-col items-center gap-1 group"
           >
-            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/30">
-              <PenTool className="w-5 h-5 text-primary" />
+            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-primary/50">
+              <PenTool className="w-5 h-5 text-white group-hover:text-primary transition-colors" />
             </div>
             <span className="text-[10px] text-white/60 font-medium">Whiteboard</span>
           </button>
@@ -1192,10 +1192,10 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             <DropdownMenuTrigger asChild>
               <button className="flex flex-col items-center gap-1 group">
                 <div className={cn(
-                  "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/30",
+                  "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-primary/50",
                   volume === 0 ? "bg-amber-500/30" : "bg-white/10 hover:bg-white/20"
                 )}>
-                  {volume === 0 ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5 text-primary" />}
+                  {volume === 0 ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5 text-white group-hover:text-primary transition-colors" />}
                 </div>
                 <span className="text-[10px] text-white/60 font-medium">Volume</span>
               </button>
@@ -1223,14 +1223,14 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
         {/* Mic toggle */}
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className={cn("flex flex-col items-center gap-1", isPiP && "gap-0")}
+          className={cn("flex flex-col items-center gap-1 group", isPiP && "gap-0")}
         >
           <div className={cn(
-            "rounded-full flex items-center justify-center transition-colors border border-white/10",
+            "rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-primary/50",
             isPiP ? "w-7 h-7" : "w-11 h-11",
             isMuted ? "bg-red-500 border-red-500/50" : "bg-white/10 hover:bg-white/20"
           )}>
-            {isMuted ? <MicOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Mic className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-primary")} />}
+            {isMuted ? <MicOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Mic className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white group-hover:text-primary transition-colors")} />}
           </div>
           {!isPiP && <span className="text-[10px] text-white/60 font-medium">{isMuted ? "Unmute" : "Mute"}</span>}
         </button>
@@ -1238,14 +1238,14 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
         {/* Video toggle */}
         <button
           onClick={() => setIsVideoOff(!isVideoOff)}
-          className={cn("flex flex-col items-center gap-1", isPiP && "gap-0")}
+          className={cn("flex flex-col items-center gap-1 group", isPiP && "gap-0")}
         >
           <div className={cn(
-            "rounded-full flex items-center justify-center transition-colors border border-white/10",
+            "rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-primary/50",
             isPiP ? "w-7 h-7" : "w-11 h-11",
             isVideoOff ? "bg-red-500 border-red-500/50" : "bg-white/10 hover:bg-white/20"
           )}>
-            {isVideoOff ? <VideoOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Video className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-primary")} />}
+            {isVideoOff ? <VideoOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Video className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white group-hover:text-primary transition-colors")} />}
           </div>
           {!isPiP && <span className="text-[10px] text-white/60 font-medium">{isVideoOff ? "Start Video" : "Stop Video"}</span>}
         </button>
@@ -1257,10 +1257,10 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             className="flex flex-col items-center gap-1 group"
           >
             <div className={cn(
-              "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/30",
+              "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-primary/50",
               isScreenSharing ? "bg-primary border-primary/50" : "bg-white/10 hover:bg-white/20"
             )}>
-              <Monitor className={cn("w-5 h-5", isScreenSharing ? "text-primary-foreground" : "text-primary")} />
+              <Monitor className={cn("w-5 h-5 transition-colors", isScreenSharing ? "text-primary-foreground" : "text-white group-hover:text-primary")} />
             </div>
             <span className="text-[10px] text-white/60 font-medium">{isScreenSharing ? "Stop Share" : "Share"}</span>
           </button>
@@ -1271,8 +1271,8 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex flex-col items-center gap-1 group">
-                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/30">
-                  <Settings className="w-5 h-5 text-primary" />
+                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-primary/50">
+                  <Settings className="w-5 h-5 text-white group-hover:text-primary transition-colors" />
                 </div>
                 <span className="text-[10px] text-white/60 font-medium">Settings</span>
               </button>
