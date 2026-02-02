@@ -11765,8 +11765,8 @@
 
 .header-logo {
   flex-shrink: 0;
-  position: absolute;
-  left: -151px; /* Moved 75px further left */
+  position: relative;
+  margin-right: 24px;
 }
 
 .header-logo img {
