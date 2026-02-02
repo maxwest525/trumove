@@ -1176,44 +1176,38 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
         )}
       </div>
 
-      {/* Control bar - compact in PiP, full controls in normal mode */}
+      {/* Control bar - compact in PiP, full controls with labels in normal mode */}
       <div className={cn(
         "bg-slate-900 border-t border-white/10 flex items-center justify-center px-2",
-        isPiP ? "h-10 gap-2" : "h-16 gap-4 px-6"
+        isPiP ? "h-10 gap-2" : "h-20 gap-5 px-6"
       )}>
         {/* Whiteboard - hide in PiP */}
         {!isPiP && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => onWhiteboardOpen?.()}
-                className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10"
-              >
-                <PenTool className="w-5 h-5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top"><p>Whiteboard</p></TooltipContent>
-          </Tooltip>
+          <button
+            onClick={() => onWhiteboardOpen?.()}
+            className="flex flex-col items-center gap-1 group"
+          >
+            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/30">
+              <PenTool className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] text-white/60 font-medium">Whiteboard</span>
+          </button>
         )}
         
         {/* Volume control - hide in PiP */}
         {!isPiP && (
           <DropdownMenu>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className={cn(
-                      "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10",
-                      volume === 0 ? "bg-amber-500/30 text-amber-400" : "bg-white/10 text-white hover:bg-white/20"
-                    )}
-                  >
-                    {volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                  </button>
-                </DropdownMenuTrigger>
-              </TooltipTrigger>
-              <TooltipContent side="top"><p>Volume</p></TooltipContent>
-            </Tooltip>
+            <DropdownMenuTrigger asChild>
+              <button className="flex flex-col items-center gap-1 group">
+                <div className={cn(
+                  "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/30",
+                  volume === 0 ? "bg-amber-500/30 text-amber-400" : "bg-white/10 text-white hover:bg-white/20"
+                )}>
+                  {volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                </div>
+                <span className="text-[10px] text-white/60 font-medium">Volume</span>
+              </button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-40 p-3">
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
@@ -1235,72 +1229,62 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
         )}
         
         {/* Mic toggle */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => setIsMuted(!isMuted)}
-              className={cn(
-                "rounded-full flex items-center justify-center transition-colors border border-white/10",
-                isPiP ? "w-7 h-7" : "w-11 h-11",
-                isMuted ? "bg-red-500 text-white border-red-500/50" : "bg-white/10 text-white hover:bg-white/20"
-              )}
-            >
-              {isMuted ? <MicOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Mic className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top"><p>{isMuted ? "Unmute" : "Mute"}</p></TooltipContent>
-        </Tooltip>
+        <button
+          onClick={() => setIsMuted(!isMuted)}
+          className={cn("flex flex-col items-center gap-1", isPiP && "gap-0")}
+        >
+          <div className={cn(
+            "rounded-full flex items-center justify-center transition-colors border border-white/10",
+            isPiP ? "w-7 h-7" : "w-11 h-11",
+            isMuted ? "bg-red-500 text-white border-red-500/50" : "bg-white/10 text-white hover:bg-white/20"
+          )}>
+            {isMuted ? <MicOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Mic className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
+          </div>
+          {!isPiP && <span className="text-[10px] text-white/60 font-medium">{isMuted ? "Unmute" : "Mute"}</span>}
+        </button>
         
         {/* Video toggle */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => setIsVideoOff(!isVideoOff)}
-              className={cn(
-                "rounded-full flex items-center justify-center transition-colors border border-white/10",
-                isPiP ? "w-7 h-7" : "w-11 h-11",
-                isVideoOff ? "bg-red-500 text-white border-red-500/50" : "bg-white/10 text-white hover:bg-white/20"
-              )}
-            >
-              {isVideoOff ? <VideoOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Video className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top"><p>{isVideoOff ? "Turn Camera On" : "Turn Camera Off"}</p></TooltipContent>
-        </Tooltip>
+        <button
+          onClick={() => setIsVideoOff(!isVideoOff)}
+          className={cn("flex flex-col items-center gap-1", isPiP && "gap-0")}
+        >
+          <div className={cn(
+            "rounded-full flex items-center justify-center transition-colors border border-white/10",
+            isPiP ? "w-7 h-7" : "w-11 h-11",
+            isVideoOff ? "bg-red-500 text-white border-red-500/50" : "bg-white/10 text-white hover:bg-white/20"
+          )}>
+            {isVideoOff ? <VideoOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Video className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
+          </div>
+          {!isPiP && <span className="text-[10px] text-white/60 font-medium">{isVideoOff ? "Start Video" : "Stop Video"}</span>}
+        </button>
 
         {/* Screen share button - hide in PiP */}
         {!isPiP && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={handleShareScreen}
-                className={cn(
-                  "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10",
-                  isScreenSharing ? "bg-primary text-primary-foreground border-primary/50" : "bg-white/10 text-white hover:bg-white/20"
-                )}
-              >
-                <Monitor className="w-5 h-5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>{isScreenSharing ? "Stop Sharing" : "Share Screen"}</p>
-            </TooltipContent>
-          </Tooltip>
+          <button
+            onClick={handleShareScreen}
+            className="flex flex-col items-center gap-1 group"
+          >
+            <div className={cn(
+              "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/30",
+              isScreenSharing ? "bg-primary text-primary-foreground border-primary/50" : "bg-white/10 text-white hover:bg-white/20"
+            )}>
+              <Monitor className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] text-white/60 font-medium">{isScreenSharing ? "Stop Share" : "Share"}</span>
+          </button>
         )}
         
         {/* Settings - hide in PiP */}
         {!isPiP && (
           <DropdownMenu>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <DropdownMenuTrigger asChild>
-                  <button className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10">
-                    <Settings className="w-5 h-5" />
-                  </button>
-                </DropdownMenuTrigger>
-              </TooltipTrigger>
-              <TooltipContent side="top"><p>Settings</p></TooltipContent>
-            </Tooltip>
+            <DropdownMenuTrigger asChild>
+              <button className="flex flex-col items-center gap-1 group">
+                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/30">
+                  <Settings className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] text-white/60 font-medium">Settings</span>
+              </button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-56">
               <DropdownMenuLabel className="text-xs flex items-center gap-2">
                 <Camera className="w-3.5 h-3.5" /> Camera
@@ -1332,20 +1316,18 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
         )}
 
         {/* End call button */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={onLeave}
-              className={cn(
-                "rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors ml-3",
-                isPiP ? "w-7 h-7" : "w-11 h-11"
-              )}
-            >
-              <Phone className={cn("rotate-[135deg]", isPiP ? "w-3.5 h-3.5" : "w-5 h-5")} />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top"><p>End Call</p></TooltipContent>
-        </Tooltip>
+        <button
+          onClick={onLeave}
+          className={cn("flex flex-col items-center gap-1 ml-3", isPiP && "gap-0")}
+        >
+          <div className={cn(
+            "rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors",
+            isPiP ? "w-7 h-7" : "w-11 h-11"
+          )}>
+            <Phone className={cn("rotate-[135deg]", isPiP ? "w-3.5 h-3.5" : "w-5 h-5")} />
+          </div>
+          {!isPiP && <span className="text-[10px] text-white/60 font-medium">End</span>}
+        </button>
       </div>
     </div>
   );
@@ -1861,10 +1843,26 @@ export default function Book() {
 
             {/* Video Window + Quick Tools Column */}
             <div className="flex flex-col items-center gap-4">
-              {/* Main Video Window - 700x550 fixed dimensions with premium frame */}
-              <Card id="video-consult-container" className="overflow-hidden border-[3px] border-slate-800 bg-gradient-to-b from-muted/30 to-background shadow-2xl shadow-black/20 ring-1 ring-white/5 w-[700px]">
-                <CardContent className="p-0">
-                  <div className="relative h-[550px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
+              {/* Main Video Window - 700x550 with window-style frame */}
+              <div className="w-[700px] rounded-xl overflow-hidden border-2 border-border bg-card shadow-2xl shadow-black/20">
+                {/* Window title bar */}
+                <div className="flex items-center justify-between px-4 py-2 bg-muted/80 border-b border-border">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <span className="w-3 h-3 rounded-full bg-red-500/80" />
+                      <span className="w-3 h-3 rounded-full bg-amber-500/80" />
+                      <span className="w-3 h-3 rounded-full bg-green-500/80" />
+                    </div>
+                    <span className="text-xs font-medium text-muted-foreground ml-2">TruMove Video Consult</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Video className="w-3.5 h-3.5" />
+                    <span className="text-[10px] font-medium">{roomUrl ? 'Connected' : 'Ready'}</span>
+                  </div>
+                </div>
+                <Card id="video-consult-container" className="overflow-hidden border-0 bg-transparent rounded-none">
+                  <CardContent className="p-0">
+                    <div className="relative h-[520px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
                     {/* Top controls - Fullscreen and PiP */}
                     <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                       {roomUrl && (
@@ -1925,18 +1923,19 @@ export default function Book() {
                   </div>
                 </CardContent>
               </Card>
+              </div>
 
-              {/* Quick Tools - Sleek pill buttons */}
+              {/* Quick Tools - Pronounced card buttons */}
               {!roomUrl && (
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-3">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
                         onClick={() => setShowScheduleModal(true)}
-                        className="group flex items-center gap-2 h-9 px-4 rounded-full bg-muted/80 border border-border hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-200"
+                        className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
                       >
-                        <CalendarDays className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" strokeWidth={2} />
-                        <span className="text-xs font-semibold">Schedule</span>
+                        <CalendarDays className="w-4 h-4 text-muted-foreground group-hover:text-foreground" strokeWidth={2} />
+                        <span className="text-sm font-semibold text-foreground">Schedule a Call</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent><p>Schedule a Call</p></TooltipContent>
@@ -1946,10 +1945,10 @@ export default function Book() {
                     <TooltipTrigger asChild>
                       <button
                         onClick={() => setShowWhiteboardModal(true)}
-                        className="group flex items-center gap-2 h-9 px-4 rounded-full bg-muted/80 border border-border hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-200"
+                        className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
                       >
-                        <PenTool className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" strokeWidth={2} />
-                        <span className="text-xs font-semibold">Whiteboard</span>
+                        <PenTool className="w-4 h-4 text-muted-foreground group-hover:text-foreground" strokeWidth={2} />
+                        <span className="text-sm font-semibold text-foreground">Whiteboard</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent><p>Open Whiteboard</p></TooltipContent>
@@ -1959,10 +1958,10 @@ export default function Book() {
                     <TooltipTrigger asChild>
                       <button
                         onClick={handleScreenShare}
-                        className="group flex items-center gap-2 h-9 px-4 rounded-full bg-muted/80 border border-border hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-200"
+                        className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
                       >
-                        <Monitor className="w-4 h-4 text-muted-foreground group-hover:text-primary-foreground" strokeWidth={2} />
-                        <span className="text-xs font-semibold">Share Screen</span>
+                        <Monitor className="w-4 h-4 text-muted-foreground group-hover:text-foreground" strokeWidth={2} />
+                        <span className="text-sm font-semibold text-foreground">Share Screen</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent><p>Share Your Screen</p></TooltipContent>

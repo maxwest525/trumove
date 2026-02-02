@@ -60,42 +60,50 @@ export function ContactHub({
         </p>
       </div>
 
-      {/* Primary Action Buttons - Clean pill style */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-2xl mb-auto">
+      {/* Primary Action Buttons - Larger, pronounced cards with subtle accents */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl mb-auto">
         {/* Video Call */}
         <button
           onClick={onStartVideoCall}
-          className="group flex flex-col items-center justify-center gap-2 py-4 px-3 rounded-xl bg-muted/10 border border-white/20 hover:bg-primary hover:border-primary transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-white/50 hover:bg-white/10 transition-all duration-200"
         >
-          <Video className="w-5 h-5 text-white/70 group-hover:text-primary-foreground" strokeWidth={2} />
-          <span className="text-xs font-semibold text-white group-hover:text-primary-foreground">Video Call</span>
+          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/15 transition-all">
+            <Video className="w-6 h-6 text-white" strokeWidth={2} />
+          </div>
+          <span className="text-sm font-bold text-white">Video Call</span>
         </button>
 
         {/* Voice Call */}
         <button
           onClick={handleVoiceCall}
-          className="group flex flex-col items-center justify-center gap-2 py-4 px-3 rounded-xl bg-muted/10 border border-white/20 hover:bg-primary hover:border-primary transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-white/50 hover:bg-white/10 transition-all duration-200"
         >
-          <PhoneCall className="w-5 h-5 text-white/70 group-hover:text-primary-foreground" strokeWidth={2} />
-          <span className="text-xs font-semibold text-white group-hover:text-primary-foreground">Voice Call</span>
+          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/15 transition-all">
+            <PhoneCall className="w-6 h-6 text-white" strokeWidth={2} />
+          </div>
+          <span className="text-sm font-bold text-white">Voice Call</span>
         </button>
 
         {/* Email */}
         <button
           onClick={handleEmail}
-          className="group flex flex-col items-center justify-center gap-2 py-4 px-3 rounded-xl bg-muted/10 border border-white/20 hover:bg-primary hover:border-primary transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-white/50 hover:bg-white/10 transition-all duration-200"
         >
-          <Mail className="w-5 h-5 text-white/70 group-hover:text-primary-foreground" strokeWidth={2} />
-          <span className="text-xs font-semibold text-white group-hover:text-primary-foreground">Email Us</span>
+          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/15 transition-all">
+            <Mail className="w-6 h-6 text-white" strokeWidth={2} />
+          </div>
+          <span className="text-sm font-bold text-white">Email Us</span>
         </button>
 
         {/* Text/SMS */}
         <button
           onClick={handleText}
-          className="group flex flex-col items-center justify-center gap-2 py-4 px-3 rounded-xl bg-muted/10 border border-white/20 hover:bg-primary hover:border-primary transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-white/50 hover:bg-white/10 transition-all duration-200"
         >
-          <Send className="w-5 h-5 text-white/70 group-hover:text-primary-foreground" strokeWidth={2} />
-          <span className="text-xs font-semibold text-white group-hover:text-primary-foreground">Text Us</span>
+          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/15 transition-all">
+            <Send className="w-6 h-6 text-white" strokeWidth={2} />
+          </div>
+          <span className="text-sm font-bold text-white">Text Us</span>
         </button>
       </div>
 
