@@ -2158,7 +2158,7 @@ export default function Book() {
                           <h4 className="font-semibold text-sm text-foreground">Live Support</h4>
                           <AgentStatusBadge status={agentStatus} />
                         </div>
-                        <p className="text-muted-foreground text-[10px]">Chat with a real person</p>
+                        <p className="text-muted-foreground text-xs">Chat With a Live Specialist</p>
                       </div>
                     </div>
                     
