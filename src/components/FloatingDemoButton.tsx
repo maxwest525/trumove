@@ -1,9 +1,16 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Play } from "lucide-react";
 import DemoLauncherModal from "./DemoLauncherModal";
 
 export default function FloatingDemoButton() {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  
+  // Hide on homepage
+  if (location.pathname === "/") {
+    return null;
+  }
 
   return (
     <>
