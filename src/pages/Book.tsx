@@ -382,20 +382,19 @@ function AgentQueueIndicator({
       <div className="flex items-center justify-center gap-3">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0">
-            <Users className="w-3 h-3 text-primary" />
+            <Users className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
           </div>
           <span className="text-foreground/70 text-xs">Queue Position</span>
           <span className={cn(
-            "text-lg font-bold transition-all",
-            isHighlighted ? "text-primary" : "text-foreground"
+            "text-lg font-bold transition-all text-foreground"
           )}>
             #{displayPosition}
           </span>
         </div>
         <span className="text-foreground/30">•</span>
         <div className="flex items-center gap-1.5">
-          <Clock className="w-3 h-3 text-primary" />
-          <span className="text-primary font-mono text-sm font-medium">
+          <Clock className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+          <span className="text-emerald-600 dark:text-emerald-400 font-mono text-sm font-medium">
             ~{formatTime(waitSeconds)}
           </span>
         </div>
@@ -1932,18 +1931,18 @@ export default function Book() {
                   Live Support
                 </button>
                 
-                {/* Popout Button - Compact */}
+                {/* Popout Button - Ultra Compact */}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button 
-                      className="ml-auto !px-1"
+                      className="ml-auto !p-0.5"
                       onClick={() => {
                         setPopoutChatMode(chatMode);
                         setShowPopoutChat(true);
                       }}
                       title="Open in movable window"
                     >
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink className="w-2.5 h-2.5" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
@@ -2177,9 +2176,6 @@ export default function Book() {
                       <div className="shrink-0 mb-2">
                         {!hasJoinedQueue ? (
                           <div className="bg-muted/50 border border-border rounded-lg p-3 text-center">
-                            <p className="text-muted-foreground text-xs mb-3">
-                              Connect with a live support agent
-                            </p>
                             <Button
                               onClick={() => setHasJoinedQueue(true)}
                               className="w-full h-9 text-xs bg-foreground text-background hover:bg-foreground/90 font-semibold"
@@ -2814,6 +2810,7 @@ export default function Book() {
         isOpen={showPopoutChat}
         onClose={() => setShowPopoutChat(false)}
         title={popoutChatMode === 'trudy' ? 'Trudy AI' : popoutChatMode === 'liveagent' ? 'In-Call Chat' : 'Live Support'}
+        isPopout={true}
       >
         <div className="h-full flex flex-col p-4">
           {popoutChatMode === 'trudy' && (

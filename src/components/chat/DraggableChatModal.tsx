@@ -34,13 +34,15 @@ interface DraggableChatModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  isPopout?: boolean; // When true, hides maximize/resize controls
 }
 
 export default function DraggableChatModal({ 
   isOpen, 
   onClose, 
   title,
-  children 
+  children,
+  isPopout = false
 }: DraggableChatModalProps) {
   const [position, setPosition] = useState(() => {
     const stored = getStoredState();
@@ -146,13 +148,21 @@ export default function DraggableChatModal({
   }, [isDragging, isResizing, size.width]);
 
   const handleMaximize = () => {
+    if (isPopout) return; // Disable maximize for popout modals
+    
     if (isMaximized) {
       setPosition({ x: prevSize.current.x, y: prevSize.current.y });
       setSize({ width: prevSize.current.width, height: prevSize.current.height });
     } else {
       prevSize.current = { ...size, x: position.x, y: position.y };
-      setPosition({ x: 20, y: 20 });
-      setSize({ width: window.innerWidth - 40, height: window.innerHeight - 40 });
+      // 25% smaller - use 75% of available space
+      const maxWidth = (window.innerWidth - 40) * 0.75;
+      const maxHeight = (window.innerHeight - 40) * 0.75;
+      setPosition({ 
+        x: (window.innerWidth - maxWidth) / 2, 
+        y: (window.innerHeight - maxHeight) / 2 
+      });
+      setSize({ width: maxWidth, height: maxHeight });
     }
     setIsMaximized(!isMaximized);
   };
@@ -190,17 +200,20 @@ export default function DraggableChatModal({
           </div>
           
           <div className="flex items-center gap-1">
-            <button
-              onClick={handleMaximize}
-              className="p-1.5 rounded-md hover:bg-muted transition-colors"
-              title={isMaximized ? "Restore" : "Maximize"}
-            >
-              {isMaximized ? (
-                <Minimize2 className="w-4 h-4 text-muted-foreground" />
-              ) : (
-                <Maximize2 className="w-4 h-4 text-muted-foreground" />
-              )}
-            </button>
+            {/* Only show maximize button if not a popout modal */}
+            {!isPopout && (
+              <button
+                onClick={handleMaximize}
+                className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                title={isMaximized ? "Restore" : "Maximize"}
+              >
+                {isMaximized ? (
+                  <Minimize2 className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <Maximize2 className="w-4 h-4 text-muted-foreground" />
+                )}
+              </button>
+            )}
             <button
               onClick={onClose}
               className="p-1.5 rounded-md hover:bg-destructive/10 hover:text-destructive transition-colors"
@@ -216,8 +229,8 @@ export default function DraggableChatModal({
           {children}
         </div>
         
-        {/* Resize Handle */}
-        {!isMaximized && (
+        {/* Resize Handle - Hidden for popout modals */}
+        {!isMaximized && !isPopout && (
           <div
             className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
             onMouseDown={handleResizeMouseDown}

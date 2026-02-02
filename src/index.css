@@ -1226,6 +1226,7 @@
     --popover-foreground: 222.2 84% 4.9%;
 
     --primary: 120 100% 54%;
+    --primary-text: 142 76% 36%; /* Readable forest green for text */
     --primary-foreground: 222 47% 11%;
 
     --secondary: 210 40% 96.1%;
@@ -1272,6 +1273,7 @@
     --popover-foreground: 210 40% 98%;
 
     --primary: 120 100% 54%;
+    --primary-text: 142 76% 55%; /* Slightly brighter for dark backgrounds */
     --primary-foreground: 222 47% 11%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -25816,9 +25818,12 @@
   height: 100%;
 }
 
-/* 2-Column Layout - Map + Dashboard (no left sidebar) */
+/* 2-Column Layout - Map + Dashboard centered */
 .tracking-content.tracking-content-2col {
-  grid-template-columns: minmax(300px, 1fr) 280px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 @media (max-width: 1600px) {
@@ -25828,7 +25833,10 @@
   }
   
   .tracking-content.tracking-content-2col {
-    grid-template-columns: minmax(280px, 1fr) 260px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px;
   }
 }
 
@@ -25839,7 +25847,10 @@
   }
   
   .tracking-content.tracking-content-2col {
-    grid-template-columns: minmax(240px, 1fr) 240px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
   }
 }
 
@@ -25850,7 +25861,10 @@
   }
   
   .tracking-content.tracking-content-2col {
-    grid-template-columns: minmax(220px, 1fr) 220px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
 
