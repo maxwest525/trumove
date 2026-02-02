@@ -1920,17 +1920,9 @@ export default function Book() {
                 >
                   <span className="relative inline-flex">
                     <Truck className="w-4 h-4" />
-                    <Sparkles className="absolute -top-1 -right-1.5 w-2.5 h-2.5 text-primary" />
+                    <Sparkles className="absolute -top-1 -right-1.5 w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
                   </span>
                   Trudy AI
-                </button>
-                <button 
-                  className={chatMode === 'liveagent' ? 'active' : ''}
-                  onClick={() => setChatMode('liveagent')}
-                  title="Chat with Trudy during your call"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  In-Call Chat
                 </button>
                 <button 
                   className={chatMode === 'support' ? 'active' : ''}
@@ -1939,6 +1931,14 @@ export default function Book() {
                 >
                   <Headset className="w-4 h-4" />
                   Live Support
+                </button>
+                <button 
+                  className={chatMode === 'liveagent' ? 'active' : ''}
+                  onClick={() => setChatMode('liveagent')}
+                  title="Chat during your video call"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  In-Video Chat
                 </button>
               </div>
               
@@ -2009,8 +2009,8 @@ export default function Book() {
                         <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-foreground font-bold text-sm">In-Call Chat</h4>
-                        <p className="text-muted-foreground text-xs">Chat with Trudy during your call</p>
+                        <h4 className="text-foreground font-bold text-sm">In-Video Chat</h4>
+                        <p className="text-muted-foreground text-xs">Chat during your video call</p>
                       </div>
                       {roomUrl && (
                         <span className="px-1.5 py-0.5 rounded bg-red-600/20 text-red-600 dark:text-red-400 text-[9px] font-bold">
