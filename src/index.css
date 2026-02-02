@@ -11767,6 +11767,7 @@
   flex-shrink: 0;
   position: relative;
   margin-right: 24px;
+  margin-left: -100px;
 }
 
 .header-logo img {
@@ -29165,7 +29166,13 @@ html.dark .tru-summary-header-large,
 /* Header logo dark mode visibility - ensure "MOVE" text is visible */
 .dark header img[alt="TruMove"],
 .dark header .tru-logo-image,
-.dark .tru-header-logo {
+.dark .tru-header-logo,
+.dark .header-logo img {
+  filter: brightness(0) invert(1);
+}
+
+/* Tracking page header logo - always white on dark header */
+.live-tracking-page .header-logo img {
   filter: brightness(0) invert(1);
 }
 
