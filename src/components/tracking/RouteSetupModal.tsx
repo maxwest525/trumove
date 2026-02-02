@@ -273,7 +273,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Truck className="w-5 h-5 text-primary" />
@@ -281,119 +281,147 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
-          {/* Origin Address */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              <Navigation className="w-3.5 h-3.5 text-primary" />
-              Origin Address
-            </Label>
-            <LocationAutocomplete
-              value={originAddress}
-              onValueChange={setOriginAddress}
-              onLocationSelect={(displayAddr, zip, fullAddress) => 
-                setOriginAddress(fullAddress || displayAddr)
-              }
-              placeholder="Enter pickup address..."
-              mode="address"
-              className="w-full"
-            />
-            {/* Street View Preview for Origin */}
-            {originCoords && (
-              <AddressPreview 
-                address={originAddress} 
-                variant="origin" 
-                coordinates={originCoords}
-              />
-            )}
-          </div>
-
-          {/* Destination Address */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              <MapPin className="w-3.5 h-3.5 text-destructive" />
-              Destination Address
-            </Label>
-            <LocationAutocomplete
-              value={destAddress}
-              onValueChange={setDestAddress}
-              onLocationSelect={(displayAddr, zip, fullAddress) => 
-                setDestAddress(fullAddress || displayAddr)
-              }
-              placeholder="Enter delivery address..."
-              mode="address"
-              className="w-full"
-            />
-            {/* Street View Preview for Destination */}
-            {destCoords && (
-              <AddressPreview 
-                address={destAddress} 
-                variant="destination" 
-                coordinates={destCoords}
-              />
-            )}
-          </div>
-
-          {/* OR Divider */}
-          <div className="flex items-center gap-3 py-2">
-            <Separator className="flex-1" />
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Or</span>
-            <Separator className="flex-1" />
-          </div>
-
-          {/* Booking/Shipping Number */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              <Search className="w-3.5 h-3.5" />
-              Booking / Shipping Number
-            </Label>
-            <Input
-              value={bookingNumber}
-              onChange={(e) => setBookingNumber(e.target.value)}
-              placeholder="Enter booking code (try 12345)"
-              className="w-full"
-            />
-            <p className="text-[10px] text-muted-foreground">
-              Enter your booking number to auto-populate route details
-            </p>
-          </div>
-
-          {/* Move Date - Only shown when booking number entered */}
-          {showDate && (
-            <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-2">
+          {/* Left Column - Address Inputs */}
+          <div className="space-y-4">
+            {/* Origin Address */}
+            <div className="space-y-2">
               <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                <CalendarIcon className="w-3.5 h-3.5" />
-                Move Date
+                <Navigation className="w-3.5 h-3.5 text-primary" />
+                Origin Address
               </Label>
-              <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !moveDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {moveDate ? format(moveDate, "PPP") : "Select a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={moveDate}
-                    onSelect={(date) => {
-                      setMoveDate(date);
-                      setDatePopoverOpen(false);
-                    }}
-                    disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
+              <LocationAutocomplete
+                value={originAddress}
+                onValueChange={setOriginAddress}
+                onLocationSelect={(displayAddr, zip, fullAddress) => 
+                  setOriginAddress(fullAddress || displayAddr)
+                }
+                placeholder="Enter pickup address..."
+                mode="address"
+                className="w-full"
+              />
             </div>
-          )}
+
+            {/* Destination Address */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                <MapPin className="w-3.5 h-3.5 text-destructive" />
+                Destination Address
+              </Label>
+              <LocationAutocomplete
+                value={destAddress}
+                onValueChange={setDestAddress}
+                onLocationSelect={(displayAddr, zip, fullAddress) => 
+                  setDestAddress(fullAddress || displayAddr)
+                }
+                placeholder="Enter delivery address..."
+                mode="address"
+                className="w-full"
+              />
+            </div>
+
+            {/* OR Divider */}
+            <div className="flex items-center gap-3 py-2">
+              <Separator className="flex-1" />
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Or</span>
+              <Separator className="flex-1" />
+            </div>
+
+            {/* Booking/Shipping Number */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                <Search className="w-3.5 h-3.5" />
+                Booking / Shipping Number
+              </Label>
+              <Input
+                value={bookingNumber}
+                onChange={(e) => setBookingNumber(e.target.value)}
+                placeholder="Enter booking code (try 12345)"
+                className="w-full"
+              />
+              <p className="text-[10px] text-muted-foreground">
+                Enter your booking number to auto-populate route details
+              </p>
+            </div>
+
+            {/* Move Date - Only shown when booking number entered */}
+            {showDate && (
+              <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  <CalendarIcon className="w-3.5 h-3.5" />
+                  Move Date
+                </Label>
+                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !moveDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {moveDate ? format(moveDate, "PPP") : "Select a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={moveDate}
+                      onSelect={(date) => {
+                        setMoveDate(date);
+                        setDatePopoverOpen(false);
+                      }}
+                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column - Street View Previews */}
+          <div className="space-y-4">
+            {/* Origin Street View */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                <Eye className="w-3.5 h-3.5" />
+                Origin Preview
+              </Label>
+              {originCoords ? (
+                <AddressPreview 
+                  address={originAddress} 
+                  variant="origin" 
+                  coordinates={originCoords}
+                />
+              ) : (
+                <div className="w-full h-[100px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
+                  <span className="text-xs text-muted-foreground">Enter origin address to preview</span>
+                </div>
+              )}
+            </div>
+
+            {/* Destination Street View */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                <Eye className="w-3.5 h-3.5" />
+                Destination Preview
+              </Label>
+              {destCoords ? (
+                <AddressPreview 
+                  address={destAddress} 
+                  variant="destination" 
+                  coordinates={destCoords}
+                />
+              ) : (
+                <div className="w-full h-[100px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
+                  <span className="text-xs text-muted-foreground">Enter destination to preview</span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
