@@ -21,7 +21,7 @@ declare global {
   }
 }
 
-// Truck SVG icon as data URL
+// Truck SVG icon as data URL (static version)
 const TRUCK_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
   <defs>
     <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
@@ -34,6 +34,33 @@ const TRUCK_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" heigh
   <circle cx="23" cy="22" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
   <path d="M17 22h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" transform="translate(2, -2)"/>
   <path d="M22 16v4h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
+</svg>`;
+
+// Truck SVG with animated pulse ring for active tracking
+const TRUCK_ICON_PULSING_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Outer pulse ring -->
+  <circle cx="28" cy="28" r="24" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.4">
+    <animate attributeName="r" values="20;26;20" dur="1.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <!-- Inner pulse ring -->
+  <circle cx="28" cy="28" r="20" fill="none" stroke="#22c55e" stroke-width="1.5" opacity="0.3">
+    <animate attributeName="r" values="18;22;18" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
+    <animate attributeName="opacity" values="0.5;0.15;0.5" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
+  </circle>
+  <!-- Main truck circle -->
+  <circle cx="28" cy="28" r="18" fill="#22c55e" filter="url(#shadow)"/>
+  <!-- Truck icon -->
+  <path d="M20 32h-1c-.6 0-1-.4-1-1v-6c0-.6.4-1 1-1h12l4 4v4c0 .6-.4 1-1 1h-1" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
+  <circle cx="23" cy="30" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
+  <circle cx="31" cy="30" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
+  <path d="M25 30h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" transform="translate(2, -2)"/>
+  <path d="M30 24v4h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
 </svg>`;
 
 /**
@@ -276,7 +303,7 @@ export function Google2DTrackingMap({
             });
           }, 350);
 
-          // Create truck marker with delay
+          // Create truck marker with delay - uses pulsing version when tracking starts
           if (truckMarkerRef.current) {
             truckMarkerRef.current.setMap(null);
           }
@@ -285,9 +312,9 @@ export function Google2DTrackingMap({
               position: { lat: originCoords[1], lng: originCoords[0] },
               map: mapRef.current,
               icon: {
-                url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(TRUCK_ICON_SVG)}`,
-                scaledSize: new window.google.maps.Size(40, 40),
-                anchor: new window.google.maps.Point(20, 20)
+                url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(TRUCK_ICON_PULSING_SVG)}`,
+                scaledSize: new window.google.maps.Size(56, 56),
+                anchor: new window.google.maps.Point(28, 28)
               },
               zIndex: 100,
               animation: window.google.maps.Animation.DROP
