@@ -1571,7 +1571,7 @@ export default function Index() {
             <div className="tru-ai-steps-inner">
               {/* Header row: info on left, previews on right */}
               <div className="tru-ai-header-row" ref={scanPreviewRef}>
-                {/* Left side: Premium marketing content */}
+                {/* Left side: Premium marketing content - centered */}
                 <div className="tru-ai-steps-left">
                   {/* Premium headline block */}
                   <div className="tru-ai-headline-block animate-fade-in" style={{ animationDelay: '0ms' }}>
@@ -1579,6 +1579,7 @@ export default function Index() {
                       <Sparkles className="w-3.5 h-3.5" />
                       Computer Vision Technology
                     </span>
+                    <h3 className="tru-ai-section-title">AI Analysis Estimator</h3>
                     <h2 className="tru-ai-main-headline">
                       Scan. Catalog.<br />
                       <span className="tru-ai-headline-accent">Estimate.</span>
