@@ -1573,12 +1573,8 @@ export default function Index() {
               <div className="tru-ai-header-row" ref={scanPreviewRef}>
                 {/* Left side: Premium marketing content - centered */}
                 <div className="tru-ai-steps-left">
-                  {/* Premium headline block */}
+                {/* Premium headline block */}
                   <div className="tru-ai-headline-block animate-fade-in" style={{ animationDelay: '0ms' }}>
-                    <span className="tru-ai-eyebrow">
-                      <Sparkles className="w-3.5 h-3.5" />
-                      Computer Vision Technology
-                    </span>
                     <h3 className="tru-ai-section-title">AI Analysis Estimator</h3>
                     <h2 className="tru-ai-main-headline">
                       Scan. Catalog.<br />
@@ -1590,7 +1586,7 @@ export default function Index() {
                   </div>
                   
                   {/* Compact step indicators */}
-                  <div className="tru-ai-step-pills animate-fade-in" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
+                  <div className="tru-ai-step-pills animate-fade-in" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
                     {[
                       { num: "01", label: "Scan rooms" },
                       { num: "02", label: "AI catalogs" },
@@ -1601,24 +1597,6 @@ export default function Index() {
                         <span className="tru-ai-step-label">{step.label}</span>
                       </div>
                     ))}
-                  </div>
-                  
-                  {/* Trust stats row */}
-                  <div className="tru-ai-trust-row animate-fade-in" style={{ animationDelay: '250ms', animationFillMode: 'both' }}>
-                    <div className="tru-ai-stat">
-                      <span className="tru-ai-stat-value">95%</span>
-                      <span className="tru-ai-stat-label">Accuracy</span>
-                    </div>
-                    <div className="tru-ai-stat-divider" />
-                    <div className="tru-ai-stat">
-                      <span className="tru-ai-stat-value">&lt;2min</span>
-                      <span className="tru-ai-stat-label">Per Room</span>
-                    </div>
-                    <div className="tru-ai-stat-divider" />
-                    <div className="tru-ai-stat">
-                      <span className="tru-ai-stat-value">500+</span>
-                      <span className="tru-ai-stat-label">Item Types</span>
-                    </div>
                   </div>
                   
                   {/* CTA Button */}
