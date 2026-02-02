@@ -162,11 +162,11 @@ const NAV: NavItem[] = [
   },
   { 
     href: "/book", 
-    label: "Book Video Consult",
+    label: "Connect With Us Live",
     hasDropdown: true,
     dropdownContent: {
       icon: Calendar,
-      title: "Book Video Consult",
+      title: "Connect With Us Live",
       description: "15-min free session with a TruMove client advocate",
       features: ["Free consultation", "Expert guidance", "Personalized plan"],
       cta: "Book Now",
