@@ -312,10 +312,35 @@ export function Google2DTrackingMap({
   // Placeholder when no coordinates
   if (!originCoords && !destCoords) {
     return (
-      <div className="relative w-full h-full rounded-xl overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border flex items-center justify-center">
-        <div className="text-center">
-          <Satellite className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Enter origin and destination to view route</p>
+      <div className="relative w-full h-full rounded-xl overflow-hidden bg-gradient-to-br from-muted to-muted/70 border border-border">
+        {/* Empty state skeleton */}
+        <div className="absolute inset-0">
+          {/* Grid pattern */}
+          <div className="absolute inset-0 opacity-5" style={{ 
+            backgroundImage: 'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
+            backgroundSize: '50px 50px'
+          }} />
+          
+          {/* Placeholder route line */}
+          <svg className="absolute inset-0 w-full h-full opacity-20" preserveAspectRatio="none">
+            <path 
+              d="M 100 350 Q 250 200 400 180 T 650 100" 
+              fill="none" 
+              stroke="hsl(var(--primary))" 
+              strokeWidth="4" 
+              strokeLinecap="round"
+              strokeDasharray="12 8"
+            />
+          </svg>
+        </div>
+        
+        {/* Centered prompt */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center bg-background/60 backdrop-blur-sm rounded-xl px-8 py-6 border border-border">
+            <Satellite className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+            <p className="text-sm font-medium text-foreground">Enter origin and destination</p>
+            <p className="text-xs text-muted-foreground mt-1">to view your route on the map</p>
+          </div>
         </div>
       </div>
     );
@@ -323,12 +348,30 @@ export function Google2DTrackingMap({
 
   return (
     <div className="relative w-full h-full rounded-xl overflow-hidden border border-border">
-      {/* Loading state */}
+      {/* Loading skeleton state */}
       {isLoading && (
-        <div className="absolute inset-0 bg-background/90 flex items-center justify-center z-10">
-          <div className="text-center">
-            <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">Loading satellite view...</p>
+        <div className="absolute inset-0 bg-gradient-to-br from-muted to-muted/70 z-10 overflow-hidden">
+          {/* Animated skeleton lines mimicking a map */}
+          <div className="absolute inset-0 flex flex-col justify-between p-6">
+            {/* Fake route line skeleton */}
+            <div className="absolute top-1/4 left-1/6 right-1/4 h-1 bg-primary/20 rounded-full animate-pulse" />
+            <div className="absolute top-1/3 left-1/4 right-1/6 h-1 bg-primary/15 rounded-full animate-pulse delay-100" style={{ transform: 'rotate(15deg)' }} />
+            <div className="absolute top-1/2 left-1/5 right-1/3 h-1 bg-primary/20 rounded-full animate-pulse delay-200" style={{ transform: 'rotate(-10deg)' }} />
+            
+            {/* Origin marker skeleton */}
+            <div className="absolute top-1/4 left-[15%] w-6 h-6 rounded-full bg-primary/30 animate-pulse" />
+            
+            {/* Destination marker skeleton */}
+            <div className="absolute bottom-1/4 right-[20%] w-6 h-6 rounded-full bg-destructive/30 animate-pulse delay-150" />
+          </div>
+          
+          {/* Center loading indicator */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center bg-background/80 backdrop-blur-sm rounded-xl px-6 py-4 border border-border shadow-lg">
+              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
+              <p className="text-sm font-medium text-foreground">Loading satellite view</p>
+              <p className="text-xs text-muted-foreground mt-1">Preparing map data...</p>
+            </div>
           </div>
         </div>
       )}

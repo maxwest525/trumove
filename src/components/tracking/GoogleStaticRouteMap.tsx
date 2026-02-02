@@ -88,11 +88,35 @@ export function GoogleStaticRouteMap({
   // Empty state when no coordinates
   if (!originCoords || !destCoords) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-muted rounded-2xl border border-border">
-        <div className="text-center p-6">
-          <MapPin className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground font-medium">Enter origin and destination</p>
-          <p className="text-xs text-muted-foreground/60 mt-1">to view the route map</p>
+      <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border bg-gradient-to-br from-muted to-muted/70">
+        {/* Empty state skeleton */}
+        <div className="absolute inset-0">
+          {/* Grid pattern */}
+          <div className="absolute inset-0 opacity-5" style={{ 
+            backgroundImage: 'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
+            backgroundSize: '50px 50px'
+          }} />
+          
+          {/* Placeholder route */}
+          <svg className="absolute inset-0 w-full h-full opacity-15" preserveAspectRatio="none">
+            <path 
+              d="M 80 400 Q 200 250 350 220 T 600 120" 
+              fill="none" 
+              stroke="hsl(var(--primary))" 
+              strokeWidth="4" 
+              strokeLinecap="round"
+              strokeDasharray="12 8"
+            />
+          </svg>
+        </div>
+        
+        {/* Centered prompt */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center bg-background/60 backdrop-blur-sm rounded-xl px-8 py-6 border border-border">
+            <MapPin className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+            <p className="text-sm font-medium text-foreground">Enter origin and destination</p>
+            <p className="text-xs text-muted-foreground mt-1">to view the route map</p>
+          </div>
         </div>
       </div>
     );
@@ -100,12 +124,49 @@ export function GoogleStaticRouteMap({
   
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border bg-background">
-      {/* Loading overlay */}
+      {/* Loading skeleton overlay */}
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/90 z-10">
-          <div className="text-center">
-            <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">Loading map...</p>
+        <div className="absolute inset-0 bg-gradient-to-br from-muted to-muted/70 z-10 overflow-hidden">
+          {/* Animated skeleton elements mimicking a map */}
+          <div className="absolute inset-0">
+            {/* Grid pattern skeleton */}
+            <div className="absolute inset-0 opacity-10" style={{ 
+              backgroundImage: 'linear-gradient(hsl(var(--border)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--border)) 1px, transparent 1px)',
+              backgroundSize: '40px 40px'
+            }} />
+            
+            {/* Fake route path */}
+            <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+              <path 
+                d="M 80 420 Q 200 300 350 280 T 600 150" 
+                fill="none" 
+                stroke="hsl(var(--primary) / 0.25)" 
+                strokeWidth="6" 
+                strokeLinecap="round"
+                className="animate-pulse"
+              />
+            </svg>
+            
+            {/* Origin marker skeleton */}
+            <div className="absolute top-[70%] left-[10%] flex flex-col items-center gap-1">
+              <div className="w-8 h-8 rounded-full bg-primary/30 animate-pulse" />
+              <div className="w-16 h-3 rounded bg-muted-foreground/20 animate-pulse" />
+            </div>
+            
+            {/* Destination marker skeleton */}
+            <div className="absolute top-[25%] right-[15%] flex flex-col items-center gap-1">
+              <div className="w-8 h-8 rounded-full bg-destructive/30 animate-pulse delay-100" />
+              <div className="w-20 h-3 rounded bg-muted-foreground/20 animate-pulse delay-100" />
+            </div>
+          </div>
+          
+          {/* Center loading indicator */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center bg-background/80 backdrop-blur-sm rounded-xl px-6 py-4 border border-border shadow-lg">
+              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
+              <p className="text-sm font-medium text-foreground">Loading map</p>
+              <p className="text-xs text-muted-foreground mt-1">Fetching route data...</p>
+            </div>
           </div>
         </div>
       )}
