@@ -1610,7 +1610,7 @@ export default function Index() {
                     className="tru-ai-cta-btn animate-fade-scale-in opacity-0"
                     style={{ animationDelay: '350ms' }}
                   >
-                    <Camera className="w-4 h-4" />
+                    <Home className="w-4 h-4" />
                     Scan Your Home
                     <ArrowRight className="w-4 h-4" />
                   </button>
