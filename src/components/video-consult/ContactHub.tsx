@@ -52,22 +52,22 @@ export function ContactHub({
           alt="TruMove" 
           className="h-10 mx-auto mb-4 brightness-0 invert"
         />
-        <h3 className="text-2xl font-black text-white mb-2">
+        <h3 className="text-3xl font-black text-white mb-3">
           Ready to Connect
         </h3>
-        <p className="text-white/70 text-sm max-w-lg mx-auto leading-relaxed">
+        <p className="text-white/70 text-base max-w-lg mx-auto leading-relaxed">
           Choose how you'd like to reach our moving specialists
         </p>
       </div>
 
-      {/* Primary Action Buttons - Slate borders, softer icon backgrounds */}
+      {/* Primary Action Buttons - Darker icon backgrounds, hover glow */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl mb-auto">
         {/* Video Call */}
         <button
           onClick={onStartVideoCall}
-          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-800/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
         >
-          <div className="w-11 h-11 rounded-lg bg-slate-800/80 border border-slate-600 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
+          <div className="w-11 h-11 rounded-lg bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
             <Video className="w-5 h-5 text-emerald-400" strokeWidth={2} />
           </div>
           <span className="text-sm font-bold text-white text-center">Video Call</span>
@@ -76,9 +76,9 @@ export function ContactHub({
         {/* Voice Call */}
         <button
           onClick={handleVoiceCall}
-          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-800/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
         >
-          <div className="w-11 h-11 rounded-lg bg-slate-800/80 border border-slate-600 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
+          <div className="w-11 h-11 rounded-lg bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
             <PhoneCall className="w-5 h-5 text-emerald-400" strokeWidth={2} />
           </div>
           <span className="text-sm font-bold text-white text-center">Voice Call</span>
@@ -87,9 +87,9 @@ export function ContactHub({
         {/* Email */}
         <button
           onClick={handleEmail}
-          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-800/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
         >
-          <div className="w-11 h-11 rounded-lg bg-slate-800/80 border border-slate-600 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
+          <div className="w-11 h-11 rounded-lg bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
             <Mail className="w-5 h-5 text-emerald-400" strokeWidth={2} />
           </div>
           <span className="text-sm font-bold text-white text-center">Email Us</span>
@@ -98,9 +98,9 @@ export function ContactHub({
         {/* Text/SMS */}
         <button
           onClick={handleText}
-          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-800/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
         >
-          <div className="w-11 h-11 rounded-lg bg-slate-800/80 border border-slate-600 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
+          <div className="w-11 h-11 rounded-lg bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
             <Send className="w-5 h-5 text-emerald-400" strokeWidth={2} />
           </div>
           <span className="text-sm font-bold text-white text-center">Text Us</span>
