@@ -59,6 +59,7 @@ export function Google2DTrackingMap({
   const truckMarkerRef = useRef<any>(null);
   const originMarkerRef = useRef<any>(null);
   const destMarkerRef = useRef<any>(null);
+  const animatedPolylineRef = useRef<any>(null);
   const routePathRef = useRef<[number, number][]>([]);
   
   const [isLoading, setIsLoading] = useState(true);
@@ -139,14 +140,14 @@ export function Google2DTrackingMap({
       trafficLayer.setMap(map);
       trafficLayerRef.current = trafficLayer;
 
-      // Initialize directions renderer
+      // Initialize directions renderer with invisible line (will animate in)
       const directionsRenderer = new window.google.maps.DirectionsRenderer({
         map,
         suppressMarkers: true, // We'll use custom markers
         polylineOptions: {
           strokeColor: '#22c55e',
           strokeWeight: 5,
-          strokeOpacity: 0.8
+          strokeOpacity: 0 // Start invisible for animation
         }
       });
       directionsRendererRef.current = directionsRenderer;
@@ -185,7 +186,8 @@ export function Google2DTrackingMap({
       },
       (result: any, status: any) => {
         if (status === 'OK' && result) {
-          directionsRendererRef.current.setDirections(result);
+          // Don't show the default renderer - we'll animate our own polyline
+          directionsRendererRef.current.setOptions({ preserveViewport: true });
           
           // Extract path coordinates for progress tracking
           const route = result.routes[0];
@@ -204,62 +206,104 @@ export function Google2DTrackingMap({
             duration: durationInSeconds
           });
 
-          // Create origin marker
+          // Remove previous animated polyline if exists
+          if (animatedPolylineRef.current) {
+            animatedPolylineRef.current.setMap(null);
+          }
+
+          // Create animated polyline that reveals itself
+          const polyline = new window.google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#22c55e',
+            strokeOpacity: 0,
+            strokeWeight: 5,
+            map: mapRef.current,
+            zIndex: 5
+          });
+          animatedPolylineRef.current = polyline;
+
+          // Animate the polyline opacity
+          let opacity = 0;
+          const fadeInInterval = setInterval(() => {
+            opacity += 0.05;
+            if (opacity >= 0.85) {
+              opacity = 0.85;
+              clearInterval(fadeInInterval);
+            }
+            polyline.setOptions({ strokeOpacity: opacity });
+          }, 30);
+
+          // Create origin marker with staggered drop animation
           if (originMarkerRef.current) {
             originMarkerRef.current.setMap(null);
           }
-          originMarkerRef.current = new window.google.maps.Marker({
-            position: { lat: originCoords[1], lng: originCoords[0] },
-            map: mapRef.current,
-            icon: {
-              path: window.google.maps.SymbolPath.CIRCLE,
-              scale: 10,
-              fillColor: '#22c55e',
-              fillOpacity: 1,
-              strokeColor: '#ffffff',
-              strokeWeight: 3
-            },
-            zIndex: 10
-          });
+          setTimeout(() => {
+            originMarkerRef.current = new window.google.maps.Marker({
+              position: { lat: originCoords[1], lng: originCoords[0] },
+              map: mapRef.current,
+              icon: {
+                path: window.google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: '#22c55e',
+                fillOpacity: 1,
+                strokeColor: '#ffffff',
+                strokeWeight: 3
+              },
+              zIndex: 10,
+              animation: window.google.maps.Animation.DROP
+            });
+          }, 150);
 
-          // Create destination marker
+          // Create destination marker with delay
           if (destMarkerRef.current) {
             destMarkerRef.current.setMap(null);
           }
-          destMarkerRef.current = new window.google.maps.Marker({
-            position: { lat: destCoords[1], lng: destCoords[0] },
-            map: mapRef.current,
-            icon: {
-              path: window.google.maps.SymbolPath.CIRCLE,
-              scale: 10,
-              fillColor: '#ef4444',
-              fillOpacity: 1,
-              strokeColor: '#ffffff',
-              strokeWeight: 3
-            },
-            zIndex: 10
-          });
+          setTimeout(() => {
+            destMarkerRef.current = new window.google.maps.Marker({
+              position: { lat: destCoords[1], lng: destCoords[0] },
+              map: mapRef.current,
+              icon: {
+                path: window.google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: '#ef4444',
+                fillOpacity: 1,
+                strokeColor: '#ffffff',
+                strokeWeight: 3
+              },
+              zIndex: 10,
+              animation: window.google.maps.Animation.DROP
+            });
+          }, 350);
 
-          // Create truck marker
+          // Create truck marker with delay
           if (truckMarkerRef.current) {
             truckMarkerRef.current.setMap(null);
           }
-          truckMarkerRef.current = new window.google.maps.Marker({
-            position: { lat: originCoords[1], lng: originCoords[0] },
-            map: mapRef.current,
-            icon: {
-              url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(TRUCK_ICON_SVG)}`,
-              scaledSize: new window.google.maps.Size(40, 40),
-              anchor: new window.google.maps.Point(20, 20)
-            },
-            zIndex: 100
-          });
+          setTimeout(() => {
+            truckMarkerRef.current = new window.google.maps.Marker({
+              position: { lat: originCoords[1], lng: originCoords[0] },
+              map: mapRef.current,
+              icon: {
+                url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(TRUCK_ICON_SVG)}`,
+                scaledSize: new window.google.maps.Size(40, 40),
+                anchor: new window.google.maps.Point(20, 20)
+              },
+              zIndex: 100,
+              animation: window.google.maps.Animation.DROP
+            });
+          }, 500);
 
-          // Fit bounds to show entire route
+          // Smooth pan to bounds
           const bounds = new window.google.maps.LatLngBounds();
           bounds.extend({ lat: originCoords[1], lng: originCoords[0] });
           bounds.extend({ lat: destCoords[1], lng: destCoords[0] });
-          mapRef.current.fitBounds(bounds, { padding: 80 });
+          setTimeout(() => {
+            mapRef.current.panToBounds(bounds, { padding: 80 });
+            setTimeout(() => {
+              mapRef.current.fitBounds(bounds, { padding: 80 });
+            }, 200);
+          }, 50);
         } else {
           console.error('Directions request failed:', status);
         }
