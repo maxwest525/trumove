@@ -1,21 +1,24 @@
-# Simplify Contact Hub - COMPLETED ✓
 
-## Summary
-Decluttered the Contact Hub by removing controls from the video preview, moving Booking ID search to the bottom, hiding the demo button, and adding a separate toolbar strip.
+## Raise Trust Bar by 20px
 
-## Changes Made
+### Overview
+The black stats strip with "SERVING 48 STATES", "50,000+ MOVES COMPLETED", etc. needs to move 20px higher on the page.
 
-### ContactHub.tsx
-- Removed Settings button (gear icon)
-- Removed Volume button (speaker icon)  
-- Removed "Try Demo Mode" button
-- Removed "Screen Sharing Available" text
-- Moved Booking ID search to absolute bottom of the preview window
-- Simplified props interface (removed device/volume props)
-- Kept 4 action buttons with distinct colors: Sky (Video), Amber (Voice), Purple (Email), Teal (Text)
+### Current State
+The `.stats-strip` component has `margin-top: -175px` which positions it to overlap with the hero section above.
 
-### Book.tsx
-- Added toolbar strip below the video Card (only visible when not on a call)
-- Toolbar contains: Schedule a Call, Whiteboard, Screen Share buttons
-- Demo button is now a subtle text link at far right of toolbar (opacity-60)
-- ContactHub props simplified to only pass essential handlers
+### Implementation
+
+**File: `src/index.css`**
+- Line 30130: Change `margin-top: -175px` to `margin-top: -195px`
+
+This single CSS change will raise the entire trust bar by 20px, creating more overlap with the content above it.
+
+---
+
+### Technical Details
+| Property | Current Value | New Value |
+|----------|---------------|-----------|
+| `margin-top` | `-175px` | `-195px` |
+
+The negative margin pulls the strip upward, so increasing the negative value by 20px raises it by 20px.
