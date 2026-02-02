@@ -1906,7 +1906,10 @@ export default function Book() {
               {/* Tab Selector - 3 Options Equal Width */}
               <div className="video-consult-chat-tabs grid grid-cols-3">
                 <button 
-                  className={chatMode === 'trudy' ? 'active' : ''}
+                  className={cn(
+                    chatMode === 'trudy' ? 'active' : '',
+                    'border-r border-border/50'
+                  )}
                   onClick={() => setChatMode('trudy')}
                   title="Talk to Trudy AI Assistant"
                 >
@@ -1917,7 +1920,10 @@ export default function Book() {
                   Trudy AI
                 </button>
                 <button 
-                  className={chatMode === 'support' ? 'active' : ''}
+                  className={cn(
+                    chatMode === 'support' ? 'active' : '',
+                    'border-r border-border/50'
+                  )}
                   onClick={() => setChatMode('support')}
                   title="Live agent, call, email, or schedule"
                 >
