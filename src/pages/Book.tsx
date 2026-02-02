@@ -1927,7 +1927,7 @@ export default function Book() {
                 </CardContent>
               </Card>
 
-              {/* Quick Tools - Horizontal buttons matching 4-button style (slate borders, black inner, green icon) */}
+              {/* Quick Tools - Horizontal buttons matching ContactHub style */}
               {!roomUrl && (
                 <div className="flex items-center justify-center gap-4">
                   <Tooltip>
@@ -1936,8 +1936,8 @@ export default function Book() {
                         onClick={() => setShowScheduleModal(true)}
                         className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
                       >
-                        <div className="w-9 h-9 rounded-lg bg-black border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-                          <CalendarDays className="w-4 h-4 text-primary" strokeWidth={2} />
+                        <div className="w-9 h-9 rounded-lg bg-slate-800/80 border border-slate-600 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
+                          <CalendarDays className="w-4 h-4 text-emerald-400" strokeWidth={2} />
                         </div>
                         <span className="text-sm font-bold text-white">Schedule a Call</span>
                       </button>
@@ -1951,8 +1951,8 @@ export default function Book() {
                         onClick={() => setShowWhiteboardModal(true)}
                         className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
                       >
-                        <div className="w-9 h-9 rounded-lg bg-black border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-                          <PenTool className="w-4 h-4 text-primary" strokeWidth={2} />
+                        <div className="w-9 h-9 rounded-lg bg-slate-800/80 border border-slate-600 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
+                          <PenTool className="w-4 h-4 text-emerald-400" strokeWidth={2} />
                         </div>
                         <span className="text-sm font-bold text-white">Whiteboard</span>
                       </button>
@@ -1966,8 +1966,8 @@ export default function Book() {
                         onClick={handleScreenShare}
                         className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
                       >
-                        <div className="w-9 h-9 rounded-lg bg-black border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-                          <Monitor className="w-4 h-4 text-primary" strokeWidth={2} />
+                        <div className="w-9 h-9 rounded-lg bg-slate-800/80 border border-slate-600 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
+                          <Monitor className="w-4 h-4 text-emerald-400" strokeWidth={2} />
                         </div>
                         <span className="text-sm font-bold text-white">Share Screen</span>
                       </button>
