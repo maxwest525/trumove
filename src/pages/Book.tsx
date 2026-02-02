@@ -2020,14 +2020,13 @@ export default function Book() {
                     {/* In-Call Chat Header */}
                     <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border shrink-0">
                       <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center relative shrink-0">
-                        <Truck className="w-4 h-4 text-foreground" />
-                        <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
+                        <User className="w-4 h-4 text-foreground" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <div>
                             <h4 className="text-foreground font-bold text-sm">In-Video Chat</h4>
-                            <p className="text-muted-foreground text-xs">Chat during your video call</p>
+                            <p className="text-muted-foreground text-xs">Text your rep during the call</p>
                           </div>
                           <span className={cn(
                             "px-2 py-1 rounded text-xs font-semibold",
@@ -2047,7 +2046,7 @@ export default function Book() {
                             <div className="flex flex-col items-center justify-center h-full text-center py-4">
                               <MessageSquare className="w-8 h-8 text-muted-foreground/40 mb-2" />
                               <p className="text-muted-foreground text-sm">
-                                Send a message to chat with Trudy
+                                {roomUrl ? "Send a message to your rep" : "Join a video call to chat"}
                               </p>
                             </div>
                           ) : (
@@ -2083,7 +2082,7 @@ export default function Book() {
                           <Input 
                             value={liveChatInput}
                             onChange={(e) => setLiveChatInput(e.target.value)}
-                            placeholder="Ask Trudy anything..."
+                            placeholder={roomUrl ? "Message your rep..." : "Join a call first..."}
                             className="flex-1 h-9 text-sm"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' && liveChatInput.trim()) {
@@ -2702,12 +2701,11 @@ export default function Book() {
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
                 <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center relative">
-                  <Truck className="w-4 h-4 text-foreground" />
-                  <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-primary" />
+                  <User className="w-4 h-4 text-foreground" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm">In-Call Chat</h4>
-                  <p className="text-muted-foreground text-xs">Chat with Trudy</p>
+                  <p className="text-muted-foreground text-xs">Text your rep during the call</p>
                 </div>
                 {roomUrl && (
                   <span className="ml-auto px-2 py-0.5 rounded bg-red-600/20 text-red-600 text-xs font-bold">LIVE</span>
@@ -2727,7 +2725,7 @@ export default function Book() {
                 {liveChatMessages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-8">
                     <MessageSquare className="w-10 h-10 text-muted-foreground/40 mb-3" />
-                    <p className="text-muted-foreground text-sm">Send a message to chat with Trudy</p>
+                    <p className="text-muted-foreground text-sm">{roomUrl ? "Send a message to your rep" : "Join a video call to chat"}</p>
                   </div>
                 ) : (
                   liveChatMessages.map((msg) => (
@@ -2748,7 +2746,7 @@ export default function Book() {
                 <Input 
                   value={liveChatInput}
                   onChange={(e) => setLiveChatInput(e.target.value)}
-                  placeholder="Ask Trudy anything..."
+                  placeholder={roomUrl ? "Message your rep..." : "Join a call first..."}
                   className="flex-1"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && liveChatInput.trim()) {
