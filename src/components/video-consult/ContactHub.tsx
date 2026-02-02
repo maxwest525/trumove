@@ -50,7 +50,7 @@ export function ContactHub({
         <img 
           src={logo} 
           alt="TruMove" 
-          className="h-10 mx-auto mb-4 brightness-0 invert"
+          className="h-10 mx-auto mb-4 brightness-0 invert animate-[pulse_3s_ease-in-out_infinite]"
         />
         <h3 className="text-3xl font-black text-white mb-3">
           Ready to Connect
