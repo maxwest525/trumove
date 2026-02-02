@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Menu, X, Phone, Video, ChevronDown, User,
-  Calculator, Calendar, Home, Shield, Bed, Bath, Square, CheckCircle2, Clock, Scan
+  Calculator, Calendar, Home, Shield, Bed, Bath, Square, CheckCircle2, Clock, Scan, MessageSquare
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -50,21 +50,36 @@ const EstimatorPreview = () => (
 );
 
 const ConsultPreview = () => (
-  <div className="mega-menu-slots">
-    <div className="mega-slots-header">
-      <span className="mega-slots-day is-active">Today</span>
-      <span className="mega-slots-day">Tomorrow</span>
+  <div className="mega-menu-consult">
+    <div className="mega-consult-visual">
+      <div className="mega-consult-icons">
+        <div className="mega-consult-icon">
+          <Video className="w-5 h-5 text-primary" />
+        </div>
+        <div className="mega-consult-icon">
+          <Phone className="w-5 h-5 text-primary" />
+        </div>
+        <div className="mega-consult-icon">
+          <MessageSquare className="w-5 h-5 text-primary" />
+        </div>
+      </div>
     </div>
-    <div className="mega-slots-grid">
-      <span className="mega-slot">10:00 AM</span>
-      <span className="mega-slot">1:00 PM</span>
-      <span className="mega-slot">4:30 PM</span>
-      <span className="mega-slot is-popular">
-        <Clock className="w-3 h-3" />
-        11:30 AM
-      </span>
+    <div className="mega-consult-info">
+      <div className="mega-consult-badge">
+        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        <span>Specialists Available Now</span>
+      </div>
+      <div className="mega-consult-stats">
+        <span className="mega-consult-stat">
+          <Clock className="w-3 h-3" />
+          ~2 min wait
+        </span>
+        <span className="mega-consult-stat">
+          <CheckCircle2 className="w-3 h-3 text-primary" />
+          Free consultation
+        </span>
+      </div>
     </div>
-    <span className="mega-slots-more">+5 more slots available</span>
   </div>
 );
 
