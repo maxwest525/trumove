@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Truck, Loader2, MapPin, Eye, Navigation, Maximize2, Minimize2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TruckAerialViewProps {
   routeCoordinates: [number, number][];
@@ -114,7 +115,7 @@ export function TruckAerialView({
 
   const streetViewUrl = getStreetViewUrl();
 
-  // Show placeholder structure when no position available - same size as active state
+  // Show placeholder structure when no position available - same size as active state with skeleton
   if (!currentPosition) {
     return (
       <div className="tracking-info-card">
@@ -136,12 +137,20 @@ export function TruckAerialView({
           </button>
         </div>
         <div 
-          className="relative w-full rounded-lg overflow-hidden bg-muted/30 border border-border flex items-center justify-center"
+          className="relative w-full rounded-lg overflow-hidden border border-border"
           style={{ height: SIZE_CONFIGS['default'].height }}
         >
-          <div className="text-center">
-            <MapPin className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
-            <span className="text-xs text-muted-foreground">Enter origin to see location</span>
+          {/* Skeleton with subtle animation */}
+          <Skeleton className="absolute inset-0 w-full h-full" />
+          
+          {/* Overlay content */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center z-10">
+              <div className="w-10 h-10 rounded-full bg-muted/80 flex items-center justify-center mx-auto mb-2 animate-pulse">
+                <MapPin className="w-5 h-5 text-muted-foreground" />
+              </div>
+              <span className="text-xs text-muted-foreground font-medium">Enter origin to see location</span>
+            </div>
           </div>
         </div>
       </div>

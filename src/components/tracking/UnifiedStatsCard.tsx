@@ -3,6 +3,7 @@ import { Clock, Route, DollarSign, Fuel, AlertTriangle, TrendingUp, TrendingDown
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -146,27 +147,39 @@ export function UnifiedStatsCard({
         </Button>
       </div>
 
-      {/* Primary Stats Row - ETA, Time, Distance - Always visible, show placeholders when empty */}
+      {/* Primary Stats Row - ETA, Time, Distance - Always visible, show skeleton when empty */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-3 border border-primary/20">
           <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">ETA</div>
-          <div className="text-xl font-bold text-primary leading-tight">
-            {isEmpty ? '--:--' : (adjustedETA || '--:--')}
-          </div>
+          {isEmpty ? (
+            <Skeleton className="h-6 w-16 bg-primary/10" />
+          ) : (
+            <div className="text-xl font-bold text-primary leading-tight">
+              {adjustedETA || '--:--'}
+            </div>
+          )}
         </div>
         
         <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
           <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Time Left</div>
-          <div className="text-xl font-bold text-foreground leading-tight">
-            {isEmpty ? '--' : (adjustedDuration || timeRemaining)}
-          </div>
+          {isEmpty ? (
+            <Skeleton className="h-6 w-14" />
+          ) : (
+            <div className="text-xl font-bold text-foreground leading-tight">
+              {adjustedDuration || timeRemaining}
+            </div>
+          )}
         </div>
         
         <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
           <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Distance</div>
-          <div className="text-xl font-bold text-foreground leading-tight">
-            {isEmpty ? '-- mi' : `${remainingDistance || Math.round(totalDistance - distanceTraveled)} mi`}
-          </div>
+          {isEmpty ? (
+            <Skeleton className="h-6 w-16" />
+          ) : (
+            <div className="text-xl font-bold text-foreground leading-tight">
+              {remainingDistance || Math.round(totalDistance - distanceTraveled)} mi
+            </div>
+          )}
         </div>
       </div>
 
@@ -184,7 +197,7 @@ export function UnifiedStatsCard({
         </div>
       </div>
 
-      {/* Traffic, Tolls, Fuel Row - Always visible with placeholders */}
+      {/* Traffic, Tolls, Fuel Row - Always visible with skeleton when empty */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         {/* Traffic */}
         <div className={cn("rounded-lg p-2.5 border", isEmpty ? "bg-muted/30 border-border" : severity.bg)}>
@@ -192,11 +205,17 @@ export function UnifiedStatsCard({
             <AlertTriangle className={cn("w-3.5 h-3.5", isEmpty ? "text-muted-foreground" : severity.color)} />
             <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Traffic</span>
           </div>
-          <div className={cn("text-sm font-bold", isEmpty ? "text-muted-foreground" : severity.color)}>
-            {isEmpty ? '--' : severity.label}
-          </div>
-          {!isEmpty && trafficDelay > 0 && (
-            <div className="text-xs text-foreground/70 mt-0.5">+{trafficDelay}m delay</div>
+          {isEmpty ? (
+            <Skeleton className="h-4 w-12" />
+          ) : (
+            <>
+              <div className={cn("text-sm font-bold", severity.color)}>
+                {severity.label}
+              </div>
+              {trafficDelay > 0 && (
+                <div className="text-xs text-foreground/70 mt-0.5">+{trafficDelay}m delay</div>
+              )}
+            </>
           )}
         </div>
 
@@ -209,9 +228,13 @@ export function UnifiedStatsCard({
             <DollarSign className={cn("w-3.5 h-3.5", isEmpty ? "text-muted-foreground" : (tollInfo?.hasTolls ? "text-foreground/70" : "text-emerald-500"))} />
             <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Tolls</span>
           </div>
-          <div className={cn("text-sm font-bold", isEmpty ? "text-muted-foreground" : (tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500"))}>
-            {isEmpty ? '--' : (tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free')}
-          </div>
+          {isEmpty ? (
+            <Skeleton className="h-4 w-10" />
+          ) : (
+            <div className={cn("text-sm font-bold", tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500")}>
+              {tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
+            </div>
+          )}
         </div>
 
         {/* Fuel Cost */}
@@ -223,11 +246,17 @@ export function UnifiedStatsCard({
             <Fuel className={cn("w-3.5 h-3.5", isEmpty ? "text-muted-foreground" : (isFuelEfficient ? "text-emerald-500" : "text-amber-500"))} />
             <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Fuel</span>
           </div>
-          <div className={cn("text-sm font-bold", isEmpty ? "text-muted-foreground" : (isFuelEfficient ? "text-emerald-500" : "text-amber-500"))}>
-            {isEmpty ? '--' : (fuelCostEstimate ? `$${fuelCostEstimate.toFixed(0)}` : '--')}
-          </div>
-          {!isEmpty && isFuelEfficient && (
-            <div className="text-[10px] text-emerald-500/80 mt-0.5">Eco route</div>
+          {isEmpty ? (
+            <Skeleton className="h-4 w-10" />
+          ) : (
+            <>
+              <div className={cn("text-sm font-bold", isFuelEfficient ? "text-emerald-500" : "text-amber-500")}>
+                {fuelCostEstimate ? `$${fuelCostEstimate.toFixed(0)}` : '--'}
+              </div>
+              {isFuelEfficient && (
+                <div className="text-[10px] text-emerald-500/80 mt-0.5">Eco route</div>
+              )}
+            </>
           )}
         </div>
       </div>
