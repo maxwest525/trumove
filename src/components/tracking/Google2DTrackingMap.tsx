@@ -244,22 +244,40 @@ export function Google2DTrackingMap({
             duration: durationInSeconds
           });
 
-          // Remove previous animated polyline if exists
+          // Remove previous animated polyline and outline if exists
           if (animatedPolylineRef.current) {
+            // Also remove the outline polyline if it exists
+            if ((animatedPolylineRef.current as any)._outlinePolyline) {
+              (animatedPolylineRef.current as any)._outlinePolyline.setMap(null);
+            }
             animatedPolylineRef.current.setMap(null);
           }
 
-          // Create animated polyline that reveals itself
+          // Create black outline polyline for better visibility
+          const outlinePolyline = new window.google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#000000',
+            strokeOpacity: 0.8,
+            strokeWeight: 10,
+            map: mapRef.current,
+            zIndex: 4
+          });
+          
+          // Create animated polyline that reveals itself (green route on top)
           const polyline = new window.google.maps.Polyline({
             path: path,
             geodesic: true,
             strokeColor: '#22c55e',
             strokeOpacity: 0,
-            strokeWeight: 5,
+            strokeWeight: 6,
             map: mapRef.current,
             zIndex: 5
           });
           animatedPolylineRef.current = polyline;
+          
+          // Store outline ref for cleanup
+          (animatedPolylineRef.current as any)._outlinePolyline = outlinePolyline;
 
           // Animate the polyline opacity
           let opacity = 0;
