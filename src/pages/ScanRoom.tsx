@@ -55,6 +55,15 @@ const DEMO_ITEMS = [
   { id: 12, name: "Bar Stool", room: "Kitchen", weight: 25, cuft: 5, image: "/inventory/kitchen/bar-stool.png" },
 ];
 
+// Sample preview items shown before scanning starts
+const SAMPLE_PREVIEW_ITEMS = [
+  { id: 101, name: "3-Seat Sofa", room: "Living Room", weight: 350, cuft: 45, image: "/inventory/living-room/sofa-3-cushion.png" },
+  { id: 102, name: "Coffee Table", room: "Living Room", weight: 45, cuft: 8, image: "/inventory/living-room/coffee-table.png" },
+  { id: 103, name: "Floor Lamp", room: "Living Room", weight: 15, cuft: 3, image: "/inventory/living-room/lamp-floor.png" },
+  { id: 104, name: "Armchair", room: "Living Room", weight: 85, cuft: 18, image: "/inventory/living-room/armchair.png" },
+  { id: 105, name: "TV Stand", room: "Living Room", weight: 80, cuft: 12, image: "/inventory/living-room/tv-stand.png" },
+];
+
 export default function ScanRoom() {
   useScrollToTop();
   const navigate = useNavigate();
@@ -432,6 +441,43 @@ export default function ScanRoom() {
                 <div className="tru-scan-video-overlay">
                   <div className="tru-scan-grid-pattern" />
                   {isScanning && <div className="tru-scan-video-scanline" />}
+                </div>
+
+                {/* Live Detection Panel - Right Side Overlay */}
+                <div className="tru-scan-live-detection">
+                  <div className="tru-scan-live-header">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Live Detection</span>
+                    {!isScanning && detectedItems.length === 0 && (
+                      <span className="tru-scan-live-sample-badge">Sample</span>
+                    )}
+                  </div>
+                  <div className="tru-scan-live-items">
+                    {(isScanning || detectedItems.length > 0 ? detectedItems : SAMPLE_PREVIEW_ITEMS).map((item, i) => (
+                      <div 
+                        key={`${item.id}-${i}`} 
+                        className={`tru-scan-live-item ${!isScanning && detectedItems.length === 0 ? 'tru-scan-live-item-sample' : ''}`}
+                        style={{ animationDelay: `${i * 0.1}s` }}
+                      >
+                        <img src={item.image} alt={item.name} />
+                        <div className="tru-scan-live-item-info">
+                          <span className="tru-scan-live-item-name">{item.name}</span>
+                          <span className="tru-scan-live-item-weight">{item.weight} lbs</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="tru-scan-live-totals">
+                    {isScanning || detectedItems.length > 0 ? (
+                      <>
+                        <span>{detectedItems.length} items</span>
+                        <span>•</span>
+                        <span>{totalWeight.toLocaleString()} lbs</span>
+                      </>
+                    ) : (
+                      <span className="tru-scan-live-totals-hint">Start scan to detect your items</span>
+                    )}
+                  </div>
                 </div>
                 
                 {/* Status Pills Bar - Left Side */}
