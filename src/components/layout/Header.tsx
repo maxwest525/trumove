@@ -168,7 +168,7 @@ const NAV: NavItem[] = [
       icon: Calendar,
       title: "Connect With Us",
       description: "15-min free session with a TruMove client advocate",
-      features: ["Free consultation", "Expert guidance", "Personalized plan"],
+      features: ["No sales pressure", "Get answers fast", "Instant callback option"],
       cta: "Book Now",
       PreviewComponent: ConsultPreview
     }
