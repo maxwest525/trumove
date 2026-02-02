@@ -2311,26 +2311,28 @@
   overflow: hidden;
 }
 
-/* Header row: centered title with previews on right */
+/* Header row: flex layout with left info and right previews */
 .tru-ai-header-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   position: relative;
   margin-bottom: 16px;
   min-height: 450px;
+  gap: 32px;
 }
 
-/* Steps left container - absolute positioned */
+/* Steps left container - constrained width */
 .tru-ai-steps-left {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 250px;
+  width: 320px;
+  max-width: 320px;
+  flex-shrink: 0;
   z-index: 5;
+  padding-right: 24px;
 }
 
 /* Centered title container - truly centered */
