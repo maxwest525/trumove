@@ -376,26 +376,26 @@ function AgentQueueIndicator({
 
   return (
     <div className={cn(
-      "bg-gradient-to-r from-amber-900/30 to-orange-900/20 border border-amber-500/30 rounded-lg px-3 py-2 mb-3 transition-all duration-300",
+      "bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-lg px-3 py-2 mb-3 transition-all duration-300",
       isHighlighted && "ring-1 ring-primary"
     )}>
       <div className="flex items-center justify-center gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center flex-shrink-0">
-            <Users className="w-3 h-3 text-amber-400" />
+          <div className="w-6 h-6 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0">
+            <Users className="w-3 h-3 text-primary" />
           </div>
-          <span className="text-white/70 text-xs">Queue Position</span>
+          <span className="text-foreground/70 text-xs">Queue Position</span>
           <span className={cn(
             "text-lg font-bold transition-all",
-            isHighlighted ? "text-primary" : "text-white"
+            isHighlighted ? "text-primary" : "text-foreground"
           )}>
             #{displayPosition}
           </span>
         </div>
-        <span className="text-white/30">•</span>
+        <span className="text-foreground/30">•</span>
         <div className="flex items-center gap-1.5">
-          <Clock className="w-3 h-3 text-amber-400" />
-          <span className="text-amber-300 font-mono text-sm font-medium">
+          <Clock className="w-3 h-3 text-primary" />
+          <span className="text-primary font-mono text-sm font-medium">
             ~{formatTime(waitSeconds)}
           </span>
         </div>
@@ -1555,8 +1555,8 @@ export default function Book() {
       if (isExpandedResizing && expandedResizeRef.current) {
         const deltaX = e.clientX - expandedResizeRef.current.startX;
         const deltaY = e.clientY - expandedResizeRef.current.startY;
-        const newWidth = Math.min(1400, Math.max(500, expandedResizeRef.current.startWidth + deltaX));
-        const newHeight = Math.min(900, Math.max(350, expandedResizeRef.current.startHeight + deltaY));
+        const newWidth = Math.min(1100, Math.max(500, expandedResizeRef.current.startWidth + deltaX));
+        const newHeight = Math.min(700, Math.max(350, expandedResizeRef.current.startHeight + deltaY));
         setExpandedVideoSize({ width: newWidth, height: newHeight });
       }
     };
@@ -1919,7 +1919,6 @@ export default function Book() {
                   className={chatMode === 'liveagent' ? 'active' : ''}
                   onClick={() => setChatMode('liveagent')}
                   title="Chat with Trudy during your call"
-                  disabled={!roomUrl}
                 >
                   <MessageSquare className="w-4 h-4" />
                   In-Call Chat
@@ -1933,18 +1932,18 @@ export default function Book() {
                   Live Support
                 </button>
                 
-                {/* Popout Button */}
+                {/* Popout Button - Compact */}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button 
-                      className="ml-auto !px-2"
+                      className="ml-auto !px-1"
                       onClick={() => {
                         setPopoutChatMode(chatMode);
                         setShowPopoutChat(true);
                       }}
                       title="Open in movable window"
                     >
-                      <ExternalLink className="w-4 h-4" />
+                      <ExternalLink className="w-3 h-3" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
@@ -2187,7 +2186,7 @@ export default function Book() {
                               size="sm"
                             >
                               <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
-                              Chat Now
+                              Connect with live support agent
                             </Button>
                           </div>
                         ) : (
@@ -2587,7 +2586,7 @@ export default function Book() {
                 <div className="flex items-center gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-destructive cursor-pointer hover:opacity-80" onClick={() => setIsFullscreen(false)} />
                   <div className="w-3 h-3 rounded-full bg-yellow-500 cursor-pointer hover:opacity-80" onClick={() => setExpandedVideoSize({ width: 640, height: 400 })} />
-                  <div className="w-3 h-3 rounded-full bg-green-500 cursor-pointer hover:opacity-80" onClick={() => setExpandedVideoSize({ width: 1200, height: 750 })} />
+                  <div className="w-3 h-3 rounded-full bg-green-500 cursor-pointer hover:opacity-80" onClick={() => setExpandedVideoSize({ width: 900, height: 550 })} />
                 </div>
                 <div className="flex items-center gap-2">
                   <Video className="w-4 h-4 text-foreground" />
