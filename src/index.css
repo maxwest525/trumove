@@ -12033,68 +12033,79 @@
 }
 
 .header-nav-link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 12px;
+  padding: 8px 16px;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: hsl(0 0% 0%);
+  color: hsl(var(--foreground) / 0.8);
   text-decoration: none;
-  border-radius: 20px;
-  transition: all 200ms ease;
+  border-radius: 8px;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Underline indicator */
+.header-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: hsl(var(--primary));
+  border-radius: 1px;
+  transform: translateX(-50%);
+  transition: width 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dark .header-nav-link {
-  color: hsl(var(--foreground));
+  color: hsl(var(--foreground) / 0.85);
 }
 
 .header-nav-link:hover {
-  color: hsl(var(--tm-ink));
-  background: transparent;
-  box-shadow: 
-    0 0 12px hsl(var(--primary) / 0.35),
-    0 0 24px hsl(var(--primary) / 0.15);
-  transform: scale(1.05);
+  color: hsl(var(--foreground));
+  background: hsl(var(--primary) / 0.08);
+}
+
+.header-nav-link:hover::after {
+  width: 60%;
 }
 
 .dark .header-nav-link:hover {
   color: hsl(var(--foreground));
-  background: transparent;
-  box-shadow: 
-    0 0 12px hsl(var(--primary) / 0.4),
-    0 0 24px hsl(var(--primary) / 0.2);
-  transform: scale(1.05);
+  background: hsl(var(--primary) / 0.12);
 }
 
-/* Pill-shaped active state - dark background with green glow */
+/* Active state - subtle fill with strong underline */
 .header-nav-link.is-active {
-  color: hsl(0 0% 100%);
-  background: hsl(220 15% 10%);
-  border: none;
+  color: hsl(var(--foreground));
+  background: hsl(var(--primary) / 0.1);
   font-weight: 600;
-  box-shadow: 
-    0 0 10px hsl(var(--primary) / 0.3),
-    0 0 20px hsl(var(--primary) / 0.15);
-  padding: 6px 12px;
+}
+
+.header-nav-link.is-active::after {
+  width: 70%;
+  height: 2px;
+  background: hsl(var(--primary));
 }
 
 .dark .header-nav-link.is-active {
-  color: hsl(0 0% 100%);
-  background: hsl(220 15% 8%);
-  border: none;
-  box-shadow: 
-    0 0 12px hsl(var(--primary) / 0.35),
-    0 0 24px hsl(var(--primary) / 0.2);
+  color: hsl(var(--foreground));
+  background: hsl(var(--primary) / 0.15);
 }
 
 .header-nav-chevron {
-  display: none;
+  transition: transform 200ms ease;
+  opacity: 0.6;
 }
 
 .header-nav-item:hover .header-nav-chevron {
-  display: none;
+  transform: rotate(180deg);
+  opacity: 1;
 }
 
 .header-actions {
