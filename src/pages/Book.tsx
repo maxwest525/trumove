@@ -1972,10 +1972,10 @@ export default function Book() {
               </div>
             )}
 
-            {/* Main Video Window - 600x450 aspect */}
+            {/* Main Video Window - matches chat panel height (560px) */}
             <Card id="video-consult-container" className="overflow-hidden border-2 border-primary/20 bg-gradient-to-b from-muted/30 to-background shadow-lg shadow-primary/5 ring-1 ring-white/5">
               <CardContent className="p-0">
-                <div className="relative min-h-[450px] h-[450px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
+                <div className="relative min-h-[560px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
                   {/* Top controls - Fullscreen, PiP, and Whiteboard */}
                   <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                     {roomUrl && (
