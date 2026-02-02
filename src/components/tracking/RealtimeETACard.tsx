@@ -138,14 +138,17 @@ export function RealtimeETACard({
       </div>
 
       {/* Main ETA Display */}
-      <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl p-4 mb-4 border border-primary/20">
+      <div className="bg-white rounded-xl p-4 mb-4 border border-black/10 shadow-sm">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[10px] uppercase tracking-wider text-white/50">Arrival Time</span>
+          <span className="text-[10px] uppercase tracking-wider text-black/50">Arrival Time</span>
           {trafficDelay > 0 && (
             <span className={cn(
               "text-[10px] px-2 py-0.5 rounded-full font-medium",
-              severity.bgColor,
-              severity.color
+              trafficSeverity === 'high' 
+                ? "bg-red-100 text-red-700"
+                : trafficSeverity === 'medium'
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-emerald-100 text-emerald-700"
             )}>
               +{trafficDelay}m delay
             </span>
@@ -153,18 +156,18 @@ export function RealtimeETACard({
         </div>
         
         <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold text-primary">
+          <span className="text-3xl font-bold text-black">
             {adjustedETA || '--:--'}
           </span>
           {adjustedDuration && (
-            <span className="text-sm text-white/40">
+            <span className="text-sm text-black/50">
               ({adjustedDuration} remaining)
             </span>
           )}
         </div>
 
         {/* Remaining distance */}
-        <div className="mt-3 flex items-center gap-2 text-xs text-white/50">
+        <div className="mt-3 flex items-center gap-2 text-xs text-black/60">
           <Route className="w-3 h-3" />
           <span>{remainingDistance} miles to destination</span>
         </div>
