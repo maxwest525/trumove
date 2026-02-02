@@ -1,239 +1,162 @@
 
-# Implementation Plan: Shipment Command Center Modal + Live Agent Enhancements
 
-## Overview
+# Chat Modal & Tracking Page UI Improvements
 
-This plan addresses multiple feature requests across two pages:
-
-1. **Book.tsx (Video Consult)**: Live Agent status indicator and dynamic queue countdown
-2. **LiveTracking.tsx (Shipment Command Center)**: Entry modal for route setup, layout improvements, and cross-page navigation
+## Summary
+This plan addresses multiple UI/UX improvements across the `/book` video consult page and the `/track` shipment tracking page, focusing on modal accessibility, styling consistency, and layout adjustments.
 
 ---
 
-## Part 1: Live Agent Enhancements (Book.tsx)
+## Changes Overview
 
-### 1.1 Agent Availability Status System
+### 1. Non-Blocking Chat Modal (Travels Across Pages)
+**Current Issue:** The `DraggableChatModal` has a backdrop overlay (`bg-black/30 backdrop-blur-sm`) that greys out the page and blocks interaction. Also, the modal is local to `/book` page.
 
-Add a simulated "Busy" vs "Available" status to the Live Agent header that changes dynamically:
+**Solution:**
+- Remove the backdrop overlay entirely so users can still interact with the website
+- Move the `DraggableChatModal` state management to `App.tsx` so it persists across page navigation
+- Use React Router's location to maintain modal visibility during navigation
 
-```text
-+---------------------------+
-| [Avatar]                  |
-| Live Agent Chat           |
-| [Status Badge] Available  | <-- Dynamic status indicator
-+---------------------------+
-```
+### 2. Queue Position Colors to Match Company Theme
+**Current Issue:** The `AgentQueueIndicator` uses amber/orange colors (`bg-amber-900/30`, `border-amber-500/30`, `text-amber-400`) which doesn't match the company's primary green theme.
 
-**Implementation Details:**
-- Add state: `agentStatus: 'available' | 'busy'`
-- Add `useEffect` to simulate random availability changes (e.g., every 30-60 seconds toggle between states)
-- Update header to show colored badge:
-  - Green dot + "Available" when available
-  - Amber/orange dot + "Busy" when busy
-- When busy, show estimated wait time in the header subtitle
+**Solution:**
+- Update queue indicator to use primary theme colors (green-based instead of amber)
+- Change from amber to primary/muted color scheme for consistency
 
-### 1.2 Dynamic Queue Countdown Timer
+### 3. Smaller Pop-Out Button
+**Current Issue:** The pop-out button in the chat tabs uses `<ExternalLink className="w-4 h-4" />` which is the same size as other tab icons.
 
-Enhance `AgentQueueIndicator` with a real-time countdown:
+**Solution:**
+- Reduce the icon size to `w-3 h-3`
+- Add `!px-1` class for tighter horizontal padding
 
-**Current State:**
-```
-Queue Position: #2
-Estimated wait: ~2 minutes
-[Progress bar]
-```
+### 4. "Connect with live support agent" Button Text
+**Current Issue:** Button says "Chat Now" with an icon prefix.
 
-**New State:**
-```
-Queue Position: #2 → #1 (updates)
-Estimated wait: 1:45 (countdown timer)
-[Animated progress bar]
-```
+**Solution:**
+- Change button text to "Connect with live support agent"
+- Keep the button functional and styled the same
 
-**Implementation Details:**
-- Add state for `queuePosition` and `queueWaitSeconds`
-- Add `useEffect` with `setInterval` to:
-  - Decrement `queueWaitSeconds` every second
-  - Occasionally decrement `queuePosition` (when timer hits certain thresholds)
-  - Clear queue when position reaches 0 (agent "connected")
-- Update `AgentQueueIndicator` to accept dynamic props
-- Add visual feedback when queue position changes (brief highlight/animation)
+### 5. In-Call Chat Always Accessible
+**Current Issue:** The In-Call Chat tab is disabled when not on a call (`disabled={!roomUrl}`).
 
----
+**Solution:**
+- Remove the `disabled` attribute from the tab
+- Keep the subtle "Not on video call" banner inside the content
+- Tab is always clickable
 
-## Part 2: Shipment Command Center Modal (LiveTracking.tsx)
+### 6. Expanded Video Modal Size Limits
+**Current Issue:** When maximized via the green macOS button, the modal expands to `1200x750` which can cover header controls. The max resize limit is `1400x900`.
 
-### 2.1 Route Setup Entry Modal
+**Solution:**
+- Reduce the "large" preset from `1200x750` to `900x550`
+- Reduce maximum resize dimensions from `1400x900` to `1100x700`
+- Add `top: 80px` offset so the modal can't overlap the header
 
-Create a new modal that appears on page load, replacing the sidebar-based route setup:
+### 7. Shipment Tracking - Lower Map & Stats by 50px
+**Current Issue:** User wants the map and stats pushed down by 50px without touching the navbar or header.
 
-```text
-+---------------------------------------+
-|          Track Your Shipment          |
-|                                       |
-| [Origin Address Input         ]       |
-| [Destination Address Input    ]       |
-|                                       |
-| --- OR ---                            |
-|                                       |
-| [Booking/Shipping Number      ]       |
-|                                       |
-| [Cancel]              [View Route]    |
-+---------------------------------------+
-```
-
-**Implementation Details:**
-- Add state: `showRouteModal: boolean` (default: `true` on mount)
-- Create `RouteSetupModal` component with:
-  - `LocationAutocomplete` for origin address
-  - `LocationAutocomplete` for destination address
-  - Divider with "OR" text
-  - Input for booking/shipping number (auto-populates addresses when valid)
-  - Date picker (only shown when booking number is entered)
-  - "View Route" button to close modal and start tracking
-  - Optional "Cancel" or close button
-- When booking number entered (e.g., 12345), auto-fill origin/destination and show date
-- On "View Route" click: close modal, populate route, center map
-
-### 2.2 Remove Left Sidebar Route Setup
-
-Since the modal now handles route entry:
-- Remove the entire `<div className="tracking-sidebar">` section containing:
-  - Origin input with Street View preview
-  - Destination input with Street View preview
-  - Move Date picker
-  - Start/Pause/Reset buttons
-
-### 2.3 Layout Recentering
-
-With the left sidebar removed, update the layout:
-
-**Current CSS Grid:**
-```css
-grid-template-columns: 480px minmax(180px, 1fr) 480px;
-```
-
-**New CSS Grid (2-column):**
-```css
-grid-template-columns: minmax(400px, 1fr) 400px;
-```
-
-- Map takes the larger left column
-- Dashboard (stats, weather, route info) takes the right column
-- Content properly padded below the sticky header
-
-### 2.4 Lower Content Below Header
-
-Add proper top padding/margin to `.tracking-content` to prevent content from being hidden behind the sticky header:
-
-```css
-.tracking-content {
-  margin-top: 12px; /* Add spacing below header */
-  /* existing styles... */
-}
-```
-
-The tracking header is already sticky at `top: 103px` offset, so the content grid needs to start below it.
-
-### 2.5 Cross-Page "View Route" Navigation
-
-Add a "View Route" button to relevant forms that navigates to the tracking page with pre-populated data:
-
-**Target Forms:**
-- `EstimateWizard.tsx` - After entering origin/destination
-- `OnlineEstimate.tsx` - Quote result screen
-- `Index.tsx` - Hero form (if applicable)
-
-**Implementation:**
-- Use `useNavigate` from `react-router-dom`
-- Store route data in localStorage before navigation:
-  ```typescript
-  localStorage.setItem('trumove_pending_route', JSON.stringify({
-    originAddress: '...',
-    destAddress: '...',
-    originCoords: [...],
-    destCoords: [...]
-  }));
-  navigate('/track');
-  ```
-- In `LiveTracking.tsx`, check for pending route on mount and auto-populate
+**Solution:**
+- Increase `padding-top` in `.tracking-content` from `16px` to `66px` (adding 50px)
+- Apply same adjustment to responsive breakpoints
 
 ---
 
 ## Technical Details
 
-### New State Variables (LiveTracking.tsx)
-```typescript
-const [showRouteModal, setShowRouteModal] = useState(true);
-const [modalOriginAddress, setModalOriginAddress] = useState("");
-const [modalDestAddress, setModalDestAddress] = useState("");
-const [modalBookingNumber, setModalBookingNumber] = useState("");
+### File: `src/components/chat/DraggableChatModal.tsx`
+- Remove the backdrop div (lines 163-168):
+  ```tsx
+  {/* Remove this backdrop */}
+  <div className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm" onClick={onClose} />
+  ```
+- Keep the modal itself, positioned with `fixed z-[70]`
+
+### File: `src/pages/Book.tsx`
+
+**Queue Indicator Colors (lines 377-404):**
+```tsx
+// Change from amber to primary theme
+<div className={cn(
+  "bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-lg px-3 py-2 mb-3 transition-all duration-300",
+  isHighlighted && "ring-1 ring-primary"
+)}>
+  <div className="w-6 h-6 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
+    <Users className="w-3 h-3 text-primary" />
+  </div>
+  <span className="text-primary font-mono text-sm font-medium">~{formatTime(waitSeconds)}</span>
+</div>
 ```
 
-### New State Variables (Book.tsx)
-```typescript
-const [agentStatus, setAgentStatus] = useState<'available' | 'busy'>('available');
-const [queuePosition, setQueuePosition] = useState(2);
-const [queueWaitSeconds, setQueueWaitSeconds] = useState(120);
+**Pop-Out Button (lines 1937-1949):**
+```tsx
+<button 
+  className="ml-auto !px-1"
+  onClick={() => {
+    setPopoutChatMode(chatMode);
+    setShowPopoutChat(true);
+  }}
+>
+  <ExternalLink className="w-3 h-3" />  {/* Reduced from w-4 h-4 */}
+</button>
 ```
 
-### CSS Updates (index.css)
+**In-Call Chat Tab (lines 1919-1926):**
+```tsx
+<button 
+  className={chatMode === 'liveagent' ? 'active' : ''}
+  onClick={() => setChatMode('liveagent')}
+  // Remove: disabled={!roomUrl}
+>
+```
+
+**Live Support Button Text (lines 2184-2191):**
+```tsx
+<Button onClick={() => setHasJoinedQueue(true)} className="...">
+  <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
+  Connect with live support agent  {/* Changed from "Chat Now" */}
+</Button>
+```
+
+**Expanded Video Modal Size (lines 2567-2656):**
+- Change line 2590 from `{ width: 1200, height: 750 }` to `{ width: 900, height: 550 }`
+- Change max resize constraints (lines 1558-1559) from `1400/900` to `1100/700`
+- Add `top: 80px` minimum offset in positioning logic
+
+### File: `src/index.css`
+
+**Tracking Content Padding (lines 25807-25817):**
 ```css
-/* Updated 2-column tracking layout */
 .tracking-content {
-  grid-template-columns: minmax(400px, 1fr) 400px;
-  padding-top: 16px;
-}
-
-/* Route Setup Modal */
-.route-setup-modal {
-  /* Modal overlay and card styles */
-}
-
-/* Agent status badge styles */
-.agent-status-badge {
-  /* Available/Busy badge variants */
+  /* ... existing styles ... */
+  padding-top: 66px; /* Changed from 16px - added 50px */
 }
 ```
 
-### Files Modified
-1. **src/pages/LiveTracking.tsx**
-   - Add `RouteSetupModal` component
-   - Add modal state management
-   - Remove left sidebar
-   - Check for pending route data on mount
-   - Update layout structure
-
-2. **src/pages/Book.tsx**
-   - Add agent status state and simulation
-   - Add queue countdown state and timer
-   - Update `AgentQueueIndicator` to use dynamic values
-   - Update Live Agent header with status badge
-
-3. **src/index.css**
-   - Update `.tracking-content` grid to 2 columns
-   - Add top padding for header clearance
-   - Add modal styles
-   - Add status badge styles
-   - Update responsive breakpoints
-
-4. **src/components/estimate/EstimateWizard.tsx**
-   - Add "View Route" button after address entry
-   - Add navigation logic with data persistence
-
-5. **src/pages/OnlineEstimate.tsx**
-   - Add "View Route" button to quote results
+**Apply to all responsive breakpoints** in the same section.
 
 ---
 
-## Summary of Changes
+## Files to Modify
 
-| Feature | File(s) | Complexity |
-|---------|---------|------------|
-| Agent Busy/Available status | Book.tsx | Low |
-| Dynamic queue countdown | Book.tsx | Medium |
-| Route Setup Entry Modal | LiveTracking.tsx | Medium |
-| Remove left sidebar | LiveTracking.tsx | Low |
-| Recenter layout (2-column) | LiveTracking.tsx, index.css | Medium |
-| Lower content below header | index.css | Low |
-| "View Route" cross-navigation | EstimateWizard.tsx, OnlineEstimate.tsx, LiveTracking.tsx | Medium |
+| File | Changes |
+|------|---------|
+| `src/components/chat/DraggableChatModal.tsx` | Remove backdrop overlay for non-blocking modal |
+| `src/pages/Book.tsx` | Queue colors, pop-out button size, button text, tab disabled state, modal size limits |
+| `src/index.css` | Add 50px to tracking page padding-top |
+
+---
+
+## Visual Changes Summary
+
+| Element | Before | After |
+|---------|--------|-------|
+| Modal backdrop | Greys out page | No backdrop - page fully interactive |
+| Queue indicator | Amber/orange theme | Primary green theme |
+| Pop-out icon | 16x16px | 12x12px |
+| Chat Now button | "Chat Now" | "Connect with live support agent" |
+| In-Call tab | Disabled when no call | Always enabled |
+| Expanded video max | 1200x750 / 1400x900 | 900x550 / 1100x700 |
+| Tracking content top | 16px padding | 66px padding (+50px) |
+
