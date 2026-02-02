@@ -50,7 +50,7 @@ export default function DraggableChatModal({
   });
   const [size, setSize] = useState(() => {
     const stored = getStoredState();
-    return stored?.size ?? { width: 280, height: 360 };
+    return stored?.size ?? { width: 380, height: 480 };
   });
   const [isMaximized, setIsMaximized] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
