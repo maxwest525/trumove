@@ -380,29 +380,14 @@ function AgentQueueIndicator({
       isHighlighted && "ring-1 ring-emerald-500"
     )}>
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-muted border border-border flex items-center justify-center flex-shrink-0">
-              <Users className="w-3 h-3 text-foreground" />
-            </div>
-            <span className="text-foreground font-semibold text-sm">You're in Queue</span>
-          </div>
-          <span className="text-foreground font-bold text-lg">
-            #{displayPosition}
-          </span>
-        </div>
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-muted-foreground">Estimated wait:</span>
-          </div>
-          <span className="text-foreground font-mono font-medium">
-            ~{formatTime(waitSeconds)}
-          </span>
-        </div>
-        <p className="text-muted-foreground text-xs">
-          A specialist will be with you shortly. Please stay on this page.
+        <p className="text-foreground font-medium text-sm">
+          A specialist will be with you shortly
         </p>
+        <div className="flex items-center gap-2 text-sm">
+          <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+          <span className="text-muted-foreground">Estimated wait:</span>
+          <span className="text-foreground font-medium">~2 minutes</span>
+        </div>
       </div>
     </div>
   );
