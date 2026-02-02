@@ -22,7 +22,6 @@ import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
 import FloatingTruckChat from "./components/FloatingTruckChat";
-import FloatingDemoButton from "./components/FloatingDemoButton";
 
 const queryClient = new QueryClient();
 
@@ -54,7 +53,6 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <FloatingTruckChat />
-          <FloatingDemoButton />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
