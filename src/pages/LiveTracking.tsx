@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
@@ -148,6 +148,9 @@ export default function LiveTracking() {
   // WebGL diagnostics and fallback state
   const [webglDiagnostics, setWebglDiagnostics] = useState<WebGLDiagnostics | null>(null);
   const [useStaticMap, setUseStaticMap] = useState(false);
+  
+  // Below-map panel collapsed state
+  const [belowMapCollapsed, setBelowMapCollapsed] = useState(false);
   
   // Route comparison state
   const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
@@ -701,58 +704,79 @@ export default function LiveTracking() {
             </div>
           </div>
 
-          {/* Below Map Panel: Weather + Alternate Routes + Weigh Stations */}
-          <div className="tracking-below-map-panel">
-            {/* Route Weather */}
-            <div className="tracking-below-map-section">
-              <div className="tracking-below-map-header">
-                <Cloud className="w-4 h-4 text-primary" />
-                <span>Route Weather</span>
-              </div>
-              <CompactRouteWeather
-                originCoords={originCoords}
-                destCoords={destCoords}
-                originName={originName}
-                destName={destName}
-              />
-            </div>
-
-            {/* Alternate Routes */}
-            {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
-              <div className="tracking-below-map-section">
-                <div className="tracking-below-map-header">
-                  <Route className="w-4 h-4 text-primary" />
-                  <span>Alternate Routes ({googleRouteData.alternateRoutes.length})</span>
-                </div>
-                <div className="tracking-alternate-routes-list">
-                  {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
-                    <div key={i} className="tracking-alternate-route-item">
-                      <span className="tracking-alt-route-name">{alt.description || `Via alternate ${i + 1}`}</span>
-                      <span className="tracking-alt-route-meta">
-                        {alt.distanceMiles} mi • {alt.durationFormatted}
-                        {alt.isTollFree && <span className="tracking-alt-toll-free">No tolls</span>}
-                      </span>
+          {/* Below Map Panel: Weather + Alternate Routes + Weigh Stations - Collapsible */}
+          <Collapsible open={!belowMapCollapsed} onOpenChange={(open) => setBelowMapCollapsed(!open)}>
+            <div className="tracking-below-map-wrapper">
+              <CollapsibleTrigger asChild>
+                <button className="tracking-below-map-toggle">
+                  {belowMapCollapsed ? (
+                    <>
+                      <ChevronUp className="w-4 h-4" />
+                      <span>Show Route Details</span>
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="w-4 h-4" />
+                      <span>Hide Route Details</span>
+                    </>
+                  )}
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="tracking-below-map-panel">
+                  {/* Route Weather */}
+                  <div className="tracking-below-map-section">
+                    <div className="tracking-below-map-header">
+                      <Cloud className="w-4 h-4 text-primary" />
+                      <span>Route Weather</span>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                    <CompactRouteWeather
+                      originCoords={originCoords}
+                      destCoords={destCoords}
+                      originName={originName}
+                      destName={destName}
+                    />
+                  </div>
 
-            {/* Weigh Stations */}
-            {routeCoordinates.length > 0 && (
-              <div className="tracking-below-map-section tracking-weigh-section">
-                <div className="tracking-below-map-header">
-                  <Scale className="w-4 h-4 text-amber-400" />
-                  <span>Weigh Stations</span>
+                  {/* Alternate Routes */}
+                  {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
+                    <div className="tracking-below-map-section">
+                      <div className="tracking-below-map-header">
+                        <Route className="w-4 h-4 text-primary" />
+                        <span>Alternate Routes ({googleRouteData.alternateRoutes.length})</span>
+                      </div>
+                      <div className="tracking-alternate-routes-list">
+                        {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
+                          <div key={i} className="tracking-alternate-route-item">
+                            <span className="tracking-alt-route-name">{alt.description || `Via alternate ${i + 1}`}</span>
+                            <span className="tracking-alt-route-meta">
+                              {alt.distanceMiles} mi • {alt.durationFormatted}
+                              {alt.isTollFree && <span className="tracking-alt-toll-free">No tolls</span>}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Weigh Stations */}
+                  {routeCoordinates.length > 0 && (
+                    <div className="tracking-below-map-section tracking-weigh-section">
+                      <div className="tracking-below-map-header">
+                        <Scale className="w-4 h-4 text-orange-400" />
+                        <span>Weigh Stations</span>
+                      </div>
+                      <WeighStationChecklist
+                        routeCoordinates={routeCoordinates}
+                        progress={progress}
+                        isTracking={isTracking}
+                      />
+                    </div>
+                  )}
                 </div>
-                <WeighStationChecklist
-                  routeCoordinates={routeCoordinates}
-                  progress={progress}
-                  isTracking={isTracking}
-                />
-              </div>
-            )}
-          </div>
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
         </div>
 
         {/* Right: Dashboard - Always Expanded */}
