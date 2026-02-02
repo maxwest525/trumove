@@ -26517,16 +26517,96 @@
   border-color: rgba(255, 255, 255, 0.06);
 }
 
+.tracking-map-weather-point-wrapper {
+  display: flex;
+  align-items: center;
+}
+
 .tracking-map-weather-point {
   display: flex;
   align-items: center;
   gap: 4px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tracking-map-weather-point:hover {
+  background: hsl(var(--primary) / 0.15);
 }
 
 .tracking-map-weather-temp {
   font-size: 13px;
   font-weight: 600;
   color: hsl(var(--foreground));
+}
+
+/* Weather Tooltip Styling */
+.tracking-weather-tooltip {
+  padding: 12px !important;
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 10px !important;
+  min-width: 180px;
+}
+
+.dark .tracking-weather-tooltip {
+  background: hsl(220 15% 12%) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.tracking-weather-tooltip-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+}
+
+.tracking-weather-tooltip-location {
+  font-size: 13px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.tracking-weather-tooltip-desc {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+  text-transform: capitalize;
+}
+
+.tracking-weather-tooltip-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tracking-weather-tooltip-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.tracking-weather-tooltip-label {
+  color: hsl(var(--muted-foreground));
+}
+
+.tracking-weather-tooltip-value {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin-left: auto;
+}
+
+.tracking-weather-tooltip-vis {
+  font-size: 10px;
+  color: hsl(var(--muted-foreground));
+  text-align: center;
+  padding-top: 6px;
+  border-top: 1px solid hsl(var(--border) / 0.3);
 }
 
 /* Horizontal Stats Strip - Below Map */
