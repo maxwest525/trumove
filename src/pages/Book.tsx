@@ -1325,7 +1325,7 @@ export default function Book() {
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
   const [bookingCode, setBookingCode] = useState("");
   const [isDemo, setIsDemo] = useState(false);
-  const [chatMode, setChatMode] = useState<'trudy' | 'liveagent' | 'support'>('trudy');
+  const [chatMode, setChatMode] = useState<'liveagent' | 'support'>('support');
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
@@ -1364,7 +1364,7 @@ export default function Book() {
   
   // Popout chat modal state
   const [showPopoutChat, setShowPopoutChat] = useState(false);
-  const [popoutChatMode, setPopoutChatMode] = useState<'trudy' | 'liveagent' | 'support'>('trudy');
+  const [popoutChatMode, setPopoutChatMode] = useState<'liveagent' | 'support'>('support');
   
   // Picture-in-picture state
   const [isPiP, setIsPiP] = useState(false);
@@ -1940,22 +1940,8 @@ export default function Book() {
                 <Maximize2 className="w-3 h-3 text-muted-foreground" />
               </button>
               
-              {/* Tab Selector - 3 Options Equal Width */}
-              <div className="video-consult-chat-tabs grid grid-cols-3">
-                <button 
-                  className={cn(
-                    chatMode === 'trudy' ? 'active' : '',
-                    'border-r border-border/50'
-                  )}
-                  onClick={() => setChatMode('trudy')}
-                  title="Talk to Trudy AI Assistant"
-                >
-                  <span className="relative inline-flex">
-                    <Truck className="w-4 h-4" />
-                    <Sparkles className="absolute -top-1 -right-1.5 w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
-                  </span>
-                  Trudy AI
-                </button>
+              {/* Tab Selector - 2 Options */}
+              <div className="video-consult-chat-tabs grid grid-cols-2">
                 <button 
                   className={cn(
                     chatMode === 'support' ? 'active' : '',
@@ -1979,62 +1965,6 @@ export default function Book() {
               
               {/* Chat Content */}
               <div className="video-consult-chat-content">
-                {chatMode === 'trudy' && (
-                  <div className="video-consult-specialist-panel live-agent-panel h-full flex flex-col">
-                    {/* Compact Header */}
-                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border shrink-0">
-                      <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center relative shrink-0">
-                        <Truck className="w-4 h-4 text-foreground" />
-                        <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-foreground font-bold text-sm">Trudy AI Assistant</h4>
-                        <p className="text-emerald-600 dark:text-emerald-400 text-xs font-medium">Available 24/7</p>
-                      </div>
-                    </div>
-                    
-                    {/* Sample Questions */}
-                    <div className="flex-1 overflow-y-auto min-h-0">
-                      <p className="text-muted-foreground text-sm mb-3">
-                        Trudy can help you with:
-                      </p>
-                      <ul className="space-y-2 text-sm text-foreground/90">
-                        <li className="flex items-start gap-2">
-                          <span className="text-emerald-600 dark:text-emerald-400">•</span>
-                          "How much will my move cost?"
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-emerald-600 dark:text-emerald-400">•</span>
-                          "What's included in full-service packing?"
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-emerald-600 dark:text-emerald-400">•</span>
-                          "Can you explain the insurance options?"
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-emerald-600 dark:text-emerald-400">•</span>
-                          "Do you offer storage between moves?"
-                        </li>
-                      </ul>
-                    </div>
-                    
-                    {/* CTA Button - Compact */}
-                    <div className="mt-auto pt-2 shrink-0">
-                      <Button 
-                        className="w-full h-10 bg-foreground hover:bg-foreground/90 text-background font-bold text-sm group"
-                        onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
-                      >
-                        <Sparkles className="w-4 h-4 mr-2 text-emerald-400" />
-                        Chat with Trudy Now
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                      <p className="text-center text-muted-foreground text-xs mt-1.5">
-                        Opens in floating chat window
-                      </p>
-                    </div>
-                  </div>
-                )}
-                
                 {chatMode === 'liveagent' && (
                   <div className="video-consult-specialist-panel live-agent-panel h-full flex flex-col">
                     {/* In-Call Chat Header */}
@@ -2725,17 +2655,10 @@ export default function Book() {
       <DraggableChatModal
         isOpen={showPopoutChat}
         onClose={() => setShowPopoutChat(false)}
-        title={popoutChatMode === 'trudy' ? 'Trudy AI' : popoutChatMode === 'liveagent' ? 'In-Call Chat' : 'Live Support'}
+        title={popoutChatMode === 'liveagent' ? 'In-Call Chat' : 'Live Support'}
         isPopout={true}
       >
         <div className="h-full flex flex-col p-4">
-          {popoutChatMode === 'trudy' && (
-            <AIChatContainer 
-              pageContext={pageContext}
-              onSwitchToQuickQuote={() => {}}
-            />
-          )}
-          
           {popoutChatMode === 'liveagent' && (
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
