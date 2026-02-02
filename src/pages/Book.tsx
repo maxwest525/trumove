@@ -1819,8 +1819,46 @@ export default function Book() {
             </p>
           </div>
 
-          {/* Two-Column Grid: Video + Chat Panel - with Schedule Button */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-6 mb-8">
+          {/* Three-Column Grid: Tools | Video | Chat */}
+          <div className="grid grid-cols-1 lg:grid-cols-[auto,1fr,380px] gap-4 mb-8">
+
+            {/* Left Toolbar - Only when not on call */}
+            {!roomUrl && (
+              <div className="flex flex-col gap-2 p-3 rounded-xl bg-muted/50 border border-border h-fit">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowScheduleModal(true)}
+                  className="h-10 px-4 gap-2 justify-start"
+                >
+                  <CalendarDays className="w-4 h-4" />
+                  Schedule
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowWhiteboardModal(true)}
+                  className="h-10 px-4 gap-2 justify-start"
+                >
+                  <PenTool className="w-4 h-4" />
+                  Whiteboard
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleScreenShare}
+                  className="h-10 px-4 gap-2 justify-start"
+                >
+                  <Monitor className="w-4 h-4" />
+                  Screen Share
+                </Button>
+                
+                {/* Demo button - subtle */}
+                <button
+                  onClick={handleStartDemo}
+                  className="mt-2 text-xs text-muted-foreground hover:text-foreground transition-colors opacity-60 hover:opacity-100 text-left px-4"
+                >
+                  Demo
+                </button>
+              </div>
+            )}
 
             {/* Main Video Window */}
             <Card id="video-consult-container" className="overflow-hidden border-2 border-primary/20 bg-gradient-to-b from-muted/30 to-background shadow-lg shadow-primary/5 ring-1 ring-white/5">
@@ -1887,44 +1925,6 @@ export default function Book() {
                 </div>
               </CardContent>
             </Card>
-            
-            {/* Toolbar Strip - Only when not on call */}
-            {!roomUrl && (
-              <div className="col-span-full flex items-center gap-3 p-3 rounded-xl bg-muted/50 border border-border">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowScheduleModal(true)}
-                  className="h-10 px-4 gap-2"
-                >
-                  <CalendarDays className="w-4 h-4" />
-                  Schedule a Call
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowWhiteboardModal(true)}
-                  className="h-10 px-4 gap-2"
-                >
-                  <PenTool className="w-4 h-4" />
-                  Whiteboard
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleScreenShare}
-                  className="h-10 px-4 gap-2"
-                >
-                  <Monitor className="w-4 h-4" />
-                  Screen Share
-                </Button>
-                
-                {/* Demo button - subtle, far right */}
-                <button
-                  onClick={handleStartDemo}
-                  className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors opacity-60 hover:opacity-100"
-                >
-                  Demo
-                </button>
-              </div>
-            )}
 
             {/* Chat Panel - Right Side */}
             <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative">

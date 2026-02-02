@@ -1,4 +1,4 @@
-import { Video, Phone, Mail, MessageSquare, Search, ArrowRight } from "lucide-react";
+import { Video, Phone, Mail, MessageSquare, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -83,15 +83,15 @@ export function ContactHub({
         </button>
       </div>
 
-      {/* Booking ID Search - Positioned at bottom */}
-      <div className="absolute bottom-6 left-6 right-6">
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-white/10 border-2 border-white/20 max-w-lg mx-auto">
-          <Search className="w-5 h-5 text-white/60 shrink-0" />
+      {/* Booking ID Search - Positioned at bottom, tighter */}
+      <div className="absolute bottom-4 left-4 right-4">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 border border-white/20 max-w-sm mx-auto">
+          <Search className="w-4 h-4 text-white/60 shrink-0" />
           <Input
             value={bookingCode}
             onChange={(e) => setBookingCode(e.target.value)}
-            placeholder="Enter Booking or Shipment ID"
-            className="flex-1 h-10 bg-transparent border-0 text-white text-base placeholder:text-white/50 focus-visible:ring-0 focus-visible:ring-offset-0"
+            placeholder="Booking or Shipment ID"
+            className="flex-1 h-8 bg-transparent border-0 text-white text-sm placeholder:text-white/50 focus-visible:ring-0 focus-visible:ring-offset-0"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 onJoinRoom();
@@ -102,10 +102,9 @@ export function ContactHub({
             size="sm"
             onClick={onJoinRoom}
             disabled={!bookingCode.trim()}
-            className="h-10 px-5 bg-foreground text-background hover:bg-foreground/90 font-bold"
+            className="h-8 px-3 bg-foreground text-background hover:bg-foreground/90 font-semibold text-xs"
           >
             Join
-            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
       </div>
