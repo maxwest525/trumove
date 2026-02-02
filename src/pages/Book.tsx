@@ -1035,7 +1035,7 @@ const trudyResponses = [
 ];
 
 // Demo Video Placeholder Component - shows fake video call experience
-function DemoVideoPlaceholder({ onLeave, isPiP = false }: { onLeave: () => void; isPiP?: boolean }) {
+function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { onLeave: () => void; isPiP?: boolean; onWhiteboardOpen?: () => void }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -1257,31 +1257,81 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false }: { onLeave: () => void;
         )}
       </div>
 
-      {/* Control bar - compact in PiP */}
+      {/* Control bar - compact in PiP, full controls in normal mode */}
       <div className={cn(
         "bg-slate-900 border-t border-white/10 flex items-center justify-center px-2",
-        isPiP ? "h-10 gap-2" : "h-16 gap-3 px-4"
+        isPiP ? "h-10 gap-2" : "h-14 gap-2 px-4"
       )}>
+        {/* Whiteboard - hide in PiP */}
+        {!isPiP && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => onWhiteboardOpen?.()}
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors"
+              >
+                <PenTool className="w-4 h-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top"><p>Whiteboard</p></TooltipContent>
+          </Tooltip>
+        )}
+        
+        {/* Volume control - hide in PiP */}
+        {!isPiP && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className={cn(
+                  "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
+                  volume === 0 ? "bg-amber-500/30 text-amber-400" : "bg-white/10 text-white hover:bg-white/20"
+                )}
+              >
+                {volume === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="w-40 p-3">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span>Volume</span>
+                  <span className="text-muted-foreground">{Math.round(volume * 100)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={volume}
+                  onChange={(e) => setVolume(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
+                />
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        
+        {/* Mic toggle */}
         <button
           onClick={() => setIsMuted(!isMuted)}
           className={cn(
             "rounded-full flex items-center justify-center transition-colors",
-            isPiP ? "w-7 h-7" : "w-11 h-11",
+            isPiP ? "w-7 h-7" : "w-10 h-10",
             isMuted ? "bg-red-500 text-white" : "bg-white/10 text-white hover:bg-white/20"
           )}
         >
-          {isMuted ? <MicOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Mic className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
+          {isMuted ? <MicOff className={isPiP ? "w-3.5 h-3.5" : "w-4 h-4"} /> : <Mic className={isPiP ? "w-3.5 h-3.5" : "w-4 h-4"} />}
         </button>
         
+        {/* Video toggle */}
         <button
           onClick={() => setIsVideoOff(!isVideoOff)}
           className={cn(
             "rounded-full flex items-center justify-center transition-colors",
-            isPiP ? "w-7 h-7" : "w-11 h-11",
+            isPiP ? "w-7 h-7" : "w-10 h-10",
             isVideoOff ? "bg-red-500 text-white" : "bg-white/10 text-white hover:bg-white/20"
           )}
         >
-          {isVideoOff ? <VideoOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Video className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
+          {isVideoOff ? <VideoOff className={isPiP ? "w-3.5 h-3.5" : "w-4 h-4"} /> : <Video className={isPiP ? "w-3.5 h-3.5" : "w-4 h-4"} />}
         </button>
 
         {/* Screen share button - hide in PiP */}
@@ -1291,11 +1341,11 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false }: { onLeave: () => void;
               <button
                 onClick={handleShareScreen}
                 className={cn(
-                  "w-11 h-11 rounded-full flex items-center justify-center transition-colors",
+                  "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
                   isScreenSharing ? "bg-primary text-primary-foreground" : "bg-white/10 text-white hover:bg-white/20"
                 )}
               >
-                <Monitor className="w-5 h-5" />
+                <Monitor className="w-4 h-4" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="top">
@@ -1303,15 +1353,54 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false }: { onLeave: () => void;
             </TooltipContent>
           </Tooltip>
         )}
+        
+        {/* Settings - hide in PiP */}
+        {!isPiP && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors">
+                <Settings className="w-4 h-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="w-56">
+              <DropdownMenuLabel className="text-xs flex items-center gap-2">
+                <Camera className="w-3.5 h-3.5" /> Camera
+              </DropdownMenuLabel>
+              {videoInputDevices.map((device) => (
+                <DropdownMenuItem 
+                  key={device.deviceId}
+                  className={cn("text-xs", selectedCamera === device.deviceId && "bg-accent")}
+                  onClick={() => setSelectedCamera(device.deviceId)}
+                >
+                  {device.label || 'Default Camera'}
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-xs flex items-center gap-2">
+                <Volume2 className="w-3.5 h-3.5" /> Speaker
+              </DropdownMenuLabel>
+              {audioOutputDevices.map((device) => (
+                <DropdownMenuItem 
+                  key={device.deviceId}
+                  className={cn("text-xs", selectedSpeaker === device.deviceId && "bg-accent")}
+                  onClick={() => setSelectedSpeaker(device.deviceId)}
+                >
+                  {device.label || 'Default Speaker'}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
 
+        {/* End call button */}
         <button
           onClick={onLeave}
           className={cn(
-            "rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors",
-            isPiP ? "w-7 h-7" : "w-11 h-11"
+            "rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors ml-2",
+            isPiP ? "w-7 h-7" : "w-10 h-10"
           )}
         >
-          <Phone className={cn("rotate-[135deg]", isPiP ? "w-3.5 h-3.5" : "w-5 h-5")} />
+          <Phone className={cn("rotate-[135deg]", isPiP ? "w-3.5 h-3.5" : "w-4 h-4")} />
         </button>
       </div>
     </div>
@@ -1822,47 +1911,56 @@ export default function Book() {
           {/* Three-Column Grid: Tools | Video | Chat */}
           <div className="grid grid-cols-1 lg:grid-cols-[auto,1fr,380px] gap-4 mb-8">
 
-            {/* Left Toolbar - Only when not on call */}
+            {/* Left Toolbar - Only when not on call, responsive */}
             {!roomUrl && (
-              <div className="flex flex-col gap-2 p-4 rounded-xl bg-muted/50 border border-border h-fit">
-                {/* Toolbar Header */}
-                <div className="flex items-center gap-2 pb-2 border-b border-border mb-1">
+              <div className="flex flex-col gap-2 p-3 lg:p-4 rounded-xl bg-muted/50 border border-border h-fit">
+                {/* Toolbar Header - hidden on small screens */}
+                <div className="hidden lg:flex items-center gap-2 pb-2 border-b border-border mb-1">
                   <Settings className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm font-semibold text-foreground">Quick Tools</span>
                 </div>
                 
-                <Button
-                  variant="outline"
-                  onClick={() => setShowScheduleModal(true)}
-                  className="h-10 px-4 gap-2 justify-start"
-                >
-                  <CalendarDays className="w-4 h-4" />
-                  Schedule
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowWhiteboardModal(true)}
-                  className="h-10 px-4 gap-2 justify-start"
-                >
-                  <PenTool className="w-4 h-4" />
-                  Whiteboard
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleScreenShare}
-                  className="h-10 px-4 gap-2 justify-start"
-                >
-                  <Monitor className="w-4 h-4" />
-                  Screen Share
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setIdleVolume(idleVolume === 0 ? 0.75 : 0)}
-                  className="h-10 px-4 gap-2 justify-start"
-                >
-                  {idleVolume === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                  Volume
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowScheduleModal(true)}
+                      className="h-10 lg:px-4 px-3 gap-2 lg:justify-start justify-center"
+                    >
+                      <CalendarDays className="w-4 h-4 shrink-0" />
+                      <span className="hidden lg:inline">Schedule</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="lg:hidden"><p>Schedule</p></TooltipContent>
+                </Tooltip>
+                
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowWhiteboardModal(true)}
+                      className="h-10 lg:px-4 px-3 gap-2 lg:justify-start justify-center"
+                    >
+                      <PenTool className="w-4 h-4 shrink-0" />
+                      <span className="hidden lg:inline">Whiteboard</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="lg:hidden"><p>Whiteboard</p></TooltipContent>
+                </Tooltip>
+                
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={handleScreenShare}
+                      className="h-10 lg:px-4 px-3 gap-2 lg:justify-start justify-center"
+                    >
+                      <Monitor className="w-4 h-4 shrink-0" />
+                      <span className="hidden lg:inline">Screen Share</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="lg:hidden"><p>Screen Share</p></TooltipContent>
+                </Tooltip>
                 
                 {/* Demo button - subtle */}
                 <button
@@ -1874,10 +1972,10 @@ export default function Book() {
               </div>
             )}
 
-            {/* Main Video Window - Enlarged */}
+            {/* Main Video Window - 600x450 aspect */}
             <Card id="video-consult-container" className="overflow-hidden border-2 border-primary/20 bg-gradient-to-b from-muted/30 to-background shadow-lg shadow-primary/5 ring-1 ring-white/5">
               <CardContent className="p-0">
-                <div className="relative min-h-[480px] h-[620px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
+                <div className="relative min-h-[450px] h-[450px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
                   {/* Top controls - Fullscreen, PiP, and Whiteboard */}
                   <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                     {roomUrl && (
@@ -1908,7 +2006,7 @@ export default function Book() {
                   </div>
                   {roomUrl ? (
                     isDemo ? (
-                      <DemoVideoPlaceholder onLeave={handleLeaveRoom} />
+                      <DemoVideoPlaceholder onLeave={handleLeaveRoom} onWhiteboardOpen={() => setShowWhiteboardModal(true)} />
                     ) : (
                       <>
                         <DailyVideoRoom 
@@ -2458,7 +2556,7 @@ export default function Book() {
             <div className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center" style={{ height: expandedVideoSize.height - 40 }}>
               {roomUrl ? (
                 isDemo ? (
-                  <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsFullscreen(false); }} />
+                  <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsFullscreen(false); }} onWhiteboardOpen={() => setShowWhiteboardModal(true)} />
                 ) : (
                   <DailyVideoRoom 
                     roomUrl={roomUrl}
@@ -2615,7 +2713,7 @@ export default function Book() {
           
           <div className="relative" style={{ height: pipSize.height }}>
             {isDemo ? (
-              <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsPiP(false); }} isPiP />
+              <DemoVideoPlaceholder onLeave={() => { handleLeaveRoom(); setIsPiP(false); }} isPiP onWhiteboardOpen={() => setShowWhiteboardModal(true)} />
             ) : (
               <DailyVideoRoom 
                 roomUrl={roomUrl}

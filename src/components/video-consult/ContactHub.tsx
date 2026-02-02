@@ -40,50 +40,50 @@ export function ContactHub({
         </p>
       </div>
 
-      {/* Primary Action Buttons - Brand-styled with refined icons */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 w-full max-w-3xl">
+      {/* Primary Action Buttons - Brand-styled with hover animations */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl">
         {/* Video Call - Primary brand green */}
         <button
           onClick={onStartVideoCall}
-          className="group flex flex-col items-center gap-4 p-6 rounded-2xl bg-gradient-to-b from-white/15 to-white/5 border-2 border-white/20 hover:border-primary/60 hover:bg-primary/20 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
+          className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-gradient-to-b from-white/12 to-white/5 border-2 border-white/15 hover:border-primary/50 hover:bg-primary/15 hover:shadow-[0_0_30px_-5px] hover:shadow-primary/40 hover:scale-105 active:scale-100 transition-all duration-300 ease-out"
         >
-          <div className="w-18 h-18 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 flex items-center justify-center group-hover:scale-110 group-hover:border-primary/50 transition-all duration-300 p-4">
-            <Video className="w-9 h-9 text-primary" strokeWidth={2} />
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/25 to-primary/10 border border-primary/25 flex items-center justify-center group-hover:scale-110 group-hover:shadow-[0_0_20px_-2px] group-hover:shadow-primary/50 transition-all duration-300 ease-out">
+            <Video className="w-7 h-7 text-primary" strokeWidth={2.5} />
           </div>
-          <span className="text-base font-bold text-white group-hover:text-primary transition-colors">Video Call</span>
+          <span className="text-sm font-bold text-white group-hover:text-primary transition-colors duration-200">Video Call</span>
         </button>
 
         {/* Voice Call - Warm amber/orange */}
         <button
           onClick={handleVoiceCall}
-          className="group flex flex-col items-center gap-4 p-6 rounded-2xl bg-gradient-to-b from-white/15 to-white/5 border-2 border-white/20 hover:border-amber-400/60 hover:bg-amber-500/20 hover:shadow-lg hover:shadow-amber-500/20 transition-all duration-300"
+          className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-gradient-to-b from-white/12 to-white/5 border-2 border-white/15 hover:border-amber-400/50 hover:bg-amber-500/15 hover:shadow-[0_0_30px_-5px] hover:shadow-amber-500/40 hover:scale-105 active:scale-100 transition-all duration-300 ease-out"
         >
-          <div className="w-18 h-18 rounded-2xl bg-gradient-to-br from-amber-500/30 to-amber-500/10 border border-amber-500/30 flex items-center justify-center group-hover:scale-110 group-hover:border-amber-400/50 transition-all duration-300 p-4">
-            <PhoneCall className="w-9 h-9 text-amber-400" strokeWidth={2} />
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/25 to-amber-500/10 border border-amber-500/25 flex items-center justify-center group-hover:scale-110 group-hover:shadow-[0_0_20px_-2px] group-hover:shadow-amber-500/50 transition-all duration-300 ease-out">
+            <PhoneCall className="w-7 h-7 text-amber-400" strokeWidth={2.5} />
           </div>
-          <span className="text-base font-bold text-white group-hover:text-amber-400 transition-colors">Voice Call</span>
+          <span className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors duration-200">Voice Call</span>
         </button>
 
         {/* Email - Cool blue/indigo */}
         <button
           onClick={handleEmail}
-          className="group flex flex-col items-center gap-4 p-6 rounded-2xl bg-gradient-to-b from-white/15 to-white/5 border-2 border-white/20 hover:border-blue-400/60 hover:bg-blue-500/20 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
+          className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-gradient-to-b from-white/12 to-white/5 border-2 border-white/15 hover:border-sky-400/50 hover:bg-sky-500/15 hover:shadow-[0_0_30px_-5px] hover:shadow-sky-500/40 hover:scale-105 active:scale-100 transition-all duration-300 ease-out"
         >
-          <div className="w-18 h-18 rounded-2xl bg-gradient-to-br from-blue-500/30 to-blue-500/10 border border-blue-500/30 flex items-center justify-center group-hover:scale-110 group-hover:border-blue-400/50 transition-all duration-300 p-4">
-            <Mail className="w-9 h-9 text-blue-400" strokeWidth={2} />
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-sky-500/25 to-sky-500/10 border border-sky-500/25 flex items-center justify-center group-hover:scale-110 group-hover:shadow-[0_0_20px_-2px] group-hover:shadow-sky-500/50 transition-all duration-300 ease-out">
+            <Mail className="w-7 h-7 text-sky-400" strokeWidth={2.5} />
           </div>
-          <span className="text-base font-bold text-white group-hover:text-blue-400 transition-colors">Email Us</span>
+          <span className="text-sm font-bold text-white group-hover:text-sky-400 transition-colors duration-200">Email Us</span>
         </button>
 
         {/* Text/SMS - Teal/cyan */}
         <button
           onClick={handleText}
-          className="group flex flex-col items-center gap-4 p-6 rounded-2xl bg-gradient-to-b from-white/15 to-white/5 border-2 border-white/20 hover:border-cyan-400/60 hover:bg-cyan-500/20 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300"
+          className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-gradient-to-b from-white/12 to-white/5 border-2 border-white/15 hover:border-teal-400/50 hover:bg-teal-500/15 hover:shadow-[0_0_30px_-5px] hover:shadow-teal-500/40 hover:scale-105 active:scale-100 transition-all duration-300 ease-out"
         >
-          <div className="w-18 h-18 rounded-2xl bg-gradient-to-br from-cyan-500/30 to-cyan-500/10 border border-cyan-500/30 flex items-center justify-center group-hover:scale-110 group-hover:border-cyan-400/50 transition-all duration-300 p-4">
-            <Send className="w-9 h-9 text-cyan-400" strokeWidth={2} />
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500/25 to-teal-500/10 border border-teal-500/25 flex items-center justify-center group-hover:scale-110 group-hover:shadow-[0_0_20px_-2px] group-hover:shadow-teal-500/50 transition-all duration-300 ease-out">
+            <Send className="w-7 h-7 text-teal-400" strokeWidth={2.5} />
           </div>
-          <span className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors">Text Us</span>
+          <span className="text-sm font-bold text-white group-hover:text-teal-400 transition-colors duration-200">Text Us</span>
         </button>
       </div>
 
