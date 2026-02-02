@@ -78,14 +78,14 @@ function AddressPreview({
     setHasError(false);
   }, [address, coordinates]);
 
-  // Google Street View Static API URL
+  // Google Street View Static API URL - larger images
   const streetViewUrl = coordinates
-    ? `https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${coordinates[1]},${coordinates[0]}&fov=90&heading=0&pitch=10&key=${GOOGLE_MAPS_API_KEY}`
+    ? `https://maps.googleapis.com/maps/api/streetview?size=600x300&location=${coordinates[1]},${coordinates[0]}&fov=90&heading=0&pitch=10&key=${GOOGLE_MAPS_API_KEY}`
     : null;
 
-  // Google Static Maps satellite fallback
+  // Google Static Maps satellite fallback - larger
   const satelliteUrl = coordinates
-    ? `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates[1]},${coordinates[0]}&zoom=17&size=400x200&maptype=hybrid&key=${GOOGLE_MAPS_API_KEY}`
+    ? `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates[1]},${coordinates[0]}&zoom=17&size=600x300&maptype=hybrid&key=${GOOGLE_MAPS_API_KEY}`
     : null;
 
   const Icon = variant === "origin" ? Navigation : MapPin;
@@ -96,7 +96,7 @@ function AddressPreview({
   }
 
   return (
-    <div className="relative w-full h-[100px] rounded-lg overflow-hidden border border-border bg-muted animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div className="relative w-full h-[180px] rounded-lg overflow-hidden border border-border bg-muted animate-in fade-in slide-in-from-bottom-2 duration-300">
       {isLoading && (
         <div className="absolute inset-0 z-10">
           {/* Skeleton loading animation */}
@@ -397,7 +397,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                   coordinates={originCoords}
                 />
               ) : (
-                <div className="w-full h-[100px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
+                <div className="w-full h-[180px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
                   <span className="text-xs text-muted-foreground">Enter origin address to preview</span>
                 </div>
               )}
@@ -416,7 +416,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                   coordinates={destCoords}
                 />
               ) : (
-                <div className="w-full h-[100px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
+                <div className="w-full h-[180px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
                   <span className="text-xs text-muted-foreground">Enter destination to preview</span>
                 </div>
               )}
