@@ -1,12 +1,22 @@
 import { useState, useEffect } from "react";
-import { Cloud, CloudRain, Sun, Snowflake, CloudFog, Loader2, ArrowRight } from "lucide-react";
+import { Cloud, CloudRain, Sun, Snowflake, CloudFog, Loader2, ArrowRight, Wind, Droplets } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface WeatherData {
   location: string;
   temp: number;
+  feels_like: number;
+  humidity: number;
   description: string;
   icon: string;
+  wind_speed: number;
+  visibility: number;
 }
 
 interface CompactRouteWeatherProps {
@@ -106,19 +116,59 @@ export function CompactRouteWeather({
   }
 
   return (
-    <div className="tracking-map-weather-compact">
-      {weather.map((w, index) => {
-        const WeatherIcon = getWeatherIcon(w.icon);
-        const isLast = index === weather.length - 1;
-        
-        return (
-          <div key={index} className="tracking-map-weather-point">
-            <WeatherIcon className="w-4 h-4 text-primary" />
-            <span className="tracking-map-weather-temp">{w.temp}°F</span>
-            {!isLast && <ArrowRight className="w-3 h-3 text-muted-foreground mx-1" />}
-          </div>
-        );
-      })}
-    </div>
+    <TooltipProvider delayDuration={200}>
+      <div className="tracking-map-weather-compact">
+        {weather.map((w, index) => {
+          const WeatherIcon = getWeatherIcon(w.icon);
+          const isLast = index === weather.length - 1;
+          
+          return (
+            <div key={index} className="tracking-map-weather-point-wrapper">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="tracking-map-weather-point">
+                    <WeatherIcon className="w-4 h-4 text-primary" />
+                    <span className="tracking-map-weather-temp">{w.temp}°F</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="tracking-weather-tooltip">
+                  <div className="tracking-weather-tooltip-header">
+                    <WeatherIcon className="w-5 h-5 text-primary" />
+                    <div>
+                      <div className="tracking-weather-tooltip-location">{w.location}</div>
+                      <div className="tracking-weather-tooltip-desc">{w.description}</div>
+                    </div>
+                  </div>
+                  <div className="tracking-weather-tooltip-grid">
+                    <div className="tracking-weather-tooltip-item">
+                      <span className="tracking-weather-tooltip-label">Temp</span>
+                      <span className="tracking-weather-tooltip-value">{w.temp}°F</span>
+                    </div>
+                    <div className="tracking-weather-tooltip-item">
+                      <span className="tracking-weather-tooltip-label">Feels Like</span>
+                      <span className="tracking-weather-tooltip-value">{w.feels_like}°F</span>
+                    </div>
+                    <div className="tracking-weather-tooltip-item">
+                      <Droplets className="w-3 h-3 text-primary" />
+                      <span className="tracking-weather-tooltip-label">Humidity</span>
+                      <span className="tracking-weather-tooltip-value">{w.humidity}%</span>
+                    </div>
+                    <div className="tracking-weather-tooltip-item">
+                      <Wind className="w-3 h-3 text-muted-foreground" />
+                      <span className="tracking-weather-tooltip-label">Wind</span>
+                      <span className="tracking-weather-tooltip-value">{w.wind_speed} mph</span>
+                    </div>
+                  </div>
+                  <div className="tracking-weather-tooltip-vis">
+                    Visibility: {w.visibility} mi
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+              {!isLast && <ArrowRight className="w-3 h-3 text-muted-foreground mx-1" />}
+            </div>
+          );
+        })}
+      </div>
+    </TooltipProvider>
   );
 }
