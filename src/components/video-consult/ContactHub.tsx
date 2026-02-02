@@ -60,50 +60,42 @@ export function ContactHub({
         </p>
       </div>
 
-      {/* Primary Action Buttons - Darker icon backgrounds, hover glow */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl mb-auto">
+      {/* Primary Action Buttons - Clean pill style */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-2xl mb-auto">
         {/* Video Call */}
         <button
           onClick={onStartVideoCall}
-          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-800/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2 py-4 px-3 rounded-xl bg-muted/10 border border-white/20 hover:bg-primary hover:border-primary transition-all duration-200"
         >
-          <div className="w-11 h-11 rounded-lg bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-            <Video className="w-5 h-5 text-emerald-400" strokeWidth={2} />
-          </div>
-          <span className="text-sm font-bold text-white text-center">Video Call</span>
+          <Video className="w-5 h-5 text-white/70 group-hover:text-primary-foreground" strokeWidth={2} />
+          <span className="text-xs font-semibold text-white group-hover:text-primary-foreground">Video Call</span>
         </button>
 
         {/* Voice Call */}
         <button
           onClick={handleVoiceCall}
-          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-800/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2 py-4 px-3 rounded-xl bg-muted/10 border border-white/20 hover:bg-primary hover:border-primary transition-all duration-200"
         >
-          <div className="w-11 h-11 rounded-lg bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-            <PhoneCall className="w-5 h-5 text-emerald-400" strokeWidth={2} />
-          </div>
-          <span className="text-sm font-bold text-white text-center">Voice Call</span>
+          <PhoneCall className="w-5 h-5 text-white/70 group-hover:text-primary-foreground" strokeWidth={2} />
+          <span className="text-xs font-semibold text-white group-hover:text-primary-foreground">Voice Call</span>
         </button>
 
         {/* Email */}
         <button
           onClick={handleEmail}
-          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-800/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2 py-4 px-3 rounded-xl bg-muted/10 border border-white/20 hover:bg-primary hover:border-primary transition-all duration-200"
         >
-          <div className="w-11 h-11 rounded-lg bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-            <Mail className="w-5 h-5 text-emerald-400" strokeWidth={2} />
-          </div>
-          <span className="text-sm font-bold text-white text-center">Email Us</span>
+          <Mail className="w-5 h-5 text-white/70 group-hover:text-primary-foreground" strokeWidth={2} />
+          <span className="text-xs font-semibold text-white group-hover:text-primary-foreground">Email Us</span>
         </button>
 
         {/* Text/SMS */}
         <button
           onClick={handleText}
-          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-slate-800/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-700/60 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2 py-4 px-3 rounded-xl bg-muted/10 border border-white/20 hover:bg-primary hover:border-primary transition-all duration-200"
         >
-          <div className="w-11 h-11 rounded-lg bg-slate-950 border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
-            <Send className="w-5 h-5 text-emerald-400" strokeWidth={2} />
-          </div>
-          <span className="text-sm font-bold text-white text-center">Text Us</span>
+          <Send className="w-5 h-5 text-white/70 group-hover:text-primary-foreground" strokeWidth={2} />
+          <span className="text-xs font-semibold text-white group-hover:text-primary-foreground">Text Us</span>
         </button>
       </div>
 
