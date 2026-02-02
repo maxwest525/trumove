@@ -55,11 +55,31 @@ const useScrollToTop = () => {
 };
 
 // Fake Agent View - Full-bleed video feed style like a real call with subtle animation
-function FakeAgentView({ isMicMuted, setIsMicMuted, audioOutputDevices }: { 
+function FakeAgentView({ 
+  isMicMuted, 
+  setIsMicMuted, 
+  audioOutputDevices,
+  videoInputDevices,
+  selectedSpeaker,
+  setSelectedSpeaker,
+  selectedCamera,
+  setSelectedCamera,
+  volume,
+  setVolume
+}: { 
   isMicMuted: boolean; 
   setIsMicMuted: (val: boolean) => void;
   audioOutputDevices: MediaDeviceInfo[];
+  videoInputDevices: MediaDeviceInfo[];
+  selectedSpeaker: string;
+  setSelectedSpeaker: (id: string) => void;
+  selectedCamera: string;
+  setSelectedCamera: (id: string) => void;
+  volume: number;
+  setVolume: (vol: number) => void;
 }) {
+  const isMuted = volume === 0;
+  
   return (
     <div className="absolute inset-0">
       {/* Full-bleed agent "video" with professional background */}
@@ -80,9 +100,91 @@ function FakeAgentView({ isMicMuted, setIsMicMuted, audioOutputDevices }: {
         LIVE
       </div>
       
+      {/* Top Right - Settings Dropdown for Camera/Speaker */}
+      <div className="absolute top-4 right-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 rounded-full bg-black/50 border border-white/30 text-white hover:bg-black/70 backdrop-blur-sm"
+            >
+              <Settings className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-64 bg-popover border border-border shadow-xl z-50">
+            {/* Camera Selection */}
+            <DropdownMenuLabel className="text-xs font-semibold flex items-center gap-2">
+              <Camera className="w-3.5 h-3.5" />
+              Camera
+            </DropdownMenuLabel>
+            {videoInputDevices.length > 0 ? (
+              videoInputDevices.map((device) => (
+                <DropdownMenuItem 
+                  key={device.deviceId} 
+                  className={cn(
+                    "text-xs cursor-pointer",
+                    selectedCamera === device.deviceId && "bg-accent"
+                  )}
+                  onClick={() => {
+                    setSelectedCamera(device.deviceId);
+                    toast.success(`Camera: ${device.label || 'Camera'}`);
+                  }}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    {selectedCamera === device.deviceId && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
+                    )}
+                    <span className="truncate">{device.label || 'Default Camera'}</span>
+                  </div>
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                No cameras found
+              </DropdownMenuItem>
+            )}
+            
+            <DropdownMenuSeparator />
+            
+            {/* Speaker Selection */}
+            <DropdownMenuLabel className="text-xs font-semibold flex items-center gap-2">
+              <Volume2 className="w-3.5 h-3.5" />
+              Speaker
+            </DropdownMenuLabel>
+            {audioOutputDevices.length > 0 ? (
+              audioOutputDevices.map((device) => (
+                <DropdownMenuItem 
+                  key={device.deviceId} 
+                  className={cn(
+                    "text-xs cursor-pointer",
+                    selectedSpeaker === device.deviceId && "bg-accent"
+                  )}
+                  onClick={() => {
+                    setSelectedSpeaker(device.deviceId);
+                    toast.success(`Speaker: ${device.label || 'Speaker'}`);
+                  }}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    {selectedSpeaker === device.deviceId && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
+                    )}
+                    <span className="truncate">{device.label || 'Default Speaker'}</span>
+                  </div>
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                Default Speaker
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      
       {/* Name badge overlay - bottom left */}
       <div className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm">
-        <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+        <div className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
         <div>
           <p className="text-white font-bold text-xs">Trudy Martinez</p>
           <p className="text-white/60 text-[10px]">Senior Moving Specialist</p>
@@ -91,32 +193,52 @@ function FakeAgentView({ isMicMuted, setIsMicMuted, audioOutputDevices }: {
       
       {/* Bottom Right Audio Controls */}
       <div className="absolute bottom-4 right-4 flex items-center gap-2">
-        {/* Speaker Toggle with Dropdown */}
+        {/* Volume Control with Slider */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 rounded-full bg-black/50 border border-white/30 text-white hover:bg-black/70 backdrop-blur-sm"
-              title="Speaker settings"
+              className={cn(
+                "h-10 w-10 rounded-full bg-black/50 border border-white/30 text-white hover:bg-black/70 backdrop-blur-sm",
+                isMuted && "border-amber-500/50"
+              )}
+              title="Volume control"
             >
-              <Volume2 className="w-5 h-5" />
+              {isMuted ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5" />}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel className="text-xs">Select Speaker</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {audioOutputDevices.length > 0 ? (
-              audioOutputDevices.map((device) => (
-                <DropdownMenuItem key={device.deviceId} className="text-xs">
-                  {device.label || 'Default Speaker'}
-                </DropdownMenuItem>
-              ))
-            ) : (
-              <DropdownMenuItem disabled className="text-xs">
-                Default Speaker
-              </DropdownMenuItem>
-            )}
+          <DropdownMenuContent align="end" className="w-48 p-3 bg-popover border border-border shadow-xl z-50">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium">Volume</span>
+                <span className="text-xs text-muted-foreground">{Math.round(volume * 100)}%</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <VolumeX className="w-4 h-4 text-muted-foreground" />
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={volume}
+                  onChange={(e) => setVolume(parseFloat(e.target.value))}
+                  className="flex-1 h-2 bg-muted rounded-full appearance-none cursor-pointer accent-sky-500
+                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 
+                    [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-sky-500 [&::-webkit-slider-thumb]:cursor-pointer
+                    [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white"
+                />
+                <Volume2 className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-xs h-7"
+                onClick={() => setVolume(volume === 0 ? 0.75 : 0)}
+              >
+                {isMuted ? "Unmute" : "Mute"}
+              </Button>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
         
@@ -942,19 +1064,37 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false }: { onLeave: () => void;
   const [hasRunTimeline, setHasRunTimeline] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [audioOutputDevices, setAudioOutputDevices] = useState<MediaDeviceInfo[]>([]);
+  const [videoInputDevices, setVideoInputDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedSpeaker, setSelectedSpeaker] = useState<string>('default');
+  const [selectedCamera, setSelectedCamera] = useState<string>('default');
+  const [volume, setVolume] = useState<number>(0.75);
 
-  // Fetch audio output devices
+  // Fetch all media devices
   useEffect(() => {
-    const getAudioDevices = async () => {
+    const getMediaDevices = async () => {
       try {
+        // Request permission to get device labels
+        await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).catch(() => {});
+        
         const devices = await navigator.mediaDevices.enumerateDevices();
         const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
+        const videoInputs = devices.filter(device => device.kind === 'videoinput');
+        
         setAudioOutputDevices(audioOutputs);
+        setVideoInputDevices(videoInputs);
+        
+        // Set default selections
+        if (audioOutputs.length > 0 && selectedSpeaker === 'default') {
+          setSelectedSpeaker(audioOutputs[0].deviceId);
+        }
+        if (videoInputs.length > 0 && selectedCamera === 'default') {
+          setSelectedCamera(videoInputs[0].deviceId);
+        }
       } catch (error) {
-        console.log('Could not enumerate audio devices:', error);
+        console.log('Could not enumerate media devices:', error);
       }
     };
-    getAudioDevices();
+    getMediaDevices();
   }, []);
 
   // Call duration timer
@@ -1044,7 +1184,18 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false }: { onLeave: () => void;
       <div className="flex-1 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         {/* Agent always visible (dimmed when screen sharing) */}
         <div className={`absolute inset-0 transition-opacity duration-300 ${isScreenSharing ? 'opacity-30' : 'opacity-100'}`}>
-          <FakeAgentView isMicMuted={isMuted} setIsMicMuted={setIsMuted} audioOutputDevices={audioOutputDevices} />
+          <FakeAgentView 
+            isMicMuted={isMuted} 
+            setIsMicMuted={setIsMuted} 
+            audioOutputDevices={audioOutputDevices}
+            videoInputDevices={videoInputDevices}
+            selectedSpeaker={selectedSpeaker}
+            setSelectedSpeaker={setSelectedSpeaker}
+            selectedCamera={selectedCamera}
+            setSelectedCamera={setSelectedCamera}
+            volume={volume}
+            setVolume={setVolume}
+          />
         </div>
         
         {/* Screen share modal overlay */}
