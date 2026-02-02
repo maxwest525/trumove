@@ -25999,54 +25999,157 @@
   font-weight: 700;
 }
 
-.tracking-header-search {
+/* Booking Input Group in Header - Center */
+.tracking-header-booking {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  border-radius: 10px;
-  padding: 6px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  gap: 12px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.tracking-header-input {
+.tracking-booking-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.tracking-booking-input {
   width: 200px;
-  height: 28px;
+  height: 36px;
+  padding: 0 14px;
   background: transparent;
   border: none;
   color: white;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   outline: none;
 }
 
-.tracking-header-input::placeholder {
+.tracking-booking-input::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
-.tracking-header-input:focus {
-  border-color: hsl(var(--primary) / 0.6);
-  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3);
-}
-
-.tracking-header-go-btn {
-  height: 28px;
-  padding: 0 14px;
-  background: hsl(var(--card)) !important;
-  color: hsl(var(--foreground)) !important;
-  font-weight: 600;
-  font-size: 12px;
-  border-radius: 6px;
-  border: 1px solid hsl(var(--border)) !important;
-  transition: all 0.2s;
-}
-
-.tracking-header-go-btn:hover {
+.tracking-booking-go-btn {
+  height: 36px;
+  padding: 0 16px;
   background: hsl(var(--primary)) !important;
   color: hsl(0 0% 0%) !important;
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 0 6px 6px 0;
+  border: none !important;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tracking-booking-go-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 16px hsl(var(--primary) / 0.5);
+}
+
+.tracking-demo-btn {
+  height: 36px;
+  padding: 0 14px;
+  background: transparent !important;
+  color: hsl(var(--primary)) !important;
+  font-weight: 600;
+  font-size: 12px;
+  border: 2px solid hsl(var(--primary) / 0.5) !important;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tracking-demo-btn:hover {
+  background: hsl(var(--primary) / 0.15) !important;
   border-color: hsl(var(--primary)) !important;
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.3);
+}
+
+/* Below Map Panel - Weather, Routes, Weigh Stations */
+.tracking-below-map-panel {
+  display: flex;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(15, 15, 15, 0.9);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+}
+
+.tracking-below-map-section {
+  flex: 1;
+  min-width: 200px;
+  max-width: 350px;
+}
+
+.tracking-below-map-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tracking-alternate-routes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tracking-alternate-route-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tracking-alt-route-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+}
+
+.tracking-alt-route-meta {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tracking-alt-toll-free {
+  color: hsl(var(--primary));
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* Weigh Station Section in Below-Map Panel */
+.tracking-weigh-section .weigh-station-checklist {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.tracking-weigh-section .weigh-station-scroll {
+  max-height: 150px;
 }
 
 .tracking-header-satellite-btn {
@@ -27156,10 +27259,44 @@
   transform: translateX(-8px);
 }
 
+/* Weigh Station Status Colors - Overhauled */
+.weigh-station-item.weigh-passed {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 95, 70, 0.08) 100%);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.1);
+}
+
+.weigh-station-item.weigh-approaching {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.18) 0%, rgba(154, 52, 18, 0.1) 100%);
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 16px rgba(249, 115, 22, 0.15);
+  animation: weigh-station-fade-in 0.3s ease-out forwards, weigh-approaching-pulse 2s ease-in-out infinite;
+}
+
+.weigh-station-item.weigh-upcoming {
+  background: rgba(71, 85, 105, 0.1);
+  border-color: rgba(71, 85, 105, 0.25);
+  opacity: 0.7;
+}
+
+.weigh-station-item.weigh-upcoming:hover {
+  opacity: 0.9;
+  background: rgba(71, 85, 105, 0.15);
+}
+
 @keyframes weigh-station-fade-in {
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes weigh-approaching-pulse {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(249, 115, 22, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(249, 115, 22, 0.3);
   }
 }
 
