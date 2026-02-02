@@ -98,8 +98,16 @@ function AddressPreview({
   return (
     <div className="relative w-full h-[100px] rounded-lg overflow-hidden border border-border bg-muted animate-in fade-in slide-in-from-bottom-2 duration-300">
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
-          <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+        <div className="absolute inset-0 z-10">
+          {/* Skeleton loading animation */}
+          <div className="absolute inset-0 bg-gradient-to-r from-muted via-muted-foreground/10 to-muted animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skeleton-shimmer" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-muted-foreground/10 flex items-center justify-center">
+              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+            </div>
+            <div className="h-2 w-24 rounded bg-muted-foreground/10" />
+          </div>
         </div>
       )}
       

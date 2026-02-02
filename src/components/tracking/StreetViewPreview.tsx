@@ -175,8 +175,17 @@ export function StreetViewPreview({
           {coordinates ? (
             <>
               {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white/5 z-10">
-                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                <div className="absolute inset-0 z-10">
+                  {/* Skeleton loading animation */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skeleton-shimmer" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                      <Loader2 className="w-4 h-4 animate-spin text-primary/60" />
+                    </div>
+                    <div className="h-1.5 w-20 rounded bg-white/10" />
+                    <div className="h-1 w-12 rounded bg-white/5" />
+                  </div>
                 </div>
               )}
               
@@ -267,8 +276,19 @@ export function StreetViewPreview({
         {coordinates ? (
           <>
             {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/5 z-10">
-                <Loader2 className="w-5 h-5 animate-spin text-primary" />
+              <div className="absolute inset-0 z-10">
+                {/* Skeleton loading animation */}
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skeleton-shimmer" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                    <Loader2 className="w-5 h-5 animate-spin text-primary/60" />
+                  </div>
+                  <div className="space-y-1.5 flex flex-col items-center">
+                    <div className="h-2 w-24 rounded bg-white/10" />
+                    <div className="h-1.5 w-16 rounded bg-white/5" />
+                  </div>
+                </div>
               </div>
             )}
             
