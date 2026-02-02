@@ -1,4 +1,4 @@
-import { Clock, Route, TrendingUp, DollarSign, AlertTriangle } from "lucide-react";
+import { Clock, Route, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TrafficInfo {
@@ -85,56 +85,30 @@ export function TrackingDashboard({
 
       {/* Traffic & Toll Info (Google Routes) */}
       {(trafficInfo || tollInfo) && (
-        <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-3">
+        <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
           {trafficInfo && (
-            <div className={cn(
-              "rounded-lg p-2 border",
-              trafficInfo.severity === 'high' 
-                ? "bg-red-500/10 border-red-500/20" 
-                : trafficInfo.severity === 'medium'
-                  ? "bg-yellow-500/10 border-yellow-500/20"
-                  : "bg-emerald-500/10 border-emerald-500/20"
-            )}>
-              <div className="flex items-center gap-1 mb-1">
-                <AlertTriangle className={cn(
-                  "w-3 h-3",
-                  trafficInfo.severity === 'high' ? "text-red-400" 
-                    : trafficInfo.severity === 'medium' ? "text-yellow-400" 
-                    : "text-emerald-400"
-                )} />
-                <span className="text-[10px] uppercase tracking-wider text-white/50">Traffic</span>
-              </div>
-              <div className={cn(
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-white/40 uppercase tracking-wider">Traffic</span>
+              <span className={cn(
                 "text-sm font-semibold",
-                trafficInfo.severity === 'high' ? "text-red-300" 
-                  : trafficInfo.severity === 'medium' ? "text-yellow-300" 
-                  : "text-emerald-300"
+                trafficInfo.severity === 'high' ? "text-red-400" 
+                  : trafficInfo.severity === 'medium' ? "text-yellow-400" 
+                  : "text-emerald-400"
               )}>
                 {trafficInfo.hasDelay ? `+${trafficInfo.delayMinutes}m` : 'Clear'}
-              </div>
+              </span>
             </div>
           )}
 
           {tollInfo && (
-            <div className={cn(
-              "rounded-lg p-2 border",
-              tollInfo.hasTolls 
-                ? "bg-white/5 border-white/10" 
-                : "bg-emerald-500/10 border-emerald-500/20"
-            )}>
-              <div className="flex items-center gap-1 mb-1">
-                <DollarSign className={cn(
-                  "w-3 h-3",
-                  tollInfo.hasTolls ? "text-white/40" : "text-emerald-400"
-                )} />
-                <span className="text-[10px] uppercase tracking-wider text-white/50">Tolls</span>
-              </div>
-              <div className={cn(
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-white/40 uppercase tracking-wider">Tolls</span>
+              <span className={cn(
                 "text-sm font-semibold",
-                tollInfo.hasTolls ? "text-white" : "text-emerald-300"
+                tollInfo.hasTolls ? "text-white" : "text-emerald-400"
               )}>
                 {tollInfo.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
-              </div>
+              </span>
             </div>
           )}
         </div>
