@@ -54,62 +54,46 @@ This plan addresses multiple UI/UX improvements across the `/book` video consult
 - Reduce maximum resize dimensions from `1400x900` to `1100x700`
 - Add `top: 80px` offset so the modal can't overlap the header
 
-### 7. Shipment Tracking - Lower Map & Stats by 50px
-**Current Issue:** User wants the map and stats pushed down by 50px without touching the navbar or header.
+### 7. Shipment Tracking - Lower Map & Stats by 50px + Fixed Map Size
+**Current Issue:** User wants the map and stats pushed down by 50px without touching the navbar or header. Also wants the map to be exactly 850px by 550px.
 
 **Solution:**
 - Increase `padding-top` in `.tracking-content` from `16px` to `66px` (adding 50px)
-- Apply same adjustment to responsive breakpoints
+- Set fixed map dimensions: width 850px, height 550px
+- Apply same padding adjustment to responsive breakpoints
 
 ---
 
 ## Technical Details
 
 ### File: `src/components/chat/DraggableChatModal.tsx`
-- Remove the backdrop div (lines 163-168):
-  ```tsx
-  {/* Remove this backdrop */}
-  <div className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm" onClick={onClose} />
-  ```
-- Keep the modal itself, positioned with `fixed z-[70]`
+Remove the backdrop div (lines 162-166):
+```tsx
+{/* Remove this backdrop entirely */}
+<div 
+  className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm"
+  onClick={onClose}
+/>
+```
 
 ### File: `src/pages/Book.tsx`
 
 **Queue Indicator Colors (lines 377-404):**
-```tsx
-// Change from amber to primary theme
-<div className={cn(
-  "bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-lg px-3 py-2 mb-3 transition-all duration-300",
-  isHighlighted && "ring-1 ring-primary"
-)}>
-  <div className="w-6 h-6 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
-    <Users className="w-3 h-3 text-primary" />
-  </div>
-  <span className="text-primary font-mono text-sm font-medium">~{formatTime(waitSeconds)}</span>
-</div>
-```
+Change from amber/orange to primary theme colors:
+- `from-amber-900/30 to-orange-900/20` → `from-primary/20 to-primary/10`
+- `border-amber-500/30` → `border-primary/30`
+- `bg-amber-500/20 border-amber-500/40` → `bg-primary/20 border-primary/40`
+- `text-amber-400` → `text-primary`
+- `text-amber-300` → `text-primary`
 
-**Pop-Out Button (lines 1937-1949):**
+**Pop-Out Button (line 1947):**
 ```tsx
-<button 
-  className="ml-auto !px-1"
-  onClick={() => {
-    setPopoutChatMode(chatMode);
-    setShowPopoutChat(true);
-  }}
->
-  <ExternalLink className="w-3 h-3" />  {/* Reduced from w-4 h-4 */}
-</button>
+<ExternalLink className="w-3 h-3" />  {/* Reduced from w-4 h-4 */}
 ```
+Also change `!px-2` to `!px-1` on line 1940.
 
-**In-Call Chat Tab (lines 1919-1926):**
-```tsx
-<button 
-  className={chatMode === 'liveagent' ? 'active' : ''}
-  onClick={() => setChatMode('liveagent')}
-  // Remove: disabled={!roomUrl}
->
-```
+**In-Call Chat Tab (lines 1918-1926):**
+Remove `disabled={!roomUrl}` from line 1922.
 
 **Live Support Button Text (lines 2184-2191):**
 ```tsx
@@ -119,22 +103,34 @@ This plan addresses multiple UI/UX improvements across the `/book` video consult
 </Button>
 ```
 
-**Expanded Video Modal Size (lines 2567-2656):**
-- Change line 2590 from `{ width: 1200, height: 750 }` to `{ width: 900, height: 550 }`
-- Change max resize constraints (lines 1558-1559) from `1400/900` to `1100/700`
-- Add `top: 80px` minimum offset in positioning logic
+**Expanded Video Modal Size (lines 2558, 2590):**
+- Line 1558: Change max width from `1400` to `1100`
+- Line 1559: Change max height from `900` to `700`
+- Line 2590: Change large preset from `{ width: 1200, height: 750 }` to `{ width: 900, height: 550 }`
+
+**Add minimum top offset for modal positioning:**
+Update modal transform logic to ensure `y` position is at least 80px from top.
 
 ### File: `src/index.css`
 
-**Tracking Content Padding (lines 25807-25817):**
+**Tracking Content Padding (line 25813):**
 ```css
-.tracking-content {
-  /* ... existing styles ... */
-  padding-top: 66px; /* Changed from 16px - added 50px */
+padding-top: 66px; /* Changed from 16px - added 50px */
+```
+
+**Fixed Map Size (lines 25897-25905):**
+```css
+.tracking-map-container {
+  width: 850px;
+  height: 550px;
+  min-height: 550px;
+  max-height: 550px;
+  flex: none;
+  /* ... rest of styles ... */
 }
 ```
 
-**Apply to all responsive breakpoints** in the same section.
+Apply same padding adjustment to responsive breakpoints in lines 25857-25862.
 
 ---
 
@@ -144,7 +140,7 @@ This plan addresses multiple UI/UX improvements across the `/book` video consult
 |------|---------|
 | `src/components/chat/DraggableChatModal.tsx` | Remove backdrop overlay for non-blocking modal |
 | `src/pages/Book.tsx` | Queue colors, pop-out button size, button text, tab disabled state, modal size limits |
-| `src/index.css` | Add 50px to tracking page padding-top |
+| `src/index.css` | Add 50px to tracking page padding-top, set fixed map dimensions 850x550 |
 
 ---
 
@@ -159,4 +155,5 @@ This plan addresses multiple UI/UX improvements across the `/book` video consult
 | In-Call tab | Disabled when no call | Always enabled |
 | Expanded video max | 1200x750 / 1400x900 | 900x550 / 1100x700 |
 | Tracking content top | 16px padding | 66px padding (+50px) |
+| Tracking map size | Dynamic (75% height) | Fixed 850x550px |
 
