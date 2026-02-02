@@ -12069,6 +12069,7 @@
 .header-nav-link:hover {
   color: hsl(var(--foreground));
   background: hsl(var(--primary) / 0.08);
+  transform: translateY(-2px);
 }
 
 .header-nav-link:hover::after {
@@ -12078,6 +12079,7 @@
 .dark .header-nav-link:hover {
   color: hsl(var(--foreground));
   background: hsl(var(--primary) / 0.12);
+  transform: translateY(-2px);
 }
 
 /* Active state - subtle fill with strong underline */
@@ -12665,7 +12667,8 @@
 .mega-consult-icon {
   width: 44px;
   height: 44px;
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--primary) / 0.1));
+  background: hsl(var(--foreground) / 0.08);
+  border: 1px solid hsl(var(--foreground) / 0.1);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -12675,7 +12678,8 @@
 
 .mega-consult-icon:hover {
   transform: scale(1.1);
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.3), hsl(var(--primary) / 0.2));
+  background: hsl(var(--foreground) / 0.12);
+  border-color: hsl(var(--foreground) / 0.15);
 }
 
 .mega-consult-info {

@@ -54,13 +54,13 @@ const ConsultPreview = () => (
     <div className="mega-consult-visual">
       <div className="mega-consult-icons">
         <div className="mega-consult-icon">
-          <Video className="w-5 h-5 text-primary" />
+          <Video className="w-5 h-5 text-foreground" />
         </div>
         <div className="mega-consult-icon">
-          <Phone className="w-5 h-5 text-primary" />
+          <Phone className="w-5 h-5 text-foreground" />
         </div>
         <div className="mega-consult-icon">
-          <MessageSquare className="w-5 h-5 text-primary" />
+          <MessageSquare className="w-5 h-5 text-foreground" />
         </div>
       </div>
     </div>
@@ -75,7 +75,7 @@ const ConsultPreview = () => (
           ~2 min wait
         </span>
         <span className="mega-consult-stat">
-          <CheckCircle2 className="w-3 h-3 text-primary" />
+          <CheckCircle2 className="w-3 h-3" />
           Free consultation
         </span>
       </div>
