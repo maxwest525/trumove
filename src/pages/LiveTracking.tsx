@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
@@ -529,6 +529,34 @@ export default function LiveTracking() {
     toast.success('📍 Route configured!');
   };
 
+  // Handle demo button click
+  const handleDemoClick = () => {
+    setBookingInput('12345');
+    setIsDemoMode(true);
+    // Pre-populate Jacksonville to Miami demo route
+    handleOriginSelect('Jacksonville', '', 'Jacksonville, FL 32202');
+    handleDestSelect('Miami', '', 'Miami, FL 33101');
+    toast.success('🚚 Demo mode activated - Jacksonville to Miami');
+  };
+
+  // Handle booking search
+  const handleBookingSearch = () => {
+    if (!bookingInput.trim()) {
+      toast.error('Please enter a booking ID');
+      return;
+    }
+    
+    // Demo booking codes
+    if (bookingInput === '12345') {
+      handleDemoClick();
+    } else if (bookingInput === '00000') {
+      // Multi-stop demo
+      toast.info('🗺️ Multi-stop route loaded');
+    } else {
+      toast.info(`🔍 Looking up booking #${bookingInput}...`);
+    }
+  };
+
   return (
     <div className="live-tracking-page">
       {/* Site Header - White logo for tracking page */}
@@ -540,14 +568,45 @@ export default function LiveTracking() {
           <img 
             src={logoImg} 
             alt="TruMove" 
-            className="h-6 brightness-0 invert"
+            className="h-7 brightness-0 invert"
           />
           <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
             Shipment Command Center
           </span>
         </div>
 
-        {/* Trust Indicators - Center */}
+        {/* Booking Input + Demo Button - Center */}
+        <div className="tracking-header-booking">
+          <div className="tracking-booking-input-group">
+            <input
+              type="text"
+              placeholder="Booking ID or Shipment #"
+              value={bookingInput}
+              onChange={(e) => setBookingInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleBookingSearch()}
+              className="tracking-booking-input"
+            />
+            <Button
+              onClick={handleBookingSearch}
+              className="tracking-booking-go-btn"
+              size="sm"
+            >
+              <Play className="w-3.5 h-3.5" />
+              Go
+            </Button>
+          </div>
+          <Button
+            onClick={handleDemoClick}
+            variant="outline"
+            size="sm"
+            className="tracking-demo-btn"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Demo
+          </Button>
+        </div>
+
+        {/* Trust Indicators - Right */}
         <div className="tracking-header-trust">
           <span className="tracking-header-trust-item">
             <ShieldCheck className="w-3.5 h-3.5 text-primary" />
@@ -558,18 +617,6 @@ export default function LiveTracking() {
             <Truck className="w-3.5 h-3.5 text-primary" />
             LIVE GPS
           </span>
-          <span className="tracking-header-trust-dot">•</span>
-          <span className="tracking-header-trust-item">
-            <Navigation className="w-3.5 h-3.5 text-primary" />
-            REAL-TIME ETA
-          </span>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="text-right hidden lg:block">
-            <div className="text-[11px] text-white/80 uppercase tracking-wider">Shipment ID</div>
-            <div className="text-sm font-mono text-white">TM-2026-{String(Date.now()).slice(-8)}</div>
-          </div>
         </div>
       </header>
 
@@ -618,7 +665,7 @@ export default function LiveTracking() {
             />
           )}
 
-          {/* Map Controls Strip - Go/Pause/Reset + Weather */}
+          {/* Map Controls Strip - Go/Pause/Reset */}
           <div className="tracking-map-controls">
             <div className="tracking-map-controls-buttons">
               {!isTracking ? (
@@ -628,7 +675,7 @@ export default function LiveTracking() {
                   className="tracking-map-go-btn"
                 >
                   <Play className="w-4 h-4" />
-                  Go
+                  Track
                 </Button>
               ) : (
                 <Button
@@ -652,14 +699,59 @@ export default function LiveTracking() {
                 Reset
               </Button>
             </div>
+          </div>
 
-            {/* Compact Weather Widget */}
-            <CompactRouteWeather
-              originCoords={originCoords}
-              destCoords={destCoords}
-              originName={originName}
-              destName={destName}
-            />
+          {/* Below Map Panel: Weather + Alternate Routes + Weigh Stations */}
+          <div className="tracking-below-map-panel">
+            {/* Route Weather */}
+            <div className="tracking-below-map-section">
+              <div className="tracking-below-map-header">
+                <Cloud className="w-4 h-4 text-primary" />
+                <span>Route Weather</span>
+              </div>
+              <CompactRouteWeather
+                originCoords={originCoords}
+                destCoords={destCoords}
+                originName={originName}
+                destName={destName}
+              />
+            </div>
+
+            {/* Alternate Routes */}
+            {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
+              <div className="tracking-below-map-section">
+                <div className="tracking-below-map-header">
+                  <Route className="w-4 h-4 text-primary" />
+                  <span>Alternate Routes ({googleRouteData.alternateRoutes.length})</span>
+                </div>
+                <div className="tracking-alternate-routes-list">
+                  {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
+                    <div key={i} className="tracking-alternate-route-item">
+                      <span className="tracking-alt-route-name">{alt.description || `Via alternate ${i + 1}`}</span>
+                      <span className="tracking-alt-route-meta">
+                        {alt.distanceMiles} mi • {alt.durationFormatted}
+                        {alt.isTollFree && <span className="tracking-alt-toll-free">No tolls</span>}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Weigh Stations */}
+            {routeCoordinates.length > 0 && (
+              <div className="tracking-below-map-section tracking-weigh-section">
+                <div className="tracking-below-map-header">
+                  <Scale className="w-4 h-4 text-amber-400" />
+                  <span>Weigh Stations</span>
+                </div>
+                <WeighStationChecklist
+                  routeCoordinates={routeCoordinates}
+                  progress={progress}
+                  isTracking={isTracking}
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -706,77 +798,6 @@ export default function LiveTracking() {
             expanded={streetViewExpanded}
             onToggleExpand={() => setStreetViewExpanded(!streetViewExpanded)}
           />
-
-          {/* Route Weather - Sidebar Card */}
-          <RouteWeather
-            originCoords={originCoords}
-            destCoords={destCoords}
-            originName={originName}
-            destName={destName}
-          />
-
-          {/* Route Info - Collapsible Sections (Bottom of sidebar) - Only when route active */}
-          {routeData && (
-            <div className="tracking-info-card space-y-2">
-              {/* Alternate Routes - Collapsible */}
-              {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
-                <Collapsible defaultOpen={false}>
-                  <CollapsibleTrigger className="w-full flex items-center justify-between py-2 text-sm hover:text-foreground transition-colors group">
-                    <div className="flex items-center gap-2">
-                      <Route className="w-4 h-4 text-primary" />
-                      <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/60">
-                        Alternate Routes ({googleRouteData.alternateRoutes.length})
-                      </span>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="space-y-2 pt-2">
-                    {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
-                      <div
-                        key={i}
-                        className="p-3 rounded-lg bg-muted/50 border border-border"
-                      >
-                        <div className="text-sm font-semibold text-foreground mb-1">
-                          {alt.description || `Via alternate ${i + 1}`}
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-foreground/70">
-                          <span>{alt.distanceMiles} mi</span>
-                          <span>•</span>
-                          <span>{alt.durationFormatted}</span>
-                          {alt.isTollFree && (
-                            <>
-                              <span>•</span>
-                              <span className="text-primary font-medium">No tolls</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </CollapsibleContent>
-                </Collapsible>
-              )}
-
-              {/* Weigh Stations - Collapsible */}
-              <Collapsible defaultOpen={false}>
-                <CollapsibleTrigger className="w-full flex items-center justify-between py-2 text-sm hover:text-foreground transition-colors group border-t border-border pt-3">
-                  <div className="flex items-center gap-2">
-                    <Scale className="w-4 h-4 text-primary" />
-                    <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-foreground/60">
-                      Weigh Stations
-                    </span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
-                </CollapsibleTrigger>
-                <CollapsibleContent className="pt-2">
-                  <WeighStationChecklist
-                    routeCoordinates={routeCoordinates}
-                    progress={progress}
-                    isTracking={isTracking}
-                  />
-                </CollapsibleContent>
-              </Collapsible>
-            </div>
-          )}
         </div>
       </div>
       
