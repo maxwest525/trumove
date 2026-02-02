@@ -1179,7 +1179,7 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
       {/* Control bar - compact in PiP, full controls in normal mode */}
       <div className={cn(
         "bg-slate-900 border-t border-white/10 flex items-center justify-center px-2",
-        isPiP ? "h-10 gap-2" : "h-14 gap-2 px-4"
+        isPiP ? "h-10 gap-2" : "h-16 gap-4 px-6"
       )}>
         {/* Whiteboard - hide in PiP */}
         {!isPiP && (
@@ -1187,9 +1187,9 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             <TooltipTrigger asChild>
               <button
                 onClick={() => onWhiteboardOpen?.()}
-                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors"
+                className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10"
               >
-                <PenTool className="w-4 h-4" />
+                <PenTool className="w-5 h-5" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="top"><p>Whiteboard</p></TooltipContent>
@@ -1204,11 +1204,11 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
                 <DropdownMenuTrigger asChild>
                   <button
                     className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
+                      "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10",
                       volume === 0 ? "bg-amber-500/30 text-amber-400" : "bg-white/10 text-white hover:bg-white/20"
                     )}
                   >
-                    {volume === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    {volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                   </button>
                 </DropdownMenuTrigger>
               </TooltipTrigger>
@@ -1240,12 +1240,12 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             <button
               onClick={() => setIsMuted(!isMuted)}
               className={cn(
-                "rounded-full flex items-center justify-center transition-colors",
-                isPiP ? "w-7 h-7" : "w-10 h-10",
-                isMuted ? "bg-red-500 text-white" : "bg-white/10 text-white hover:bg-white/20"
+                "rounded-full flex items-center justify-center transition-colors border border-white/10",
+                isPiP ? "w-7 h-7" : "w-11 h-11",
+                isMuted ? "bg-red-500 text-white border-red-500/50" : "bg-white/10 text-white hover:bg-white/20"
               )}
             >
-              {isMuted ? <MicOff className={isPiP ? "w-3.5 h-3.5" : "w-4 h-4"} /> : <Mic className={isPiP ? "w-3.5 h-3.5" : "w-4 h-4"} />}
+              {isMuted ? <MicOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Mic className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
             </button>
           </TooltipTrigger>
           <TooltipContent side="top"><p>{isMuted ? "Unmute" : "Mute"}</p></TooltipContent>
@@ -1257,12 +1257,12 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             <button
               onClick={() => setIsVideoOff(!isVideoOff)}
               className={cn(
-                "rounded-full flex items-center justify-center transition-colors",
-                isPiP ? "w-7 h-7" : "w-10 h-10",
-                isVideoOff ? "bg-red-500 text-white" : "bg-white/10 text-white hover:bg-white/20"
+                "rounded-full flex items-center justify-center transition-colors border border-white/10",
+                isPiP ? "w-7 h-7" : "w-11 h-11",
+                isVideoOff ? "bg-red-500 text-white border-red-500/50" : "bg-white/10 text-white hover:bg-white/20"
               )}
             >
-              {isVideoOff ? <VideoOff className={isPiP ? "w-3.5 h-3.5" : "w-4 h-4"} /> : <Video className={isPiP ? "w-3.5 h-3.5" : "w-4 h-4"} />}
+              {isVideoOff ? <VideoOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Video className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
             </button>
           </TooltipTrigger>
           <TooltipContent side="top"><p>{isVideoOff ? "Turn Camera On" : "Turn Camera Off"}</p></TooltipContent>
@@ -1275,11 +1275,11 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
               <button
                 onClick={handleShareScreen}
                 className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-                  isScreenSharing ? "bg-primary text-primary-foreground" : "bg-white/10 text-white hover:bg-white/20"
+                  "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10",
+                  isScreenSharing ? "bg-primary text-primary-foreground border-primary/50" : "bg-white/10 text-white hover:bg-white/20"
                 )}
               >
-                <Monitor className="w-4 h-4" />
+                <Monitor className="w-5 h-5" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="top">
@@ -1294,8 +1294,8 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             <Tooltip>
               <TooltipTrigger asChild>
                 <DropdownMenuTrigger asChild>
-                  <button className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors">
-                    <Settings className="w-4 h-4" />
+                  <button className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10">
+                    <Settings className="w-5 h-5" />
                   </button>
                 </DropdownMenuTrigger>
               </TooltipTrigger>
@@ -1337,11 +1337,11 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             <button
               onClick={onLeave}
               className={cn(
-                "rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors ml-2",
-                isPiP ? "w-7 h-7" : "w-10 h-10"
+                "rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors ml-3",
+                isPiP ? "w-7 h-7" : "w-11 h-11"
               )}
             >
-              <Phone className={cn("rotate-[135deg]", isPiP ? "w-3.5 h-3.5" : "w-4 h-4")} />
+              <Phone className={cn("rotate-[135deg]", isPiP ? "w-3.5 h-3.5" : "w-5 h-5")} />
             </button>
           </TooltipTrigger>
           <TooltipContent side="top"><p>End Call</p></TooltipContent>
@@ -1911,38 +1911,40 @@ export default function Book() {
                   <TooltipContent side="right" className="lg:hidden"><p>Screen Share</p></TooltipContent>
                 </Tooltip>
                 
-                {/* Demo button - subtle */}
-                <button
-                  onClick={handleStartDemo}
-                  className="mt-2 text-xs text-muted-foreground hover:text-foreground transition-colors opacity-60 hover:opacity-100 text-left px-4"
-                >
-                  Demo
-                </button>
+                {/* Demo button removed from here - moved to page footer */}
               </div>
             )}
 
-            {/* Main Video Window - 700x550 fixed dimensions */}
-            <Card id="video-consult-container" className="overflow-hidden border-2 border-primary/20 bg-gradient-to-b from-muted/30 to-background shadow-lg shadow-primary/5 ring-1 ring-white/5 w-[700px]">
+            {/* Main Video Window - 700x550 fixed dimensions with premium frame */}
+            <Card id="video-consult-container" className="overflow-hidden border-[3px] border-slate-800 bg-gradient-to-b from-muted/30 to-background shadow-2xl shadow-black/20 ring-1 ring-white/5 w-[700px]">
               <CardContent className="p-0">
                 <div className="relative h-[550px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
                   {/* Top controls - Fullscreen and PiP */}
                   <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                     {roomUrl && (
-                      <button
-                        onClick={() => setIsPiP(!isPiP)}
-                        className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
-                        title={isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}
-                      >
-                        <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
-                      </button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => setIsPiP(!isPiP)}
+                            className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+                          >
+                            <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="left"><p>{isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}</p></TooltipContent>
+                      </Tooltip>
                     )}
-                    <button
-                      onClick={toggleFullscreen}
-                      className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
-                      title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
-                    >
-                      {isFullscreen ? <Minimize2 className="w-4 h-4 text-white" /> : <Maximize2 className="w-4 h-4 text-white" />}
-                    </button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={toggleFullscreen}
+                          className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+                        >
+                          {isFullscreen ? <Minimize2 className="w-4 h-4 text-white" /> : <Maximize2 className="w-4 h-4 text-white" />}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="left"><p>{isFullscreen ? "Exit Fullscreen" : "Fullscreen"}</p></TooltipContent>
+                    </Tooltip>
                   </div>
                   {roomUrl ? (
                     isDemo ? (
@@ -1978,8 +1980,11 @@ export default function Book() {
               </CardContent>
             </Card>
 
-            {/* Chat Panel - Right Side */}
-            <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative">
+            {/* Chat Panel - Right Side - Resizable when on call */}
+            <div className={cn(
+              "video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative",
+              roomUrl && "is-resizable"
+            )}>
               {/* Popout Button - Small box in corner */}
               <button 
                 className="absolute top-1 right-1 z-10 w-5 h-5 rounded bg-muted/80 border border-border flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-colors"
@@ -2851,6 +2856,21 @@ export default function Book() {
           )}
         </div>
       </DraggableChatModal>
+      
+      {/* Demo Button - Fixed position bottom right above footer */}
+      <div className="fixed bottom-24 right-6 z-40">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={handleStartDemo}
+              className="px-4 py-2 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-white/70 hover:text-white text-xs font-medium transition-all border border-slate-700 backdrop-blur-sm shadow-lg"
+            >
+              Demo
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="left"><p>Start demo video call</p></TooltipContent>
+        </Tooltip>
+      </div>
       
       {/* Footer */}
       <Footer />
