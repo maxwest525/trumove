@@ -1575,6 +1575,10 @@ export default function Index() {
                 <div className="tru-ai-steps-left">
                 {/* Premium headline block */}
                   <div className="tru-ai-headline-block animate-fade-in" style={{ animationDelay: '0ms' }}>
+                    {/* Decorative icon badge */}
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 mx-auto">
+                      <Scan className="w-7 h-7 text-primary" />
+                    </div>
                     <h3 className="tru-ai-section-title">AI Analysis Estimator</h3>
                     <h2 className="tru-ai-main-headline">
                       Scan. Catalog.<br />
