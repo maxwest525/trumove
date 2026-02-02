@@ -36,31 +36,42 @@ const TRUCK_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" heigh
   <path d="M22 16v4h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
 </svg>`;
 
-// Truck SVG with animated pulse ring for active tracking
-const TRUCK_ICON_PULSING_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+// Truck SVG with animated pulse ring and glow for active tracking
+const TRUCK_ICON_PULSING_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
   <defs>
     <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
     </filter>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
+  <!-- Glow background -->
+  <circle cx="32" cy="32" r="26" fill="#22c55e" opacity="0.25" filter="url(#glow)">
+    <animate attributeName="opacity" values="0.25;0.4;0.25" dur="2s" repeatCount="indefinite"/>
+  </circle>
   <!-- Outer pulse ring -->
-  <circle cx="28" cy="28" r="24" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.4">
-    <animate attributeName="r" values="20;26;20" dur="1.5s" repeatCount="indefinite"/>
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.4">
+    <animate attributeName="r" values="24;30;24" dur="1.5s" repeatCount="indefinite"/>
     <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.5s" repeatCount="indefinite"/>
   </circle>
   <!-- Inner pulse ring -->
-  <circle cx="28" cy="28" r="20" fill="none" stroke="#22c55e" stroke-width="1.5" opacity="0.3">
-    <animate attributeName="r" values="18;22;18" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#22c55e" stroke-width="1.5" opacity="0.3">
+    <animate attributeName="r" values="20;25;20" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
     <animate attributeName="opacity" values="0.5;0.15;0.5" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
   </circle>
-  <!-- Main truck circle -->
-  <circle cx="28" cy="28" r="18" fill="#22c55e" filter="url(#shadow)"/>
+  <!-- Main truck circle with glow -->
+  <circle cx="32" cy="32" r="18" fill="#22c55e" filter="url(#shadow)"/>
   <!-- Truck icon -->
-  <path d="M20 32h-1c-.6 0-1-.4-1-1v-6c0-.6.4-1 1-1h12l4 4v4c0 .6-.4 1-1 1h-1" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
-  <circle cx="23" cy="30" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
-  <circle cx="31" cy="30" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
-  <path d="M25 30h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" transform="translate(2, -2)"/>
-  <path d="M30 24v4h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
+  <path d="M24 36h-1c-.6 0-1-.4-1-1v-6c0-.6.4-1 1-1h12l4 4v4c0 .6-.4 1-1 1h-1" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
+  <circle cx="27" cy="34" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
+  <circle cx="35" cy="34" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
+  <path d="M29 34h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" transform="translate(2, -2)"/>
+  <path d="M34 28v4h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
 </svg>`;
 
 /**
@@ -313,8 +324,8 @@ export function Google2DTrackingMap({
               map: mapRef.current,
               icon: {
                 url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(TRUCK_ICON_PULSING_SVG)}`,
-                scaledSize: new window.google.maps.Size(56, 56),
-                anchor: new window.google.maps.Point(28, 28)
+                scaledSize: new window.google.maps.Size(64, 64),
+                anchor: new window.google.maps.Point(32, 32)
               },
               zIndex: 100,
               animation: window.google.maps.Animation.DROP
