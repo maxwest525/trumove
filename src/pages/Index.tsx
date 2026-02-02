@@ -1576,7 +1576,7 @@ export default function Index() {
                 {/* Premium headline block */}
                   <div className="tru-ai-headline-block animate-fade-in" style={{ animationDelay: '0ms' }}>
                     {/* Decorative icon badge */}
-                    <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 mx-auto">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 mx-auto animate-[pulse_2.5s_ease-in-out_infinite] shadow-[0_0_20px_hsl(var(--primary)/0.3)]">
                       <Scan className="w-7 h-7 text-primary" />
                     </div>
                     <h3 className="tru-ai-section-title">AI Analysis Estimator</h3>
