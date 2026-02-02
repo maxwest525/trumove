@@ -1573,53 +1573,55 @@ export default function Index() {
               <div className="tru-ai-header-row" ref={scanPreviewRef}>
                 {/* Left side: Title, description, steps, features */}
                 <div className="tru-ai-steps-left">
-                  {/* Title */}
-                  <h2 className="text-2xl font-black text-foreground mb-2">
-                    <span className="text-primary">AI</span> Inventory Analysis
-                  </h2>
-                  <p className="text-sm text-muted-foreground mb-5 max-w-sm">
-                    Our computer vision technology scans your rooms and automatically catalogs every item for an accurate moving estimate.
-                  </p>
-                  
-                  {/* How it works steps */}
-                  <div className="space-y-3 mb-5">
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-foreground">Point Your Camera</h4>
-                        <p className="text-xs text-muted-foreground">Walk through each room with your phone or upload photos</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-foreground">AI Identifies Items</h4>
-                        <p className="text-xs text-muted-foreground">Computer vision detects furniture, appliances & boxes</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-foreground">Get Your Estimate</h4>
-                        <p className="text-xs text-muted-foreground">Review, edit, and receive an instant quote</p>
-                      </div>
-                    </div>
+                  {/* Title with stagger */}
+                  <div className="animate-fade-in" style={{ animationDelay: '0ms' }}>
+                    <h2 className="text-3xl font-black text-foreground mb-3">
+                      <span className="text-primary">AI</span> Inventory Analysis
+                    </h2>
+                    <p className="text-sm text-muted-foreground mb-8 max-w-md leading-relaxed">
+                      Our computer vision technology scans your rooms and automatically catalogs every item for an accurate moving estimate.
+                    </p>
                   </div>
                   
-                  {/* Feature badges */}
-                  <div className="flex flex-wrap gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground border border-border">
-                      <Sparkles className="w-3 h-3 text-primary" />
-                      95% Accuracy
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground border border-border">
-                      <Camera className="w-3 h-3 text-primary" />
-                      Video or Photo
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground border border-border">
-                      <Clock className="w-3 h-3 text-primary" />
-                      Under 2 Minutes
-                    </span>
+                  {/* How it works steps - staggered */}
+                  <div className="space-y-5 mb-8">
+                    {[
+                      { num: 1, title: "Point Your Camera", desc: "Walk through each room with your phone or upload photos" },
+                      { num: 2, title: "AI Identifies Items", desc: "Computer vision detects furniture, appliances & boxes" },
+                      { num: 3, title: "Get Your Estimate", desc: "Review, edit, and receive an instant quote" }
+                    ].map((step, idx) => (
+                      <div 
+                        key={step.num}
+                        className="flex items-start gap-4 animate-fade-in"
+                        style={{ animationDelay: `${100 + idx * 100}ms`, animationFillMode: 'both' }}
+                      >
+                        <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center shrink-0 shadow-md">
+                          {step.num}
+                        </div>
+                        <div className="pt-0.5">
+                          <h4 className="text-base font-semibold text-foreground mb-1">{step.title}</h4>
+                          <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Feature badges - staggered */}
+                  <div className="flex flex-wrap gap-3">
+                    {[
+                      { icon: Sparkles, label: "95% Accuracy" },
+                      { icon: Camera, label: "Video or Photo" },
+                      { icon: Clock, label: "Under 2 Minutes" }
+                    ].map((badge, idx) => (
+                      <span 
+                        key={badge.label}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/80 text-sm font-medium text-foreground border border-border shadow-sm animate-fade-in hover:border-primary/40 transition-colors"
+                        style={{ animationDelay: `${400 + idx * 80}ms`, animationFillMode: 'both' }}
+                      >
+                        <badge.icon className="w-4 h-4 text-primary" />
+                        {badge.label}
+                      </span>
+                    ))}
                   </div>
                 </div>
                 
