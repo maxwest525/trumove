@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/dialog";
 import { BookingCalendar } from "@/components/video-consult/BookingCalendar";
 import { WhiteboardCanvas } from "@/components/video-consult/WhiteboardCanvas";
-import { SchedulePanel } from "@/components/video-consult/SchedulePanel";
+// SchedulePanel is available if needed for embedded scheduling
 import { ContactHub } from "@/components/video-consult/ContactHub";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -1819,12 +1819,8 @@ export default function Book() {
             </p>
           </div>
 
-          {/* Three-Column Grid: Schedule Panel + Video + Chat Panel */}
-          <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr,380px] gap-6 mb-8">
-            {/* Schedule Panel - Left Side */}
-            <div className="hidden lg:block">
-              <SchedulePanel className="h-[600px]" />
-            </div>
+          {/* Two-Column Grid: Video + Chat Panel - with Schedule Button */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-6 mb-8">
 
             {/* Main Video Window */}
             <Card id="video-consult-container" className="overflow-hidden border-2 border-primary/20 bg-gradient-to-b from-muted/30 to-background shadow-lg shadow-primary/5 ring-1 ring-white/5">
@@ -2310,6 +2306,19 @@ export default function Book() {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Schedule Call CTA - Simple button below the main grid */}
+          <div className="flex justify-center">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setShowScheduleModal(true)}
+              className="h-14 px-8 text-base font-bold border-2 border-border hover:border-foreground hover:bg-foreground hover:text-background transition-all"
+            >
+              <CalendarDays className="w-5 h-5 mr-3" />
+              Schedule a Call for Later
+            </Button>
           </div>
 
         </div>
