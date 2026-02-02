@@ -1586,13 +1586,13 @@ export default function Index() {
                   </div>
                   
                   {/* Compact step indicators */}
-                  <div className="tru-ai-step-pills animate-fade-in" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
+                  <div className="tru-ai-step-pills animate-fade-scale-in opacity-0" style={{ animationDelay: '100ms' }}>
                     {[
                       { num: "01", label: "Scan rooms" },
                       { num: "02", label: "AI catalogs" },
                       { num: "03", label: "Get quote" }
                     ].map((step, idx) => (
-                      <div key={step.num} className="tru-ai-step-pill">
+                      <div key={step.num} className="tru-ai-step-pill" style={{ animationDelay: `${150 + idx * 80}ms` }}>
                         <span className="tru-ai-step-num">{step.num}</span>
                         <span className="tru-ai-step-label">{step.label}</span>
                       </div>
@@ -1602,8 +1602,8 @@ export default function Index() {
                   {/* CTA Button */}
                   <button 
                     onClick={() => navigate("/scan-room")}
-                    className="tru-ai-cta-btn animate-fade-in"
-                    style={{ animationDelay: '350ms', animationFillMode: 'both' }}
+                    className="tru-ai-cta-btn animate-fade-scale-in opacity-0"
+                    style={{ animationDelay: '350ms' }}
                   >
                     <Camera className="w-4 h-4" />
                     Try AI Scanner
