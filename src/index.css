@@ -12528,7 +12528,7 @@
   display: block;
   text-align: center;
   font-size: 11px;
-  color: hsl(var(--primary));
+  color: hsl(var(--foreground));
   font-weight: 600;
 }
 
