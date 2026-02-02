@@ -104,6 +104,8 @@ export function Google2DTrackingMap({
   const [error, setError] = useState<string | null>(null);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [internalFollowMode, setInternalFollowMode] = useState(followMode);
+  const [currentSpeed, setCurrentSpeed] = useState<number>(0);
+  const lastPositionRef = useRef<{ lat: number; lng: number; time: number } | null>(null);
 
   // Sync follow mode with prop
   useEffect(() => {
@@ -387,6 +389,29 @@ export function Google2DTrackingMap({
     const newPosition = { lat, lng };
     truckMarkerRef.current.setPosition(newPosition);
 
+    // Calculate speed based on position change
+    const now = Date.now();
+    if (lastPositionRef.current && isTracking) {
+      const timeDelta = (now - lastPositionRef.current.time) / 1000 / 3600; // hours
+      if (timeDelta > 0) {
+        // Haversine distance
+        const R = 3959; // miles
+        const dLat = (lat - lastPositionRef.current.lat) * Math.PI / 180;
+        const dLng = (lng - lastPositionRef.current.lng) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lastPositionRef.current.lat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) *
+          Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const distance = R * c;
+        
+        // Speed in mph (clamped to realistic values)
+        const speed = Math.min(Math.max(distance / timeDelta, 0), 85);
+        // Smooth the speed value
+        setCurrentSpeed(prev => Math.round(prev * 0.7 + speed * 0.3));
+      }
+    }
+    lastPositionRef.current = { lat, lng, time: now };
+
     // Follow mode: pan map to follow truck
     if (internalFollowMode && mapRef.current && isTracking) {
       mapRef.current.panTo(newPosition);
@@ -499,6 +524,19 @@ export function Google2DTrackingMap({
           <div className="px-2 py-1.5 rounded-lg bg-primary/90 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
             <span className="text-[9px] font-bold text-primary-foreground tracking-wider">LIVE</span>
+          </div>
+        )}
+        
+        {/* Speed indicator */}
+        {isTracking && currentSpeed > 0 && (
+          <div className="px-3 py-1.5 rounded-lg bg-background/90 backdrop-blur-sm border border-border flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+              <span className="text-[8px] font-bold text-primary">⚡</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-foreground leading-none">{currentSpeed}</span>
+              <span className="text-[8px] text-muted-foreground uppercase tracking-wider">MPH</span>
+            </div>
           </div>
         )}
       </div>
