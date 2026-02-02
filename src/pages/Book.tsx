@@ -1379,9 +1379,14 @@ export default function Book() {
   const [scheduleEmail, setScheduleEmail] = useState("");
   const [scheduleTcpaConsent, setScheduleTcpaConsent] = useState(false);
   
-  // Live Support chat state
-  const [liveChatMessages, setLiveChatMessages] = useState<{id: string; text: string; isUser: boolean; time: Date}[]>([]);
-  const [liveChatInput, setLiveChatInput] = useState('');
+  // Live Support chat state (separate from In-Video chat)
+  const [supportChatMessages, setSupportChatMessages] = useState<{id: string; text: string; isUser: boolean; time: Date}[]>([]);
+  const [supportChatInput, setSupportChatInput] = useState('');
+  
+  // In-Video chat state (separate from Live Support)
+  const [videoChatMessages, setVideoChatMessages] = useState<{id: string; text: string; isUser: boolean; time: Date}[]>([]);
+  const [videoChatInput, setVideoChatInput] = useState('');
+  
   const [isAgentTyping, setIsAgentTyping] = useState(false);
   
   // Agent status and queue state
@@ -1621,7 +1626,7 @@ export default function Book() {
   
   // Dynamic queue countdown timer (only runs when user has joined queue)
   useEffect(() => {
-    if (!hasJoinedQueue || agentConnected || liveChatMessages.length > 0) return;
+    if (!hasJoinedQueue || agentConnected || supportChatMessages.length > 0) return;
     
     const interval = setInterval(() => {
       setQueueWaitSeconds(prev => {
@@ -1642,7 +1647,7 @@ export default function Book() {
     }, 1000);
     
     return () => clearInterval(interval);
-  }, [roomUrl, agentConnected, liveChatMessages.length, queuePosition]);
+  }, [roomUrl, agentConnected, supportChatMessages.length, queuePosition]);
   
   // Get page context for AI chat
   const pageContext = getPageContext('/book');
@@ -1922,16 +1927,16 @@ export default function Book() {
                 </CardContent>
               </Card>
 
-              {/* Quick Tools - Horizontal buttons matching 4-button style */}
+              {/* Quick Tools - Horizontal buttons matching 4-button style (slate borders, black inner, green icon) */}
               {!roomUrl && (
                 <div className="flex items-center justify-center gap-4">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
                         onClick={() => setShowScheduleModal(true)}
-                        className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+                        className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
                       >
-                        <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+                        <div className="w-9 h-9 rounded-lg bg-black border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
                           <CalendarDays className="w-4 h-4 text-primary" strokeWidth={2} />
                         </div>
                         <span className="text-sm font-bold text-white">Schedule a Call</span>
@@ -1944,9 +1949,9 @@ export default function Book() {
                     <TooltipTrigger asChild>
                       <button
                         onClick={() => setShowWhiteboardModal(true)}
-                        className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+                        className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
                       >
-                        <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+                        <div className="w-9 h-9 rounded-lg bg-black border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
                           <PenTool className="w-4 h-4 text-primary" strokeWidth={2} />
                         </div>
                         <span className="text-sm font-bold text-white">Whiteboard</span>
@@ -1959,9 +1964,9 @@ export default function Book() {
                     <TooltipTrigger asChild>
                       <button
                         onClick={handleScreenShare}
-                        className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+                        className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-900/50 border-2 border-slate-600 hover:border-slate-400 hover:bg-slate-800/80 hover:scale-[1.02] active:scale-100 transition-all duration-200"
                       >
-                        <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+                        <div className="w-9 h-9 rounded-lg bg-black border border-slate-700 flex items-center justify-center group-hover:bg-slate-900 transition-all duration-200">
                           <Monitor className="w-4 h-4 text-primary" strokeWidth={2} />
                         </div>
                         <span className="text-sm font-bold text-white">Share Screen</span>
@@ -2042,7 +2047,7 @@ export default function Book() {
                     <>
                         {/* Messages Area */}
                         <div className="flex-1 overflow-y-auto space-y-2 mb-2 min-h-0 bg-muted/30 border border-border rounded-lg p-3">
-                          {liveChatMessages.length === 0 && !isAgentTyping ? (
+                          {videoChatMessages.length === 0 && !isAgentTyping ? (
                             <div className="flex flex-col items-center justify-center h-full text-center py-4">
                               <MessageSquare className="w-8 h-8 text-muted-foreground/40 mb-2" />
                               <p className="text-muted-foreground text-sm">
@@ -2051,7 +2056,7 @@ export default function Book() {
                             </div>
                           ) : (
                             <>
-                              {liveChatMessages.map((msg) => (
+                              {videoChatMessages.map((msg) => (
                                 <div 
                                   key={msg.id} 
                                   className={cn(
@@ -2080,20 +2085,20 @@ export default function Book() {
                         {/* Chat Input */}
                         <div className="flex items-center gap-2 mt-auto pt-2 shrink-0">
                           <Input 
-                            value={liveChatInput}
-                            onChange={(e) => setLiveChatInput(e.target.value)}
+                            value={videoChatInput}
+                            onChange={(e) => setVideoChatInput(e.target.value)}
                             placeholder={roomUrl ? "Message your rep..." : "Join a call first..."}
                             className="flex-1 h-9 text-sm"
                             onKeyDown={(e) => {
-                              if (e.key === 'Enter' && liveChatInput.trim()) {
+                              if (e.key === 'Enter' && videoChatInput.trim()) {
                                 const newMsg = {
                                   id: `msg-${Date.now()}`,
-                                  text: liveChatInput.trim(),
+                                  text: videoChatInput.trim(),
                                   isUser: true,
                                   time: new Date()
                                 };
-                                setLiveChatMessages(prev => [...prev, newMsg]);
-                                setLiveChatInput('');
+                                setVideoChatMessages(prev => [...prev, newMsg]);
+                                setVideoChatInput('');
                                 
                                 setTimeout(() => setIsAgentTyping(true), 500);
                                 setTimeout(() => {
@@ -2104,7 +2109,7 @@ export default function Book() {
                                     "Absolutely! I'll make a note of that in your profile.",
                                     "I see that on my end. Let's walk through it together.",
                                   ];
-                                  setLiveChatMessages(prev => [...prev, {
+                                  setVideoChatMessages(prev => [...prev, {
                                     id: `msg-${Date.now()}`,
                                     text: responses[Math.floor(Math.random() * responses.length)],
                                     isUser: false,
@@ -2116,18 +2121,18 @@ export default function Book() {
                           />
                           <Button
                             size="icon"
-                            disabled={!liveChatInput.trim()}
+                            disabled={!videoChatInput.trim()}
                             className="h-9 w-9 shrink-0 bg-foreground text-background hover:bg-foreground/90"
                             onClick={() => {
-                              if (liveChatInput.trim()) {
+                              if (videoChatInput.trim()) {
                                 const newMsg = {
                                   id: `msg-${Date.now()}`,
-                                  text: liveChatInput.trim(),
+                                  text: videoChatInput.trim(),
                                   isUser: true,
                                   time: new Date()
                                 };
-                                setLiveChatMessages(prev => [...prev, newMsg]);
-                                setLiveChatInput('');
+                                setVideoChatMessages(prev => [...prev, newMsg]);
+                                setVideoChatInput('');
                                 
                                 setTimeout(() => setIsAgentTyping(true), 500);
                                 setTimeout(() => {
@@ -2137,7 +2142,7 @@ export default function Book() {
                                     "Got it! Let me look into that for you.",
                                     "That's a common concern - let me explain.",
                                   ];
-                                  setLiveChatMessages(prev => [...prev, {
+                                  setVideoChatMessages(prev => [...prev, {
                                     id: `msg-${Date.now()}`,
                                     text: responses[Math.floor(Math.random() * responses.length)],
                                     isUser: false,
@@ -2175,7 +2180,7 @@ export default function Book() {
                     </div>
                     
                     {/* Live Agent Queue Section */}
-                    {liveChatMessages.length === 0 && !isAgentTyping && !agentConnected && (
+                    {supportChatMessages.length === 0 && !isAgentTyping && !agentConnected && (
                       <div className="shrink-0 mb-2">
                         {!hasJoinedQueue ? (
                           <div className="bg-muted/50 border border-border rounded-lg p-3 text-center">
@@ -2199,7 +2204,7 @@ export default function Book() {
                     
                     {/* Live Chat Messages Area */}
                     <div className="flex-1 overflow-y-auto space-y-2 mb-2 min-h-0 bg-muted/30 border border-border rounded-lg p-2">
-                      {liveChatMessages.length === 0 && !isAgentTyping ? (
+                      {supportChatMessages.length === 0 && !isAgentTyping ? (
                         <div className="flex flex-col items-center justify-center h-full text-center py-4">
                           <MessageSquare className="w-8 h-8 text-muted-foreground/40 mb-2" />
                           <p className="text-muted-foreground text-sm">
@@ -2208,7 +2213,7 @@ export default function Book() {
                         </div>
                       ) : (
                         <>
-                          {liveChatMessages.map((msg) => (
+                          {supportChatMessages.map((msg) => (
                             <div 
                               key={msg.id} 
                               className={cn(
@@ -2237,21 +2242,21 @@ export default function Book() {
                     {/* Chat Input */}
                     <div className="flex items-center gap-2 shrink-0">
                       <Input 
-                        value={liveChatInput}
-                        onChange={(e) => setLiveChatInput(e.target.value)}
+                        value={supportChatInput}
+                        onChange={(e) => setSupportChatInput(e.target.value)}
                         placeholder={hasJoinedQueue || agentConnected ? "Type a message..." : "Join queue to chat"}
                         disabled={!hasJoinedQueue && !agentConnected}
                         className="flex-1 h-9 text-sm disabled:opacity-50"
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter' && liveChatInput.trim() && (hasJoinedQueue || agentConnected)) {
+                          if (e.key === 'Enter' && supportChatInput.trim() && (hasJoinedQueue || agentConnected)) {
                             const newMsg = {
                               id: `msg-${Date.now()}`,
-                              text: liveChatInput.trim(),
+                              text: supportChatInput.trim(),
                               isUser: true,
                               time: new Date()
                             };
-                            setLiveChatMessages(prev => [...prev, newMsg]);
-                            setLiveChatInput('');
+                            setSupportChatMessages(prev => [...prev, newMsg]);
+                            setSupportChatInput('');
                             
                             setTimeout(() => setIsAgentTyping(true), 500);
                             setTimeout(() => {
@@ -2263,7 +2268,7 @@ export default function Book() {
                                 "I'm here to help! Let me look into this.",
                               ];
                               const response = agentResponses[Math.floor(Math.random() * agentResponses.length)];
-                              setLiveChatMessages(prev => [...prev, {
+                              setSupportChatMessages(prev => [...prev, {
                                 id: `msg-${Date.now()}`,
                                 text: response,
                                 isUser: false,
@@ -2275,18 +2280,18 @@ export default function Book() {
                       />
                       <Button 
                         size="icon"
-                        disabled={(!hasJoinedQueue && !agentConnected) || !liveChatInput.trim()}
+                        disabled={(!hasJoinedQueue && !agentConnected) || !supportChatInput.trim()}
                         className="h-8 w-8 bg-foreground hover:bg-foreground/90 text-background disabled:opacity-50"
                         onClick={() => {
-                          if (liveChatInput.trim() && (hasJoinedQueue || agentConnected)) {
+                          if (supportChatInput.trim() && (hasJoinedQueue || agentConnected)) {
                             const newMsg = {
                               id: `msg-${Date.now()}`,
-                              text: liveChatInput.trim(),
+                              text: supportChatInput.trim(),
                               isUser: true,
                               time: new Date()
                             };
-                            setLiveChatMessages(prev => [...prev, newMsg]);
-                            setLiveChatInput('');
+                            setSupportChatMessages(prev => [...prev, newMsg]);
+                            setSupportChatInput('');
                             
                             setTimeout(() => setIsAgentTyping(true), 500);
                             setTimeout(() => {
@@ -2297,7 +2302,7 @@ export default function Book() {
                                 "Great question! Based on what I see, I can help with that.",
                               ];
                               const response = agentResponses[Math.floor(Math.random() * agentResponses.length)];
-                              setLiveChatMessages(prev => [...prev, {
+                              setSupportChatMessages(prev => [...prev, {
                                 id: `msg-${Date.now()}`,
                                 text: response,
                                 isUser: false,
@@ -2722,13 +2727,13 @@ export default function Book() {
               )}
               
               <div className="flex-1 overflow-y-auto space-y-2 mb-3 bg-muted/30 border border-border rounded-lg p-3">
-                {liveChatMessages.length === 0 ? (
+                {videoChatMessages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-8">
                     <MessageSquare className="w-10 h-10 text-muted-foreground/40 mb-3" />
                     <p className="text-muted-foreground text-sm">{roomUrl ? "Send a message to your rep" : "Join a video call to chat"}</p>
                   </div>
                 ) : (
-                  liveChatMessages.map((msg) => (
+                  videoChatMessages.map((msg) => (
                     <div key={msg.id} className={cn("flex", msg.isUser ? "justify-end" : "justify-start")}>
                       <div className={cn(
                         "max-w-[80%] px-3 py-2 rounded-lg text-sm",
@@ -2744,34 +2749,34 @@ export default function Book() {
               </div>
               <div className="flex gap-2">
                 <Input 
-                  value={liveChatInput}
-                  onChange={(e) => setLiveChatInput(e.target.value)}
+                  value={videoChatInput}
+                  onChange={(e) => setVideoChatInput(e.target.value)}
                   placeholder={roomUrl ? "Message your rep..." : "Join a call first..."}
                   className="flex-1"
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && liveChatInput.trim()) {
-                      setLiveChatMessages(prev => [...prev, {
+                    if (e.key === 'Enter' && videoChatInput.trim()) {
+                      setVideoChatMessages(prev => [...prev, {
                         id: `msg-${Date.now()}`,
-                        text: liveChatInput.trim(),
+                        text: videoChatInput.trim(),
                         isUser: true,
                         time: new Date()
                       }]);
-                      setLiveChatInput('');
+                      setVideoChatInput('');
                     }
                   }}
                 />
                 <Button
                   size="icon"
-                  disabled={!liveChatInput.trim()}
+                  disabled={!videoChatInput.trim()}
                   onClick={() => {
-                    if (liveChatInput.trim()) {
-                      setLiveChatMessages(prev => [...prev, {
+                    if (videoChatInput.trim()) {
+                      setVideoChatMessages(prev => [...prev, {
                         id: `msg-${Date.now()}`,
-                        text: liveChatInput.trim(),
+                        text: videoChatInput.trim(),
                         isUser: true,
                         time: new Date()
                       }]);
-                      setLiveChatInput('');
+                      setVideoChatInput('');
                     }
                   }}
                 >
@@ -2810,13 +2815,13 @@ export default function Book() {
               {hasJoinedQueue && (
                 <div className="flex-1 flex flex-col">
                   <div className="flex-1 overflow-y-auto space-y-2 mb-3 bg-muted/30 border border-border rounded-lg p-3">
-                    {liveChatMessages.length === 0 ? (
+                    {supportChatMessages.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-center py-8">
                         <MessageSquare className="w-10 h-10 text-muted-foreground/40 mb-3" />
                         <p className="text-muted-foreground text-sm">Waiting for agent...</p>
                       </div>
                     ) : (
-                      liveChatMessages.map((msg) => (
+                      supportChatMessages.map((msg) => (
                         <div key={msg.id} className={cn("flex", msg.isUser ? "justify-end" : "justify-start")}>
                           <div className={cn(
                             "max-w-[80%] px-3 py-2 rounded-lg text-sm",
@@ -2832,12 +2837,12 @@ export default function Book() {
                   </div>
                   <div className="flex gap-2">
                     <Input 
-                      value={liveChatInput}
-                      onChange={(e) => setLiveChatInput(e.target.value)}
+                      value={supportChatInput}
+                      onChange={(e) => setSupportChatInput(e.target.value)}
                       placeholder="Type a message..."
                       className="flex-1"
                     />
-                    <Button size="icon" disabled={!liveChatInput.trim()}>
+                    <Button size="icon" disabled={!supportChatInput.trim()}>
                       <Send className="w-4 h-4" />
                     </Button>
                   </div>
