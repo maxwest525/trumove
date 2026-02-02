@@ -1925,49 +1925,47 @@ export default function Book() {
               </Card>
               </div>
 
-              {/* Quick Tools - Pronounced card buttons */}
-              {!roomUrl && (
-                <div className="flex items-center justify-center gap-3">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => setShowScheduleModal(true)}
-                        className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
-                      >
-                        <CalendarDays className="w-4 h-4 text-muted-foreground group-hover:text-foreground" strokeWidth={2} />
-                        <span className="text-sm font-semibold text-foreground">Schedule a Call</span>
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>Schedule a Call</p></TooltipContent>
-                  </Tooltip>
-                  
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => setShowWhiteboardModal(true)}
-                        className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
-                      >
-                        <PenTool className="w-4 h-4 text-muted-foreground group-hover:text-foreground" strokeWidth={2} />
-                        <span className="text-sm font-semibold text-foreground">Whiteboard</span>
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>Open Whiteboard</p></TooltipContent>
-                  </Tooltip>
-                  
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={handleScreenShare}
-                        className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
-                      >
-                        <Monitor className="w-4 h-4 text-muted-foreground group-hover:text-foreground" strokeWidth={2} />
-                        <span className="text-sm font-semibold text-foreground">Share Screen</span>
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent><p>Share Your Screen</p></TooltipContent>
-                  </Tooltip>
-                </div>
-              )}
+              {/* Quick Tools - Pronounced card buttons - Always visible */}
+              <div className="flex items-center justify-center gap-3">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setShowScheduleModal(true)}
+                      className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
+                    >
+                      <CalendarDays className="w-4 h-4 text-primary" strokeWidth={2} />
+                      <span className="text-sm font-semibold text-foreground">Schedule a Call</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent><p>Schedule a Call</p></TooltipContent>
+                </Tooltip>
+                
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setShowWhiteboardModal(true)}
+                      className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
+                    >
+                      <PenTool className="w-4 h-4 text-primary" strokeWidth={2} />
+                      <span className="text-sm font-semibold text-foreground">Whiteboard</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent><p>Open Whiteboard</p></TooltipContent>
+                </Tooltip>
+                
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={handleScreenShare}
+                      className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
+                    >
+                      <Monitor className="w-4 h-4 text-primary" strokeWidth={2} />
+                      <span className="text-sm font-semibold text-foreground">Share Screen</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent><p>Share Your Screen</p></TooltipContent>
+                </Tooltip>
+              </div>
             </div>
 
             {/* Chat Panel - Right Side - Resizable when on call */}
