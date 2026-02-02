@@ -11,6 +11,7 @@ import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
 import { StreetViewPreview } from "@/components/tracking/StreetViewPreview";
 import { TruckAerialView } from "@/components/tracking/TruckAerialView";
 import { RouteWeather } from "@/components/tracking/RouteWeather";
+import { CompactRouteWeather } from "@/components/tracking/CompactRouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
 import { type MultiStopTruckStatus } from "@/components/tracking/CheckMyTruckModal";
 import { MultiStopSummaryCard } from "@/components/tracking/MultiStopSummaryCard";
@@ -676,6 +677,50 @@ export default function LiveTracking() {
               googleApiKey={GOOGLE_MAPS_API_KEY}
             />
           )}
+
+          {/* Map Controls Strip - Go/Pause/Reset + Weather */}
+          <div className="tracking-map-controls">
+            <div className="tracking-map-controls-buttons">
+              {!isTracking ? (
+                <Button
+                  onClick={startTracking}
+                  disabled={!canTrack}
+                  className="tracking-map-go-btn"
+                >
+                  <Play className="w-4 h-4" />
+                  Go
+                </Button>
+              ) : (
+                <Button
+                  onClick={isPaused ? resumeTracking : pauseTracking}
+                  variant="secondary"
+                  className="tracking-map-pause-btn"
+                >
+                  {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+                  {isPaused ? 'Resume' : 'Pause'}
+                </Button>
+              )}
+              
+              <Button
+                onClick={resetTracking}
+                variant="ghost"
+                size="sm"
+                disabled={progress === 0 && !isTracking}
+                className="tracking-map-reset-btn"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Reset
+              </Button>
+            </div>
+
+            {/* Compact Weather Widget */}
+            <CompactRouteWeather
+              originCoords={originCoords}
+              destCoords={destCoords}
+              originName={originName}
+              destName={destName}
+            />
+          </div>
         </div>
 
         {/* Right: Dashboard - Always Expanded */}
