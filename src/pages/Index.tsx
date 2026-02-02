@@ -1569,42 +1569,61 @@ export default function Index() {
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="tru-ai-steps-section">
             <div className="tru-ai-steps-inner">
-              {/* Header row: steps on left, centered title, previews on right */}
+              {/* Header row: info on left, previews on right */}
               <div className="tru-ai-header-row" ref={scanPreviewRef}>
-                {/* Steps on left */}
+                {/* Left side: Title, description, steps, features */}
                 <div className="tru-ai-steps-left">
-                  <div className="tru-ai-step-card">
-                    <div className="tru-ai-step-number">1</div>
-                    <div className="tru-ai-step-content">
-                      <h3 className="tru-ai-step-title">Video or Photos</h3>
-                      <p className="tru-ai-step-desc">Walk through rooms with your camera.</p>
-                    </div>
-                  </div>
-                  <div className="tru-ai-step-card">
-                    <div className="tru-ai-step-number">2</div>
-                    <div className="tru-ai-step-content">
-                      <h3 className="tru-ai-step-title">AI Detection</h3>
-                      <p className="tru-ai-step-desc">Computer vision identifies items.</p>
-                    </div>
-                  </div>
-                  <div className="tru-ai-step-card">
-                    <div className="tru-ai-step-number">3</div>
-                    <div className="tru-ai-step-content">
-                      <h3 className="tru-ai-step-title">Agent Confirmation</h3>
-                      <p className="tru-ai-step-desc">A live specialist reviews accuracy.</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Centered title */}
-                <div className="tru-ai-header-center">
-                  <h2 className="tru-ai-steps-title">
-                    <span className="tru-ai-gradient-text">AI</span> Move Estimator
+                  {/* Title */}
+                  <h2 className="text-2xl font-black text-foreground mb-2">
+                    <span className="text-primary">AI</span> Inventory Analysis
                   </h2>
-                  <div className="tru-ai-accent-line" />
+                  <p className="text-sm text-muted-foreground mb-5 max-w-sm">
+                    Our computer vision technology scans your rooms and automatically catalogs every item for an accurate moving estimate.
+                  </p>
+                  
+                  {/* How it works steps */}
+                  <div className="space-y-3 mb-5">
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground">Point Your Camera</h4>
+                        <p className="text-xs text-muted-foreground">Walk through each room with your phone or upload photos</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground">AI Identifies Items</h4>
+                        <p className="text-xs text-muted-foreground">Computer vision detects furniture, appliances & boxes</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground">Get Your Estimate</h4>
+                        <p className="text-xs text-muted-foreground">Review, edit, and receive an instant quote</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Feature badges */}
+                  <div className="flex flex-wrap gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground border border-border">
+                      <Sparkles className="w-3 h-3 text-primary" />
+                      95% Accuracy
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground border border-border">
+                      <Camera className="w-3 h-3 text-primary" />
+                      Video or Photo
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground border border-border">
+                      <Clock className="w-3 h-3 text-primary" />
+                      Under 2 Minutes
+                    </span>
+                  </div>
                 </div>
                 
-                {/* Previews on right */}
+                {/* Previews on right - UNCHANGED */}
                 <div className={`tru-ai-header-previews ${scanDemoRunning ? 'is-running' : ''}`}>
                   <ScannerPreview 
                     isRunning={scanDemoRunning} 
