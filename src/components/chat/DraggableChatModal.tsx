@@ -48,7 +48,7 @@ export default function DraggableChatModal({
   });
   const [size, setSize] = useState(() => {
     const stored = getStoredState();
-    return stored?.size ?? { width: 380, height: 500 };
+    return stored?.size ?? { width: 280, height: 360 };
   });
   const [isMaximized, setIsMaximized] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -57,7 +57,7 @@ export default function DraggableChatModal({
   const dragOffset = useRef({ x: 0, y: 0 });
   const resizeStart = useRef({ x: 0, y: 0, width: 0, height: 0 });
   const modalRef = useRef<HTMLDivElement>(null);
-  const prevSize = useRef({ width: 380, height: 500, x: 100, y: 100 });
+  const prevSize = useRef({ width: 280, height: 360, x: 100, y: 100 });
 
   // Initialize position on first open - use stored or center
   useEffect(() => {
@@ -119,8 +119,8 @@ export default function DraggableChatModal({
       if (isResizing) {
         const deltaX = e.clientX - resizeStart.current.x;
         const deltaY = e.clientY - resizeStart.current.y;
-        const newWidth = Math.max(300, Math.min(800, resizeStart.current.width + deltaX));
-        const newHeight = Math.max(400, Math.min(800, resizeStart.current.height + deltaY));
+        const newWidth = Math.max(220, Math.min(600, resizeStart.current.width + deltaX));
+        const newHeight = Math.max(280, Math.min(600, resizeStart.current.height + deltaY));
         currentSize = { width: newWidth, height: newHeight };
         setSize(currentSize);
       }
