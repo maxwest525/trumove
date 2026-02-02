@@ -60,14 +60,14 @@ export function ContactHub({
         </p>
       </div>
 
-      {/* Primary Action Buttons - Green icons */}
+      {/* Primary Action Buttons - Green icons with glow on hover */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl mb-auto">
         {/* Video Call */}
         <button
           onClick={onStartVideoCall}
           className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 transition-all">
+          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
             <Video className="w-6 h-6 text-primary" strokeWidth={2} />
           </div>
           <span className="text-sm font-bold text-white">Video Call</span>
@@ -78,7 +78,7 @@ export function ContactHub({
           onClick={handleVoiceCall}
           className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 transition-all">
+          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
             <PhoneCall className="w-6 h-6 text-primary" strokeWidth={2} />
           </div>
           <span className="text-sm font-bold text-white">Voice Call</span>
@@ -89,7 +89,7 @@ export function ContactHub({
           onClick={handleEmail}
           className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 transition-all">
+          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
             <Mail className="w-6 h-6 text-primary" strokeWidth={2} />
           </div>
           <span className="text-sm font-bold text-white">Email Us</span>
@@ -100,7 +100,7 @@ export function ContactHub({
           onClick={handleText}
           className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 transition-all">
+          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
             <Send className="w-6 h-6 text-primary" strokeWidth={2} />
           </div>
           <span className="text-sm font-bold text-white">Text Us</span>
