@@ -2320,17 +2320,14 @@
   min-height: 450px;
 }
 
-/* Steps left container - moved to RIGHT and CENTER ALIGNED */
+/* Steps left container - absolute positioned */
 .tru-ai-steps-left {
   position: absolute;
-  right: 0;
-  left: auto;
+  left: 0;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
   gap: 20px;
   width: 380px;
   z-index: 5;
@@ -2340,7 +2337,6 @@
 .tru-ai-headline-block {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
 }
 
@@ -2367,7 +2363,6 @@
   letter-spacing: -0.03em;
   color: hsl(var(--foreground));
   margin: 0;
-  text-align: center;
 }
 
 .tru-ai-headline-accent {
@@ -2381,7 +2376,6 @@
   color: hsl(var(--muted-foreground));
   max-width: 340px;
   margin: 0;
-  text-align: center;
 }
 
 /* Compact Step Pills Row */
@@ -2389,7 +2383,6 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .tru-ai-step-pill {
@@ -2425,18 +2418,15 @@
 .tru-ai-trust-row {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 16px;
   padding: 16px 0;
   border-top: 1px solid hsl(var(--border) / 0.5);
   border-bottom: 1px solid hsl(var(--border) / 0.5);
-  width: 100%;
 }
 
 .tru-ai-stat {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 2px;
 }
 
@@ -2465,7 +2455,6 @@
 .tru-ai-cta-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
   padding: 12px 24px;
   background: hsl(var(--foreground));
@@ -2586,11 +2575,10 @@
   margin: 0 auto;
 }
 
-/* Previews container - absolute LEFT, full height */
+/* Previews container - absolute right, full height */
 .tru-ai-header-previews {
   position: absolute;
-  left: 0;
-  right: auto;
+  right: 0;
   top: 0;
   bottom: 0;
   display: flex;
