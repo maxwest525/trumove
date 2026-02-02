@@ -376,25 +376,23 @@ function AgentQueueIndicator({
 
   return (
     <div className={cn(
-      "bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-lg px-3 py-2 mb-3 transition-all duration-300",
+      "bg-white dark:bg-white border border-border rounded-lg px-3 py-2 mb-3 transition-all duration-300",
       isHighlighted && "ring-1 ring-primary"
     )}>
       <div className="flex items-center justify-center gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0">
-            <Users className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+          <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+            <Users className="w-2.5 h-2.5 text-foreground dark:text-black" />
           </div>
-          <span className="text-foreground/70 text-xs">Queue Position</span>
-          <span className={cn(
-            "text-lg font-bold transition-all text-foreground"
-          )}>
+          <span className="text-black/60 text-xs">Queue</span>
+          <span className="text-sm font-bold text-black">
             #{displayPosition}
           </span>
         </div>
-        <span className="text-foreground/30">•</span>
+        <span className="text-black/20">•</span>
         <div className="flex items-center gap-1.5">
-          <Clock className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-          <span className="text-emerald-600 dark:text-emerald-400 font-mono text-sm font-medium">
+          <Clock className="w-2.5 h-2.5 text-black/50" />
+          <span className="text-black/70 font-mono text-xs font-medium">
             ~{formatTime(waitSeconds)}
           </span>
         </div>
@@ -1931,24 +1929,17 @@ export default function Book() {
                   Live Support
                 </button>
                 
-                {/* Popout Button - Ultra Compact */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button 
-                      className="ml-auto !p-0.5"
-                      onClick={() => {
-                        setPopoutChatMode(chatMode);
-                        setShowPopoutChat(true);
-                      }}
-                      title="Open in movable window"
-                    >
-                      <ExternalLink className="w-2.5 h-2.5" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    <p>Pop out chat</p>
-                  </TooltipContent>
-                </Tooltip>
+                {/* Popout Button - Minimal */}
+                <button 
+                  className="ml-auto w-5 h-5 flex items-center justify-center rounded hover:bg-muted transition-colors"
+                  onClick={() => {
+                    setPopoutChatMode(chatMode);
+                    setShowPopoutChat(true);
+                  }}
+                  title="Pop out chat"
+                >
+                  <ExternalLink className="w-2 h-2 text-muted-foreground" />
+                </button>
               </div>
               
               {/* Chat Content */}

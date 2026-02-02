@@ -1,13 +1,6 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { Truck, Loader2, MapPin, Eye, Navigation, Maximize2, Minimize2, X, Move } from "lucide-react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { Truck, Loader2, MapPin, Eye, Navigation, Maximize2, Minimize2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 
 interface TruckAerialViewProps {
   routeCoordinates: [number, number][];
@@ -20,12 +13,10 @@ interface TruckAerialViewProps {
   onToggleExpand?: () => void;
 }
 
-type PreviewSize = 'compact' | 'default' | 'large';
+type PreviewSize = 'default';
 
 const SIZE_CONFIGS: Record<PreviewSize, { height: number; label: string }> = {
-  compact: { height: 120, label: 'Compact' },
   default: { height: 180, label: 'Default' },
-  large: { height: 280, label: 'Large' },
 };
 
 export function TruckAerialView({
@@ -142,16 +133,16 @@ export function TruckAerialView({
     );
   }
 
-  // Determine display state
+  // Determine display state - always show "Live Location" when paused
   const isShowingOrigin = !isTracking || progress === 0;
-  const headerLabel = isShowingOrigin ? "Origin Location" : "Live Truck View";
-  const headerIcon = isShowingOrigin ? Navigation : Truck;
+  const headerLabel = "Live Location";
+  const headerIcon = isTracking && progress > 0 ? Truck : Navigation;
   const HeaderIcon = headerIcon;
 
   return (
     <div className={cn(
       "tracking-info-card transition-all duration-300",
-      expanded && "fixed inset-4 z-50 bg-background/95 backdrop-blur-sm"
+      expanded && "fixed inset-[15%] z-50 bg-background/95 backdrop-blur-sm rounded-xl border border-border shadow-2xl"
     )}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -169,38 +160,8 @@ export function TruckAerialView({
           )}
         </div>
         
-        {/* Controls row */}
+        {/* Controls row - only fullscreen toggle */}
         <div className="flex items-center gap-1.5">
-          {/* Size selector dropdown - only show when not expanded */}
-          {!expanded && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 px-2 text-[10px] font-medium gap-1 border border-border"
-                >
-                  <Move className="w-3 h-3" />
-                  {SIZE_CONFIGS[previewSize].label}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-[100px]">
-                {(Object.keys(SIZE_CONFIGS) as PreviewSize[]).map((size) => (
-                  <DropdownMenuItem
-                    key={size}
-                    onClick={() => setPreviewSize(size)}
-                    className={cn(
-                      "text-xs",
-                      previewSize === size && "bg-primary/10 text-primary"
-                    )}
-                  >
-                    {SIZE_CONFIGS[size].label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-          
           {/* Expand/Remote View Button */}
           <button
             onClick={onToggleExpand}
@@ -393,16 +354,6 @@ export function TruckAerialView({
                 <MapPin className="w-3 h-3 text-primary" />
                 <span className="text-[10px] font-semibold text-white/90">
                   {Math.round(progress)}% Complete
-                </span>
-              </div>
-            )}
-            
-            {/* Origin label when not tracking */}
-            {isShowingOrigin && (
-              <div className="absolute bottom-2 left-2 px-2 py-1 rounded-md bg-green-500/90 backdrop-blur-sm flex items-center gap-2">
-                <Navigation className="w-3 h-3 text-white" />
-                <span className="text-[10px] font-semibold text-white">
-                  Pickup Location
                 </span>
               </div>
             )}
