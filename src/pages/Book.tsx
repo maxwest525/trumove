@@ -1898,9 +1898,21 @@ export default function Book() {
             </Card>
 
             {/* Chat Panel - Right Side */}
-            <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5">
-              {/* Tab Selector - 3 Options + Popout */}
-              <div className="video-consult-chat-tabs">
+            <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative">
+              {/* Popout Button - Styled like Trudy pill hand button */}
+              <button 
+                className="absolute -top-2 -right-2 z-10 w-7 h-7 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-colors group"
+                onClick={() => {
+                  setPopoutChatMode(chatMode);
+                  setShowPopoutChat(true);
+                }}
+                title="Pop out chat"
+              >
+                <ExternalLink className="w-3 h-3 text-muted-foreground group-hover:text-foreground transition-colors" />
+              </button>
+              
+              {/* Tab Selector - 3 Options Equal Width */}
+              <div className="video-consult-chat-tabs grid grid-cols-3">
                 <button 
                   className={chatMode === 'trudy' ? 'active' : ''}
                   onClick={() => setChatMode('trudy')}
@@ -1927,18 +1939,6 @@ export default function Book() {
                 >
                   <Headset className="w-4 h-4" />
                   Live Support
-                </button>
-                
-                {/* Popout Button - Minimal */}
-                <button 
-                  className="ml-auto w-5 h-5 flex items-center justify-center rounded hover:bg-muted transition-colors"
-                  onClick={() => {
-                    setPopoutChatMode(chatMode);
-                    setShowPopoutChat(true);
-                  }}
-                  title="Pop out chat"
-                >
-                  <ExternalLink className="w-2 h-2 text-muted-foreground" />
                 </button>
               </div>
               
