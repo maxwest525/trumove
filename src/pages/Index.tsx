@@ -356,22 +356,27 @@ interface DetectionListProps {
 }
 
 function DetectionList({ visibleCount }: DetectionListProps) {
-  const visibleItems = SCAN_DEMO_ITEMS.slice(0, visibleCount);
-  const totalWeight = visibleItems.reduce((sum, item) => sum + item.weight, 0);
-  const totalCuFt = visibleItems.reduce((sum, item) => sum + item.cuft, 0);
+  const isRunning = visibleCount > 0;
+  // Show all items as samples when not running, otherwise show detected items
+  const displayItems = isRunning ? SCAN_DEMO_ITEMS.slice(0, visibleCount) : SCAN_DEMO_ITEMS;
+  const totalWeight = displayItems.reduce((sum, item) => sum + item.weight, 0);
+  const totalCuFt = displayItems.reduce((sum, item) => sum + item.cuft, 0);
 
   return (
     <div className="tru-ai-live-inventory">
       <div className="tru-ai-live-header">
         <Sparkles className="w-4 h-4" />
         <span>Live Detection</span>
+        {!isRunning && (
+          <span className="tru-ai-live-sample-badge">Sample</span>
+        )}
       </div>
-      <div className="tru-ai-live-items">
-        {visibleItems.map((item, i) => (
+      <div className={`tru-ai-live-items ${!isRunning ? 'is-sample' : ''}`}>
+        {displayItems.map((item, i) => (
           <div 
             key={`${item.name}-${i}`} 
-            className="tru-ai-live-item"
-            style={{ animationDelay: `${i * 0.1}s` }}
+            className={`tru-ai-live-item ${!isRunning ? 'is-sample' : ''}`}
+            style={{ animationDelay: isRunning ? `${i * 0.1}s` : '0s' }}
           >
             <img src={item.image} alt={item.name} />
             <span className="tru-ai-live-item-name">{item.name}</span>
@@ -381,7 +386,7 @@ function DetectionList({ visibleCount }: DetectionListProps) {
       </div>
       <div className="tru-ai-live-totals">
         <span>
-          <span className="tru-ai-total-label">Items:</span> {visibleCount}
+          <span className="tru-ai-total-label">Items:</span> {displayItems.length}
         </span>
         <span>
           <span className="tru-ai-total-label">Weight:</span> {totalWeight} lbs
