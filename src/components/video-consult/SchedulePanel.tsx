@@ -48,7 +48,7 @@ export function SchedulePanel({ className }: SchedulePanelProps) {
     <Card className={cn("border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 h-full flex flex-col", className)}>
       <CardHeader className="pb-3 pt-4 px-4 shrink-0">
         <CardTitle className="text-base font-bold flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-primary" />
+          <Calendar className="w-4 h-4 text-foreground" />
           Schedule a Call
         </CardTitle>
       </CardHeader>
