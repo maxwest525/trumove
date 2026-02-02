@@ -2311,28 +2311,87 @@
   overflow: hidden;
 }
 
-/* Header row: flex layout with left info and right previews */
+/* Header row: centered title with previews on right */
 .tru-ai-header-row {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   position: relative;
   margin-bottom: 16px;
   min-height: 450px;
-  gap: 32px;
 }
 
-/* Steps left container - constrained width */
+/* Steps left container - absolute positioned */
 .tru-ai-steps-left {
-  position: relative;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: 320px;
-  max-width: 320px;
-  flex-shrink: 0;
+  gap: 12px;
+  width: 340px;
   z-index: 5;
-  padding-right: 24px;
+}
+
+/* Responsive: tablet */
+@media (max-width: 1400px) {
+  .tru-ai-steps-left {
+    width: 280px;
+  }
+  .tru-ai-header-previews .tru-ai-live-scanner,
+  .tru-ai-header-previews .tru-ai-live-inventory {
+    width: 340px;
+  }
+}
+
+/* Responsive: smaller screens - stack layout */
+@media (max-width: 1100px) {
+  .tru-ai-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: auto;
+    gap: 24px;
+  }
+  .tru-ai-steps-left {
+    position: relative;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: 500px;
+  }
+  .tru-ai-header-previews {
+    position: relative;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .tru-ai-header-previews .tru-ai-live-scanner,
+  .tru-ai-header-previews .tru-ai-live-inventory {
+    width: 100%;
+    max-width: 400px;
+    height: 350px !important;
+    min-height: 350px !important;
+  }
+}
+
+/* Responsive: mobile */
+@media (max-width: 640px) {
+  .tru-ai-steps-section {
+    padding: 16px;
+  }
+  .tru-ai-header-previews {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .tru-ai-header-previews .tru-ai-live-scanner,
+  .tru-ai-header-previews .tru-ai-live-inventory {
+    max-width: 100%;
+    height: 300px !important;
+    min-height: 300px !important;
+  }
 }
 
 /* Centered title container - truly centered */
