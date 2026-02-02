@@ -281,10 +281,9 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-2">
-          {/* Left Column - Address Inputs */}
-          <div className="space-y-4">
-            {/* Origin Address */}
+        <div className="space-y-5 py-2">
+          {/* Origin Row - Input left, Preview right, vertically centered */}
+          <div className="grid grid-cols-1 md:grid-cols-[1fr,auto] gap-4 items-center">
             <div className="space-y-2">
               <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                 <Navigation className="w-3.5 h-3.5 text-primary" />
@@ -301,8 +300,29 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                 className="w-full"
               />
             </div>
+            
+            {/* Origin Preview */}
+            <div className="w-[280px] hidden md:block">
+              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2">
+                <Eye className="w-3.5 h-3.5" />
+                Origin Preview
+              </Label>
+              {originCoords ? (
+                <AddressPreview 
+                  address={originAddress} 
+                  variant="origin" 
+                  coordinates={originCoords}
+                />
+              ) : (
+                <div className="w-full h-[180px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
+                  <span className="text-xs text-muted-foreground">Enter origin to preview</span>
+                </div>
+              )}
+            </div>
+          </div>
 
-            {/* Destination Address */}
+          {/* Destination Row - Input left, Preview right, vertically centered */}
+          <div className="grid grid-cols-1 md:grid-cols-[1fr,auto] gap-4 items-center">
             <div className="space-y-2">
               <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
                 <MapPin className="w-3.5 h-3.5 text-destructive" />
@@ -319,93 +339,10 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                 className="w-full"
               />
             </div>
-
-            {/* OR Divider */}
-            <div className="flex items-center gap-3 py-2">
-              <Separator className="flex-1" />
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Or</span>
-              <Separator className="flex-1" />
-            </div>
-
-            {/* Booking/Shipping Number */}
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                <Search className="w-3.5 h-3.5" />
-                Booking / Shipping Number
-              </Label>
-              <Input
-                value={bookingNumber}
-                onChange={(e) => setBookingNumber(e.target.value)}
-                placeholder="Enter booking code (try 12345)"
-                className="w-full"
-              />
-              <p className="text-[10px] text-muted-foreground">
-                Enter your booking number to auto-populate route details
-              </p>
-            </div>
-
-            {/* Move Date - Only shown when booking number entered */}
-            {showDate && (
-              <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                  <CalendarIcon className="w-3.5 h-3.5" />
-                  Move Date
-                </Label>
-                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !moveDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {moveDate ? format(moveDate, "PPP") : "Select a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={moveDate}
-                      onSelect={(date) => {
-                        setMoveDate(date);
-                        setDatePopoverOpen(false);
-                      }}
-                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                      initialFocus
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column - Street View Previews */}
-          <div className="space-y-4">
-            {/* Origin Street View */}
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                <Eye className="w-3.5 h-3.5" />
-                Origin Preview
-              </Label>
-              {originCoords ? (
-                <AddressPreview 
-                  address={originAddress} 
-                  variant="origin" 
-                  coordinates={originCoords}
-                />
-              ) : (
-                <div className="w-full h-[180px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground">Enter origin address to preview</span>
-                </div>
-              )}
-            </div>
-
-            {/* Destination Street View */}
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            
+            {/* Destination Preview */}
+            <div className="w-[280px] hidden md:block">
+              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2">
                 <Eye className="w-3.5 h-3.5" />
                 Destination Preview
               </Label>
@@ -422,6 +359,67 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
               )}
             </div>
           </div>
+
+          {/* OR Divider */}
+          <div className="flex items-center gap-3 py-1">
+            <Separator className="flex-1" />
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Or</span>
+            <Separator className="flex-1" />
+          </div>
+
+          {/* Booking/Shipping Number - Full width */}
+          <div className="space-y-2 max-w-md">
+            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              <Search className="w-3.5 h-3.5" />
+              Booking / Shipping Number
+            </Label>
+            <Input
+              value={bookingNumber}
+              onChange={(e) => setBookingNumber(e.target.value)}
+              placeholder="Enter booking code (try 12345)"
+              className="w-full"
+            />
+            <p className="text-[10px] text-muted-foreground">
+              Enter your booking number to auto-populate route details
+            </p>
+          </div>
+
+          {/* Move Date - Only shown when booking number entered */}
+          {showDate && (
+            <div className="space-y-2 max-w-md animate-in fade-in slide-in-from-top-2 duration-200">
+              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                <CalendarIcon className="w-3.5 h-3.5" />
+                Move Date
+              </Label>
+              <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !moveDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {moveDate ? format(moveDate, "PPP") : "Select a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={moveDate}
+                    onSelect={(date) => {
+                      setMoveDate(date);
+                      setDatePopoverOpen(false);
+                    }}
+                    disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
