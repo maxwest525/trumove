@@ -193,19 +193,33 @@ function FakeAgentView({
       
       {/* Bottom Right Audio Controls */}
       <div className="absolute bottom-4 right-4 flex items-center gap-2">
-        {/* Volume Control with Slider */}
+        {/* Mic Toggle - Circular */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "h-10 w-10 rounded-full bg-black/50 border border-white/30 text-white hover:bg-black/70 backdrop-blur-sm",
+            isMicMuted && "bg-destructive/60 border-destructive/50 text-white"
+          )}
+          onClick={() => setIsMicMuted(!isMicMuted)}
+          title={isMicMuted ? "Unmute microphone" : "Mute microphone"}
+        >
+          {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+        </Button>
+        
+        {/* Volume/Speaker Control - Pill shaped to distinguish from mic */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              size="icon"
               className={cn(
-                "h-10 w-10 rounded-full bg-black/50 border border-white/30 text-white hover:bg-black/70 backdrop-blur-sm",
-                isMuted && "border-amber-500/50"
+                "h-10 px-3 rounded-full bg-slate-900/80 border border-sky-500/40 text-white hover:bg-slate-800 backdrop-blur-sm flex items-center gap-2",
+                isMuted && "border-amber-500/50 bg-amber-900/40"
               )}
               title="Volume control"
             >
-              {isMuted ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5" />}
+              {isMuted ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5 text-sky-400" />}
+              <span className="text-xs font-medium tabular-nums">{Math.round(volume * 100)}%</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48 p-3 bg-popover border border-border shadow-xl z-50">
@@ -241,20 +255,6 @@ function FakeAgentView({
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
-        
-        {/* Mic Toggle */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "h-10 w-10 rounded-full bg-black/50 border border-white/30 text-white hover:bg-black/70 backdrop-blur-sm",
-            isMicMuted && "bg-destructive/60 border-destructive/50 text-white"
-          )}
-          onClick={() => setIsMicMuted(!isMicMuted)}
-          title={isMicMuted ? "Unmute microphone" : "Mute microphone"}
-        >
-          {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-        </Button>
       </div>
     </div>
   );
@@ -347,12 +347,10 @@ function ChatTypingIndicator() {
 // Queue position indicator for live agent with dynamic countdown
 function AgentQueueIndicator({ 
   position, 
-  waitSeconds,
-  onRequestCallback
+  waitSeconds
 }: { 
   position: number; 
   waitSeconds: number;
-  onRequestCallback?: () => void;
 }) {
   const [displayPosition, setDisplayPosition] = useState(position);
   const [isHighlighted, setIsHighlighted] = useState(false);
@@ -374,41 +372,32 @@ function AgentQueueIndicator({
       }, 300);
     }
   }, [position, displayPosition]);
-  
-  const progressPercent = Math.max(10, Math.min(90, 100 - (waitSeconds / 180) * 100));
 
   return (
     <div className={cn(
       "bg-gradient-to-r from-amber-900/30 to-orange-900/20 border border-amber-500/30 rounded-lg px-3 py-2 mb-3 transition-all duration-300",
       isHighlighted && "ring-1 ring-primary"
     )}>
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center flex-shrink-0">
-          <Users className="w-3.5 h-3.5 text-amber-400" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="text-white/80 text-xs">Position</span>
-            <span className={cn(
-              "text-sm font-bold transition-all",
-              isHighlighted ? "text-primary" : "text-white"
-            )}>
-              #{displayPosition}
-            </span>
-            <span className="text-white/40 text-xs">•</span>
-            <span className="text-amber-300 font-mono text-xs font-medium">
-              ~{formatTime(waitSeconds)}
-            </span>
+      <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center flex-shrink-0">
+            <Users className="w-3 h-3 text-amber-400" />
           </div>
+          <span className="text-white/70 text-xs">Queue Position</span>
+          <span className={cn(
+            "text-lg font-bold transition-all",
+            isHighlighted ? "text-primary" : "text-white"
+          )}>
+            #{displayPosition}
+          </span>
         </div>
-        {/* Skip queue button */}
-        <button
-          onClick={onRequestCallback}
-          className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded transition-colors"
-        >
-          <PhoneCall className="w-3 h-3" />
-          Callback
-        </button>
+        <span className="text-white/30">•</span>
+        <div className="flex items-center gap-1.5">
+          <Clock className="w-3 h-3 text-amber-400" />
+          <span className="text-amber-300 font-mono text-sm font-medium">
+            ~{formatTime(waitSeconds)}
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -2046,7 +2035,6 @@ export default function Book() {
                           <AgentQueueIndicator 
                             position={queuePosition} 
                             waitSeconds={queueWaitSeconds}
-                            onRequestCallback={() => setShowCallbackModal(true)}
                           />
                         )}
                       </div>
