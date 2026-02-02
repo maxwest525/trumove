@@ -258,6 +258,10 @@ export function Google2DTrackingMap({
             if ((animatedPolylineRef.current as any)._outlinePolyline) {
               (animatedPolylineRef.current as any)._outlinePolyline.setMap(null);
             }
+            // Remove all gradient polylines
+            if ((animatedPolylineRef.current as any)._gradientPolylines) {
+              (animatedPolylineRef.current as any)._gradientPolylines.forEach((pl: any) => pl.setMap(null));
+            }
             animatedPolylineRef.current.setMap(null);
           }
 
@@ -294,24 +298,50 @@ export function Google2DTrackingMap({
             zIndex: 4
           });
           
-          // Create animated polyline that reveals itself (green route on top)
-          const polyline = new window.google.maps.Polyline({
-            path: path,
-            geodesic: true,
-            strokeColor: '#22c55e',
-            strokeOpacity: 0,
-            strokeWeight: 5,
-            map: mapRef.current,
-            zIndex: 5
-          });
-          animatedPolylineRef.current = polyline;
+          // Create gradient effect using multiple polyline segments
+          const gradientColors = [
+            '#16a34a', // darker green (start)
+            '#1cb454',
+            '#22c55e', // primary green (middle)
+            '#34d06a',
+            '#22c55e', // primary green
+            '#1cb454',
+            '#16a34a', // darker green (end)
+          ];
           
-          // Store shadow refs for cleanup
+          const segmentCount = gradientColors.length;
+          const pointsPerSegment = Math.floor(path.length / segmentCount);
+          const gradientPolylines: any[] = [];
+          
+          for (let i = 0; i < segmentCount; i++) {
+            const startIdx = i * pointsPerSegment;
+            const endIdx = i === segmentCount - 1 ? path.length : (i + 1) * pointsPerSegment + 1;
+            const segmentPath = path.slice(startIdx, endIdx);
+            
+            if (segmentPath.length > 1) {
+              const segmentPolyline = new window.google.maps.Polyline({
+                path: segmentPath,
+                geodesic: true,
+                strokeColor: gradientColors[i],
+                strokeOpacity: 0,
+                strokeWeight: 5,
+                map: mapRef.current,
+                zIndex: 5 + i
+              });
+              gradientPolylines.push(segmentPolyline);
+            }
+          }
+          
+          // Use first segment as the main reference
+          animatedPolylineRef.current = gradientPolylines[0] || new window.google.maps.Polyline({ path, map: mapRef.current });
+          
+          // Store all refs for cleanup
           (animatedPolylineRef.current as any)._shadowPolyline = shadowPolyline;
           (animatedPolylineRef.current as any)._midShadowPolyline = midShadowPolyline;
           (animatedPolylineRef.current as any)._outlinePolyline = outlinePolyline;
+          (animatedPolylineRef.current as any)._gradientPolylines = gradientPolylines;
 
-          // Animate the polyline opacity
+          // Animate the gradient polylines opacity
           let opacity = 0;
           const fadeInInterval = setInterval(() => {
             opacity += 0.05;
@@ -319,7 +349,8 @@ export function Google2DTrackingMap({
               opacity = 0.85;
               clearInterval(fadeInInterval);
             }
-            polyline.setOptions({ strokeOpacity: opacity });
+            // Update all gradient polylines
+            gradientPolylines.forEach(pl => pl.setOptions({ strokeOpacity: opacity }));
           }, 30);
 
           // Create origin marker with staggered drop animation
@@ -557,12 +588,51 @@ export function Google2DTrackingMap({
           </div>
         )}
         
-        {/* Speed indicator */}
-        {isTracking && currentSpeed > 0 && (
-          <div className="px-3 py-1.5 rounded-lg bg-background/90 backdrop-blur-sm border border-border flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
-              <span className="text-[8px] font-bold text-primary">⚡</span>
-            </div>
+        {/* Speedometer gauge */}
+        {isTracking && currentSpeed >= 0 && (
+          <div className="px-2 py-1.5 rounded-lg bg-background/90 backdrop-blur-sm border border-border flex items-center gap-2">
+            <svg width="36" height="36" viewBox="0 0 36 36" className="drop-shadow-sm">
+              {/* Gauge background arc */}
+              <path
+                d="M 6 26 A 14 14 0 0 1 30 26"
+                fill="none"
+                stroke="hsl(var(--muted))"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+              {/* Gauge colored arc (speed indicator) */}
+              <path
+                d="M 6 26 A 14 14 0 0 1 30 26"
+                fill="none"
+                stroke="url(#speedGradient)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeDasharray="44"
+                strokeDashoffset={44 - (currentSpeed / 85) * 44}
+                style={{ transition: 'stroke-dashoffset 0.3s ease-out' }}
+              />
+              {/* Gradient definition */}
+              <defs>
+                <linearGradient id="speedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" />
+                  <stop offset="100%" stopColor="#16a34a" />
+                </linearGradient>
+              </defs>
+              {/* Needle */}
+              <line
+                x1="18"
+                y1="26"
+                x2="18"
+                y2="14"
+                stroke="hsl(var(--foreground))"
+                strokeWidth="2"
+                strokeLinecap="round"
+                transform={`rotate(${-90 + (currentSpeed / 85) * 180}, 18, 26)`}
+                style={{ transition: 'transform 0.3s ease-out' }}
+              />
+              {/* Center dot */}
+              <circle cx="18" cy="26" r="3" fill="hsl(var(--foreground))" />
+            </svg>
             <div className="flex flex-col">
               <span className="text-sm font-bold text-foreground leading-none">{currentSpeed}</span>
               <span className="text-[8px] text-muted-foreground uppercase tracking-wider">MPH</span>
