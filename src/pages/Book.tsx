@@ -8,7 +8,7 @@ import {
   Sofa, Bed, UtensilsCrossed, Laptop, Wrench, LayoutGrid, List, Sparkles, Truck,
   Shield, BadgeCheck, FileText, Clock, Bot, Headphones, Volume2, VolumeX,
   Maximize2, Minimize2, Settings, CalendarDays, PenTool, User, Headset,
-  PhoneCall, PictureInPicture2, PictureInPictureIcon
+  PhoneCall, PictureInPicture2, PictureInPictureIcon, ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import logoImg from "@/assets/logo.png";
 import AIChatContainer from "@/components/chat/AIChatContainer";
 import { getPageContext } from "@/components/chat/pageContextConfig";
+import DraggableChatModal from "@/components/chat/DraggableChatModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1367,6 +1368,10 @@ export default function Book() {
   const [callbackPhone, setCallbackPhone] = useState('');
   const [callbackSubmitted, setCallbackSubmitted] = useState(false);
   
+  // Popout chat modal state
+  const [showPopoutChat, setShowPopoutChat] = useState(false);
+  const [popoutChatMode, setPopoutChatMode] = useState<'trudy' | 'liveagent' | 'support'>('trudy');
+  
   // Picture-in-picture state
   const [isPiP, setIsPiP] = useState(false);
   const [pipPosition, setPipPosition] = useState({ x: 0, y: 0 }); // 0,0 = default position (bottom-right)
@@ -1897,7 +1902,7 @@ export default function Book() {
 
             {/* Chat Panel - Right Side */}
             <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5">
-              {/* Tab Selector - 3 Options */}
+              {/* Tab Selector - 3 Options + Popout */}
               <div className="video-consult-chat-tabs">
                 <button 
                   className={chatMode === 'trudy' ? 'active' : ''}
@@ -1927,6 +1932,25 @@ export default function Book() {
                   <Headset className="w-4 h-4" />
                   Live Support
                 </button>
+                
+                {/* Popout Button */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button 
+                      className="ml-auto !px-2"
+                      onClick={() => {
+                        setPopoutChatMode(chatMode);
+                        setShowPopoutChat(true);
+                      }}
+                      title="Open in movable window"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>Pop out chat</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
               
               {/* Chat Content */}
@@ -2839,6 +2863,220 @@ export default function Book() {
           </div>
         </div>
       )}
+      
+      {/* Draggable Popout Chat Modal */}
+      <DraggableChatModal
+        isOpen={showPopoutChat}
+        onClose={() => setShowPopoutChat(false)}
+        title={popoutChatMode === 'trudy' ? 'Trudy AI' : popoutChatMode === 'liveagent' ? 'In-Call Chat' : 'Live Support'}
+      >
+        <div className="h-full flex flex-col p-4">
+          {popoutChatMode === 'trudy' && (
+            <AIChatContainer 
+              pageContext={pageContext}
+              onSwitchToQuickQuote={() => {}}
+            />
+          )}
+          
+          {popoutChatMode === 'liveagent' && (
+            <div className="flex-1 flex flex-col">
+              {!roomUrl ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-center">
+                  <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+                    <Video className="w-8 h-8 text-muted-foreground/50" />
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">Join a Call First</h4>
+                  <p className="text-muted-foreground text-sm max-w-[250px]">
+                    This chat is available during live video consultations
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => {
+                      setShowPopoutChat(false);
+                      handleStartDemo();
+                    }}
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Try Demo Mode
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
+                    <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center relative">
+                      <Truck className="w-4 h-4 text-foreground" />
+                      <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm">In-Call Chat</h4>
+                      <p className="text-muted-foreground text-xs">Chat with Trudy</p>
+                    </div>
+                    <span className="ml-auto px-2 py-0.5 rounded bg-red-600/20 text-red-600 text-xs font-bold">LIVE</span>
+                  </div>
+                  <div className="flex-1 overflow-y-auto space-y-2 mb-3 bg-muted/30 border border-border rounded-lg p-3">
+                    {liveChatMessages.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                        <MessageSquare className="w-10 h-10 text-muted-foreground/40 mb-3" />
+                        <p className="text-muted-foreground text-sm">Send a message to chat with Trudy</p>
+                      </div>
+                    ) : (
+                      liveChatMessages.map((msg) => (
+                        <div key={msg.id} className={cn("flex", msg.isUser ? "justify-end" : "justify-start")}>
+                          <div className={cn(
+                            "max-w-[80%] px-3 py-2 rounded-lg text-sm",
+                            msg.isUser 
+                              ? "bg-foreground text-background rounded-br-sm" 
+                              : "bg-card border border-border text-card-foreground rounded-bl-sm"
+                          )}>
+                            <p>{msg.text}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Input 
+                      value={liveChatInput}
+                      onChange={(e) => setLiveChatInput(e.target.value)}
+                      placeholder="Ask Trudy anything..."
+                      className="flex-1"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && liveChatInput.trim()) {
+                          setLiveChatMessages(prev => [...prev, {
+                            id: `msg-${Date.now()}`,
+                            text: liveChatInput.trim(),
+                            isUser: true,
+                            time: new Date()
+                          }]);
+                          setLiveChatInput('');
+                        }
+                      }}
+                    />
+                    <Button
+                      size="icon"
+                      disabled={!liveChatInput.trim()}
+                      onClick={() => {
+                        if (liveChatInput.trim()) {
+                          setLiveChatMessages(prev => [...prev, {
+                            id: `msg-${Date.now()}`,
+                            text: liveChatInput.trim(),
+                            isUser: true,
+                            time: new Date()
+                          }]);
+                          setLiveChatInput('');
+                        }
+                      }}
+                    >
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+          
+          {popoutChatMode === 'support' && (
+            <div className="flex-1 flex flex-col">
+              <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border">
+                <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center relative">
+                  <Headset className="w-5 h-5 text-muted-foreground" />
+                  <span className={cn(
+                    "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-background",
+                    agentStatus === 'available' ? "bg-emerald-500" : "bg-amber-500"
+                  )} />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-foreground">Live Support</h4>
+                  <p className="text-muted-foreground text-xs">Chat with a real person</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-2 mb-4">
+                <Button 
+                  size="sm"
+                  className="flex-1 bg-foreground hover:bg-foreground/90 text-background"
+                  onClick={() => window.location.href = "tel:+18001234567"}
+                >
+                  <Phone className="w-4 h-4 mr-1.5" />
+                  Call
+                </Button>
+                <Button 
+                  size="sm"
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => setShowScheduleModal(true)}
+                >
+                  <Calendar className="w-4 h-4 mr-1.5" />
+                  Schedule
+                </Button>
+                <Button 
+                  size="sm"
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => window.open('mailto:support@trumove.com')}
+                >
+                  <Mail className="w-4 h-4 mr-1.5" />
+                  Email
+                </Button>
+              </div>
+              
+              {!hasJoinedQueue && (
+                <div className="bg-muted/50 border border-border rounded-lg p-4 text-center">
+                  <p className="text-muted-foreground text-sm mb-3">Want to chat with a live agent?</p>
+                  <div className="flex gap-2 justify-center">
+                    <Button onClick={() => setHasJoinedQueue(true)} size="sm">
+                      <Users className="w-4 h-4 mr-1.5" />
+                      Join Queue
+                    </Button>
+                    <Button onClick={() => setShowCallbackModal(true)} variant="outline" size="sm">
+                      <PhoneCall className="w-4 h-4 mr-1.5" />
+                      Callback
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              {hasJoinedQueue && (
+                <div className="flex-1 flex flex-col">
+                  <div className="flex-1 overflow-y-auto space-y-2 mb-3 bg-muted/30 border border-border rounded-lg p-3">
+                    {liveChatMessages.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                        <MessageSquare className="w-10 h-10 text-muted-foreground/40 mb-3" />
+                        <p className="text-muted-foreground text-sm">Waiting for agent...</p>
+                      </div>
+                    ) : (
+                      liveChatMessages.map((msg) => (
+                        <div key={msg.id} className={cn("flex", msg.isUser ? "justify-end" : "justify-start")}>
+                          <div className={cn(
+                            "max-w-[80%] px-3 py-2 rounded-lg text-sm",
+                            msg.isUser 
+                              ? "bg-foreground text-background rounded-br-sm" 
+                              : "bg-muted text-foreground rounded-bl-sm"
+                          )}>
+                            <p>{msg.text}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Input 
+                      value={liveChatInput}
+                      onChange={(e) => setLiveChatInput(e.target.value)}
+                      placeholder="Type a message..."
+                      className="flex-1"
+                    />
+                    <Button size="icon" disabled={!liveChatInput.trim()}>
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </DraggableChatModal>
       
       {/* Footer */}
       <Footer />
