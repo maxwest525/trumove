@@ -46,13 +46,13 @@ export function ContactHub({
   return (
     <div className="flex flex-col items-center justify-center h-full p-8 relative">
       {/* Logo and Header */}
-      <div className="text-center mb-auto pt-8">
+      <div className="text-center mb-auto pt-4">
         <img 
           src={logo} 
           alt="TruMove" 
-          className="h-10 mx-auto mb-4 brightness-0 invert animate-[pulse_3s_ease-in-out_infinite]"
+          className="h-10 mx-auto mb-3 brightness-0 invert animate-[pulse_3s_ease-in-out_infinite]"
         />
-        <h3 className="text-3xl font-black text-white mb-3">
+        <h3 className="text-3xl font-black text-white mb-2">
           Ready to Connect
         </h3>
         <p className="text-white/70 text-base max-w-lg mx-auto leading-relaxed">
