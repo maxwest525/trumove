@@ -634,41 +634,44 @@ export default function LiveTracking() {
 
       {/* Main Content - 2 Column Layout */}
       <div className="tracking-content tracking-content-2col">
-        {/* Left: Map - Auto-select based on WebGL capabilities */}
-        <div className="tracking-map-container">
-          {/* WebGL warning banner when using static fallback */}
-          {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
-            <div className="absolute top-0 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-              <span>{webglDiagnostics.warnings[0]}</span>
-            </div>
-          )}
-          
-          {useStaticMap ? (
-            <GoogleStaticRouteMap
-              originCoords={originCoords}
-              destCoords={destCoords}
-              progress={progress}
-              isTracking={isTracking}
-              googleApiKey={GOOGLE_MAPS_API_KEY}
-              routePolyline={googleRouteData.polyline}
-              truckPosition={currentTruckPosition}
-              originName={originName}
-              destName={destName}
-            />
-          ) : (
-            <Google2DTrackingMap
-              originCoords={originCoords}
-              destCoords={destCoords}
-              progress={progress}
-              isTracking={isTracking}
-              onRouteCalculated={handleRouteCalculated}
-              followMode={true}
-              onFollowModeChange={() => {}}
-              mapType={mapViewType}
-              googleApiKey={GOOGLE_MAPS_API_KEY}
-            />
-          )}
+        {/* Left: Map Area */}
+        <div className="tracking-map-area">
+          {/* Map Container */}
+          <div className="tracking-map-container">
+            {/* WebGL warning banner when using static fallback */}
+            {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
+              <div className="absolute top-0 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                <span>{webglDiagnostics.warnings[0]}</span>
+              </div>
+            )}
+            
+            {useStaticMap ? (
+              <GoogleStaticRouteMap
+                originCoords={originCoords}
+                destCoords={destCoords}
+                progress={progress}
+                isTracking={isTracking}
+                googleApiKey={GOOGLE_MAPS_API_KEY}
+                routePolyline={googleRouteData.polyline}
+                truckPosition={currentTruckPosition}
+                originName={originName}
+                destName={destName}
+              />
+            ) : (
+              <Google2DTrackingMap
+                originCoords={originCoords}
+                destCoords={destCoords}
+                progress={progress}
+                isTracking={isTracking}
+                onRouteCalculated={handleRouteCalculated}
+                followMode={true}
+                onFollowModeChange={() => {}}
+                mapType={mapViewType}
+                googleApiKey={GOOGLE_MAPS_API_KEY}
+              />
+            )}
+          </div>
 
           {/* Map Controls Strip - Go/Pause/Reset */}
           <div className="tracking-map-controls">
@@ -765,7 +768,7 @@ export default function LiveTracking() {
                   {routeCoordinates.length > 0 && (
                     <div className="tracking-below-map-section tracking-weigh-section">
                       <div className="tracking-below-map-header">
-                        <Scale className="w-4 h-4 text-orange-400" />
+                        <Scale className="w-4 h-4 text-amber-500" />
                         <span>Weigh Stations</span>
                       </div>
                       <WeighStationChecklist
