@@ -376,26 +376,33 @@ function AgentQueueIndicator({
 
   return (
     <div className={cn(
-      "bg-white dark:bg-white border border-border rounded-lg px-3 py-2 mb-3 transition-all duration-300",
-      isHighlighted && "ring-1 ring-primary"
+      "bg-background border border-border rounded-lg px-4 py-3 mb-3 transition-all duration-300",
+      isHighlighted && "ring-1 ring-emerald-500"
     )}>
-      <div className="flex items-center justify-center gap-3">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
-            <Users className="w-2.5 h-2.5 text-foreground dark:text-black" />
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-full bg-muted border border-border flex items-center justify-center flex-shrink-0">
+              <Users className="w-3 h-3 text-foreground" />
+            </div>
+            <span className="text-foreground font-semibold text-sm">You're in Queue</span>
           </div>
-          <span className="text-black/60 text-xs">Queue</span>
-          <span className="text-sm font-bold text-black">
+          <span className="text-foreground font-bold text-lg">
             #{displayPosition}
           </span>
         </div>
-        <span className="text-black/20">•</span>
-        <div className="flex items-center gap-1.5">
-          <Clock className="w-2.5 h-2.5 text-black/50" />
-          <span className="text-black/70 font-mono text-xs font-medium">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-muted-foreground">Estimated wait:</span>
+          </div>
+          <span className="text-foreground font-mono font-medium">
             ~{formatTime(waitSeconds)}
           </span>
         </div>
+        <p className="text-muted-foreground text-xs">
+          A specialist will be with you shortly. Please stay on this page.
+        </p>
       </div>
     </div>
   );
@@ -405,16 +412,16 @@ function AgentQueueIndicator({
 function AgentStatusBadge({ status }: { status: 'available' | 'busy' }) {
   return (
     <span className={cn(
-      "inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wide",
+      "inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-semibold uppercase tracking-wide",
       status === 'available' 
         ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400" 
-        : "bg-amber-500/20 text-amber-600 dark:text-amber-400"
+        : "bg-red-500/20 text-red-600 dark:text-red-400"
     )}>
       <span className={cn(
         "w-1.5 h-1.5 rounded-full shrink-0",
         status === 'available' 
           ? "bg-emerald-500 animate-pulse" 
-          : "bg-amber-500 animate-pulse"
+          : "bg-red-500 animate-pulse"
       )} />
       {status === 'available' ? 'Available' : 'Busy'}
     </span>
@@ -2150,7 +2157,7 @@ export default function Book() {
                         <Headset className="w-4 h-4 text-muted-foreground" />
                         <span className={cn(
                           "absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-background",
-                          agentStatus === 'available' ? "bg-emerald-500" : "bg-amber-500"
+                          agentStatus === 'available' ? "bg-emerald-500" : "bg-red-500"
                         )} />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -2169,11 +2176,11 @@ export default function Book() {
                           <div className="bg-muted/50 border border-border rounded-lg p-3 text-center">
                             <Button
                               onClick={() => setHasJoinedQueue(true)}
-                              className="w-full h-9 text-xs bg-foreground text-background hover:bg-foreground/90 font-semibold"
+                              className="w-full h-10 text-sm bg-foreground text-background hover:bg-foreground/90 font-semibold"
                               size="sm"
                             >
-                              <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
-                              Connect with live support agent
+                              <MessageSquare className="w-4 h-4 mr-2" />
+                              Connect with Live Specialist
                             </Button>
                           </div>
                         ) : (
@@ -2229,7 +2236,7 @@ export default function Book() {
                         onChange={(e) => setLiveChatInput(e.target.value)}
                         placeholder={hasJoinedQueue || agentConnected ? "Type a message..." : "Join queue to chat"}
                         disabled={!hasJoinedQueue && !agentConnected}
-                        className="flex-1 h-8 text-xs disabled:opacity-50"
+                        className="flex-1 h-9 text-sm disabled:opacity-50"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && liveChatInput.trim() && (hasJoinedQueue || agentConnected)) {
                             const newMsg = {
