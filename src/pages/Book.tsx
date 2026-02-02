@@ -1901,7 +1901,7 @@ export default function Book() {
             <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative">
               {/* Popout Button - Styled like Trudy pill hand button */}
               <button 
-                className="absolute -top-2 -right-2 z-10 w-7 h-7 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-colors group"
+                className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-colors group"
                 onClick={() => {
                   setPopoutChatMode(chatMode);
                   setShowPopoutChat(true);
