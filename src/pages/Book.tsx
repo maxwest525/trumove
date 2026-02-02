@@ -1144,15 +1144,7 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
 
         {/* Chat removed - available in right side panel */}
 
-        {/* Connection status - looks like a real call - hide in PiP */}
-        {!isPiP && (
-          <div className="absolute top-4 left-4 flex items-center gap-2">
-            <div className="px-3 py-1.5 rounded-full bg-green-500/90 text-white text-xs font-bold flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              Connected • {formatDuration(callDuration)}
-            </div>
-          </div>
-        )}
+        {/* Connection status removed - timer now shown in title bar */}
 
         {/* PiP compact status badge */}
         {isPiP && (
@@ -1187,8 +1179,8 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
             onClick={() => onWhiteboardOpen?.()}
             className="flex flex-col items-center gap-1 group"
           >
-            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/30">
-              <PenTool className="w-5 h-5" />
+            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/30">
+              <PenTool className="w-5 h-5 text-primary" />
             </div>
             <span className="text-[10px] text-white/60 font-medium">Whiteboard</span>
           </button>
@@ -1201,9 +1193,9 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
               <button className="flex flex-col items-center gap-1 group">
                 <div className={cn(
                   "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/30",
-                  volume === 0 ? "bg-amber-500/30 text-amber-400" : "bg-white/10 text-white hover:bg-white/20"
+                  volume === 0 ? "bg-amber-500/30" : "bg-white/10 hover:bg-white/20"
                 )}>
-                  {volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                  {volume === 0 ? <VolumeX className="w-5 h-5 text-amber-400" /> : <Volume2 className="w-5 h-5 text-primary" />}
                 </div>
                 <span className="text-[10px] text-white/60 font-medium">Volume</span>
               </button>
@@ -1236,9 +1228,9 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
           <div className={cn(
             "rounded-full flex items-center justify-center transition-colors border border-white/10",
             isPiP ? "w-7 h-7" : "w-11 h-11",
-            isMuted ? "bg-red-500 text-white border-red-500/50" : "bg-white/10 text-white hover:bg-white/20"
+            isMuted ? "bg-red-500 border-red-500/50" : "bg-white/10 hover:bg-white/20"
           )}>
-            {isMuted ? <MicOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Mic className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
+            {isMuted ? <MicOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Mic className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-primary")} />}
           </div>
           {!isPiP && <span className="text-[10px] text-white/60 font-medium">{isMuted ? "Unmute" : "Mute"}</span>}
         </button>
@@ -1251,9 +1243,9 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
           <div className={cn(
             "rounded-full flex items-center justify-center transition-colors border border-white/10",
             isPiP ? "w-7 h-7" : "w-11 h-11",
-            isVideoOff ? "bg-red-500 text-white border-red-500/50" : "bg-white/10 text-white hover:bg-white/20"
+            isVideoOff ? "bg-red-500 border-red-500/50" : "bg-white/10 hover:bg-white/20"
           )}>
-            {isVideoOff ? <VideoOff className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} /> : <Video className={isPiP ? "w-3.5 h-3.5" : "w-5 h-5"} />}
+            {isVideoOff ? <VideoOff className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-white")} /> : <Video className={cn(isPiP ? "w-3.5 h-3.5" : "w-5 h-5", "text-primary")} />}
           </div>
           {!isPiP && <span className="text-[10px] text-white/60 font-medium">{isVideoOff ? "Start Video" : "Stop Video"}</span>}
         </button>
@@ -1266,9 +1258,9 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
           >
             <div className={cn(
               "w-11 h-11 rounded-full flex items-center justify-center transition-colors border border-white/10 group-hover:border-white/30",
-              isScreenSharing ? "bg-primary text-primary-foreground border-primary/50" : "bg-white/10 text-white hover:bg-white/20"
+              isScreenSharing ? "bg-primary border-primary/50" : "bg-white/10 hover:bg-white/20"
             )}>
-              <Monitor className="w-5 h-5" />
+              <Monitor className={cn("w-5 h-5", isScreenSharing ? "text-primary-foreground" : "text-primary")} />
             </div>
             <span className="text-[10px] text-white/60 font-medium">{isScreenSharing ? "Stop Share" : "Share"}</span>
           </button>
@@ -1279,8 +1271,8 @@ function DemoVideoPlaceholder({ onLeave, isPiP = false, onWhiteboardOpen }: { on
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex flex-col items-center gap-1 group">
-                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/30">
-                  <Settings className="w-5 h-5" />
+                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors border border-white/10 group-hover:border-white/30">
+                  <Settings className="w-5 h-5 text-primary" />
                 </div>
                 <span className="text-[10px] text-white/60 font-medium">Settings</span>
               </button>
@@ -1340,6 +1332,7 @@ export default function Book() {
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
   const [bookingCode, setBookingCode] = useState("");
   const [isDemo, setIsDemo] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
   const [chatMode, setChatMode] = useState<'liveagent' | 'support'>('support');
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -1396,6 +1389,25 @@ export default function Book() {
   const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
   const resizeRef = useRef<{ startX: number; startY: number; startWidth: number; startHeight: number; startPosX: number; startPosY: number } | null>(null);
   const pipRef = useRef<HTMLDivElement>(null);
+  
+  // Call duration timer - runs when connected to a room
+  useEffect(() => {
+    if (!roomUrl) {
+      setCallDuration(0);
+      return;
+    }
+    const timer = setInterval(() => {
+      setCallDuration(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [roomUrl]);
+  
+  // Format duration as M:SS
+  const formatCallDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
   
   // Expanded video modal state (draggable + resizable)
   const [expandedVideoPosition, setExpandedVideoPosition] = useState({ x: 0, y: 0 });
@@ -1855,9 +1867,17 @@ export default function Book() {
                     </div>
                     <span className="text-xs font-medium text-muted-foreground ml-2">TruMove Video Consult</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <Video className="w-3.5 h-3.5" />
-                    <span className="text-[10px] font-medium">{roomUrl ? 'Connected' : 'Ready'}</span>
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <div className="flex items-center gap-1.5">
+                      <Video className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-medium">{roomUrl ? 'Connected' : 'Ready'}</span>
+                    </div>
+                    {roomUrl && (
+                      <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        <span className="text-[10px] font-bold text-primary tabular-nums">{formatCallDuration(callDuration)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Card id="video-consult-container" className="overflow-hidden border-0 bg-transparent rounded-none">
@@ -1926,15 +1946,15 @@ export default function Book() {
               </div>
 
               {/* Quick Tools - Pronounced card buttons - Always visible */}
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-6">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setShowScheduleModal(true)}
-                      className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
+                      className="group flex items-center gap-3 h-12 px-6 rounded-lg bg-card border-2 border-border hover:border-primary/50 hover:bg-muted transition-all duration-200"
                     >
-                      <CalendarDays className="w-4 h-4 text-primary" strokeWidth={2} />
-                      <span className="text-sm font-semibold text-foreground">Schedule a Call</span>
+                      <CalendarDays className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" strokeWidth={2} />
+                      <span className="text-base font-semibold text-foreground">Schedule a Call</span>
                     </button>
                   </TooltipTrigger>
                   <TooltipContent><p>Schedule a Call</p></TooltipContent>
@@ -1944,10 +1964,10 @@ export default function Book() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setShowWhiteboardModal(true)}
-                      className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
+                      className="group flex items-center gap-3 h-12 px-6 rounded-lg bg-card border-2 border-border hover:border-primary/50 hover:bg-muted transition-all duration-200"
                     >
-                      <PenTool className="w-4 h-4 text-primary" strokeWidth={2} />
-                      <span className="text-sm font-semibold text-foreground">Whiteboard</span>
+                      <PenTool className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" strokeWidth={2} />
+                      <span className="text-base font-semibold text-foreground">Whiteboard</span>
                     </button>
                   </TooltipTrigger>
                   <TooltipContent><p>Open Whiteboard</p></TooltipContent>
@@ -1957,10 +1977,10 @@ export default function Book() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={handleScreenShare}
-                      className="group flex items-center gap-2.5 h-11 px-5 rounded-lg bg-card border-2 border-border hover:border-foreground/40 hover:bg-muted transition-all duration-200"
+                      className="group flex items-center gap-3 h-12 px-6 rounded-lg bg-card border-2 border-border hover:border-primary/50 hover:bg-muted transition-all duration-200"
                     >
-                      <Monitor className="w-4 h-4 text-primary" strokeWidth={2} />
-                      <span className="text-sm font-semibold text-foreground">Share Screen</span>
+                      <Monitor className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" strokeWidth={2} />
+                      <span className="text-base font-semibold text-foreground">Share Screen</span>
                     </button>
                   </TooltipTrigger>
                   <TooltipContent><p>Share Your Screen</p></TooltipContent>
