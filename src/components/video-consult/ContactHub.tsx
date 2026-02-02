@@ -69,8 +69,8 @@ export function ContactHub({
         {/* Video Call */}
         <button
           onClick={onStartVideoCall}
-          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200 animate-fade-in opacity-0"
-          style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
+          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200 animate-fade-scale-in opacity-0"
+          style={{ animationDelay: '100ms' }}
         >
           <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
             <Video className="w-6 h-6 text-primary" strokeWidth={2} />
@@ -81,8 +81,8 @@ export function ContactHub({
         {/* Voice Call */}
         <button
           onClick={handleVoiceCall}
-          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200 animate-fade-in opacity-0"
-          style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
+          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200 animate-fade-scale-in opacity-0"
+          style={{ animationDelay: '200ms' }}
         >
           <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
             <PhoneCall className="w-6 h-6 text-primary" strokeWidth={2} />
@@ -93,8 +93,8 @@ export function ContactHub({
         {/* Email */}
         <button
           onClick={handleEmail}
-          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200 animate-fade-in opacity-0"
-          style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
+          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200 animate-fade-scale-in opacity-0"
+          style={{ animationDelay: '300ms' }}
         >
           <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
             <Mail className="w-6 h-6 text-primary" strokeWidth={2} />
@@ -105,8 +105,8 @@ export function ContactHub({
         {/* Text/SMS */}
         <button
           onClick={handleText}
-          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200 animate-fade-in opacity-0"
-          style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+          className="group flex flex-col items-center justify-center gap-3 py-6 px-4 rounded-xl bg-white/5 border-2 border-white/20 hover:border-primary/50 hover:bg-white/10 transition-all duration-200 animate-fade-scale-in opacity-0"
+          style={{ animationDelay: '400ms' }}
         >
           <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-primary/15 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
             <Send className="w-6 h-6 text-primary" strokeWidth={2} />
