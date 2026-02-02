@@ -54,8 +54,8 @@ export function ContactHub({
         />
       </div>
 
-      {/* Header - centered vertically between logo and buttons */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center">
+      {/* Header - raised slightly higher */}
+      <div className="flex-1 flex flex-col items-center justify-center text-center -mt-8">
         <h3 className="text-3xl font-black text-white mb-2">
           Ready to Connect
         </h3>
@@ -64,8 +64,8 @@ export function ContactHub({
         </p>
       </div>
 
-      {/* Primary Action Buttons - Green icons with glow on hover */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl pb-8">
+      {/* Primary Action Buttons - Green icons with glow on hover, moved up */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl pb-12">
         {/* Video Call */}
         <button
           onClick={onStartVideoCall}
