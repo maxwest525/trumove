@@ -1947,37 +1947,37 @@ export default function Book() {
                 {chatMode === 'trudy' && (
                   <div className="video-consult-specialist-panel live-agent-panel h-full flex flex-col">
                     {/* Compact Header */}
-                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border shrink-0">
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border shrink-0">
                       <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center relative shrink-0">
                         <Truck className="w-4 h-4 text-foreground" />
-                        <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-primary" />
+                        <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div className="min-w-0">
-                        <h4 className="text-foreground font-bold text-xs">Trudy AI Assistant</h4>
-                        <p className="text-primary text-[10px] font-medium">Available 24/7</p>
+                        <h4 className="text-foreground font-bold text-sm">Trudy AI Assistant</h4>
+                        <p className="text-emerald-600 dark:text-emerald-400 text-xs font-medium">Available 24/7</p>
                       </div>
                     </div>
                     
-                    {/* Sample Questions - Compact */}
+                    {/* Sample Questions */}
                     <div className="flex-1 overflow-y-auto min-h-0">
-                      <p className="text-muted-foreground text-xs mb-2">
+                      <p className="text-muted-foreground text-sm mb-3">
                         Trudy can help you with:
                       </p>
-                      <ul className="space-y-1.5 text-xs text-foreground/80">
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-primary">•</span>
+                      <ul className="space-y-2 text-sm text-foreground/90">
+                        <li className="flex items-start gap-2">
+                          <span className="text-emerald-600 dark:text-emerald-400">•</span>
                           "How much will my move cost?"
                         </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-primary">•</span>
+                        <li className="flex items-start gap-2">
+                          <span className="text-emerald-600 dark:text-emerald-400">•</span>
                           "What's included in full-service packing?"
                         </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-primary">•</span>
+                        <li className="flex items-start gap-2">
+                          <span className="text-emerald-600 dark:text-emerald-400">•</span>
                           "Can you explain the insurance options?"
                         </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-primary">•</span>
+                        <li className="flex items-start gap-2">
+                          <span className="text-emerald-600 dark:text-emerald-400">•</span>
                           "Do you offer storage between moves?"
                         </li>
                       </ul>
@@ -1986,14 +1986,14 @@ export default function Book() {
                     {/* CTA Button - Compact */}
                     <div className="mt-auto pt-2 shrink-0">
                       <Button 
-                        className="w-full h-9 bg-foreground hover:bg-foreground/90 text-background font-bold text-xs group"
+                        className="w-full h-10 bg-foreground hover:bg-foreground/90 text-background font-bold text-sm group"
                         onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
                       >
-                        <Sparkles className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                        <Sparkles className="w-4 h-4 mr-2 text-emerald-400" />
                         Chat with Trudy Now
-                        <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                       </Button>
-                      <p className="text-center text-muted-foreground text-[9px] mt-1">
+                      <p className="text-center text-muted-foreground text-xs mt-1.5">
                         Opens in floating chat window
                       </p>
                     </div>
@@ -2003,14 +2003,14 @@ export default function Book() {
                 {chatMode === 'liveagent' && (
                   <div className="video-consult-specialist-panel live-agent-panel h-full flex flex-col">
                     {/* In-Call Chat Header */}
-                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border shrink-0">
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border shrink-0">
                       <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center relative shrink-0">
                         <Truck className="w-4 h-4 text-foreground" />
-                        <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-primary" />
+                        <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-foreground font-bold text-xs">In-Call Chat</h4>
-                        <p className="text-muted-foreground text-[10px]">Chat with Trudy during your call</p>
+                        <h4 className="text-foreground font-bold text-sm">In-Call Chat</h4>
+                        <p className="text-muted-foreground text-xs">Chat with Trudy during your call</p>
                       </div>
                       {roomUrl && (
                         <span className="px-1.5 py-0.5 rounded bg-red-600/20 text-red-600 dark:text-red-400 text-[9px] font-bold">
@@ -2022,8 +2022,8 @@ export default function Book() {
                     {!roomUrl && (
                       <div className="flex items-center gap-2 px-3 py-2 mb-2 bg-muted/50 border border-border rounded-lg">
                         <Video className="w-4 h-4 text-muted-foreground/60 shrink-0" />
-                        <p className="text-muted-foreground text-[11px]">
-                          Not on video call — <button onClick={handleStartDemo} className="text-primary hover:underline font-medium">try demo</button>
+                        <p className="text-muted-foreground text-xs">
+                          Not on video call — <button onClick={handleStartDemo} className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium">try demo</button>
                         </p>
                       </div>
                     )}
@@ -2033,7 +2033,7 @@ export default function Book() {
                           {liveChatMessages.length === 0 && !isAgentTyping ? (
                             <div className="flex flex-col items-center justify-center h-full text-center py-4">
                               <MessageSquare className="w-8 h-8 text-muted-foreground/40 mb-2" />
-                              <p className="text-muted-foreground text-xs">
+                              <p className="text-muted-foreground text-sm">
                                 Send a message to chat with Trudy
                               </p>
                             </div>
@@ -2048,13 +2048,13 @@ export default function Book() {
                                   )}
                                 >
                                   <div className={cn(
-                                    "max-w-[85%] px-3 py-2 rounded-lg text-xs shadow-sm",
+                                    "max-w-[85%] px-3 py-2 rounded-lg text-sm shadow-sm",
                                     msg.isUser 
                                       ? "bg-foreground text-background rounded-br-sm" 
                                       : "bg-card border border-border text-card-foreground rounded-bl-sm"
                                   )}>
                                     <p>{msg.text}</p>
-                                    <span className="text-[9px] opacity-60 mt-1 block">
+                                    <span className="text-[10px] opacity-60 mt-1 block">
                                       {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </span>
                                   </div>
@@ -2190,7 +2190,7 @@ export default function Book() {
                       {liveChatMessages.length === 0 && !isAgentTyping ? (
                         <div className="flex flex-col items-center justify-center h-full text-center py-4">
                           <MessageSquare className="w-8 h-8 text-muted-foreground/40 mb-2" />
-                          <p className="text-muted-foreground text-xs">
+                          <p className="text-muted-foreground text-sm">
                             {hasJoinedQueue ? "Waiting for agent..." : "Join queue to start chatting"}
                           </p>
                         </div>
@@ -2205,13 +2205,13 @@ export default function Book() {
                               )}
                             >
                               <div className={cn(
-                                "max-w-[80%] px-2 py-1.5 rounded-lg text-xs",
+                                "max-w-[80%] px-3 py-2 rounded-lg text-sm",
                                 msg.isUser 
                                   ? "bg-foreground text-background rounded-br-sm" 
                                   : "bg-muted text-foreground rounded-bl-sm"
                               )}>
                                 <p>{msg.text}</p>
-                                <span className="text-[9px] opacity-60 mt-0.5 block">
+                                <span className="text-[10px] opacity-60 mt-0.5 block">
                                   {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                               </div>
