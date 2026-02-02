@@ -565,7 +565,7 @@ export default function LiveTracking() {
       {/* Site Header - White logo for tracking page */}
       <Header whiteLogo />
       
-      {/* Dashboard Header */}
+      {/* Dashboard Header - Compact */}
       <header className="tracking-header">
         <div className="flex items-center gap-3">
           <img 
@@ -578,12 +578,27 @@ export default function LiveTracking() {
           </span>
         </div>
 
-        {/* Booking Input + Demo Button - Center */}
-        <div className="tracking-header-booking">
+        {/* Trust Indicators - Right */}
+        <div className="tracking-header-trust">
+          <span className="tracking-header-trust-item">
+            <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+            FMCSA VERIFIED
+          </span>
+          <span className="tracking-header-trust-dot">•</span>
+          <span className="tracking-header-trust-item">
+            <Truck className="w-3.5 h-3.5 text-primary" />
+            LIVE GPS
+          </span>
+        </div>
+      </header>
+      
+      {/* Booking Search Bar - Below Header */}
+      <div className="tracking-search-bar">
+        <div className="tracking-search-bar-inner">
           <div className="tracking-booking-input-group">
             <input
               type="text"
-              placeholder="Booking ID or Shipment #"
+              placeholder="Enter Booking ID or Shipment #"
               value={bookingInput}
               onChange={(e) => setBookingInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleBookingSearch()}
@@ -608,20 +623,7 @@ export default function LiveTracking() {
             Demo
           </Button>
         </div>
-
-        {/* Trust Indicators - Right */}
-        <div className="tracking-header-trust">
-          <span className="tracking-header-trust-item">
-            <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-            FMCSA VERIFIED
-          </span>
-          <span className="tracking-header-trust-dot">•</span>
-          <span className="tracking-header-trust-item">
-            <Truck className="w-3.5 h-3.5 text-primary" />
-            LIVE GPS
-          </span>
-        </div>
-      </header>
+      </div>
 
       {/* Route Setup Modal */}
       <RouteSetupModal 
