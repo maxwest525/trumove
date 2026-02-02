@@ -1066,11 +1066,11 @@ export default function Index() {
                   {/* Progress bar removed per user request */}
                   
                   <div className="tru-qb-form-header tru-qb-form-header-pill">
-                    <div className="tru-qb-form-title-group animate-fade-in">
-                      <span className="tru-qb-form-title tru-qb-form-title-large" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
+                    <div className="tru-qb-form-title-group animate-fade-scale-in opacity-0">
+                      <span className="tru-qb-form-title tru-qb-form-title-large" style={{ animationDelay: '0.1s' }}>
                         AI-powered <span className="tru-qb-title-accent">Moving</span>
                       </span>
-                      <span className="tru-qb-form-subtitle-compact" style={{ animationDelay: '0.25s', animationFillMode: 'both' }}>
+                      <span className="tru-qb-form-subtitle-compact" style={{ animationDelay: '0.25s' }}>
                         FMCSA-vetted carriers, AI precision
                       </span>
                     </div>
@@ -1246,8 +1246,8 @@ export default function Index() {
 
                         {propertyType === 'apartment' && (
                           <>
-                            <p className="tru-qb-section-label animate-fade-in">What floor?</p>
-                            <div className="tru-qb-size-grid animate-fade-in">
+                            <p className="tru-qb-section-label animate-fade-scale-in opacity-0">What floor?</p>
+                            <div className="tru-qb-size-grid animate-fade-scale-in opacity-0" style={{ animationDelay: '50ms' }}>
                               {FLOOR_OPTIONS.map((f) => (
                                 <button
                                   key={f.value}
@@ -1260,8 +1260,8 @@ export default function Index() {
                               ))}
                             </div>
 
-                            <p className="tru-qb-section-label animate-fade-in">Access type</p>
-                            <div className="tru-qb-toggles animate-fade-in">
+                            <p className="tru-qb-section-label animate-fade-scale-in opacity-0" style={{ animationDelay: '100ms' }}>Access type</p>
+                            <div className="tru-qb-toggles animate-fade-scale-in opacity-0" style={{ animationDelay: '150ms' }}>
                               <button
                                 type="button"
                                 className={`tru-qb-toggle-card ${!hasElevator ? 'is-active' : ''}`}
@@ -1574,7 +1574,7 @@ export default function Index() {
                 {/* Left side: Premium marketing content - centered */}
                 <div className="tru-ai-steps-left">
                 {/* Premium headline block */}
-                  <div className="tru-ai-headline-block animate-fade-in" style={{ animationDelay: '0ms' }}>
+                  <div className="tru-ai-headline-block animate-fade-scale-in opacity-0" style={{ animationDelay: '0ms' }}>
                     <h3 className="tru-ai-section-title text-lg tracking-widest">AI Analysis Estimator</h3>
                     <h2 className="tru-ai-main-headline">
                       Scan. Catalog.<br />

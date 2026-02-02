@@ -152,7 +152,8 @@ export default function FeatureCarousel() {
           {features.map((feature, index) => (
             <CarouselItem key={index} className="features-carousel-item">
               <div 
-                className="features-carousel-card"
+                className="features-carousel-card animate-fade-scale-in opacity-0"
+                style={{ animationDelay: `${index * 80}ms` }}
                 onClick={() => handleCardClick(feature)}
                 role="button"
                 tabIndex={0}

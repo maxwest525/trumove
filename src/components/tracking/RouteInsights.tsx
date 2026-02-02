@@ -134,7 +134,7 @@ export function RouteInsights({
             {error}
           </div>
         ) : currentInsight ? (
-          <div className="space-y-2 animate-fade-in">
+          <div className="space-y-2 animate-fade-scale-in opacity-0">
             {/* Fun Fact */}
             {currentInsight.funFact && (
               <div className="flex gap-3">
