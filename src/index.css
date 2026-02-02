@@ -30321,13 +30321,19 @@ html.dark .tru-summary-header-large,
 
 .video-consult-chat-tabs button:hover {
   color: hsl(var(--foreground));
-  background: hsl(var(--muted));
+  background: hsl(var(--muted) / 0.8);
 }
 
 .video-consult-chat-tabs button.active {
   color: hsl(var(--foreground));
-  background: hsl(var(--muted));
-  border-bottom: 2px solid hsl(var(--primary));
+  background: hsl(var(--foreground) / 0.08);
+  border-bottom: 2.5px solid hsl(var(--foreground));
+  box-shadow: inset 0 -1px 0 hsl(var(--foreground) / 0.1);
+}
+
+.dark .video-consult-chat-tabs button.active {
+  background: hsl(0 0% 100% / 0.1);
+  border-bottom-color: hsl(0 0% 100%);
 }
 
 .video-consult-chat-content {
