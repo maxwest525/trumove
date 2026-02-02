@@ -1898,18 +1898,17 @@ export default function Book() {
             </Card>
 
             {/* Chat Panel - Right Side */}
-            <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative overflow-visible">
-              {/* Popout Button - Styled like Trudy pill hand button */}
+            <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative">
+              {/* Popout Button - Small box in corner */}
               <button 
-                className="absolute -top-2 -right-2 z-10 w-8 h-8 rounded-full bg-background border border-border flex items-center justify-center gap-0.5 hover:bg-primary/20 hover:border-primary/40 transition-colors group shadow-md"
+                className="absolute top-1 right-1 z-10 w-5 h-5 rounded bg-muted/80 border border-border flex items-center justify-center hover:bg-primary/20 hover:border-primary/40 transition-colors"
                 onClick={() => {
                   setPopoutChatMode(chatMode);
                   setShowPopoutChat(true);
                 }}
                 title="Pop out chat"
               >
-                <Hand className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground group-hover:animate-wave" />
-                <ChevronRight className="w-3 h-3 text-muted-foreground group-hover:text-foreground" />
+                <Maximize2 className="w-3 h-3 text-muted-foreground" />
               </button>
               
               {/* Tab Selector - 3 Options Equal Width */}
