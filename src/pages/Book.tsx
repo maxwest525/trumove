@@ -420,13 +420,13 @@ function AgentStatusBadge({ status }: { status: 'available' | 'busy' }) {
     <div className={cn(
       "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
       status === 'available' 
-        ? "bg-sky-500/20 text-sky-500" 
-        : "bg-amber-500/20 text-amber-400"
+        ? "bg-emerald-900 text-emerald-300" 
+        : "bg-amber-900 text-amber-300"
     )}>
       <span className={cn(
         "w-1.5 h-1.5 rounded-full",
         status === 'available' 
-          ? "bg-sky-500 animate-pulse" 
+          ? "bg-emerald-400 animate-pulse" 
           : "bg-amber-400 animate-pulse"
       )} />
       {status === 'available' ? 'Available' : 'Busy'}
@@ -2025,7 +2025,7 @@ export default function Book() {
                             <div className="flex gap-2">
                               <Button
                                 onClick={() => setHasJoinedQueue(true)}
-                                className="flex-1 h-8 text-xs"
+                                className="flex-1 h-8 text-xs bg-foreground text-background hover:bg-foreground/90"
                                 size="sm"
                               >
                                 <Users className="w-3 h-3 mr-1.5" />
@@ -2130,7 +2130,7 @@ export default function Book() {
                       <Button
                         size="icon"
                         disabled={!roomUrl || !liveChatInput.trim()}
-                        className="h-9 w-9 shrink-0"
+                        className="h-9 w-9 shrink-0 bg-foreground text-background hover:bg-foreground/90"
                         onClick={() => {
                           if (liveChatInput.trim() && roomUrl) {
                             const newMsg = {
