@@ -223,6 +223,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
   const [moveDate, setMoveDate] = useState<Date | undefined>(undefined);
   const [showDate, setShowDate] = useState(false);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [isLookingUp, setIsLookingUp] = useState(false);
   
   // Coordinates for Street View previews
   const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
@@ -256,17 +257,27 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
     return () => clearTimeout(timer);
   }, [destAddress]);
 
-  // Auto-populate from booking number
+  // Auto-populate from booking number with loading animation
   useEffect(() => {
     const trimmed = bookingNumber.trim();
-    if (MOCK_BOOKINGS[trimmed]) {
-      const booking = MOCK_BOOKINGS[trimmed];
-      setOriginAddress(booking.origin);
-      setDestAddress(booking.destination);
-      setMoveDate(booking.date);
-      setShowDate(true);
+    if (trimmed.length >= 4) {
+      setIsLookingUp(true);
+      const timer = setTimeout(() => {
+        if (MOCK_BOOKINGS[trimmed]) {
+          const booking = MOCK_BOOKINGS[trimmed];
+          setOriginAddress(booking.origin);
+          setDestAddress(booking.destination);
+          setMoveDate(booking.date);
+          setShowDate(true);
+        } else {
+          setShowDate(trimmed.length > 0);
+        }
+        setIsLookingUp(false);
+      }, 600);
+      return () => clearTimeout(timer);
     } else {
-      setShowDate(bookingNumber.trim().length > 0);
+      setShowDate(trimmed.length > 0);
+      setIsLookingUp(false);
     }
   }, [bookingNumber]);
 
@@ -418,23 +429,37 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
           {/* Booking/Shipping Number with inline buttons */}
           <div className="space-y-2">
             <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              <Search className="w-3.5 h-3.5" />
+              {isLookingUp ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+              ) : (
+                <Search className="w-3.5 h-3.5" />
+              )}
               Booking / Shipping Number
             </Label>
             <div className="flex items-center gap-2">
-              <Input
-                value={bookingNumber}
-                onChange={(e) => setBookingNumber(e.target.value)}
-                placeholder="Enter booking code (try 12345)"
-                className="flex-1 max-w-xs"
-              />
+              <div className="relative flex-1 max-w-xs">
+                <Input
+                  value={bookingNumber}
+                  onChange={(e) => setBookingNumber(e.target.value)}
+                  placeholder="Have a Booking ID or Shipping #?"
+                  className={cn(
+                    "pr-8 transition-all",
+                    isLookingUp && "border-primary/50"
+                  )}
+                />
+                {isLookingUp && (
+                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  </div>
+                )}
+              </div>
               <Button variant="outline" size="sm" onClick={onClose} className="h-10 px-4">
                 <X className="w-3.5 h-3.5 mr-1.5" />
                 Cancel
               </Button>
               <Button 
                 onClick={handleSubmit} 
-                disabled={!canSubmit}
+                disabled={!canSubmit || isLookingUp}
                 size="sm"
                 className="h-10 px-4 bg-foreground text-background hover:bg-foreground/90"
               >
@@ -443,7 +468,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
               </Button>
             </div>
             <p className="text-[10px] text-muted-foreground">
-              Enter your booking number to auto-populate route details
+              Enter your booking number to auto-populate route details (try 12345)
             </p>
           </div>
 

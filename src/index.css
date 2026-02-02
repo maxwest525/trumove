@@ -30302,6 +30302,36 @@ html.dark .tru-summary-header-large,
   border: 1px solid hsl(var(--border));
   border-radius: 12px;
   overflow: hidden;
+  position: relative;
+}
+
+/* Resizable chat panel when on call */
+.video-consult-chat-panel.is-resizable {
+  resize: horizontal;
+  min-width: 280px;
+  max-width: 480px;
+  overflow: auto;
+}
+
+/* Custom resize handle */
+.video-consult-chat-panel.is-resizable::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 40px;
+  background: hsl(var(--border));
+  border-radius: 2px;
+  cursor: ew-resize;
+  opacity: 0.5;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.video-consult-chat-panel.is-resizable:hover::after {
+  opacity: 1;
+  background: hsl(var(--primary) / 0.5);
 }
 
 /* Responsive chat panel height adjustments */
@@ -30317,6 +30347,14 @@ html.dark .tru-summary-header-large,
     height: 420px;
     min-height: 380px;
     max-height: none;
+  }
+  
+  .video-consult-chat-panel.is-resizable {
+    resize: none;
+  }
+  
+  .video-consult-chat-panel.is-resizable::after {
+    display: none;
   }
 }
 
