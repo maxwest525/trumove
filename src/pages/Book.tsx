@@ -1824,7 +1824,13 @@ export default function Book() {
 
             {/* Left Toolbar - Only when not on call */}
             {!roomUrl && (
-              <div className="flex flex-col gap-2 p-3 rounded-xl bg-muted/50 border border-border h-fit">
+              <div className="flex flex-col gap-2 p-4 rounded-xl bg-muted/50 border border-border h-fit">
+                {/* Toolbar Header */}
+                <div className="flex items-center gap-2 pb-2 border-b border-border mb-1">
+                  <Settings className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold text-foreground">Quick Tools</span>
+                </div>
+                
                 <Button
                   variant="outline"
                   onClick={() => setShowScheduleModal(true)}
@@ -1849,6 +1855,14 @@ export default function Book() {
                   <Monitor className="w-4 h-4" />
                   Screen Share
                 </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setIdleVolume(idleVolume === 0 ? 0.75 : 0)}
+                  className="h-10 px-4 gap-2 justify-start"
+                >
+                  {idleVolume === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  Volume
+                </Button>
                 
                 {/* Demo button - subtle */}
                 <button
@@ -1860,10 +1874,10 @@ export default function Book() {
               </div>
             )}
 
-            {/* Main Video Window */}
+            {/* Main Video Window - Enlarged */}
             <Card id="video-consult-container" className="overflow-hidden border-2 border-primary/20 bg-gradient-to-b from-muted/30 to-background shadow-lg shadow-primary/5 ring-1 ring-white/5">
               <CardContent className="p-0">
-                <div className="relative min-h-[400px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
+                <div className="relative min-h-[480px] h-[620px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
                   {/* Top controls - Fullscreen, PiP, and Whiteboard */}
                   <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                     {roomUrl && (
@@ -2267,18 +2281,7 @@ export default function Book() {
             </div>
           </div>
 
-          {/* Schedule Call CTA - Simple button below the main grid */}
-          <div className="flex justify-center">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => setShowScheduleModal(true)}
-              className="h-14 px-8 text-base font-bold border-2 border-border hover:border-foreground hover:bg-foreground hover:text-background transition-all"
-            >
-              <CalendarDays className="w-5 h-5 mr-3" />
-              Schedule a Call for Later
-            </Button>
-          </div>
+          {/* Schedule CTA removed - now in left toolbar */}
 
         </div>
       </div>
