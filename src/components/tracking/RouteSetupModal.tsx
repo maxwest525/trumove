@@ -96,7 +96,7 @@ function AddressPreview({
   }
 
   return (
-    <div className="relative w-full h-[180px] rounded-lg overflow-hidden border border-border bg-muted animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <div className="relative w-full h-[220px] rounded-lg overflow-hidden border border-border bg-muted animate-in fade-in slide-in-from-bottom-2 duration-300">
       {isLoading && (
         <div className="absolute inset-0 z-10">
           {/* Skeleton loading animation */}
@@ -282,12 +282,12 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
         </DialogHeader>
 
         <div className="space-y-5 py-2">
-          {/* Origin Row - Input left, Preview right, vertically centered */}
-          <div className="grid grid-cols-1 md:grid-cols-[1fr,auto] gap-4 items-center">
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                <Navigation className="w-3.5 h-3.5 text-primary" />
-                Origin Address
+          {/* Origin Row - Compact input left, Larger preview right */}
+          <div className="grid grid-cols-1 md:grid-cols-[280px,1fr] gap-4 items-center">
+            <div className="space-y-1.5">
+              <Label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                <Navigation className="w-3 h-3 text-primary" />
+                Origin
               </Label>
               <LocationAutocomplete
                 value={originAddress}
@@ -297,14 +297,14 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                 }
                 placeholder="Enter pickup address..."
                 mode="address"
-                className="w-full"
+                className="w-full h-9 text-sm"
               />
             </div>
             
-            {/* Origin Preview */}
-            <div className="w-[280px] hidden md:block">
-              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2">
-                <Eye className="w-3.5 h-3.5" />
+            {/* Origin Preview - Larger */}
+            <div className="hidden md:block">
+              <Label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-1.5">
+                <Eye className="w-3 h-3" />
                 Origin Preview
               </Label>
               {originCoords ? (
@@ -314,19 +314,19 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                   coordinates={originCoords}
                 />
               ) : (
-                <div className="w-full h-[180px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
+                <div className="w-full h-[220px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
                   <span className="text-xs text-muted-foreground">Enter origin to preview</span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Destination Row - Input left, Preview right, vertically centered */}
-          <div className="grid grid-cols-1 md:grid-cols-[1fr,auto] gap-4 items-center">
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                <MapPin className="w-3.5 h-3.5 text-destructive" />
-                Destination Address
+          {/* Destination Row - Compact input left, Larger preview right */}
+          <div className="grid grid-cols-1 md:grid-cols-[280px,1fr] gap-4 items-center">
+            <div className="space-y-1.5">
+              <Label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                <MapPin className="w-3 h-3 text-destructive" />
+                Destination
               </Label>
               <LocationAutocomplete
                 value={destAddress}
@@ -336,14 +336,14 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                 }
                 placeholder="Enter delivery address..."
                 mode="address"
-                className="w-full"
+                className="w-full h-9 text-sm"
               />
             </div>
             
-            {/* Destination Preview */}
-            <div className="w-[280px] hidden md:block">
-              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2">
-                <Eye className="w-3.5 h-3.5" />
+            {/* Destination Preview - Larger */}
+            <div className="hidden md:block">
+              <Label className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground mb-1.5">
+                <Eye className="w-3 h-3" />
                 Destination Preview
               </Label>
               {destCoords ? (
@@ -353,7 +353,7 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                   coordinates={destCoords}
                 />
               ) : (
-                <div className="w-full h-[180px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
+                <div className="w-full h-[220px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center">
                   <span className="text-xs text-muted-foreground">Enter destination to preview</span>
                 </div>
               )}
