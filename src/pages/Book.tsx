@@ -38,6 +38,8 @@ import {
 } from "@/components/ui/dialog";
 import { BookingCalendar } from "@/components/video-consult/BookingCalendar";
 import { WhiteboardCanvas } from "@/components/video-consult/WhiteboardCanvas";
+import { SchedulePanel } from "@/components/video-consult/SchedulePanel";
+import { ContactHub } from "@/components/video-consult/ContactHub";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 // Trust strip items now inline in header
@@ -1333,7 +1335,10 @@ export default function Book() {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showWhiteboardModal, setShowWhiteboardModal] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState<string>("default");
+  const [selectedCamera, setSelectedCamera] = useState<string>("default");
   const [audioOutputDevices, setAudioOutputDevices] = useState<MediaDeviceInfo[]>([]);
+  const [videoInputDevices, setVideoInputDevices] = useState<MediaDeviceInfo[]>([]);
+  const [idleVolume, setIdleVolume] = useState<number>(0.75);
   
   // Schedule form state
   const [scheduleName, setScheduleName] = useState("");
@@ -1614,20 +1619,29 @@ export default function Book() {
     setIsFullscreen(!isFullscreen);
   };
 
-  // Enumerate audio output devices
+  // Enumerate audio and video devices
   useEffect(() => {
     const enumerateDevices = async () => {
       try {
         // Request permission first (needed for full device labels)
-        await navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(stream => {
           stream.getTracks().forEach(track => track.stop());
         }).catch(() => {});
         
         const devices = await navigator.mediaDevices.enumerateDevices();
         const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
+        const videoInputs = devices.filter(device => device.kind === 'videoinput');
         setAudioOutputDevices(audioOutputs);
+        setVideoInputDevices(videoInputs);
+        
+        if (audioOutputs.length > 0 && selectedSpeaker === 'default') {
+          setSelectedSpeaker(audioOutputs[0].deviceId);
+        }
+        if (videoInputs.length > 0 && selectedCamera === 'default') {
+          setSelectedCamera(videoInputs[0].deviceId);
+        }
       } catch (error) {
-        console.log('Could not enumerate audio devices:', error);
+        console.log('Could not enumerate devices:', error);
       }
     };
     
@@ -1636,7 +1650,7 @@ export default function Book() {
     // Listen for device changes
     navigator.mediaDevices.addEventListener('devicechange', enumerateDevices);
     return () => navigator.mediaDevices.removeEventListener('devicechange', enumerateDevices);
-  }, []);
+  }, [selectedSpeaker, selectedCamera]);
 
   // Handle join room with booking code
   const handleJoinRoom = () => {
@@ -1748,7 +1762,7 @@ export default function Book() {
               className="h-6 brightness-0 invert"
             />
             <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
-              Video Consult Center
+              Contact Center
             </span>
           </div>
 
@@ -1797,30 +1811,44 @@ export default function Book() {
           {/* Section Header - matches Build Your Move styling */}
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-2">
-              Virtual Video <span className="tru-qb-title-accent">Call</span>
+              Connect <span className="tru-qb-title-accent">With Us</span>
             </h2>
             <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-              Connect face-to-face with our moving specialists for a personalized consultation. 
-              Share your screen to walk through your inventory together in real-time.
+              Reach out to our moving specialists by video, phone, email, or text. 
+              Schedule a call or connect instantly for personalized assistance.
             </p>
           </div>
 
-          {/* Two-Column Grid: Video + Chat Panel */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-6 mb-8">
+          {/* Three-Column Grid: Schedule Panel + Video + Chat Panel */}
+          <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr,380px] gap-6 mb-8">
+            {/* Schedule Panel - Left Side */}
+            <div className="hidden lg:block">
+              <SchedulePanel className="h-[600px]" />
+            </div>
+
             {/* Main Video Window */}
             <Card id="video-consult-container" className="overflow-hidden border-2 border-primary/20 bg-gradient-to-b from-muted/30 to-background shadow-lg shadow-primary/5 ring-1 ring-white/5">
               <CardContent className="p-0">
                 <div className="relative min-h-[400px] h-[560px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center ring-1 ring-inset ring-white/10">
-                  {/* Top controls - Fullscreen and PiP */}
+                  {/* Top controls - Fullscreen, PiP, and Whiteboard */}
                   <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
                     {roomUrl && (
-                      <button
-                        onClick={() => setIsPiP(!isPiP)}
-                        className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
-                        title={isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}
-                      >
-                        <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
-                      </button>
+                      <>
+                        <button
+                          onClick={() => setShowWhiteboardModal(true)}
+                          className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+                          title="Open Whiteboard"
+                        >
+                          <PenTool className="w-4 h-4 text-white" />
+                        </button>
+                        <button
+                          onClick={() => setIsPiP(!isPiP)}
+                          className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+                          title={isPiP ? "Exit Picture-in-Picture" : "Picture-in-Picture"}
+                        >
+                          <PictureInPicture2 className={cn("w-4 h-4", isPiP ? "text-primary" : "text-white")} />
+                        </button>
+                      </>
                     )}
                     <button
                       onClick={toggleFullscreen}
@@ -1852,42 +1880,26 @@ export default function Book() {
                       </>
                     )
                   ) : (
-                    <div className="text-center p-8">
-                      {/* Placeholder video state */}
-                      <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
-                        <Users className="w-12 h-12 text-white/30" />
-                      </div>
-                      <h3 className="text-xl font-bold text-white/90 mb-2">
-                        Ready to Connect
-                      </h3>
-                      <p className="text-white/50 text-sm mb-6 max-w-sm mx-auto">
-                        Use the booking controls below to join your scheduled session, or start a demo.
-                      </p>
-                      
-                      <button
-                        onClick={handleStartDemo}
-                        className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-primary transition-colors"
-                      >
-                        <Play className="w-4 h-4" />
-                        Try Demo Mode
-                      </button>
-                      
-                      {/* Screen sharing info */}
-                      <div className="mt-6 pt-6 border-t border-white/10 max-w-md mx-auto">
-                        <div className="flex items-center gap-3 text-white/60">
-                          <Monitor className="w-5 h-5 text-primary" />
-                          <p className="text-xs text-left">
-                            <span className="font-semibold text-white/80">Screen Sharing Available</span><br />
-                            Both you and support can share screens to collaborate on inventory, documents, and profiles.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    <ContactHub
+                      onStartVideoCall={handleStartDemo}
+                      bookingCode={bookingCode}
+                      setBookingCode={setBookingCode}
+                      onJoinRoom={handleJoinRoom}
+                      audioOutputDevices={audioOutputDevices}
+                      videoInputDevices={videoInputDevices}
+                      selectedSpeaker={selectedSpeaker}
+                      setSelectedSpeaker={setSelectedSpeaker}
+                      selectedCamera={selectedCamera}
+                      setSelectedCamera={setSelectedCamera}
+                      volume={idleVolume}
+                      setVolume={setIdleVolume}
+                    />
                   )}
                   
                 </div>
               </CardContent>
             </Card>
+
 
             {/* Chat Panel - Right Side */}
             <div className="video-consult-chat-panel border-2 border-primary/20 shadow-lg shadow-primary/5 ring-1 ring-white/5 relative">
@@ -2300,127 +2312,6 @@ export default function Book() {
             </div>
           </div>
 
-          {/* Booking Controls - Light themed card */}
-          <div className="video-consult-booking-controls animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'both' }}>
-            {/* Header with decorative lines */}
-            <div className="flex items-center gap-3 w-full mb-4">
-              <div className="flex-1 h-px bg-border" />
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground px-2">
-                Virtual Video Controls
-              </h3>
-              <div className="flex-1 h-px bg-border" />
-            </div>
-            
-            {/* Top Row: All Control Buttons */}
-            <div className="flex items-center gap-2 flex-wrap justify-center mb-4">
-              {/* Screen Share */}
-              <Button 
-                variant="outline" 
-                className={cn(
-                  "h-10 px-3 border border-border bg-background hover:bg-muted",
-                  isScreenSharing && "border-foreground/50 bg-foreground/10"
-                )}
-                onClick={handleScreenShare}
-              >
-                <Monitor className="w-4 h-4 mr-1.5" />
-                {isScreenSharing ? "Stop Share" : "Share Screen"}
-              </Button>
-              
-              
-              {/* Schedule Time */}
-              <Button 
-                variant="outline"
-                className="h-10 px-3 border border-border bg-background hover:bg-muted"
-                onClick={() => setShowScheduleModal(true)}
-              >
-                <CalendarDays className="w-4 h-4 mr-1.5" />
-                Schedule
-              </Button>
-              
-              {/* Trudy AI Service - Opens global chat */}
-              <Button 
-                variant="outline"
-                className="h-10 px-3 border border-border bg-background hover:bg-muted"
-                onClick={() => window.dispatchEvent(new CustomEvent('openTrudyChat'))}
-              >
-                <Bot className="w-4 h-4 mr-1.5" />
-                Trudy AI
-              </Button>
-              
-              {/* Virtual Whiteboard */}
-              <Button 
-                variant="outline"
-                className="h-10 px-3 border border-border bg-background hover:bg-muted"
-                onClick={() => setShowWhiteboardModal(true)}
-              >
-                <PenTool className="w-4 h-4 mr-1.5" />
-                Whiteboard
-              </Button>
-              
-              {/* Settings Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    className="h-10 w-10 border border-border bg-background hover:bg-muted"
-                  >
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-card border-border">
-                  <DropdownMenuLabel>Video Settings</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
-                    Quality: Auto ✓
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    Quality: High
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    Quality: Medium
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                  <DropdownMenuItem className="cursor-pointer">
-                    Sound Alerts: On ✓
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            
-            {/* Divider */}
-            <div className="w-full border-t border-border mb-4" />
-            
-            {/* Bottom Section: Booking Input + Actions */}
-            <div className="w-full space-y-2">
-              <div className="flex items-center gap-2">
-                <Input
-                  value={bookingCode}
-                  onChange={(e) => setBookingCode(e.target.value)}
-                  placeholder="Booking Code or Shipment ID"
-                  className="flex-1 h-8 text-xs bg-background border border-border placeholder:text-muted-foreground/60"
-                  onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
-                />
-                <Button 
-                  onClick={handleJoinRoom} 
-                  disabled={!bookingCode.trim()}
-                  className="h-8 px-2.5 text-xs bg-foreground text-background hover:bg-foreground/90 font-semibold"
-                >
-                  <Video className="w-3 h-3 mr-1" />
-                  Join
-                </Button>
-                <Button 
-                  variant="outline"
-                  className="h-8 px-2.5 text-xs border border-border bg-background hover:bg-muted font-semibold"
-                  onClick={() => window.location.href = "tel:+16097277647"}
-                >
-                  <Phone className="w-3 h-3 mr-1" />
-                  Call
-                </Button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       
