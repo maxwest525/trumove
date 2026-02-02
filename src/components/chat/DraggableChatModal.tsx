@@ -161,13 +161,7 @@ export default function DraggableChatModal({
 
   return (
     <>
-      {/* Backdrop - click to close */}
-      <div 
-        className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      
-      {/* Draggable Modal */}
+      {/* Draggable Modal - No backdrop for non-blocking interaction */}
       <div
         ref={modalRef}
         className={cn(

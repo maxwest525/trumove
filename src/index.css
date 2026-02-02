@@ -25810,7 +25810,7 @@
   grid-template-columns: 400px minmax(140px, 1fr) 400px;
   gap: 8px;
   padding: 10px;
-  padding-top: 16px; /* Gap from header */
+  padding-top: 66px; /* Gap from header - added 50px to push map/stats below header */
   overflow: auto;
   min-height: 0;
   height: 100%;
@@ -25859,6 +25859,7 @@
   .tracking-content.tracking-content-2col {
     grid-template-columns: 1fr;
     padding: 10px;
+    padding-top: 66px; /* Keep 50px offset on mobile */
   }
   
   .tracking-sidebar {
@@ -25893,12 +25894,13 @@
   min-width: 220px;
 }
 
-/* Map Container - Reduced height by 25% */
+/* Map Container - Fixed size 850x550 */
 .tracking-map-container {
-  min-height: 225px;
-  max-height: calc((100vh - 280px) * 0.75);
-  height: 75%;
-  flex: 0.75;
+  width: 850px;
+  height: 550px;
+  min-height: 550px;
+  max-height: 550px;
+  flex: none;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid hsl(var(--border));
