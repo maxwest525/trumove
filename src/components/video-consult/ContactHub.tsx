@@ -44,60 +44,60 @@ export function ContactHub({
 
   return (
     <div className="flex flex-col items-center justify-center h-full p-8 relative">
-      {/* Header - Larger, more readable text */}
-      <div className="text-center mb-10">
-        <h3 className="text-3xl font-black text-white mb-4">
+      {/* Header - Higher position in the window */}
+      <div className="text-center mb-auto pt-6">
+        <h3 className="text-3xl font-black text-white mb-3">
           Ready to Connect
         </h3>
-        <p className="text-white/80 text-lg max-w-lg mx-auto leading-relaxed">
+        <p className="text-white/70 text-base max-w-lg mx-auto leading-relaxed">
           Choose how you'd like to reach our moving specialists
         </p>
       </div>
 
-      {/* Primary Action Buttons - Dark premium style with subtle accents */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 w-full max-w-3xl">
+      {/* Primary Action Buttons - Black with tiny green accent on icons only */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl mb-auto">
         {/* Video Call */}
         <button
           onClick={onStartVideoCall}
-          className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-slate-900 border-2 border-slate-700/60 hover:border-slate-500 hover:bg-slate-800 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
-            <Video className="w-6 h-6 text-slate-400 group-hover:text-white transition-colors" strokeWidth={2} />
+          <div className="w-11 h-11 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+            <Video className="w-5 h-5 text-primary group-hover:text-primary transition-colors" strokeWidth={2} />
           </div>
-          <span className="text-sm font-semibold text-slate-300 group-hover:text-white text-center transition-colors">Video Call</span>
+          <span className="text-sm font-bold text-white text-center">Video Call</span>
         </button>
 
         {/* Voice Call */}
         <button
           onClick={handleVoiceCall}
-          className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-slate-900 border-2 border-slate-700/60 hover:border-slate-500 hover:bg-slate-800 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
-            <PhoneCall className="w-6 h-6 text-slate-400 group-hover:text-white transition-colors" strokeWidth={2} />
+          <div className="w-11 h-11 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+            <PhoneCall className="w-5 h-5 text-primary group-hover:text-primary transition-colors" strokeWidth={2} />
           </div>
-          <span className="text-sm font-semibold text-slate-300 group-hover:text-white text-center transition-colors">Voice Call</span>
+          <span className="text-sm font-bold text-white text-center">Voice Call</span>
         </button>
 
         {/* Email */}
         <button
           onClick={handleEmail}
-          className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-slate-900 border-2 border-slate-700/60 hover:border-slate-500 hover:bg-slate-800 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
-            <Mail className="w-6 h-6 text-slate-400 group-hover:text-white transition-colors" strokeWidth={2} />
+          <div className="w-11 h-11 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+            <Mail className="w-5 h-5 text-primary group-hover:text-primary transition-colors" strokeWidth={2} />
           </div>
-          <span className="text-sm font-semibold text-slate-300 group-hover:text-white text-center transition-colors">Email Us</span>
+          <span className="text-sm font-bold text-white text-center">Email Us</span>
         </button>
 
         {/* Text/SMS */}
         <button
           onClick={handleText}
-          className="group flex flex-col items-center gap-3 p-5 rounded-xl bg-slate-900 border-2 border-slate-700/60 hover:border-slate-500 hover:bg-slate-800 hover:scale-[1.02] active:scale-100 transition-all duration-200"
+          className="group flex flex-col items-center justify-center gap-2.5 p-5 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
         >
-          <div className="w-12 h-12 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-all duration-200">
-            <Send className="w-6 h-6 text-slate-400 group-hover:text-white transition-colors" strokeWidth={2} />
+          <div className="w-11 h-11 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+            <Send className="w-5 h-5 text-primary group-hover:text-primary transition-colors" strokeWidth={2} />
           </div>
-          <span className="text-sm font-semibold text-slate-300 group-hover:text-white text-center transition-colors">Text Us</span>
+          <span className="text-sm font-bold text-white text-center">Text Us</span>
         </button>
       </div>
 

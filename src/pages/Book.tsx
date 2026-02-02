@@ -1922,19 +1922,19 @@ export default function Book() {
                 </CardContent>
               </Card>
 
-              {/* Quick Tools - Horizontal row underneath video */}
+              {/* Quick Tools - Horizontal buttons matching 4-button style */}
               {!roomUrl && (
-                <div className="flex items-center justify-center gap-3">
+                <div className="flex items-center justify-center gap-4">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
                         onClick={() => setShowScheduleModal(true)}
-                        className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-900/80 border border-slate-700/50 hover:border-slate-600 hover:bg-slate-800 transition-all group"
+                        className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
                       >
-                        <div className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-colors">
-                          <CalendarDays className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                        <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+                          <CalendarDays className="w-4 h-4 text-primary" strokeWidth={2} />
                         </div>
-                        <span className="text-[11px] font-medium text-slate-400 group-hover:text-white text-center transition-colors">Schedule</span>
+                        <span className="text-sm font-bold text-white">Schedule a Call</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent><p>Schedule a Call</p></TooltipContent>
@@ -1944,12 +1944,12 @@ export default function Book() {
                     <TooltipTrigger asChild>
                       <button
                         onClick={() => setShowWhiteboardModal(true)}
-                        className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-900/80 border border-slate-700/50 hover:border-slate-600 hover:bg-slate-800 transition-all group"
+                        className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
                       >
-                        <div className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-colors">
-                          <PenTool className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                        <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+                          <PenTool className="w-4 h-4 text-primary" strokeWidth={2} />
                         </div>
-                        <span className="text-[11px] font-medium text-slate-400 group-hover:text-white text-center transition-colors">Whiteboard</span>
+                        <span className="text-sm font-bold text-white">Whiteboard</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent><p>Open Whiteboard</p></TooltipContent>
@@ -1959,12 +1959,12 @@ export default function Book() {
                     <TooltipTrigger asChild>
                       <button
                         onClick={handleScreenShare}
-                        className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-900/80 border border-slate-700/50 hover:border-slate-600 hover:bg-slate-800 transition-all group"
+                        className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-black border-2 border-slate-700/80 hover:border-slate-500 hover:bg-slate-900 hover:scale-[1.02] active:scale-100 transition-all duration-200"
                       >
-                        <div className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:bg-slate-700 transition-colors">
-                          <Monitor className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+                        <div className="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:bg-slate-800 transition-all duration-200">
+                          <Monitor className="w-4 h-4 text-primary" strokeWidth={2} />
                         </div>
-                        <span className="text-[11px] font-medium text-slate-400 group-hover:text-white text-center transition-colors">Share</span>
+                        <span className="text-sm font-bold text-white">Share Screen</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent><p>Share Your Screen</p></TooltipContent>
