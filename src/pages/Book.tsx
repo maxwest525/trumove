@@ -2001,24 +2001,22 @@ export default function Book() {
                         <Sparkles className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-foreground font-bold text-sm">In-Video Chat</h4>
-                        <p className="text-muted-foreground text-xs">Chat during your video call</p>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="text-foreground font-bold text-sm">In-Video Chat</h4>
+                            <p className="text-muted-foreground text-xs">Chat during your video call</p>
+                          </div>
+                          <span className={cn(
+                            "px-2 py-1 rounded text-xs font-semibold",
+                            roomUrl 
+                              ? "bg-red-600/20 text-red-600 dark:text-red-400" 
+                              : "bg-muted text-muted-foreground"
+                          )}>
+                            {roomUrl ? "ON CALL" : "NOT ON CALL"}
+                          </span>
+                        </div>
                       </div>
-                      {roomUrl && (
-                        <span className="px-1.5 py-0.5 rounded bg-red-600/20 text-red-600 dark:text-red-400 text-[9px] font-bold">
-                          LIVE
-                        </span>
-                      )}
                     </div>
-                    
-                    {!roomUrl && (
-                      <div className="flex items-center gap-2 px-3 py-2 mb-2 bg-muted/50 border border-border rounded-lg">
-                        <Video className="w-4 h-4 text-muted-foreground/60 shrink-0" />
-                        <p className="text-muted-foreground text-xs">
-                          Not on video call — <button onClick={handleStartDemo} className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium">try demo</button>
-                        </p>
-                      </div>
-                    )}
                     <>
                         {/* Messages Area */}
                         <div className="flex-1 overflow-y-auto space-y-2 mb-2 min-h-0 bg-muted/30 border border-border rounded-lg p-3">
