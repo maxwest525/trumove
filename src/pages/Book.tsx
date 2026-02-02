@@ -2074,7 +2074,7 @@ export default function Book() {
                               <div className={cn(
                                 "max-w-[85%] px-3 py-2 rounded-lg text-xs shadow-sm",
                                 msg.isUser 
-                                  ? "bg-primary text-primary-foreground rounded-br-sm" 
+                                  ? "bg-foreground text-background rounded-br-sm" 
                                   : "bg-card border border-border text-card-foreground rounded-bl-sm"
                               )}>
                                 <p>{msg.text}</p>
