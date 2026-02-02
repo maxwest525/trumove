@@ -114,20 +114,35 @@ export function TruckAerialView({
 
   const streetViewUrl = getStreetViewUrl();
 
-  // Show placeholder when no position available
+  // Show placeholder structure when no position available - same size as active state
   if (!currentPosition) {
     return (
       <div className="tracking-info-card">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-6 h-6 rounded-md bg-muted flex items-center justify-center">
-            <Navigation className="w-3.5 h-3.5 text-muted-foreground" />
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-muted flex items-center justify-center">
+              <Navigation className="w-3.5 h-3.5 text-muted-foreground" />
+            </div>
+            <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+              Location Preview
+            </span>
           </div>
-          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
-            Location Preview
-          </span>
+          <button
+            disabled
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[10px] font-semibold border bg-muted/50 text-muted-foreground border-border cursor-not-allowed opacity-50"
+          >
+            <Maximize2 className="w-3.5 h-3.5" />
+            <span>Fullscreen</span>
+          </button>
         </div>
-        <div className="h-[180px] rounded-lg bg-muted/50 border border-border flex items-center justify-center">
-          <span className="text-xs text-muted-foreground">Enter origin to see location</span>
+        <div 
+          className="relative w-full rounded-lg overflow-hidden bg-muted/30 border border-border flex items-center justify-center"
+          style={{ height: SIZE_CONFIGS['default'].height }}
+        >
+          <div className="text-center">
+            <MapPin className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
+            <span className="text-xs text-muted-foreground">Enter origin to see location</span>
+          </div>
         </div>
       </div>
     );

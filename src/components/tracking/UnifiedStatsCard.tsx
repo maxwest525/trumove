@@ -146,123 +146,112 @@ export function UnifiedStatsCard({
         </Button>
       </div>
 
-      {/* Empty State Message */}
-      {isEmpty && (
-        <div className="text-center py-6 text-muted-foreground">
-          <Route className="w-10 h-10 mx-auto mb-3 opacity-50" />
-          <p className="text-base font-semibold text-foreground/80">Enter a Booking # or Route</p>
-          <p className="text-sm mt-1.5 text-foreground/60">Stats will appear once tracking begins</p>
-        </div>
-      )}
-
-      {/* Primary Stats Row - ETA, Time, Distance */}
-      {!isEmpty && (
-        <div className="grid grid-cols-3 gap-2 mb-3">
-          <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-3 border border-primary/20">
-            <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">ETA</div>
-            <div className="text-xl font-bold text-primary leading-tight">
-              {adjustedETA || '--:--'}
-            </div>
-          </div>
-          
-          <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
-            <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Time Left</div>
-            <div className="text-xl font-bold text-foreground leading-tight">
-              {adjustedDuration || timeRemaining}
-            </div>
-          </div>
-          
-          <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
-            <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Distance</div>
-            <div className="text-xl font-bold text-foreground leading-tight">
-              {remainingDistance || Math.round(totalDistance - distanceTraveled)} mi
-            </div>
+      {/* Primary Stats Row - ETA, Time, Distance - Always visible, show placeholders when empty */}
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-3 border border-primary/20">
+          <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">ETA</div>
+          <div className="text-xl font-bold text-primary leading-tight">
+            {isEmpty ? '--:--' : (adjustedETA || '--:--')}
           </div>
         </div>
-      )}
-
-      {/* Progress Bar */}
-      {!isEmpty && (
-        <div className="mb-3">
-          <div className="flex justify-between text-sm text-foreground/80 mb-2 font-medium">
-            <span>{Math.round(progress)}% complete</span>
-            <span>{Math.round(distanceTraveled)}/{Math.round(totalDistance)} mi</span>
-          </div>
-          <div className="tracking-progress-bar h-2.5">
-            <div 
-              className="tracking-progress-fill"
-              style={{ width: `${progress}%` }}
-            />
+        
+        <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
+          <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Time Left</div>
+          <div className="text-xl font-bold text-foreground leading-tight">
+            {isEmpty ? '--' : (adjustedDuration || timeRemaining)}
           </div>
         </div>
-      )}
-
-      {/* Traffic, Tolls, Fuel Row */}
-      {!isEmpty && (
-        <div className="grid grid-cols-3 gap-2 mb-3">
-          {/* Traffic */}
-          <div className={cn("rounded-lg p-2.5 border", severity.bg)}>
-            <div className="flex items-center gap-1.5 mb-1">
-              <AlertTriangle className={cn("w-3.5 h-3.5", severity.color)} />
-              <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Traffic</span>
-            </div>
-            <div className={cn("text-sm font-bold", severity.color)}>
-              {severity.label}
-            </div>
-            {trafficDelay > 0 && (
-              <div className="text-xs text-foreground/70 mt-0.5">+{trafficDelay}m delay</div>
-            )}
-          </div>
-
-          {/* Tolls */}
-          <div className={cn(
-            "rounded-lg p-2.5 border",
-            tollInfo?.hasTolls ? "bg-muted/50 dark:bg-white/5 border-border" : "bg-emerald-500/10 border-emerald-500/20"
-          )}>
-            <div className="flex items-center gap-1.5 mb-1">
-              <DollarSign className={cn("w-3.5 h-3.5", tollInfo?.hasTolls ? "text-foreground/70" : "text-emerald-500")} />
-              <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Tolls</span>
-            </div>
-            <div className={cn("text-sm font-bold", tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500")}>
-              {tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
-            </div>
-          </div>
-
-          {/* Fuel Cost */}
-          <div className={cn(
-            "rounded-lg p-2.5 border",
-            isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/20" : "bg-amber-500/10 border-amber-500/20"
-          )}>
-            <div className="flex items-center gap-1.5 mb-1">
-              <Fuel className={cn("w-3.5 h-3.5", isFuelEfficient ? "text-emerald-500" : "text-amber-500")} />
-              <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Fuel</span>
-            </div>
-            <div className={cn("text-sm font-bold", isFuelEfficient ? "text-emerald-500" : "text-amber-500")}>
-              {fuelCostEstimate ? `$${fuelCostEstimate.toFixed(0)}` : '--'}
-            </div>
-            {isFuelEfficient && (
-              <div className="text-[10px] text-emerald-500/80 mt-0.5">Eco route</div>
-            )}
+        
+        <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
+          <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Distance</div>
+          <div className="text-xl font-bold text-foreground leading-tight">
+            {isEmpty ? '-- mi' : `${remainingDistance || Math.round(totalDistance - distanceTraveled)} mi`}
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Traffic Trend & Last Update */}
-      {!isEmpty && (
-        <div className="flex items-center justify-between py-2.5 border-t border-border">
-          {trend && (
-            <div className="flex items-center gap-2">
-              <span className={trend.color}>{trend.icon}</span>
-              <span className="text-sm text-foreground/80 font-medium">Traffic {trend.label}</span>
-            </div>
-          )}
-          {lastUpdate && (
-            <span className="text-sm text-foreground/70">
-              Updated {formatTimeAgo(lastUpdate)}
-            </span>
+      {/* Progress Bar - Always visible */}
+      <div className="mb-3">
+        <div className="flex justify-between text-sm text-foreground/80 mb-2 font-medium">
+          <span>{isEmpty ? '0% complete' : `${Math.round(progress)}% complete`}</span>
+          <span>{isEmpty ? '0/0 mi' : `${Math.round(distanceTraveled)}/${Math.round(totalDistance)} mi`}</span>
+        </div>
+        <div className="tracking-progress-bar h-2.5">
+          <div 
+            className="tracking-progress-fill"
+            style={{ width: isEmpty ? '0%' : `${progress}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Traffic, Tolls, Fuel Row - Always visible with placeholders */}
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        {/* Traffic */}
+        <div className={cn("rounded-lg p-2.5 border", isEmpty ? "bg-muted/30 border-border" : severity.bg)}>
+          <div className="flex items-center gap-1.5 mb-1">
+            <AlertTriangle className={cn("w-3.5 h-3.5", isEmpty ? "text-muted-foreground" : severity.color)} />
+            <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Traffic</span>
+          </div>
+          <div className={cn("text-sm font-bold", isEmpty ? "text-muted-foreground" : severity.color)}>
+            {isEmpty ? '--' : severity.label}
+          </div>
+          {!isEmpty && trafficDelay > 0 && (
+            <div className="text-xs text-foreground/70 mt-0.5">+{trafficDelay}m delay</div>
           )}
         </div>
-      )}
+
+        {/* Tolls */}
+        <div className={cn(
+          "rounded-lg p-2.5 border",
+          isEmpty ? "bg-muted/30 border-border" : (tollInfo?.hasTolls ? "bg-muted/50 dark:bg-white/5 border-border" : "bg-emerald-500/10 border-emerald-500/20")
+        )}>
+          <div className="flex items-center gap-1.5 mb-1">
+            <DollarSign className={cn("w-3.5 h-3.5", isEmpty ? "text-muted-foreground" : (tollInfo?.hasTolls ? "text-foreground/70" : "text-emerald-500"))} />
+            <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Tolls</span>
+          </div>
+          <div className={cn("text-sm font-bold", isEmpty ? "text-muted-foreground" : (tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500"))}>
+            {isEmpty ? '--' : (tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free')}
+          </div>
+        </div>
+
+        {/* Fuel Cost */}
+        <div className={cn(
+          "rounded-lg p-2.5 border",
+          isEmpty ? "bg-muted/30 border-border" : (isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/20" : "bg-amber-500/10 border-amber-500/20")
+        )}>
+          <div className="flex items-center gap-1.5 mb-1">
+            <Fuel className={cn("w-3.5 h-3.5", isEmpty ? "text-muted-foreground" : (isFuelEfficient ? "text-emerald-500" : "text-amber-500"))} />
+            <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Fuel</span>
+          </div>
+          <div className={cn("text-sm font-bold", isEmpty ? "text-muted-foreground" : (isFuelEfficient ? "text-emerald-500" : "text-amber-500"))}>
+            {isEmpty ? '--' : (fuelCostEstimate ? `$${fuelCostEstimate.toFixed(0)}` : '--')}
+          </div>
+          {!isEmpty && isFuelEfficient && (
+            <div className="text-[10px] text-emerald-500/80 mt-0.5">Eco route</div>
+          )}
+        </div>
+      </div>
+
+      {/* Traffic Trend & Last Update - Always visible */}
+      <div className="flex items-center justify-between py-2.5 border-t border-border">
+        {isEmpty ? (
+          <span className="text-sm text-muted-foreground">Awaiting route data...</span>
+        ) : (
+          <>
+            {trend && (
+              <div className="flex items-center gap-2">
+                <span className={trend.color}>{trend.icon}</span>
+                <span className="text-sm text-foreground/80 font-medium">Traffic {trend.label}</span>
+              </div>
+            )}
+            {lastUpdate && (
+              <span className="text-sm text-foreground/70">
+                Updated {formatTimeAgo(lastUpdate)}
+              </span>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
