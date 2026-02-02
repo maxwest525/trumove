@@ -2345,12 +2345,12 @@
 
 /* Section Title */
 .tru-ai-section-title {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: hsl(var(--muted-foreground));
-  margin: 8px 0 4px 0;
+  margin: 8px 0 6px 0;
 }
 
 .tru-ai-eyebrow {
