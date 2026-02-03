@@ -20,6 +20,7 @@ import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import logoImg from "@/assets/logo.png";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { getWebGLDiagnostics, type WebGLDiagnostics } from "@/lib/webglDiagnostics";
 import { Button } from "@/components/ui/button";
@@ -628,18 +629,19 @@ export default function LiveTracking() {
       
       {/* Dashboard Header - Compact with booking reference */}
       <header className="tracking-header">
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-bold tracking-wide uppercase text-white">
+        {/* Left - Logo & Title */}
+        <div className="flex items-center gap-3">
+          <img 
+            src={logoImg} 
+            alt="TruMove" 
+            className="h-6 brightness-0 invert"
+          />
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
             Shipment Command Center
           </span>
-          {bookingInput && (
-            <span className="px-2.5 py-1 rounded bg-white/10 text-[11px] font-mono text-white/80 border border-white/20">
-              #{bookingInput || '—'}
-            </span>
-          )}
         </div>
 
-        {/* Trust Indicators - Right */}
+        {/* Center - Trust Indicators */}
         <div className="tracking-header-trust">
           <span className="tracking-header-trust-item">
             <ShieldCheck className="w-3.5 h-3.5 text-primary" />
@@ -655,6 +657,14 @@ export default function LiveTracking() {
             <Cloud className="w-3.5 h-3.5 text-primary" />
             REAL-TIME ETA
           </span>
+        </div>
+
+        {/* Right - Shipment ID */}
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <div className="text-[11px] text-white/80 uppercase tracking-wider">Shipment ID</div>
+            <div className="text-sm font-mono text-white">{bookingInput ? `TM-${bookingInput}` : 'TM-2026-78331681'}</div>
+          </div>
         </div>
       </header>
 
