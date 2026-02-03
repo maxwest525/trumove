@@ -1873,9 +1873,9 @@ export default function Book() {
                       <span className="text-[10px] font-medium">{roomUrl ? 'Connected' : 'Ready'}</span>
                     </div>
                     {roomUrl && (
-                      <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20">
+                      <div className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                        <span className="text-[10px] font-bold text-primary tabular-nums">{formatCallDuration(callDuration)}</span>
+                        <span className="text-[10px] font-medium text-muted-foreground tabular-nums">{formatCallDuration(callDuration)}</span>
                       </div>
                     )}
                   </div>
