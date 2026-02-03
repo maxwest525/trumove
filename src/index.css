@@ -17720,13 +17720,8 @@
 .features-carousel {
   width: 100%;
   margin: 0;
-  padding: 0;
-}
-
-.features-carousel,
-.features-carousel-container,
-.features-carousel-content {
-  overflow: visible !important;
+  padding: 16px 0;
+  overflow: hidden;
 }
 
 .features-carousel-container {
@@ -17734,6 +17729,7 @@
   max-width: 100%;
   padding: 0;
   position: relative;
+  overflow: hidden;
 }
 
 /* Fade gradient on right edge - DISABLED to prevent white shadow artifact */
@@ -17747,20 +17743,19 @@
   display: flex;
   margin-left: 0 !important;
   margin-right: 0 !important;
-  padding: 8px 0 8px 8px;  /* Remove right padding - let cards fill space */
+  padding: 8px 0;
   /* Smooth scroll snap enhancement */
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 4 cards visible - exact 25% with padding accounted for */
+/* 4 cards visible - exact 25% */
 .features-carousel-item {
-  flex: 0 0 calc(25% - 6px) !important;  /* Reduced to prevent 5th card peek */
+  flex: 0 0 25% !important;
   min-width: 0;
-  padding: 0 8px !important;
+  padding: 0 6px !important;
   margin: 0 !important;
   position: relative;
-  overflow: visible !important;
   box-sizing: border-box;
   z-index: 1;
   /* Scroll snap point */
@@ -17817,11 +17812,11 @@
 
 /* Hover effects - contained within carousel bounds */
 .features-carousel-card:hover {
-  transform: scale(1.22) translateZ(0);
-  z-index: 100;
+  transform: scale(1.08) translateZ(0);
+  z-index: 10;
   border-color: hsl(var(--primary) / 0.4);
   box-shadow: 
-    0 20px 50px hsl(var(--tm-ink) / 0.25),
+    0 12px 32px hsl(var(--tm-ink) / 0.2),
     0 0 0 2px hsl(var(--primary) / 0.3);
 }
 
@@ -17832,7 +17827,7 @@
 
 /* Remove any transform on active to prevent flicker */
 .features-carousel-card:active {
-  transform: scale(1.22) translateZ(0);
+  transform: scale(1.08) translateZ(0);
 }
 
 .features-carousel-card:focus-visible {

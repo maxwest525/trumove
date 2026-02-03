@@ -148,7 +148,7 @@ export default function FeatureCarousel() {
         }}
         className="features-carousel-container"
       >
-        <CarouselContent className="features-carousel-content" allowOverflow>
+        <CarouselContent className="features-carousel-content">
           {features.map((feature, index) => (
             <CarouselItem key={index} className="features-carousel-item">
               <div 
