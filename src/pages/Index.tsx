@@ -951,7 +951,7 @@ export default function Index() {
   return (
     <SiteShell centered hideTrustStrip>
       {/* Sticky Header Block - TruMove Command Center */}
-      <div className="sticky top-[62px] z-40">
+      <div className="sticky top-[102px] z-40">
         <header className="tracking-header">
           {/* Left - Logo & Title */}
           <div className="flex items-center gap-3">
