@@ -241,14 +241,6 @@ export function TruckAerialView({
               onError={() => setIsLoading(false)}
             />
 
-            {/* Live badge */}
-            {isTracking && progress > 0 && (
-              <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-red-500/80 flex items-center gap-1.5 z-20">
-                <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                <span className="text-[9px] font-bold text-white tracking-wider">LIVE</span>
-              </div>
-            )}
-
             {/* View badge */}
             <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1.5 z-20">
               <Eye className="w-3 h-3 text-primary" />
