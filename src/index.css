@@ -30404,10 +30404,8 @@ html.dark .tru-summary-header-large,
   filter: brightness(0) invert(1);
 }
 
-/* Tracking page header logo - always white on dark header */
-.live-tracking-page .header-logo img {
-  filter: brightness(0) invert(1);
-}
+/* Note: The tracking-header has its own logo with brightness(0) invert(1) applied inline.
+   The global nav header logo should NOT be inverted on the tracking page. */
 
 /* =============================================
    COMPREHENSIVE DARK MODE VISIBILITY FIXES
