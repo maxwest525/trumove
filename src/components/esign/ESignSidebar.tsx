@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Send, Mail, FileText, UserPlus, Check, Loader2 } from "lucide-react";
+import { Send, Mail, FileText, UserPlus, Check, Loader2, Download } from "lucide-react";
 import { toast } from "sonner";
 import { DocumentTabs, type DocumentType } from "./DocumentTabs";
 import { ESignStatusCard } from "./ESignStatusCard";
@@ -20,7 +20,9 @@ interface ESignSidebarProps {
   onDocumentChange: (doc: DocumentType) => void;
   completedDocuments: Record<DocumentType, boolean>;
   onSendPdfEmail?: () => Promise<void>;
+  onDownloadPdf?: () => Promise<void>;
   isSendingEmail?: boolean;
+  isDownloading?: boolean;
   allSigned?: boolean;
   recipientEmail?: string;
   refNumber?: string;
@@ -35,7 +37,9 @@ export function ESignSidebar({
   onDocumentChange,
   completedDocuments,
   onSendPdfEmail,
+  onDownloadPdf,
   isSendingEmail = false,
+  isDownloading = false,
   allSigned = false,
   recipientEmail,
   refNumber = "DOC-2026-0001",
@@ -76,23 +80,42 @@ export function ESignSidebar({
         </Button>
       </div>
 
-      {/* Email Signed PDF Button */}
-      {onSendPdfEmail && (
+      {/* PDF Action Buttons */}
+      <div className="flex gap-2">
+        {/* Download PDF Button */}
         <Button
           variant="outline"
           size="sm"
-          className="w-full h-10 gap-2 border-foreground/20 hover:bg-foreground hover:text-background transition-all group"
-          onClick={onSendPdfEmail}
-          disabled={!allSigned || isSendingEmail}
+          className="flex-1 h-10 gap-2 border-foreground/20 hover:bg-foreground hover:text-background transition-all group"
+          onClick={onDownloadPdf}
+          disabled={!allSigned || isDownloading}
         >
-          {isSendingEmail ? (
+          {isDownloading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <FileText className="h-4 w-4 group-hover:scale-110 transition-transform" />
+            <Download className="h-4 w-4 group-hover:scale-110 transition-transform" />
           )}
-          <span className="text-xs font-medium">{isSendingEmail ? "Sending..." : "Email Signed PDF"}</span>
+          <span className="text-xs font-medium">{isDownloading ? "..." : "Download"}</span>
         </Button>
-      )}
+
+        {/* Email Signed PDF Button */}
+        {onSendPdfEmail && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 h-10 gap-2 border-foreground/20 hover:bg-foreground hover:text-background transition-all group"
+            onClick={onSendPdfEmail}
+            disabled={!allSigned || isSendingEmail}
+          >
+            {isSendingEmail ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Mail className="h-4 w-4 group-hover:scale-110 transition-transform" />
+            )}
+            <span className="text-xs font-medium">{isSendingEmail ? "..." : "Email"}</span>
+          </Button>
+        )}
+      </div>
 
       {/* Customer Name Card */}
       <Card className="border border-border bg-background shadow-sm">

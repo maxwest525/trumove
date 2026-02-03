@@ -6,6 +6,7 @@ import { EstimateAuthDocument } from "@/components/esign/EstimateAuthDocument";
 import { CCACHDocumentWrapper } from "@/components/esign/CCACHDocumentWrapper";
 import { BOLDocumentWrapper } from "@/components/esign/BOLDocumentWrapper";
 import type { DocumentType } from "@/components/esign/DocumentTabs";
+import { toast as sonnerToast } from "sonner";
 
 type SignatureField = "initial1" | "initial2" | "initial3" | "signature";
 
@@ -80,6 +81,25 @@ export default function Auth() {
   };
 
   const allSigned = Object.values(signatures).every(Boolean);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    setIsDownloading(true);
+    try {
+      // Simulate PDF generation
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const docName = activeDocument === "estimate" 
+        ? "Estimate Authorization" 
+        : activeDocument === "ccach" 
+        ? "CC-ACH Authorization" 
+        : "Bill of Lading";
+      
+      sonnerToast.success(`${docName} downloaded as PDF`);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
     <SiteShell>
@@ -97,6 +117,8 @@ export default function Auth() {
             allSigned={allSigned}
             recipientEmail="customer@example.com"
             refNumber={refNumber}
+            onDownloadPdf={handleDownloadPdf}
+            isDownloading={isDownloading}
           />
 
           {/* Document Container */}
