@@ -1,4 +1,4 @@
-import { FileText, CreditCard, Receipt, Check } from "lucide-react";
+import { FileText, CreditCard, Receipt, Check, CircleCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type DocumentType = "estimate" | "ccach" | "bol";
@@ -16,8 +16,28 @@ const documents: { type: DocumentType; label: string; icon: typeof FileText }[] 
 ];
 
 export function DocumentTabs({ activeDocument, onDocumentChange, completedDocuments }: DocumentTabsProps) {
+  const completedCount = Object.values(completedDocuments).filter(Boolean).length;
+  
   return (
     <div className="space-y-2">
+      {/* Progress indicator */}
+      <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+        <span>{completedCount} of {documents.length} signed</span>
+        <div className="flex gap-1">
+          {documents.map(({ type }) => (
+            <div
+              key={type}
+              className={cn(
+                "w-2 h-2 rounded-full transition-colors",
+                completedDocuments[type] 
+                  ? "bg-primary" 
+                  : "bg-muted-foreground/30"
+              )}
+            />
+          ))}
+        </div>
+      </div>
+      
       {documents.map(({ type, label, icon: Icon }) => {
         const isActive = activeDocument === type;
         const isCompleted = completedDocuments[type];
@@ -27,18 +47,22 @@ export function DocumentTabs({ activeDocument, onDocumentChange, completedDocume
             key={type}
             onClick={() => onDocumentChange(type)}
             className={cn(
-              "flex items-center gap-3 p-2 rounded border w-full text-left transition-colors",
-              isActive
-                ? "border-foreground/20 bg-foreground/5"
-                : "border-border hover:bg-muted/50"
+              "flex items-center gap-3 p-2.5 rounded-lg border w-full text-left transition-all",
+              isCompleted 
+                ? "border-primary/30 bg-primary/5" 
+                : isActive
+                  ? "border-foreground/20 bg-foreground/5"
+                  : "border-border hover:bg-muted/50"
             )}
           >
             <div
               className={cn(
-                "w-5 h-5 rounded-full flex items-center justify-center text-[10px] flex-shrink-0",
-                isActive || isCompleted
-                  ? "bg-foreground text-background"
-                  : "border border-muted-foreground/40"
+                "w-5 h-5 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 transition-colors",
+                isCompleted
+                  ? "bg-primary text-primary-foreground"
+                  : isActive
+                    ? "bg-foreground text-background"
+                    : "border border-muted-foreground/40"
               )}
             >
               {isCompleted ? (
@@ -51,19 +75,21 @@ export function DocumentTabs({ activeDocument, onDocumentChange, completedDocume
               <Icon
                 className={cn(
                   "h-3.5 w-3.5",
-                  isActive ? "text-foreground" : "text-muted-foreground"
+                  isCompleted ? "text-primary" : isActive ? "text-foreground" : "text-muted-foreground"
                 )}
               />
               <span
                 className={cn(
                   "text-xs font-medium",
-                  isActive ? "text-foreground" : "text-muted-foreground"
+                  isCompleted ? "text-primary" : isActive ? "text-foreground" : "text-muted-foreground"
                 )}
               >
                 {label}
               </span>
             </div>
-            {isCompleted && <Check className="h-3.5 w-3.5 text-foreground flex-shrink-0" />}
+            {isCompleted && (
+              <CircleCheck className="h-4 w-4 text-primary flex-shrink-0" />
+            )}
           </button>
         );
       })}
