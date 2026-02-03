@@ -416,14 +416,15 @@ export default function CarrierVetting() {
           </header>
         </div>
 
-        <div className="container max-w-7xl mx-auto px-4 py-8">
-          {/* Compact Hero Section - Only show when no carriers */}
+        <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
+          <div className="w-full max-w-7xl mx-auto">
+          {/* Hero Section - matches spacing from Connect With Us page */}
           {carriers.length === 0 && (
-            <div className="text-center mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-                Verify Any Carrier's Trust & Safety Score in Seconds
+            <div className="flex flex-col items-center justify-center text-center mb-10 max-w-xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3">
+                Verify Any Carrier's <span className="tru-qb-title-accent">Trust & Safety</span>
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Real-time FMCSA safety data • Insurance verification • DOT lookup
               </p>
             </div>
@@ -873,6 +874,7 @@ export default function CarrierVetting() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
         </div>
       </div>
     </SiteShell>
