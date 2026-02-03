@@ -3000,7 +3000,6 @@
   align-items: center;
   gap: 8px;
   padding-bottom: 12px;
-  border-bottom: 1px solid hsl(var(--border));
   margin-bottom: 12px;
   font-size: 13px;
   font-weight: 700;
