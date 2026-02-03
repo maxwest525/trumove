@@ -83,7 +83,7 @@ export function AgentLoginModal({ open, onClose, onLogin }: AgentLoginModalProps
           <div className="flex gap-3 pt-2">
             <Button
               onClick={handleLogin}
-              className="flex-1"
+              className="flex-1 bg-foreground text-background hover:bg-primary hover:text-foreground shadow-md hover:shadow-lg transition-all duration-200"
               disabled={isLoading}
             >
               {isLoading ? "Signing in..." : "Sign In"}
@@ -91,7 +91,7 @@ export function AgentLoginModal({ open, onClose, onLogin }: AgentLoginModalProps
             <Button
               onClick={handleDemo}
               variant="outline"
-              className="gap-2"
+              className="gap-2 border-2 hover:border-primary/50 hover:bg-primary/10"
             >
               <Sparkles className="w-4 h-4" />
               Demo

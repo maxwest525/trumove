@@ -76,6 +76,52 @@ function formatTime(date: Date): string {
 }
 
 // Format duration in hours/minutes
+// Individual collapsible section component for below-map panels
+function IndividualCollapsibleSection({ 
+  title, 
+  icon, 
+  children, 
+  storageKey,
+  defaultOpen = true 
+}: { 
+  title: string; 
+  icon: React.ReactNode; 
+  children: React.ReactNode; 
+  storageKey: string;
+  defaultOpen?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(() => {
+    const stored = localStorage.getItem(`collapsible-${storageKey}`);
+    return stored !== null ? stored === 'true' : defaultOpen;
+  });
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    localStorage.setItem(`collapsible-${storageKey}`, String(open));
+  };
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
+      <div className="tracking-below-map-section" data-state={isOpen ? 'open' : 'closed'}>
+        <CollapsibleTrigger className="tracking-below-map-section-trigger">
+          <div className="tracking-section-title">
+            {icon}
+            <span>{title}</span>
+          </div>
+          {isOpen ? (
+            <ChevronDown className="w-3.5 h-3.5 tracking-section-chevron" />
+          ) : (
+            <ChevronRight className="w-3.5 h-3.5 tracking-section-chevron" />
+          )}
+        </CollapsibleTrigger>
+        <CollapsibleContent className="tracking-below-map-section-content">
+          {children}
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
+  );
+}
+
 function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -729,27 +775,27 @@ export default function LiveTracking() {
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="tracking-below-map-panel">
-                  {/* Route Weather */}
-                  <div className="tracking-below-map-section">
-                    <div className="tracking-below-map-header">
-                      <Cloud className="w-4 h-4 text-primary" />
-                      <span>Route Weather</span>
-                    </div>
+                  {/* Route Weather - Individually Collapsible */}
+                  <IndividualCollapsibleSection
+                    title="Route Weather"
+                    icon={<Cloud className="w-4 h-4 text-primary" />}
+                    storageKey="tracking-weather"
+                  >
                     <CompactRouteWeather
                       originCoords={originCoords}
                       destCoords={destCoords}
                       originName={originName}
                       destName={destName}
                     />
-                  </div>
+                  </IndividualCollapsibleSection>
 
-                  {/* Alternate Routes */}
+                  {/* Alternate Routes - Individually Collapsible */}
                   {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
-                    <div className="tracking-below-map-section">
-                      <div className="tracking-below-map-header">
-                        <Route className="w-4 h-4 text-primary" />
-                        <span>Alternate Routes ({googleRouteData.alternateRoutes.length})</span>
-                      </div>
+                    <IndividualCollapsibleSection
+                      title={`Alternate Routes (${googleRouteData.alternateRoutes.length})`}
+                      icon={<Route className="w-4 h-4 text-primary" />}
+                      storageKey="tracking-alt-routes"
+                    >
                       <div className="tracking-alternate-routes-list">
                         {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
                           <div key={i} className="tracking-alternate-route-item">
@@ -761,22 +807,22 @@ export default function LiveTracking() {
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </IndividualCollapsibleSection>
                   )}
 
-                  {/* Weigh Stations */}
+                  {/* Weigh Stations - Individually Collapsible */}
                   {routeCoordinates.length > 0 && (
-                    <div className="tracking-below-map-section tracking-weigh-section">
-                      <div className="tracking-below-map-header">
-                        <Scale className="w-4 h-4 text-amber-500" />
-                        <span>Weigh Stations</span>
-                      </div>
+                    <IndividualCollapsibleSection
+                      title="Weigh Stations"
+                      icon={<Scale className="w-4 h-4 text-amber-500" />}
+                      storageKey="tracking-weigh"
+                    >
                       <WeighStationChecklist
                         routeCoordinates={routeCoordinates}
                         progress={progress}
                         isTracking={isTracking}
                       />
-                    </div>
+                    </IndividualCollapsibleSection>
                   )}
                 </div>
               </CollapsibleContent>
