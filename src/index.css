@@ -26881,13 +26881,15 @@
   flex: none;
   border-radius: 10px 10px 0 0;
   overflow: hidden;
-  border: 1px solid hsl(var(--border));
+  border: 2px solid hsl(var(--border));
   border-bottom: none;
   position: relative;
+  box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.1);
 }
 
 .dark .tracking-map-container {
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 /* Below Map Panel positions directly under map */
