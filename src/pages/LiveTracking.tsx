@@ -583,12 +583,12 @@ export default function LiveTracking() {
       {/* Site Header */}
       <Header />
       
-      {/* Hero Section - matches Book page styling */}
-      <div className="flex flex-col items-center justify-center text-center py-10 px-6 bg-gradient-to-b from-background to-muted/30 max-w-xl mx-auto">
-        <h1 className="tru-page-headline text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3">
+      {/* Hero Section - Headline & Subheadline */}
+      <div className="text-center py-8 px-4 bg-gradient-to-b from-background to-muted/30">
+        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-2">
           Track Your <span className="tru-qb-title-accent">Shipment</span>
         </h1>
-        <p className="tru-page-subheadline text-sm text-muted-foreground leading-relaxed">
+        <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
           Monitor your move in real-time with live GPS tracking, traffic updates, and estimated arrival times. Stay informed every step of the way.
         </p>
       </div>
