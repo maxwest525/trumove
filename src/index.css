@@ -8,8 +8,8 @@
    ============================================= */
 .tru-page-hero-section {
   text-align: center;
-  padding: 48px 16px; /* py-12 px-4 */
-  margin-bottom: 40px; /* mb-10 */
+  padding: 48px 16px 0 16px; /* py-12 px-4, but no bottom padding */
+  margin-bottom: 35px; /* Matches Connect With Us gap */
 }
 
 .tru-page-hero-section h1 {
