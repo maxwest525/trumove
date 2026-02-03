@@ -13,6 +13,16 @@ export default {
       },
     },
     extend: {
+      spacing: {
+        'xs': '0.5rem',
+        'sm-scale': '0.75rem',
+        'md-scale': '1rem',
+        'lg-scale': '1.5rem',
+        'xl-scale': '2rem',
+        '2xl-scale': '3rem',
+        '3xl-scale': '4rem',
+        'header-offset': '6.375rem',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
