@@ -27152,9 +27152,9 @@
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
-  width: 320px;
-  min-width: 320px;
-  max-width: 320px;
+  width: 380px;
+  min-width: 380px;
+  max-width: 380px;
   height: 612px; /* Match map (550px) + controls strip (~62px) */
 }
 
