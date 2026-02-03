@@ -26124,7 +26124,7 @@
 /* Sticky variant - locks with nav bar */
 .tracking-header.tracking-header-sticky {
   position: sticky;
-  top: 88px; /* Global nav height (72px) + margin (8px) + padding (8px) */
+  top: 102px; /* Matches Connect With Us header offset for consistency */
   z-index: 45;
 }
 
