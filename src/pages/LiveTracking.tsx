@@ -578,6 +578,8 @@ export default function LiveTracking() {
   const handleDemoClick = () => {
     setBookingInput('12345');
     setIsDemoMode(true);
+    // Auto-fill move date for demo
+    setMoveDate(new Date());
     // Pre-populate Jacksonville to Miami demo route
     handleOriginSelect('Jacksonville', '', 'Jacksonville, FL 32202');
     handleDestSelect('Miami', '', 'Miami, FL 33101');
@@ -591,12 +593,29 @@ export default function LiveTracking() {
       return;
     }
     
-    // Demo booking codes
+    // Demo booking codes with auto-filled move dates
     if (bookingInput === '12345') {
+      setMoveDate(new Date()); // Today
       handleDemoClick();
     } else if (bookingInput === '00000') {
       // Multi-stop demo
+      setMoveDate(new Date()); // Today
       toast.info('🗺️ Multi-stop route loaded');
+    } else if (bookingInput.toUpperCase().startsWith('TM-')) {
+      // Parse date from booking format TM-YYYYMMDD-XXXX
+      const dateMatch = bookingInput.match(/TM-(\d{8})-/i);
+      if (dateMatch) {
+        const dateStr = dateMatch[1];
+        const year = parseInt(dateStr.substring(0, 4));
+        const month = parseInt(dateStr.substring(4, 6)) - 1;
+        const day = parseInt(dateStr.substring(6, 8));
+        const parsedDate = new Date(year, month, day);
+        if (!isNaN(parsedDate.getTime())) {
+          setMoveDate(parsedDate);
+          toast.success(`📅 Move date auto-filled: ${format(parsedDate, 'MMM d, yyyy')}`);
+        }
+      }
+      toast.info(`🔍 Looking up booking #${bookingInput}...`);
     } else {
       toast.info(`🔍 Looking up booking #${bookingInput}...`);
     }
@@ -640,12 +659,36 @@ export default function LiveTracking() {
           <div className="tracking-booking-input-group">
             <input
               type="text"
-              placeholder="Enter Booking ID or Shipment #"
+              placeholder="Booking ID or Shipment #"
               value={bookingInput}
               onChange={(e) => setBookingInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleBookingSearch()}
               className="tracking-booking-input"
             />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "h-8 px-2.5 gap-1.5 text-xs border-border/50 bg-background/50 hover:bg-accent/50",
+                    !moveDate && "text-muted-foreground"
+                  )}
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  {moveDate ? format(moveDate, 'MMM d') : 'Date'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={moveDate}
+                  onSelect={(date) => date && setMoveDate(date)}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
             <Button
               onClick={handleBookingSearch}
               className="tracking-booking-go-btn"
