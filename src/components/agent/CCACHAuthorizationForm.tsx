@@ -9,6 +9,7 @@ import logo from "@/assets/logo.png";
 import { Check, Download, Printer, CreditCard, Building, Send, Mail, UserPlus, Shield, Lock, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ClientSearchModal, type ClientData } from "./ClientSearchModal";
+import { ESignStatusCard } from "@/components/esign/ESignStatusCard";
 import { supabase } from "@/integrations/supabase/client";
 
 type SignatureField = "initial1" | "initial2" | "signature";
@@ -348,6 +349,15 @@ export function CCACHAuthorizationForm({
               </Button>
             </CardContent>
           </Card>
+
+          {/* Document Status Card */}
+          <ESignStatusCard
+            documentTitle="CC/ACH Authorization"
+            recipientEmail={formData.email || undefined}
+            recipientName={typedName}
+            isSigned={allSigned}
+            refNumber={refNumber}
+          />
 
           {/* Progress */}
           <Card className="border border-border bg-background shadow-sm">

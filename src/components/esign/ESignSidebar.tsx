@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Send, Mail, FileText, UserPlus, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { DocumentTabs, type DocumentType } from "./DocumentTabs";
+import { ESignStatusCard } from "./ESignStatusCard";
 import { ClientSearchModal, type ClientData } from "@/components/agent/ClientSearchModal";
 
 type SignatureField = "initial1" | "initial2" | "initial3" | "signature";
@@ -21,6 +22,8 @@ interface ESignSidebarProps {
   onSendPdfEmail?: () => Promise<void>;
   isSendingEmail?: boolean;
   allSigned?: boolean;
+  recipientEmail?: string;
+  refNumber?: string;
 }
 
 export function ESignSidebar({
@@ -34,6 +37,8 @@ export function ESignSidebar({
   onSendPdfEmail,
   isSendingEmail = false,
   allSigned = false,
+  recipientEmail,
+  refNumber = "DOC-2026-0001",
 }: ESignSidebarProps) {
   const [showClientSearch, setShowClientSearch] = useState(false);
 
@@ -150,11 +155,26 @@ export function ESignSidebar({
         </CardContent>
       </Card>
 
+      {/* Document Status Card - Shows receipt/signature confirmations */}
+      <ESignStatusCard
+        documentTitle={
+          activeDocument === "estimate" 
+            ? "Estimate Authorization" 
+            : activeDocument === "ccach" 
+            ? "CC/ACH Authorization" 
+            : "Bill of Lading"
+        }
+        recipientEmail={recipientEmail}
+        recipientName={typedName}
+        isSigned={allSigned}
+        refNumber={refNumber}
+      />
+
       {/* Progress (for Estimate Auth) */}
       {activeDocument === "estimate" && (
         <Card className="border border-border bg-background shadow-sm">
           <CardContent className="p-4">
-            <h3 className="font-medium text-[10px] uppercase tracking-wider text-muted-foreground mb-3">Progress</h3>
+            <h3 className="font-medium text-[10px] uppercase tracking-wider text-muted-foreground mb-3">Signing Progress</h3>
             <div className="space-y-1.5">
               {(["initial1", "initial2", "initial3", "signature"] as SignatureField[]).map((field, i) => (
                 <div key={field} className="flex items-center gap-2 text-xs">
