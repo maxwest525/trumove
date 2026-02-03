@@ -2757,8 +2757,8 @@
 .tru-ai-header-previews .tru-ai-live-scanner,
 .tru-ai-header-previews .tru-ai-live-inventory {
   width: var(--ai-preview-width);
-  height: clamp(20rem, 30vh, 26rem); /* Own height, not 100% of parent */
-  min-height: 20rem;
+  height: clamp(24rem, 38vh, 30rem); /* Match section height */
+  min-height: 24rem;
 }
 
 /* Steps content container */
