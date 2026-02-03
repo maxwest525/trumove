@@ -659,7 +659,7 @@ export default function LiveTracking() {
                   className={cn(
                     "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
                     mapViewType === 'satellite' 
-                      ? "bg-primary text-primary-foreground font-bold shadow-inner" 
+                      ? "bg-foreground text-background font-bold" 
                       : "hover:bg-muted"
                   )}
                 >
@@ -673,7 +673,7 @@ export default function LiveTracking() {
                   className={cn(
                     "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
                     mapViewType === 'roadmap' 
-                      ? "bg-primary text-primary-foreground font-bold shadow-inner" 
+                      ? "bg-foreground text-background font-bold" 
                       : "hover:bg-muted"
                   )}
                 >
@@ -681,19 +681,6 @@ export default function LiveTracking() {
                   Roadmap
                 </Button>
               </div>
-              
-              {/* Relocate Truck Button - only when tracking */}
-              {isTracking && (
-                <Button
-                  onClick={() => setFollowMode(true)}
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 gap-1.5 text-xs bg-background/95 backdrop-blur-sm border-border shadow-lg"
-                >
-                  <Crosshair className="w-3.5 h-3.5" />
-                  Relocate Truck
-                </Button>
-              )}
               
               {/* Demo Button */}
               <Button
@@ -901,10 +888,12 @@ export default function LiveTracking() {
             routeCoordinates={routeCoordinates}
             progress={progress}
             isTracking={isTracking}
+            isPaused={isPaused}
             originCoords={originCoords}
             googleApiKey={GOOGLE_MAPS_API_KEY}
             expanded={streetViewExpanded}
             onToggleExpand={() => setStreetViewExpanded(!streetViewExpanded)}
+            onRelocateTruck={() => setFollowMode(true)}
           />
         </div>
       </div>
