@@ -127,28 +127,28 @@ export function ESignStatusCard({
   const statusItems = [
     {
       key: "sent",
-      label: "Document Sent",
+      label: "Sent to Customer",
       icon: Send,
       time: sentAt,
       active: deliveryStatus !== "pending",
     },
     {
       key: "delivered",
-      label: "Delivered to Inbox",
+      label: "Customer Received",
       icon: Mail,
       time: deliveredAt,
       active: ["delivered", "opened", "signed"].includes(deliveryStatus),
     },
     {
       key: "opened",
-      label: "Document Opened",
+      label: "Customer Opened",
       icon: Eye,
       time: openedAt,
       active: ["opened", "signed"].includes(deliveryStatus),
     },
     {
       key: "signed",
-      label: "Successfully Signed",
+      label: "Customer Signed ✓",
       icon: CheckCircle2,
       time: signedAt,
       active: deliveryStatus === "signed",
@@ -161,7 +161,7 @@ export function ESignStatusCard({
         <div className="flex items-center justify-between">
           <h3 className="font-medium text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <FileText className="w-3.5 h-3.5" />
-            Document Status
+            Customer E-Sign Status
           </h3>
           <span className="text-[10px] font-mono text-muted-foreground">{refNumber}</span>
         </div>
@@ -260,7 +260,7 @@ export function ESignStatusCard({
           <div className="flex items-center gap-2 p-2 rounded-md bg-primary/10 border border-primary/20">
             <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
             <span className="text-xs text-primary font-medium">
-              Document successfully signed and verified
+              Customer has signed — ready for download
             </span>
           </div>
         )}
