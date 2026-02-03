@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
 import { Google2DTrackingMap } from "@/components/tracking/Google2DTrackingMap";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+
 import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
 import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
@@ -77,48 +77,6 @@ function formatTime(date: Date): string {
 }
 
 // Format duration in hours/minutes
-// Individual collapsible section component for below-map panels
-function IndividualCollapsibleSection({ 
-  title, 
-  icon, 
-  children, 
-  storageKey,
-  defaultOpen = true 
-}: { 
-  title: string; 
-  icon: React.ReactNode; 
-  children: React.ReactNode; 
-  storageKey: string;
-  defaultOpen?: boolean;
-}) {
-  const [isOpen, setIsOpen] = useState(() => {
-    const stored = localStorage.getItem(`collapsible-${storageKey}`);
-    return stored !== null ? stored === 'true' : defaultOpen;
-  });
-
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
-    localStorage.setItem(`collapsible-${storageKey}`, String(open));
-  };
-
-  return (
-    <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
-      <div className="tracking-below-map-section" data-state={isOpen ? 'open' : 'closed'}>
-        <CollapsibleTrigger className="tracking-below-map-section-trigger">
-          <div className="tracking-section-title">
-            {icon}
-            <span>{title}</span>
-          </div>
-          <ChevronRight className="w-3.5 h-3.5 tracking-section-chevron" />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="tracking-below-map-section-content">
-          {children}
-        </CollapsibleContent>
-      </div>
-    </Collapsible>
-  );
-}
-
 function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -192,8 +150,6 @@ export default function LiveTracking() {
   const [webglDiagnostics, setWebglDiagnostics] = useState<WebGLDiagnostics | null>(null);
   const [useStaticMap, setUseStaticMap] = useState(false);
   
-  // Below-map panel collapsed state
-  const [belowMapCollapsed, setBelowMapCollapsed] = useState(false);
   
   // Route comparison state
   const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
@@ -771,7 +727,7 @@ export default function LiveTracking() {
             )}
           </div>
 
-          {/* Map Controls Strip - Go/Pause/Reset */}
+          {/* Map Controls Strip - Go/Pause/Reset + Route Info Dropdowns */}
           <div className="tracking-map-controls">
             <div className="tracking-map-controls-buttons">
               {!isTracking ? (
@@ -804,82 +760,76 @@ export default function LiveTracking() {
                 <RotateCcw className="w-4 h-4" />
                 Reset
               </Button>
+
+              {/* Separator */}
+              <div className="h-6 w-px bg-border mx-2" />
+
+              {/* Weather Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-1.5">
+                    <Cloud className="w-4 h-4" />
+                    Weather
+                    <ChevronDown className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-80 p-3 bg-popover">
+                  <CompactRouteWeather
+                    originCoords={originCoords}
+                    destCoords={destCoords}
+                    originName={originName}
+                    destName={destName}
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Alternate Routes Dropdown */}
+              {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-1.5">
+                      <Route className="w-4 h-4" />
+                      Routes
+                      <ChevronDown className="w-3 h-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-72 p-3 bg-popover">
+                    <div className="tracking-alternate-routes-list">
+                      {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
+                        <div key={i} className="tracking-alternate-route-item">
+                          <span className="tracking-alt-route-name">{alt.description || `Via alternate ${i + 1}`}</span>
+                          <span className="tracking-alt-route-meta">
+                            {alt.distanceMiles} mi • {alt.durationFormatted}
+                            {alt.isTollFree && <span className="tracking-alt-toll-free">No tolls</span>}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              {/* Weigh Stations Dropdown */}
+              {routeCoordinates.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-1.5">
+                      <Scale className="w-4 h-4" />
+                      Weigh
+                      <ChevronDown className="w-3 h-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-80 p-3 bg-popover">
+                    <WeighStationChecklist
+                      routeCoordinates={routeCoordinates}
+                      progress={progress}
+                      isTracking={isTracking}
+                    />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </div>
-
-          {/* Below Map Panel: Weather + Alternate Routes + Weigh Stations - Collapsible */}
-          <Collapsible open={!belowMapCollapsed} onOpenChange={(open) => setBelowMapCollapsed(!open)}>
-            <div className="tracking-below-map-wrapper">
-              <CollapsibleTrigger asChild>
-                <button className="tracking-below-map-toggle">
-                  {belowMapCollapsed ? (
-                    <>
-                      <ChevronUp className="w-4 h-4" />
-                      <span>Show Route Details</span>
-                    </>
-                  ) : (
-                    <>
-                      <ChevronDown className="w-4 h-4" />
-                      <span>Hide Route Details</span>
-                    </>
-                  )}
-                </button>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <div className="tracking-below-map-panel">
-                  {/* Route Weather - Individually Collapsible */}
-                  <IndividualCollapsibleSection
-                    title="Route Weather"
-                    icon={<Cloud className="w-4 h-4 text-primary" />}
-                    storageKey="tracking-weather"
-                  >
-                    <CompactRouteWeather
-                      originCoords={originCoords}
-                      destCoords={destCoords}
-                      originName={originName}
-                      destName={destName}
-                    />
-                  </IndividualCollapsibleSection>
-
-                  {/* Alternate Routes - Individually Collapsible */}
-                  {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
-                    <IndividualCollapsibleSection
-                      title={`Alternate Routes (${googleRouteData.alternateRoutes.length})`}
-                      icon={<Route className="w-4 h-4 text-primary" />}
-                      storageKey="tracking-alt-routes"
-                    >
-                      <div className="tracking-alternate-routes-list">
-                        {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
-                          <div key={i} className="tracking-alternate-route-item">
-                            <span className="tracking-alt-route-name">{alt.description || `Via alternate ${i + 1}`}</span>
-                            <span className="tracking-alt-route-meta">
-                              {alt.distanceMiles} mi • {alt.durationFormatted}
-                              {alt.isTollFree && <span className="tracking-alt-toll-free">No tolls</span>}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </IndividualCollapsibleSection>
-                  )}
-
-                  {/* Weigh Stations - Individually Collapsible */}
-                  {routeCoordinates.length > 0 && (
-                    <IndividualCollapsibleSection
-                      title="Weigh Stations"
-                      icon={<Scale className="w-4 h-4 text-amber-500" />}
-                      storageKey="tracking-weigh"
-                    >
-                      <WeighStationChecklist
-                        routeCoordinates={routeCoordinates}
-                        progress={progress}
-                        isTracking={isTracking}
-                      />
-                    </IndividualCollapsibleSection>
-                  )}
-                </div>
-              </CollapsibleContent>
-            </div>
-          </Collapsible>
         </div>
 
         {/* Right: Dashboard - Always Expanded */}
