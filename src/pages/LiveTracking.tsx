@@ -587,11 +587,14 @@ export default function LiveTracking() {
       <header className="tracking-header tracking-header-sticky">
         {/* Left - Logo & Title */}
         <div className="flex items-center gap-3">
-          <img 
-            src={logoImg} 
-            alt="TruMove" 
-            className="h-6 dark:brightness-0 dark:invert"
-          />
+          {/* Custom styled TruMove logo */}
+          <div className="flex items-center gap-1.5">
+            <Truck className="w-5 h-5 text-primary" />
+            <span className="text-lg font-black tracking-tight">
+              <span className="text-primary">Tru</span>
+              <span className="text-white">Move</span>
+            </span>
+          </div>
           <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
             Shipment Command Center
           </span>
