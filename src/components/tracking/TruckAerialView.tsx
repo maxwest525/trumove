@@ -319,12 +319,6 @@ export function TruckAerialView({
               </span>
             </div>
 
-            {/* Coordinates */}
-            <div className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm">
-              <span className="text-[8px] font-mono text-white/60">
-                {currentPosition[1].toFixed(4)}°, {currentPosition[0].toFixed(4)}°
-              </span>
-            </div>
 
           </div>
 
