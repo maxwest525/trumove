@@ -26111,7 +26111,7 @@
 /* Sticky variant - locks with nav bar */
 .tracking-header.tracking-header-sticky {
   position: sticky;
-  top: 72px; /* Right below nav bar */
+  top: 102px; /* Match Connect With Us header offset */
   z-index: 45;
 }
 
