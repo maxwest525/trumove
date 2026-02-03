@@ -181,21 +181,6 @@ export function TruckAerialView({
             <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
               {headerLabel}
             </span>
-            {isTracking && progress > 0 && !isPaused && (
-              <span className="text-[9px] text-muted-foreground/70 flex items-center gap-1">
-                <Pause className="w-2.5 h-2.5" />
-                Pause to view
-              </span>
-            )}
-            {isTracking && progress > 0 && isPaused && onRelocateTruck && (
-              <button 
-                onClick={onRelocateTruck}
-                className="text-[9px] text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
-              >
-                <Crosshair className="w-2.5 h-2.5" />
-                Relocate Truck
-              </button>
-            )}
           </div>
           {isTracking && progress > 0 && (
             <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-destructive/20 text-destructive text-[9px] font-bold">
