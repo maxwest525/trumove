@@ -31042,6 +31042,8 @@ html.dark .tru-summary-header-large,
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: hsl(0 0% 100% / 0.85);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .safer-trust-item svg {
