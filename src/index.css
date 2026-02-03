@@ -2469,18 +2469,20 @@
   height: auto; /* Allow natural expansion beyond min-height */
 }
 
-/* Steps left container - narrower width to reduce gap with previews */
+/* Steps left container - center-relative positioning for consistent gap */
 .tru-ai-steps-left {
   position: absolute;
-  left: 2rem;
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-100%, -50%);
+  margin-left: -2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 1.25rem;
-  width: calc(42% - 2rem);
+  width: auto;
+  max-width: 26rem;
   z-index: 5;
 }
 
@@ -2740,12 +2742,14 @@
   margin: 0 auto;
 }
 
-/* Previews container - vertically centered, shifted left to reduce gap */
+/* Previews container - center-relative positioning for consistent gap */
 .tru-ai-header-previews {
   position: absolute;
-  right: 1rem;
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(0, -50%);
+  margin-left: 2rem;
+  right: auto;
   display: flex;
   flex-direction: row;
   gap: var(--spacing-md);
