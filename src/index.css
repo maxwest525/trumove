@@ -2469,10 +2469,10 @@
   height: auto; /* Allow natural expansion beyond min-height */
 }
 
-/* Steps left container - centered within left half */
+/* Steps left container - narrower width to reduce gap with previews */
 .tru-ai-steps-left {
   position: absolute;
-  left: 0;
+  left: 2rem;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -2480,7 +2480,7 @@
   align-items: center;
   text-align: center;
   gap: 1.25rem;
-  width: calc(50% - 1.25rem);
+  width: calc(42% - 2rem);
   z-index: 5;
 }
 
@@ -2740,16 +2740,16 @@
   margin: 0 auto;
 }
 
-/* Previews container - absolute right, full height */
+/* Previews container - vertically centered, shifted left to reduce gap */
 .tru-ai-header-previews {
   position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: row;
   gap: var(--spacing-md);
-  align-items: stretch;
+  align-items: center;
   opacity: 1;
   transition: all 0.4s ease;
 }
