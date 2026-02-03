@@ -1,88 +1,67 @@
 
-## Add "Go" Button and Weather Widget Under the Map on Command Center
+## Plan: Fix Feature Carousel to Show Exactly 4 Cards Without Edge Cut-offs
 
-### Overview
-Add a "Go" button underneath the map on the Shipment Command Center (/track) page along with a compact weather widget. This creates a more intuitive control layout with essential route information displayed below the map visualization.
+### Problem
+The feature carousel in the "Why TruMove" section shows partial/cut-off cards on the left and right edges. Cards are peeking outside the carousel container bounds.
 
-### Current Layout
-The tracking page has a 2-column layout:
-- **Left column**: Map container (850x550px fixed size)
-- **Right column**: Dashboard sidebar with stats, street view, weather, and route info
+### Root Cause
+- The carousel has `overflow: visible` forced on all container elements (`.features-carousel`, `.features-carousel-container`, `.features-carousel-content`)
+- The `CarouselContent` component is using `allowOverflow={true}` which removes the `overflow-hidden` wrapper
+- Card hover effects use `scale(1.22)` which was the original reason for allowing overflow, but this causes cards at edges to be partially visible
 
-Currently, tracking controls are scattered in the header area. The weather widget (`RouteWeather`) is only in the sidebar.
+### Solution
+Restructure the carousel to clip content at container edges while still allowing hover effects to work within the visible area. This involves:
 
-### Implementation
+1. **Update FeatureCarousel.tsx**
+   - Remove `allowOverflow` prop from `CarouselContent` to restore default clipping behavior
+   - Add a dedicated container with proper overflow handling
 
-#### 1. Create New Map Controls Section
-Add a new control strip below the map that includes:
-- **Go/Start button**: Primary action to start tracking
-- **Pause/Resume button**: Toggle during active tracking
-- **Reset button**: Clear progress and reset
-- **Compact Weather Widget**: Show weather for origin, route midpoint, and destination
-
-#### 2. File Changes
-
-**File: `src/pages/LiveTracking.tsx`**
-- Add a new controls section immediately after the map container (inside `tracking-map-container` wrapper or as a sibling)
-- Include:
-  - "Go" button that triggers `startTracking()` when route is ready
-  - Pause/Resume button that toggles `pauseTracking()` / `resumeTracking()`
-  - Reset button calling `resetTracking()`
-  - Compact inline weather display using existing weather data from `RouteWeather` or a new lightweight variant
-
-**File: `src/index.css`**
-- Add new CSS classes for the under-map controls strip:
-  - `.tracking-map-controls`: Flexbox row container matching map width (850px)
-  - `.tracking-map-control-btn`: Styled button for Go/Pause/Reset
-  - `.tracking-map-weather-inline`: Compact horizontal weather display
-
-#### 3. Visual Design
-
-```text
-+------------------------------------------+
-|                                          |
-|               MAP (850x550)              |
-|                                          |
-+------------------------------------------+
-|  [▶ GO]  [⏸ PAUSE]  [↺ RESET]  |  🌤 72°F → 🌧 65°F → ☀️ 78°F  |
-+------------------------------------------+
-```
-
-- **Control buttons**: Left-aligned, primary-styled "Go" button, ghost-styled others
-- **Weather**: Right-aligned compact strip with temperature for origin → midpoint → destination
-- **Responsive**: Stack vertically on mobile
-
-#### 4. Weather Widget Design
-The compact weather strip will show:
-- Origin weather icon + temperature
-- Arrow connector
-- En-route weather icon + temperature  
-- Arrow connector
-- Destination weather icon + temperature
-
-This reuses data from the existing `weather-route` edge function.
+2. **Update index.css carousel styles**
+   - Remove `overflow: visible !important` from carousel containers
+   - Add `overflow: hidden` to the main container to clip cards at boundaries
+   - Adjust inner container to allow cards room for hover scaling within visible bounds
+   - Add small internal padding so hover effects have room to breathe without breaking container edges
 
 ### Technical Details
 
-| Component | Purpose |
-|-----------|---------|
-| `startTracking()` | Begin animation playback |
-| `pauseTracking()` | Pause at current progress |
-| `resumeTracking()` | Continue from paused state |
-| `resetTracking()` | Reset progress to 0% |
-| `RouteWeather` data | Reuse for compact inline display |
+**FeatureCarousel.tsx changes:**
+```tsx
+// Change from:
+<CarouselContent className="features-carousel-content" allowOverflow>
 
-### CSS Classes to Add
-- `.tracking-map-wrapper`: Wrapper for map + controls
-- `.tracking-map-controls`: Controls strip container
-- `.tracking-map-go-btn`: Primary "Go" button styling
-- `.tracking-map-weather-compact`: Inline weather display
+// To:
+<CarouselContent className="features-carousel-content">
+```
 
-### Files to Modify
-1. `src/pages/LiveTracking.tsx` - Add controls section with buttons and inline weather
-2. `src/index.css` - Add styling for the new control strip
+**index.css changes:**
+```css
+/* Container clips content at edges */
+.features-carousel {
+  overflow: hidden;  /* Clip cards at boundaries */
+  padding: 16px 0;   /* Internal breathing room for hover effects */
+}
 
-### Button States
-- **Go button**: Enabled when `canTrack` is true, disabled otherwise
-- Shows "Go" when not tracking, changes to "Pause" when tracking is active
-- Green primary styling for Go, amber for Pause, ghost for Reset
+/* Remove the forced overflow: visible */
+.features-carousel,
+.features-carousel-container,
+.features-carousel-content {
+  /* Remove: overflow: visible !important; */
+}
+
+/* Reduce hover scale slightly so it doesn't feel cramped */
+.features-carousel-card:hover {
+  transform: scale(1.12) translateZ(0);  /* Reduced from 1.22 */
+}
+
+/* Ensure card sizing fills exactly 4 slots */
+.features-carousel-item {
+  flex: 0 0 25% !important;  /* Clean 25% for 4 cards */
+  padding: 0 6px !important; /* Smaller gap between cards */
+}
+```
+
+### Expected Result
+- Exactly 4 cards visible at any time
+- No partial cards visible at left or right edges
+- Cards still scale up on hover but stay within the container bounds
+- Smooth scrolling/rotation continues to work with autoplay
