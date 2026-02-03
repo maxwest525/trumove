@@ -1,117 +1,90 @@
 
-
-# Plan: Close the Horizontal Gap in AI Analysis Section
+# Plan: Center AI Analysis Section at Fixed 750px Midpoint
 
 ## Current Issue
 
-At both 80% and 100% zoom levels, there's a noticeable horizontal gap between the headline content (left side) and the demo preview panels (right side). The gap appears larger at lower zoom levels due to how the percentage-based widths scale.
+The AI Analysis section uses `left: 50%` for center-relative positioning, which works well for percentage-based layouts but doesn't account for situations where the user wants a fixed horizontal center point. The user wants the entire content group (headline + both demo previews) centered with the midpoint at exactly **750px** from the left edge of the 1500px section.
 
-## Root Cause
+## Solution
 
-The current layout uses edge-based positioning:
-- **Left content**: `left: 2rem` with `width: calc(42% - 2rem)` - starts 2rem from left edge
-- **Right previews**: `right: 1rem` - starts 1rem from right edge
+Change the positioning from percentage-based (`left: 50%`) to a fixed pixel value (`left: 750px`) for both the headline and the preview containers. This ensures the center point remains at 750px regardless of viewport or zoom changes.
 
-This leaves a variable-width gap in the center that grows as the viewport widens.
+---
 
-## Solution: Center-Relative Positioning
+## Technical Implementation
 
-Instead of positioning from edges, position both elements relative to the center of the container. This keeps them close together regardless of viewport width.
+### File: `src/index.css`
 
-### Changes to `.tru-ai-steps-left`
+#### 1. Update `.tru-ai-steps-left` (Headline Container)
 
-```css
-.tru-ai-steps-left {
-  position: absolute;
-  /* Position relative to center, offset left */
-  left: 50%;
-  transform: translate(-100%, -50%); /* Move fully left of center point, and center vertically */
-  margin-left: -2rem; /* Small gap from center */
-  width: auto;
-  max-width: 26rem; /* ~416px - enough for content */
-  /* ... rest unchanged */
-}
-```
-
-### Changes to `.tru-ai-header-previews`
-
-```css
-.tru-ai-header-previews {
-  position: absolute;
-  /* Position relative to center, offset right */
-  left: 50%;
-  transform: translate(0, -50%); /* Start at center, centered vertically */
-  margin-left: 2rem; /* Small gap from center */
-  right: auto; /* Remove right positioning */
-  /* ... rest unchanged */
-}
-```
-
-## Visual Result
-
-| Viewport | Before | After |
-|----------|--------|-------|
-| Wide (80% zoom) | Large gap ~200px+ | Consistent ~64px gap |
-| Normal (100% zoom) | Medium gap ~100px | Consistent ~64px gap |
-| Narrow (1400px) | Smaller gap | Same ~64px gap |
-
-## Files to Modify
-
-| File | Changes |
-|------|---------|
-| `src/index.css` | Update positioning for `.tru-ai-steps-left` and `.tru-ai-header-previews` to use center-relative layout |
-
-## Technical Details
-
-### Updated `.tru-ai-steps-left` (Lines 2473-2485)
-
+**Current (Lines 2473-2487):**
 ```css
 .tru-ai-steps-left {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-100%, -50%);
-  margin-left: -2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 1.25rem;
-  width: auto;
-  max-width: 26rem;
-  z-index: 5;
+  margin-left: -4rem;
+  ...
 }
 ```
 
-### Updated `.tru-ai-header-previews` (Lines 2744-2755)
+**Updated:**
+```css
+.tru-ai-steps-left {
+  position: absolute;
+  left: 750px;
+  top: 50%;
+  transform: translate(-100%, -50%);
+  margin-left: -4rem;
+  ...
+}
+```
 
+#### 2. Update `.tru-ai-header-previews` (Demo Previews Container)
+
+**Current (Lines 2746-2759):**
 ```css
 .tru-ai-header-previews {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(0, -50%);
-  margin-left: 2rem;
-  right: auto;
-  display: flex;
-  flex-direction: row;
-  gap: var(--spacing-md);
-  align-items: center;
-  opacity: 1;
-  transition: all 0.4s ease;
+  margin-left: 4rem;
+  ...
 }
 ```
 
-### Update Responsive Breakpoint (1400px)
-
-Remove the fixed width override since we're now using `max-width`:
-
+**Updated:**
 ```css
-@media (max-width: 1400px) {
-  .tru-ai-steps-left {
-    max-width: 22rem; /* Slightly smaller on medium screens */
-  }
-  /* ... preview adjustments remain */
+.tru-ai-header-previews {
+  position: absolute;
+  left: 750px;
+  top: 50%;
+  transform: translate(0, -50%);
+  margin-left: 4rem;
+  ...
 }
 ```
 
+---
+
+## Visual Result
+
+| Element | Anchor Point | Offset |
+|---------|--------------|--------|
+| Headline | 750px (right edge at center) | -4rem left |
+| Demo Previews | 750px (left edge at center) | +4rem right |
+
+**Total gap between headline and previews:** 8rem (~128px)
+
+The content will be perfectly centered at the 750px mark of the section, with equal spacing on both sides regardless of browser zoom level.
+
+---
+
+## Files to Modify
+
+| File | Lines | Changes |
+|------|-------|---------|
+| `src/index.css` | 2475 | Change `left: 50%` to `left: 750px` |
+| `src/index.css` | 2748 | Change `left: 50%` to `left: 750px` |
