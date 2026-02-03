@@ -55,16 +55,21 @@ export function GoogleStaticRouteMap({
     let url = `${baseUrl}?${params.toString()}`;
     url += `&center=${centerLat},${centerLng}`;
 
-    // Origin marker (green)
-    url += `&markers=color:0x22c55e|label:A|${originCoords[1]},${originCoords[0]}`;
+    // Calculate truck position - at origin when not tracking, or along route when tracking
+    const truckLat = (truckPosition && isTracking) ? truckPosition[1] : originCoords[1];
+    const truckLng = (truckPosition && isTracking) ? truckPosition[0] : originCoords[0];
+    
+    // Origin marker (green circle) - only show separately when tracking and truck has moved
+    if (isTracking && progress > 5) {
+      url += `&markers=color:0x22c55e|size:mid|label:A|${originCoords[1]},${originCoords[0]}`;
+    }
     
     // Destination marker (red)
-    url += `&markers=color:0xef4444|label:B|${destCoords[1]},${destCoords[0]}`;
+    url += `&markers=color:0xef4444|size:mid|label:B|${destCoords[1]},${destCoords[0]}`;
     
-    // Truck position marker (blue)
-    if (truckPosition && isTracking) {
-      url += `&markers=color:0x3b82f6|label:T|${truckPosition[1]},${truckPosition[0]}`;
-    }
+    // Truck marker (blue with truck label) - always visible, shows at origin initially
+    // Using size:large and label:🚚 or just T for the truck
+    url += `&markers=color:0x16a34a|size:large|label:T|${truckLat},${truckLng}`;
 
     // Add route path
     if (routePolyline) {

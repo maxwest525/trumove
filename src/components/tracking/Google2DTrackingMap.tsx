@@ -206,7 +206,30 @@ export function Google2DTrackingMap({
       setError('Failed to initialize map');
       setIsLoading(false);
     }
-  }, [isScriptLoaded, mapType, originCoords]);
+  }, [isScriptLoaded, originCoords]);
+
+  // Update map type without recreating map
+  useEffect(() => {
+    if (!mapRef.current) return;
+    
+    mapRef.current.setMapTypeId(mapType);
+    
+    // Apply dark styles for roadmap, clear for satellite/hybrid
+    if (mapType === 'roadmap') {
+      mapRef.current.setOptions({
+        styles: [
+          { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
+          { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
+          { elementType: 'labels.text.fill', stylers: [{ color: '#8a8aa3' }] },
+          { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2d2d44' }] },
+          { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#9ca5b3' }] },
+          { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0e1626' }] },
+        ]
+      });
+    } else {
+      mapRef.current.setOptions({ styles: undefined });
+    }
+  }, [mapType]);
 
   // Calculate route when origin/destination change
   useEffect(() => {
