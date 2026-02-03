@@ -345,6 +345,58 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
         </DialogHeader>
 
         <div className="space-y-5 py-2">
+          {/* Booking/Shipping Number - NOW AT TOP */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              {isLookingUp ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+              ) : (
+                <Search className="w-3.5 h-3.5" />
+              )}
+              Booking / Shipping Number
+            </Label>
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 max-w-xs">
+                <Input
+                  value={bookingNumber}
+                  onChange={(e) => setBookingNumber(e.target.value)}
+                  placeholder="Have a Booking ID or Shipping #?"
+                  className={cn(
+                    "pr-8 transition-all",
+                    isLookingUp && "border-primary/50"
+                  )}
+                />
+                {isLookingUp && (
+                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  </div>
+                )}
+              </div>
+              <Button variant="outline" size="sm" onClick={onClose} className="h-10 px-4">
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSubmit} 
+                disabled={!canSubmit}
+                size="sm"
+                className="h-10 px-5 gap-2"
+              >
+                View Route
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Enter your booking number to auto-populate route details (try 12345)
+            </p>
+          </div>
+
+          {/* OR Divider */}
+          <div className="flex items-center gap-3 py-1">
+            <Separator className="flex-1" />
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Or enter addresses manually</span>
+            <Separator className="flex-1" />
+          </div>
+
           {/* Origin Row - Compact input left, Larger preview right */}
           <div className="grid grid-cols-1 md:grid-cols-[280px,1fr] gap-4 items-center">
             <div className="space-y-1.5">
@@ -417,59 +469,6 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                 <PreviewSkeleton variant="destination" />
               )}
             </div>
-          </div>
-
-          {/* OR Divider */}
-          <div className="flex items-center gap-3 py-1">
-            <Separator className="flex-1" />
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Or</span>
-            <Separator className="flex-1" />
-          </div>
-
-          {/* Booking/Shipping Number with inline buttons */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-              {isLookingUp ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
-              ) : (
-                <Search className="w-3.5 h-3.5" />
-              )}
-              Booking / Shipping Number
-            </Label>
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1 max-w-xs">
-                <Input
-                  value={bookingNumber}
-                  onChange={(e) => setBookingNumber(e.target.value)}
-                  placeholder="Have a Booking ID or Shipping #?"
-                  className={cn(
-                    "pr-8 transition-all",
-                    isLookingUp && "border-primary/50"
-                  )}
-                />
-                {isLookingUp && (
-                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
-                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                  </div>
-                )}
-              </div>
-              <Button variant="outline" size="sm" onClick={onClose} className="h-10 px-4">
-                <X className="w-3.5 h-3.5 mr-1.5" />
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleSubmit} 
-                disabled={!canSubmit || isLookingUp}
-                size="sm"
-                className="h-10 px-4 bg-foreground text-background hover:bg-foreground/90"
-              >
-                <ArrowRight className="w-3.5 h-3.5 mr-1.5" />
-                View Route
-              </Button>
-            </div>
-            <p className="text-[10px] text-muted-foreground">
-              Enter your booking number to auto-populate route details (try 12345)
-            </p>
           </div>
 
           {/* Move Date - Only shown when booking number entered */}
