@@ -583,8 +583,9 @@ export default function LiveTracking() {
       {/* Site Header */}
       <Header />
       
-      {/* Dashboard Header - Sticky with nav bar */}
-      <header className="tracking-header tracking-header-sticky">
+      {/* Sticky Header Block - matches Connect With Us offset */}
+      <div className="sticky top-[102px] z-40">
+        <header className="tracking-header">
         {/* Left - Logo & Title */}
         <div className="flex items-center gap-3">
           <img 
@@ -633,6 +634,7 @@ export default function LiveTracking() {
           </div>
         </div>
       </header>
+      </div>
       
       {/* Hero Section - Headline & Subheadline */}
       <div className="tru-page-hero-section">
