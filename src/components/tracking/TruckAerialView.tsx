@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Truck, Loader2, MapPin, Eye, Navigation, Maximize2, Minimize2, X } from "lucide-react";
+import { Truck, Loader2, MapPin, Eye, Navigation, Maximize2, Minimize2, X, Pause } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -173,9 +173,17 @@ export function TruckAerialView({
           <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
             <HeaderIcon className="w-3.5 h-3.5 text-primary" />
           </div>
-          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
-            {headerLabel}
-          </span>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+              {headerLabel}
+            </span>
+            {isTracking && progress > 0 && (
+              <span className="text-[9px] text-muted-foreground/70 flex items-center gap-1">
+                <Pause className="w-2.5 h-2.5" />
+                Pause to view
+              </span>
+            )}
+          </div>
           {isTracking && progress > 0 && (
             <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-destructive/20 text-destructive text-[9px] font-bold">
               <span className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse" />
