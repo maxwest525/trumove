@@ -1049,12 +1049,19 @@ export default function Index() {
               </div>
             )}
 
-            {/* Hero Header with Logo stacked above headline */}
-            <div className="tru-hero-header-section tru-hero-header-refined tru-hero-header-stacked">
-              <img src={logoImg} alt="TruMove" className="tru-hero-headline-logo tru-hero-logo-stacked" />
-              <h1 className="tru-hero-headline-main tru-headline-animated">
-                The Smarter Way To <span className="tru-hero-headline-accent">Move</span>
-              </h1>
+            {/* Hero Header - Refined minimal logo + headline */}
+            <div className="tru-hero-header-section">
+              <div className="tru-hero-branding">
+                <img src={logoImg} alt="TruMove" className="tru-hero-logo" />
+                <div className="tru-hero-headline-group">
+                  <h1 className="tru-hero-headline">
+                    The Smarter Way To <span className="tru-hero-accent">Move</span>
+                  </h1>
+                  <p className="tru-hero-tagline">
+                    AI-powered estimates • FMCSA-vetted carriers • Zero hidden fees
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
@@ -1539,29 +1546,26 @@ export default function Index() {
                 />
               )}
               
-              {/* CARD 1: Why TruMove - Premium Card */}
-              <div className="tru-why-card-premium" ref={parallaxCardsRef}
+              {/* CARD 1: Company Info - Compact */}
+              <div className="tru-company-card">
+                <h3 className="tru-company-title">Why TruMove?</h3>
+                <p className="tru-company-desc">
+                  We connect you directly with vetted carriers—no middlemen, no markups. AI-powered estimates ensure accuracy, while FMCSA safety data keeps you protected.
+                </p>
+                <Link to="/about" className="tru-company-link">
+                  Learn more about us <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+              
+              {/* CARD 2: Feature Carousel */}
+              <div className="tru-features-card" ref={parallaxCardsRef}
                 style={{ transform: `translateY(${cardsParallax.y}px)` }}
               >
-                <div className="tru-why-card-premium-glow" />
-                <div className="tru-why-card-premium-content">
-                  <h3 className="tru-ai-steps-title" style={{ fontSize: '24px', marginBottom: '8px', color: 'hsl(var(--tm-ink))' }}>
-                    Why TruMove?
-                  </h3>
-                  <div className="tru-ai-accent-line" style={{ marginBottom: '6px' }} />
-                  <p className="tru-ai-steps-subtitle" style={{ maxWidth: 'none', marginBottom: '8px' }}>
-                    Skip the van line middleman. Get matched with vetted carriers who compete for your business.
-                  </p>
-                  
-                  {/* Mission Paragraph - Larger font */}
-                  <p className="tru-why-mission-paragraph tru-why-mission-large">
-                    We built TruMove to cut through the complexity of the moving industry. Using AI-powered inventory scanning and live video consultations, we understand your move better than anyone. Then we vet carriers through verified FMCSA and DOT safety databases to match you with movers you can actually trust.
-                  </p>
-                  
-                  {/* Feature Carousel with hover expansion + click modal */}
-                  <FeatureCarousel />
-                  
+                <div className="tru-features-header">
+                  <h3 className="tru-features-title">Our Platform</h3>
+                  <span className="tru-features-badge">7 Features</span>
                 </div>
+                <FeatureCarousel />
               </div>
               
             </div>

@@ -1426,92 +1426,182 @@
   margin: 0 auto;
 }
 
-/* Hero Header Section - Centered with Backdrop */
+/* =============================================
+   HERO HEADER - REFINED COMPACT
+   ============================================= */
 .tru-hero-header-section {
   grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 40px 48px 32px 48px;
-  gap: 16px;
+  padding: 24px 32px 16px;
+  gap: 0;
   position: relative;
 }
 
-/* No backdrop boxes behind hero header - keep it clean */
+.tru-hero-branding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
 
-/* H1 - Dominant */
-.tru-hero-header-section .tru-hero-headline-main {
+.tru-hero-logo {
+  height: 56px;
+  width: auto;
+  filter: drop-shadow(0 2px 8px hsl(0 0% 0% / 0.3));
+}
+
+.tru-hero-headline-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.tru-hero-headline {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: hsl(0 0% 100%);
+  margin: 0;
+  white-space: nowrap;
+  text-shadow: 
+    0 2px 4px hsl(0 0% 0% / 0.8),
+    0 4px 12px hsl(0 0% 0% / 0.6),
+    0 8px 24px hsl(0 0% 0% / 0.4);
+}
+
+.tru-hero-accent {
+  color: hsl(var(--tm-green));
+  -webkit-text-fill-color: hsl(var(--tm-green));
+  filter: drop-shadow(0 2px 6px hsl(var(--tm-green) / 0.4));
+}
+
+.tru-hero-tagline {
+  font-size: 13px;
+  font-weight: 500;
+  color: hsl(0 0% 100% / 0.7);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+/* =============================================
+   COMPANY INFO CARD
+   ============================================= */
+.tru-company-card {
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--border));
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+
+.tru-company-card:hover {
+  border-color: hsl(var(--tm-ink));
+}
+
+.tru-company-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: hsl(var(--foreground));
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.tru-company-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: hsl(var(--muted-foreground));
+  margin: 0;
+}
+
+.tru-company-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--primary));
+  text-decoration: none;
+  margin-top: 4px;
+  transition: gap 0.2s;
+}
+
+.tru-company-link:hover {
+  gap: 8px;
+}
+
+/* =============================================
+   FEATURES CARD WITH CAROUSEL
+   ============================================= */
+.tru-features-card {
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--border));
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+
+.tru-features-card:hover {
+  border-color: hsl(var(--tm-ink));
+}
+
+.tru-features-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tru-features-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: hsl(var(--foreground));
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.tru-features-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Legacy support for existing headline styles */
+.tru-hero-headline-main {
   font-size: clamp(40px, 6vw, 72px);
   font-weight: 900;
   letter-spacing: -0.03em;
   line-height: 1.05;
   color: hsl(0 0% 100%);
   margin: 0;
-  text-shadow: 0 2px 16px hsl(0 0% 0% / 0.6), 0 4px 24px hsl(0 0% 0% / 0.4);
+  text-shadow: 
+    0 2px 4px hsl(0 0% 0% / 1),
+    0 4px 10px hsl(0 0% 0% / 1),
+    0 6px 16px hsl(0 0% 0% / 0.95),
+    0 10px 28px hsl(0 0% 0% / 0.9);
 }
 
-/* Subheadline - Short version, 45-55% of H1 */
-.tru-hero-subheadline-short {
-  font-size: clamp(16px, 2vw, 24px);
-  font-weight: 500;
-  line-height: 1.5;
-  color: hsl(var(--tm-ink) / 0.75);
-  max-width: 700px;
-  margin: 0 auto;
-  text-shadow: 0 1px 8px hsl(var(--background) / 0.4);
-}
-
-/* Hero Subheadline - Long version (legacy support) */
-.tru-hero-subheadline-long {
-  font-size: clamp(14px, 1.8vw, 18px);
-  line-height: 1.65;
-  max-width: 900px;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.75);
-  margin: 16px auto 0;
-  text-shadow: 0 1px 8px hsl(var(--background) / 0.5);
-}
-
-/* "Move" accent - solid bright green matching logo */
 .tru-hero-headline-accent {
   color: hsl(var(--tm-green));
   -webkit-text-fill-color: hsl(var(--tm-green));
   position: relative;
   display: inline-block;
   filter: drop-shadow(0 2px 8px hsl(var(--tm-green) / 0.4));
-}
-
-/* Text shadow for headline readability - maximum dark underglow */
-.tru-hero-headline-main {
-  text-shadow: 
-    0 2px 4px hsl(0 0% 0% / 1),
-    0 4px 10px hsl(0 0% 0% / 1),
-    0 6px 16px hsl(0 0% 0% / 0.95),
-    0 10px 28px hsl(0 0% 0% / 0.9),
-    0 16px 44px hsl(0 0% 0% / 0.85),
-    0 24px 64px hsl(0 0% 0% / 0.8),
-    0 36px 100px hsl(0 0% 0% / 0.7),
-    0 50px 140px hsl(0 0% 0% / 0.6);
-}
-
-.tru-hero-header-section .tru-hero-header-subheadline {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: hsl(var(--tm-ink) / 0.7);
-  margin: 8px 0 0 0;
-  letter-spacing: 0.01em;
-  opacity: 0;
-  animation: hero-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards;
-}
-
-.tru-hero-header-section .tru-hero-subheadline {
-  font-size: 18px;
-  line-height: 1.65;
-  color: hsl(var(--tm-ink) / 0.75);
-  max-width: 100%;
-  margin: 0;
-  font-weight: 500;
 }
 
 /* Animated Arrow Indicator */
