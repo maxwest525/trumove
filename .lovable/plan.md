@@ -1,67 +1,96 @@
 
-## Plan: Fix Feature Carousel to Show Exactly 4 Cards Without Edge Cut-offs
+## Plan: Enlarge Text on Feature Carousel Cards & Debug Route Details
 
-### Problem
-The feature carousel in the "Why TruMove" section shows partial/cut-off cards on the left and right edges. Cards are peeking outside the carousel container bounds.
+Based on my analysis, almost all requested features are already implemented. The remaining work is:
 
-### Root Cause
-- The carousel has `overflow: visible` forced on all container elements (`.features-carousel`, `.features-carousel-container`, `.features-carousel-content`)
-- The `CarouselContent` component is using `allowOverflow={true}` which removes the `overflow-hidden` wrapper
-- Card hover effects use `scale(1.22)` which was the original reason for allowing overflow, but this causes cards at edges to be partially visible
+### 1. Enlarge Feature Carousel Card Text
 
-### Solution
-Restructure the carousel to clip content at container edges while still allowing hover effects to work within the visible area. This involves:
+**Current State:**
+- Card title: `1rem` (16px) - line 17853
+- Card description: `0.875rem` (14px) - line 17865
 
-1. **Update FeatureCarousel.tsx**
-   - Remove `allowOverflow` prop from `CarouselContent` to restore default clipping behavior
-   - Add a dedicated container with proper overflow handling
+**Changes to `src/index.css`:**
 
-2. **Update index.css carousel styles**
-   - Remove `overflow: visible !important` from carousel containers
-   - Add `overflow: hidden` to the main container to clip cards at boundaries
-   - Adjust inner container to allow cards room for hover scaling within visible bounds
-   - Add small internal padding so hover effects have room to breathe without breaking container edges
+Increase the typography sizes for better readability:
+- `.features-carousel-card-title`: Change from `1rem` to `1.125rem` (18px)
+- `.features-carousel-card-desc`: Change from `0.875rem` to `0.938rem` (15px)
+- Consider adding slightly more padding and increasing card height from `240px` to `260px` to accommodate larger text
 
-### Technical Details
+### 2. Investigate Route Details Panel Issue
 
-**FeatureCarousel.tsx changes:**
-```tsx
-// Change from:
-<CarouselContent className="features-carousel-content" allowOverflow>
+The route details section in LiveTracking.tsx (lines 810-882) exists with:
+- Weather section
+- Alternate Routes section  
+- Weigh Stations section
 
-// To:
-<CarouselContent className="features-carousel-content">
-```
+The structure looks correct. Potential issues to investigate:
+- CSS display/visibility properties
+- Collapsible state management
+- Data not being passed correctly to child components
 
-**index.css changes:**
+**Debugging steps:**
+1. Check if `originCoords` and `destCoords` are populated
+2. Verify `googleRouteData.alternateRoutes` is being fetched
+3. Test collapsible open/close functionality
+
+---
+
+### Technical Implementation
+
+**File: `src/index.css`**
+
+Update carousel card typography (around lines 17852-17872):
+
 ```css
-/* Container clips content at edges */
-.features-carousel {
-  overflow: hidden;  /* Clip cards at boundaries */
-  padding: 16px 0;   /* Internal breathing room for hover effects */
+/* BEFORE */
+.features-carousel-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  ...
 }
 
-/* Remove the forced overflow: visible */
-.features-carousel,
-.features-carousel-container,
-.features-carousel-content {
-  /* Remove: overflow: visible !important; */
+.features-carousel-card-desc {
+  font-size: 0.875rem;
+  ...
 }
 
-/* Reduce hover scale slightly so it doesn't feel cramped */
-.features-carousel-card:hover {
-  transform: scale(1.12) translateZ(0);  /* Reduced from 1.22 */
+/* AFTER */
+.features-carousel-card-title {
+  font-size: 1.125rem;  /* Increased from 1rem */
+  font-weight: 700;
+  ...
 }
 
-/* Ensure card sizing fills exactly 4 slots */
-.features-carousel-item {
-  flex: 0 0 25% !important;  /* Clean 25% for 4 cards */
-  padding: 0 6px !important; /* Smaller gap between cards */
+.features-carousel-card-desc {
+  font-size: 0.938rem;  /* Increased from 0.875rem */
+  ...
+}
+
+/* Also increase card height to fit larger text */
+.features-carousel-card {
+  height: 260px;  /* Increased from 240px */
+  ...
 }
 ```
 
-### Expected Result
-- Exactly 4 cards visible at any time
-- No partial cards visible at left or right edges
-- Cards still scale up on hover but stay within the container bounds
-- Smooth scrolling/rotation continues to work with autoplay
+---
+
+### Route Details - What to Check
+
+To debug the route details issue, I would need to:
+1. Open the browser and test the collapsible panel
+2. Check console logs for any errors
+3. Verify data flow from Google Routes API
+
+If you can describe what specifically is "not functioning properly" (e.g., doesn't open, shows empty, data missing), I can target the fix more precisely.
+
+---
+
+### Summary
+
+| Change | File |
+|--------|------|
+| Enlarge card title to 18px | `src/index.css` |
+| Enlarge card description to 15px | `src/index.css` |
+| Increase card height to 260px | `src/index.css` |
+| Debug route details (pending info) | `src/pages/LiveTracking.tsx` |
