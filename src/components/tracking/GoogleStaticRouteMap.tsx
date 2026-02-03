@@ -242,12 +242,6 @@ export function GoogleStaticRouteMap({
         </div>
       )}
 
-      {/* Google attribution */}
-      <div className="absolute bottom-3 left-3 z-20">
-        <span className="text-[9px] text-foreground/40 bg-background/60 px-2 py-1 rounded">
-          © Google Maps
-        </span>
-      </div>
       
       {/* Static map image */}
       {mapUrl && (

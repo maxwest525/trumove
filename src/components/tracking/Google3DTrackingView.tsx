@@ -272,15 +272,10 @@ export function Google3DTrackingView({
       </button>
 
       {/* Coordinates display */}
-      <div className="absolute bottom-3 right-3 z-20 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-sm">
-        <span className="text-[9px] font-mono text-white/60">
+      <div className="absolute bottom-2 right-2 z-20 px-2 py-1 rounded bg-black/70 backdrop-blur-sm">
+        <span className="text-[8px] font-mono text-white/60">
           {coordinates[1].toFixed(4)}°, {coordinates[0].toFixed(4)}°
         </span>
-      </div>
-
-      {/* Google attribution */}
-      <div className="absolute bottom-3 left-3 z-20 px-2 py-1 rounded bg-black/70 backdrop-blur-sm">
-        <span className="text-[8px] text-white/50">Google 3D Maps</span>
       </div>
 
       {/* 3D Map container */}
