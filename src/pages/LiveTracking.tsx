@@ -641,32 +641,32 @@ export default function LiveTracking() {
           </span>
         </div>
 
-        {/* Center - Trust Items (inline) */}
+        {/* Center - Trust Indicators */}
         <div className="tracking-header-trust">
-          <div className="tracking-header-trust-item">
-            <ShieldCheck className="w-4 h-4" />
-            <span>FMCSA VERIFIED</span>
-          </div>
+          <span className="tracking-header-trust-item">
+            <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+            FMCSA VERIFIED
+          </span>
           <span className="tracking-header-trust-dot">•</span>
-          <div className="tracking-header-trust-item">
-            <Truck className="w-4 h-4" />
-            <span>LIVE GPS</span>
-          </div>
+          <span className="tracking-header-trust-item">
+            <Truck className="w-3.5 h-3.5 text-primary" />
+            LIVE GPS
+          </span>
           <span className="tracking-header-trust-dot">•</span>
-          <div className="tracking-header-trust-item">
-            <Cloud className="w-4 h-4" />
-            <span>REAL-TIME ETA</span>
-          </div>
+          <span className="tracking-header-trust-item">
+            <Cloud className="w-3.5 h-3.5 text-primary" />
+            REAL-TIME ETA
+          </span>
           <span className="tracking-header-trust-dot">•</span>
-          <div className="tracking-header-trust-item">
-            <Navigation className="w-4 h-4" />
-            <span>TRAFFIC AWARE</span>
-          </div>
+          <span className="tracking-header-trust-item">
+            <Navigation className="w-3.5 h-3.5 text-primary" />
+            TRAFFIC AWARE
+          </span>
           <span className="tracking-header-trust-dot">•</span>
-          <div className="tracking-header-trust-item">
-            <Scale className="w-4 h-4" />
-            <span>DOT COMPLIANT</span>
-          </div>
+          <span className="tracking-header-trust-item">
+            <Scale className="w-3.5 h-3.5 text-primary" />
+            DOT COMPLIANT
+          </span>
         </div>
 
         {/* Right - Shipment ID */}
