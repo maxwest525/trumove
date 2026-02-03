@@ -641,29 +641,6 @@ export function Google2DTrackingMap({
         )}
       </div>
 
-      {/* Follow Mode Status Badge on Map */}
-      {isTracking && routePathRef.current.length > 0 && (
-        <div className={cn(
-          "absolute bottom-16 left-3 z-20 px-3 py-1.5 rounded-lg backdrop-blur-sm border transition-all duration-300",
-          internalFollowMode 
-            ? "bg-primary/20 border-primary/40 text-primary" 
-            : "bg-amber-500/15 border-amber-500/30 text-amber-400"
-        )}>
-          <div className="flex items-center gap-2">
-            {internalFollowMode ? (
-              <>
-                <Navigation2 className="w-3.5 h-3.5 animate-pulse" />
-                <span className="text-[10px] font-bold tracking-wider uppercase">Following Truck</span>
-              </>
-            ) : (
-              <>
-                <Satellite className="w-3.5 h-3.5" />
-                <span className="text-[10px] font-bold tracking-wider uppercase">Manual View</span>
-              </>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Google attribution - positioned bottom-left */}
       <div className="absolute bottom-3 left-3 z-20 px-2 py-1 rounded bg-background/70 backdrop-blur-sm border border-border">
