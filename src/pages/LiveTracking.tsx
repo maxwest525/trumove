@@ -735,7 +735,7 @@ export default function LiveTracking() {
                     <ChevronDown className="w-3 h-3" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-80 p-3 bg-popover border border-border">
+                <DropdownMenuContent align="start" side="top" className="w-80 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
                   <CompactRouteWeather
                     originCoords={originCoords}
                     destCoords={destCoords}
@@ -759,7 +759,7 @@ export default function LiveTracking() {
                     <ChevronDown className="w-3 h-3" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-72 p-3 bg-popover border border-border">
+                <DropdownMenuContent align="start" side="top" className="w-72 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
                   {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 ? (
                     <div className="space-y-2">
                       {googleRouteData.alternateRoutes.slice(0, 3).map((alt: any, i: number) => (
@@ -794,7 +794,7 @@ export default function LiveTracking() {
                     <ChevronDown className="w-3 h-3" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-80 p-3 bg-popover border border-border">
+                <DropdownMenuContent align="start" side="top" className="w-80 p-3 bg-popover border border-border shadow-xl z-50 max-h-[60vh] overflow-y-auto">
                   <WeighStationChecklist
                     routeCoordinates={routeCoordinates}
                     progress={progress}
