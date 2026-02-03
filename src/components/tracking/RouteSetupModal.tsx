@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Navigation, Truck, CalendarIcon, Search, Loader2, Globe, Eye, X, ArrowRight } from "lucide-react";
+import { MapPin, Navigation, Truck, CalendarIcon, Search, Loader2, Globe, Eye, X, ArrowRight, Play } from "lucide-react";
 import { format } from "date-fns";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
@@ -379,8 +379,9 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                 onClick={handleSubmit} 
                 disabled={!canSubmit}
                 size="sm"
-                className="h-10 px-5 gap-2"
+                className="h-10 px-6 gap-2 bg-[hsl(220,15%,8%)] text-white hover:bg-[hsl(220,15%,12%)] border-2 border-border/30 rounded-lg font-bold shadow-lg"
               >
+                <Play className="w-4 h-4 text-primary" />
                 View Route
                 <ArrowRight className="w-4 h-4" />
               </Button>

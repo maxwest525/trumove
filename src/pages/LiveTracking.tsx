@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect, useRef } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud } from "lucide-react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
@@ -637,50 +637,8 @@ export default function LiveTracking() {
         <div className="tracking-map-area">
           {/* Map Container */}
           <div className="tracking-map-container">
-            {/* Booking Search Overlay - Top of Map */}
-            <div className="absolute top-3 left-3 right-3 z-20 flex items-center gap-2">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-background/95 backdrop-blur-sm border border-border shadow-lg flex-1 max-w-md">
-                <input
-                  type="text"
-                  placeholder="Booking ID or Shipment #"
-                  value={bookingInput}
-                  onChange={(e) => setBookingInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleBookingSearch()}
-                  className="flex-1 bg-transparent border-none outline-none text-sm font-medium placeholder:text-muted-foreground"
-                />
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={cn(
-                        "h-7 px-2 gap-1 text-xs",
-                        !moveDate && "text-muted-foreground"
-                      )}
-                    >
-                      <Calendar className="w-3.5 h-3.5" />
-                      {moveDate ? format(moveDate, 'MMM d') : 'Date'}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarComponent
-                      mode="single"
-                      selected={moveDate}
-                      onSelect={(date) => date && setMoveDate(date)}
-                      initialFocus
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-                <Button
-                  onClick={handleBookingSearch}
-                  size="sm"
-                  className="h-7 px-3 gap-1.5 text-xs"
-                >
-                  <Play className="w-3 h-3" />
-                  Go
-                </Button>
-              </div>
+            {/* Demo Button - Top of Map */}
+            <div className="absolute top-3 right-3 z-20">
               <Button
                 onClick={handleDemoClick}
                 variant="outline"
@@ -737,7 +695,8 @@ export default function LiveTracking() {
                   className="tracking-map-go-btn"
                 >
                   <Play className="w-4 h-4" />
-                  Track
+                  Analyze Route
+                  <ArrowRight className="w-4 h-4" />
                 </Button>
               ) : (
                 <Button
@@ -767,13 +726,16 @@ export default function LiveTracking() {
               {/* Weather Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-1.5">
+                  <Button variant="ghost" size="sm" className="gap-1.5 relative">
                     <Cloud className="w-4 h-4" />
                     Weather
+                    {originCoords && destCoords && (
+                      <span className="w-2 h-2 rounded-full bg-primary absolute -top-0.5 -right-0.5" />
+                    )}
                     <ChevronDown className="w-3 h-3" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-80 p-3 bg-popover">
+                <DropdownMenuContent align="start" className="w-80 p-3 bg-popover border border-border">
                   <CompactRouteWeather
                     originCoords={originCoords}
                     destCoords={destCoords}
@@ -784,50 +746,62 @@ export default function LiveTracking() {
               </DropdownMenu>
 
               {/* Alternate Routes Dropdown */}
-              {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-1.5">
-                      <Route className="w-4 h-4" />
-                      Routes
-                      <ChevronDown className="w-3 h-3" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-72 p-3 bg-popover">
-                    <div className="tracking-alternate-routes-list">
-                      {googleRouteData.alternateRoutes.slice(0, 2).map((alt: any, i: number) => (
-                        <div key={i} className="tracking-alternate-route-item">
-                          <span className="tracking-alt-route-name">{alt.description || `Via alternate ${i + 1}`}</span>
-                          <span className="tracking-alt-route-meta">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-1.5">
+                    <Route className="w-4 h-4" />
+                    Routes
+                    {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">
+                        {googleRouteData.alternateRoutes.length}
+                      </span>
+                    )}
+                    <ChevronDown className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-72 p-3 bg-popover border border-border">
+                  {googleRouteData.alternateRoutes && googleRouteData.alternateRoutes.length > 0 ? (
+                    <div className="space-y-2">
+                      {googleRouteData.alternateRoutes.slice(0, 3).map((alt: any, i: number) => (
+                        <div key={i} className="flex flex-col gap-1 p-3 rounded-lg bg-muted/50 border border-border hover:bg-muted transition-colors cursor-pointer">
+                          <span className="text-sm font-semibold text-foreground">{alt.description || `Route ${i + 1}`}</span>
+                          <span className="text-xs text-muted-foreground flex items-center gap-2">
                             {alt.distanceMiles} mi • {alt.durationFormatted}
-                            {alt.isTollFree && <span className="tracking-alt-toll-free">No tolls</span>}
+                            {alt.isTollFree && <span className="text-primary font-semibold">No tolls</span>}
                           </span>
                         </div>
                       ))}
                     </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+                  ) : (
+                    <div className="text-center py-4 text-muted-foreground text-sm">
+                      Enter route to see alternatives
+                    </div>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Weigh Stations Dropdown */}
-              {routeCoordinates.length > 0 && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-1.5">
-                      <Scale className="w-4 h-4" />
-                      Weigh
-                      <ChevronDown className="w-3 h-3" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-80 p-3 bg-popover">
-                    <WeighStationChecklist
-                      routeCoordinates={routeCoordinates}
-                      progress={progress}
-                      isTracking={isTracking}
-                    />
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-1.5">
+                    <Scale className="w-4 h-4" />
+                    Weigh
+                    {routeCoordinates.length > 0 && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-500">
+                        •
+                      </span>
+                    )}
+                    <ChevronDown className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-80 p-3 bg-popover border border-border">
+                  <WeighStationChecklist
+                    routeCoordinates={routeCoordinates}
+                    progress={progress}
+                    isTracking={isTracking}
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
