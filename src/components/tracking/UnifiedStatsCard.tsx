@@ -126,7 +126,7 @@ export function UnifiedStatsCard({
   return (
     <div className="tracking-info-card unified-stats-card">
       {/* Header with refresh */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded-md flex items-center justify-center bg-primary/20 text-primary">
             <Zap className="w-3 h-3" />
@@ -147,49 +147,49 @@ export function UnifiedStatsCard({
         </Button>
       </div>
 
-      {/* Primary Stats Row - ETA, Time, Distance - Always visible, show skeleton when empty */}
-      <div className="grid grid-cols-3 gap-2 mb-3">
-        <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-3 border border-primary/20">
-          <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">ETA</div>
+      {/* Primary Stats Row - ETA, Time, Distance - Compact single row */}
+      <div className="grid grid-cols-3 gap-1.5 mb-2">
+        <div className="bg-primary/15 rounded-lg p-2 border border-primary/25">
+          <div className="text-[9px] uppercase tracking-wider text-primary/80 mb-0.5 font-semibold">ETA</div>
           {isEmpty ? (
-            <Skeleton className="h-6 w-16 bg-primary/10" />
+            <Skeleton className="h-5 w-12 bg-primary/10" />
           ) : (
-            <div className="text-xl font-bold text-primary leading-tight">
+            <div className="text-base font-bold text-primary leading-tight">
               {adjustedETA || '--:--'}
             </div>
           )}
         </div>
         
-        <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
-          <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Time Left</div>
+        <div className="bg-muted/60 dark:bg-white/5 rounded-lg p-2 border border-border/60">
+          <div className="text-[9px] uppercase tracking-wider text-foreground/60 mb-0.5 font-semibold">Time</div>
           {isEmpty ? (
-            <Skeleton className="h-6 w-14" />
+            <Skeleton className="h-5 w-10" />
           ) : (
-            <div className="text-xl font-bold text-foreground leading-tight">
+            <div className="text-base font-bold text-foreground leading-tight">
               {adjustedDuration || timeRemaining}
             </div>
           )}
         </div>
         
-        <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-3 border border-border">
-          <div className="text-[11px] uppercase tracking-wider text-foreground/70 mb-1 font-medium">Distance</div>
+        <div className="bg-muted/60 dark:bg-white/5 rounded-lg p-2 border border-border/60">
+          <div className="text-[9px] uppercase tracking-wider text-foreground/60 mb-0.5 font-semibold">Miles</div>
           {isEmpty ? (
-            <Skeleton className="h-6 w-16" />
+            <Skeleton className="h-5 w-12" />
           ) : (
-            <div className="text-xl font-bold text-foreground leading-tight">
-              {remainingDistance || Math.round(totalDistance - distanceTraveled)} mi
+            <div className="text-base font-bold text-foreground leading-tight">
+              {remainingDistance || Math.round(totalDistance - distanceTraveled)}
             </div>
           )}
         </div>
       </div>
 
-      {/* Progress Bar - Always visible */}
-      <div className="mb-3">
-        <div className="flex justify-between text-sm text-foreground/80 mb-2 font-medium">
-          <span>{isEmpty ? '0% complete' : `${Math.round(progress)}% complete`}</span>
+      {/* Progress Bar - Compact */}
+      <div className="mb-2">
+        <div className="flex justify-between text-[10px] text-foreground/70 mb-1 font-medium">
+          <span>{isEmpty ? '0%' : `${Math.round(progress)}%`}</span>
           <span>{isEmpty ? '0/0 mi' : `${Math.round(distanceTraveled)}/${Math.round(totalDistance)} mi`}</span>
         </div>
-        <div className="tracking-progress-bar h-2.5">
+        <div className="tracking-progress-bar h-1.5">
           <div 
             className="tracking-progress-fill"
             style={{ width: isEmpty ? '0%' : `${progress}%` }}
@@ -197,23 +197,23 @@ export function UnifiedStatsCard({
         </div>
       </div>
 
-      {/* Traffic, Tolls, Fuel Row - Always visible with skeleton when empty */}
-      <div className="grid grid-cols-3 gap-2 mb-3">
+      {/* Traffic, Tolls, Fuel Row - Compact */}
+      <div className="grid grid-cols-3 gap-1.5 mb-2">
         {/* Traffic */}
-        <div className={cn("rounded-lg p-2.5 border", isEmpty ? "bg-muted/30 border-border" : severity.bg)}>
-          <div className="flex items-center gap-1.5 mb-1">
-            <AlertTriangle className={cn("w-3.5 h-3.5", isEmpty ? "text-muted-foreground" : severity.color)} />
-            <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Traffic</span>
+        <div className={cn("rounded-lg p-2 border", isEmpty ? "bg-muted/30 border-border/50" : severity.bg)}>
+          <div className="flex items-center gap-1 mb-0.5">
+            <AlertTriangle className={cn("w-3 h-3", isEmpty ? "text-muted-foreground" : severity.color)} />
+            <span className="text-[9px] uppercase tracking-wider text-foreground/60 font-semibold">Traffic</span>
           </div>
           {isEmpty ? (
-            <Skeleton className="h-4 w-12" />
+            <Skeleton className="h-4 w-10" />
           ) : (
             <>
-              <div className={cn("text-sm font-bold", severity.color)}>
+              <div className={cn("text-sm font-bold leading-tight", severity.color)}>
                 {severity.label}
               </div>
               {trafficDelay > 0 && (
-                <div className="text-xs text-foreground/70 mt-0.5">+{trafficDelay}m delay</div>
+                <div className="text-[9px] text-foreground/60">+{trafficDelay}m</div>
               )}
             </>
           )}
@@ -221,61 +221,61 @@ export function UnifiedStatsCard({
 
         {/* Tolls */}
         <div className={cn(
-          "rounded-lg p-2.5 border",
-          isEmpty ? "bg-muted/30 border-border" : (tollInfo?.hasTolls ? "bg-muted/50 dark:bg-white/5 border-border" : "bg-emerald-500/10 border-emerald-500/20")
+          "rounded-lg p-2 border",
+          isEmpty ? "bg-muted/30 border-border/50" : (tollInfo?.hasTolls ? "bg-muted/50 dark:bg-white/5 border-border/60" : "bg-emerald-500/10 border-emerald-500/25")
         )}>
-          <div className="flex items-center gap-1.5 mb-1">
-            <DollarSign className={cn("w-3.5 h-3.5", isEmpty ? "text-muted-foreground" : (tollInfo?.hasTolls ? "text-foreground/70" : "text-emerald-500"))} />
-            <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Tolls</span>
+          <div className="flex items-center gap-1 mb-0.5">
+            <DollarSign className={cn("w-3 h-3", isEmpty ? "text-muted-foreground" : (tollInfo?.hasTolls ? "text-foreground/60" : "text-emerald-500"))} />
+            <span className="text-[9px] uppercase tracking-wider text-foreground/60 font-semibold">Tolls</span>
           </div>
           {isEmpty ? (
-            <Skeleton className="h-4 w-10" />
+            <Skeleton className="h-4 w-8" />
           ) : (
-            <div className={cn("text-sm font-bold", tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500")}>
-              {tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
+            <div className={cn("text-sm font-bold leading-tight", tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500")}>
+              {tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$10') : 'Free'}
             </div>
           )}
         </div>
 
         {/* Fuel Cost */}
         <div className={cn(
-          "rounded-lg p-2.5 border",
-          isEmpty ? "bg-muted/30 border-border" : (isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/20" : "bg-amber-500/10 border-amber-500/20")
+          "rounded-lg p-2 border",
+          isEmpty ? "bg-muted/30 border-border/50" : (isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/25" : "bg-amber-500/10 border-amber-500/25")
         )}>
-          <div className="flex items-center gap-1.5 mb-1">
-            <Fuel className={cn("w-3.5 h-3.5", isEmpty ? "text-muted-foreground" : (isFuelEfficient ? "text-emerald-500" : "text-amber-500"))} />
-            <span className="text-[11px] uppercase tracking-wider text-foreground/70 font-medium">Fuel</span>
+          <div className="flex items-center gap-1 mb-0.5">
+            <Fuel className={cn("w-3 h-3", isEmpty ? "text-muted-foreground" : (isFuelEfficient ? "text-emerald-500" : "text-amber-500"))} />
+            <span className="text-[9px] uppercase tracking-wider text-foreground/60 font-semibold">Fuel</span>
           </div>
           {isEmpty ? (
-            <Skeleton className="h-4 w-10" />
+            <Skeleton className="h-4 w-8" />
           ) : (
             <>
-              <div className={cn("text-sm font-bold", isFuelEfficient ? "text-emerald-500" : "text-amber-500")}>
+              <div className={cn("text-sm font-bold leading-tight", isFuelEfficient ? "text-emerald-500" : "text-amber-500")}>
                 {fuelCostEstimate ? `$${fuelCostEstimate.toFixed(0)}` : '--'}
               </div>
               {isFuelEfficient && (
-                <div className="text-[10px] text-emerald-500/80 mt-0.5">Eco route</div>
+                <div className="text-[8px] text-emerald-500/80">Eco</div>
               )}
             </>
           )}
         </div>
       </div>
 
-      {/* Traffic Trend & Last Update - Always visible */}
-      <div className="flex items-center justify-between py-2.5 border-t border-border">
+      {/* Traffic Trend & Last Update - Compact footer */}
+      <div className="flex items-center justify-between pt-1.5 border-t border-border/50">
         {isEmpty ? (
-          <span className="text-sm text-muted-foreground">Awaiting route data...</span>
+          <span className="text-[10px] text-muted-foreground">Awaiting route...</span>
         ) : (
           <>
             {trend && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <span className={trend.color}>{trend.icon}</span>
-                <span className="text-sm text-foreground/80 font-medium">Traffic {trend.label}</span>
+                <span className="text-[10px] text-foreground/70 font-medium">{trend.label}</span>
               </div>
             )}
             {lastUpdate && (
-              <span className="text-sm text-foreground/70">
-                Updated {formatTimeAgo(lastUpdate)}
+              <span className="text-[10px] text-foreground/60">
+                {formatTimeAgo(lastUpdate)}
               </span>
             )}
           </>
