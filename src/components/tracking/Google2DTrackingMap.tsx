@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Loader2, Navigation2, Eye, Satellite, ShieldCheck, Truck } from "lucide-react";
+import { Loader2, Navigation2, Eye, Satellite } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Google2DTrackingMapProps {
@@ -571,28 +571,6 @@ export function Google2DTrackingMap({
           </div>
         </div>
       )}
-      {/* Centered Trust Strip on Map */}
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-lg flex items-center gap-3">
-        <span className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-foreground/90 uppercase">
-          <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          FMCSA Verified
-        </span>
-        <span className="text-muted-foreground/50">•</span>
-        <span className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-foreground/90 uppercase">
-          <Truck className="w-3.5 h-3.5 text-primary" />
-          Live GPS
-        </span>
-        {isTracking && (
-          <>
-            <span className="text-muted-foreground/50">•</span>
-            <span className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-primary uppercase">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              Tracking
-            </span>
-          </>
-        )}
-      </div>
-
       {/* Map container */}
       <div 
         ref={containerRef} 
