@@ -418,17 +418,15 @@ export default function CarrierVetting() {
 
         <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-12">
           <div className="w-full max-w-7xl mx-auto">
-          {/* Hero Section - matches spacing from Connect With Us page */}
-          {carriers.length === 0 && (
-            <div className="flex flex-col items-center justify-center text-center mb-10 max-w-2xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3 whitespace-nowrap">
-                Verify Any Carrier's <span className="tru-qb-title-accent">Trust & Safety</span>
-              </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Real-time FMCSA safety data • Insurance verification • DOT lookup
-              </p>
-            </div>
-          )}
+          {/* Hero Section - always visible */}
+          <div className="flex flex-col items-center justify-center text-center mb-10 max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3 whitespace-nowrap">
+              Verify Any Carrier's <span className="tru-qb-title-accent">Trust & Safety</span>
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Real-time FMCSA safety data • Insurance verification • DOT lookup
+            </p>
+          </div>
 
           {/* FMCSA Terminal - Always Visible */}
           <div className="fmcsa-terminal max-w-2xl mx-auto mb-6">
