@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =============================================
+   UNIFIED PAGE HERO SPACING
+   Standard spacing for all page hero sections
+   ============================================= */
+.tru-page-hero-section {
+  text-align: center;
+  padding: 48px 16px; /* py-12 px-4 */
+  margin-bottom: 40px; /* mb-10 */
+}
+
+.tru-page-hero-section h1 {
+  margin-bottom: 12px; /* mb-3 - headline to subheadline */
+}
+
 /* Carrier Vetting Placeholder Animations */
 @keyframes pulse-subtle {
   0%, 100% {
