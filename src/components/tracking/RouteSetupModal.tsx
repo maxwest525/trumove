@@ -4,11 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Navigation, Truck, CalendarIcon, Search, Loader2, Globe, Eye, X, ArrowRight, Play, } from "lucide-react";
-import { format } from "date-fns";
+import { MapPin, Navigation, Truck, Search, Loader2, Globe, Eye, ArrowRight, Play } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
@@ -220,9 +217,6 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
   const [originAddress, setOriginAddress] = useState("");
   const [destAddress, setDestAddress] = useState("");
   const [bookingNumber, setBookingNumber] = useState("");
-  const [moveDate, setMoveDate] = useState<Date | undefined>(undefined);
-  const [showDate, setShowDate] = useState(false);
-  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [isLookingUp, setIsLookingUp] = useState(false);
   
   // Coordinates for Street View previews
@@ -267,16 +261,11 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
           const booking = MOCK_BOOKINGS[trimmed];
           setOriginAddress(booking.origin);
           setDestAddress(booking.destination);
-          setMoveDate(booking.date);
-          setShowDate(true);
-        } else {
-          setShowDate(trimmed.length > 0);
         }
         setIsLookingUp(false);
       }, 600);
       return () => clearTimeout(timer);
     } else {
-      setShowDate(trimmed.length > 0);
       setIsLookingUp(false);
     }
   }, [bookingNumber]);
@@ -304,7 +293,6 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
     onSubmit({
       originAddress: originAddress.trim(),
       destAddress: destAddress.trim(),
-      moveDate: showDate ? moveDate : undefined,
       bookingNumber: bookingNumber.trim() || undefined,
     });
   };
@@ -472,42 +460,6 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
             </div>
           </div>
 
-          {/* Move Date - Only shown when booking number entered */}
-          {showDate && (
-            <div className="space-y-2 max-w-md animate-in fade-in slide-in-from-top-2 duration-200">
-              <Label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                <CalendarIcon className="w-3.5 h-3.5" />
-                Move Date
-              </Label>
-              <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !moveDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {moveDate ? format(moveDate, "PPP") : "Select a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={moveDate}
-                    onSelect={(date) => {
-                      setMoveDate(date);
-                      setDatePopoverOpen(false);
-                    }}
-                    disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>
