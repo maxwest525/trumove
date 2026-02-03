@@ -214,7 +214,6 @@ const NAV: NavItem[] = [
       PreviewComponent: VettingPreview
     }
   },
-  { href: "/about", label: "About" },
 ];
 
 interface HeaderProps {
