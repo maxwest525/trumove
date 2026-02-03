@@ -6,9 +6,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import logo from "@/assets/logo.png";
-import { Check, Download, Printer, CreditCard, Building, Send, Mail, UserPlus, Shield, Lock } from "lucide-react";
+import { Check, Download, Printer, CreditCard, Building, Send, Mail, UserPlus, Shield, Lock, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ClientSearchModal, type ClientData } from "./ClientSearchModal";
+import { supabase } from "@/integrations/supabase/client";
 
 type SignatureField = "initial1" | "initial2" | "signature";
 
@@ -23,6 +24,7 @@ export function CCACHAuthorizationForm() {
   });
   const [currentField, setCurrentField] = useState<SignatureField>("initial1");
   const [showClientSearch, setShowClientSearch] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   // Payment form data
   const [formData, setFormData] = useState({
@@ -114,6 +116,52 @@ export function CCACHAuthorizationForm() {
     toast.success("Demo data loaded");
   };
 
+  const handleSendPdfEmail = async () => {
+    if (!allSigned) {
+      toast.error("Please complete all signatures first");
+      return;
+    }
+    if (!formData.email) {
+      toast.error("Please enter a customer email address");
+      return;
+    }
+
+    setIsSendingEmail(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-ccach-pdf", {
+        body: {
+          customerName: typedName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          paymentMethod: formData.paymentMethod,
+          cardNumber: formData.cardNumber,
+          expiry: formData.expiry,
+          bankName: formData.bankName,
+          routingNumber: formData.routingNumber,
+          accountNumber: formData.accountNumber,
+          amount: formData.amount,
+          refNumber,
+          signedDate: today,
+          initials: typedInitials,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success(`PDF sent to ${formData.email}`);
+      } else {
+        throw new Error(data?.error || "Failed to send email");
+      }
+    } catch (err) {
+      console.error("Error sending PDF:", err);
+      toast.error(err instanceof Error ? err.message : "Failed to send PDF email");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
   const allSigned = Object.values(signatures).every(Boolean);
   const canInitial = typedInitials.length >= 1;
   const canSign = typedName.length >= 2;
@@ -198,6 +246,24 @@ export function CCACHAuthorizationForm() {
               <span className="text-xs font-medium">Send Email</span>
             </Button>
           </div>
+
+          {/* Email Signed PDF Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full h-10 gap-2 border-foreground/20 hover:bg-foreground hover:text-background transition-all group"
+            onClick={handleSendPdfEmail}
+            disabled={!allSigned || isSendingEmail}
+          >
+            {isSendingEmail ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <FileText className="h-4 w-4 group-hover:scale-110 transition-transform" />
+            )}
+            <span className="text-xs font-medium">
+              {isSendingEmail ? "Sending..." : "Email Signed PDF"}
+            </span>
+          </Button>
 
           {/* Customer Info Card */}
           <Card className="border border-border bg-background shadow-sm">
