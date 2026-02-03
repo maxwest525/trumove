@@ -27146,13 +27146,25 @@
   font-weight: 600;
 }
 
-/* Dashboard (Right Side) - Compact cards */
+/* Dashboard (Right Side) - Match map height */
 .tracking-dashboard {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
   overflow-y: auto;
-  min-width: 200px;
+  min-width: 280px;
+  height: 550px; /* Match map height */
+}
+
+/* Make cards grow to fill space - Stats gets ~55%, Location gets ~45% */
+.tracking-dashboard > div:first-child {
+  flex: 1.2;
+  min-height: 0;
+}
+
+.tracking-dashboard > div:last-child {
+  flex: 1;
+  min-height: 0;
 }
 
 /* Collapsed Dashboard State */
@@ -27182,10 +27194,12 @@
 }
 
 .tracking-dashboard > div {
-  padding: 8px !important;
+  padding: 14px !important;
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: 8px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .dark .tracking-dashboard > div {
@@ -27194,48 +27208,48 @@
 }
 
 .tracking-dashboard .text-sm {
-  font-size: 11px;
-}
-
-.tracking-dashboard .text-xs {
-  font-size: 9px;
-}
-
-.tracking-dashboard .text-base {
   font-size: 12px;
 }
 
-.tracking-dashboard .text-lg {
+.tracking-dashboard .text-xs {
+  font-size: 10px;
+}
+
+.tracking-dashboard .text-base {
   font-size: 13px;
 }
 
+.tracking-dashboard .text-lg {
+  font-size: 15px;
+}
+
 .tracking-dashboard .text-xl {
-  font-size: 14px;
+  font-size: 17px;
 }
 
 .tracking-dashboard .text-2xl {
-  font-size: 16px;
+  font-size: 20px;
 }
 
-/* Compact icons in dashboard */
+/* Icons in dashboard - slightly larger */
 .tracking-dashboard [class*="w-3"] {
-  width: 0.6rem;
-  height: 0.6rem;
-}
-
-.tracking-dashboard [class*="w-4"] {
   width: 0.75rem;
   height: 0.75rem;
 }
 
-.tracking-dashboard [class*="w-5"] {
+.tracking-dashboard [class*="w-4"] {
   width: 0.9rem;
   height: 0.9rem;
 }
 
+.tracking-dashboard [class*="w-5"] {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
 .tracking-dashboard [class*="w-6"] {
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 /* Unified Stats Card */
@@ -27261,59 +27275,63 @@
   margin-top: 2px;
 }
 
-/* Glass Card Style - Themed, compact */
+/* Glass Card Style - Themed */
 .tracking-info-card {
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border) / 0.6);
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 10px;
+  padding: 14px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 1px 4px hsl(var(--foreground) / 0.02);
+  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.03);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .tracking-info-card h3,
 .tracking-info-card .card-title {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: hsl(var(--foreground) / 0.5);
 }
 
-/* Compact text and icons for tracking cards */
+/* Text sizes in tracking info card - larger */
 .tracking-info-card .text-xs {
-  font-size: 0.65rem;
-}
-
-.tracking-info-card .text-sm {
   font-size: 0.7rem;
 }
 
-.tracking-info-card .text-lg {
-  font-size: 0.95rem;
+.tracking-info-card .text-sm {
+  font-size: 0.8rem;
 }
 
-.tracking-info-card .text-xl {
+.tracking-info-card .text-lg {
   font-size: 1.1rem;
 }
 
-.tracking-info-card .text-2xl {
+.tracking-info-card .text-xl {
   font-size: 1.25rem;
 }
 
+.tracking-info-card .text-2xl {
+  font-size: 1.4rem;
+}
+
 .tracking-info-card [class*="w-3"] {
-  width: 0.65rem;
-  height: 0.65rem;
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 .tracking-info-card [class*="w-4"] {
-  width: 0.85rem;
-  height: 0.85rem;
+  width: 1rem;
+  height: 1rem;
 }
 
 .tracking-info-card [class*="w-5"] {
-  width: 1rem;
-  height: 1rem;
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 .dark .tracking-info-card {

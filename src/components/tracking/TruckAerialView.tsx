@@ -16,11 +16,7 @@ interface TruckAerialViewProps {
   onRelocateTruck?: () => void;
 }
 
-type PreviewSize = 'default';
-
-const SIZE_CONFIGS: Record<PreviewSize, { height: number; label: string }> = {
-  default: { height: 180, label: 'Default' },
-};
+// Image fills available flex space now - no fixed heights needed
 
 export function TruckAerialView({
   routeCoordinates,
@@ -34,7 +30,6 @@ export function TruckAerialView({
   onToggleExpand,
   onRelocateTruck
 }: TruckAerialViewProps) {
-  const [previewSize, setPreviewSize] = useState<PreviewSize>('default');
   const [isLoading, setIsLoading] = useState(true);
   const [hasStreetViewError, setHasStreetViewError] = useState(false);
   const [imageTransition, setImageTransition] = useState(false);
@@ -141,8 +136,7 @@ export function TruckAerialView({
           </button>
         </div>
         <div 
-          className="relative w-full rounded-lg overflow-hidden border border-border"
-          style={{ height: SIZE_CONFIGS['default'].height }}
+          className="relative w-full rounded-lg overflow-hidden border border-border flex-1"
         >
           {/* Skeleton with subtle animation */}
           <Skeleton className="absolute inset-0 w-full h-full" />
@@ -262,10 +256,9 @@ export function TruckAerialView({
         </div>
       ) : (
         <>
-          {/* Collapsed Static Street View Image - Dynamic Height */}
+          {/* Collapsed Static Street View Image - Fills available space */}
           <div 
-            className="relative w-full rounded-lg overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border transition-all duration-300"
-            style={{ height: SIZE_CONFIGS[previewSize].height }}
+            className="relative w-full rounded-lg overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border transition-all duration-300 flex-1 min-h-[140px]"
           >
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
