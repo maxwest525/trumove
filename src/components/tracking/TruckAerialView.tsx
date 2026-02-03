@@ -239,18 +239,11 @@ export function TruckAerialView({
               onError={() => setIsLoading(false)}
             />
 
-            {/* View badge */}
-            <div className="absolute bottom-3 left-3 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1.5 z-20">
+            {/* View badge - top left with proper spacing */}
+            <div className="absolute top-4 left-4 px-3 py-1.5 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1.5 z-20">
               <Eye className="w-3 h-3 text-primary" />
               <span className="text-[9px] font-bold tracking-wider text-white/90 uppercase">
                 Interactive Street View
-              </span>
-            </div>
-
-            {/* Coordinates */}
-            <div className="absolute bottom-3 right-3 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm z-20">
-              <span className="text-[9px] font-mono text-white/60">
-                {currentPosition[1].toFixed(4)}°, {currentPosition[0].toFixed(4)}°
               </span>
             </div>
 
