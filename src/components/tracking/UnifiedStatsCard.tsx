@@ -200,45 +200,45 @@ export function UnifiedStatsCard({
       {/* Traffic, Tolls, Fuel Row - Uniform brand styling */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         {/* Traffic */}
-        <div className="rounded-lg p-3 border h-[60px] flex flex-col justify-between bg-muted/40 dark:bg-white/5 border-border">
+        <div className="rounded-lg p-2.5 border h-[60px] flex flex-col justify-between bg-muted/40 dark:bg-white/5 border-border overflow-hidden">
           <div className="flex items-center gap-1">
             <AlertTriangle className={cn("w-3.5 h-3.5 flex-shrink-0", isEmpty ? "text-muted-foreground" : "text-primary")} />
-            <span className="text-[10px] uppercase tracking-wider text-foreground/70 font-medium">Traffic</span>
+            <span className="text-[9px] uppercase tracking-wider text-foreground/70 font-medium">Traffic</span>
           </div>
           {isEmpty ? (
             <Skeleton className="h-5 w-16" />
           ) : (
-            <div className="text-sm font-bold leading-tight text-foreground">
+            <div className="text-xs font-bold leading-tight text-foreground truncate">
               {severity.label}{trafficDelay > 0 && <span className="font-normal text-foreground/60 ml-1">+{trafficDelay}m</span>}
             </div>
           )}
         </div>
 
         {/* Tolls */}
-        <div className="rounded-lg p-3 border h-[60px] flex flex-col justify-between bg-muted/40 dark:bg-white/5 border-border">
+        <div className="rounded-lg p-2.5 border h-[60px] flex flex-col justify-between bg-muted/40 dark:bg-white/5 border-border overflow-hidden">
           <div className="flex items-center gap-1">
             <DollarSign className={cn("w-3.5 h-3.5 flex-shrink-0", isEmpty ? "text-muted-foreground" : "text-primary")} />
-            <span className="text-[10px] uppercase tracking-wider text-foreground/70 font-medium">Tolls</span>
+            <span className="text-[9px] uppercase tracking-wider text-foreground/70 font-medium">Tolls</span>
           </div>
           {isEmpty ? (
             <Skeleton className="h-5 w-12" />
           ) : (
-            <div className="text-sm font-bold leading-tight text-foreground">
+            <div className="text-xs font-bold leading-tight text-foreground truncate">
               {tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
             </div>
           )}
         </div>
 
         {/* Fuel Cost */}
-        <div className="rounded-lg p-3 border h-[60px] flex flex-col justify-between bg-muted/40 dark:bg-white/5 border-border">
+        <div className="rounded-lg p-2.5 border h-[60px] flex flex-col justify-between bg-muted/40 dark:bg-white/5 border-border overflow-hidden">
           <div className="flex items-center gap-1">
             <Fuel className={cn("w-3.5 h-3.5 flex-shrink-0", isEmpty ? "text-muted-foreground" : "text-primary")} />
-            <span className="text-[10px] uppercase tracking-wider text-foreground/70 font-medium">Fuel</span>
+            <span className="text-[9px] uppercase tracking-wider text-foreground/70 font-medium">Fuel</span>
           </div>
           {isEmpty ? (
             <Skeleton className="h-5 w-12" />
           ) : (
-            <div className="text-sm font-bold leading-tight text-foreground">
+            <div className="text-xs font-bold leading-tight text-foreground truncate">
               {fuelCostEstimate ? `$${fuelCostEstimate.toFixed(0)}` : '--'}
             </div>
           )}
