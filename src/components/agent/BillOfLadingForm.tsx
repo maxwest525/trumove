@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Receipt, Truck, MapPin, Package, Calendar, FileText, Sparkles, Printer, Download, UserPlus } from "lucide-react";
+import { Receipt, Truck, MapPin, Package, Calendar, FileText, Sparkles, Printer, Download, UserPlus, History } from "lucide-react";
 import { toast } from "sonner";
 import { ClientSearchModal, type ClientData } from "./ClientSearchModal";
-
+import { CarrierSearchModal, type CarrierMoveData } from "./CarrierSearchModal";
 const DEMO_DATA = {
   bolNumber: "BOL-2026-001247",
   bookingRef: "TM-20260131-8472",
@@ -48,6 +48,7 @@ export function BillOfLadingForm() {
   });
   
   const [showClientSearch, setShowClientSearch] = useState(false);
+  const [showCarrierSearch, setShowCarrierSearch] = useState(false);
   const [importTarget, setImportTarget] = useState<"origin" | "dest">("origin");
 
   const fillDemo = () => {
@@ -86,12 +87,28 @@ export function BillOfLadingForm() {
     }
   };
 
+  const handleCarrierSelect = (carrier: CarrierMoveData) => {
+    setFormData(prev => ({
+      ...prev,
+      carrierName: carrier.carrierName,
+      carrierMC: carrier.carrierMC,
+      driverName: carrier.driverName,
+      truckNumber: carrier.truckNumber,
+    }));
+    toast.success(`Imported carrier: ${carrier.carrierName}`);
+  };
+
   return (
     <div className="space-y-6">
       <ClientSearchModal
         open={showClientSearch}
         onClose={() => setShowClientSearch(false)}
         onSelect={handleClientSelect}
+      />
+      <CarrierSearchModal
+        open={showCarrierSearch}
+        onClose={() => setShowCarrierSearch(false)}
+        onSelect={handleCarrierSelect}
       />
       
       <div className="flex items-center justify-between flex-wrap gap-3">
@@ -254,9 +271,20 @@ export function BillOfLadingForm() {
         {/* Carrier Info */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Truck className="w-5 h-5" />
-              Carrier Information
+            <CardTitle className="text-lg flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Truck className="w-5 h-5" />
+                Carrier Information
+              </span>
+              <Button
+                onClick={() => setShowCarrierSearch(true)}
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs h-8"
+              >
+                <History className="w-3.5 h-3.5" />
+                Import from Past Move
+              </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
