@@ -13,10 +13,27 @@ import { supabase } from "@/integrations/supabase/client";
 
 type SignatureField = "initial1" | "initial2" | "signature";
 
-export function CCACHAuthorizationForm() {
+interface CCACHAuthorizationFormProps {
+  externalTypedName?: string;
+  onExternalTypedNameChange?: (name: string) => void;
+}
+
+export function CCACHAuthorizationForm({ 
+  externalTypedName, 
+  onExternalTypedNameChange 
+}: CCACHAuthorizationFormProps = {}) {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   
-  const [typedName, setTypedName] = useState("");
+  const [internalTypedName, setInternalTypedName] = useState("");
+  const typedName = externalTypedName !== undefined ? externalTypedName : internalTypedName;
+  const setTypedName = (name: string) => {
+    if (onExternalTypedNameChange) {
+      onExternalTypedNameChange(name);
+    } else {
+      setInternalTypedName(name);
+    }
+  };
+  
   const [signatures, setSignatures] = useState<Record<SignatureField, boolean>>({
     initial1: false,
     initial2: false,
