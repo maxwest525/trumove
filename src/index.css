@@ -17773,9 +17773,9 @@
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: 16px;
-  padding: 12px;
+  padding: 14px;
   cursor: pointer;
-  height: 240px;
+  height: 260px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04);
@@ -17850,10 +17850,10 @@
 
 /* Typography - clamped to 1-2 lines */
 .features-carousel-card-title {
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 700;
   color: hsl(var(--foreground));
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -17862,9 +17862,9 @@
 }
 
 .features-carousel-card-desc {
-  font-size: 0.875rem;
+  font-size: 0.938rem;
   color: hsl(var(--muted-foreground));
-  line-height: 1.4;
+  line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
