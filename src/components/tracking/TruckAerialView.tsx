@@ -214,14 +214,6 @@ export function TruckAerialView({
       {/* Expanded Interactive Street View */}
       {expanded ? (
         <div className="flex flex-col h-[calc(100%-3rem)]">
-          {/* Floating close button - always visible */}
-          <button
-            onClick={onToggleExpand}
-            className="absolute top-4 right-4 z-30 flex items-center gap-2 px-4 py-2 rounded-full bg-background/90 hover:bg-destructive/10 border border-border hover:border-destructive/40 text-foreground hover:text-destructive transition-all shadow-lg backdrop-blur-sm"
-          >
-            <X className="w-4 h-4" />
-            <span className="text-sm font-semibold">Exit View</span>
-          </button>
           
           <div className="relative flex-1 rounded-lg overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border">
             {isLoading && (
@@ -256,15 +248,6 @@ export function TruckAerialView({
               </span>
             </div>
 
-            {/* Progress indicator */}
-            {isTracking && progress > 0 && (
-              <div className="absolute top-3 left-[120px] px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-2 z-20">
-                <MapPin className="w-3 h-3 text-primary" />
-                <span className="text-[10px] font-semibold text-white/90">
-                  {Math.round(progress)}% Complete
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Location info footer */}
@@ -321,26 +304,6 @@ export function TruckAerialView({
               />
             ) : null}
 
-            {/* Marker overlay - different for origin vs tracking */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="relative">
-                {isTracking && progress > 0 ? (
-                  <>
-                    <div className="absolute inset-0 -m-2 rounded-full bg-primary/20 animate-ping" />
-                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white">
-                      <Truck className="w-5 h-5 text-primary-foreground" />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="absolute inset-0 -m-1 rounded-full bg-primary/30 animate-pulse" />
-                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-white">
-                      <MapPin className="w-4 h-4 text-primary-foreground" />
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
 
             {/* View badge */}
             <div className="absolute top-2 left-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1.5">
@@ -364,15 +327,6 @@ export function TruckAerialView({
               </span>
             </div>
 
-            {/* Progress indicator - only when tracking */}
-            {isTracking && progress > 0 && (
-              <div className="absolute bottom-2 left-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-2">
-                <MapPin className="w-3 h-3 text-primary" />
-                <span className="text-[10px] font-semibold text-white/90">
-                  {Math.round(progress)}% Complete
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Location description */}

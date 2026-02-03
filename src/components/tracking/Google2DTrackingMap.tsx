@@ -571,13 +571,13 @@ export function Google2DTrackingMap({
           </div>
         </div>
       )}
-
-
-
-      {/* Google attribution - positioned bottom-left */}
-      <div className="absolute bottom-3 left-3 z-20 px-2 py-1 rounded bg-background/70 backdrop-blur-sm border border-border">
-        <span className="text-[8px] text-muted-foreground">Google Maps</span>
-      </div>
+      {/* Minimal tracking active indicator */}
+      {isTracking && (
+        <div className="absolute top-3 left-3 z-20 px-2 py-1 rounded-full bg-primary/90 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span className="text-[9px] font-bold text-primary-foreground tracking-wider uppercase">Tracking</span>
+        </div>
+      )}
 
       {/* Map container */}
       <div 
