@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight, Headphones, Shield } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
@@ -144,7 +144,7 @@ export default function LiveTracking() {
   const [show3DView, setShow3DView] = useState(false);
   
   // Map view type for 2D maps (satellite, hybrid, roadmap)
-  const [mapViewType, setMapViewType] = useState<'satellite' | 'hybrid' | 'roadmap'>('hybrid');
+  const [mapViewType, setMapViewType] = useState<'satellite' | 'hybrid' | 'roadmap'>('satellite');
   
   // WebGL diagnostics and fallback state
   const [webglDiagnostics, setWebglDiagnostics] = useState<WebGLDiagnostics | null>(null);
@@ -612,6 +612,16 @@ export default function LiveTracking() {
           <span className="tracking-header-trust-item">
             <Cloud className="w-3.5 h-3.5 text-primary" />
             REAL-TIME ETA
+          </span>
+          <span className="tracking-header-trust-dot">•</span>
+          <span className="tracking-header-trust-item">
+            <Headphones className="w-3.5 h-3.5 text-primary" />
+            24/7 SUPPORT
+          </span>
+          <span className="tracking-header-trust-dot">•</span>
+          <span className="tracking-header-trust-item">
+            <Shield className="w-3.5 h-3.5 text-primary" />
+            INSURED CARGO
           </span>
         </div>
 
