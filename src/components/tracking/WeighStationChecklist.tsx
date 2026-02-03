@@ -78,12 +78,12 @@ export function WeighStationChecklist({
     return (
       <div className="tracking-info-card weigh-station-checklist">
         <div className="flex items-center gap-2 mb-3">
-          <Scale className="w-4 h-4 text-orange-400" />
-          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-slate-400">
+          <Scale className="w-4 h-4 text-orange-500" />
+          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
             Weigh Stations
           </span>
         </div>
-        <div className="text-center py-6 text-slate-500 text-sm">
+        <div className="text-center py-6 text-muted-foreground text-sm">
           Enter route to see stations
         </div>
       </div>
@@ -95,23 +95,23 @@ export function WeighStationChecklist({
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Scale className="w-4 h-4 text-orange-400" />
-          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-slate-400">
+          <Scale className="w-4 h-4 text-orange-500" />
+          <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
             Weigh Stations
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-emerald-400">
+          <span className="text-xs font-bold text-primary">
             {passedCount}/{totalCount}
           </span>
-          <span className="text-[10px] text-slate-500">cleared</span>
+          <span className="text-[10px] text-muted-foreground">cleared</span>
         </div>
       </div>
 
       {/* Station List */}
       <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1 weigh-station-scroll">
         {stationsWithStatus.length === 0 ? (
-          <div className="text-center py-4 text-slate-500 text-sm">
+          <div className="text-center py-4 text-muted-foreground text-sm">
             No weigh stations on this route
           </div>
         ) : (
@@ -129,17 +129,17 @@ export function WeighStationChecklist({
 
       {/* Legend */}
       {totalCount > 0 && (
-        <div className="mt-3 pt-3 border-t border-slate-700/50 flex items-center justify-center gap-4">
-          <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+        <div className="mt-3 pt-3 border-t border-border flex items-center justify-center gap-4">
+          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <div className="w-2 h-2 rounded-full bg-primary" />
             <span>Passed</span>
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
             <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
             <span>Approaching</span>
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-            <div className="w-2 h-2 rounded-full bg-slate-500" />
+          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <div className="w-2 h-2 rounded-full bg-muted-foreground" />
             <span>Upcoming</span>
           </div>
         </div>
@@ -172,16 +172,16 @@ function WeighStationItem({
       {/* Status Icon */}
       <div className={cn(
         "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all",
-        status === 'passed' && "bg-emerald-500/20",
+        status === 'passed' && "bg-primary/20",
         status === 'approaching' && "bg-orange-500/25",
-        status === 'upcoming' && "bg-slate-500/15"
+        status === 'upcoming' && "bg-muted"
       )}>
         {status === 'passed' ? (
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <CheckCircle2 className="w-4 h-4 text-primary" />
         ) : status === 'approaching' ? (
-          <AlertCircle className="w-4 h-4 text-orange-400" />
+          <AlertCircle className="w-4 h-4 text-orange-500" />
         ) : (
-          <ChevronRight className="w-4 h-4 text-slate-400" />
+          <ChevronRight className="w-4 h-4 text-muted-foreground" />
         )}
       </div>
 
@@ -190,36 +190,36 @@ function WeighStationItem({
         <div className="flex items-center gap-2">
           <span className={cn(
             "text-sm font-semibold truncate",
-            status === 'passed' ? "text-emerald-300" : 
-            status === 'approaching' ? "text-orange-300" : "text-slate-400"
+            status === 'passed' ? "text-primary" : 
+            status === 'approaching' ? "text-orange-500" : "text-muted-foreground"
           )}>
             {station.name}
           </span>
         </div>
         
         <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-[10px] font-medium text-slate-500">
+          <span className="text-[10px] font-medium text-muted-foreground">
             {station.interstate} • MM {station.mile_marker}
           </span>
-          <span className="text-[10px] text-slate-600">•</span>
-          <span className="text-[10px] text-slate-500">{station.state}</span>
+          <span className="text-[10px] text-muted-foreground/60">•</span>
+          <span className="text-[10px] text-muted-foreground">{station.state}</span>
         </div>
 
         {/* Badges */}
         <div className="flex items-center gap-1.5 mt-1.5">
           {station.is_24_7 && (
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-700/50 text-[9px] font-semibold text-slate-300">
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-muted text-[9px] font-semibold text-foreground/80">
               24/7
             </span>
           )}
           {station.has_prepass && (
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-cyan-500/20 text-[9px] font-semibold text-cyan-400">
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-cyan-500/20 text-[9px] font-semibold text-cyan-600 dark:text-cyan-400">
               <Radio className="w-2.5 h-2.5" />
               PrePass
             </span>
           )}
           {station.has_drivewyze && (
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-violet-500/20 text-[9px] font-semibold text-violet-400">
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-violet-500/20 text-[9px] font-semibold text-violet-600 dark:text-violet-400">
               <Shield className="w-2.5 h-2.5" />
               Drivewyze
             </span>
