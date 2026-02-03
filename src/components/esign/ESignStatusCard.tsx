@@ -257,9 +257,9 @@ export function ESignStatusCard({
 
         {/* Signed Success Message */}
         {isSigned && (
-          <div className="flex items-center gap-2 p-2 rounded-md bg-primary/10 border border-primary/20">
+          <div className="flex items-center gap-2 p-2 rounded-md bg-foreground text-background border border-foreground">
             <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-            <span className="text-xs text-primary font-medium">
+            <span className="text-xs font-medium">
               Customer has signed — ready for download
             </span>
           </div>
