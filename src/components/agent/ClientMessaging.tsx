@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Mail, MessageSquare, Send, FileText, Sparkles, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const EMAIL_TEMPLATES = [
   {
@@ -187,8 +188,13 @@ export function ClientMessaging() {
                 {EMAIL_TEMPLATES.map((template) => (
                   <Button
                     key={template.id}
-                    variant={selectedTemplate === template.id ? "default" : "outline"}
-                    className="w-full justify-start"
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start border-foreground/20",
+                      selectedTemplate === template.id 
+                        ? "bg-foreground text-background border-foreground" 
+                        : "hover:bg-foreground hover:text-background"
+                    )}
                     onClick={() => handleTemplateSelect(template.id)}
                   >
                     {template.name}
@@ -261,8 +267,13 @@ export function ClientMessaging() {
                 {SMS_TEMPLATES.map((template) => (
                   <Button
                     key={template.id}
-                    variant={selectedTemplate === template.id ? "default" : "outline"}
-                    className="w-full justify-start"
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start border-foreground/20",
+                      selectedTemplate === template.id 
+                        ? "bg-foreground text-background border-foreground" 
+                        : "hover:bg-foreground hover:text-background"
+                    )}
                     onClick={() => handleTemplateSelect(template.id)}
                   >
                     {template.name}
