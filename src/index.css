@@ -31035,6 +31035,7 @@ html.dark .tru-summary-header-large,
 
 .safer-trust-item {
   display: inline-flex;
+  flex-direction: row;
   align-items: center;
   gap: 6px;
   font-size: 12px;
@@ -31042,6 +31043,12 @@ html.dark .tru-summary-header-large,
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: hsl(0 0% 100% / 0.85);
+  white-space: nowrap;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+}
+
+.safer-trust-item span {
   white-space: nowrap;
   flex-shrink: 0;
 }
