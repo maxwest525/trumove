@@ -54,8 +54,8 @@ export function ContactHub({
         />
       </div>
 
-      {/* Header - raised 50px higher */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center -mt-20">
+      {/* Header */}
+      <div className="mt-8 text-center">
         <h3 className="text-3xl font-black text-white mb-2">
           Ready to Connect
         </h3>
@@ -64,8 +64,10 @@ export function ContactHub({
         </p>
       </div>
 
-      {/* Primary Action Buttons - Green icons with glow on hover, staggered entrance */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl pb-12">
+
+      {/* Primary Action Buttons - Centered between header and booking input */}
+      <div className="flex-1 flex items-center justify-center w-full">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl">
         {/* Video Call */}
         <button
           onClick={onStartVideoCall}
@@ -113,10 +115,11 @@ export function ContactHub({
           </div>
           <span className="text-sm font-bold text-white">Text Us</span>
         </button>
+        </div>
       </div>
 
       {/* Booking ID Search - Compact at bottom */}
-      <div className="absolute bottom-5 left-6 right-6">
+      <div className="pb-4">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 max-w-sm mx-auto">
           {isLookingUp ? (
             <Loader2 className="w-3.5 h-3.5 text-primary shrink-0 animate-spin" />
