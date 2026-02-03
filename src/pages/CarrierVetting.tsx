@@ -7,7 +7,8 @@ const useScrollToTop = () => {
   }, []);
 };
 import { useSearchParams } from 'react-router-dom';
-import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle, Printer, Lock, Activity, ClipboardCheck, Share2, FileDown, Copy, Check } from 'lucide-react';
+import { Shield, Database, Radio, AlertTriangle, Users, Scale, Zap, Search, Info, ChevronDown, ExternalLink, FileCheck, TrendingUp, Truck, CheckCircle2, AlertCircle, Printer, Lock, Activity, ClipboardCheck, Share2, FileDown, Copy, Check, BadgeCheck } from 'lucide-react';
+import logoImg from '@/assets/logo.png';
 
 import SiteShell from '@/components/layout/SiteShell';
 
@@ -362,63 +363,57 @@ export default function CarrierVetting() {
   return (
     <SiteShell hideTrustStrip>
       <div className="min-h-screen carrier-vetting-page">
-        {/* Combined Sticky Header Block - locks below TruMove nav (72px + 8px margin + 8px buffer) */}
-        <div className="sticky top-[88px] z-40">
-          {/* Government-style Header */}
-          <div className="fmcsa-header bg-slate-900">
-            <div className="container max-w-7xl mx-auto px-4 py-4">
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="fmcsa-shield">
-                    <Shield className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                      FMCSA Carrier Vetting
-                    </h1>
-                    <p className="text-xs text-slate-600 dark:text-white/60">
-                      Safety & Fitness Electronic Records System (SAFER)
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="fmcsa-badge">
-                    <Database className="w-3.5 h-3.5" />
-                    <span className="text-slate-700 dark:text-slate-300">SAFER Web Services</span>
-                  </div>
-                  <div className="fmcsa-live-indicator">
-                    <div className="fmcsa-live-dot" />
-                    <span className="text-slate-700 dark:text-primary">Live Data</span>
-                  </div>
-                </div>
-              </div>
+        {/* Unified Command Center Header - matches Connect With Us, Shipment Tracking, AI Move Estimator */}
+        <div className="sticky top-[102px] z-40">
+          <header className="tracking-header">
+            {/* Left - Logo & Title */}
+            <div className="flex items-center gap-3">
+              <img 
+                src={logoImg} 
+                alt="TruMove" 
+                className="h-6 brightness-0 invert"
+              />
+              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
+                Carrier Vetting
+              </span>
             </div>
-          </div>
 
-          {/* Trust Strip */}
-          <div className="bg-muted/95 border-b border-border/50 backdrop-blur-md">
-            <div className="container max-w-7xl mx-auto px-4 py-3">
-              <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
-                {DATA_SOURCES.map((source) => (
-                  <div key={source.title} className="flex items-center gap-2">
-                    <source.icon className="w-4 h-4 text-slate-900 dark:text-foreground shrink-0" />
-                    <div className="text-left">
-                      <p className="text-xs font-medium text-foreground">{source.title}</p>
-                    </div>
-                  </div>
-                ))}
-                <a 
-                  href="https://safer.fmcsa.dot.gov/CompanySnapshot.aspx"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-xs text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 underline font-medium"
-                >
-                  Official FMCSA Source
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+            {/* Center - Trust Indicators */}
+            <div className="tracking-header-trust">
+              <span className="tracking-header-trust-item">
+                <Database className="w-3.5 h-3.5 text-primary" />
+                SAFER DATABASE
+              </span>
+              <span className="tracking-header-trust-dot">•</span>
+              <span className="tracking-header-trust-item">
+                <Activity className="w-3.5 h-3.5 text-primary" />
+                LIVE DATA
+              </span>
+              <span className="tracking-header-trust-dot">•</span>
+              <span className="tracking-header-trust-item">
+                <Shield className="w-3.5 h-3.5 text-primary" />
+                FMCSA VERIFIED
+              </span>
+              <span className="tracking-header-trust-dot">•</span>
+              <span className="tracking-header-trust-item">
+                <ClipboardCheck className="w-3.5 h-3.5 text-primary" />
+                CSA SCORES
+              </span>
+              <span className="tracking-header-trust-dot">•</span>
+              <span className="tracking-header-trust-item">
+                <BadgeCheck className="w-3.5 h-3.5 text-primary" />
+                AUTHORITY CHECK
+              </span>
+            </div>
+
+            {/* Right - Session ID */}
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <div className="text-[11px] text-white/80 uppercase tracking-wider">Session ID</div>
+                <div className="text-sm font-mono text-white">VET-{String(Date.now()).slice(-8)}</div>
               </div>
             </div>
-          </div>
+          </header>
         </div>
 
         <div className="container max-w-7xl mx-auto px-4 py-8">
