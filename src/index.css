@@ -3,17 +3,41 @@
 @tailwind utilities;
 
 /* =============================================
+   ZOOM-RESILIENT SPACING SCALE
+   rem-based units for consistent scaling across zoom levels
+   ============================================= */
+:root {
+  /* Base spacing scale */
+  --spacing-xs: 0.5rem;      /* 8px */
+  --spacing-sm: 0.75rem;     /* 12px */
+  --spacing-md: 1rem;        /* 16px */
+  --spacing-lg: 1.5rem;      /* 24px */
+  --spacing-xl: 2rem;        /* 32px */
+  --spacing-2xl: 3rem;       /* 48px */
+  --spacing-3xl: 4rem;       /* 64px */
+  
+  /* Layout-specific */
+  --header-height: 3.875rem;  /* 62px */
+  --header-offset: 6.375rem;  /* 102px (nav + gap) */
+  
+  /* AI Section specific */
+  --ai-section-min-height: clamp(20rem, 35vh, 24rem);
+  --ai-preview-width: clamp(17.5rem, 25vw, 26.25rem);
+  --ai-preview-height: clamp(18.75rem, 30vh, 27.5rem);
+}
+
+/* =============================================
    UNIFIED PAGE HERO SPACING
    Standard spacing for all page hero sections
    ============================================= */
 .tru-page-hero-section {
   text-align: center;
-  padding: 48px 16px 0 16px; /* py-12 px-4, but no bottom padding */
-  margin-bottom: 35px; /* Matches Connect With Us gap */
+  padding: var(--spacing-2xl) var(--spacing-md) 0 var(--spacing-md);
+  margin-bottom: 2.1875rem; /* ~35px in rem for zoom consistency */
 }
 
 .tru-page-hero-section h1 {
-  margin-bottom: 12px; /* mb-3 - headline to subheadline */
+  margin-bottom: var(--spacing-sm); /* 12px */
 }
 
 /* Carrier Vetting Placeholder Animations */
@@ -2419,7 +2443,7 @@
    AI STEPS SECTION
    ============================================= */
 .tru-ai-steps-section {
-  padding: 12px 24px 16px 16px;
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md) var(--spacing-md);
   margin-top: 0;
   background: hsl(var(--background));
   position: relative;
@@ -2434,8 +2458,8 @@
   display: flex;
   align-items: center;
   position: relative;
-  margin-bottom: 12px;
-  min-height: 380px;
+  margin-bottom: var(--spacing-sm);
+  min-height: var(--ai-section-min-height);
 }
 
 /* Steps left container - centered within left half */
@@ -2448,8 +2472,8 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 20px;
-  width: calc(50% - 20px);
+  gap: 1.25rem;
+  width: calc(50% - 1.25rem);
   z-index: 5;
 }
 
@@ -2613,14 +2637,14 @@
 /* Responsive adjustments for new design */
 @media (max-width: 1400px) {
   .tru-ai-steps-left {
-    width: 300px;
+    width: 18.75rem; /* 300px in rem */
   }
   .tru-ai-main-headline {
     font-size: 2rem;
   }
   .tru-ai-header-previews .tru-ai-live-scanner,
   .tru-ai-header-previews .tru-ai-live-inventory {
-    width: 340px;
+    width: 21.25rem; /* 340px in rem */
   }
 }
 
@@ -2630,14 +2654,14 @@
     flex-direction: column;
     align-items: center;
     min-height: auto;
-    gap: 32px;
+    gap: var(--spacing-xl);
   }
   .tru-ai-steps-left {
     position: relative;
     top: auto;
     transform: none;
     width: 100%;
-    max-width: 500px;
+    max-width: 31.25rem; /* 500px */
     text-align: center;
     align-items: center;
   }
@@ -2646,7 +2670,7 @@
   }
   .tru-ai-subheadline {
     text-align: center;
-    max-width: 420px;
+    max-width: 26.25rem; /* 420px */
   }
   .tru-ai-step-pills {
     justify-content: center;
@@ -2666,26 +2690,26 @@
   .tru-ai-header-previews .tru-ai-live-scanner,
   .tru-ai-header-previews .tru-ai-live-inventory {
     width: 100%;
-    max-width: 400px;
-    height: 350px !important;
-    min-height: 350px !important;
+    max-width: 25rem; /* 400px */
+    height: 21.875rem !important; /* 350px */
+    min-height: 21.875rem !important;
   }
 }
 
 /* Responsive: mobile */
 @media (max-width: 640px) {
   .tru-ai-steps-section {
-    padding: 16px;
+    padding: var(--spacing-md);
   }
   .tru-ai-header-previews {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-sm);
   }
   .tru-ai-header-previews .tru-ai-live-scanner,
   .tru-ai-header-previews .tru-ai-live-inventory {
     max-width: 100%;
-    height: 300px !important;
-    min-height: 300px !important;
+    height: 18.75rem !important; /* 300px */
+    min-height: 18.75rem !important;
   }
 }
 
@@ -2696,13 +2720,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-left: 250px;
-  padding-right: 860px;
+  padding-left: 15.625rem; /* 250px in rem */
+  padding-right: 53.75rem; /* 860px in rem */
 }
 
 .tru-ai-header-center .tru-ai-steps-title {
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-xs);
 }
 
 .tru-ai-header-center .tru-ai-accent-line {
@@ -2717,20 +2741,20 @@
   bottom: 0;
   display: flex;
   flex-direction: row;
-  gap: 16px;
+  gap: var(--spacing-md);
   align-items: stretch;
   opacity: 1;
   transition: all 0.4s ease;
 }
 
 .tru-ai-header-previews .tru-ai-live-scanner {
-  width: 420px;
+  width: var(--ai-preview-width);
   height: 100% !important;
   min-height: 100% !important;
 }
 
 .tru-ai-header-previews .tru-ai-live-inventory {
-  width: 420px;
+  width: var(--ai-preview-width);
   height: 100% !important;
   min-height: 100% !important;
 }
