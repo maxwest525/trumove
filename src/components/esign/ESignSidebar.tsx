@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Progress } from "@/components/ui/progress";
 import { Send, Mail, FileText, UserPlus, Check, Loader2, Download } from "lucide-react";
 import { toast } from "sonner";
 import { DocumentTabs, type DocumentType } from "./DocumentTabs";
@@ -51,30 +50,8 @@ export function ESignSidebar({
     onTypedNameChange(client.name);
   };
 
-  // Calculate overall progress
-  const completedCount = Object.values(completedDocuments).filter(Boolean).length;
-  const totalDocuments = 3;
-  const progressPercent = (completedCount / totalDocuments) * 100;
-
   return (
     <div className="w-72 flex-shrink-0 space-y-4">
-      {/* Overall Progress Bar */}
-      <Card className="border border-border bg-background shadow-sm">
-        <CardContent className="p-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Overall Progress</span>
-            <span className="text-sm font-semibold text-foreground">{completedCount} of {totalDocuments}</span>
-          </div>
-          <Progress value={progressPercent} className="h-2" />
-          <p className="text-[11px] text-muted-foreground">
-            {completedCount === 0 && "Sign all documents to complete"}
-            {completedCount === 1 && "1 document signed, 2 remaining"}
-            {completedCount === 2 && "Almost done! 1 document remaining"}
-            {completedCount === 3 && "All documents signed ✓"}
-          </p>
-        </CardContent>
-      </Card>
-
       <ClientSearchModal
         open={showClientSearch}
         onClose={() => setShowClientSearch(false)}

@@ -17721,15 +17721,12 @@
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Clip cards outside bounds */
 }
 
-.features-carousel-container {
-  overflow: hidden !important; /* Clip cards outside bounds */
-}
-
+.features-carousel,
+.features-carousel-container,
 .features-carousel-content {
-  overflow: visible !important; /* Allow hover effects to pop out */
+  overflow: visible !important;
 }
 
 .features-carousel-container {
@@ -17750,17 +17747,17 @@
   display: flex;
   margin-left: 0 !important;
   margin-right: 0 !important;
-  padding: 8px 0 8px 0;  /* Remove left/right padding to fit exactly 4 cards */
+  padding: 8px 0 8px 8px;  /* Remove right padding - let cards fill space */
   /* Smooth scroll snap enhancement */
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 4 cards visible - exact 25% */
+/* 4 cards visible - exact 25% with padding accounted for */
 .features-carousel-item {
-  flex: 0 0 25% !important;  /* Exact 25% for 4 cards */
+  flex: 0 0 calc(25% - 6px) !important;  /* Reduced to prevent 5th card peek */
   min-width: 0;
-  padding: 0 6px !important;
+  padding: 0 8px !important;
   margin: 0 !important;
   position: relative;
   overflow: visible !important;
@@ -26095,7 +26092,6 @@
   background: hsl(var(--foreground) / 0.95);
   border-bottom: 1px solid hsl(var(--border) / 0.3);
   backdrop-filter: blur(12px);
-  position: relative; /* Required for absolute positioned trust items */
 }
 
 .dark .tracking-header {
@@ -26117,94 +26113,23 @@
 .tracking-header-trust {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  gap: 12px;
 }
 
 .tracking-header-trust-item {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 10px;
+  gap: 6px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.9);
-  white-space: nowrap;
 }
 
 .tracking-header-trust-dot {
   color: hsl(var(--primary));
   font-weight: 700;
-  font-size: 10px;
-}
-
-/* =============================================
-   ONLINE ESTIMATE PAGE HEADER (AI Move Estimator)
-   ============================================= */
-.estimate-header {
-  position: sticky;
-  top: 103px;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 24px;
-  background: hsl(var(--foreground) / 0.95);
-  border-bottom: 1px solid hsl(var(--border) / 0.3);
-  backdrop-filter: blur(12px);
-  position: relative;
-}
-
-.dark .estimate-header {
-  background: rgba(15, 15, 15, 0.95);
-  border-bottom-color: rgba(255, 255, 255, 0.06);
-}
-
-.estimate-header-trust {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.estimate-header-trust-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.9);
-  white-space: nowrap;
-}
-
-.estimate-header-trust-dot {
-  color: hsl(var(--primary));
-  font-weight: 700;
-  font-size: 10px;
-}
-
-@media (max-width: 1200px) {
-  .estimate-header-trust-item:nth-child(n+7) {
-    display: none;
-  }
-  .estimate-header-trust-dot:nth-child(n+8) {
-    display: none;
-  }
-}
-
-@media (max-width: 900px) {
-  .estimate-header-trust {
-    display: none;
-  }
 }
 
 /* Search Bar - Below Header */
@@ -26294,14 +26219,9 @@
 
 /* Below Map Panel - Collapsible Wrapper */
 .tracking-below-map-wrapper {
-  background: hsl(var(--card));
-  border-top: 2px solid hsl(var(--border));
-  backdrop-filter: blur(12px);
-}
-
-.dark .tracking-below-map-wrapper {
   background: rgba(12, 12, 14, 0.98);
-  border-top-color: rgba(255, 255, 255, 0.06);
+  border-top: 2px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
 }
 
 .tracking-below-map-toggle {
@@ -26311,10 +26231,10 @@
   justify-content: center;
   gap: 8px;
   padding: 10px 16px;
-  background: hsl(var(--muted) / 0.5);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
   border: none;
-  border-bottom: 1px solid hsl(var(--border) / 0.5);
-  color: hsl(var(--foreground) / 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.55);
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
@@ -26323,18 +26243,8 @@
   transition: all 0.2s;
 }
 
-.dark .tracking-below-map-toggle {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
-  border-bottom-color: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.55);
-}
-
 .tracking-below-map-toggle:hover {
   color: hsl(var(--primary));
-  background: hsl(var(--muted) / 0.8);
-}
-
-.dark .tracking-below-map-toggle:hover {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 100%);
 }
 
@@ -26355,8 +26265,8 @@
   flex: 1;
   min-width: 220px;
   max-width: 380px;
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -26364,12 +26274,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.dark .tracking-below-map-section {
-  background: rgba(255, 255, 255, 0.025);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
 .tracking-below-map-section:hover {
+  background: rgba(255, 255, 255, 0.05);
   border-color: hsl(var(--primary) / 0.3);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 0 1px hsl(var(--primary) / 0.15);
