@@ -2419,13 +2419,13 @@
    AI STEPS SECTION
    ============================================= */
 .tru-ai-steps-section {
-  padding: 16px 24px 20px 16px;
+  padding: 12px 24px 16px 16px;
   margin-top: 0;
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
   height: auto;
-  min-height: 500px;
+  min-height: auto;
   overflow: hidden;
 }
 
@@ -2434,8 +2434,8 @@
   display: flex;
   align-items: center;
   position: relative;
-  margin-bottom: 16px;
-  min-height: 450px;
+  margin-bottom: 12px;
+  min-height: 380px;
 }
 
 /* Steps left container - centered within left half */
