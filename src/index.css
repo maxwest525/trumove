@@ -26769,7 +26769,6 @@
   grid-template-columns: 400px minmax(140px, 1fr) 400px;
   gap: 8px;
   padding: 10px;
-  padding-top: 66px; /* Gap from header - added 50px to push map/stats below header */
   overflow: auto;
   min-height: 0;
   height: 100%;
