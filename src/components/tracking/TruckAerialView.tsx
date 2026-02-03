@@ -292,7 +292,7 @@ export function TruckAerialView({
             )}
             
             {hasStreetViewError ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900">
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted to-background">
                 <div className="text-center">
                   <MapPin className="w-8 h-8 text-primary/40 mx-auto mb-2" />
                   <span className="text-xs text-white/60">{locationName || 'Location preview'}</span>
@@ -333,9 +333,9 @@ export function TruckAerialView({
                   </>
                 ) : (
                   <>
-                    <div className="absolute inset-0 -m-1 rounded-full bg-green-500/30 animate-pulse" />
-                    <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center shadow-lg border-2 border-white">
-                      <MapPin className="w-4 h-4 text-white" />
+                    <div className="absolute inset-0 -m-1 rounded-full bg-primary/30 animate-pulse" />
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-white">
+                      <MapPin className="w-4 h-4 text-primary-foreground" />
                     </div>
                   </>
                 )}
