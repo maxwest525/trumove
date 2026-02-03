@@ -4391,12 +4391,21 @@
   color: hsl(var(--primary));
 }
 
-/* Agent Login - pushed to far right with separator */
+/* Agent Login - pushed to far right with separator, no animation */
 .tru-static-nav-item.is-agent-login {
   margin-top: 8px;
   padding-top: 12px;
   position: relative;
   border-top: none;
+  transition: none;
+}
+
+.tru-static-nav-item.is-agent-login:hover {
+  transform: none;
+}
+
+.tru-static-nav-item.is-agent-login:hover svg {
+  transform: none;
 }
 
 .tru-static-nav-item.is-agent-login::before {
@@ -4407,6 +4416,12 @@
   right: 4px;
   height: 1px;
   background: hsl(var(--border) / 0.4);
+  transform: none;
+  transition: none;
+}
+
+.tru-static-nav-item.is-agent-login:hover::before {
+  transform: none;
 }
 
 .dark .tru-static-nav-item.is-agent-login::before {
