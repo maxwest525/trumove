@@ -648,17 +648,19 @@ export default function LiveTracking() {
         <div className="tracking-map-area">
           {/* Map Container */}
           <div className="tracking-map-container">
-            {/* Top Controls - Demo, Reopen Modal, Map View Toggle */}
+            {/* Top Controls - Demo, Map View Toggle */}
             <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
               {/* Map View Toggle */}
-              <div className="flex items-center bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-lg overflow-hidden">
+              <div className="flex items-center bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-lg overflow-hidden">
                 <Button
                   onClick={() => setMapViewType('satellite')}
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border",
-                    mapViewType === 'satellite' && "bg-primary/10 text-primary"
+                    "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
+                    mapViewType === 'satellite' 
+                      ? "bg-primary text-primary-foreground font-bold shadow-inner" 
+                      : "hover:bg-muted"
                   )}
                 >
                   <Satellite className="w-3.5 h-3.5" />
@@ -669,8 +671,10 @@ export default function LiveTracking() {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none",
-                    mapViewType === 'roadmap' && "bg-primary/10 text-primary"
+                    "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
+                    mapViewType === 'roadmap' 
+                      ? "bg-primary text-primary-foreground font-bold shadow-inner" 
+                      : "hover:bg-muted"
                   )}
                 >
                   <Map className="w-3.5 h-3.5" />
@@ -678,16 +682,18 @@ export default function LiveTracking() {
                 </Button>
               </div>
               
-              {/* Reopen Modal Button */}
-              <Button
-                onClick={() => setShowRouteModal(true)}
-                variant="outline"
-                size="sm"
-                className="h-9 px-3 gap-1.5 text-xs bg-background/95 backdrop-blur-sm border-border shadow-lg"
-              >
-                <Navigation className="w-3.5 h-3.5" />
-                New Route
-              </Button>
+              {/* Relocate Truck Button - only when tracking */}
+              {isTracking && (
+                <Button
+                  onClick={() => setFollowMode(true)}
+                  variant="outline"
+                  size="sm"
+                  className="h-9 px-3 gap-1.5 text-xs bg-background/95 backdrop-blur-sm border-border shadow-lg"
+                >
+                  <Crosshair className="w-3.5 h-3.5" />
+                  Relocate Truck
+                </Button>
+              )}
               
               {/* Demo Button */}
               <Button
