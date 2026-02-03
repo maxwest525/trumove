@@ -1,129 +1,72 @@
 
+# Plan: Center and Close the Gap in AI Analysis Section
 
-# Plan: Fix AI Analysis Section - Content Cutoff Issue
+## Current Layout Issue
 
-## Problem Analysis
+Looking at the screenshot, the headline content on the left and the demo previews on the right are:
+1. **Too far apart horizontally** - There's a large gap between "Scan Your Home" button and the scanner preview
+2. **Not vertically centered** - The previews span from top to bottom of the section instead of being centered between the black boxes
 
-After reducing the section height for closer headline/demo proximity, text and content are now getting cut off. The issue stems from:
+## Root Cause
 
-1. **`--ai-section-min-height: clamp(16rem, 28vh, 20rem)`** - This was reduced too aggressively. At small zoom levels (67%), `28vh` can become as low as 16rem (~256px), which is insufficient for the content.
+From the CSS analysis:
+- `.tru-ai-steps-left` is positioned at `left: 0` with `width: calc(50% - 1.25rem)` (50% of container)
+- `.tru-ai-header-previews` is positioned at `right: 0` with `top: 0; bottom: 0` (stretched to full height)
+- This creates a large horizontal gap and misaligned vertical positioning
 
-2. **Preview containers rely on parent height** - The scanner and inventory panels use `height: 100%`, inheriting from the section's min-height. When this shrinks, content inside overflows or clips.
+## Solution
 
-3. **Left headline block needs breathing room** - The headline, subheadline, step pills, and CTA button require a minimum vertical space that the clamp isn't guaranteeing.
+### Step 1: Center Previews Vertically
 
----
-
-## Proposed Solution
-
-Adjust the clamp values to provide adequate minimum heights while still keeping the section compact. Use `min-content` and `auto` where appropriate so the layout naturally expands to fit content.
-
----
-
-## Implementation Steps
-
-### Step 1: Increase Minimum Height in Clamp
-
-Update `--ai-section-min-height` to ensure content never clips:
+Change the preview container from stretching full height to being vertically centered:
 
 ```css
-/* Current - too aggressive */
---ai-section-min-height: clamp(16rem, 28vh, 20rem);
-
-/* Fixed - better minimum */
---ai-section-min-height: clamp(22rem, 32vh, 26rem);
-```
-
-This provides:
-- **Minimum**: 22rem (352px) - sufficient for headline + sub + pills + CTA
-- **Preferred**: 32vh - scales nicely with viewport height
-- **Maximum**: 26rem (416px) - prevents excessive stretching
-
-### Step 2: Allow Content to Expand Beyond Min-Height
-
-Ensure the section doesn't clip content if it exceeds the min-height:
-
-```css
-.tru-ai-header-row {
-  min-height: var(--ai-section-min-height);
-  height: auto; /* Allow natural expansion */
+.tru-ai-header-previews {
+  position: absolute;
+  right: 0;
+  top: 50%;                    /* Changed from top: 0 */
+  transform: translateY(-50%); /* Center vertically */
+  /* Remove: bottom: 0 */
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+  align-items: center;         /* Changed from stretch */
 }
 ```
 
-### Step 3: Set Explicit Heights for Preview Containers
+### Step 2: Reduce Horizontal Gap
 
-Instead of relying on `100%` of parent, give the scanner and inventory their own clamp-based heights:
+Bring the headline content closer to center by narrowing its width and shifting it right:
 
 ```css
-.tru-ai-header-previews .tru-ai-live-scanner,
-.tru-ai-header-previews .tru-ai-live-inventory {
-  width: var(--ai-preview-width);
-  height: clamp(20rem, 30vh, 26rem); /* Own height, not 100% */
-  min-height: 20rem;
+.tru-ai-steps-left {
+  position: absolute;
+  left: 2rem;                  /* Add small left margin */
+  top: 50%;
+  transform: translateY(-50%);
+  width: calc(45% - 2rem);     /* Narrower to reduce gap */
+  /* rest unchanged */
 }
 ```
 
-### Step 4: Add Overflow Handling
+### Step 3: Shift Previews Slightly Left
 
-Ensure the inventory list can scroll if items exceed available space:
+Add a small right offset to bring previews closer to center:
 
 ```css
-.tru-ai-live-items {
-  overflow-y: auto;
-  max-height: 12rem; /* ~192px - allows scrolling if needed */
+.tru-ai-header-previews {
+  right: 1rem;  /* Small inset from edge */
+  /* rest of centering changes */
 }
 ```
-
----
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/index.css` | Update `--ai-section-min-height`, adjust `.tru-ai-header-row` and preview container heights, add overflow handling |
+| `src/index.css` | Update `.tru-ai-header-previews` vertical positioning, adjust `.tru-ai-steps-left` width |
 
----
+## Visual Result
 
-## Technical Details
-
-### Updated CSS Variable
-```css
-:root {
-  /* AI Section - balanced for content visibility and compactness */
-  --ai-section-min-height: clamp(22rem, 32vh, 26rem);
-}
-```
-
-### Updated Header Row
-```css
-.tru-ai-header-row {
-  display: flex;
-  align-items: center;
-  position: relative;
-  margin-bottom: var(--spacing-sm);
-  min-height: var(--ai-section-min-height);
-  height: auto; /* Allow expansion */
-}
-```
-
-### Updated Preview Containers
-```css
-.tru-ai-header-previews .tru-ai-live-scanner,
-.tru-ai-header-previews .tru-ai-live-inventory {
-  width: var(--ai-preview-width);
-  height: clamp(20rem, 30vh, 26rem);
-  min-height: 20rem;
-}
-```
-
----
-
-## Testing Plan
-
-After implementation, verify:
-- At 67% zoom: Headlines fully visible, no text clipping
-- At 80% zoom: Scanner and inventory panels show all content
-- At 100% zoom: Layout appears balanced and compact
-- At 125% zoom: Content doesn't overflow or break
-- Scroll the inventory list if more than 5 items to confirm scrolling works
-
+Before: Headline left-aligned, previews right-aligned, stretched full height
+After: Both sections centered vertically between black boxes, with reduced horizontal gap between them
