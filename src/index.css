@@ -26095,6 +26095,7 @@
   background: hsl(var(--foreground) / 0.95);
   border-bottom: 1px solid hsl(var(--border) / 0.3);
   backdrop-filter: blur(12px);
+  position: relative; /* Required for absolute positioned trust items */
 }
 
 .dark .tracking-header {
@@ -26116,23 +26117,29 @@
 .tracking-header-trust {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .tracking-header-trust-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
+  gap: 5px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
 }
 
 .tracking-header-trust-dot {
   color: hsl(var(--primary));
   font-weight: 700;
+  font-size: 10px;
 }
 
 /* Search Bar - Below Header */
@@ -26222,9 +26229,14 @@
 
 /* Below Map Panel - Collapsible Wrapper */
 .tracking-below-map-wrapper {
-  background: rgba(12, 12, 14, 0.98);
-  border-top: 2px solid rgba(255, 255, 255, 0.06);
+  background: hsl(var(--card));
+  border-top: 2px solid hsl(var(--border));
   backdrop-filter: blur(12px);
+}
+
+.dark .tracking-below-map-wrapper {
+  background: rgba(12, 12, 14, 0.98);
+  border-top-color: rgba(255, 255, 255, 0.06);
 }
 
 .tracking-below-map-toggle {
@@ -26234,10 +26246,10 @@
   justify-content: center;
   gap: 8px;
   padding: 10px 16px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+  background: hsl(var(--muted) / 0.5);
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  color: hsl(var(--foreground) / 0.7);
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
@@ -26246,8 +26258,18 @@
   transition: all 0.2s;
 }
 
+.dark .tracking-below-map-toggle {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.55);
+}
+
 .tracking-below-map-toggle:hover {
   color: hsl(var(--primary));
+  background: hsl(var(--muted) / 0.8);
+}
+
+.dark .tracking-below-map-toggle:hover {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 100%);
 }
 
@@ -26268,8 +26290,8 @@
   flex: 1;
   min-width: 220px;
   max-width: 380px;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 12px;
   padding: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -26277,8 +26299,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.dark .tracking-below-map-section {
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
 .tracking-below-map-section:hover {
-  background: rgba(255, 255, 255, 0.05);
   border-color: hsl(var(--primary) / 0.3);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 0 1px hsl(var(--primary) / 0.15);

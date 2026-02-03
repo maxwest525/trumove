@@ -657,6 +657,16 @@ export default function LiveTracking() {
             <Cloud className="w-3.5 h-3.5 text-primary" />
             REAL-TIME ETA
           </span>
+          <span className="tracking-header-trust-dot">•</span>
+          <span className="tracking-header-trust-item">
+            <Navigation className="w-3.5 h-3.5 text-primary" />
+            TRAFFIC AWARE
+          </span>
+          <span className="tracking-header-trust-dot">•</span>
+          <span className="tracking-header-trust-item">
+            <Scale className="w-3.5 h-3.5 text-primary" />
+            DOT COMPLIANT
+          </span>
         </div>
 
         {/* Right - Shipment ID */}
