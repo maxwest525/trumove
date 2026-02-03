@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Receipt, Truck, MapPin, Package, Calendar, FileText, Sparkles, Printer, Download } from "lucide-react";
+import { Receipt, Truck, MapPin, Package, Calendar, FileText, Sparkles, Printer, Download, UserPlus } from "lucide-react";
 import { toast } from "sonner";
+import { ClientSearchModal, type ClientData } from "./ClientSearchModal";
 
 const DEMO_DATA = {
   bolNumber: "BOL-2026-001247",
@@ -45,6 +46,9 @@ export function BillOfLadingForm() {
     pieces: "",
     specialInstructions: "",
   });
+  
+  const [showClientSearch, setShowClientSearch] = useState(false);
+  const [importTarget, setImportTarget] = useState<"origin" | "dest">("origin");
 
   const fillDemo = () => {
     setFormData(DEMO_DATA);
@@ -59,14 +63,43 @@ export function BillOfLadingForm() {
     toast.success("Downloading BOL as PDF...");
   };
 
+  const openClientSearch = (target: "origin" | "dest") => {
+    setImportTarget(target);
+    setShowClientSearch(true);
+  };
+
+  const handleClientSelect = (client: ClientData) => {
+    if (importTarget === "origin") {
+      setFormData(prev => ({
+        ...prev,
+        originName: client.name,
+        originAddress: client.address,
+        originPhone: client.phone,
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        destName: client.name,
+        destAddress: client.address,
+        destPhone: client.phone,
+      }));
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <ClientSearchModal
+        open={showClientSearch}
+        onClose={() => setShowClientSearch(false)}
+        onSelect={handleClientSelect}
+      />
+      
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Receipt className="w-6 h-6" />
           Bill of Lading
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button onClick={fillDemo} variant="outline" size="sm" className="gap-2">
             <Sparkles className="w-4 h-4" />
             Fill Demo
@@ -125,9 +158,20 @@ export function BillOfLadingForm() {
         {/* Origin */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-emerald-500" />
-              Origin (Shipper)
+            <CardTitle className="text-lg flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-emerald-500" />
+                Origin (Shipper)
+              </span>
+              <Button
+                onClick={() => openClientSearch("origin")}
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs h-8"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                Import Client
+              </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -161,9 +205,20 @@ export function BillOfLadingForm() {
         {/* Destination */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-red-500" />
-              Destination (Consignee)
+            <CardTitle className="text-lg flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-red-500" />
+                Destination (Consignee)
+              </span>
+              <Button
+                onClick={() => openClientSearch("dest")}
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs h-8"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                Import Client
+              </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
