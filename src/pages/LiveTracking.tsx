@@ -635,7 +635,7 @@ export default function LiveTracking() {
       </header>
       
       {/* Hero Section - Headline & Subheadline */}
-      <div className="text-center py-8 px-4 bg-gradient-to-b from-background to-muted/30">
+      <div className="text-center py-8 px-4">
         <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-2 tru-summary-header-large">
           Track Your <span className="tru-qb-title-accent">Shipment</span>
         </h1>
