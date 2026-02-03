@@ -1003,16 +1003,6 @@ export default function Index() {
         </header>
       </div>
 
-      {/* Standardized Hero Text Section */}
-      <div className="text-center py-8 px-4 mb-10">
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3">
-          The Smarter Way To Move
-        </h1>
-        <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
-          AI-powered estimates • FMCSA-vetted carriers • Zero hidden fees
-        </p>
-      </div>
-
       <div className="tru-page-frame">
         <div className="tru-page-inner">
         {/* HERO - Full Width Background Wrapper */}
