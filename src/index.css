@@ -30257,6 +30257,23 @@ html.dark .tru-summary-header-large,
 }
 
 /* ========================================
+   PAGE HEADLINE UNDERGLOW
+   Used on secondary pages (Track, Book, etc.)
+   ======================================== */
+.tru-page-headline {
+  text-shadow: 
+    0 2px 4px hsl(0 0% 0% / 0.5),
+    0 4px 8px hsl(0 0% 0% / 0.35),
+    0 8px 16px hsl(0 0% 0% / 0.2);
+}
+
+.tru-page-subheadline {
+  text-shadow: 
+    0 1px 3px hsl(0 0% 0% / 0.4),
+    0 3px 8px hsl(0 0% 0% / 0.25);
+}
+
+/* ========================================
    GLOBAL BUTTON IMPROVEMENTS
    ======================================== */
 

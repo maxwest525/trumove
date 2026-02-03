@@ -1842,10 +1842,10 @@ export default function Book() {
 
           {/* Section Header - centered */}
           <div className="flex flex-col items-center justify-center text-center mb-10 max-w-xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3">
+            <h2 className="tru-page-headline text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3">
               Connect <span className="tru-qb-title-accent">With Us</span>
             </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="tru-page-subheadline text-sm text-muted-foreground leading-relaxed">
               Reach out to our moving specialists by video, phone, email, or text. Schedule a call or connect instantly for personalized assistance.
             </p>
           </div>
