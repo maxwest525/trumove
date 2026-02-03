@@ -12,6 +12,9 @@ export default function Footer() {
         </div>
 
         <nav className="footer-nav">
+          <Link className="footer-link" to="/about">
+            About
+          </Link>
           <Link className="footer-link" to="/carrier-vetting">
             Carrier Vetting
           </Link>
