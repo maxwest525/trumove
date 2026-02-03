@@ -1465,7 +1465,7 @@
   padding: 32px 64px 24px;
   max-width: 1480px;
   margin: 0 auto;
-  min-height: min(calc(100vh - 80px), 470px);
+  /* No min-height - let content determine height */
 }
 
 /* LEFT COLUMN - Text Content */
