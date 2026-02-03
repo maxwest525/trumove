@@ -108,11 +108,7 @@ function IndividualCollapsibleSection({
             {icon}
             <span>{title}</span>
           </div>
-          {isOpen ? (
-            <ChevronDown className="w-3.5 h-3.5 tracking-section-chevron" />
-          ) : (
-            <ChevronRight className="w-3.5 h-3.5 tracking-section-chevron" />
-          )}
+          <ChevronRight className="w-3.5 h-3.5 tracking-section-chevron" />
         </CollapsibleTrigger>
         <CollapsibleContent className="tracking-below-map-section-content">
           {children}

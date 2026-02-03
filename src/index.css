@@ -26213,15 +26213,57 @@
 
 .tracking-below-map-section-trigger .tracking-section-chevron {
   color: rgba(255, 255, 255, 0.35);
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(0deg);
+}
+
+.tracking-below-map-section[data-state="open"] .tracking-section-chevron {
+  transform: rotate(90deg);
 }
 
 .tracking-below-map-section-trigger:hover .tracking-section-chevron {
   color: hsl(var(--primary));
 }
 
+/* Collapsible Content with smooth animation */
 .tracking-below-map-section-content {
   padding: 14px 16px 16px;
+  overflow: hidden;
+}
+
+/* Radix Collapsible animations */
+.tracking-below-map-section-content[data-state="open"] {
+  animation: collapsible-slide-down 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tracking-below-map-section-content[data-state="closed"] {
+  animation: collapsible-slide-up 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes collapsible-slide-down {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    max-height: var(--radix-collapsible-content-height);
+    transform: translateY(0);
+  }
+}
+
+@keyframes collapsible-slide-up {
+  from {
+    opacity: 1;
+    max-height: var(--radix-collapsible-content-height);
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+  }
 }
 
 /* When section is collapsed, remove bottom border from trigger */
