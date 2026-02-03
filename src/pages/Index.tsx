@@ -504,7 +504,6 @@ export default function Index() {
   
   // Parallax effects for hero elements
   const [parallaxHeadlineRef, headlineParallax] = useParallax<HTMLDivElement>({ speed: 0.15, direction: "up" });
-  const [parallaxCardsRef, cardsParallax] = useParallax<HTMLDivElement>({ speed: 0.08, direction: "up" });
   const [parallaxFormRef, formParallax] = useParallax<HTMLDivElement>({ speed: 0.05, direction: "up" });
   
   // Step tracking (1-4)
@@ -574,33 +573,6 @@ export default function Index() {
   
   // Why TruMove feature selection state
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
-  
-  // Move Summary Modal visibility state
-  const [showMoveSummary, setShowMoveSummary] = useState(true);
-  const moveSummaryRef = useRef<HTMLDivElement>(null);
-  
-  // Reset Move Summary visibility when locations change
-  useEffect(() => {
-    if (fromCity || toCity) {
-      setShowMoveSummary(true);
-    }
-  }, [fromCity, toCity]);
-  
-  // Handle click outside to dismiss move summary
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        showMoveSummary && 
-        moveSummaryRef.current && 
-        !moveSummaryRef.current.contains(event.target as Node)
-      ) {
-        setShowMoveSummary(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showMoveSummary]);
   
   
   // Why TruMove features data - Updated per plan
@@ -1102,25 +1074,21 @@ export default function Index() {
               </div>
             )}
 
-            {/* Hero Header - Refined minimal logo + headline */}
-            <div className="tru-hero-header-section">
-              <div className="tru-hero-branding">
-                <img src={logoImg} alt="TruMove" className="tru-hero-logo" />
-                <div className="tru-hero-headline-group">
-                  <h1 className="tru-hero-headline">
-                    The Smarter Way To <span className="tru-hero-accent">Move</span>
-                  </h1>
-                  <p className="tru-hero-tagline">
-                    AI-powered estimates • FMCSA-vetted carriers • Zero hidden fees
-                  </p>
-                </div>
-              </div>
+            {/* LEFT COLUMN: Text Content */}
+            <div className="tru-hero-left-column">
+              <img src={logoImg} alt="TruMove" className="tru-hero-logo" />
+              <h1 className="tru-hero-headline">
+                The Smarter Way To <span className="tru-hero-accent">Move</span>
+              </h1>
+              <p className="tru-hero-feature-line">
+                AI-powered estimates · FMCSA-vetted carriers · No van line middlemen · Live video consults · Real-time tracking
+              </p>
             </div>
 
-            {/* RIGHT: Form + Sidebar Stacked Vertically with parallax */}
+            {/* RIGHT COLUMN: Form + CTAs */}
             <div 
               ref={parallaxFormRef}
-              className="tru-hero-right-half tru-hero-right-stacked"
+              className="tru-hero-right-column"
               style={{
                 transform: `translateY(${formParallax.y}px)`,
               }}
@@ -1499,128 +1467,16 @@ export default function Index() {
 
               </div>
 
-              {/* SIDEBAR: Temporarily hidden - Summary Pill + Nav Icons Pill
-              <div className="tru-hero-sidebar tru-hero-sidebar-stacked">
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="tru-sidebar-summary-pill-v3 group">
-                        <div className="tru-summary-pill-collapsed">
-                          <div className="tru-summary-pill-icon-wrap">
-                            <MapPin className="w-5 h-5" />
-                          </div>
-                          <span className="tru-summary-pill-vertical-label">SUMMARY</span>
-                        </div>
-                        <div className="tru-summary-pill-expanded">
-                          <div className="tru-summary-pill-header">
-                            <span>MOVE SUMMARY</span>
-                          </div>
-                          <div className="tru-summary-pill-body">
-                            <div className="tru-summary-pill-row">
-                              <span className="tru-summary-pill-label">From</span>
-                              <span className="tru-summary-pill-value">{fromCity ? fromCity.split(',')[0] : '—'}</span>
-                            </div>
-                            <div className="tru-summary-pill-row">
-                              <span className="tru-summary-pill-label">To</span>
-                              <span className="tru-summary-pill-value">{toCity ? toCity.split(',')[0] : '—'}</span>
-                            </div>
-                            <div className="tru-summary-pill-row">
-                              <span className="tru-summary-pill-label">Distance</span>
-                              <span className="tru-summary-pill-value">{distance > 0 ? `${distance.toLocaleString()} mi` : '—'}</span>
-                            </div>
-                            <div className="tru-summary-pill-row">
-                              <span className="tru-summary-pill-label">Date</span>
-                              <span className="tru-summary-pill-value">{moveDate ? format(moveDate, "MMM d") : '—'}</span>
-                            </div>
-                            <div className="tru-summary-pill-row">
-                              <span className="tru-summary-pill-label">ETA</span>
-                              <span className="tru-summary-pill-value">{estimatedDuration || '—'}</span>
-                            </div>
-                            <div className="tru-summary-pill-row">
-                              <span className="tru-summary-pill-label">Size</span>
-                              <span className="tru-summary-pill-value">{size || '—'}</span>
-                            </div>
-                            <div className="tru-summary-pill-row">
-                              <span className="tru-summary-pill-label">Property</span>
-                              <span className="tru-summary-pill-value">{selectedPropertyType ? selectedPropertyType.charAt(0).toUpperCase() + selectedPropertyType.slice(1) : '—'}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent side="left" className="tru-tooltip-summary-preview">
-                      <div className="tru-summary-preview-content">
-                        <div className="tru-summary-preview-header">Quick Summary</div>
-                        <div className="tru-summary-preview-body">
-                          {fromCity && (
-                            <div className="tru-summary-preview-row">
-                              <span className="tru-summary-preview-label">From</span>
-                              <span className="tru-summary-preview-value">{fromCity.split(',')[0]}</span>
-                            </div>
-                          )}
-                          {toCity && (
-                            <div className="tru-summary-preview-row">
-                              <span className="tru-summary-preview-label">To</span>
-                              <span className="tru-summary-preview-value">{toCity.split(',')[0]}</span>
-                            </div>
-                          )}
-                          {distance > 0 && (
-                            <div className="tru-summary-preview-row">
-                              <span className="tru-summary-preview-label">Distance</span>
-                              <span className="tru-summary-preview-value">{distance.toLocaleString()} mi</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider delayDuration={200}>
-                  <div className="tru-sidebar-nav-pill-v3">
-                    <FloatingNav onChatOpen={() => setChatOpen(true)} iconsOnly />
-                  </div>
-                </TooltipProvider>
-              </div>
-              */}
-            </div>
-
-            {/* RIGHT SIDE: Move Summary Modal + Why TruMove Card */}
-            <div className="tru-hero-content-panel tru-hero-stacked-cards">
-              {/* Move Summary Modal - appears when location data exists */}
-              {showMoveSummary && (
-                <MoveSummaryModal 
-                  ref={moveSummaryRef}
-                  fromCity={fromCity}
-                  toCity={toCity}
-                  distance={distance}
-                  fromCoords={fromCoords}
-                  toCoords={toCoords}
-                  onClose={() => setShowMoveSummary(false)}
-                />
-              )}
+              {/* Micro-copy below form */}
+              <p className="tru-hero-form-microcopy">
+                A moving specialist will call you shortly.
+              </p>
               
-              {/* CARD 1: Company Info - Compact */}
-              <div className="tru-company-card">
-                <h3 className="tru-company-title">Why TruMove?</h3>
-                <p className="tru-company-desc">
-                  We connect you directly with vetted carriers—no middlemen, no markups. AI-powered estimates ensure accuracy, while FMCSA safety data keeps you protected.
-                </p>
-                <Link to="/about" className="tru-company-link">
-                  Learn more about us <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-              
-              {/* CARD 2: Feature Carousel */}
-              <div className="tru-features-card" ref={parallaxCardsRef}
-                style={{ transform: `translateY(${cardsParallax.y}px)` }}
-              >
-                <div className="tru-features-header">
-                  <h3 className="tru-features-title">Our Platform</h3>
-                  <span className="tru-features-badge">7 Features</span>
-                </div>
-                <FeatureCarousel />
-              </div>
-              
+              {/* Secondary call button */}
+              <a href="tel:+16097277647" className="tru-hero-call-btn">
+                <Phone className="w-4 h-4" />
+                Call a moving specialist
+              </a>
             </div>
           </section>
         </div> {/* End tru-hero-wrapper */}
