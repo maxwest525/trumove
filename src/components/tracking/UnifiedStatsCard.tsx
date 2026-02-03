@@ -149,7 +149,7 @@ export function UnifiedStatsCard({
 
       {/* Primary Stats Row - ETA, Time, Distance - Always visible, show skeleton when empty */}
       <div className="grid grid-cols-3 gap-2 mb-3">
-        <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg p-2.5 border border-primary/20">
+        <div className="bg-gradient-to-br from-primary/15 to-primary/5 rounded-lg p-2.5 border border-primary/20">
           <div className="text-[10px] uppercase tracking-wider text-foreground/70 mb-1 font-medium whitespace-nowrap">ETA</div>
           {isEmpty ? (
             <Skeleton className="h-6 w-14 bg-primary/10" />
@@ -160,7 +160,7 @@ export function UnifiedStatsCard({
           )}
         </div>
         
-        <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-2.5 border border-border">
+        <div className="bg-muted/40 dark:bg-white/5 rounded-lg p-2.5 border border-border">
           <div className="text-[10px] uppercase tracking-wider text-foreground/70 mb-1 font-medium whitespace-nowrap">Time Left</div>
           {isEmpty ? (
             <Skeleton className="h-6 w-12" />
@@ -171,7 +171,7 @@ export function UnifiedStatsCard({
           )}
         </div>
         
-        <div className="bg-muted/50 dark:bg-white/5 rounded-lg p-2.5 border border-border">
+        <div className="bg-muted/40 dark:bg-white/5 rounded-lg p-2.5 border border-border">
           <div className="text-[10px] uppercase tracking-wider text-foreground/70 mb-1 font-medium whitespace-nowrap">Distance</div>
           {isEmpty ? (
             <Skeleton className="h-6 w-14" />
@@ -197,54 +197,48 @@ export function UnifiedStatsCard({
         </div>
       </div>
 
-      {/* Traffic, Tolls, Fuel Row - Always visible with skeleton when empty */}
+      {/* Traffic, Tolls, Fuel Row - Uniform brand styling */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         {/* Traffic */}
-        <div className={cn("rounded-lg p-3 border h-[60px] flex flex-col justify-between", isEmpty ? "bg-muted/30 border-border" : severity.bg)}>
+        <div className="rounded-lg p-3 border h-[60px] flex flex-col justify-between bg-muted/40 dark:bg-white/5 border-border">
           <div className="flex items-center gap-1">
-            <AlertTriangle className={cn("w-3.5 h-3.5 flex-shrink-0", isEmpty ? "text-muted-foreground" : severity.color)} />
+            <AlertTriangle className={cn("w-3.5 h-3.5 flex-shrink-0", isEmpty ? "text-muted-foreground" : "text-primary")} />
             <span className="text-[10px] uppercase tracking-wider text-foreground/70 font-medium">Traffic</span>
           </div>
           {isEmpty ? (
             <Skeleton className="h-5 w-16" />
           ) : (
-            <div className={cn("text-sm font-bold leading-tight", severity.color)}>
+            <div className="text-sm font-bold leading-tight text-foreground">
               {severity.label}{trafficDelay > 0 && <span className="font-normal text-foreground/60 ml-1">+{trafficDelay}m</span>}
             </div>
           )}
         </div>
 
         {/* Tolls */}
-        <div className={cn(
-          "rounded-lg p-3 border h-[60px] flex flex-col justify-between",
-          isEmpty ? "bg-muted/30 border-border" : (tollInfo?.hasTolls ? "bg-muted/50 dark:bg-white/5 border-border" : "bg-emerald-500/10 border-emerald-500/20")
-        )}>
+        <div className="rounded-lg p-3 border h-[60px] flex flex-col justify-between bg-muted/40 dark:bg-white/5 border-border">
           <div className="flex items-center gap-1">
-            <DollarSign className={cn("w-3.5 h-3.5 flex-shrink-0", isEmpty ? "text-muted-foreground" : (tollInfo?.hasTolls ? "text-foreground/70" : "text-emerald-500"))} />
+            <DollarSign className={cn("w-3.5 h-3.5 flex-shrink-0", isEmpty ? "text-muted-foreground" : "text-primary")} />
             <span className="text-[10px] uppercase tracking-wider text-foreground/70 font-medium">Tolls</span>
           </div>
           {isEmpty ? (
             <Skeleton className="h-5 w-12" />
           ) : (
-            <div className={cn("text-sm font-bold leading-tight", tollInfo?.hasTolls ? "text-foreground" : "text-emerald-500")}>
+            <div className="text-sm font-bold leading-tight text-foreground">
               {tollInfo?.hasTolls ? (tollInfo.estimatedPrice || '~$5-15') : 'Free'}
             </div>
           )}
         </div>
 
         {/* Fuel Cost */}
-        <div className={cn(
-          "rounded-lg p-3 border h-[60px] flex flex-col justify-between",
-          isEmpty ? "bg-muted/30 border-border" : (isFuelEfficient ? "bg-emerald-500/10 border-emerald-500/20" : "bg-amber-500/10 border-amber-500/20")
-        )}>
+        <div className="rounded-lg p-3 border h-[60px] flex flex-col justify-between bg-muted/40 dark:bg-white/5 border-border">
           <div className="flex items-center gap-1">
-            <Fuel className={cn("w-3.5 h-3.5 flex-shrink-0", isEmpty ? "text-muted-foreground" : (isFuelEfficient ? "text-emerald-500" : "text-amber-500"))} />
+            <Fuel className={cn("w-3.5 h-3.5 flex-shrink-0", isEmpty ? "text-muted-foreground" : "text-primary")} />
             <span className="text-[10px] uppercase tracking-wider text-foreground/70 font-medium">Fuel</span>
           </div>
           {isEmpty ? (
             <Skeleton className="h-5 w-12" />
           ) : (
-            <div className={cn("text-sm font-bold leading-tight", isFuelEfficient ? "text-emerald-500" : "text-amber-500")}>
+            <div className="text-sm font-bold leading-tight text-foreground">
               {fuelCostEstimate ? `$${fuelCostEstimate.toFixed(0)}` : '--'}
             </div>
           )}
