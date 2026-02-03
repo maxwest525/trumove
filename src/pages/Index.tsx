@@ -949,7 +949,60 @@ export default function Index() {
   const hasRoute = fromZip.length === 5 && toZip.length === 5;
 
   return (
-    <SiteShell centered>
+    <SiteShell centered hideTrustStrip>
+      {/* Sticky Header Block - TruMove Command Center */}
+      <div className="sticky top-[62px] z-40">
+        <header className="tracking-header">
+          {/* Left - Logo & Title */}
+          <div className="flex items-center gap-3">
+            <img 
+              src={logoImg} 
+              alt="TruMove" 
+              className="h-6 brightness-0 invert"
+            />
+            <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
+              TruMove Command Center
+            </span>
+          </div>
+
+          {/* Center - Trust Items */}
+          <div className="tracking-header-trust">
+            <span className="tracking-header-trust-item">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              AI-POWERED
+            </span>
+            <span className="tracking-header-trust-dot">•</span>
+            <span className="tracking-header-trust-item">
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+              FMCSA VERIFIED
+            </span>
+            <span className="tracking-header-trust-dot">•</span>
+            <span className="tracking-header-trust-item">
+              <DollarSign className="w-3.5 h-3.5 text-primary" />
+              REAL-TIME PRICING
+            </span>
+            <span className="tracking-header-trust-dot">•</span>
+            <span className="tracking-header-trust-item">
+              <Headphones className="w-3.5 h-3.5 text-primary" />
+              24/7 SUPPORT
+            </span>
+            <span className="tracking-header-trust-dot">•</span>
+            <span className="tracking-header-trust-item">
+              <Shield className="w-3.5 h-3.5 text-primary" />
+              ZERO HIDDEN FEES
+            </span>
+          </div>
+
+          {/* Right - Session ID */}
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <div className="text-[11px] text-white/80 uppercase tracking-wider">Session ID</div>
+              <div className="text-sm font-mono text-white">TM-{String(Date.now()).slice(-8)}</div>
+            </div>
+          </div>
+        </header>
+      </div>
+
       <div className="tru-page-frame">
         <div className="tru-page-inner">
         {/* HERO - Full Width Background Wrapper */}
