@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Receipt, Truck, MapPin, Package, Calendar, FileText, Sparkles, Printer, Download, UserPlus, History } from "lucide-react";
+import { Receipt, Truck, MapPin, Package, Calendar, FileText, Sparkles, Printer, Download, UserPlus, History, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { ClientSearchModal, type ClientData } from "./ClientSearchModal";
 import { CarrierSearchModal, type CarrierMoveData } from "./CarrierSearchModal";
+import { ESignStatusCard } from "@/components/esign/ESignStatusCard";
+
 const DEMO_DATA = {
   bolNumber: "BOL-2026-001247",
   bookingRef: "TM-20260131-8472",
@@ -111,23 +113,26 @@ export function BillOfLadingForm() {
         onSelect={handleCarrierSelect}
       />
       
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
-          <Receipt className="w-6 h-6" />
-          Bill of Lading
-        </h2>
-        <div className="flex gap-2 flex-wrap">
-          <Button onClick={fillDemo} variant="outline" size="sm" className="gap-2">
-            <Sparkles className="w-4 h-4" />
-            Fill Demo
-          </Button>
-          <Button onClick={handlePrint} variant="outline" size="sm" className="gap-2">
-            <Printer className="w-4 h-4" />
-            Print
-          </Button>
-          <Button onClick={handleDownload} size="sm" variant="outline" className="gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
-            <Download className="w-4 h-4" />
-            Download PDF
+      <div className="flex items-start gap-6">
+        {/* Main Form Content */}
+        <div className="flex-1 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <Receipt className="w-6 h-6" />
+              Bill of Lading
+            </h2>
+            <div className="flex gap-2 flex-wrap">
+              <Button onClick={fillDemo} variant="outline" size="sm" className="gap-2">
+                <Sparkles className="w-4 h-4" />
+                Fill Demo
+              </Button>
+              <Button onClick={handlePrint} variant="outline" size="sm" className="gap-2">
+                <Printer className="w-4 h-4" />
+                Print
+              </Button>
+              <Button onClick={handleDownload} size="sm" variant="outline" className="gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
+                <Download className="w-4 h-4" />
+                Download PDF
           </Button>
         </div>
       </div>
@@ -365,14 +370,27 @@ export function BillOfLadingForm() {
             </div>
           </CardContent>
         </Card>
-      </div>
+        </div>
 
-      <div className="flex justify-end gap-3">
-        <Button variant="outline">Cancel</Button>
-        <Button variant="outline" className="gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
-          <Receipt className="w-4 h-4" />
-          Generate BOL
-        </Button>
+        <div className="flex justify-end gap-3">
+          <Button variant="outline">Cancel</Button>
+          <Button variant="outline" className="gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
+            <Receipt className="w-4 h-4" />
+            Generate BOL
+          </Button>
+        </div>
+        </div>
+        
+        {/* Right Sidebar - Document Status */}
+        <div className="w-64 flex-shrink-0">
+          <ESignStatusCard
+            documentTitle="Bill of Lading"
+            recipientEmail={formData.originPhone ? undefined : undefined}
+            recipientName={formData.originName}
+            isSigned={!!formData.bolNumber && !!formData.originName && !!formData.destName}
+            refNumber={formData.bolNumber || "BOL-PENDING"}
+          />
+        </div>
       </div>
     </div>
   );

@@ -95,6 +95,8 @@ export default function Auth() {
             onDocumentChange={handleDocumentChange}
             completedDocuments={completedDocuments}
             allSigned={allSigned}
+            recipientEmail="customer@example.com"
+            refNumber={refNumber}
           />
 
           {/* Document Container */}
