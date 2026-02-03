@@ -17721,12 +17721,15 @@
   width: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden; /* Clip cards outside bounds */
 }
 
-.features-carousel,
-.features-carousel-container,
+.features-carousel-container {
+  overflow: hidden !important; /* Clip cards outside bounds */
+}
+
 .features-carousel-content {
-  overflow: visible !important;
+  overflow: visible !important; /* Allow hover effects to pop out */
 }
 
 .features-carousel-container {
@@ -17747,17 +17750,17 @@
   display: flex;
   margin-left: 0 !important;
   margin-right: 0 !important;
-  padding: 8px 0 8px 8px;  /* Remove right padding - let cards fill space */
+  padding: 8px 0 8px 0;  /* Remove left/right padding to fit exactly 4 cards */
   /* Smooth scroll snap enhancement */
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 4 cards visible - exact 25% with padding accounted for */
+/* 4 cards visible - exact 25% */
 .features-carousel-item {
-  flex: 0 0 calc(25% - 6px) !important;  /* Reduced to prevent 5th card peek */
+  flex: 0 0 25% !important;  /* Exact 25% for 4 cards */
   min-width: 0;
-  padding: 0 8px !important;
+  padding: 0 6px !important;
   margin: 0 !important;
   position: relative;
   overflow: visible !important;
