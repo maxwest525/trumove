@@ -22,6 +22,7 @@ const DEMO_DATA = {
   destPhone: "(555) 123-4567",
   carrierName: "ABC Moving Co.",
   carrierMC: "MC-123456",
+  carrierDOT: "2847193",
   driverName: "John Smith",
   truckNumber: "TRK-4521",
   weight: "4,250",
@@ -42,6 +43,7 @@ export function BillOfLadingForm() {
     destPhone: "",
     carrierName: "",
     carrierMC: "",
+    carrierDOT: "",
     driverName: "",
     truckNumber: "",
     weight: "",
@@ -94,6 +96,7 @@ export function BillOfLadingForm() {
       ...prev,
       carrierName: carrier.carrierName,
       carrierMC: carrier.carrierMC,
+      carrierDOT: carrier.dotNumber || "",
       driverName: carrier.driverName,
       truckNumber: carrier.truckNumber,
     }));
@@ -293,21 +296,29 @@ export function BillOfLadingForm() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Carrier Name</Label>
+              <Input
+                value={formData.carrierName}
+                onChange={(e) => setFormData({ ...formData, carrierName: e.target.value })}
+                placeholder="Carrier company"
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Carrier Name</Label>
-                <Input
-                  value={formData.carrierName}
-                  onChange={(e) => setFormData({ ...formData, carrierName: e.target.value })}
-                  placeholder="Carrier company"
-                />
-              </div>
               <div className="space-y-2">
                 <Label>MC Number</Label>
                 <Input
                   value={formData.carrierMC}
                   onChange={(e) => setFormData({ ...formData, carrierMC: e.target.value })}
                   placeholder="MC-XXXXXX"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>DOT Number</Label>
+                <Input
+                  value={formData.carrierDOT}
+                  onChange={(e) => setFormData({ ...formData, carrierDOT: e.target.value })}
+                  placeholder="XXXXXXX"
                 />
               </div>
             </div>
