@@ -20,8 +20,8 @@
   --header-height: 3.875rem;  /* 62px */
   --header-offset: 6.375rem;  /* 102px (nav + gap) */
   
-  /* AI Section specific - tighter for closer headline/demo proximity */
-  --ai-section-min-height: clamp(16rem, 28vh, 20rem);
+  /* AI Section specific - balanced for content visibility and compactness */
+  --ai-section-min-height: clamp(22rem, 32vh, 26rem);
   
   /* Route Analysis section */
   --route-section-padding: 2rem 1.5rem;
@@ -2466,6 +2466,7 @@
   position: relative;
   margin-bottom: var(--spacing-sm);
   min-height: var(--ai-section-min-height);
+  height: auto; /* Allow natural expansion beyond min-height */
 }
 
 /* Steps left container - centered within left half */
@@ -2753,16 +2754,11 @@
   transition: all 0.4s ease;
 }
 
-.tru-ai-header-previews .tru-ai-live-scanner {
-  width: var(--ai-preview-width);
-  height: 100% !important;
-  min-height: 100% !important;
-}
-
+.tru-ai-header-previews .tru-ai-live-scanner,
 .tru-ai-header-previews .tru-ai-live-inventory {
   width: var(--ai-preview-width);
-  height: 100% !important;
-  min-height: 100% !important;
+  height: clamp(20rem, 30vh, 26rem); /* Own height, not 100% of parent */
+  min-height: 20rem;
 }
 
 /* Steps content container */
@@ -3077,6 +3073,7 @@
   gap: 4px;
   overflow-y: auto;
   padding-right: 4px;
+  max-height: 12rem; /* ~192px - allows scrolling if needed */
 }
 
 /* Custom scrollbar for items list */
