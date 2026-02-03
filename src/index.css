@@ -20,8 +20,14 @@
   --header-height: 3.875rem;  /* 62px */
   --header-offset: 6.375rem;  /* 102px (nav + gap) */
   
-  /* AI Section specific */
-  --ai-section-min-height: clamp(20rem, 35vh, 24rem);
+  /* AI Section specific - tighter for closer headline/demo proximity */
+  --ai-section-min-height: clamp(16rem, 28vh, 20rem);
+  
+  /* Route Analysis section */
+  --route-section-padding: 2rem 1.5rem;
+  
+  /* Consult section */
+  --consult-section-padding: 2rem 1.5rem;
   --ai-preview-width: clamp(17.5rem, 25vw, 26.25rem);
   --ai-preview-height: clamp(18.75rem, 30vh, 27.5rem);
 }
@@ -2175,7 +2181,7 @@
    ============================================= */
 /* Route Analysis Section - Permanent Display */
 .tru-route-analysis-section {
-  padding: 32px 24px;
+  padding: var(--route-section-padding);
   background: linear-gradient(180deg, hsl(var(--muted) / 0.5) 0%, hsl(var(--background)) 100%);
   border-top: 1px solid hsl(var(--border));
 }
@@ -17312,7 +17318,7 @@
 
 /* CONSULT COMPACT */
 .tru-consult-compact {
-  padding: 32px 24px;
+  padding: var(--consult-section-padding);
   background: linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 25% 14%) 100%);
 }
 
