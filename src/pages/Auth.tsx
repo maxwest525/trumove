@@ -75,6 +75,32 @@ export default function Auth() {
     }
   };
 
+  const handleCCACHSubmit = () => {
+    setCompletedDocuments((prev) => ({ ...prev, ccach: true }));
+    toast({
+      title: "CC/ACH Authorization Submitted",
+      description: "Your payment authorization has been received.",
+    });
+  };
+
+  const handleBOLSubmit = () => {
+    setCompletedDocuments((prev) => ({ ...prev, bol: true }));
+    toast({
+      title: "Bill of Lading Submitted",
+      description: "All documents have been signed and submitted.",
+    });
+  };
+
+  const handleContinueToNext = () => {
+    if (activeDocument === "estimate") {
+      setActiveDocument("ccach");
+      window.scrollTo(0, 0);
+    } else if (activeDocument === "ccach") {
+      setActiveDocument("bol");
+      window.scrollTo(0, 0);
+    }
+  };
+
   const handleDocumentChange = (doc: DocumentType) => {
     setActiveDocument(doc);
     window.scrollTo(0, 0);
@@ -131,6 +157,8 @@ export default function Auth() {
                 currentField={currentField}
                 onSign={handleSign}
                 onSubmit={handleSubmit}
+                onContinueToNext={handleContinueToNext}
+                isSubmitted={completedDocuments.estimate}
                 refNumber={refNumber}
                 today={today}
               />
@@ -140,6 +168,9 @@ export default function Auth() {
               <CCACHDocumentWrapper
                 typedName={typedName}
                 onTypedNameChange={setTypedName}
+                isSubmitted={completedDocuments.ccach}
+                onSubmit={handleCCACHSubmit}
+                onContinueToNext={handleContinueToNext}
               />
             )}
 
@@ -147,6 +178,8 @@ export default function Auth() {
               <BOLDocumentWrapper
                 typedName={typedName}
                 onTypedNameChange={setTypedName}
+                isSubmitted={completedDocuments.bol}
+                onSubmit={handleBOLSubmit}
               />
             )}
           </div>

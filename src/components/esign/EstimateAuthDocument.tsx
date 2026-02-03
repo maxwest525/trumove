@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, Download, Printer } from "lucide-react";
+import { Check, Download, Printer, ArrowRight } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 type SignatureField = "initial1" | "initial2" | "initial3" | "signature";
@@ -13,6 +13,8 @@ interface EstimateAuthDocumentProps {
   currentField: SignatureField;
   onSign: (field: SignatureField) => void;
   onSubmit: () => void;
+  onContinueToNext?: () => void;
+  isSubmitted?: boolean;
   refNumber: string;
   today: string;
 }
@@ -24,6 +26,8 @@ export function EstimateAuthDocument({
   currentField,
   onSign,
   onSubmit,
+  onContinueToNext,
+  isSubmitted = false,
   refNumber,
   today,
 }: EstimateAuthDocumentProps) {
@@ -251,21 +255,38 @@ export function EstimateAuthDocument({
               </Button>
             </div>
 
-            <Button
-              onClick={onSubmit}
-              disabled={!allSigned}
-              className="gap-2"
-              variant={allSigned ? "default" : "outline"}
-            >
-              {allSigned ? (
-                <>
-                  <Check className="h-4 w-4" />
-                  Submit Authorization
-                </>
+            <div className="flex gap-2">
+              {!isSubmitted ? (
+                <Button
+                  onClick={onSubmit}
+                  disabled={!allSigned}
+                  className="gap-2"
+                  variant={allSigned ? "default" : "outline"}
+                >
+                  {allSigned ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Submit Authorization
+                    </>
+                  ) : (
+                    "Complete All Signatures"
+                  )}
+                </Button>
               ) : (
-                "Complete All Signatures"
+                <>
+                  <div className="flex items-center gap-2 text-sm text-primary font-medium">
+                    <Check className="h-4 w-4" />
+                    Submitted
+                  </div>
+                  {onContinueToNext && (
+                    <Button onClick={onContinueToNext} className="gap-2">
+                      Continue to Next Document
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  )}
+                </>
               )}
-            </Button>
+            </div>
           </div>
         </div>
       </CardContent>
