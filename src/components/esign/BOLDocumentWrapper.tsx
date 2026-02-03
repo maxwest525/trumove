@@ -1,6 +1,6 @@
 import { BillOfLadingForm } from "@/components/agent/BillOfLadingForm";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Paperclip } from "lucide-react";
 
 interface BOLDocumentWrapperProps {
   typedName: string;
@@ -21,8 +21,12 @@ export function BOLDocumentWrapper({
         <BillOfLadingForm />
       </div>
       
-      {/* Footer with Submit button - no continue since BOL is last */}
-      <div className="px-10 pb-6 flex items-center justify-end gap-2 border-t border-muted pt-4 mx-6">
+      {/* Footer with Attach Inventory and Submit button */}
+      <div className="px-10 pb-6 flex items-center justify-end gap-3 border-t border-muted pt-4 mx-6">
+        <Button variant="outline" className="gap-2">
+          <Paperclip className="h-4 w-4" />
+          Attach Inventory
+        </Button>
         {!isSubmitted ? (
           <Button onClick={onSubmit} className="gap-2">
             <Check className="h-4 w-4" />
