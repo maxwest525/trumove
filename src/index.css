@@ -12305,7 +12305,7 @@
   background: hsl(var(--tm-ink));
   color: white;
   border-color: hsl(var(--tm-ink));
-  transform: translateY(-1px);
+  transform: translateY(-50%);
 }
 
 .dark .header-btn-agent:hover {
