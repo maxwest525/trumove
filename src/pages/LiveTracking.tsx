@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight, Headphones, Shield } from "lucide-react";
+import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, AlertTriangle, ChevronDown, ChevronRight, ChevronLeft, ChevronUp, Map, Layers, Globe, Navigation2, Sparkles, Scale, Route, Crosshair, ShieldCheck, Cloud, ArrowRight, Headphones, Shield, Satellite } from "lucide-react";
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
@@ -639,6 +639,7 @@ export default function LiveTracking() {
         open={showRouteModal} 
         onClose={() => setShowRouteModal(false)}
         onSubmit={handleRouteModalSubmit}
+        onDemo={handleDemoClick}
       />
 
       {/* Main Content - 2 Column Layout */}
@@ -647,8 +648,48 @@ export default function LiveTracking() {
         <div className="tracking-map-area">
           {/* Map Container */}
           <div className="tracking-map-container">
-            {/* Demo Button - Top of Map */}
-            <div className="absolute top-3 right-3 z-20">
+            {/* Top Controls - Demo, Reopen Modal, Map View Toggle */}
+            <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
+              {/* Map View Toggle */}
+              <div className="flex items-center bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-lg overflow-hidden">
+                <Button
+                  onClick={() => setMapViewType('satellite')}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border",
+                    mapViewType === 'satellite' && "bg-primary/10 text-primary"
+                  )}
+                >
+                  <Satellite className="w-3.5 h-3.5" />
+                  Satellite
+                </Button>
+                <Button
+                  onClick={() => setMapViewType('roadmap')}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "h-9 px-3 gap-1.5 text-xs rounded-none",
+                    mapViewType === 'roadmap' && "bg-primary/10 text-primary"
+                  )}
+                >
+                  <Map className="w-3.5 h-3.5" />
+                  Roadmap
+                </Button>
+              </div>
+              
+              {/* Reopen Modal Button */}
+              <Button
+                onClick={() => setShowRouteModal(true)}
+                variant="outline"
+                size="sm"
+                className="h-9 px-3 gap-1.5 text-xs bg-background/95 backdrop-blur-sm border-border shadow-lg"
+              >
+                <Navigation className="w-3.5 h-3.5" />
+                New Route
+              </Button>
+              
+              {/* Demo Button */}
               <Button
                 onClick={handleDemoClick}
                 variant="outline"

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Navigation, Truck, Search, Loader2, Globe, Eye, ArrowRight, Play } from "lucide-react";
+import { MapPin, Navigation, Truck, Search, Loader2, Globe, Eye, ArrowRight, Play, Sparkles } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
@@ -21,6 +21,7 @@ interface RouteSetupModalProps {
     moveDate?: Date;
     bookingNumber?: string;
   }) => void;
+  onDemo?: () => void;
 }
 
 // Mock booking data for demo
@@ -213,7 +214,7 @@ function AddressPreview({
   );
 }
 
-export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProps) {
+export function RouteSetupModal({ open, onClose, onSubmit, onDemo }: RouteSetupModalProps) {
   const [originAddress, setOriginAddress] = useState("");
   const [destAddress, setDestAddress] = useState("");
   const [bookingNumber, setBookingNumber] = useState("");
@@ -373,6 +374,20 @@ export function RouteSetupModal({ open, onClose, onSubmit }: RouteSetupModalProp
                 View Route
                 <ArrowRight className="w-4 h-4" />
               </Button>
+              {onDemo && (
+                <Button 
+                  onClick={() => {
+                    onDemo();
+                    onClose();
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="h-10 px-4 gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Demo
+                </Button>
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               Enter your booking number to auto-populate route details (try 12345)

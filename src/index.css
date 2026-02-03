@@ -26108,7 +26108,9 @@
 .tracking-header-trust {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 24px;
+  flex: 1;
 }
 
 .tracking-header-trust-item {
