@@ -216,19 +216,29 @@ export function WhiteboardCanvas() {
         <div className="flex items-center gap-1">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mr-2">Tools</span>
           <Button
-            variant={tool === 'pen' ? 'default' : 'outline'}
+            variant="outline"
             size="sm"
             onClick={() => setTool('pen')}
-            className="h-8 px-3"
+            className={cn(
+              "h-8 px-3 border-foreground/20",
+              tool === 'pen' 
+                ? "bg-foreground text-background border-foreground" 
+                : "hover:bg-foreground hover:text-background"
+            )}
           >
             <Pencil className="w-4 h-4 mr-1.5" />
             Pen
           </Button>
           <Button
-            variant={tool === 'eraser' ? 'default' : 'outline'}
+            variant="outline"
             size="sm"
             onClick={() => setTool('eraser')}
-            className="h-8 px-3"
+            className={cn(
+              "h-8 px-3 border-foreground/20",
+              tool === 'eraser' 
+                ? "bg-foreground text-background border-foreground" 
+                : "hover:bg-foreground hover:text-background"
+            )}
           >
             <Eraser className="w-4 h-4 mr-1.5" />
             Eraser
