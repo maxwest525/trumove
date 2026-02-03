@@ -1453,46 +1453,31 @@
 }
 
 /* =============================================
-   SPLIT HERO LAYOUT - Homepage
+   SPLIT HERO LAYOUT - Two Column Homepage
    ============================================= */
-/* 50/50 Two-column layout */
-/* Hero Split Layout - Compact with inline header */
 .tru-hero.tru-hero-split {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 500px 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 32px 48px;
-  align-items: start;
-  padding: 48px 64px 24px 48px;
-  max-width: 1720px;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  padding: 80px 64px 48px;
+  max-width: 1480px;
   margin: 0 auto;
+  min-height: calc(100vh - 80px);
 }
 
-/* =============================================
-   HERO HEADER - REFINED COMPACT
-   ============================================= */
-.tru-hero-header-section {
-  grid-column: 1 / -1;
+/* LEFT COLUMN - Text Content */
+.tru-hero-left-column {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 24px 32px 16px;
-  gap: 0;
-  position: relative;
-}
-
-.tru-hero-branding {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 20px;
 }
 
 .tru-hero-logo {
-  height: 56px;
+  height: 72px;
   width: auto;
   filter: 
     /* White underglow halo effect */
@@ -1505,21 +1490,13 @@
     drop-shadow(0 16px 40px hsl(0 0% 0% / 0.3));
 }
 
-.tru-hero-headline-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
 .tru-hero-headline {
-  font-size: clamp(28px, 4vw, 44px);
+  font-size: clamp(32px, 4.5vw, 52px);
   font-weight: 900;
   letter-spacing: -0.02em;
   line-height: 1.1;
   color: hsl(0 0% 100%);
   margin: 0;
-  white-space: nowrap;
   text-shadow: 
     0 2px 4px hsl(0 0% 0% / 0.95),
     0 4px 8px hsl(0 0% 0% / 0.85),
@@ -1534,16 +1511,114 @@
   filter: drop-shadow(0 2px 6px hsl(var(--tm-green) / 0.4));
 }
 
-.tru-hero-tagline {
+/* Feature line - single line, muted */
+.tru-hero-feature-line {
   font-size: 13px;
   font-weight: 500;
-  color: hsl(0 0% 100% / 0.85);
-  letter-spacing: 0.02em;
+  color: hsl(0 0% 100% / 0.7);
+  letter-spacing: 0.01em;
+  line-height: 1.5;
   margin: 0;
   text-shadow: 
     0 2px 4px hsl(0 0% 0% / 0.9),
     0 4px 12px hsl(0 0% 0% / 0.7),
     0 8px 24px hsl(0 0% 0% / 0.5);
+}
+
+/* RIGHT COLUMN - Form + CTAs */
+.tru-hero-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 480px;
+  margin-left: auto;
+}
+
+/* Micro-copy below form */
+.tru-hero-form-microcopy {
+  text-align: center;
+  font-size: 13px;
+  color: hsl(0 0% 100% / 0.7);
+  margin: 0;
+  text-shadow: 
+    0 1px 3px hsl(0 0% 0% / 0.8),
+    0 2px 8px hsl(0 0% 0% / 0.6);
+}
+
+/* Secondary call button */
+.tru-hero-call-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border: 2px solid hsl(0 0% 100% / 0.3);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(0 0% 100%);
+  background: hsl(0 0% 0% / 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.tru-hero-call-btn:hover {
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary));
+  background: hsl(0 0% 0% / 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.2);
+}
+
+.tru-hero-call-btn svg {
+  flex-shrink: 0;
+}
+
+/* Mobile: stack columns */
+@media (max-width: 1024px) {
+  .tru-hero.tru-hero-split {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 48px 24px 32px;
+    min-height: auto;
+  }
+  
+  .tru-hero-left-column {
+    align-items: center;
+    text-align: center;
+  }
+  
+  .tru-hero-headline {
+    text-align: center;
+  }
+  
+  .tru-hero-feature-line {
+    text-align: center;
+  }
+  
+  .tru-hero-right-column {
+    max-width: 100%;
+    margin-left: 0;
+  }
+}
+
+/* Legacy support for old structure - can be removed later */
+.tru-hero-header-section {
+  display: none;
+}
+
+.tru-hero-branding {
+  display: none;
+}
+
+.tru-hero-headline-group {
+  display: none;
+}
+
+.tru-hero-tagline {
+  display: none;
 }
 
 /* =============================================
