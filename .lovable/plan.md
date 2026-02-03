@@ -1,52 +1,47 @@
 
-## Enhance Text Visibility with Underglow Effects
+# Plan: Match Shipment Tracking Spacing to Connect With Us Page
 
-### Summary
-Add enhanced underglow styling to improve visibility of key page elements:
-1. **TruMove Logo (Homepage)**: Add a subtle white underglow to make the logo pop against the hero background
-2. **"Build Your Move" Section (Online Estimate page)**: Add dark black underglow to the headline and subheadline for better readability
+## Overview
+Update the "Track Your Shipment" hero section on the LiveTracking page to match the exact spacing structure used on the "Connect With Us" (Book) page.
 
----
+## Current Spacing Analysis
 
-### Implementation Details
+### Connect With Us Page (`Book.tsx`)
+- Header container: `mb-10` (40px margin-bottom to video content)
+- Headline to subheadline: `mb-3` (12px gap)
 
-#### 1. TruMove Logo - White Underglow
+### Shipment Tracking Page (`LiveTracking.tsx`)  
+- Hero container: `py-8` (32px vertical padding)
+- Headline to subheadline: `mb-2` (8px gap)
 
-The homepage logo (`.tru-hero-logo`) currently has a black drop-shadow. I'll add a **soft white glow behind it** to create depth and make it more legible against varied backgrounds.
+## Changes Required
 
-**Location**: `src/index.css` (around line 1450)
+### File: `src/pages/LiveTracking.tsx`
 
-**Approach**:
-- Add a white glow layer behind the existing black shadows
-- Use a subtle white `drop-shadow` that creates a "halo" effect
-- Keeps the logo visible on both light and dark hero image areas
+**Line 638 - Update container spacing:**
+```tsx
+// Before:
+<div className="text-center py-8 px-4">
 
-#### 2. "Build Your Move" Headline & Subheadline - Black Underglow
+// After:
+<div className="text-center py-8 px-4 mb-10">
+```
 
-On the Online Estimate page, the "Build Your Move" title and its subtitle ("Add your household items...") appear in the `.tru-summary-header-large` section. I'll add multi-layered black text shadows similar to the hero headline treatment.
+**Line 639 - Update headline margin:**
+```tsx
+// Before:
+<h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-2">
 
-**Locations affected**:
-- `.tru-summary-header-large h3` - The "Build Your Move" headline
-- `.tru-summary-header-large p` - The subheadline text
+// After:
+<h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3">
+```
 
-**Approach**:
-- Add layered `text-shadow` with high-opacity blacks for deep underglow
-- Ensures maximum readability against the gradient card backgrounds
+## Summary of Changes
+| Element | Current | Updated |
+|---------|---------|---------|
+| Hero container bottom margin | 0px | 40px (`mb-10`) |
+| Headline to subheadline gap | 8px (`mb-2`) | 12px (`mb-3`) |
 
----
-
-### Technical Changes
-
-**File**: `src/index.css`
-
-| Element | Current State | After Change |
-|---------|--------------|--------------|
-| `.tru-hero-logo` | Black drop-shadows only | Add white glow layer for halo effect |
-| `.tru-summary-header-large h3` | No text-shadow | Multi-layer black underglow |
-| `.tru-summary-header-large p` | No text-shadow | Multi-layer black underglow (lighter) |
-
----
-
-### Visual Result
-- **Logo**: Will have a soft white "halo" glow, making it stand out on any background
-- **Build Your Move**: Headline and subheadline will have enhanced depth and legibility with black underglow treatment matching the homepage hero style
+This will ensure both pages have identical spacing between:
+1. The subheadline and the main content below (40px)
+2. The headline and subheadline (12px)
