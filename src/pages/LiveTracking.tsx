@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { getQuickFuelEstimate } from "@/lib/fuelCostCalculator";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import logoImg from "@/assets/logo.png";
+
 
 // Google Maps API key from environment
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
@@ -623,20 +623,20 @@ export default function LiveTracking() {
 
   return (
     <div className="live-tracking-page">
-      {/* Site Header - White logo for tracking page */}
-      <Header whiteLogo />
+      {/* Site Header */}
+      <Header />
       
-      {/* Dashboard Header - Compact */}
+      {/* Dashboard Header - Compact with booking reference */}
       <header className="tracking-header">
-        <div className="flex items-center gap-3">
-          <img 
-            src={logoImg} 
-            alt="TruMove" 
-            className="h-7 brightness-0 invert"
-          />
-          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/90">
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-bold tracking-wide uppercase text-white">
             Shipment Command Center
           </span>
+          {bookingInput && (
+            <span className="px-2.5 py-1 rounded bg-white/10 text-[11px] font-mono text-white/80 border border-white/20">
+              #{bookingInput || '—'}
+            </span>
+          )}
         </div>
 
         {/* Trust Indicators - Right */}
@@ -650,65 +650,13 @@ export default function LiveTracking() {
             <Truck className="w-3.5 h-3.5 text-primary" />
             LIVE GPS
           </span>
+          <span className="tracking-header-trust-dot">•</span>
+          <span className="tracking-header-trust-item">
+            <Cloud className="w-3.5 h-3.5 text-primary" />
+            REAL-TIME ETA
+          </span>
         </div>
       </header>
-      
-      {/* Booking Search Bar - Below Header */}
-      <div className="tracking-search-bar">
-        <div className="tracking-search-bar-inner">
-          <div className="tracking-booking-input-group">
-            <input
-              type="text"
-              placeholder="Booking ID or Shipment #"
-              value={bookingInput}
-              onChange={(e) => setBookingInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleBookingSearch()}
-              className="tracking-booking-input"
-            />
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    "h-8 px-2.5 gap-1.5 text-xs border-border/50 bg-background/50 hover:bg-accent/50",
-                    !moveDate && "text-muted-foreground"
-                  )}
-                >
-                  <Calendar className="w-3.5 h-3.5" />
-                  {moveDate ? format(moveDate, 'MMM d') : 'Date'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={moveDate}
-                  onSelect={(date) => date && setMoveDate(date)}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-            <Button
-              onClick={handleBookingSearch}
-              className="tracking-booking-go-btn"
-              size="sm"
-            >
-              <Play className="w-3.5 h-3.5" />
-              Go
-            </Button>
-          </div>
-          <Button
-            onClick={handleDemoClick}
-            variant="outline"
-            size="sm"
-            className="tracking-demo-btn"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Demo
-          </Button>
-        </div>
-      </div>
 
       {/* Route Setup Modal */}
       <RouteSetupModal 
@@ -723,9 +671,64 @@ export default function LiveTracking() {
         <div className="tracking-map-area">
           {/* Map Container */}
           <div className="tracking-map-container">
+            {/* Booking Search Overlay - Top of Map */}
+            <div className="absolute top-3 left-3 right-3 z-20 flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-background/95 backdrop-blur-sm border border-border shadow-lg flex-1 max-w-md">
+                <input
+                  type="text"
+                  placeholder="Booking ID or Shipment #"
+                  value={bookingInput}
+                  onChange={(e) => setBookingInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleBookingSearch()}
+                  className="flex-1 bg-transparent border-none outline-none text-sm font-medium placeholder:text-muted-foreground"
+                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn(
+                        "h-7 px-2 gap-1 text-xs",
+                        !moveDate && "text-muted-foreground"
+                      )}
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                      {moveDate ? format(moveDate, 'MMM d') : 'Date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={moveDate}
+                      onSelect={(date) => date && setMoveDate(date)}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+                <Button
+                  onClick={handleBookingSearch}
+                  size="sm"
+                  className="h-7 px-3 gap-1.5 text-xs"
+                >
+                  <Play className="w-3 h-3" />
+                  Go
+                </Button>
+              </div>
+              <Button
+                onClick={handleDemoClick}
+                variant="outline"
+                size="sm"
+                className="h-9 px-3 gap-1.5 text-xs bg-background/95 backdrop-blur-sm border-border shadow-lg"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                Demo
+              </Button>
+            </div>
+
             {/* WebGL warning banner when using static fallback */}
             {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
-              <div className="absolute top-0 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
+              <div className="absolute top-16 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                 <span>{webglDiagnostics.warnings[0]}</span>
               </div>
