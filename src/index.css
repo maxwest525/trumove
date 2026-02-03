@@ -31415,6 +31415,15 @@ html.dark .tru-summary-header-large,
 
 /* Responsive - hide trust items on smaller screens */
 @media (max-width: 1200px) {
+  .video-consult-header-trust-item:nth-child(n+7) {
+    display: none;
+  }
+  .video-consult-header-trust-dot:nth-child(n+8) {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
   .video-consult-header-trust {
     display: none;
   }
