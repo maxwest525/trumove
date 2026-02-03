@@ -1462,10 +1462,11 @@
   grid-template-columns: 1fr 1fr;
   gap: 48px;
   align-items: center;
-  padding: 32px 64px 24px;
+  justify-content: center;
+  padding: 0 64px;
   max-width: 1480px;
   margin: 0 auto;
-  /* No min-height - let content determine height */
+  height: 550px;
 }
 
 /* LEFT COLUMN - Text Content */
