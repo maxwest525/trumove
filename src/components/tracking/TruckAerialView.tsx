@@ -214,14 +214,6 @@ export function TruckAerialView({
       {/* Expanded Interactive Street View */}
       {expanded ? (
         <div className="flex flex-col h-[calc(100%-3rem)]">
-          {/* Floating close button - always visible */}
-          <button
-            onClick={onToggleExpand}
-            className="absolute top-4 right-4 z-30 flex items-center gap-2 px-4 py-2 rounded-full bg-background/90 hover:bg-destructive/10 border border-border hover:border-destructive/40 text-foreground hover:text-destructive transition-all shadow-lg backdrop-blur-sm"
-          >
-            <X className="w-4 h-4" />
-            <span className="text-sm font-semibold">Exit View</span>
-          </button>
           
           <div className="relative flex-1 rounded-lg overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border">
             {isLoading && (
