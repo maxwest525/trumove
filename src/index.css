@@ -27146,14 +27146,16 @@
   font-weight: 600;
 }
 
-/* Dashboard (Right Side) - Match map height */
+/* Dashboard (Right Side) - Match map + controls total height */
 .tracking-dashboard {
   display: flex;
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
-  min-width: 280px;
-  height: 550px; /* Match map height */
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+  height: 612px; /* Match map (550px) + controls strip (~62px) */
 }
 
 /* Make cards grow to fill space - Stats gets ~55%, Location gets ~45% */
