@@ -154,7 +154,7 @@ export function UnifiedStatsCard({
           {isEmpty ? (
             <Skeleton className="h-6 w-14 bg-primary/10" />
           ) : (
-            <div className="text-lg font-bold text-primary leading-tight">
+            <div className="text-lg font-bold text-foreground leading-tight">
               {adjustedETA || '--:--'}
             </div>
           )}
