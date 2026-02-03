@@ -108,7 +108,7 @@ export function BillOfLadingForm() {
             <Printer className="w-4 h-4" />
             Print
           </Button>
-          <Button onClick={handleDownload} size="sm" className="gap-2">
+          <Button onClick={handleDownload} size="sm" variant="outline" className="gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
             <Download className="w-4 h-4" />
             Download PDF
           </Button>
@@ -341,7 +341,7 @@ export function BillOfLadingForm() {
 
       <div className="flex justify-end gap-3">
         <Button variant="outline">Cancel</Button>
-        <Button className="gap-2">
+        <Button variant="outline" className="gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
           <Receipt className="w-4 h-4" />
           Generate BOL
         </Button>

@@ -272,7 +272,7 @@ export function CarrierDashboard() {
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <Button size="sm" className="gap-1">
+                        <Button size="sm" variant="outline" className="gap-1 border-foreground/20 hover:bg-foreground hover:text-background">
                           <ChevronRight className="w-4 h-4" />
                           View
                         </Button>

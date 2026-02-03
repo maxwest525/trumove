@@ -145,7 +145,7 @@ export function CustomerLookup() {
                 className="pl-10"
               />
             </div>
-            <Button onClick={handleSearch} className="gap-2">
+            <Button onClick={handleSearch} variant="outline" className="gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
               <Search className="w-4 h-4" />
               Search
             </Button>
@@ -283,7 +283,7 @@ export function CustomerLookup() {
               </Card>
 
               <div className="flex gap-3">
-                <Button className="flex-1 gap-2">
+                <Button variant="outline" className="flex-1 gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
                   <Mail className="w-4 h-4" />
                   Email Customer
                 </Button>

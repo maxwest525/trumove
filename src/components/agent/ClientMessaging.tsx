@@ -237,7 +237,7 @@ export function ClientMessaging() {
                   />
                 </div>
                 <div className="flex justify-end">
-                  <Button onClick={handleSend} className="gap-2">
+                  <Button onClick={handleSend} variant="outline" className="gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
                     <Send className="w-4 h-4" />
                     Send Email
                   </Button>
@@ -308,7 +308,7 @@ export function ClientMessaging() {
                   )}
                 </div>
                 <div className="flex justify-end">
-                  <Button onClick={handleSend} className="gap-2">
+                  <Button onClick={handleSend} variant="outline" className="gap-2 border-foreground/20 hover:bg-foreground hover:text-background">
                     <Send className="w-4 h-4" />
                     Send SMS
                   </Button>
