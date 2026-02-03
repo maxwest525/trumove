@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Truck, Loader2, MapPin, Eye, Navigation, Maximize2, Minimize2, X, Pause } from "lucide-react";
+import { Truck, Loader2, MapPin, Eye, Navigation, Maximize2, Minimize2, X, Pause, Crosshair } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -7,11 +7,13 @@ interface TruckAerialViewProps {
   routeCoordinates: [number, number][];
   progress: number;
   isTracking: boolean;
+  isPaused?: boolean;
   originCoords?: [number, number] | null;
   locationName?: string;
   googleApiKey?: string;
   expanded?: boolean;
   onToggleExpand?: () => void;
+  onRelocateTruck?: () => void;
 }
 
 type PreviewSize = 'default';
@@ -24,11 +26,13 @@ export function TruckAerialView({
   routeCoordinates,
   progress,
   isTracking,
+  isPaused = false,
   originCoords,
   locationName,
   googleApiKey,
   expanded = false,
-  onToggleExpand
+  onToggleExpand,
+  onRelocateTruck
 }: TruckAerialViewProps) {
   const [previewSize, setPreviewSize] = useState<PreviewSize>('default');
   const [isLoading, setIsLoading] = useState(true);
@@ -177,11 +181,20 @@ export function TruckAerialView({
             <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground">
               {headerLabel}
             </span>
-            {isTracking && progress > 0 && (
+            {isTracking && progress > 0 && !isPaused && (
               <span className="text-[9px] text-muted-foreground/70 flex items-center gap-1">
                 <Pause className="w-2.5 h-2.5" />
                 Pause to view
               </span>
+            )}
+            {isTracking && progress > 0 && isPaused && onRelocateTruck && (
+              <button 
+                onClick={onRelocateTruck}
+                className="text-[9px] text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
+              >
+                <Crosshair className="w-2.5 h-2.5" />
+                Relocate Truck
+              </button>
             )}
           </div>
           {isTracking && progress > 0 && (
