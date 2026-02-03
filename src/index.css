@@ -27148,13 +27148,13 @@
 
 /* Dashboard (Right Side) - Match map + controls total height */
 .tracking-dashboard {
-  display: flex !important;
-  flex-direction: column !important;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   overflow-y: auto;
-  width: 260px !important;
-  min-width: 260px !important;
-  max-width: 260px !important;
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
   height: 612px; /* Match map (550px) + controls strip (~62px) */
 }
 
