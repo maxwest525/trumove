@@ -31651,3 +31651,42 @@ html.dark .tru-summary-header-large,
 .animate-subtle-zoom {
   animation: subtle-zoom 8s ease-in-out infinite;
 }
+
+/* =============================================
+   GOOGLE MAPS WATERMARK/ATTRIBUTION HIDE
+   Hide Google Maps branding for cleaner map display
+   ============================================= */
+/* Hide Google logo */
+.gm-style a[href*="google.com/maps"],
+.gm-style-cc,
+.gmnoprint,
+.gm-bundled-control,
+.gm-fullscreen-control,
+gmp-map .gm-style a[href*="google.com/maps"],
+gmp-map .gm-style-cc,
+gmp-map .gmnoprint,
+gmp-map3d-element .gm-style a[href*="google.com/maps"],
+gmp-map3d-element .gm-style-cc,
+gmp-map3d-element .gmnoprint {
+  display: none !important;
+}
+
+/* Hide keyboard shortcuts hint */
+.gm-style .gm-style-mtc,
+.gm-style button[title="Toggle fullscreen view"],
+.gm-style button[title="Keyboard shortcuts"] {
+  display: none !important;
+}
+
+/* Hide "Map data" text */
+.gm-style .gmnoprint div,
+.gm-style span[role="img"] {
+  display: none !important;
+}
+
+/* For 3D maps element */
+gmp-map-3d-element .gm-style a,
+gmp-map-3d-element .gm-style-cc,
+gmp-map-3d-element .gmnoprint {
+  display: none !important;
+}
