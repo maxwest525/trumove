@@ -20,8 +20,8 @@
   --header-height: 3.875rem;  /* 62px */
   --header-offset: 6.375rem;  /* 102px (nav + gap) */
   
-  /* AI Section specific - balanced for content visibility and compactness */
-  --ai-section-min-height: clamp(22rem, 32vh, 26rem);
+  /* AI Section specific - generous height to prevent content cutoff */
+  --ai-section-min-height: clamp(26rem, 40vh, 32rem);
   
   /* Route Analysis section */
   --route-section-padding: 2rem 1.5rem;
