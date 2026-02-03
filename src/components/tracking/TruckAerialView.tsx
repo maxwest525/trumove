@@ -319,16 +319,9 @@ export function TruckAerialView({
               </span>
             </div>
 
-            {/* Google attribution badge */}
-            <div className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm flex items-center gap-1">
-              <span className="text-[8px] font-medium text-white/60">
-                Google Maps
-              </span>
-            </div>
-
             {/* Coordinates */}
-            <div className="absolute top-2 right-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm">
-              <span className="text-[9px] font-mono text-white/60">
+            <div className="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm">
+              <span className="text-[8px] font-mono text-white/60">
                 {currentPosition[1].toFixed(4)}°, {currentPosition[0].toFixed(4)}°
               </span>
             </div>
