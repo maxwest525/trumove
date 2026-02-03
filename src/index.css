@@ -27150,22 +27150,22 @@
 .tracking-dashboard {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   overflow-y: auto;
-  width: 320px;
-  min-width: 320px;
-  max-width: 320px;
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
   height: 612px; /* Match map (550px) + controls strip (~62px) */
 }
 
 /* Make cards grow to fill space - Stats gets ~55%, Location gets ~45% */
 .tracking-dashboard > div:first-child {
-  flex: 1.2;
+  flex: 1.1;
   min-height: 0;
 }
 
 .tracking-dashboard > div:last-child {
-  flex: 1;
+  flex: 0.9;
   min-height: 0;
 }
 
@@ -27254,13 +27254,25 @@
   height: 1.25rem;
 }
 
-/* Unified Stats Card */
+/* Unified Stats Card - Compact with TruMove branding */
 .unified-stats-card {
-  padding: 8px !important;
+  padding: 12px !important;
+  min-width: 0;
 }
 
 .unified-stats-card .tracking-progress-bar {
-  height: 4px;
+  height: 6px;
+}
+
+/* Ensure stats grid cells don't wrap text */
+.unified-stats-card .grid > div {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.unified-stats-card .text-base {
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 /* Collapsible Card Styling */
