@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Navigation, Truck, CalendarIcon, Search, Loader2, Globe, Eye, X, ArrowRight, Play } from "lucide-react";
+import { MapPin, Navigation, Truck, CalendarIcon, Search, Loader2, Globe, Eye, X, ArrowRight, Play, } from "lucide-react";
 import { format } from "date-fns";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { cn } from "@/lib/utils";
