@@ -1509,6 +1509,9 @@ export default function Index() {
                           {!isSearchingCarriers && !isAnalyzing && <ArrowRight className="w-5 h-5 tru-btn-arrow" />}
                         </button>
                         
+                        {/* Micro-copy below Analyze Route */}
+                        <p className="tru-qb-microcopy">A moving specialist will call you shortly.</p>
+                        
                         {/* Track My Move Button */}
                         {fromLocationDisplay && toLocationDisplay && (
                           <button
@@ -1761,10 +1764,6 @@ export default function Index() {
 
               </div>
 
-              {/* Micro-copy below form */}
-              <p className="tru-hero-form-microcopy">
-                A moving specialist will call you shortly.
-              </p>
               
               {/* Secondary call button */}
               <a href="tel:+16097277647" className="tru-hero-call-btn">

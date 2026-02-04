@@ -6285,6 +6285,16 @@
   50% { transform: scale(1.2); opacity: 0.8; }
 }
 
+/* Microcopy below Analyze Route button */
+.tru-qb-microcopy {
+  text-align: center;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  opacity: 0.8;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+}
+
 /* Premium Button Styling (legacy) */
 .tru-qb-continue.tru-qb-continue-premium {
   background: linear-gradient(135deg, hsl(142 70% 45%), hsl(160 80% 40%));
