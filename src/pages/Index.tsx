@@ -669,13 +669,8 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
     <section className="tru-tracker-section">
       <div className="tru-tracker-inner">
         <div className="tru-tracker-header-row">
-          {/* Preview on LEFT (mirrored) */}
-          <div className="tru-tracker-preview-left">
-            <TrackingPreview />
-          </div>
-          
-          {/* Content on RIGHT (mirrored) */}
-          <div className="tru-tracker-content-right">
+          {/* Content on LEFT (matches AI section layout) */}
+          <div className="tru-tracker-content-left">
             <div className="tru-ai-headline-block">
               <h3 className="tru-ai-section-title">Real-Time Tracking</h3>
               <h2 className="tru-ai-main-headline">
@@ -710,6 +705,11 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
               Track Your Shipment
               <ArrowRight className="w-4 h-4" />
             </button>
+          </div>
+          
+          {/* Preview on RIGHT (matches AI section layout) */}
+          <div className="tru-tracker-preview-right">
+            <TrackingPreview />
           </div>
         </div>
       </div>
