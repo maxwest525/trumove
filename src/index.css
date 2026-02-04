@@ -6148,8 +6148,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   text-align: center;
+}
+
+/* Top label - small accent label */
+.tru-qb-form-label-top {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.08);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 4px;
 }
 
 .tru-qb-form-header-pill .tru-qb-form-title {
@@ -6159,10 +6172,11 @@
 }
 
 .tru-qb-form-header-pill .tru-qb-form-title.tru-qb-form-title-large {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
   color: hsl(var(--tm-ink));
+  margin-top: 4px;
 }
 
 /* Inline logo in form title */
@@ -6440,6 +6454,14 @@
   opacity: 0.8;
   margin-top: 0.75rem;
   padding-top: 0.5rem;
+}
+
+/* Prominent microcopy - enhanced visibility */
+.tru-qb-microcopy.tru-qb-microcopy-prominent {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  opacity: 1;
 }
 
 /* Premium Button Styling (legacy) */
