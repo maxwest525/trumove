@@ -1,127 +1,145 @@
 
-# Navigation Dropdown Polish Plan
+
+# Hero Section Enhancement Plan
 
 ## Overview
-Refine the mega-menu hover previews with entrance animations, improved typography, and cohesive spacing to create a premium, unified look.
+Enhance the homepage hero section's left column with larger sizing for the logo, headline, and subheadline, plus add subtle entrance animations for a polished, premium feel.
 
 ---
 
 ## Changes
 
-### 1. Add Entrance Animations for Preview Images
-Create smooth, staggered entrance animations when the dropdown appears:
+### 1. Logo Sizing (Larger on Wide Screens)
 
-- **Preview card**: Subtle scale-up (0.95 → 1) + fade-in with 80ms delay
-- **Image**: Additional subtle zoom effect (1.08 → 1) creating depth
-- **Caption**: Slide up from bottom with fade (100ms delay after image)
-- **Header/CTA elements**: Fade in with 120ms delay for sequential reveal
+**Current**: Fixed 72px height  
+**Updated**: Responsive sizing with larger desktop breakpoint
+
+```text
+Mobile:      64px height
+Tablet:      72px height  
+Desktop:     96px height
+Wide (1400px+): 110px height
+```
+
+### 2. Headline Sizing (More Impact on Wide Screens)
+
+**Current**: `clamp(36px, 5vw, 58px)`  
+**Updated**: `clamp(40px, 6vw, 72px)` with tighter letter-spacing
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  Property         │  Current    │  Updated                  │
+├───────────────────┼─────────────┼───────────────────────────┤
+│  font-size        │  max 58px   │  max 72px                 │
+│  font-weight      │  800        │  900                      │
+│  letter-spacing   │  -0.03em    │  -0.035em                 │
+│  line-height      │  1.05       │  1.02                     │
+│  margin-bottom    │  12px       │  16px                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 3. Feature Line (Subheadline) Sizing
+
+**Current**: 12px fixed  
+**Updated**: Responsive with more presence
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  Property         │  Current    │  Updated                  │
+├───────────────────┼─────────────┼───────────────────────────┤
+│  font-size        │  12px       │  clamp(12px, 1.1vw, 15px) │
+│  letter-spacing   │  0.02em     │  0.03em                   │
+│  opacity          │  0.65       │  0.75                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 4. Entrance Animations
+
+Add staggered fade-up animations with smooth timing:
 
 ```text
 Animation Timeline:
-┌─────────────────────────────────────────┐
-│  0ms   │ Dropdown container fades in    │
-│  50ms  │ Preview image scales up        │
-│  80ms  │ Badge appears with pop         │
-│ 120ms  │ Caption slides up              │
-│ 160ms  │ Title + tagline fade in        │
-│ 200ms  │ CTA button enters              │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  Element          │  Delay    │  Duration   │  Effect      │
+├───────────────────┼───────────┼─────────────┼──────────────┤
+│  Logo             │  0ms      │  600ms      │  fade + rise │
+│  Headline         │  100ms    │  700ms      │  fade + rise │
+│  Feature line     │  250ms    │  600ms      │  fade + rise │
+└─────────────────────────────────────────────────────────────┘
 ```
-
-### 2. Typography & Font Cohesion
-Standardize fonts across all dropdown elements:
-
-- **Title**: 15px, font-weight 700, letter-spacing -0.01em
-- **Tagline**: 13px, font-weight 500, muted foreground
-- **Caption highlight**: 13px, font-weight 600, with subtle green accent
-- **Badge**: 9px uppercase, tracking 0.05em
-- **CTA button**: 13px, font-weight 600
-
-### 3. Spacing & Layout Improvements
-Tighten the visual rhythm:
-
-```text
-┌────────────────────────────────────┐
-│  Preview Image (16:10 ratio)       │  ← 12px padding
-│  ┌──────────────────────────────┐  │
-│  │  Badge ──────────────────────│  │  ← 8px from top-right
-│  └──────────────────────────────┘  │
-├────────────────────────────────────┤
-│  Caption: "Scan any room..."       │  ← 12px vertical padding
-├────────────────────────────────────┤
-│  🔧 AI Move Estimator              │  ← 10px gap
-│  Point. Scan. Price.               │
-├────────────────────────────────────┤
-│  [Scan Room]  [Build Manually]     │  ← 10px gap, 8px between pills
-├────────────────────────────────────┤
-│  [Try It Now →]                    │  ← 12px bottom padding
-└────────────────────────────────────┘
-
-Padding: 14px (down from 16px)
-Card border-radius: 14px (more refined)
-Image border-radius: 10px
-```
-
-### 4. Visual Refinements
-- **Softer shadow**: More subtle, layered shadow for premium feel
-- **Border**: Thinner 0.5px border with lower opacity
-- **Caption background**: Gradient fade from transparent to card background
-- **Badge styling**: Frosted glass effect with backdrop-blur
 
 ---
 
-## Technical Details
+## Technical Implementation
 
-### Files to Modify
+### File: `src/index.css`
 
-**`src/index.css`** (mega-menu section):
-- Add new keyframes: `mega-preview-enter`, `mega-caption-enter`, `mega-content-stagger`
-- Update `.mega-preview-card` with animation delay and easing
-- Refine spacing values throughout dropdown components
-- Improve typography with consistent font sizes and weights
-- Add gradient overlays and enhanced shadows
+**Updates to `.tru-hero-logo`:**
+- Increase base height to 80px
+- Add responsive breakpoints for 96px (1200px+) and 110px (1440px+)
+- Add entrance animation
 
-**`src/components/layout/Header.tsx`**:
-- No structural changes needed - CSS handles all animations
-- Current preview components work as-is
+**Updates to `.tru-hero-headline`:**
+- Increase font-size clamp to `clamp(40px, 6vw, 72px)`
+- Bump font-weight to 900
+- Tighten letter-spacing to -0.035em
+- Reduce line-height to 1.02
+- Increase bottom margin to 16px
+- Add entrance animation with 100ms delay
 
-### New CSS Keyframes
+**Updates to `.tru-hero-accent`:**
+- Enhance green glow with additional drop-shadow layer
+
+**Updates to `.tru-hero-feature-line`:**
+- Make font-size responsive: `clamp(12px, 1.1vw, 15px)`
+- Increase letter-spacing to 0.03em
+- Brighten opacity to 0.75
+- Add entrance animation with 250ms delay
+
+**New keyframes to add:**
 ```css
-@keyframes mega-preview-enter {
-  from { 
-    opacity: 0; 
-    transform: scale(0.96); 
+@keyframes hero-element-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  to { 
-    opacity: 1; 
-    transform: scale(1); 
-  }
-}
-
-@keyframes mega-caption-slide {
-  from { 
-    opacity: 0; 
-    transform: translateY(6px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
-}
-
-@keyframes mega-badge-pop {
-  from { 
-    opacity: 0; 
-    transform: scale(0.8); 
-  }
-  to { 
-    opacity: 1; 
-    transform: scale(1); 
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 ```
 
+**Animation utility classes:**
+```css
+.tru-hero-logo {
+  animation: hero-element-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.tru-hero-headline {
+  animation: hero-element-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  opacity: 0;
+}
+
+.tru-hero-feature-line {
+  animation: hero-element-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
+  opacity: 0;
+}
+```
+
+### File: `src/pages/Index.tsx`
+
+No changes required - the CSS handles all animation and sizing updates.
+
 ---
 
-## Result
-The dropdowns will feel more polished and intentional - like a premium software product rather than a generic template. The staggered animations create visual interest without feeling slow, and the consistent typography establishes brand cohesion.
+## Visual Result
+
+The hero left column will have significantly more visual presence on wide screens:
+- **Logo**: 50% larger on desktop (110px vs 72px)
+- **Headline**: 24% larger max size (72px vs 58px) with bolder weight
+- **Feature line**: 25% larger max size (15px vs 12px) with better contrast
+
+The staggered entrance animations create a polished, sequential reveal that draws the eye from the logo down to the headline and feature line.
+
