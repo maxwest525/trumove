@@ -1746,9 +1746,9 @@ export default function Index() {
             <div className="tru-ai-steps-inner">
               {/* Header row: info on left, previews on right */}
               <div className="tru-ai-header-row" ref={scanPreviewRef}>
-                {/* Left side: Premium marketing content - centered */}
-                <div className="tru-ai-steps-left">
-                {/* Premium headline block */}
+                {/* LEFT: Description content */}
+                <div className="tru-ai-content-left">
+                  {/* Premium headline block */}
                   <div className="tru-ai-headline-block animate-fade-scale-in opacity-0" style={{ animationDelay: '0ms' }}>
                     <h3 className="tru-ai-section-title text-lg tracking-widest">AI Analysis Estimator</h3>
                     <h2 className="tru-ai-main-headline">
@@ -1786,8 +1786,8 @@ export default function Index() {
                   </button>
                 </div>
                 
-                {/* Previews on right - UNCHANGED */}
-                <div className={`tru-ai-header-previews ${scanDemoRunning ? 'is-running' : ''}`}>
+                {/* CENTER: Room Scanner Demo */}
+                <div className={`tru-ai-scanner-center ${scanDemoRunning ? 'is-running' : ''}`}>
                   <ScannerPreview 
                     isRunning={scanDemoRunning} 
                     visibleCount={scanVisibleCount}
@@ -1798,6 +1798,10 @@ export default function Index() {
                       }, 100);
                     }} 
                   />
+                </div>
+                
+                {/* RIGHT: Detection List */}
+                <div className="tru-ai-detection-right">
                   <DetectionList visibleCount={scanVisibleCount} />
                 </div>
               </div>

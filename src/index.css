@@ -2588,9 +2588,51 @@
 }
 
 /* Steps left container - center-relative positioning for consistent gap */
+/* =============================================
+   AI ANALYSIS SECTION - 3-column centered layout
+   Description (left) | Room Demo (center @ 770px) | Detection (right)
+   ============================================= */
+
+/* Description - LEFT of center */
+.tru-ai-content-left {
+  position: absolute;
+  left: 770px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin-left: calc(-210px - 24px - 210px - 4rem); /* Half scanner + gap + half detection + extra gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  width: auto;
+  max-width: 26rem;
+  z-index: 5;
+}
+
+/* Room Scanner Demo - CENTERED at 770px anchor */
+.tru-ai-scanner-center {
+  position: absolute;
+  left: 770px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+/* Detection List - RIGHT of center */
+.tru-ai-detection-right {
+  position: absolute;
+  left: 770px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin-left: calc(210px + 24px); /* Half scanner + gap */
+  z-index: 10;
+}
+
+/* Legacy class - keep for backwards compatibility */
 .tru-ai-steps-left {
   position: absolute;
-  left: 737.5px;
+  left: 770px;
   top: 50%;
   transform: translate(-100%, -50%);
   margin-left: -4rem;
@@ -2763,6 +2805,7 @@
 
 /* Responsive adjustments for new design */
 @media (max-width: 1400px) {
+  .tru-ai-content-left,
   .tru-ai-steps-left {
     width: 18.75rem; /* 300px in rem */
   }
@@ -2783,14 +2826,30 @@
     min-height: auto;
     gap: var(--spacing-xl);
   }
+  .tru-ai-content-left,
   .tru-ai-steps-left {
     position: relative;
+    left: auto;
     top: auto;
     transform: none;
+    margin-left: 0;
     width: 100%;
     max-width: 31.25rem; /* 500px */
     text-align: center;
     align-items: center;
+  }
+  .tru-ai-scanner-center {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+  }
+  .tru-ai-detection-right {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    margin-left: 0;
   }
   .tru-ai-headline-block {
     align-items: center;
@@ -2861,9 +2920,10 @@
 }
 
 /* Previews container - center-relative positioning for consistent gap */
+/* Legacy previews container - no longer used in 3-column layout */
 .tru-ai-header-previews {
   position: absolute;
-  left: 737.5px;
+  left: 770px;
   top: 50%;
   transform: translate(0, -50%);
   margin-left: 4rem;
