@@ -569,17 +569,28 @@ function RoadMapPanel() {
         <span>LIVE GPS</span>
       </div>
       
-      {/* Camera Mode Toggle */}
-      <button
-        onClick={() => setIsChaseMode(!isChaseMode)}
-        className="absolute top-2 right-2 z-20 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/70 hover:bg-black/90 border border-white/20 hover:border-primary/50 backdrop-blur-sm transition-all"
-        aria-label={isChaseMode ? "Switch to North-facing view" : "Switch to Chase-cam view"}
-      >
-        <Compass className="w-3 h-3 text-primary" />
-        <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">
-          {isChaseMode ? "Chase" : "North"}
-        </span>
-      </button>
+      {/* Camera Mode Toggle with Tooltip */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => setIsChaseMode(!isChaseMode)}
+            className="absolute top-2 right-2 z-20 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/70 hover:bg-black/90 border border-white/20 hover:border-primary/50 backdrop-blur-sm transition-all"
+            aria-label={isChaseMode ? "Switch to North-facing view" : "Switch to Chase-cam view"}
+          >
+            <Compass className="w-3 h-3 text-primary" />
+            <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">
+              {isChaseMode ? "Chase" : "North"}
+            </span>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="left" className="max-w-[200px]">
+          <p className="text-xs">
+            {isChaseMode 
+              ? "Chase: Camera follows truck's heading direction" 
+              : "North: Fixed north-facing orientation"}
+          </p>
+        </TooltipContent>
+      </Tooltip>
       
       <div className="tru-tracker-progress-badge">
         <span>{Math.round(truckProgress * 100)}% Complete</span>
