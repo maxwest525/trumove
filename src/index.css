@@ -15433,9 +15433,9 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 36px 32px;
-  max-width: 1200px;
-  width: 96%;
+  padding: 48px 48px 40px;
+  max-width: 1280px;
+  width: 94%;
   background: hsl(var(--background));
   border-radius: 24px;
   border: 3px solid hsl(var(--tm-ink));
@@ -15460,11 +15460,11 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 
 .tru-analyze-popup-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: hsl(var(--tm-ink));
   letter-spacing: -0.02em;
@@ -15475,7 +15475,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: 16px;
+  gap: 24px;
   width: 100%;
 }
 
@@ -15483,6 +15483,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 0 0 auto;
   opacity: 0;
   transform: scale(0.9) translateY(16px);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -15493,25 +15494,30 @@
   transform: scale(1) translateY(0);
 }
 
+.tru-analyze-strip-route {
+  flex: 1 1 auto;
+  max-width: 420px;
+}
+
 .tru-analyze-strip-label {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: hsl(var(--muted-foreground));
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
 }
 
 .tru-analyze-strip-frame {
   position: relative;
-  width: 360px;
-  height: 220px;
+  width: 320px;
+  height: 200px;
   background: hsl(var(--muted));
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
   border: 2px solid hsl(var(--border));
   box-shadow: 
@@ -15519,12 +15525,11 @@
     0 2px 8px hsl(var(--tm-ink) / 0.08);
 }
 
-.tru-analyze-strip-route .tru-analyze-strip-frame {
-  width: 440px;
-}
-
+.tru-analyze-strip-route .tru-analyze-strip-frame,
 .tru-analyze-strip-route-frame {
-  width: 440px !important;
+  width: 100%;
+  max-width: 420px;
+  height: 200px;
 }
 
 .tru-analyze-strip-shimmer {
