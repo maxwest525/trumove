@@ -435,7 +435,7 @@ function TrackingPreview() {
   
   // Animate truck along route - one way trip
   useEffect(() => {
-    const duration = 15000; // 15 seconds total journey
+    const duration = 10000; // 10 seconds total journey
     const startTime = Date.now();
     
     const animate = () => {
@@ -564,19 +564,42 @@ function TrackingPreview() {
                 <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.6" />
               </linearGradient>
             </defs>
-            {/* Glow layer */}
+            {/* Glow layer - squiggly road-like path */}
             <path 
-              d="M 380 180 C 340 190 300 200 260 210 C 220 220 180 235 140 245 C 100 255 60 265 40 280"
+              d="M 380 178 
+                 C 370 182 362 188 355 185 
+                 C 345 180 338 190 328 195 
+                 C 318 200 308 198 298 205 
+                 C 288 212 280 208 270 215 
+                 C 258 222 250 218 240 225 
+                 C 228 232 220 228 210 235 
+                 C 198 242 188 238 178 245 
+                 C 165 252 155 248 145 255 
+                 C 132 263 120 258 108 265 
+                 C 95 272 82 268 70 275 
+                 C 58 282 48 278 40 282"
               stroke="hsl(145, 63%, 42%)"
               strokeWidth="10"
               strokeOpacity="0.3"
               fill="none"
               strokeLinecap="round"
+              strokeLinejoin="round"
               className="tru-tracker-route-glow"
             />
-            {/* Animated drawing line */}
+            {/* Animated drawing line - squiggly road-like path */}
             <path 
-              d="M 380 180 C 340 190 300 200 260 210 C 220 220 180 235 140 245 C 100 255 60 265 40 280"
+              d="M 380 178 
+                 C 370 182 362 188 355 185 
+                 C 345 180 338 190 328 195 
+                 C 318 200 308 198 298 205 
+                 C 288 212 280 208 270 215 
+                 C 258 222 250 218 240 225 
+                 C 228 232 220 228 210 235 
+                 C 198 242 188 238 178 245 
+                 C 165 252 155 248 145 255 
+                 C 132 263 120 258 108 265 
+                 C 95 272 82 268 70 275 
+                 C 58 282 48 278 40 282"
               className="tru-tracker-route-draw"
               stroke="url(#satRouteGradient)"
               strokeWidth="5"
