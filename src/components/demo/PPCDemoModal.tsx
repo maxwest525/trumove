@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +14,11 @@ import {
   CheckCircle2, AlertTriangle, ArrowUp, ArrowDown,
   Copy, ExternalLink, Lightbulb,
   Type, Play, Pause, FlaskConical, LineChart,
-  ArrowRight, Percent, Timer, Eye, Users, Layers,
-  Plus, Trophy, Zap, Activity, Download, Mail, 
-  Share2, FileDown, Radio
+  Radio, Mail
 } from "lucide-react";
+import { ABTest, ConversionEvent, FunnelStage, Stats, Ad } from "./ppc/types";
+import { ABTestManager } from "./ppc/ABTestManager";
+import { ConversionsPanel } from "./ppc/ConversionsPanel";
 
 interface PPCDemoModalProps {
   open: boolean;
@@ -86,7 +87,7 @@ const LANDING_PAGE_TEMPLATES = [
   { id: 4, name: "Calculator Tool", conversion: "15.8%", thumbnail: "calculator" },
 ];
 
-const INITIAL_AB_TESTS = [
+const INITIAL_AB_TESTS: ABTest[] = [
   {
     id: 1,
     name: "Homepage Hero CTA",
@@ -128,7 +129,7 @@ const INITIAL_AB_TESTS = [
   },
 ];
 
-const INITIAL_CONVERSION_EVENTS = [
+const INITIAL_CONVERSION_EVENTS: ConversionEvent[] = [
   { event: "Quote Requested", count: 847, trend: "+12%", value: "$42.35", source: "Google Ads" },
   { event: "Phone Call", count: 234, trend: "+8%", value: "$68.20", source: "Direct" },
   { event: "Form Submitted", count: 1203, trend: "+18%", value: "$28.50", source: "Organic" },
@@ -136,7 +137,7 @@ const INITIAL_CONVERSION_EVENTS = [
   { event: "Booking Completed", count: 89, trend: "+6%", value: "$285.00", source: "Google Ads" },
 ];
 
-const INITIAL_FUNNEL_STAGES = [
+const INITIAL_FUNNEL_STAGES: FunnelStage[] = [
   { stage: "Landing Page Views", count: 28450, rate: 100 },
   { stage: "Quote Started", count: 8234, rate: 28.9 },
   { stage: "Inventory Added", count: 4521, rate: 15.9 },
@@ -144,7 +145,7 @@ const INITIAL_FUNNEL_STAGES = [
   { stage: "Booking Made", count: 847, rate: 3.0 },
 ];
 
-const INITIAL_STATS = {
+const INITIAL_STATS: Stats = {
   totalSpend: 1736,
   clicks: 2373,
   conversions: 70,
@@ -156,8 +157,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
-  const [showNewTest, setShowNewTest] = useState(false);
-  const [newTestName, setNewTestName] = useState("");
   
   // Live demo mode
   const [liveMode, setLiveMode] = useState(false);
@@ -169,10 +168,10 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   const [chartData, setChartData] = useState([35, 45, 30, 60, 75, 55, 80, 65, 90, 70, 85, 95, 75, 88]);
   
   // Export states
-  const [isExporting, setIsExporting] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [exportEmail, setExportEmail] = useState("");
   const [exportType, setExportType] = useState<"abtest" | "conversions">("abtest");
+  const [isExporting, setIsExporting] = useState(false);
 
   // Live mode simulation
   useEffect(() => {
@@ -238,70 +237,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
       setGeneratedContent("Get Your Free Moving Quote in 60 Seconds\n\nTrusted by 50,000+ families nationwide. Our AI-powered system gives you accurate, binding quotes without the runaround.\n\n✓ Compare verified movers instantly\n✓ Real-time shipment tracking\n✓ Price-match guarantee\n✓ $0 deposit to book");
     }, 2000);
   };
-
-  const handleCreateTest = () => {
-    setShowNewTest(false);
-    setNewTestName("");
-  };
-  
-  // Export functions
-  const generatePDFContent = useCallback((type: "abtest" | "conversions") => {
-    const date = new Date().toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-    
-    if (type === "abtest") {
-      return {
-        title: "A/B Test Results Report",
-        date,
-        sections: abTests.map(test => ({
-          name: test.name,
-          status: test.status,
-          winner: test.winner,
-          confidence: `${test.confidence}%`,
-          lift: test.lift,
-          variants: test.variants
-        }))
-      };
-    } else {
-      return {
-        title: "Conversion Analytics Report",
-        date,
-        stats: {
-          totalConversions: conversionEvents.reduce((acc, e) => acc + e.count, 0),
-          avgValue: "$" + (conversionEvents.reduce((acc, e) => acc + parseFloat(e.value.replace('$', '')) * e.count, 0) / conversionEvents.reduce((acc, e) => acc + e.count, 0)).toFixed(2),
-        },
-        events: conversionEvents,
-        funnel: funnelStages
-      };
-    }
-  }, [abTests, conversionEvents, funnelStages]);
-  
-  const handleExportPDF = async (type: "abtest" | "conversions") => {
-    setIsExporting(true);
-    setExportType(type);
-    
-    // Simulate PDF generation
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const content = generatePDFContent(type);
-    
-    // Create a simple text representation for demo
-    const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${type === "abtest" ? "ab-test-results" : "conversion-report"}-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    setIsExporting(false);
-    toast.success(`${type === "abtest" ? "A/B Test" : "Conversion"} report downloaded!`);
-  };
   
   const handleEmailExport = async () => {
     if (!exportEmail) {
@@ -319,11 +254,10 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
     setExportEmail("");
     toast.success(`Report sent to ${exportEmail}!`);
   };
-  
-  const handleShare = (type: "abtest" | "conversions") => {
-    const shareUrl = `https://trumove.ai/reports/${type}/${Date.now()}`;
-    navigator.clipboard.writeText(shareUrl);
-    toast.success("Shareable link copied to clipboard!");
+
+  const openEmailModal = (type: "abtest" | "conversions") => {
+    setExportType(type);
+    setShowEmailModal(true);
   };
 
   return (
@@ -778,387 +712,24 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
               </div>
             )}
 
-            {/* A/B Testing */}
+            {/* A/B Testing - Using new component with drag-and-drop */}
             {activeTab === "abtest" && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-foreground">A/B Test Manager</h3>
-                  <div className="flex gap-2">
-                    {/* Export Buttons */}
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-1"
-                      onClick={() => handleExportPDF("abtest")}
-                      disabled={isExporting}
-                    >
-                      <Download className="w-3 h-3" />
-                      PDF
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-1"
-                      onClick={() => { setExportType("abtest"); setShowEmailModal(true); }}
-                    >
-                      <Mail className="w-3 h-3" />
-                      Email
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-1"
-                      onClick={() => handleShare("abtest")}
-                    >
-                      <Share2 className="w-3 h-3" />
-                      Share
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      className="gap-2"
-                      onClick={() => setShowNewTest(true)}
-                      style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
-                    >
-                      <Plus className="w-4 h-4" />
-                      Create Test
-                    </Button>
-                  </div>
-                </div>
-
-                {/* New Test Form */}
-                {showNewTest && (
-                  <div className="p-4 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50/50 dark:bg-purple-950/20">
-                    <div className="flex items-center gap-3 mb-3">
-                      <FlaskConical className="w-5 h-5" style={{ color: "#7C3AED" }} />
-                      <h4 className="font-semibold text-foreground">New A/B Test</h4>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 mb-3">
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1 block">Test Name</label>
-                        <Input 
-                          placeholder="e.g., Homepage CTA Color" 
-                          value={newTestName}
-                          onChange={(e) => setNewTestName(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1 block">Test Type</label>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm" className="flex-1 gap-1">
-                            <Layers className="w-3 h-3" />
-                            Element
-                          </Button>
-                          <Button variant="outline" size="sm" className="flex-1 gap-1">
-                            <Layout className="w-3 h-3" />
-                            Page
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="p-3 rounded-lg border border-border bg-card">
-                        <div className="text-xs font-medium text-muted-foreground mb-2">Control (Original)</div>
-                        <div className="aspect-video rounded bg-muted flex items-center justify-center">
-                          <span className="text-xs text-muted-foreground">Current Version</span>
-                        </div>
-                      </div>
-                      <div className="p-3 rounded-lg border border-dashed border-purple-300 bg-purple-50/30">
-                        <div className="text-xs font-medium mb-2" style={{ color: "#7C3AED" }}>Variant A</div>
-                        <div className="aspect-video rounded bg-muted flex items-center justify-center cursor-pointer hover:bg-muted/70 transition-colors">
-                          <Plus className="w-4 h-4 text-muted-foreground" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => setShowNewTest(false)}>Cancel</Button>
-                      <Button size="sm" onClick={handleCreateTest} style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
-                        <Zap className="w-3 h-3 mr-1" />
-                        Launch Test
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Active Tests */}
-                <div className="space-y-3">
-                  {abTests.map((test) => (
-                    <div key={test.id} className={`p-4 rounded-xl border border-border bg-card ${liveMode ? "transition-all duration-500" : ""}`}>
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-semibold text-foreground">{test.name}</h4>
-                            <Badge 
-                              className="text-[10px]"
-                              style={{ 
-                                background: test.status === "running" ? "#10B98120" : "#7C3AED20",
-                                color: test.status === "running" ? "#10B981" : "#7C3AED"
-                              }}
-                            >
-                              {test.status === "running" ? "Running" : "Completed"}
-                            </Badge>
-                            {test.confidence >= 95 && (
-                              <Badge className="text-[10px] gap-1" style={{ background: "#F59E0B20", color: "#F59E0B" }}>
-                                <Trophy className="w-2.5 h-2.5" />
-                                Winner Found
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="text-xs text-muted-foreground">Started {test.startDate}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold" style={{ color: "#10B981" }}>{test.lift}</div>
-                          <div className="text-[10px] text-muted-foreground">Lift</div>
-                        </div>
-                      </div>
-
-                      {/* Variants Comparison */}
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        {test.variants.map((variant, idx) => (
-                          <div 
-                            key={idx} 
-                            className={`p-3 rounded-lg border ${variant.name === test.winner ? "border-green-300 bg-green-50/50 dark:bg-green-950/20" : "border-border bg-muted/30"}`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-medium text-foreground">{variant.name}</span>
-                              {variant.name === test.winner && (
-                                <Trophy className="w-3 h-3 text-green-500" />
-                              )}
-                            </div>
-                            <div className="grid grid-cols-3 gap-2 text-center">
-                              <div>
-                                <div className={`text-sm font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{variant.visitors.toLocaleString()}</div>
-                                <div className="text-[9px] text-muted-foreground">Visitors</div>
-                              </div>
-                              <div>
-                                <div className={`text-sm font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{variant.conversions}</div>
-                                <div className="text-[9px] text-muted-foreground">Conversions</div>
-                              </div>
-                              <div>
-                                <div className={`text-sm font-bold ${liveMode ? "transition-all duration-300" : ""}`} style={{ color: variant.name === test.winner ? "#10B981" : "#64748B" }}>{variant.rate.toFixed(1)}%</div>
-                                <div className="text-[9px] text-muted-foreground">Rate</div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Confidence Bar */}
-                      <div className="flex items-center gap-3">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between text-xs mb-1">
-                            <span className="text-muted-foreground">Statistical Confidence</span>
-                            <span className={`font-medium ${liveMode ? "transition-all duration-300" : ""}`} style={{ color: test.confidence >= 95 ? "#10B981" : "#F59E0B" }}>{test.confidence.toFixed(0)}%</span>
-                          </div>
-                          <div className="h-2 rounded-full bg-muted overflow-hidden">
-                            <div 
-                              className={`h-full rounded-full ${liveMode ? "transition-all duration-500" : ""}`}
-                              style={{ 
-                                width: `${test.confidence}%`,
-                                background: test.confidence >= 95 ? "#10B981" : test.confidence >= 80 ? "#F59E0B" : "#EF4444"
-                              }}
-                            />
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm" className="gap-1">
-                          {test.status === "running" ? (
-                            <>
-                              <Pause className="w-3 h-3" />
-                              Pause
-                            </>
-                          ) : (
-                            <>
-                              <ArrowRight className="w-3 h-3" />
-                              Apply Winner
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ABTestManager
+                tests={abTests}
+                setTests={setAbTests}
+                liveMode={liveMode}
+                onEmailExport={() => openEmailModal("abtest")}
+              />
             )}
 
-            {/* Conversions */}
+            {/* Conversions - Using new component */}
             {activeTab === "conversions" && (
-              <div className="space-y-4">
-                {/* Export Header */}
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-foreground">Conversion Analytics</h3>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-1"
-                      onClick={() => handleExportPDF("conversions")}
-                      disabled={isExporting}
-                    >
-                      <FileDown className="w-3 h-3" />
-                      Export PDF
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-1"
-                      onClick={() => { setExportType("conversions"); setShowEmailModal(true); }}
-                    >
-                      <Mail className="w-3 h-3" />
-                      Email Report
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-1"
-                      onClick={() => handleShare("conversions")}
-                    >
-                      <Share2 className="w-3 h-3" />
-                      Share Link
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Summary Stats */}
-                <div className="grid grid-cols-4 gap-3">
-                  {[
-                    { label: "Total Conversions", value: conversionEvents.reduce((acc, e) => acc + e.count, 0).toLocaleString(), icon: Target, color: "#7C3AED" },
-                    { label: "Conversion Rate", value: "3.2%", icon: Percent, color: "#10B981" },
-                    { label: "Avg. Time to Convert", value: "4.2 days", icon: Timer, color: "#EC4899" },
-                    { label: "Total Value", value: "$" + (conversionEvents.reduce((acc, e) => acc + parseFloat(e.value.replace('$', '')) * e.count, 0) / 1000).toFixed(0) + "K", icon: DollarSign, color: "#F59E0B" },
-                  ].map((stat) => (
-                    <div key={stat.label} className={`p-4 rounded-xl border border-border bg-card ${liveMode ? "transition-all duration-500" : ""}`}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${stat.color}20` }}>
-                          <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
-                        </div>
-                      </div>
-                      <div className={`text-2xl font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{stat.value}</div>
-                      <div className="text-xs text-muted-foreground">{stat.label}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Conversion Funnel */}
-                <div className="rounded-xl border border-border bg-card p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-foreground">Conversion Funnel</h3>
-                    <div className="flex gap-2 items-center">
-                      {liveMode && (
-                        <Badge className="gap-1 text-[10px]" style={{ background: "#EF444420", color: "#EF4444" }}>
-                          <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                          Live
-                        </Badge>
-                      )}
-                      <Badge variant="secondary">Last 30 days</Badge>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {funnelStages.map((stage, i) => (
-                      <div key={stage.stage} className="flex items-center gap-3">
-                        <div className="w-32 text-xs text-muted-foreground truncate">{stage.stage}</div>
-                        <div className="flex-1 h-8 rounded-lg overflow-hidden bg-muted relative">
-                          <div 
-                            className={`h-full rounded-lg flex items-center justify-end px-2 ${liveMode ? "transition-all duration-500" : ""}`}
-                            style={{ 
-                              width: `${Math.max(stage.rate, 5)}%`,
-                              background: `linear-gradient(90deg, #7C3AED ${100 - stage.rate}%, #A855F7 100%)`,
-                              minWidth: "60px"
-                            }}
-                          >
-                            <span className={`text-xs font-bold text-white ${liveMode ? "transition-all duration-300" : ""}`}>{stage.count.toLocaleString()}</span>
-                          </div>
-                        </div>
-                        <div className="w-16 text-right">
-                          <span className="text-xs font-medium" style={{ color: "#7C3AED" }}>{stage.rate.toFixed(1)}%</span>
-                        </div>
-                        {i < funnelStages.length - 1 && (
-                          <div className="w-16 text-right">
-                            <span className="text-[10px] text-red-500">
-                              -{((1 - (funnelStages[i + 1].count / stage.count)) * 100).toFixed(0)}%
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Conversion Events */}
-                <div className="rounded-xl border border-border overflow-hidden">
-                  <div className="px-4 py-3 flex items-center justify-between" style={{ background: "#F8FAFC" }}>
-                    <span className="font-semibold text-sm text-foreground">Conversion Events</span>
-                    <Button variant="ghost" size="sm" className="gap-1">
-                      <Plus className="w-3 h-3" />
-                      Add Event
-                    </Button>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {conversionEvents.map((event, i) => (
-                      <div key={i} className={`px-4 py-3 flex items-center gap-4 hover:bg-muted/30 transition-colors ${liveMode ? "transition-all duration-500" : ""}`}>
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#7C3AED20" }}>
-                          <Activity className="w-4 h-4" style={{ color: "#7C3AED" }} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm text-foreground">{event.event}</div>
-                          <div className="text-xs text-muted-foreground">Source: {event.source}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className={`text-lg font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{event.count}</div>
-                          <div className="text-[10px] text-green-500">{event.trend}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-medium" style={{ color: "#7C3AED" }}>{event.value}</div>
-                          <div className="text-[10px] text-muted-foreground">Avg. Value</div>
-                        </div>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Attribution */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl border border-border bg-card">
-                    <h4 className="font-semibold text-sm mb-3 text-foreground">Top Converting Sources</h4>
-                    <div className="space-y-2">
-                      {[
-                        { source: "Google Ads", conversions: 412, rate: "4.2%" },
-                        { source: "Organic Search", conversions: 328, rate: "3.8%" },
-                        { source: "Direct", conversions: 245, rate: "3.1%" },
-                        { source: "Facebook", conversions: 156, rate: "2.4%" },
-                      ].map((item) => (
-                        <div key={item.source} className="flex items-center justify-between">
-                          <span className="text-sm text-foreground">{item.source}</span>
-                          <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-foreground">{item.conversions}</span>
-                            <Badge variant="secondary" className="text-[10px]">{item.rate}</Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl border border-border bg-card">
-                    <h4 className="font-semibold text-sm mb-3 text-foreground">Conversion Path</h4>
-                    <div className="space-y-2">
-                      {[
-                        { path: "Ad → Quote → Book", count: 234, percent: 42 },
-                        { path: "Organic → Blog → Quote", count: 156, percent: 28 },
-                        { path: "Direct → Quote", count: 112, percent: 20 },
-                        { path: "Social → Landing → Quote", count: 56, percent: 10 },
-                      ].map((item) => (
-                        <div key={item.path}>
-                          <div className="flex items-center justify-between text-xs mb-1">
-                            <span className="text-muted-foreground truncate">{item.path}</span>
-                            <span className="font-medium text-foreground">{item.count}</span>
-                          </div>
-                          <Progress value={item.percent} className="h-1" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <ConversionsPanel
+                events={conversionEvents}
+                funnel={funnelStages}
+                liveMode={liveMode}
+                onEmailExport={() => openEmailModal("conversions")}
+              />
             )}
           </div>
         </ScrollArea>
