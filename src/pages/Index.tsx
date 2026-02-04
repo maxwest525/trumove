@@ -482,74 +482,7 @@ function TrackingPreview() {
 
   return (
     <div className="tru-tracker-preview-container">
-      {/* Main Road Map - Dark themed with route */}
-      <div className="tru-tracker-road-map">
-        <img 
-          src={roadMapUrl} 
-          alt="Route from New York to Los Angeles" 
-          className="tru-tracker-road-map-img"
-        />
-        
-        {/* Animated truck marker overlay */}
-        <div 
-          className="tru-tracker-truck-overlay"
-          style={{
-            left: `${10 + truckProgress * 80}%`,
-            top: `${35 + Math.sin(truckProgress * Math.PI) * 15}%`
-          }}
-        >
-          <div className="tru-tracker-truck-pulse" />
-          <Truck className="w-5 h-5 text-white" />
-        </div>
-        
-        {/* LIVE GPS Badge */}
-        <div className="tru-tracker-live-badge">
-          <span className="tru-tracker-live-dot" />
-          <span>LIVE GPS</span>
-        </div>
-        
-        {/* Progress indicator */}
-        <div className="tru-tracker-progress-badge">
-          <span>{Math.round(truckProgress * 100)}% Complete</span>
-        </div>
-        
-        {/* Stats Overlay - Top Right */}
-        <div className="tru-tracker-stats-overlay">
-          <div className="tru-tracker-stat-item">
-            <Clock className="w-3 h-3" />
-            <span className="tru-tracker-stat-label">ETA</span>
-            <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.eta}</span>
-          </div>
-          <div className="tru-tracker-stat-item">
-            <Route className="w-3 h-3" />
-            <span className="tru-tracker-stat-label">Traffic</span>
-            <span className="tru-tracker-stat-value tru-tracker-traffic-light">{SAMPLE_ROUTE.traffic}</span>
-          </div>
-          <div className="tru-tracker-stat-item">
-            <Globe className="w-3 h-3" />
-            <span className="tru-tracker-stat-label">Weather</span>
-            <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.weather}</span>
-          </div>
-        </div>
-        
-        {/* Route Info Bar - Bottom */}
-        <div className="tru-tracker-route-bar">
-          <div className="tru-tracker-route-endpoints">
-            <span className="tru-tracker-origin">
-              <MapPin className="w-3 h-3" />
-              {SAMPLE_ROUTE.origin.name}
-            </span>
-            <ArrowRight className="w-3 h-3" />
-            <span className="tru-tracker-destination">
-              <MapPinned className="w-3 h-3" />
-              {SAMPLE_ROUTE.destination.name}
-            </span>
-          </div>
-          <span className="tru-tracker-distance">{SAMPLE_ROUTE.distance}</span>
-        </div>
-      </div>
-      
-      {/* Satellite Route Overview - Full USA */}
+      {/* Satellite Route Overview - Full USA (LEFT) */}
       <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
         <img src={satelliteMapUrl} alt="Satellite Route Overview" />
         
@@ -619,6 +552,73 @@ function TrackingPreview() {
         <div className="tru-tracker-satellite-label">
           <Radar className="w-3 h-3" />
           <span>Route Overview</span>
+        </div>
+      </div>
+      
+      {/* Main Road Map - Dark themed with route (RIGHT) */}
+      <div className="tru-tracker-road-map">
+        <img 
+          src={roadMapUrl} 
+          alt="Route from New York to Los Angeles" 
+          className="tru-tracker-road-map-img"
+        />
+        
+        {/* Animated truck marker overlay */}
+        <div 
+          className="tru-tracker-truck-overlay"
+          style={{
+            left: `${10 + truckProgress * 80}%`,
+            top: `${35 + Math.sin(truckProgress * Math.PI) * 15}%`
+          }}
+        >
+          <div className="tru-tracker-truck-pulse" />
+          <Truck className="w-5 h-5 text-white" />
+        </div>
+        
+        {/* LIVE GPS Badge */}
+        <div className="tru-tracker-live-badge">
+          <span className="tru-tracker-live-dot" />
+          <span>LIVE GPS</span>
+        </div>
+        
+        {/* Progress indicator */}
+        <div className="tru-tracker-progress-badge">
+          <span>{Math.round(truckProgress * 100)}% Complete</span>
+        </div>
+        
+        {/* Stats Overlay - Top Right */}
+        <div className="tru-tracker-stats-overlay">
+          <div className="tru-tracker-stat-item">
+            <Clock className="w-3 h-3" />
+            <span className="tru-tracker-stat-label">ETA</span>
+            <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.eta}</span>
+          </div>
+          <div className="tru-tracker-stat-item">
+            <Route className="w-3 h-3" />
+            <span className="tru-tracker-stat-label">Traffic</span>
+            <span className="tru-tracker-stat-value tru-tracker-traffic-light">{SAMPLE_ROUTE.traffic}</span>
+          </div>
+          <div className="tru-tracker-stat-item">
+            <Globe className="w-3 h-3" />
+            <span className="tru-tracker-stat-label">Weather</span>
+            <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.weather}</span>
+          </div>
+        </div>
+        
+        {/* Route Info Bar - Bottom */}
+        <div className="tru-tracker-route-bar">
+          <div className="tru-tracker-route-endpoints">
+            <span className="tru-tracker-origin">
+              <MapPin className="w-3 h-3" />
+              {SAMPLE_ROUTE.origin.name}
+            </span>
+            <ArrowRight className="w-3 h-3" />
+            <span className="tru-tracker-destination">
+              <MapPinned className="w-3 h-3" />
+              {SAMPLE_ROUTE.destination.name}
+            </span>
+          </div>
+          <span className="tru-tracker-distance">{SAMPLE_ROUTE.distance}</span>
         </div>
       </div>
     </div>
