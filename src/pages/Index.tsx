@@ -418,26 +418,26 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN
 // Supabase URL for edge function proxying
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://nhoagucgcqjfbtifykha.supabase.co';
 
-function TrackingPreview() {
+// Route waypoints from NY to LA (simplified path)
+const ROUTE_WAYPOINTS = [
+  { lat: 40.7128, lng: -74.0060 },   // NYC
+  { lat: 40.4406, lng: -79.9959 },   // Pittsburgh
+  { lat: 39.7684, lng: -86.1581 },   // Indianapolis
+  { lat: 38.6270, lng: -90.1994 },   // St. Louis
+  { lat: 39.0997, lng: -94.5786 },   // Kansas City
+  { lat: 35.4676, lng: -97.5164 },   // Oklahoma City
+  { lat: 35.0844, lng: -106.6504 },  // Albuquerque
+  { lat: 33.4484, lng: -112.0740 },  // Phoenix
+  { lat: 34.0522, lng: -118.2437 },  // LA
+];
+
+// Custom hook for shared truck animation state
+function useTruckAnimation() {
   const [truckProgress, setTruckProgress] = useState(0);
   const [mapCenter, setMapCenter] = useState({ lat: SAMPLE_ROUTE.origin.lat, lng: SAMPLE_ROUTE.origin.lng });
   
-  // Route waypoints from NY to LA (simplified path)
-  const routeWaypoints = [
-    { lat: 40.7128, lng: -74.0060 },   // NYC
-    { lat: 40.4406, lng: -79.9959 },   // Pittsburgh
-    { lat: 39.7684, lng: -86.1581 },   // Indianapolis
-    { lat: 38.6270, lng: -90.1994 },   // St. Louis
-    { lat: 39.0997, lng: -94.5786 },   // Kansas City
-    { lat: 35.4676, lng: -97.5164 },   // Oklahoma City
-    { lat: 35.0844, lng: -106.6504 },  // Albuquerque
-    { lat: 33.4484, lng: -112.0740 },  // Phoenix
-    { lat: 34.0522, lng: -118.2437 },  // LA
-  ];
-  
-  // Animate truck along route - one way trip
   useEffect(() => {
-    const duration = 10000; // 10 seconds total journey
+    const duration = 10000;
     const startTime = Date.now();
     
     const animate = () => {
@@ -445,14 +445,13 @@ function TrackingPreview() {
       const progress = Math.min(elapsed / duration, 1);
       setTruckProgress(progress);
       
-      // Calculate current position along waypoints
-      const totalSegments = routeWaypoints.length - 1;
+      const totalSegments = ROUTE_WAYPOINTS.length - 1;
       const segmentProgress = progress * totalSegments;
       const currentSegment = Math.min(Math.floor(segmentProgress), totalSegments - 1);
       const segmentFraction = segmentProgress - currentSegment;
       
-      const start = routeWaypoints[currentSegment];
-      const end = routeWaypoints[Math.min(currentSegment + 1, routeWaypoints.length - 1)];
+      const start = ROUTE_WAYPOINTS[currentSegment];
+      const end = ROUTE_WAYPOINTS[Math.min(currentSegment + 1, ROUTE_WAYPOINTS.length - 1)];
       
       const currentLat = start.lat + (end.lat - start.lat) * segmentFraction;
       const currentLng = start.lng + (end.lng - start.lng) * segmentFraction;
@@ -467,172 +466,154 @@ function TrackingPreview() {
     animate();
   }, []);
   
-  // Dark mode road map - zoomed in on current truck position to show streets
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${mapCenter.lng},${mapCenter.lat})/${mapCenter.lng},${mapCenter.lat},13,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
-  
-  // Satellite overview showing full USA with route markers
+  return { truckProgress, mapCenter };
+}
+
+// Satellite Map Panel - Route Overview
+function SatelliteMapPanel() {
   const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-98,39,3.2,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
-  // Google Street View via edge function proxy
-  const streetViewUrl = `${SUPABASE_URL}/functions/v1/google-street-view?lat=${mapCenter.lat}&lng=${mapCenter.lng}&heading=270&size=240x160`;
-
   return (
-    <div className="tru-tracker-preview-container">
-      {/* Satellite Route Overview - Full USA (LEFT) */}
-      <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
-        <img src={satelliteMapUrl} alt="Satellite Route Overview" />
-        
-        {/* Animated Route Line - Drawing from NY to CA */}
-        <div className="tru-tracker-satellite-route-overlay">
-          <svg viewBox="0 0 420 480" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="satRouteGradient" x1="100%" y1="0%" x2="0%" y2="0%">
-                <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="1" />
-                <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.6" />
-              </linearGradient>
-            </defs>
-            {/* Glow layer - route path matching actual coordinates */}
-            <path 
-              d="M 365 168 
-                 C 350 175 335 178 320 185 
-                 C 300 195 280 200 260 210 
-                 C 235 222 210 230 185 238 
-                 C 160 248 135 258 110 270 
-                 C 90 280 75 290 60 300"
-              stroke="hsl(145, 63%, 42%)"
-              strokeWidth="10"
-              strokeOpacity="0.3"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="tru-tracker-route-glow"
-            />
-            {/* Animated drawing line - route path */}
-            <path 
-              d="M 365 168 
-                 C 350 175 335 178 320 185 
-                 C 300 195 280 200 260 210 
-                 C 235 222 210 230 185 238 
-                 C 160 248 135 258 110 270 
-                 C 90 280 75 290 60 300"
-              className="tru-tracker-route-draw"
-              stroke="url(#satRouteGradient)"
-              strokeWidth="5"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Origin marker (NY) - positioned to match Mapbox pin */}
-            <circle cx="365" cy="168" r="10" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="3" />
-            {/* City waypoints along route */}
-            <circle cx="320" cy="185" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Pittsburgh */}
-            <circle cx="260" cy="210" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Indianapolis */}
-            <circle cx="185" cy="238" r="6" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" opacity="0.9" /> {/* Kansas City */}
-            <circle cx="110" cy="270" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Albuquerque */}
-            {/* Destination marker (LA) - positioned to match Mapbox pin */}
-            <circle cx="60" cy="300" r="10" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="3" />
-          </svg>
-        </div>
-        
-        {/* City waypoint labels */}
-        <div className="tru-tracker-waypoint-label" style={{ top: '48%', left: '38%' }}>Kansas City</div>
-        <div className="tru-tracker-waypoint-label" style={{ top: '55%', left: '18%' }}>Albuquerque</div>
-        
-        {/* City Labels */}
-        <div className="tru-tracker-city-label tru-tracker-city-origin">
-          <span>New York, NY</span>
-        </div>
-        <div className="tru-tracker-city-label tru-tracker-city-destination">
-          <span>Los Angeles, CA</span>
-        </div>
-        
-        <div className="tru-tracker-satellite-label">
-          <Radar className="w-3 h-3" />
-          <span>Route Overview</span>
-        </div>
+    <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
+      <img src={satelliteMapUrl} alt="Satellite Route Overview" />
+      
+      <div className="tru-tracker-satellite-route-overlay">
+        <svg viewBox="0 0 420 480" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="satRouteGradient" x1="100%" y1="0%" x2="0%" y2="0%">
+              <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="1" />
+              <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.6" />
+            </linearGradient>
+          </defs>
+          <path 
+            d="M 365 168 C 350 175 335 178 320 185 C 300 195 280 200 260 210 C 235 222 210 230 185 238 C 160 248 135 258 110 270 C 90 280 75 290 60 300"
+            stroke="hsl(145, 63%, 42%)"
+            strokeWidth="10"
+            strokeOpacity="0.3"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="tru-tracker-route-glow"
+          />
+          <path 
+            d="M 365 168 C 350 175 335 178 320 185 C 300 195 280 200 260 210 C 235 222 210 230 185 238 C 160 248 135 258 110 270 C 90 280 75 290 60 300"
+            className="tru-tracker-route-draw"
+            stroke="url(#satRouteGradient)"
+            strokeWidth="5"
+            fill="none"
+            strokeLinecap="round"
+          />
+          <circle cx="365" cy="168" r="10" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="3" />
+          <circle cx="320" cy="185" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" />
+          <circle cx="260" cy="210" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" />
+          <circle cx="185" cy="238" r="6" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" opacity="0.9" />
+          <circle cx="110" cy="270" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" />
+          <circle cx="60" cy="300" r="10" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="3" />
+        </svg>
       </div>
       
-      {/* Main Road Map - Dark themed with route (RIGHT) */}
-      <div className="tru-tracker-road-map">
-        <img 
-          src={roadMapUrl} 
-          alt="Route from New York to Los Angeles" 
-          className="tru-tracker-road-map-img"
-        />
-        
-        {/* Animated truck marker overlay */}
-        <div 
-          className="tru-tracker-truck-overlay"
-          style={{
-            left: `${10 + truckProgress * 80}%`,
-            top: `${35 + Math.sin(truckProgress * Math.PI) * 15}%`
-          }}
-        >
-          <div className="tru-tracker-truck-pulse" />
-          <Truck className="w-5 h-5 text-white" />
-        </div>
-        
-        {/* LIVE GPS Badge */}
-        <div className="tru-tracker-live-badge">
-          <span className="tru-tracker-live-dot" />
-          <span>LIVE GPS</span>
-        </div>
-        
-        {/* Progress indicator */}
-        <div className="tru-tracker-progress-badge">
-          <span>{Math.round(truckProgress * 100)}% Complete</span>
-        </div>
-        
-        {/* Stats Overlay - Top Right */}
-        <div className="tru-tracker-stats-overlay">
-          <div className="tru-tracker-stat-item">
-            <Clock className="w-3 h-3" />
-            <span className="tru-tracker-stat-label">ETA</span>
-            <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.eta}</span>
-          </div>
-          <div className="tru-tracker-stat-item">
-            <Route className="w-3 h-3" />
-            <span className="tru-tracker-stat-label">Traffic</span>
-            <span className="tru-tracker-stat-value tru-tracker-traffic-light">{SAMPLE_ROUTE.traffic}</span>
-          </div>
-          <div className="tru-tracker-stat-item">
-            <Globe className="w-3 h-3" />
-            <span className="tru-tracker-stat-label">Weather</span>
-            <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.weather}</span>
-          </div>
-        </div>
-        
-        {/* Route Info Bar - Bottom */}
-        <div className="tru-tracker-route-bar">
-          <div className="tru-tracker-route-endpoints">
-            <span className="tru-tracker-origin">
-              <MapPin className="w-3 h-3" />
-              {SAMPLE_ROUTE.origin.name}
-            </span>
-            <ArrowRight className="w-3 h-3" />
-            <span className="tru-tracker-destination">
-              <MapPinned className="w-3 h-3" />
-              {SAMPLE_ROUTE.destination.name}
-            </span>
-          </div>
-          <span className="tru-tracker-distance">{SAMPLE_ROUTE.distance}</span>
-        </div>
+      <div className="tru-tracker-waypoint-label" style={{ top: '48%', left: '38%' }}>Kansas City</div>
+      <div className="tru-tracker-waypoint-label" style={{ top: '55%', left: '18%' }}>Albuquerque</div>
+      
+      <div className="tru-tracker-city-label tru-tracker-city-origin">
+        <span>New York, NY</span>
+      </div>
+      <div className="tru-tracker-city-label tru-tracker-city-destination">
+        <span>Los Angeles, CA</span>
+      </div>
+      
+      <div className="tru-tracker-satellite-label">
+        <Radar className="w-3 h-3" />
+        <span>Route Overview</span>
       </div>
     </div>
   );
 }
 
-// Shipment Tracker Section (mirrored layout)
+// Road Map Panel - Live GPS View
+function RoadMapPanel() {
+  const { truckProgress, mapCenter } = useTruckAnimation();
+  
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${mapCenter.lng},${mapCenter.lat})/${mapCenter.lng},${mapCenter.lat},13,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  
+  return (
+    <div className="tru-tracker-road-map">
+      <img 
+        src={roadMapUrl} 
+        alt="Live GPS View" 
+        className="tru-tracker-road-map-img"
+      />
+      
+      <div 
+        className="tru-tracker-truck-overlay"
+        style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+      >
+        <div className="tru-tracker-truck-pulse" />
+        <Truck className="w-5 h-5 text-white" />
+      </div>
+      
+      <div className="tru-tracker-live-badge">
+        <span className="tru-tracker-live-dot" />
+        <span>LIVE GPS</span>
+      </div>
+      
+      <div className="tru-tracker-progress-badge">
+        <span>{Math.round(truckProgress * 100)}% Complete</span>
+      </div>
+      
+      <div className="tru-tracker-stats-overlay">
+        <div className="tru-tracker-stat-item">
+          <Clock className="w-3 h-3" />
+          <span className="tru-tracker-stat-label">ETA</span>
+          <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.eta}</span>
+        </div>
+        <div className="tru-tracker-stat-item">
+          <Route className="w-3 h-3" />
+          <span className="tru-tracker-stat-label">Traffic</span>
+          <span className="tru-tracker-stat-value tru-tracker-traffic-light">{SAMPLE_ROUTE.traffic}</span>
+        </div>
+        <div className="tru-tracker-stat-item">
+          <Globe className="w-3 h-3" />
+          <span className="tru-tracker-stat-label">Weather</span>
+          <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.weather}</span>
+        </div>
+      </div>
+      
+      <div className="tru-tracker-route-bar">
+        <div className="tru-tracker-route-endpoints">
+          <span className="tru-tracker-origin">
+            <MapPin className="w-3 h-3" />
+            {SAMPLE_ROUTE.origin.name}
+          </span>
+          <ArrowRight className="w-3 h-3" />
+          <span className="tru-tracker-destination">
+            <MapPinned className="w-3 h-3" />
+            {SAMPLE_ROUTE.destination.name}
+          </span>
+        </div>
+        <span className="tru-tracker-distance">{SAMPLE_ROUTE.distance}</span>
+      </div>
+    </div>
+  );
+}
+
+// Shipment Tracker Section - 3-column layout: Satellite | Road Map (centered) | Description
 function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void }) {
   return (
     <section className="tru-tracker-section">
       <div className="tru-tracker-inner">
         <div className="tru-tracker-header-row">
-          {/* Maps on LEFT - Satellite then Road */}
-          <div className="tru-tracker-preview-left">
-            <TrackingPreview />
+          {/* Satellite map - LEFT */}
+          <div className="tru-tracker-satellite-left">
+            <SatelliteMapPanel />
           </div>
           
-          {/* Content on RIGHT */}
+          {/* Road map - CENTER (aligned with AI demo above) */}
+          <div className="tru-tracker-roadmap-center">
+            <RoadMapPanel />
+          </div>
+          
+          {/* Content - RIGHT */}
           <div className="tru-tracker-content-right">
             <div className="tru-ai-headline-block">
               <h3 className="tru-ai-section-title">Real-Time Tracking</h3>
