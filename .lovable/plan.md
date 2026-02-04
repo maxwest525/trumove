@@ -1,184 +1,186 @@
 
-# ✅ COMPLETED: Upgrade Maps with 3D Buildings, Terrain & Cinematic Views
+# Fix Orbit Animation, Add 3D Terrain to Route Overview, and Intro Fly-Through
 
-All maps across the TruMove platform now feature stunning 3D visualization with buildings, terrain, and cinematic camera angles.
+This plan addresses all your feedback: fixing the broken camera orbit, making the maps look as cool as the Mapbox documentation examples, and removing Street View from the tracking map.
 
-## What You'll Get
+## What's Wrong with the Current Orbit
 
-### Visual Features from Your Screenshots
-1. **3D Extruded Buildings** - Realistic city skylines with height-accurate building models
-2. **Tilted Camera Views** - 45-60 degree pitch for cinematic perspectives
-3. **3D Terrain** - Hills and mountains with realistic elevation
-4. **Atmospheric Effects** - Fog, haze, and sky rendering for depth
-5. **Day/Night/Dawn Lighting** - Time-of-day based lighting options
-6. **Smooth Camera Animations** - Cinematic fly-through transitions
+The current sine wave oscillation (`Math.sin(Date.now() / 4000) * 25`) has a problem:
+- `Date.now()` returns huge values (milliseconds since 1970)
+- When divided by 4000, it creates very large radians for the sine function
+- This causes the sine wave to appear "choppy" because it's cycling through many complete periods rapidly
+- The camera appears to jump 5% then reset because you're seeing micro-slices of fast oscillation
 
-## Implementation Overview
+## Implementation Plan
 
-### Phase 1: Create Reusable 3D Map Configuration
-Create a new utility file with shared 3D map configuration that can be applied to any map component:
+### 1. Fix the Orbit Animation (Index.tsx Homepage)
 
-**New file: `src/lib/mapbox3DConfig.ts`**
-- Terrain source configuration (DEM tiles)
-- 3D building layer definition with height extrusion
-- Fog/atmosphere settings for depth
-- Sky layer with realistic lighting
-- Preset camera configurations (overview, city-level, street-level)
+Replace the current choppy sine wave with a **proper elapsed-time-based oscillation**:
 
-### Phase 2: Upgrade Map Components
-
-**6 map components to upgrade:**
-
-| Component | Current Style | New Features |
-|-----------|---------------|--------------|
-| `TruckTrackingMap.tsx` | dark-v11 (flat) | 3D buildings + terrain + tilted camera during follow mode |
-| `MapboxMoveMap.tsx` | satellite-v9 | 3D buildings overlay + terrain + atmospheric fog |
-| `AnimatedRouteMap.tsx` | satellite-v9 | 3D terrain + dramatic pitch for route visualization |
-| `MultiStopRoutePreview.tsx` | light-v11 | 3D buildings for urban stops + subtle terrain |
-| `PropertyMapPreview.tsx` | light-v11 / satellite | 3D buildings for property context |
-| Homepage Route Demo | navigation-night-v1 | 3D buildings + dramatic city flyovers |
-
-### Phase 3: Specific Enhancements
-
-#### Truck Tracking Map (Most Impactful)
 ```text
-Current: Flat dark view with route line
-Upgraded:
+Current (broken):
+  additionalBearing = Math.sin(Date.now() / 4000) * 25
+  ↳ Date.now() is huge → sine cycles too fast → appears jerky
+
+Fixed:
+  startTime = Date.now() at animation start
+  elapsedSeconds = (Date.now() - startTime) / 1000
+  additionalBearing = Math.sin(elapsedSeconds * 0.25) * 35
+  ↳ Counts from 0 → smooth 8-second oscillation cycle
+```
+
+This creates a natural, cinematic camera sway that:
+- Oscillates ±35° smoothly over ~25 seconds (full cycle)
+- Never resets or jumps
+- Feels like a drone camera naturally panning while following the truck
+
+### 2. Add 3D Terrain to Route Overview Panel (Homepage)
+
+Convert the static image Route Overview to a **live Mapbox GL JS map** with:
+
+```text
 +------------------------------------------+
+|  [3D Globe view with terrain hillshade]  |
 |                                          |
-|     [3D Buildings rising from ground]    |
+|      LA ●━━━━━━━━━━━━━━━━━━━● NY         |
+|           Rocky Mountains visible        |
+|           with elevation shading         |
 |                                          |
-|   🚚 ← Truck at street level             |
-|      with 45° tilted camera              |
-|      rotating bearing to follow truck    |
-|                                          |
-|     [Terrain hillshade visible]          |
-|     [Atmospheric fog in distance]        |
+|  [Subtle atmospheric fog at horizon]     |
 +------------------------------------------+
 ```
 
-- Use `mapbox://styles/mapbox/standard` with monochrome theme
-- Add `fill-extrusion` layer for 3D buildings
-- Enable terrain with subtle 1.2x exaggeration
-- 45° pitch in follow mode, 0° for overview
-- Camera bearing rotates to truck heading
+Features:
+- Use `mapbox://styles/mapbox/satellite-streets-v12` for hybrid terrain view
+- Add DEM terrain with **2.5x exaggeration** (dramatic mountains)
+- Add atmospheric fog for depth
+- 30° pitch angle to show elevation
+- GeoJSON route line with cyan neon glow
 
-#### Homepage Route Demo
+### 3. Add Intro Fly-Through on Tracking Page
+
+When the user starts tracking, add a **cinematic intro animation** that zooms from overview to street level:
+
 ```text
-Current: Flat night view with route line
-Upgraded:
-+------------------------------------------+
-|                                          |
-|    [Dramatic city skyline with           |
-|     illuminated 3D buildings]            |
-|                                          |
-|    Cinematic camera orbiting             |
-|    around Oklahoma City center           |
-|    as truck moves through streets        |
-|                                          |
-+------------------------------------------+
+Sequence (3 seconds total):
+1. Start: Continental overview (zoom 4, pitch 0°)
+2. Mid: Regional view (zoom 8, pitch 30°) 
+3. End: Street level at truck (zoom 15, pitch 55°)
 ```
 
-- Enable 3D buildings with warm evening colors
-- Add subtle camera orbit animation
-- Maintain cyan route line with glow effect
+Using the existing `cinematicFlyTo()` function from `mapbox3DConfig.ts`:
+- Triggered when tracking starts AND route is calculated
+- Smooth cubic easing for dramatic effect
+- Ends at the origin point with tilted perspective
 
-#### Property Lookup / Origin-Destination Views
-- Show 3D buildings at property locations
-- Tilted satellite view with building extrusions
-- Helps customers visualize loading/unloading context
+### 4. Confirm Street View Removal
 
-### Phase 4: Light/Time Controls (Optional Enhancement)
-
-Add a small control panel to select lighting conditions:
-- **Day** (default) - Bright lighting
-- **Dusk** - Warm golden hour
-- **Night** - Dark with illuminated buildings
-
-This matches the control buttons visible in your first screenshot.
+The Street View inset was already removed from `TruckTrackingMap.tsx` (line 798 shows the comment: `{/* Street View inset removed - cleaner map focus */}`). I'll verify no other Street View overlays exist within the map component.
 
 ---
+
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `src/pages/Index.tsx` | Fix orbit animation with elapsed-time tracking; Convert RouteOverviewPanel from static image to live Mapbox GL map with 3D terrain |
+| `src/components/tracking/TruckTrackingMap.tsx` | Add intro fly-through animation when tracking starts |
 
 ## Technical Details
 
-### 3D Building Layer Configuration
+### Fixed Orbit Animation Logic
+
 ```javascript
-{
-  id: '3d-buildings',
-  source: 'composite',
-  'source-layer': 'building',
-  filter: ['==', 'extrude', 'true'],
-  type: 'fill-extrusion',
-  minzoom: 14,
-  paint: {
-    'fill-extrusion-color': '#aaa',
-    'fill-extrusion-height': ['get', 'height'],
-    'fill-extrusion-base': ['get', 'min_height'],
-    'fill-extrusion-opacity': 0.7
-  }
+// In TruckViewPanel
+const startTimeRef = useRef<number>(Date.now());
+
+const animate = () => {
+  // Calculate elapsed time since animation started
+  const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
+  
+  // Smooth sine wave: completes one oscillation every ~25 seconds
+  // ±35° range for natural camera sway
+  const orbitOffset = Math.sin(elapsedSeconds * 0.25) * 35;
+  
+  // Apply to driving bearing
+  map.current.setBearing(drivingBearing + orbitOffset);
+};
+```
+
+### 3D Route Overview Panel Structure
+
+```javascript
+// Convert RouteOverviewPanel to live Mapbox GL
+function RouteOverviewPanel() {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  
+  useEffect(() => {
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      center: [-98, 38], // Center of US
+      zoom: 3.5,
+      pitch: 35,
+      bearing: -15,
+      interactive: false
+    });
+    
+    map.current.on('load', () => {
+      // Add dramatic terrain
+      addTerrain(map.current, 2.5);
+      setFogPreset(map.current, 'satellite');
+      
+      // Add route line with glow
+      map.current.addSource('route', { ... });
+      map.current.addLayer({ id: 'route-glow', ... });
+      map.current.addLayer({ id: 'route-line', ... });
+    });
+  }, []);
+  
+  return <div ref={mapContainer} className="w-full h-full" />;
 }
 ```
 
-### Terrain Configuration
+### Intro Fly-Through Trigger
+
 ```javascript
-map.addSource('mapbox-dem', {
-  type: 'raster-dem',
-  url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
-  tileSize: 512,
-  maxzoom: 14
-});
-map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.3 });
-```
-
-### Atmosphere/Fog Configuration
-```javascript
-map.setFog({
-  color: 'rgb(220, 230, 240)',
-  'high-color': 'rgb(180, 200, 230)',
-  'horizon-blend': 0.15,
-  'space-color': 'rgb(15, 20, 30)',
-  'star-intensity': 0.15
-});
-```
-
-### Camera Presets
-```javascript
-// Overview (continental routes)
-{ pitch: 0, bearing: 0, zoom: 4 }
-
-// City level (showing buildings)
-{ pitch: 45, bearing: -17, zoom: 15 }
-
-// Street level (truck following)
-{ pitch: 60, bearing: [dynamic], zoom: 17 }
+// In TruckTrackingMap.tsx - when route is calculated
+const triggerIntroAnimation = useCallback(() => {
+  if (!map.current || !originCoords || introPlayedRef.current) return;
+  
+  introPlayedRef.current = true;
+  
+  // Start zoomed out
+  map.current.jumpTo({
+    center: [-98, 39], // US center
+    zoom: 4,
+    pitch: 0,
+    bearing: 0
+  });
+  
+  // Cinematic fly to origin
+  setTimeout(() => {
+    cinematicFlyTo(map.current!, originCoords, {
+      zoom: 15,
+      pitch: 55,
+      bearing: -20,
+      duration: 3500,
+      curve: 1.8
+    });
+  }, 500);
+}, [originCoords]);
 ```
 
 ---
 
-## Files to Create/Modify
+## Visual Impact
 
-### New Files
-1. `src/lib/mapbox3DConfig.ts` - Reusable 3D configuration utilities
+| Element | Before | After |
+|---------|--------|-------|
+| Homepage Truck View | Camera sways 5% then resets | Smooth continuous ±35° sway |
+| Homepage Route Overview | Static 2D image | Live 3D terrain with visible mountains |
+| Tracking Page Load | Instant view at origin | Cinematic zoom from space to street |
+| Tracking Map | May have Street View inset | Clean map-only focus |
 
-### Modified Files
-1. `src/components/tracking/TruckTrackingMap.tsx` - Add 3D buildings, terrain, tilted camera
-2. `src/components/MapboxMoveMap.tsx` - Add 3D buildings overlay for route analysis
-3. `src/components/estimate/AnimatedRouteMap.tsx` - Add terrain for route animation
-4. `src/components/estimate/MultiStopRoutePreview.tsx` - Add 3D buildings for urban previews
-5. `src/components/PropertyMapPreview.tsx` - Add 3D buildings for property context
-6. `src/pages/Index.tsx` - Upgrade homepage route demo map with 3D
-7. `src/index.css` - Add CSS for light/time toggle controls if desired
-
----
-
-## Visual Impact Summary
-
-| Map Location | Before | After |
-|--------------|--------|-------|
-| Truck Tracking | Flat dark map | Dramatic 3D city views |
-| Homepage Demo | Flat night roads | Cinematic city skyline |
-| Route Analysis | Flat satellite | 3D terrain + buildings |
-| Property Preview | 2D satellite | 3D neighborhood context |
-| Multi-stop | Flat light map | 3D urban visualization |
-
-These changes will make your maps look as stunning as the Mapbox documentation examples you shared - with realistic 3D cities, terrain, and cinematic camera angles throughout the entire application.
+These changes will make your maps match the stunning Mapbox documentation examples - with dramatic terrain, cinematic camera moves, and smooth animations throughout.
