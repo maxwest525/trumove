@@ -466,8 +466,12 @@ function TrackingPreview() {
     animate();
   }, []);
   
-  // Dark mode road map - zoomed very close on current truck position (street level)
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${mapCenter.lng},${mapCenter.lat},15,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Dark mode road map showing full route from NY to LA with markers
+  // Using path overlay to show route and markers for origin/destination
+  const routePathEncoded = encodeURIComponent(
+    `path-5+22c55e-0.6(${routeWaypoints.map(w => `${w.lng},${w.lat}`).join(',')})`
+  );
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s-a+22c55e(-74.006,40.7128),pin-s-b+ef4444(-118.2437,34.0522),path-4+22c55e-0.8(${routeWaypoints.map(w => `${w.lng},${w.lat}`).join(',')})/-98,38,3.5,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Satellite overview showing full USA with route markers
   const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-98,39,3.2,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
@@ -477,55 +481,25 @@ function TrackingPreview() {
 
   return (
     <div className="tru-tracker-preview-container">
-      {/* Main Road Map - US Skeleton with animated truck */}
-      <div className="tru-tracker-road-map tru-tracker-us-skeleton">
-        {/* US Outline SVG */}
-        <svg viewBox="0 0 960 600" className="tru-us-outline-svg">
-          <defs>
-            <linearGradient id="usOutlineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.15" />
-            </linearGradient>
-          </defs>
-          {/* Simplified US Continental Outline */}
-          <path 
-            d="M 120 180 L 140 160 L 180 155 L 220 140 L 280 135 L 340 130 L 400 125 L 460 120 L 520 118 L 580 120 L 640 125 L 700 135 L 750 150 L 800 170 L 830 200 L 840 240 L 835 280 L 820 320 L 800 360 L 780 400 L 750 430 L 700 450 L 650 460 L 600 455 L 550 445 L 500 440 L 450 445 L 400 455 L 350 470 L 300 480 L 250 475 L 200 460 L 160 430 L 130 390 L 110 340 L 100 290 L 105 240 L 120 180 Z"
-            fill="url(#usOutlineGradient)"
-            stroke="hsl(145, 63%, 42%)"
-            strokeWidth="2"
-            strokeOpacity="0.6"
-            className="tru-us-outline-path"
-          />
-          {/* Route path across US */}
-          <path 
-            d="M 820 200 C 780 210 740 220 700 235 C 660 250 620 245 580 255 C 540 265 500 260 460 270 C 420 280 380 275 340 285 C 300 295 260 290 220 305 C 180 320 150 340 130 370"
-            stroke="hsl(145, 63%, 42%)"
-            strokeWidth="4"
-            strokeOpacity="0.8"
-            fill="none"
-            strokeLinecap="round"
-            strokeDasharray="12 6"
-            className="tru-us-route-animated"
-          />
-          {/* City waypoints */}
-          <circle cx="820" cy="200" r="8" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" /> {/* NY */}
-          <circle cx="700" cy="235" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Pittsburgh */}
-          <circle cx="580" cy="255" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Indianapolis */}
-          <circle cx="460" cy="270" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Kansas City */}
-          <circle cx="340" cy="285" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Oklahoma City */}
-          <circle cx="220" cy="305" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Albuquerque */}
-          <circle cx="130" cy="370" r="8" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="2" /> {/* LA */}
-          {/* Animated truck position */}
-          <circle 
-            cx={130 + (820 - 130) * (1 - truckProgress)} 
-            cy={370 + (200 - 370) * (1 - truckProgress)} 
-            r="10" 
-            fill="hsl(145, 63%, 42%)" 
-            stroke="white" 
-            strokeWidth="3"
-            className="tru-us-truck-dot"
-          />
-        </svg>
+      {/* Main Road Map - Dark themed with route */}
+      <div className="tru-tracker-road-map">
+        <img 
+          src={roadMapUrl} 
+          alt="Route from New York to Los Angeles" 
+          className="tru-tracker-road-map-img"
+        />
+        
+        {/* Animated truck marker overlay */}
+        <div 
+          className="tru-tracker-truck-overlay"
+          style={{
+            left: `${10 + truckProgress * 80}%`,
+            top: `${35 + Math.sin(truckProgress * Math.PI) * 15}%`
+          }}
+        >
+          <div className="tru-tracker-truck-pulse" />
+          <Truck className="w-5 h-5 text-white" />
+        </div>
         
         {/* LIVE GPS Badge */}
         <div className="tru-tracker-live-badge">
