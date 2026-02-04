@@ -294,11 +294,11 @@ MoveSummaryModal.displayName = "MoveSummaryModal";
 
 // Furniture positions for detection overlay on sample living room image
 const FURNITURE_POSITIONS = [
-  { id: 0, name: "Sofa", confidence: 98, top: "40%", left: "2%", width: "30%", height: "42%" },
-  { id: 1, name: "Coffee Table", confidence: 96, top: "56%", left: "30%", width: "24%", height: "22%" },
-  { id: 2, name: "TV Console", confidence: 97, top: "30%", left: "26%", width: "38%", height: "30%" },
-  { id: 3, name: "Armchair", confidence: 94, top: "48%", left: "70%", width: "24%", height: "36%" },
-  { id: 4, name: "Floor Lamp", confidence: 91, top: "26%", left: "58%", width: "8%", height: "38%" },
+  { id: 0, name: "Sofa", confidence: 98, top: "44%", left: "1%", width: "36%", height: "48%" },
+  { id: 1, name: "Coffee Table", confidence: 96, top: "62%", left: "34%", width: "20%", height: "18%" },
+  { id: 2, name: "TV Console", confidence: 97, top: "28%", left: "30%", width: "32%", height: "28%" },
+  { id: 3, name: "Armchair", confidence: 94, top: "44%", left: "72%", width: "22%", height: "40%" },
+  { id: 4, name: "Floor Lamp", confidence: 91, top: "18%", left: "62%", width: "6%", height: "42%" },
 ];
 
 // Scanner Component - Center column
