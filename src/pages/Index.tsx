@@ -417,73 +417,71 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://nhoagucgcqjfbtifykha.supabase.co';
 
 function TrackingPreview() {
-  // Dark mode road map - zoomed on truck position showing highway
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},13,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  const [truckProgress, setTruckProgress] = useState(0);
+  const [mapCenter, setMapCenter] = useState({ lat: SAMPLE_ROUTE.origin.lat, lng: SAMPLE_ROUTE.origin.lng });
+  
+  // Route waypoints from NY to LA (simplified path)
+  const routeWaypoints = [
+    { lat: 40.7128, lng: -74.0060 },   // NYC
+    { lat: 40.4406, lng: -79.9959 },   // Pittsburgh
+    { lat: 39.7684, lng: -86.1581 },   // Indianapolis
+    { lat: 38.6270, lng: -90.1994 },   // St. Louis
+    { lat: 39.0997, lng: -94.5786 },   // Kansas City
+    { lat: 35.4676, lng: -97.5164 },   // Oklahoma City
+    { lat: 35.0844, lng: -106.6504 },  // Albuquerque
+    { lat: 33.4484, lng: -112.0740 },  // Phoenix
+    { lat: 34.0522, lng: -118.2437 },  // LA
+  ];
+  
+  // Animate truck along route - one way trip
+  useEffect(() => {
+    const duration = 15000; // 15 seconds total journey
+    const startTime = Date.now();
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      setTruckProgress(progress);
+      
+      // Calculate current position along waypoints
+      const totalSegments = routeWaypoints.length - 1;
+      const segmentProgress = progress * totalSegments;
+      const currentSegment = Math.min(Math.floor(segmentProgress), totalSegments - 1);
+      const segmentFraction = segmentProgress - currentSegment;
+      
+      const start = routeWaypoints[currentSegment];
+      const end = routeWaypoints[Math.min(currentSegment + 1, routeWaypoints.length - 1)];
+      
+      const currentLat = start.lat + (end.lat - start.lat) * segmentFraction;
+      const currentLng = start.lng + (end.lng - start.lng) * segmentFraction;
+      
+      setMapCenter({ lat: currentLat, lng: currentLng });
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    animate();
+  }, []);
+  
+  // Dark mode road map - zoomed very close on current truck position (street level)
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${mapCenter.lng},${mapCenter.lat},15,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Satellite overview showing full USA with route markers
   const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-98,39,3.2,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Google Street View via edge function proxy
-  const streetViewUrl = `${SUPABASE_URL}/functions/v1/google-street-view?lat=${SAMPLE_ROUTE.truckPosition.lat}&lng=${SAMPLE_ROUTE.truckPosition.lng}&heading=270&size=240x160`;
+  const streetViewUrl = `${SUPABASE_URL}/functions/v1/google-street-view?lat=${mapCenter.lat}&lng=${mapCenter.lng}&heading=270&size=240x160`;
 
   return (
     <div className="tru-tracker-preview-container">
-      {/* Main Road Map - Dark mode zoomed on truck */}
+      {/* Main Road Map - Dark mode zoomed on truck at street level */}
       <div className="tru-tracker-road-map">
-        <img src={roadMapUrl} alt="Live Route Map" />
+        <img src={roadMapUrl} alt="Live Route Map" key={`${mapCenter.lat}-${mapCenter.lng}`} />
         
-        {/* SVG Route Line Overlay - East to West (NY to CA) */}
-        <div className="tru-tracker-route-line-overlay">
-          <svg viewBox="0 0 420 480" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="routeGradientHomepage" x1="100%" y1="50%" x2="0%" y2="50%">
-                <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.2" />
-                <stop offset="50%" stopColor="hsl(145, 63%, 42%)" stopOpacity="1" />
-                <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.2" />
-              </linearGradient>
-              {/* Glow filter */}
-              <filter id="roadRouteGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            {/* Glow base layer */}
-            <path 
-              d="M 400 180 C 350 200 300 240 250 250 C 200 260 150 240 100 260 C 60 275 30 300 20 320"
-              stroke="hsl(145, 63%, 42%)"
-              strokeWidth="14"
-              strokeOpacity="0.25"
-              fill="none"
-              strokeLinecap="round"
-            />
-            {/* Animated route from right (east) to left (west) */}
-            <path 
-              d="M 400 180 C 350 200 300 240 250 250 C 200 260 150 240 100 260 C 60 275 30 300 20 320"
-              className="tru-tracker-animated-route"
-              stroke="url(#routeGradientHomepage)"
-              strokeWidth="7"
-              strokeDasharray="18 12"
-              fill="none"
-              strokeLinecap="round"
-              filter="url(#roadRouteGlow)"
-            />
-            {/* Solid traveled portion (from origin to truck) */}
-            <path 
-              d="M 400 180 C 350 200 300 240 250 250 C 230 255 210 250 210 245"
-              className="tru-tracker-traveled-route"
-              stroke="hsl(145, 63%, 42%)"
-              strokeWidth="7"
-              fill="none"
-              strokeLinecap="round"
-            />
-          </svg>
-        </div>
-        
-        {/* Truck Marker - Animated along route */}
-        <div className="tru-homepage-truck-marker tru-homepage-truck-animated">
+        {/* Truck Marker - Centered, stationary on map */}
+        <div className="tru-homepage-truck-marker">
           <div className="tru-homepage-truck-glow" />
           <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
           <div className="tru-homepage-truck-icon">
@@ -501,6 +499,11 @@ function TrackingPreview() {
         <div className="tru-tracker-live-badge">
           <span className="tru-tracker-live-dot" />
           <span>LIVE GPS</span>
+        </div>
+        
+        {/* Progress indicator */}
+        <div className="tru-tracker-progress-badge">
+          <span>{Math.round(truckProgress * 100)}% Complete</span>
         </div>
         
         {/* Stats Overlay - Top Right */}
@@ -524,7 +527,7 @@ function TrackingPreview() {
         
         {/* Mini Street View - Bottom Right */}
         <div className="tru-tracker-street-view-mini">
-          <img src={streetViewUrl} alt="Street View" />
+          <img src={streetViewUrl} alt="Street View" key={`sv-${mapCenter.lat}`} />
           <div className="tru-tracker-street-view-label">
             <Camera className="w-2.5 h-2.5" />
             <span>Street View</span>
@@ -552,49 +555,38 @@ function TrackingPreview() {
       <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
         <img src={satelliteMapUrl} alt="Satellite Route Overview" />
         
-        {/* Animated Route Line - NY to CA (right to left) */}
+        {/* Animated Route Line - Drawing from NY to CA */}
         <div className="tru-tracker-satellite-route-overlay">
           <svg viewBox="0 0 420 480" preserveAspectRatio="none">
             <defs>
               <linearGradient id="satRouteGradient" x1="100%" y1="0%" x2="0%" y2="0%">
                 <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="1" />
-                <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.6" />
               </linearGradient>
-              {/* Glow filter for route */}
-              <filter id="routeGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
             </defs>
-            {/* Glow layer for route */}
+            {/* Glow layer */}
             <path 
               d="M 380 180 C 340 190 300 200 260 210 C 220 220 180 235 140 245 C 100 255 60 265 40 280"
               stroke="hsl(145, 63%, 42%)"
-              strokeWidth="12"
+              strokeWidth="10"
               strokeOpacity="0.3"
               fill="none"
               strokeLinecap="round"
+              className="tru-tracker-route-glow"
             />
-            {/* Full route from NY (right) to CA (left) */}
+            {/* Animated drawing line */}
             <path 
               d="M 380 180 C 340 190 300 200 260 210 C 220 220 180 235 140 245 C 100 255 60 265 40 280"
-              className="tru-tracker-animated-route tru-tracker-satellite-route-line"
+              className="tru-tracker-route-draw"
               stroke="url(#satRouteGradient)"
-              strokeWidth="6"
-              strokeDasharray="16 10"
+              strokeWidth="5"
               fill="none"
               strokeLinecap="round"
-              filter="url(#routeGlow)"
             />
             {/* Origin marker (NY) */}
             <circle cx="380" cy="180" r="10" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="3" />
             {/* Destination marker (CA) */}
             <circle cx="40" cy="280" r="10" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="3" />
-            {/* Moving Truck position indicator */}
-            <circle cx="210" cy="225" r="8" fill="hsl(145, 63%, 42%)" className="tru-tracker-satellite-truck-moving" stroke="white" strokeWidth="2" />
           </svg>
         </div>
         
