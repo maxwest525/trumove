@@ -472,7 +472,7 @@ function TrackingPreview() {
   const routePathEncoded = encodeURIComponent(
     `path-5+22c55e-0.6(${routeWaypoints.map(w => `${w.lng},${w.lat}`).join(',')})`
   );
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s-a+22c55e(-74.006,40.7128),pin-s-b+ef4444(-118.2437,34.0522),path-4+22c55e-0.8(${routeWaypoints.map(w => `${w.lng},${w.lat}`).join(',')})/-98,38,3.5,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s-a+22c55e(-74.006,40.7128),pin-s-b+ef4444(-118.2437,34.0522),path-4+22c55e-0.8(${routeWaypoints.map(w => `${w.lng},${w.lat}`).join(',')})/-98,38,4.2,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Satellite overview showing full USA with route markers
   const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-98,39,3.2,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
