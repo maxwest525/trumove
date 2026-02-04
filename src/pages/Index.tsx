@@ -476,24 +476,55 @@ function TrackingPreview() {
 
   return (
     <div className="tru-tracker-preview-container">
-      {/* Main Road Map - Dark mode zoomed on truck at street level */}
-      <div className="tru-tracker-road-map">
-        <img src={roadMapUrl} alt="Live Route Map" key={`${mapCenter.lat}-${mapCenter.lng}`} />
-        
-        {/* Truck Marker - Centered, stationary on map */}
-        <div className="tru-homepage-truck-marker">
-          <div className="tru-homepage-truck-glow" />
-          <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
-          <div className="tru-homepage-truck-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
-              <path d="M15 18H9"/>
-              <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
-              <circle cx="17" cy="18" r="2"/>
-              <circle cx="7" cy="18" r="2"/>
-            </svg>
-          </div>
-        </div>
+      {/* Main Road Map - US Skeleton with animated truck */}
+      <div className="tru-tracker-road-map tru-tracker-us-skeleton">
+        {/* US Outline SVG */}
+        <svg viewBox="0 0 960 600" className="tru-us-outline-svg">
+          <defs>
+            <linearGradient id="usOutlineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.15" />
+            </linearGradient>
+          </defs>
+          {/* Simplified US Continental Outline */}
+          <path 
+            d="M 120 180 L 140 160 L 180 155 L 220 140 L 280 135 L 340 130 L 400 125 L 460 120 L 520 118 L 580 120 L 640 125 L 700 135 L 750 150 L 800 170 L 830 200 L 840 240 L 835 280 L 820 320 L 800 360 L 780 400 L 750 430 L 700 450 L 650 460 L 600 455 L 550 445 L 500 440 L 450 445 L 400 455 L 350 470 L 300 480 L 250 475 L 200 460 L 160 430 L 130 390 L 110 340 L 100 290 L 105 240 L 120 180 Z"
+            fill="url(#usOutlineGradient)"
+            stroke="hsl(145, 63%, 42%)"
+            strokeWidth="2"
+            strokeOpacity="0.6"
+            className="tru-us-outline-path"
+          />
+          {/* Route path across US */}
+          <path 
+            d="M 820 200 C 780 210 740 220 700 235 C 660 250 620 245 580 255 C 540 265 500 260 460 270 C 420 280 380 275 340 285 C 300 295 260 290 220 305 C 180 320 150 340 130 370"
+            stroke="hsl(145, 63%, 42%)"
+            strokeWidth="4"
+            strokeOpacity="0.8"
+            fill="none"
+            strokeLinecap="round"
+            strokeDasharray="12 6"
+            className="tru-us-route-animated"
+          />
+          {/* City waypoints */}
+          <circle cx="820" cy="200" r="8" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" /> {/* NY */}
+          <circle cx="700" cy="235" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Pittsburgh */}
+          <circle cx="580" cy="255" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Indianapolis */}
+          <circle cx="460" cy="270" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Kansas City */}
+          <circle cx="340" cy="285" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Oklahoma City */}
+          <circle cx="220" cy="305" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.8" /> {/* Albuquerque */}
+          <circle cx="130" cy="370" r="8" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="2" /> {/* LA */}
+          {/* Animated truck position */}
+          <circle 
+            cx={130 + (820 - 130) * (1 - truckProgress)} 
+            cy={370 + (200 - 370) * (1 - truckProgress)} 
+            r="10" 
+            fill="hsl(145, 63%, 42%)" 
+            stroke="white" 
+            strokeWidth="3"
+            className="tru-us-truck-dot"
+          />
+        </svg>
         
         {/* LIVE GPS Badge */}
         <div className="tru-tracker-live-badge">
@@ -522,15 +553,6 @@ function TrackingPreview() {
             <Globe className="w-3 h-3" />
             <span className="tru-tracker-stat-label">Weather</span>
             <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.weather}</span>
-          </div>
-        </div>
-        
-        {/* Mini Street View - Bottom Right */}
-        <div className="tru-tracker-street-view-mini">
-          <img src={streetViewUrl} alt="Street View" key={`sv-${mapCenter.lat}`} />
-          <div className="tru-tracker-street-view-label">
-            <Camera className="w-2.5 h-2.5" />
-            <span>Street View</span>
           </div>
         </div>
         
@@ -607,11 +629,21 @@ function TrackingPreview() {
               strokeLinecap="round"
             />
             {/* Origin marker (NY) */}
-            <circle cx="380" cy="180" r="10" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="3" />
+            <circle cx="380" cy="178" r="10" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="3" />
+            {/* City waypoints along route */}
+            <circle cx="328" cy="195" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Pittsburgh */}
+            <circle cx="270" cy="215" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Indianapolis */}
+            <circle cx="210" cy="235" r="6" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" opacity="0.9" /> {/* Kansas City */}
+            <circle cx="145" cy="255" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Oklahoma City */}
+            <circle cx="70" cy="275" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Phoenix */}
             {/* Destination marker (CA) */}
-            <circle cx="40" cy="280" r="10" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="3" />
+            <circle cx="40" cy="282" r="10" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="3" />
           </svg>
         </div>
+        
+        {/* City waypoint labels */}
+        <div className="tru-tracker-waypoint-label" style={{ top: '38%', left: '72%' }}>Kansas City</div>
+        <div className="tru-tracker-waypoint-label" style={{ top: '52%', left: '12%' }}>Phoenix</div>
         
         {/* City Labels */}
         <div className="tru-tracker-city-label tru-tracker-city-origin">
