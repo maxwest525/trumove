@@ -32275,6 +32275,60 @@ html.dark .tru-summary-header-large,
 }
 
 /* ========================================
+   FEATURE TRUST STRIP - Between sections
+   ======================================== */
+.feature-trust-strip {
+  background: linear-gradient(to bottom, hsl(220 15% 6%), hsl(220 15% 4%));
+  border-top: 1px solid hsl(0 0% 100% / 0.08);
+  border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+  padding: 12px 24px;
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.feature-trust-strip-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: max-content;
+  margin: 0 auto;
+}
+
+.feature-trust-item {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 100% / 0.85);
+  white-space: nowrap;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+}
+
+.feature-trust-item span {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.feature-trust-item svg {
+  width: 16px;
+  height: 16px;
+  color: hsl(142 70% 50%);
+}
+
+.feature-trust-dot {
+  color: hsl(0 0% 100% / 0.4);
+  margin: 0 8px;
+}
+
+/* ========================================
    BLACK TRUST STRIP - Compliance bar
    ======================================== */
 .trust-strip {

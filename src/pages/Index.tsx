@@ -17,6 +17,7 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import RouteAnalysisSection from "@/components/RouteAnalysisSection";
 import FeatureCarousel from "@/components/FeatureCarousel";
+import FeatureTrustStrip from "@/components/FeatureTrustStrip";
 import StatsStrip from "@/components/StatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallax } from "@/hooks/useParallax";
@@ -1840,8 +1841,8 @@ export default function Index() {
             </div>
           </section>
 
-
-          {/* Move Summary is now in the hero right panel */}
+          {/* FEATURE TRUST STRIP - Between AI Analysis and Tracking */}
+          <FeatureTrustStrip />
 
           {/* CONSULT SECTION - Compact */}
           <section className="tru-consult-compact">
