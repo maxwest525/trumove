@@ -7,7 +7,8 @@ import {
   ClipboardList, 
   Scan,
   MapPin,
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -16,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import PPCDemoModal from "./demo/PPCDemoModal";
 
 interface DemoLauncherModalProps {
   isOpen: boolean;
@@ -69,21 +71,36 @@ const demoOptions = [
     route: "/property-lookup",
     color: "from-emerald-500/20 to-emerald-500/5 border-emerald-500/30",
     iconColor: "text-emerald-500"
+  },
+  {
+    id: "ppc",
+    title: "AI Marketing Suite",
+    description: "PPC campaigns, SEO audit, keyword research, and landing page builder",
+    icon: Sparkles,
+    route: "",
+    openModal: true,
+    color: "from-purple-500/20 to-pink-500/5 border-purple-500/30",
+    iconColor: "text-purple-500"
   }
 ];
 
 export default function DemoLauncherModal({ isOpen, onClose }: DemoLauncherModalProps) {
   const navigate = useNavigate();
+  const [ppcModalOpen, setPpcModalOpen] = useState(false);
 
   const handleDemoSelect = (option: typeof demoOptions[0]) => {
+    if (option.id === "ppc") {
+      onClose();
+      setPpcModalOpen(true);
+      return;
+    }
+    
     onClose();
     
     if (option.id === "tracking" && option.demoCode) {
-      // Navigate to tracking and trigger demo mode
       localStorage.setItem("tm_demo_tracking_code", option.demoCode);
       navigate(option.route);
     } else if (option.skipToInventory) {
-      // Set flag to skip to inventory step
       localStorage.setItem("tm_skip_to_inventory", "true");
       navigate(option.route);
     } else {
@@ -92,6 +109,7 @@ export default function DemoLauncherModal({ isOpen, onClose }: DemoLauncherModal
   };
 
   return (
+    <>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[480px] p-0 gap-0 overflow-hidden">
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
@@ -143,5 +161,8 @@ export default function DemoLauncherModal({ isOpen, onClose }: DemoLauncherModal
         </div>
       </DialogContent>
     </Dialog>
+
+    <PPCDemoModal open={ppcModalOpen} onOpenChange={setPpcModalOpen} />
+  </>
   );
 }
