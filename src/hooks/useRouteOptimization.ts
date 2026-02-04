@@ -51,7 +51,7 @@ function getCacheKey(waypoints: Waypoint[]): string {
 export function useRouteOptimization(
   options: UseRouteOptimizationOptions = {}
 ): UseRouteOptimizationResult {
-  // Use Mapbox by default for traffic-aware optimization
+  // Use Mapbox Directions-based optimization by default for traffic-aware routing
   const { provider = 'mapbox', profile = 'driving-traffic' } = options;
   
   const [isOptimizing, setIsOptimizing] = useState(false);
@@ -90,8 +90,8 @@ export function useRouteOptimization(
     setError(null);
 
     try {
-      // Use Mapbox Optimization API by default for better traffic-aware results
-      const functionName = provider === 'mapbox' ? 'mapbox-optimization' : 'google-route-optimization';
+      // Use Mapbox Directions-based optimization for traffic-aware results with public token
+      const functionName = provider === 'mapbox' ? 'mapbox-directions-optimize' : 'google-route-optimization';
       
       const { data, error: funcError } = await supabase.functions.invoke(functionName, {
         body: {
@@ -100,10 +100,7 @@ export function useRouteOptimization(
             lng: w.lng,
             label: w.label || w.address,
           })),
-          profile, // Only used by Mapbox
-          roundtrip: false,
-          source: 'first',
-          destination: 'last',
+          profile, // driving-traffic for real-time traffic
         },
       });
 

@@ -36,5 +36,8 @@ verify_jwt = false
 [functions.mapbox-optimization]
 verify_jwt = false
 
+[functions.mapbox-directions-optimize]
+verify_jwt = false
+
 [functions.elevenlabs-conversation-token]
 verify_jwt = false
