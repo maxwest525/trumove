@@ -1155,12 +1155,15 @@ export default function Index() {
     navigate(leadCaptureTarget === "ai" ? "/scan-room" : "/online-estimate");
   };
 
-  // Step validation
+  // Step validation - Updated flow:
+  // Step 1: From/To addresses + move date
+  // Step 2: Contact info (name, email, SMS)
+  // Step 3: Choose estimate method (AI or Manual)
   const canContinue = () => {
     switch (step) {
       case 1: return fromZip.length === 5 && fromCity && toZip.length === 5 && toCity && moveDate !== null;
-      case 2: return size !== "" && propertyType !== "";
-      case 3: return email.includes("@") && phone.trim().length >= 10;
+      case 2: return name.trim().length >= 2 && email.includes("@") && phone.trim().length >= 10;
+      case 3: return true; // Always can proceed from method selection
       default: return false;
     }
   };
@@ -1551,139 +1554,40 @@ export default function Index() {
                     )}
 
 
-                    {/* Step 2: Move Size + Property Type */}
+                    {/* Step 2: Contact Information (moved from step 3) */}
                     {step === 2 && (
-                      <div className="tru-qb-step-content" key="step-2">
-                        <h1 className="tru-qb-question">What size is your current home?</h1>
-                        <p className="tru-qb-subtitle">This helps us estimate weight and crew size</p>
-                        
-                        <div className="tru-qb-size-grid">
-                          {MOVE_SIZES.map((s) => (
-                            <button
-                              key={s.value}
-                              type="button"
-                              className={`tru-qb-size-btn ${size === s.value ? 'is-active' : ''}`}
-                              onClick={() => setSize(s.value)}
-                            >
-                              {s.label}
-                            </button>
-                          ))}
-                        </div>
-
-                        <p className="tru-qb-section-label">Property Type</p>
-                        <div className="tru-qb-toggles">
-                          <button
-                            type="button"
-                            className={`tru-qb-toggle-card ${propertyType === 'house' ? 'is-active' : ''}`}
-                            onClick={() => setPropertyType('house')}
-                          >
-                            <Home className="tru-qb-toggle-icon" />
-                            <div className="tru-qb-toggle-content">
-                              <span className="tru-qb-toggle-title">House</span>
-                            </div>
-                          </button>
-                          <button
-                            type="button"
-                            className={`tru-qb-toggle-card ${propertyType === 'apartment' ? 'is-active' : ''}`}
-                            onClick={() => setPropertyType('apartment')}
-                          >
-                            <Building2 className="tru-qb-toggle-icon" />
-                            <div className="tru-qb-toggle-content">
-                              <span className="tru-qb-toggle-title">Apartment</span>
-                            </div>
-                          </button>
-                        </div>
-
-                        {propertyType === 'apartment' && (
-                          <>
-                            <p className="tru-qb-section-label animate-fade-scale-in opacity-0">What floor?</p>
-                            <div className="tru-qb-size-grid animate-fade-scale-in opacity-0" style={{ animationDelay: '50ms' }}>
-                              {FLOOR_OPTIONS.map((f) => (
-                                <button
-                                  key={f.value}
-                                  type="button"
-                                  className={`tru-qb-size-btn ${floor === f.value ? 'is-active' : ''}`}
-                                  onClick={() => setFloor(f.value)}
-                                >
-                                  {f.label}
-                                </button>
-                              ))}
-                            </div>
-
-                            <p className="tru-qb-section-label animate-fade-scale-in opacity-0" style={{ animationDelay: '100ms' }}>Access type</p>
-                            <div className="tru-qb-toggles animate-fade-scale-in opacity-0" style={{ animationDelay: '150ms' }}>
-                              <button
-                                type="button"
-                                className={`tru-qb-toggle-card ${!hasElevator ? 'is-active' : ''}`}
-                                onClick={() => setHasElevator(false)}
-                              >
-                                <MoveVertical className="tru-qb-toggle-icon" />
-                                <div className="tru-qb-toggle-content">
-                                  <span className="tru-qb-toggle-title">Stairs</span>
-                                </div>
-                              </button>
-                              <button
-                                type="button"
-                                className={`tru-qb-toggle-card ${hasElevator ? 'is-active' : ''}`}
-                                onClick={() => setHasElevator(true)}
-                              >
-                                <ArrowUpDown className="tru-qb-toggle-icon" />
-                                <div className="tru-qb-toggle-content">
-                                  <span className="tru-qb-toggle-title">Elevator</span>
-                                </div>
-                              </button>
-                            </div>
-                          </>
-                        )}
-
-                        <button
-                          type="button"
-                          className="tru-qb-continue tru-engine-btn"
-                          disabled={!canContinue()}
-                          onClick={goNext}
-                        >
-                          <span>Match Carriers</span>
-                          <ArrowRight className="w-5 h-5 tru-btn-arrow" />
-                        </button>
-
-                        <button type="button" className="tru-qb-back" onClick={goBack}>
-                          <ChevronLeft className="w-4 h-4" />
-                          <span>Back</span>
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Step 3: Contact - Simplified Lead Capture */}
-                    {step === 3 && !submitted && (
-                      <form className="tru-qb-step-content tru-qb-step-compact" key="step-3" onSubmit={handleSubmit}>
-                        <h1 className="tru-qb-question">Almost done! How can we reach you?</h1>
-                        <p className="tru-qb-subtitle">We'll call you within 1 business day to finalize your quote</p>
+                      <div className="tru-qb-step-content tru-qb-step-compact" key="step-2">
+                        <h1 className="tru-qb-question">How can we reach you?</h1>
+                        <p className="tru-qb-subtitle">We'll save your progress and send updates</p>
                         
                         <div className="tru-qb-contact-fields">
                           <div className="tru-qb-input-wrap tru-qb-glow-always">
                             <input
                               type="text"
                               className={`tru-qb-input ${formError && !name.trim() ? 'has-error' : ''}`}
-                              placeholder="Your name"
+                              placeholder="Your full name"
                               value={name}
                               onChange={(e) => { setName(e.target.value); setFormError(""); }}
                               autoFocus
                             />
                           </div>
                           
-                          <div className="tru-qb-input-row">
+                          <div className="tru-qb-input-wrap">
                             <input
                               type="email"
-                              className={`tru-qb-input ${formError && !email.trim() ? 'has-error' : ''}`}
-                              placeholder="Email"
+                              className={`tru-qb-input ${formError && !email.includes('@') ? 'has-error' : ''}`}
+                              placeholder="Email address"
                               value={email}
                               onChange={(e) => { setEmail(e.target.value); setFormError(""); }}
                               onKeyDown={handleKeyDown}
                             />
+                          </div>
+                          
+                          <div className="tru-qb-input-wrap">
                             <input
                               type="tel"
-                              className="tru-qb-input"
-                              placeholder="Phone"
+                              className={`tru-qb-input ${formError && phone.trim().length < 10 ? 'has-error' : ''}`}
+                              placeholder="Phone / SMS number"
                               value={phone}
                               onChange={(e) => { setPhoneNum(e.target.value); setFormError(""); }}
                               onKeyDown={handleKeyDown}
@@ -1696,16 +1600,26 @@ export default function Index() {
                         )}
 
                         <button
-                          type="submit"
+                          type="button"
                           className="tru-qb-continue tru-engine-btn"
-                          onClick={(e) => { 
-                            if (!canContinue()) {
-                              e.preventDefault();
-                              setFormError("Please enter a valid email and phone number (10+ digits).");
+                          disabled={!canContinue()}
+                          onClick={() => {
+                            if (canContinue()) {
+                              // Store lead data
+                              localStorage.setItem("tm_lead_contact", JSON.stringify({
+                                name, email, phone,
+                                fromCity, toCity, fromZip, toZip,
+                                moveDate: moveDate?.toISOString(),
+                                ts: Date.now()
+                              }));
+                              setHasProvidedContactInfo(true);
+                              setStep(3);
+                            } else {
+                              setFormError("Please enter your name, a valid email, and phone number (10+ digits).");
                             }
                           }}
                         >
-                          <span>Get My Free Quote</span>
+                          <span>Continue</span>
                           <ArrowRight className="w-5 h-5 tru-btn-arrow" />
                         </button>
 
@@ -1713,29 +1627,108 @@ export default function Index() {
                           <ChevronLeft className="w-4 h-4" />
                           <span>Back</span>
                         </button>
-
+                        
                         <p className="tru-qb-disclaimer-bottom">
-                          By submitting, you agree we may contact you. <Lock className="w-3 h-3 inline" /> Secure & never sold.
+                          <Lock className="w-3 h-3 inline" /> Your info is secure & never sold.
                         </p>
-                      </form>
+                      </div>
                     )}
 
-                    {/* Post-Submission Confirmation */}
-                    {step === 3 && submitted && (
+                    {/* Step 3: Choose Estimate Method */}
+                    {step === 3 && !submitted && (
+                      <div className="tru-qb-step-content" key="step-3">
+                        <h1 className="tru-qb-question">How would you like to build your inventory?</h1>
+                        <p className="tru-qb-subtitle">Choose the method that works best for you</p>
+                        
+                        <div className="tru-qb-method-options">
+                          {/* AI Estimate Option */}
+                          <button 
+                            type="button" 
+                            className="tru-qb-method-card tru-qb-method-primary"
+                            onClick={() => {
+                              handleSubmit(new Event('submit') as any);
+                              navigate("/scan-room");
+                            }}
+                          >
+                            <div className="tru-qb-method-icon-wrap tru-qb-method-icon-ai">
+                              <Scan className="w-6 h-6" />
+                            </div>
+                            <div className="tru-qb-method-content">
+                              <span className="tru-qb-method-title">AI Estimate</span>
+                              <span className="tru-qb-method-desc">Upload photos or video of your rooms</span>
+                              <span className="tru-qb-method-badge">
+                                <Camera className="w-3 h-3" />
+                                Fastest
+                              </span>
+                            </div>
+                            <ArrowRight className="w-5 h-5 tru-qb-method-arrow" />
+                          </button>
+                          
+                          {/* Manual Inventory Option */}
+                          <button 
+                            type="button" 
+                            className="tru-qb-method-card"
+                            onClick={() => {
+                              handleSubmit(new Event('submit') as any);
+                              navigate("/online-estimate");
+                            }}
+                          >
+                            <div className="tru-qb-method-icon-wrap">
+                              <Boxes className="w-6 h-6" />
+                            </div>
+                            <div className="tru-qb-method-content">
+                              <span className="tru-qb-method-title">Manual Builder</span>
+                              <span className="tru-qb-method-desc">Select items room-by-room</span>
+                            </div>
+                            <ArrowRight className="w-5 h-5 tru-qb-method-arrow" />
+                          </button>
+                        </div>
+
+                        <button type="button" className="tru-qb-back" onClick={goBack}>
+                          <ChevronLeft className="w-4 h-4" />
+                          <span>Back</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Post-Submission Confirmation - shown after selecting a method */}
+                    {submitted && (
                       <div className="tru-qb-step-content tru-qb-confirmation" key="step-confirmed">
                         <div className="tru-qb-confirmation-icon">
                           <CheckCircle className="w-12 h-12" />
                         </div>
-                        <h1 className="tru-qb-question">Request received!</h1>
+                        <h1 className="tru-qb-question">You're all set!</h1>
                         <p className="tru-qb-subtitle tru-qb-subtitle-bold">
-                          <strong>A TruMove specialist will be contacting you shortly</strong> to discuss your move details and provide a personalized quote.
+                          <strong>We've saved your move details.</strong> You can continue building your inventory or speak with a specialist.
                         </p>
                         
                         <div className="tru-qb-confirmation-divider">
-                          <span>Take control of your move:</span>
+                          <span>Continue with:</span>
                         </div>
                         
                         <div className="tru-qb-options-stack-full">
+                          <button 
+                            type="button" 
+                            className="tru-qb-option-card"
+                            onClick={() => navigate("/scan-room")}
+                          >
+                            <Scan className="w-5 h-5" />
+                            <div className="tru-qb-option-text">
+                              <span className="tru-qb-option-title">AI Inventory</span>
+                              <span className="tru-qb-option-desc">Upload photos or video</span>
+                            </div>
+                          </button>
+                          <button 
+                            type="button" 
+                            className="tru-qb-option-card tru-qb-option-card-outline"
+                            onClick={() => navigate("/online-estimate")}
+                          >
+                            <Boxes className="w-5 h-5" />
+                            <div className="tru-qb-option-text">
+                              <span className="tru-qb-option-title">Manual Builder</span>
+                              <span className="tru-qb-option-desc">Select items room-by-room</span>
+                            </div>
+                          </button>
                           <button 
                             type="button" 
                             className="tru-qb-option-card tru-qb-option-card-outline"
@@ -1745,24 +1738,6 @@ export default function Index() {
                             <div className="tru-qb-option-text">
                               <span className="tru-qb-option-title">Video Consult</span>
                               <span className="tru-qb-option-desc">Schedule a walkthrough</span>
-                            </div>
-                          </button>
-                          <a href="tel:+16097277647" className="tru-qb-option-card tru-qb-option-card-outline">
-                            <Phone className="w-5 h-5" />
-                            <div className="tru-qb-option-text">
-                              <span className="tru-qb-option-title">Call Us Now</span>
-                              <span className="tru-qb-option-desc">(609) 727-7647</span>
-                            </div>
-                          </a>
-                          <button 
-                            type="button" 
-                            className="tru-qb-option-card"
-                            onClick={() => navigate("/online-estimate")}
-                          >
-                            <Sparkles className="w-5 h-5" />
-                            <div className="tru-qb-option-text">
-                              <span className="tru-qb-option-title">AI Estimator</span>
-                              <span className="tru-qb-option-desc">Build your inventory</span>
                             </div>
                           </button>
                         </div>

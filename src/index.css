@@ -17198,6 +17198,137 @@
   color: hsl(var(--tm-ink) / 0.55);
 }
 
+/* Method Selection Cards (Step 3) */
+.tru-qb-method-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.tru-qb-method-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 2px solid hsl(var(--tm-ink) / 0.12);
+  background: hsl(var(--background));
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+}
+
+.tru-qb-method-card:hover {
+  border-color: hsl(var(--primary) / 0.5);
+  background: hsl(var(--primary) / 0.04);
+  transform: translateX(4px);
+}
+
+.tru-qb-method-card.tru-qb-method-primary {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.08);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.2);
+}
+
+.tru-qb-method-card.tru-qb-method-primary:hover {
+  background: hsl(var(--primary) / 0.12);
+  box-shadow: 0 6px 20px hsl(var(--primary) / 0.3);
+  transform: translateX(6px);
+}
+
+.tru-qb-method-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: hsl(var(--muted));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: hsl(var(--muted-foreground));
+  transition: all 0.2s ease;
+}
+
+.tru-qb-method-icon-wrap.tru-qb-method-icon-ai {
+  background: hsl(var(--primary) / 0.15);
+  color: hsl(var(--primary));
+}
+
+.tru-qb-method-card:hover .tru-qb-method-icon-wrap {
+  background: hsl(var(--primary) / 0.15);
+  color: hsl(var(--primary));
+}
+
+.tru-qb-method-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tru-qb-method-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.tru-qb-method-desc {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+
+.tru-qb-method-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: hsl(var(--primary) / 0.12);
+  color: hsl(var(--primary));
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  width: fit-content;
+}
+
+.tru-qb-method-arrow {
+  color: hsl(var(--muted-foreground));
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.tru-qb-method-card:hover .tru-qb-method-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: hsl(var(--primary));
+}
+
+/* Dark mode method cards */
+.dark .tru-qb-method-card {
+  background: hsl(220 15% 10%);
+  border-color: hsl(0 0% 100% / 0.08);
+}
+
+.dark .tru-qb-method-card:hover {
+  background: hsl(220 15% 14%);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+.dark .tru-qb-method-card.tru-qb-method-primary {
+  background: hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary) / 0.5);
+}
+
+.dark .tru-qb-method-icon-wrap {
+  background: hsl(220 15% 18%);
+}
+
 /* Legacy Alternative Options - Step 6 (keeping for backwards compat) */
 .tru-qb-alt-options {
   display: flex;
