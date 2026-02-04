@@ -111,6 +111,53 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
     map.current.on('load', () => {
       if (!map.current) return;
 
+      // Add shadow source for contrast on satellite
+      map.current.addSource('route-shadow', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: coords
+          }
+        }
+      });
+
+      // Black shadow - outermost layer for depth
+      map.current.addLayer({
+        id: 'route-shadow-outer',
+        type: 'line',
+        source: 'route-shadow',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#000000',
+          'line-width': 14,
+          'line-opacity': 0.3,
+          'line-blur': 6
+        }
+      });
+
+      // Black shadow - mid layer
+      map.current.addLayer({
+        id: 'route-shadow-mid',
+        type: 'line',
+        source: 'route-shadow',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#000000',
+          'line-width': 10,
+          'line-opacity': 0.5,
+          'line-blur': 3
+        }
+      });
+
       // Add background route (faint)
       map.current.addSource('route-bg', {
         type: 'geojson',
