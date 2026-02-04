@@ -3365,8 +3365,15 @@
   z-index: 5;
 }
 
-/* Tracking Preview Card */
-.tru-tracker-preview {
+/* Enhanced Tracking Preview Container */
+.tru-tracker-preview-container {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* Main Road Map */
+.tru-tracker-road-map {
   position: relative;
   border-radius: 12px;
   overflow: hidden;
@@ -3377,10 +3384,58 @@
   box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.1);
 }
 
-.tru-tracker-preview img {
+.tru-tracker-road-map img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Pulsing Truck Marker */
+.tru-tracker-truck-marker {
+  position: absolute;
+  top: 50%;
+  left: 48%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+}
+
+.tru-tracker-truck-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 50%;
+  animation: truck-marker-pulse 2s ease-in-out infinite;
+}
+
+@keyframes truck-marker-pulse {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    opacity: 0.6; 
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.5); 
+    opacity: 0; 
+  }
+}
+
+.tru-tracker-truck-icon {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--primary-foreground));
+  box-shadow: 
+    0 4px 12px hsl(var(--primary) / 0.5),
+    0 0 0 3px hsl(var(--background)),
+    0 0 0 5px hsl(var(--primary) / 0.3);
 }
 
 /* Live GPS Badge */
@@ -3399,6 +3454,7 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.3);
+  z-index: 10;
 }
 
 .tru-tracker-live-dot {
@@ -3414,50 +3470,192 @@
   50% { opacity: 0.5; transform: scale(1.2); }
 }
 
-/* Route overlay */
-.tru-tracker-route-overlay {
+/* Stats Overlay - Top Right */
+.tru-tracker-stats-overlay {
   position: absolute;
-  bottom: 60px;
-  right: 40px;
-  width: 40px;
-  height: 40px;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10;
+}
+
+.tru-tracker-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: hsl(var(--foreground) / 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 6px;
+  color: hsl(var(--background));
+  font-size: 10px;
+}
+
+.tru-tracker-stat-item svg {
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.tru-tracker-stat-label {
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.tru-tracker-stat-value {
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.tru-tracker-traffic-moderate {
+  color: hsl(45 100% 60%);
+}
+
+/* Mini Street View - Bottom Right */
+.tru-tracker-street-view-mini {
+  position: absolute;
+  bottom: 52px;
+  right: 12px;
+  width: 90px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid hsl(var(--background));
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.3);
+  z-index: 10;
+}
+
+.tru-tracker-street-view-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tru-tracker-street-view-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--primary));
-  color: white;
-  border-radius: 50%;
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.5);
-  animation: tracker-truck-bob 2s ease-in-out infinite;
+  gap: 3px;
+  padding: 2px 4px;
+  background: hsl(var(--foreground) / 0.8);
+  color: hsl(var(--background));
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-@keyframes tracker-truck-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-/* Stats bar at bottom */
-.tru-tracker-stats-bar {
+/* Route Info Bar - Bottom */
+.tru-tracker-route-bar {
   position: absolute;
   bottom: 12px;
   left: 12px;
   right: 12px;
   display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding: 8px 16px;
-  background: hsl(var(--foreground) / 0.85);
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: hsl(var(--foreground) / 0.9);
   backdrop-filter: blur(8px);
   border-radius: 10px;
   color: hsl(var(--background));
   font-size: 11px;
-  font-weight: 600;
+  z-index: 10;
 }
 
-.tru-tracker-stats-bar span {
+.tru-tracker-route-endpoints {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tru-tracker-origin,
+.tru-tracker-destination {
   display: flex;
   align-items: center;
   gap: 4px;
+  font-weight: 600;
+}
+
+.tru-tracker-origin svg {
+  color: hsl(var(--primary));
+}
+
+.tru-tracker-destination svg {
+  color: hsl(0 84% 60%);
+}
+
+.tru-tracker-route-endpoints > svg {
+  opacity: 0.5;
+}
+
+.tru-tracker-distance {
+  font-weight: 700;
+  color: hsl(var(--primary));
+}
+
+/* Satellite Route Overview - Side Panel */
+.tru-tracker-satellite-panel {
+  position: relative;
+  width: 140px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 16px hsl(var(--tm-ink) / 0.1);
+  flex-shrink: 0;
+}
+
+.tru-tracker-satellite-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tru-tracker-satellite-label {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: hsl(var(--foreground) / 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 6px;
+  color: hsl(var(--background));
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tru-tracker-satellite-label svg {
+  color: hsl(var(--primary));
+}
+
+/* Legacy support */
+.tru-tracker-preview {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 420px;
+  height: clamp(24rem, 38vh, 30rem);
+  min-height: 24rem;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.1);
+}
+
+.tru-tracker-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Responsive: stack on smaller screens */
@@ -3485,6 +3683,23 @@
     align-items: center;
   }
   
+  .tru-tracker-preview-container {
+    flex-direction: column;
+    width: 100%;
+    max-width: 25rem;
+  }
+  
+  .tru-tracker-road-map {
+    width: 100%;
+    height: 20rem;
+    min-height: 20rem;
+  }
+  
+  .tru-tracker-satellite-panel {
+    width: 100%;
+    height: 8rem;
+  }
+  
   .tru-tracker-preview {
     width: 100%;
     max-width: 25rem;
@@ -3496,6 +3711,12 @@
 .dark .tru-tracker-section {
   background: hsl(220 15% 8%);
 }
+
+.dark .tru-tracker-road-map,
+.dark .tru-tracker-satellite-panel {
+  border-color: hsl(0 0% 100% / 0.1);
+}
+
 
 .tru-ai-steps-inner {
   max-width: none;
