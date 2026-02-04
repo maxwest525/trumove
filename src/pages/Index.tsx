@@ -439,13 +439,15 @@ const ROUTE_WAYPOINTS = [
 // Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
 // Homepage now uses static demo preview - no animation needed
 
-// Route Overview Panel - Mapbox dark road style (matches Truck View aesthetic)
+// Route Overview Panel - Live Mapbox GL with 3D terrain
+import { addTerrain, setFogPreset } from '@/lib/mapbox3DConfig';
+
 function RouteOverviewPanel() {
-  const laCoords = [-118.24, 34.05]; // [lng, lat] for Mapbox
-  const nyCoords = [-74.00, 40.71];
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapInstance = useRef<mapboxgl.Map | null>(null);
   
   // Realistic I-10/I-40/I-70 highway corridor waypoints [lng, lat]
-  const waypoints: [number, number][] = [
+  const waypoints: [number, number][] = useMemo(() => [
     [-118.24, 34.05],   // Los Angeles
     [-114.29, 34.14],   // Needles, CA
     [-111.65, 35.19],   // Flagstaff, AZ
@@ -459,37 +461,113 @@ function RouteOverviewPanel() {
     [-82.98, 40.00],    // Columbus, OH
     [-79.99, 40.44],    // Pittsburgh, PA
     [-74.00, 40.71],    // New York, NY
-  ];
+  ], []);
   
-  // Build GeoJSON LineString for the route with styling
-  const routeGeoJSON = {
-    type: "Feature",
-    properties: {
-      stroke: "#4285F4",
-      "stroke-width": 4,
-      "stroke-opacity": 0.9
-    },
-    geometry: {
-      type: "LineString",
-      coordinates: waypoints
-    }
-  };
-  
-  // URI encode the GeoJSON
-  const geoJsonEncoded = encodeURIComponent(JSON.stringify(routeGeoJSON));
-  const geoJsonOverlay = `geojson(${geoJsonEncoded})`;
-  
-  // Markers
-  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
-  const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
-  
-  // Use 'auto' to fit all overlays (route + markers) in view
-  // navigation-night-v1 for dark theme matching Truck View
-  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${geoJsonOverlay},${originMarker},${destMarker}/auto/420x480@2x?padding=40&access_token=${MAPBOX_TOKEN}`;
+  useEffect(() => {
+    if (!mapContainer.current || mapInstance.current) return;
+    
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+    
+    mapInstance.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      center: [-98, 38], // Center of US
+      zoom: 3.2,
+      pitch: 35,
+      bearing: -15,
+      interactive: false,
+      attributionControl: false
+    });
+    
+    mapInstance.current.on('load', () => {
+      if (!mapInstance.current) return;
+      
+      // Add dramatic 3D terrain
+      addTerrain(mapInstance.current, 2.5);
+      
+      // Add atmospheric fog for depth
+      setFogPreset(mapInstance.current, 'satellite');
+      
+      // Add route shadow for contrast
+      mapInstance.current.addSource('route', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'LineString', coordinates: waypoints }
+        }
+      });
+      
+      // Black shadow layer for terrain visibility
+      mapInstance.current.addLayer({
+        id: 'route-shadow',
+        type: 'line',
+        source: 'route',
+        paint: {
+          'line-color': '#000000',
+          'line-width': 8,
+          'line-opacity': 0.5,
+          'line-blur': 3
+        }
+      });
+      
+      // Outer glow - cyan
+      mapInstance.current.addLayer({
+        id: 'route-glow',
+        type: 'line',
+        source: 'route',
+        paint: {
+          'line-color': '#00e5a0',
+          'line-width': 6,
+          'line-opacity': 0.4,
+          'line-blur': 4
+        }
+      });
+      
+      // Main route line - bright cyan
+      mapInstance.current.addLayer({
+        id: 'route-line',
+        type: 'line',
+        source: 'route',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#00e5a0',
+          'line-width': 3,
+          'line-opacity': 0.95
+        }
+      });
+      
+      // Origin marker (LA)
+      const originEl = document.createElement('div');
+      originEl.className = 'route-overview-marker origin';
+      originEl.innerHTML = '<div class="marker-dot"></div><span>LA</span>';
+      new mapboxgl.Marker({ element: originEl })
+        .setLngLat(waypoints[0])
+        .addTo(mapInstance.current!);
+      
+      // Destination marker (NY)
+      const destEl = document.createElement('div');
+      destEl.className = 'route-overview-marker destination';
+      destEl.innerHTML = '<div class="marker-dot"></div><span>NY</span>';
+      new mapboxgl.Marker({ element: destEl })
+        .setLngLat(waypoints[waypoints.length - 1])
+        .addTo(mapInstance.current!);
+    });
+    
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [waypoints]);
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged tru-map-window-frame">
-      <img src={staticMapUrl} alt="Route Overview" className="w-full h-full object-cover" />
+      <div ref={mapContainer} className="w-full h-full" />
     </div>
   );
 }
@@ -502,6 +580,7 @@ function TruckViewPanel() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const animationRef = useRef<number>();
+  const startTimeRef = useRef<number>(Date.now()); // Track animation start time
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   
   // Fetch actual road geometry from Mapbox Directions API - city streets loop
@@ -584,6 +663,9 @@ function TruckViewPanel() {
     
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
+    // Reset start time when animation begins
+    startTimeRef.current = Date.now();
+    
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/navigation-night-v1',
@@ -596,7 +678,6 @@ function TruckViewPanel() {
     });
     
     let progress = 0;
-    let additionalBearing = 0; // Smooth additive rotation on top of driving direction
     
     const animate = () => {
       if (!map.current) return;
@@ -608,12 +689,16 @@ function TruckViewPanel() {
       const position = getPointAlongRoute(progress);
       const drivingBearing = getBearing(progress);
       
-      // Add subtle continuous orbit effect - smoothly oscillates ±30 degrees
-      // Uses sine wave for natural easing (no abrupt stops)
-      additionalBearing = Math.sin(Date.now() / 4000) * 25; // 25 degree sway, 4 second period
+      // FIXED: Calculate elapsed time from animation start (not absolute Date.now())
+      // This creates a smooth continuous oscillation that never resets or jumps
+      const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
+      
+      // Smooth sine wave oscillation: ±35° sway over ~25 second full cycle
+      // elapsedSeconds * 0.25 means one full sine period = 2π / 0.25 ≈ 25 seconds
+      const orbitOffset = Math.sin(elapsedSeconds * 0.25) * 35;
       
       map.current.setCenter(position);
-      map.current.setBearing(drivingBearing + additionalBearing);
+      map.current.setBearing(drivingBearing + orbitOffset);
       
       animationRef.current = requestAnimationFrame(animate);
     };
