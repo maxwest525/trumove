@@ -12549,37 +12549,41 @@
 }
 
 /* =============================================
-   MEGA-MENU DROPDOWN STYLES
+   MEGA-MENU DROPDOWN STYLES - Polished v2
    ============================================= */
 .header-mega-menu {
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  padding-top: 12px;
+  padding-top: 10px;
   z-index: 100;
 }
 
 .mega-menu-content {
   background: hsl(var(--card));
-  border-radius: 16px;
-  padding: 16px;
-  min-width: 300px;
-  max-width: 320px;
-  box-shadow: 0 12px 48px hsl(var(--tm-ink) / 0.18);
-  border: 1px solid hsl(var(--tm-ink) / 0.08);
-  animation: mega-menu-enter 200ms ease;
+  border-radius: 14px;
+  padding: 14px;
+  min-width: 290px;
+  max-width: 310px;
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.08),
+    0 12px 32px hsl(var(--tm-ink) / 0.12);
+  border: 0.5px solid hsl(var(--border) / 0.5);
+  animation: mega-menu-enter 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark .mega-menu-content {
-  border-color: hsl(0 0% 100% / 0.1);
-  box-shadow: 0 12px 48px hsl(0 0% 0% / 0.5);
+  border-color: hsl(0 0% 100% / 0.08);
+  box-shadow: 
+    0 4px 12px hsl(0 0% 0% / 0.2),
+    0 12px 32px hsl(0 0% 0% / 0.4);
 }
 
 @keyframes mega-menu-enter {
   from { 
     opacity: 0; 
-    transform: translateY(-8px); 
+    transform: translateY(-6px); 
   }
   to { 
     opacity: 1; 
@@ -12588,13 +12592,62 @@
 }
 
 /* =============================================
-   NEW IMAGE-BASED PREVIEW CARD
+   NEW STAGGERED ENTRANCE ANIMATIONS
+   ============================================= */
+@keyframes mega-preview-enter {
+  from { 
+    opacity: 0; 
+    transform: scale(0.96); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+@keyframes mega-caption-slide {
+  from { 
+    opacity: 0; 
+    transform: translateY(6px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes mega-badge-pop {
+  from { 
+    opacity: 0; 
+    transform: scale(0.8); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+@keyframes mega-content-stagger {
+  from { 
+    opacity: 0; 
+    transform: translateY(4px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* =============================================
+   IMAGE-BASED PREVIEW CARD - Polished
    ============================================= */
 .mega-preview-card {
-  margin-bottom: 14px;
-  border-radius: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
   overflow: hidden;
   background: hsl(var(--muted));
+  opacity: 0;
+  animation: mega-preview-enter 400ms cubic-bezier(0.16, 1, 0.3, 1) 50ms forwards;
 }
 
 .mega-preview-image {
@@ -12608,7 +12661,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transform: scale(1.08);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: mega-image-settle 500ms cubic-bezier(0.16, 1, 0.3, 1) 80ms forwards;
+}
+
+@keyframes mega-image-settle {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
 }
 
 .mega-preview-card:hover .mega-preview-image img {
@@ -12617,22 +12677,25 @@
 
 .mega-preview-overlay {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
 }
 
 .mega-preview-badge {
   display: inline-flex;
   align-items: center;
   padding: 4px 10px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: hsl(0 0% 100%);
-  background: hsl(var(--tm-ink) / 0.85);
-  backdrop-filter: blur(8px);
+  background: hsl(var(--tm-ink) / 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 6px;
+  opacity: 0;
+  animation: mega-badge-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms forwards;
 }
 
 .mega-preview-live {
@@ -12640,14 +12703,17 @@
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: hsl(0 0% 100%);
-  background: hsl(142 70% 35% / 0.9);
-  backdrop-filter: blur(8px);
+  background: hsl(142 70% 35% / 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 6px;
+  opacity: 0;
+  animation: mega-badge-pop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms forwards;
 }
 
 .mega-live-dot {
@@ -12665,24 +12731,40 @@
 
 .mega-preview-caption {
   padding: 10px 12px;
-  background: hsl(var(--card));
+  background: linear-gradient(to bottom, hsl(var(--card) / 0.95), hsl(var(--card)));
+  opacity: 0;
+  animation: mega-caption-slide 350ms cubic-bezier(0.16, 1, 0.3, 1) 120ms forwards;
 }
 
 .mega-preview-highlight {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: hsl(var(--foreground));
-  line-height: 1.3;
+  line-height: 1.35;
+}
+
+/* Subtle green accent for highlight */
+.mega-preview-highlight::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
 }
 
 /* =============================================
-   COMPACT HEADER
+   COMPACT HEADER - Polished Typography
    ============================================= */
 .mega-menu-header-compact {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 12px;
+  gap: 3px;
+  margin-bottom: 10px;
+  opacity: 0;
+  animation: mega-content-stagger 300ms cubic-bezier(0.16, 1, 0.3, 1) 160ms forwards;
 }
 
 .mega-menu-title-row {
@@ -12693,27 +12775,33 @@
 
 .mega-menu-title-row svg {
   color: hsl(var(--primary));
+  flex-shrink: 0;
 }
 
 .mega-menu-title-row h3 {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
+  letter-spacing: -0.01em;
   color: hsl(var(--foreground));
+  margin: 0;
 }
 
 .mega-menu-tagline {
-  font-size: 12px;
+  font-size: 13px;
   color: hsl(var(--muted-foreground));
   font-weight: 500;
+  line-height: 1.4;
 }
 
 /* =============================================
-   COMPACT METHOD PILLS
+   COMPACT METHOD PILLS - Polished
    ============================================= */
 .mega-menu-methods-compact {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  opacity: 0;
+  animation: mega-content-stagger 300ms cubic-bezier(0.16, 1, 0.3, 1) 200ms forwards;
 }
 
 .mega-method-pill {
@@ -12739,6 +12827,7 @@
 
 .mega-method-pill svg {
   color: hsl(var(--muted-foreground));
+  flex-shrink: 0;
 }
 
 .mega-method-pill:hover svg {
@@ -12749,7 +12838,7 @@
   font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   padding: 2px 6px;
   background: hsl(var(--tm-ink));
   color: hsl(0 0% 100%);
@@ -12758,7 +12847,7 @@
 }
 
 /* =============================================
-   COMPACT CTA
+   COMPACT CTA - Polished
    ============================================= */
 .mega-menu-cta-compact {
   display: flex;
@@ -12768,16 +12857,18 @@
   padding: 10px 16px;
   background: hsl(var(--tm-ink));
   color: hsl(var(--background));
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   border-radius: 8px;
   text-decoration: none;
   transition: all 0.2s ease;
+  opacity: 0;
+  animation: mega-content-stagger 300ms cubic-bezier(0.16, 1, 0.3, 1) 200ms forwards;
 }
 
 .mega-menu-cta-compact:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.25);
 }
 
 .mega-menu-cta-compact svg {
@@ -12794,7 +12885,7 @@
 }
 
 .dark .mega-preview-caption {
-  background: hsl(220 15% 10%);
+  background: linear-gradient(to bottom, hsl(220 15% 10% / 0.95), hsl(220 15% 10%));
 }
 
 .dark .mega-method-pill {
