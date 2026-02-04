@@ -1474,6 +1474,10 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 20px;
+  /* Allow glow effects to extend beyond bounds */
+  overflow: visible;
+  padding-top: 40px;
+  margin-top: -40px;
 }
 
 /* Hero Element Entrance Animation */
@@ -26440,7 +26444,8 @@
 /* Hero section relative positioning for particles */
 .tru-hero.tru-hero-split {
   position: relative;
-  overflow: hidden;
+  /* Allow logo glow to extend beyond bounds - particles contained via their own clipping */
+  overflow: visible;
 }
 
 /* Ensure hero content stays above particles AND header backdrop */
