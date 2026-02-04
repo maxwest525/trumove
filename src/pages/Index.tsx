@@ -50,7 +50,7 @@ import {
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar, Sun, Moon
+  Play, Pause, MapPinned, Calendar
 } from "lucide-react";
 
 
@@ -435,62 +435,43 @@ const ROUTE_WAYPOINTS = [
 // Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
 // Homepage now uses static demo preview - no animation needed
 
-// Route Overview Panel - Google Static Maps API with dark/light toggle
+// Route Overview Panel - Mapbox dark road style (matches Truck View aesthetic)
 function RouteOverviewPanel() {
-  const [isDarkStyle, setIsDarkStyle] = useState(false);
+  const laCoords = [-118.24, 34.05]; // [lng, lat] for Mapbox
+  const nyCoords = [-74.00, 40.71];
   
-  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
-  
-  const laLat = 34.05, laLng = -118.24;
-  const nyLat = 40.71, nyLng = -74.00;
-  
-  // Realistic I-10/I-40/I-70 highway corridor waypoints
+  // Realistic I-10/I-40/I-70 highway corridor waypoints [lng, lat]
   const waypoints = [
-    [34.05, -118.24],   // Los Angeles
-    [34.14, -114.29],   // Needles, CA
-    [35.19, -111.65],   // Flagstaff, AZ
-    [35.08, -106.65],   // Albuquerque, NM
-    [35.22, -101.83],   // Amarillo, TX
-    [35.47, -97.52],    // Oklahoma City, OK
-    [37.69, -97.34],    // Wichita, KS
-    [39.10, -94.58],    // Kansas City, MO
-    [38.63, -90.20],    // St. Louis, MO
-    [39.77, -86.16],    // Indianapolis, IN
-    [40.00, -82.98],    // Columbus, OH
-    [40.44, -79.99],    // Pittsburgh, PA
-    [40.71, -74.00],    // New York, NY
+    [-118.24, 34.05],   // Los Angeles
+    [-114.29, 34.14],   // Needles, CA
+    [-111.65, 35.19],   // Flagstaff, AZ
+    [-106.65, 35.08],   // Albuquerque, NM
+    [-101.83, 35.22],   // Amarillo, TX
+    [-97.52, 35.47],    // Oklahoma City, OK
+    [-97.34, 37.69],    // Wichita, KS
+    [-94.58, 39.10],    // Kansas City, MO
+    [-90.20, 38.63],    // St. Louis, MO
+    [-86.16, 39.77],    // Indianapolis, IN
+    [-82.98, 40.00],    // Columbus, OH
+    [-79.99, 40.44],    // Pittsburgh, PA
+    [-74.00, 40.71],    // New York, NY
   ];
   
-  const pathPoints = waypoints.map(([lat, lng]) => `${lat},${lng}`).join('|');
+  // Build path overlay for Mapbox: path-strokeWidth+color-opacity(coords)
+  const pathCoords = waypoints.map(([lng, lat]) => `${lng},${lat}`).join(',');
+  const pathOverlay = `path-4+4285F4-0.9(${encodeURIComponent(pathCoords)})`;
   
-  // Dark mode styling for Google Static Maps
-  const darkStyleParam = '&style=feature:all|element:geometry|color:0x242f3e' +
-    '&style=feature:all|element:labels.text.stroke|color:0x242f3e' +
-    '&style=feature:all|element:labels.text.fill|color:0x746855' +
-    '&style=feature:road|element:geometry|color:0x38414e' +
-    '&style=feature:water|element:geometry|color:0x17263c';
+  // Markers
+  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
+  const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
   
-  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?` +
-    `size=420x480&scale=2&maptype=roadmap` +
-    `&markers=color:0x22c55e|size:mid|label:A|${laLat},${laLng}` +
-    `&markers=color:0xef4444|size:mid|label:B|${nyLat},${nyLng}` +
-    `&path=color:0x4285F4|weight:4|${pathPoints}` +
-    `${isDarkStyle ? darkStyleParam : ''}` +
-    `&key=${googleApiKey}`;
+  // Use navigation-night-v1 for dark theme (same as Truck View)
+  // Center on continental US, zoom 3.5 to see full route
+  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${pathOverlay},${originMarker},${destMarker}/-98,38,3.5/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
       <img src={staticMapUrl} alt="Route Overview" className="w-full h-full object-cover" />
-      
-      {/* Discreet style toggle */}
-      <button 
-        onClick={() => setIsDarkStyle(!isDarkStyle)}
-        className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm 
-                   border border-white/20 flex items-center justify-center hover:bg-black/60 transition-all"
-        aria-label={isDarkStyle ? 'Switch to light map' : 'Switch to dark map'}
-      >
-        {isDarkStyle ? <Sun className="w-3 h-3 text-white/80" /> : <Moon className="w-3 h-3 text-white/80" />}
-      </button>
       
       <div className="tru-tracker-satellite-label">
         <Radar className="w-3 h-3" />
