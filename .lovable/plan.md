@@ -1,32 +1,32 @@
 
 
 ## Summary
-Clean up the homepage Shipment Tracker demo by removing unnecessary UI elements and fixing the visual consistency to match the shipment tracking page. The satellite Route Overview map will zoom in to show actual roads/highways, and both maps will get proper borders.
+Simplify the homepage Shipment Tracker to be a **static demo preview** that doesn't animate or loop. The Route Overview will use a Google Maps-style plain road map with city markers (like your reference screenshot), and the Truck View will be a static tilted dark mode map with the truck logo in the center.
 
 ---
 
 ## What Will Change
 
-### 1. Remove Street View Preview (Lines 640-661)
-Delete the static Street View inset completely - it doesn't belong on the homepage demo.
+### 1. Route Overview (Left Panel)
+**Replace satellite map with Google Maps Static API** showing:
+- Plain road map style (not satellite)
+- Markers on Los Angeles and New York
+- Simple route polyline between them
+- Like your reference screenshot - clean, standard Google Maps look
 
-### 2. Remove Unnecessary Overlays from Road Map Panel
-Remove these elements that clutter the demo:
-- **Progress badge** ("X% Complete") - lines 603-605
-- **Stats overlay** (ETA, Traffic, Weather) - lines 607-623
-- **Route bar** (origin → destination + distance) - lines 625-638
+### 2. Truck View (Right Panel) 
+**Make completely static** - no animation:
+- Remove the `useTruckAnimation` hook usage
+- Use fixed coordinates (somewhere mid-route, like Oklahoma City)
+- Fixed bearing (e.g., 45° northeast heading)
+- Keep the tilted dark mode view with truck icon
+- Remove the Chase/North toggle (not needed for static demo)
+- Keep "LIVE GPS" badge for visual effect
 
-### 3. Update Truck Marker Styling
-Replace the current basic green circle truck overlay with the same cyan-accented style used on the shipment tracking page. The tracking page uses:
-- Green background with glow effect
-- Black truck icon color
-- Pulsing radial gradient animation
-
-### 4. Fix Satellite Route Overview Zoom
-Currently uses `auto` fit which shows all of North/South America. Change to a fixed zoom level (around 4-5) to show the continental US with visible highways while still displaying the full route.
-
-### 5. Add Borders to Both Maps
-Add visible borders to both the Satellite and Road Map panels matching the existing styling pattern.
+### 3. Remove Animation Logic
+- The `useTruckAnimation` hook can remain in code but won't be used
+- No more `requestAnimationFrame` loop for the homepage demo
+- No throttling logic needed
 
 ---
 
@@ -34,75 +34,95 @@ Add visible borders to both the Satellite and Road Map panels matching the exist
 
 ### File: `src/pages/Index.tsx`
 
-**A) Remove unused `Eye` import (line 53):**
+**A) Update SatelliteMapPanel → RouteOverviewPanel**
+
+Replace the Mapbox satellite map with Google Static Maps API:
+
 ```tsx
-// Before:
-Play, Pause, MapPinned, Calendar, Compass, Eye
-
-// After:
-Play, Pause, MapPinned, Calendar, Compass
-```
-
-**B) Update SatelliteMapPanel (around lines 488-527):**
-Change the Mapbox Static API URL to use a fixed zoom level instead of `auto`:
-```tsx
-// Before:
-const satelliteMapUrl = `.../${pathOverlay},${originMarker},${destMarker}/auto/420x480@2x?...`;
-
-// After (zoom 4, centered on continental US):
-const centerLng = -98;  // Center of continental US
-const centerLat = 38;
-const zoom = 4;
-const satelliteMapUrl = `.../${pathOverlay},${originMarker},${destMarker}/${centerLng},${centerLat},${zoom}/420x480@2x?...`;
-```
-
-**C) Update RoadMapPanel truck overlay (around lines 567-573):**
-Replace basic truck overlay with tracking page style:
-```tsx
-// Before:
-<div className="tru-tracker-truck-overlay" style={{...}}>
-  <div className="tru-tracker-truck-pulse" />
-  <Truck className="w-5 h-5 text-white" />
-</div>
-
-// After (matching tracking page):
-<div className="tru-homepage-truck-marker">
-  <div className="tru-homepage-truck-glow" />
-  <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
-  <div className="tru-homepage-truck-icon">
-    <Truck className="w-6 h-6" />
-  </div>
-</div>
-```
-
-**D) Remove Progress Badge (lines 603-605):**
-Delete entire block.
-
-**E) Remove Stats Overlay (lines 607-623):**
-Delete entire block (ETA, Traffic, Weather items).
-
-**F) Remove Route Bar (lines 625-638):**
-Delete entire block (origin/destination endpoints + distance).
-
-**G) Delete Street View Preview (lines 640-661):**
-Delete entire block.
-
----
-
-### File: `src/index.css`
-
-**Add prominent borders to both map panels:**
-```css
-.tru-tracker-satellite-enlarged,
-.tru-tracker-road-map {
-  border: 2px solid hsl(0 0% 100% / 0.15);
-}
-
-.dark .tru-tracker-satellite-enlarged,
-.dark .tru-tracker-road-map {
-  border: 2px solid hsl(0 0% 100% / 0.2);
+function RouteOverviewPanel() {
+  // LA and NY coordinates for markers
+  const laLat = 34.05, laLng = -118.24;
+  const nyLat = 40.71, nyLng = -74.00;
+  
+  // Google Static Maps API with roadmap style
+  // Using the same key already used elsewhere in the project
+  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+  
+  // Simple route with markers - roadmap style like reference screenshot
+  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?` +
+    `size=420x480` +
+    `&scale=2` +
+    `&maptype=roadmap` +
+    `&markers=color:green%7Clabel:A%7C${laLat},${laLng}` +
+    `&markers=color:red%7Clabel:B%7C${nyLat},${nyLng}` +
+    `&path=color:0x4285F4%7Cweight:4%7C${laLat},${laLng}%7C35.08,-106.65%7C35.47,-97.52%7C${nyLat},${nyLng}` +
+    `&key=${googleApiKey}`;
+  
+  return (
+    <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
+      <img src={staticMapUrl} alt="Route Overview" />
+      <div className="tru-tracker-satellite-label">
+        <Radar className="w-3 h-3" />
+        <span>Route Overview</span>
+      </div>
+    </div>
+  );
 }
 ```
+
+**B) Simplify RoadMapPanel to be static**
+
+Remove animation, use fixed position mid-route:
+
+```tsx
+function RoadMapPanel() {
+  // Static position - Oklahoma City area (mid-route) with northeast heading
+  const fixedCenter = { lat: 35.47, lng: -97.52 };
+  const fixedBearing = 45;  // Northeast heading
+  const pitch = 60;
+  const zoom = 15;
+  
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/` +
+    `pin-s+22c55e(${fixedCenter.lng},${fixedCenter.lat})/` +
+    `${fixedCenter.lng},${fixedCenter.lat},${zoom},${fixedBearing},${pitch}/420x480@2x` +
+    `?access_token=${MAPBOX_TOKEN}`;
+  
+  return (
+    <div className="tru-tracker-road-map">
+      <img 
+        src={roadMapUrl} 
+        alt="Live GPS View" 
+        className="tru-tracker-road-map-img"
+      />
+      
+      {/* Truck marker - centered, static */}
+      <div className="tru-homepage-truck-marker">
+        <div className="tru-homepage-truck-glow" />
+        <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
+        <div className="tru-homepage-truck-icon">
+          <Truck className="w-6 h-6" />
+        </div>
+      </div>
+      
+      {/* LIVE GPS badge for visual effect */}
+      <div className="tru-tracker-live-badge">
+        <span className="tru-tracker-live-dot" />
+        <span>LIVE GPS</span>
+      </div>
+    </div>
+  );
+}
+```
+
+**C) Remove from RoadMapPanel:**
+- All animation hook usage (`useTruckAnimation`)
+- Throttling logic (`lastUpdateRef`, `throttledCenter`, etc.)
+- Camera mode toggle (Chase/North button + Tooltip)
+- `isChaseMode` state
+
+**D) Remove unused imports:**
+- `Compass` (only used for toggle)
+- Any animation-related refs that are no longer needed
 
 ---
 
@@ -113,16 +133,16 @@ Delete entire block.
 │                     SHIPMENT TRACKER SECTION                    │
 ├──────────────────┬────────────────────┬────────────────────────┤
 │                  │                    │                        │
-│   SATELLITE      │    ROAD MAP        │    CONTENT             │
-│   (zoomed to     │    (3D tilt,       │    - Title             │
-│   show US +      │    dark mode,      │    - Description       │
-│   highways)      │    truck marker)   │    - Step pills        │
-│                  │                    │    - CTA button        │
-│   [border]       │   [border]         │                        │
+│   ROUTE OVERVIEW │    TRUCK VIEW      │    CONTENT             │
+│   (Google Maps   │    (Static tilted  │    - Title             │
+│   plain roadmap  │    dark mode map   │    - Description       │
+│   with markers   │    with truck      │    - Step pills        │
+│   A → B)         │    logo centered)  │    - CTA button        │
 │                  │                    │                        │
-│   Route Overview │   LIVE GPS badge   │                        │
-│   label          │   + Chase toggle   │                        │
-│                  │   (no stats/bar)   │                        │
+│   [border]       │   [border]         │                        │
+│                  │   LIVE GPS badge   │                        │
+│   Route Overview │                    │                        │
+│   label          │                    │                        │
 └──────────────────┴────────────────────┴────────────────────────┘
 ```
 
@@ -130,8 +150,9 @@ Delete entire block.
 
 ## Technical Notes
 
-- The `useTruckAnimation` hook continues to work as-is, animating the map center and bearing in real-time
-- The Road Map will still use the Mapbox Static API with `navigation-night-v1` style and 60° tilt
-- The truck marker will use the existing `.tru-homepage-truck-marker` CSS classes already defined in index.css (lines 3594-3647)
-- No changes needed to the animation loop logic
+1. **Google Static Maps API** will show the clean roadmap style with green/red markers like your reference screenshot
+2. **Mapbox navigation-night-v1** will provide the tilted dark mode view for the truck panel
+3. **No animation loop** means no CPU usage for homepage demo
+4. Both panels remain as simple `<img>` tags with static URLs
+5. The `useTruckAnimation` hook can be kept in the file for potential future use on other pages
 
