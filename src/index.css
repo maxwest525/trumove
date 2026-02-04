@@ -3111,59 +3111,86 @@
   50% { top: 90%; }
 }
 
-/* Furniture detection box styling */
+/* Furniture detection box styling - authentic CV look */
 .tru-ai-detection-box {
   position: absolute;
-  border: 1.5px solid hsl(0 0% 100% / 0.5);
-  border-radius: 6px;
-  background: hsl(0 0% 100% / 0.08);
-  box-shadow: 
-    0 0 12px hsl(0 0% 100% / 0.15),
-    inset 0 0 16px hsl(0 0% 100% / 0.03);
-  animation: detection-pulse 3s ease-in-out infinite, detection-appear 0.4s ease-out;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  animation: detection-appear 0.5s ease-out;
   pointer-events: none;
   z-index: 10;
+}
+
+/* Corner bracket markers for authentic detection look */
+.tru-ai-detection-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: hsl(0 0% 100% / 0.7);
+  border-style: solid;
+  border-width: 0;
+}
+
+.tru-ai-corner-tl {
+  top: 0;
+  left: 0;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+
+.tru-ai-corner-tr {
+  top: 0;
+  right: 0;
+  border-top-width: 2px;
+  border-right-width: 2px;
+}
+
+.tru-ai-corner-bl {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+}
+
+.tru-ai-corner-br {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
 }
 
 @keyframes detection-appear {
   from {
     opacity: 0;
-    transform: scale(0.95);
   }
   to {
     opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes detection-pulse {
-  0%, 100% {
-    box-shadow: 
-      0 0 12px hsl(0 0% 100% / 0.15),
-      inset 0 0 16px hsl(0 0% 100% / 0.03);
-  }
-  50% {
-    box-shadow: 
-      0 0 18px hsl(0 0% 100% / 0.25),
-      inset 0 0 24px hsl(0 0% 100% / 0.05);
   }
 }
 
 .tru-ai-detection-label {
   position: absolute;
-  top: -22px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: hsl(0 0% 0% / 0.6);
-  color: hsl(0 0% 100% / 0.85);
-  padding: 3px 10px;
-  border-radius: 4px;
-  font-size: 10px;
+  top: -20px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: hsl(0 0% 0% / 0.7);
+  color: hsl(0 0% 100% / 0.9);
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 9px;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   white-space: nowrap;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 2px 6px hsl(0 0% 0% / 0.3);
+}
+
+.tru-ai-detection-confidence {
+  color: hsl(142 70% 60%);
+  font-weight: 600;
+  font-size: 9px;
 }
 
 .tru-ai-scanner-badge {

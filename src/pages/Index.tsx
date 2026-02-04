@@ -294,11 +294,11 @@ MoveSummaryModal.displayName = "MoveSummaryModal";
 
 // Furniture positions for detection overlay on sample living room image
 const FURNITURE_POSITIONS = [
-  { id: 0, name: "3-Seat Sofa", top: "52%", left: "8%", width: "38%", height: "30%" },
-  { id: 1, name: "Coffee Table", top: "68%", left: "38%", width: "20%", height: "12%" },
-  { id: 2, name: "TV Stand", top: "25%", left: "48%", width: "26%", height: "26%" },
-  { id: 3, name: "Armchair", top: "45%", left: "65%", width: "24%", height: "30%" },
-  { id: 4, name: "Floor Lamp", top: "15%", left: "85%", width: "12%", height: "40%" },
+  { id: 0, name: "Sofa", confidence: 98, top: "48%", left: "5%", width: "42%", height: "38%" },
+  { id: 1, name: "Coffee Table", confidence: 94, top: "72%", left: "36%", width: "22%", height: "14%" },
+  { id: 2, name: "TV Stand", confidence: 96, top: "22%", left: "46%", width: "28%", height: "32%" },
+  { id: 3, name: "Armchair", confidence: 92, top: "42%", left: "68%", width: "22%", height: "34%" },
+  { id: 4, name: "Floor Lamp", confidence: 89, top: "12%", left: "88%", width: "10%", height: "45%" },
 ];
 
 // Scanner Component - Center column
@@ -329,7 +329,14 @@ function ScannerPreview({ isRunning, onStartDemo, visibleCount }: ScannerPreview
                 height: item.height 
               }}
             >
-              <span className="tru-ai-detection-label">{item.name}</span>
+              <span className="tru-ai-detection-corner tru-ai-corner-tl" />
+              <span className="tru-ai-detection-corner tru-ai-corner-tr" />
+              <span className="tru-ai-detection-corner tru-ai-corner-bl" />
+              <span className="tru-ai-detection-corner tru-ai-corner-br" />
+              <span className="tru-ai-detection-label">
+                {item.name}
+                <span className="tru-ai-detection-confidence">{item.confidence}%</span>
+              </span>
             </div>
           ))}
         </>
