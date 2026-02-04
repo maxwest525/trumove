@@ -432,19 +432,27 @@ const ROUTE_WAYPOINTS = [
   { lat: 34.0522, lng: -118.2437 },  // LA
 ];
 
-// Custom hook for shared truck animation state
+// Custom hook for shared truck animation state - loops continuously
 function useTruckAnimation() {
   const [truckProgress, setTruckProgress] = useState(0);
   const [mapCenter, setMapCenter] = useState({ lat: SAMPLE_ROUTE.origin.lat, lng: SAMPLE_ROUTE.origin.lng });
   const [currentBearing, setCurrentBearing] = useState(90); // East-facing by default
+  const startTimeRef = useRef(Date.now());
   
   useEffect(() => {
-    const duration = 10000;
-    const startTime = Date.now();
+    const duration = 30000; // 30 seconds for full route (slower for better observation)
+    let animationId: number;
     
     const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
+      const elapsed = Date.now() - startTimeRef.current;
+      let progress = (elapsed % duration) / duration; // Loop using modulo
+      
+      // Reset start time when loop completes for smoother transitions
+      if (elapsed >= duration) {
+        startTimeRef.current = Date.now();
+        progress = 0;
+      }
+      
       setTruckProgress(progress);
       
       const totalSegments = ROUTE_WAYPOINTS.length - 1;
@@ -466,12 +474,12 @@ function useTruckAnimation() {
       
       setMapCenter({ lat: currentLat, lng: currentLng });
       
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
+      animationId = requestAnimationFrame(animate);
     };
     
-    animate();
+    animationId = requestAnimationFrame(animate);
+    
+    return () => cancelAnimationFrame(animationId);
   }, []);
   
   return { truckProgress, mapCenter, currentBearing };
