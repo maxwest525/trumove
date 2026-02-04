@@ -3367,23 +3367,24 @@
 
 /* =============================================
    TRACKER SECTION - 3-column centered layout
-   Satellite (left) | Road Map (center @ 550px) | Description (right)
+   Satellite (left) | Road Map (center @ 770px) | Description (right)
+   Shifted 220px right from AI section anchor
    ============================================= */
 
 /* Satellite map - LEFT of center (offset by road map width + gap) */
 .tru-tracker-satellite-left {
   position: absolute;
-  left: 550px;
+  left: 770px;
   top: 50%;
   transform: translate(-50%, -50%);
   margin-left: calc(-210px - 12px - 210px); /* Half road map + gap + half satellite */
   z-index: 10;
 }
 
-/* Road map - CENTERED at 550px anchor (directly under AI demo) */
+/* Road map - CENTERED at 770px anchor */
 .tru-tracker-roadmap-center {
   position: absolute;
-  left: 550px;
+  left: 770px;
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
@@ -3392,7 +3393,7 @@
 /* Description - RIGHT of center (offset by road map width + gap) */
 .tru-tracker-content-right {
   position: absolute;
-  left: 550px;
+  left: 770px;
   top: 50%;
   transform: translate(-50%, -50%);
   margin-left: calc(210px + 12px + 210px + 4rem); /* Half road map + gap + half satellite + description gap */
@@ -3409,7 +3410,7 @@
 /* Legacy classes for backwards compatibility */
 .tru-tracker-preview-left {
   position: absolute;
-  left: 550px;
+  left: 770px;
   top: 50%;
   transform: translate(-100%, -50%);
   margin-left: -4rem;
