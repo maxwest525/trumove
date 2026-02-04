@@ -414,20 +414,23 @@ const SAMPLE_ROUTE = {
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
 
 function TrackingPreview() {
-  // Road map with route line
-  const routeMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-80.8,27,6.5,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Encoded polyline for Miami to Orlando route (simplified I-95/Turnpike path)
+  const routePolyline = encodeURIComponent('_pflCz{qhNgGkB{FwCeHoFkIgJaKoMmLoQwMqTuNkWoPsZqQq]iR_`@{Roc@aSkf@eSmi@eS_l@cSso@aSur@_Squ@}Rox@{R_{@yR}~@wRaaBuRocBsRieByRggBqRkiBqRmkBoRonBoRqpBoRsrBqRusBqRwuBqRyvBoRaxBoR');
   
-  // Satellite overview of the route
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-80.8,27,6.5,0/200x150@2x?access_token=${MAPBOX_TOKEN}`;
+  // Zoomed-in road map centered on truck position (showing truck on route)
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/path-4+22c55e-0.7(${routePolyline}),pin-s+16a34a(${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat})/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},11,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  
+  // Satellite overview showing full route with markers
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/path-3+22c55e-0.8(${routePolyline}),pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-80.8,27,6.5,0/200x150@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Street view at truck position (using satellite as proxy for street-level context)
-  const streetViewUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},15,0/120x80@2x?access_token=${MAPBOX_TOKEN}`;
+  const streetViewUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},16,0/120x80@2x?access_token=${MAPBOX_TOKEN}`;
 
   return (
     <div className="tru-tracker-preview-container">
       {/* Main Road Map */}
       <div className="tru-tracker-road-map">
-        <img src={routeMapUrl} alt="Live Route Map" />
+        <img src={roadMapUrl} alt="Live Route Map" />
         
         {/* Pulsing Truck Marker */}
         <div className="tru-tracker-truck-marker">
