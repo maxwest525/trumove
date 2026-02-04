@@ -484,49 +484,121 @@ function RouteOverviewPanel() {
   const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${geoJsonOverlay},${originMarker},${destMarker}/auto/420x480@2x?padding=40&access_token=${MAPBOX_TOKEN}`;
   
   return (
-    <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
+    <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged tru-map-window-frame">
       <img src={staticMapUrl} alt="Route Overview" className="w-full h-full object-cover" />
-      
-      <div className="tru-tracker-satellite-label">
-        <Radar className="w-3 h-3" />
-        <span>Route Overview</span>
-      </div>
     </div>
   );
 }
 
-// Truck View Panel - Static tilted dark mode map with truck logo (no animation)
+// Truck View Panel - Animated Mapbox GL map with truck driving through streets
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
 function TruckViewPanel() {
-  // Static position - Oklahoma City area (mid-route) with northeast heading
-  const fixedCenter = { lat: 35.47, lng: -97.52 };
-  const fixedBearing = 45;  // Northeast heading
-  const pitch = 60;         // 3D tilt
-  const zoom = 15;          // Street-level detail
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const animationRef = useRef<number>();
   
-  // Use navigation-night-v1 for dark theme (tilted view)
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${fixedCenter.lng},${fixedCenter.lat})/${fixedCenter.lng},${fixedCenter.lat},${zoom},${fixedBearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Street-level looping route in Oklahoma City area
+  const streetRoute: [number, number][] = useMemo(() => [
+    [-97.520, 35.470],   // Start
+    [-97.516, 35.473],   // Turn 1
+    [-97.512, 35.471],   // Turn 2
+    [-97.514, 35.467],   // Turn 3
+    [-97.518, 35.465],   // Turn 4
+    [-97.522, 35.468],   // Turn 5
+    [-97.520, 35.470],   // Back to start (loop)
+  ], []);
+  
+  // Helper: interpolate position along route
+  const getPointAlongRoute = useCallback((progress: number): [number, number] => {
+    const numSegments = streetRoute.length - 1;
+    const segmentProgress = progress * numSegments;
+    const segmentIndex = Math.min(Math.floor(segmentProgress), numSegments - 1);
+    const t = segmentProgress - segmentIndex;
+    
+    const start = streetRoute[segmentIndex];
+    const end = streetRoute[segmentIndex + 1];
+    
+    return [
+      start[0] + (end[0] - start[0]) * t,
+      start[1] + (end[1] - start[1]) * t
+    ];
+  }, [streetRoute]);
+  
+  // Helper: calculate bearing between two points
+  const getBearing = useCallback((progress: number): number => {
+    const numSegments = streetRoute.length - 1;
+    const segmentIndex = Math.min(Math.floor(progress * numSegments), numSegments - 1);
+    
+    const start = streetRoute[segmentIndex];
+    const end = streetRoute[segmentIndex + 1];
+    
+    const dLng = end[0] - start[0];
+    const dLat = end[1] - start[1];
+    
+    return (Math.atan2(dLng, dLat) * 180) / Math.PI;
+  }, [streetRoute]);
+  
+  useEffect(() => {
+    if (!mapContainer.current || map.current) return;
+    
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+    
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/navigation-night-v1',
+      center: streetRoute[0],
+      zoom: 17,
+      pitch: 60,
+      bearing: 45,
+      interactive: false,
+      attributionControl: false
+    });
+    
+    let progress = 0;
+    
+    const animate = () => {
+      if (!map.current) return;
+      
+      progress += 0.00015; // Slow for realistic driving speed (~20 sec loop)
+      if (progress > 1) progress = 0;
+      
+      const position = getPointAlongRoute(progress);
+      const bearing = getBearing(progress);
+      
+      map.current.setCenter(position);
+      map.current.setBearing(bearing);
+      
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    map.current.on('load', () => {
+      animate();
+    });
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, [streetRoute, getPointAlongRoute, getBearing]);
   
   return (
-    <div className="tru-tracker-road-map">
-      <img 
-        src={roadMapUrl} 
-        alt="Live GPS View" 
-        className="tru-tracker-road-map-img"
-      />
+    <div className="tru-tracker-road-map tru-map-window-frame">
+      <div ref={mapContainer} className="w-full h-full" />
       
-      {/* Truck marker - centered, static */}
+      {/* Truck marker - centered, fixed position */}
       <div className="tru-homepage-truck-marker">
         <div className="tru-homepage-truck-glow" />
         <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
         <div className="tru-homepage-truck-icon">
           <Truck className="w-6 h-6" />
         </div>
-      </div>
-      
-      {/* LIVE GPS badge for visual effect */}
-      <div className="tru-tracker-live-badge">
-        <span className="tru-tracker-live-dot" />
-        <span>LIVE GPS</span>
       </div>
     </div>
   );
