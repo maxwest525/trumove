@@ -3365,23 +3365,37 @@
   z-index: 10;
 }
 
-/* Preview container - LEFT side (flipped layout: maps on left) */
-.tru-tracker-preview-left {
+/* =============================================
+   TRACKER SECTION - 3-column centered layout
+   Satellite (left) | Road Map (center @ 550px) | Description (right)
+   ============================================= */
+
+/* Satellite map - LEFT of center (offset by road map width + gap) */
+.tru-tracker-satellite-left {
   position: absolute;
   left: 550px;
   top: 50%;
-  transform: translate(-100%, -50%);
-  margin-left: -4rem;
+  transform: translate(-50%, -50%);
+  margin-left: calc(-210px - 12px - 210px); /* Half road map + gap + half satellite */
   z-index: 10;
 }
 
-/* Content container - RIGHT side (flipped layout: text on right) */
+/* Road map - CENTERED at 550px anchor (directly under AI demo) */
+.tru-tracker-roadmap-center {
+  position: absolute;
+  left: 550px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+/* Description - RIGHT of center (offset by road map width + gap) */
 .tru-tracker-content-right {
   position: absolute;
   left: 550px;
   top: 50%;
-  transform: translate(0, -50%);
-  margin-left: 4rem;
+  transform: translate(-50%, -50%);
+  margin-left: calc(210px + 12px + 210px + 4rem); /* Half road map + gap + half satellite + description gap */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3390,6 +3404,16 @@
   width: auto;
   max-width: 26rem;
   z-index: 5;
+}
+
+/* Legacy classes for backwards compatibility */
+.tru-tracker-preview-left {
+  position: absolute;
+  left: 550px;
+  top: 50%;
+  transform: translate(-100%, -50%);
+  margin-left: -4rem;
+  z-index: 10;
 }
 
 /* Enhanced Tracking Preview Container */
@@ -3898,7 +3922,9 @@
   .tru-tracker-content-left,
   .tru-tracker-preview-right,
   .tru-tracker-content-right,
-  .tru-tracker-preview-left {
+  .tru-tracker-preview-left,
+  .tru-tracker-satellite-left,
+  .tru-tracker-roadmap-center {
     position: relative;
     left: auto;
     top: auto;
@@ -3916,7 +3942,9 @@
   }
   
   .tru-tracker-preview-right,
-  .tru-tracker-preview-left {
+  .tru-tracker-preview-left,
+  .tru-tracker-satellite-left,
+  .tru-tracker-roadmap-center {
     order: 2; /* Preview appears second on mobile */
   }
   
