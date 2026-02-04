@@ -471,8 +471,20 @@ function useTruckAnimation() {
 
 // Satellite Map Panel - Route Overview (matches tracking page style)
 function SatelliteMapPanel() {
-  // Use satellite-v9 style for cleaner look matching the tracking page
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/-98,39,3.2,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Use satellite-v9 style centered on US with proper zoom to show LA to NY route
+  // Center: -98, 39 (Kansas - center of US), zoom 3.2 shows full continental US
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/-98,39,3.0,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  
+  // Pixel positions for cities on a 420x480 map centered at -98,39 zoom 3.0
+  // LA is roughly at -118.24, 34.05 → pixel ~85, 265
+  // NY is roughly at -74.00, 40.71 → pixel ~335, 215
+  const laPos = { x: 85, y: 265 };
+  const nyPos = { x: 335, y: 215 };
+  
+  // Midpoint waypoints for realistic curved route
+  const kansasCity = { x: 210, y: 235 }; // -94.5, 39.1
+  const denver = { x: 145, y: 230 };     // -104.9, 39.7
+  const stLouis = { x: 235, y: 240 };    // -90.2, 38.6
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
@@ -494,10 +506,10 @@ function SatelliteMapPanel() {
           
           {/* Black shadow layer for terrain visibility */}
           <path 
-            d="M 365 168 C 350 175 335 178 320 185 C 300 195 280 200 260 210 C 235 222 210 230 185 238 C 160 248 135 258 110 270 C 90 280 75 290 60 300"
+            d={`M ${laPos.x} ${laPos.y} Q ${denver.x} ${denver.y - 20}, ${kansasCity.x} ${kansasCity.y} Q ${stLouis.x} ${stLouis.y}, ${nyPos.x} ${nyPos.y}`}
             stroke="#000000"
-            strokeWidth="12"
-            strokeOpacity="0.6"
+            strokeWidth="10"
+            strokeOpacity="0.7"
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -505,10 +517,10 @@ function SatelliteMapPanel() {
           
           {/* Outer glow - cyan neon */}
           <path 
-            d="M 365 168 C 350 175 335 178 320 185 C 300 195 280 200 260 210 C 235 222 210 230 185 238 C 160 248 135 258 110 270 C 90 280 75 290 60 300"
+            d={`M ${laPos.x} ${laPos.y} Q ${denver.x} ${denver.y - 20}, ${kansasCity.x} ${kansasCity.y} Q ${stLouis.x} ${stLouis.y}, ${nyPos.x} ${nyPos.y}`}
             stroke="#00e5a0"
-            strokeWidth="8"
-            strokeOpacity="0.4"
+            strokeWidth="6"
+            strokeOpacity="0.5"
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -517,26 +529,33 @@ function SatelliteMapPanel() {
           
           {/* Core route line - bright cyan */}
           <path 
-            d="M 365 168 C 350 175 335 178 320 185 C 300 195 280 200 260 210 C 235 222 210 230 185 238 C 160 248 135 258 110 270 C 90 280 75 290 60 300"
+            d={`M ${laPos.x} ${laPos.y} Q ${denver.x} ${denver.y - 20}, ${kansasCity.x} ${kansasCity.y} Q ${stLouis.x} ${stLouis.y}, ${nyPos.x} ${nyPos.y}`}
             className="tru-tracker-route-draw"
             stroke="#00e5a0"
-            strokeWidth="4"
+            strokeWidth="3"
             fill="none"
             strokeLinecap="round"
           />
           
           {/* Origin marker - Red circle (Los Angeles) */}
-          <circle cx="60" cy="300" r="10" fill="#ef4444" stroke="white" strokeWidth="3" />
+          <circle cx={laPos.x} cy={laPos.y} r="8" fill="#ef4444" stroke="white" strokeWidth="2" />
           
-          {/* Destination marker - Truck in green circle (New York) */}
-          <circle cx="365" cy="168" r="16" fill="none" stroke="#00e5a0" strokeWidth="3" opacity="0.6" />
-          <circle cx="365" cy="168" r="12" fill="#1a1a2e" stroke="#00e5a0" strokeWidth="2" />
-          {/* Truck icon */}
-          <g transform="translate(357, 161)">
-            <path d="M2 4h10v6H2V4z M12 7h3l2 3v4h-3v-2h-2V7z M4 12a2 2 0 100-4 2 2 0 000 4z M13 12a2 2 0 100-4 2 2 0 000 4z" 
-              fill="#00e5a0" 
+          {/* Destination marker - Truck in green pulsing circle (New York) */}
+          <circle cx={nyPos.x} cy={nyPos.y} r="18" fill="none" stroke="#00e5a0" strokeWidth="2" opacity="0.4">
+            <animate attributeName="r" values="16;22;16" dur="2s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.4;0.1;0.4" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx={nyPos.x} cy={nyPos.y} r="12" fill="#0f1419" stroke="#00e5a0" strokeWidth="2" />
+          
+          {/* Truck icon using Lucide-style path */}
+          <g transform={`translate(${nyPos.x - 8}, ${nyPos.y - 6})`}>
+            <path 
+              d="M1 3h9v7H1V3z M10 5.5h3.5l2.5 3v4h-2.5M10 12.5H3.5M5 14a1.5 1.5 0 110-3 1.5 1.5 0 010 3zM12 14a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" 
+              fill="none" 
               stroke="#00e5a0" 
-              strokeWidth="0.5"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </g>
         </svg>
