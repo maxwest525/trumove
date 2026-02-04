@@ -33238,7 +33238,7 @@ gmp-map-3d-element .gmnoprint {
 
 /* =============================================
    WINDOW FRAME EFFECT FOR MAP PANELS
-   Realistic bezel/frame border for map displays
+   Shadow-based frame for map displays
    ============================================= */
 .tru-map-window-frame {
   position: relative;
@@ -33246,35 +33246,38 @@ gmp-map-3d-element .gmnoprint {
   overflow: hidden;
   box-shadow:
     /* Inner shadow for depth */
-    inset 0 2px 4px hsl(0 0% 0% / 0.3),
-    inset 0 -1px 2px hsl(0 0% 100% / 0.05),
-    /* Outer glow */
-    0 0 0 1px hsl(0 0% 100% / 0.08),
-    0 4px 24px hsl(0 0% 0% / 0.5);
-  border: 3px solid hsl(220 10% 18%);
+    inset 0 2px 8px hsl(0 0% 0% / 0.5),
+    inset 0 -2px 6px hsl(0 0% 0% / 0.3),
+    inset 2px 0 6px hsl(0 0% 0% / 0.2),
+    inset -2px 0 6px hsl(0 0% 0% / 0.2),
+    /* Outer shadow for lift */
+    0 4px 20px hsl(0 0% 0% / 0.6),
+    0 8px 40px hsl(0 0% 0% / 0.4);
 }
 
 .tru-map-window-frame::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 5px;
-  border: 1px solid hsl(0 0% 100% / 0.12);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px hsl(0 0% 100% / 0.08);
   pointer-events: none;
   z-index: 20;
 }
 
-/* Subtle bezel gradient effect */
-.tru-map-window-frame::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 11px;
-  background: linear-gradient(
-    145deg,
-    hsl(220 10% 22%) 0%,
-    hsl(220 10% 14%) 50%,
-    hsl(220 10% 10%) 100%
-  );
-  z-index: -1;
+/* =============================================
+   MAPBOX WATERMARK/ATTRIBUTION HIDE
+   Hide Mapbox branding for cleaner map display
+   ============================================= */
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right,
+.mapboxgl-ctrl {
+  display: none !important;
+}
+
+.mapboxgl-canvas-container .mapboxgl-ctrl-attrib-inner,
+.mapboxgl-canvas-container .mapboxgl-ctrl-attrib {
+  display: none !important;
 }
