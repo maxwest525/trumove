@@ -437,41 +437,37 @@ const ROUTE_WAYPOINTS = [
 
 // Route Overview Panel - Mapbox Streets style (roadmap look like Google Maps)
 function RouteOverviewPanel() {
-  // LA and NY coordinates
+  // LA and NY coordinates [lng, lat]
   const laCoords = [-118.24, 34.05];
   const nyCoords = [-74.00, 40.71];
   
-  // Key waypoints along I-40/I-70 corridor for realistic routing
+  // Key waypoints along the route for a realistic path
   const waypoints = [
     [-118.24, 34.05],  // Los Angeles
-    [-111.89, 33.45],  // Phoenix area
     [-106.65, 35.08],  // Albuquerque
     [-97.52, 35.47],   // Oklahoma City
-    [-90.05, 35.15],   // Memphis
-    [-86.78, 36.16],   // Nashville
-    [-77.03, 38.90],   // Washington DC
     [-74.00, 40.71],   // New York
   ];
   
-  // Build path string for Mapbox - blue color matching Google Maps style
+  // Build path overlay - correct Mapbox format: path-strokeWidth+color-opacity(coords)
+  // Coords format: lng,lat,lng,lat,lng,lat (no URL encoding needed)
   const pathCoords = waypoints.map(([lng, lat]) => `${lng},${lat}`).join(',');
-  const pathOverlay = `path-4+4285F4-0.9(${encodeURIComponent(pathCoords)})`;
+  const pathOverlay = `path-4+4285F4-0.8(${pathCoords})`;
   
-  // Origin marker (green) and destination marker (red)
+  // Markers: pin-s = small pin, +color, (lng,lat)
   const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
   const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
   
-  // Use fixed zoom level centered on continental US
-  const centerLng = -98;
-  const centerLat = 38;
-  const zoom = 3.5;
-  
-  // Use streets-v12 for roadmap style (like Google Maps)
-  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${pathOverlay},${originMarker},${destMarker}/${centerLng},${centerLat},${zoom}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Center on continental US with zoom to see full route
+  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${pathOverlay},${originMarker},${destMarker}/-98,38,3.5/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
-      <img src={staticMapUrl} alt="Route Overview" />
+      <img 
+        src={staticMapUrl} 
+        alt="Route Overview" 
+        className="w-full h-full object-cover"
+      />
       
       <div className="tru-tracker-satellite-label">
         <Radar className="w-3 h-3" />
