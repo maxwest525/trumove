@@ -33235,3 +33235,46 @@ gmp-map-3d-element .gm-style-cc,
 gmp-map-3d-element .gmnoprint {
   display: none !important;
 }
+
+/* =============================================
+   WINDOW FRAME EFFECT FOR MAP PANELS
+   Realistic bezel/frame border for map displays
+   ============================================= */
+.tru-map-window-frame {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow:
+    /* Inner shadow for depth */
+    inset 0 2px 4px hsl(0 0% 0% / 0.3),
+    inset 0 -1px 2px hsl(0 0% 100% / 0.05),
+    /* Outer glow */
+    0 0 0 1px hsl(0 0% 100% / 0.08),
+    0 4px 24px hsl(0 0% 0% / 0.5);
+  border: 3px solid hsl(220 10% 18%);
+}
+
+.tru-map-window-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  border: 1px solid hsl(0 0% 100% / 0.12);
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Subtle bezel gradient effect */
+.tru-map-window-frame::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 11px;
+  background: linear-gradient(
+    145deg,
+    hsl(220 10% 22%) 0%,
+    hsl(220 10% 14%) 50%,
+    hsl(220 10% 10%) 100%
+  );
+  z-index: -1;
+}
