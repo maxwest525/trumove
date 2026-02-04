@@ -12193,29 +12193,25 @@
    NEW CONSOLIDATED HEADER - FLOATING GLASSMORPHISM
    ============================================= */
 .header-main {
-  background: hsl(0 0% 100% / 0.96);
-  backdrop-filter: blur(12px);
+  background: hsl(0 0% 100%);
   border-bottom: 1px solid hsl(var(--tm-line));
   position: relative;
   z-index: 1000;
 }
 
-/* Floating glassmorphism variant */
+/* Floating variant - solid white with shadow */
 .header-main.header-floating {
   position: sticky;
   top: 0;
   margin: 8px 24px 0;
   border-radius: 16px;
-  background: linear-gradient(135deg, 
-    hsl(0 0% 100% / 0.88), 
-    hsl(var(--primary) / 0.01));
-  backdrop-filter: blur(16px);
+  background: hsl(0 0% 100%);
   border: none;
   box-shadow: 
     0 4px 12px hsl(var(--tm-ink) / 0.08),
     0 12px 32px hsl(var(--tm-ink) / 0.1),
     0 24px 64px hsl(var(--tm-ink) / 0.06);
-  transition: all 300ms ease;
+  transition: box-shadow 300ms ease;
   z-index: 100;
 }
 
@@ -12224,27 +12220,27 @@
     0 6px 16px hsl(var(--tm-ink) / 0.1),
     0 16px 40px hsl(var(--tm-ink) / 0.12),
     0 32px 80px hsl(var(--tm-ink) / 0.08);
-  background: hsl(0 0% 100% / 0.95);
 }
 
-/* Dark mode floating header */
+/* Dark mode - solid dark background with shadow */
+.dark .header-main {
+  background: hsl(220 15% 10%);
+  border-bottom-color: hsl(0 0% 100% / 0.1);
+}
+
 .dark .header-main.header-floating {
-  background: linear-gradient(135deg, 
-    hsl(var(--background) / 0.85), 
-    hsl(var(--primary) / 0.03));
-  border: none;
+  background: hsl(220 15% 10%);
   box-shadow: 
-    0 4px 12px hsl(0 0% 0% / 0.2),
-    0 12px 32px hsl(0 0% 0% / 0.25),
-    0 24px 64px hsl(0 0% 0% / 0.15);
+    0 4px 12px hsl(0 0% 0% / 0.3),
+    0 12px 32px hsl(0 0% 0% / 0.35),
+    0 24px 64px hsl(0 0% 0% / 0.2);
 }
 
 .dark .header-main.header-floating.is-scrolled {
-  background: hsl(var(--background) / 0.92);
   box-shadow: 
-    0 6px 16px hsl(0 0% 0% / 0.25),
-    0 16px 40px hsl(0 0% 0% / 0.3),
-    0 32px 80px hsl(0 0% 0% / 0.2);
+    0 6px 16px hsl(0 0% 0% / 0.35),
+    0 16px 40px hsl(0 0% 0% / 0.4),
+    0 32px 80px hsl(0 0% 0% / 0.25);
 }
 
 .header-inner {
