@@ -51,8 +51,8 @@ function getCacheKey(waypoints: Waypoint[]): string {
 export function useRouteOptimization(
   options: UseRouteOptimizationOptions = {}
 ): UseRouteOptimizationResult {
-  // Default to Google until Mapbox secret token is configured
-  const { provider = 'google', profile = 'driving-traffic' } = options;
+  // Use Mapbox by default for traffic-aware optimization
+  const { provider = 'mapbox', profile = 'driving-traffic' } = options;
   
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [result, setResult] = useState<OptimizationResult | null>(null);
