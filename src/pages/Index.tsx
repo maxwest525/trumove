@@ -469,57 +469,77 @@ function useTruckAnimation() {
   return { truckProgress, mapCenter };
 }
 
-// Satellite Map Panel - Route Overview
+// Satellite Map Panel - Route Overview (matches tracking page style)
 function SatelliteMapPanel() {
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-98,39,3.2,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Use satellite-v9 style for cleaner look matching the tracking page
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/-98,39,3.2,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
       <img src={satelliteMapUrl} alt="Satellite Route Overview" />
       
+      {/* Route overlay with cyan neon line matching tracking page */}
       <div className="tru-tracker-satellite-route-overlay">
         <svg viewBox="0 0 420 480" preserveAspectRatio="none">
           <defs>
-            <linearGradient id="satRouteGradient" x1="100%" y1="0%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="1" />
-              <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.6" />
-            </linearGradient>
+            {/* Outer glow filter for route visibility */}
+            <filter id="routeGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
           </defs>
+          
+          {/* Black shadow layer for terrain visibility */}
           <path 
             d="M 365 168 C 350 175 335 178 320 185 C 300 195 280 200 260 210 C 235 222 210 230 185 238 C 160 248 135 258 110 270 C 90 280 75 290 60 300"
-            stroke="hsl(145, 63%, 42%)"
-            strokeWidth="10"
-            strokeOpacity="0.3"
+            stroke="#000000"
+            strokeWidth="12"
+            strokeOpacity="0.6"
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="tru-tracker-route-glow"
           />
+          
+          {/* Outer glow - cyan neon */}
+          <path 
+            d="M 365 168 C 350 175 335 178 320 185 C 300 195 280 200 260 210 C 235 222 210 230 185 238 C 160 248 135 258 110 270 C 90 280 75 290 60 300"
+            stroke="#00e5a0"
+            strokeWidth="8"
+            strokeOpacity="0.4"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            filter="url(#routeGlow)"
+          />
+          
+          {/* Core route line - bright cyan */}
           <path 
             d="M 365 168 C 350 175 335 178 320 185 C 300 195 280 200 260 210 C 235 222 210 230 185 238 C 160 248 135 258 110 270 C 90 280 75 290 60 300"
             className="tru-tracker-route-draw"
-            stroke="url(#satRouteGradient)"
-            strokeWidth="5"
+            stroke="#00e5a0"
+            strokeWidth="4"
             fill="none"
             strokeLinecap="round"
           />
-          <circle cx="365" cy="168" r="10" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="3" />
-          <circle cx="320" cy="185" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" />
-          <circle cx="260" cy="210" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" />
-          <circle cx="185" cy="238" r="6" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" opacity="0.9" />
-          <circle cx="110" cy="270" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" />
-          <circle cx="60" cy="300" r="10" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="3" />
+          
+          {/* Origin marker - Red circle (Los Angeles) */}
+          <circle cx="60" cy="300" r="10" fill="#ef4444" stroke="white" strokeWidth="3" />
+          
+          {/* Destination marker - Truck in green circle (New York) */}
+          <circle cx="365" cy="168" r="16" fill="none" stroke="#00e5a0" strokeWidth="3" opacity="0.6" />
+          <circle cx="365" cy="168" r="12" fill="#1a1a2e" stroke="#00e5a0" strokeWidth="2" />
+          {/* Truck icon */}
+          <g transform="translate(357, 161)">
+            <path d="M2 4h10v6H2V4z M12 7h3l2 3v4h-3v-2h-2V7z M4 12a2 2 0 100-4 2 2 0 000 4z M13 12a2 2 0 100-4 2 2 0 000 4z" 
+              fill="#00e5a0" 
+              stroke="#00e5a0" 
+              strokeWidth="0.5"
+            />
+          </g>
         </svg>
-      </div>
-      
-      <div className="tru-tracker-waypoint-label" style={{ top: '48%', left: '38%' }}>Kansas City</div>
-      <div className="tru-tracker-waypoint-label" style={{ top: '55%', left: '18%' }}>Albuquerque</div>
-      
-      <div className="tru-tracker-city-label tru-tracker-city-origin">
-        <span>New York, NY</span>
-      </div>
-      <div className="tru-tracker-city-label tru-tracker-city-destination">
-        <span>Los Angeles, CA</span>
       </div>
       
       <div className="tru-tracker-satellite-label">
