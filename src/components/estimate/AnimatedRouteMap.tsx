@@ -199,6 +199,41 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
         }
       });
 
+      // Animated route shadow - outer
+      map.current.addLayer({
+        id: 'route-animated-shadow-outer',
+        type: 'line',
+        source: 'route-animated',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#000000',
+          'line-width': 16,
+          'line-opacity': 0.35,
+          'line-blur': 6
+        }
+      });
+
+      // Animated route shadow - inner
+      map.current.addLayer({
+        id: 'route-animated-shadow-inner',
+        type: 'line',
+        source: 'route-animated',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#000000',
+          'line-width': 10,
+          'line-opacity': 0.6,
+          'line-blur': 2
+        }
+      });
+
+      // Main animated route line
       map.current.addLayer({
         id: 'route-animated',
         type: 'line',
