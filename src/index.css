@@ -12758,16 +12758,25 @@
   line-height: 1.35;
 }
 
-/* Subtle green accent for highlight */
+/* Subtle accent dot for highlight - black with green glow on hover */
 .mega-preview-highlight::before {
   content: '';
   display: inline-block;
   width: 4px;
   height: 4px;
-  background: hsl(var(--primary));
+  background: hsl(var(--tm-ink));
   border-radius: 50%;
   margin-right: 8px;
   vertical-align: middle;
+  transition: box-shadow 0.2s ease;
+}
+
+.mega-preview-card:hover .mega-preview-highlight::before {
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.6), 0 0 12px hsl(var(--primary) / 0.3);
+}
+
+.dark .mega-preview-highlight::before {
+  background: hsl(0 0% 100%);
 }
 
 /* =============================================
@@ -12789,8 +12798,17 @@
 }
 
 .mega-menu-title-row svg {
-  color: hsl(var(--primary));
+  color: hsl(var(--tm-ink));
   flex-shrink: 0;
+  transition: filter 0.2s ease;
+}
+
+.mega-menu-header-compact:hover .mega-menu-title-row svg {
+  filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.5)) drop-shadow(0 0 10px hsl(var(--primary) / 0.3));
+}
+
+.dark .mega-menu-title-row svg {
+  color: hsl(0 0% 100%);
 }
 
 .mega-menu-title-row h3 {
@@ -12841,12 +12859,22 @@
 }
 
 .mega-method-pill svg {
-  color: hsl(var(--muted-foreground));
+  color: hsl(var(--tm-ink));
   flex-shrink: 0;
+  transition: color 0.2s ease, filter 0.2s ease;
+}
+
+.dark .mega-method-pill svg {
+  color: hsl(0 0% 100%);
 }
 
 .mega-method-pill:hover svg {
-  color: hsl(var(--primary));
+  color: hsl(var(--tm-ink));
+  filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.6)) drop-shadow(0 0 10px hsl(var(--primary) / 0.3));
+}
+
+.dark .mega-method-pill:hover svg {
+  color: hsl(0 0% 100%);
 }
 
 .mega-method-badge {
