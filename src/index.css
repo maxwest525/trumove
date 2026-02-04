@@ -3341,20 +3341,20 @@
 /* Preview container - LEFT side (mirrored from AI section) */
 .tru-tracker-preview-left {
   position: absolute;
-  right: 550px;
+  left: 550px;
   top: 50%;
-  transform: translate(0, -50%);
-  margin-right: 4rem;
+  transform: translate(-100%, -50%);
+  margin-left: -4rem;
   z-index: 10;
 }
 
 /* Content container - RIGHT side (mirrored from AI section) */
 .tru-tracker-content-right {
   position: absolute;
-  right: 550px;
+  left: 550px;
   top: 50%;
-  transform: translate(100%, -50%);
-  margin-right: -4rem;
+  transform: translate(0, -50%);
+  margin-left: 4rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3871,10 +3871,10 @@
   .tru-tracker-preview-left,
   .tru-tracker-content-right {
     position: relative;
-    right: auto;
+    left: auto;
     top: auto;
     transform: none;
-    margin-right: 0;
+    margin-left: 0;
   }
   
   .tru-tracker-content-right {
