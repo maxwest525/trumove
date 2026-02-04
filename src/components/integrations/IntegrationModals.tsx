@@ -8,10 +8,10 @@ import {
   Users, Phone, Calendar, MessageSquare, BarChart3, 
   FileText, Mail, Video, Headphones, Clock, 
   CheckCircle2, ArrowRight, ExternalLink, TrendingUp,
-  PhoneCall, PhoneIncoming, PhoneOutgoing, Voicemail,
-  UserPlus, DollarSign, Truck, MapPin, Star, Bell,
-  Search, Filter, MoreHorizontal, Plus, ChevronRight,
-  Activity, Target, Zap, AlertCircle, RefreshCw
+  PhoneIncoming, PhoneOutgoing, Voicemail,
+  UserPlus, DollarSign, Truck, MapPin, Bell,
+  Filter, MoreHorizontal, Plus,
+  Activity, Target, RefreshCw
 } from "lucide-react";
 
 interface IntegrationModalProps {
@@ -38,12 +38,11 @@ const RINGCENTRAL_FEATURES = [
   { icon: CheckCircle2, title: "CRM Integration", desc: "Sync calls with Granot CRM" },
 ];
 
-// Enhanced demo data for Granot CRM
 const GRANOT_DEMO_LEADS = [
-  { name: "Sarah Johnson", status: "Hot", value: "$4,200", move: "NYC → Miami", date: "Feb 15", phone: "(555) 123-4567", email: "sarah.j@email.com", lastContact: "2 hours ago" },
-  { name: "Michael Chen", status: "Warm", value: "$2,800", move: "LA → Seattle", date: "Feb 18", phone: "(555) 234-5678", email: "m.chen@email.com", lastContact: "Yesterday" },
-  { name: "Emily Rodriguez", status: "New", value: "$3,500", move: "Chicago → Denver", date: "Feb 22", phone: "(555) 345-6789", email: "emily.r@email.com", lastContact: "Just now" },
-  { name: "David Kim", status: "Hot", value: "$5,100", move: "Boston → Austin", date: "Feb 12", phone: "(555) 456-7890", email: "d.kim@email.com", lastContact: "3 hours ago" },
+  { name: "Sarah Johnson", status: "Hot", value: "$4,200", move: "NYC → Miami", phone: "(555) 123-4567", email: "sarah.j@email.com" },
+  { name: "Michael Chen", status: "Warm", value: "$2,800", move: "LA → Seattle", phone: "(555) 234-5678", email: "m.chen@email.com" },
+  { name: "Emily Rodriguez", status: "New", value: "$3,500", move: "Chicago → Denver", phone: "(555) 345-6789", email: "emily.r@email.com" },
+  { name: "David Kim", status: "Hot", value: "$5,100", move: "Boston → Austin", phone: "(555) 456-7890", email: "d.kim@email.com" },
 ];
 
 const GRANOT_DEMO_STATS = [
@@ -68,14 +67,13 @@ const GRANOT_UPCOMING_MOVES = [
 ];
 
 const GRANOT_PIPELINE_STAGES = [
-  { stage: "New Leads", count: 12, value: "$38K", color: "bg-blue-500" },
-  { stage: "Contacted", count: 18, value: "$52K", color: "bg-yellow-500" },
-  { stage: "Quoted", count: 9, value: "$31K", color: "bg-orange-500" },
-  { stage: "Negotiating", count: 5, value: "$16K", color: "bg-purple-500" },
-  { stage: "Won", count: 23, value: "$89K", color: "bg-primary" },
+  { stage: "New Leads", count: 12, value: "$38K", color: "#3B82F6" },
+  { stage: "Contacted", count: 18, value: "$52K", color: "#FBBF24" },
+  { stage: "Quoted", count: 9, value: "$31K", color: "#F97316" },
+  { stage: "Negotiating", count: 5, value: "$16K", color: "#8B5CF6" },
+  { stage: "Won", count: 23, value: "$89K", color: "#4CAF50" },
 ];
 
-// Fake demo data for RingCentral
 const RINGCENTRAL_DEMO_CALLS = [
   { type: "incoming", name: "Sarah Johnson", duration: "4:32", time: "2 min ago", status: "answered" },
   { type: "outgoing", name: "Michael Chen", duration: "2:15", time: "15 min ago", status: "completed" },
@@ -90,14 +88,33 @@ const RINGCENTRAL_DEMO_STATS = [
   { label: "Queue Wait", value: "0:18" },
 ];
 
+// ============ GRANOT CRM DEMO ============
 function GranotDemoVisual() {
   const [activeView, setActiveView] = useState<"dashboard" | "pipeline" | "calendar" | "activity">("dashboard");
   const [selectedLead, setSelectedLead] = useState<number | null>(null);
 
   return (
-    <div className="space-y-3">
-      {/* Dashboard Navigation */}
-      <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/30">
+    <div className="rounded-xl overflow-hidden" style={{ border: "2px solid #1B365D", background: "#FFFFFF" }}>
+      {/* Granot Header - Navy/Green branding */}
+      <div className="px-4 py-3 flex items-center justify-between" style={{ background: "linear-gradient(90deg, #1B365D 0%, #2E4A7D 100%)" }}>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#4CAF50" }}>
+            <BarChart3 className="w-5 h-5 text-white" />
+          </div>
+          <span className="font-bold text-white text-lg tracking-tight">Granot</span>
+          <Badge className="text-[10px]" style={{ background: "#4CAF50", color: "white" }}>CRM</Badge>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="p-1.5 rounded-lg hover:bg-white/10 transition-colors relative">
+            <Bell className="w-4 h-4 text-white/80" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: "#4CAF50" }} />
+          </button>
+          <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium" style={{ background: "#4CAF50", color: "white" }}>JD</div>
+        </div>
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="flex gap-1 px-3 py-2" style={{ background: "#F8FAFC", borderBottom: "1px solid #E2E8F0" }}>
         {[
           { id: "dashboard", label: "Dashboard", icon: BarChart3 },
           { id: "pipeline", label: "Pipeline", icon: Target },
@@ -107,11 +124,11 @@ function GranotDemoVisual() {
           <button
             key={tab.id}
             onClick={() => setActiveView(tab.id as typeof activeView)}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium transition-all ${
-              activeView === tab.id
-                ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            }`}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+            style={{
+              background: activeView === tab.id ? "#1B365D" : "transparent",
+              color: activeView === tab.id ? "white" : "#64748B",
+            }}
           >
             <tab.icon className="w-3.5 h-3.5" />
             {tab.label}
@@ -119,366 +136,456 @@ function GranotDemoVisual() {
         ))}
       </div>
 
-      {/* Dashboard View */}
-      {activeView === "dashboard" && (
-        <div className="space-y-3">
-          {/* Stats Row */}
-          <div className="grid grid-cols-4 gap-2">
-            {GRANOT_DEMO_STATS.map((stat) => (
-              <div key={stat.label} className="p-3 rounded-lg bg-muted/40 hover:bg-muted/60 transition-colors cursor-pointer group">
-                <div className="flex items-center justify-between mb-1">
-                  <stat.icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                  <span className="text-[10px] text-primary font-medium">{stat.change}</span>
+      {/* Content Area */}
+      <div className="p-4 max-h-[350px] overflow-y-auto" style={{ background: "#FFFFFF" }}>
+        {/* Dashboard View */}
+        {activeView === "dashboard" && (
+          <div className="space-y-3">
+            {/* Stats Row */}
+            <div className="grid grid-cols-4 gap-2">
+              {GRANOT_DEMO_STATS.map((stat) => (
+                <div key={stat.label} className="p-3 rounded-lg hover:shadow-md transition-all cursor-pointer" style={{ background: "#F8FAFC", border: "1px solid #E2E8F0" }}>
+                  <div className="flex items-center justify-between mb-1">
+                    <stat.icon className="w-4 h-4" style={{ color: "#1B365D" }} />
+                    <span className="text-[10px] font-medium" style={{ color: "#4CAF50" }}>{stat.change}</span>
+                  </div>
+                  <div className="text-xl font-bold" style={{ color: "#1B365D" }}>{stat.value}</div>
+                  <div className="text-[10px] text-gray-500 uppercase tracking-wide">{stat.label}</div>
                 </div>
-                <div className="text-xl font-bold text-foreground">{stat.value}</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-2 gap-3">
-            {/* Lead Pipeline Mini */}
-            <div className="rounded-lg border border-border bg-card overflow-hidden">
-              <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Hot Leads</span>
-                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                  <Plus className="w-3 h-3" />
-                </Button>
-              </div>
-              <ScrollArea className="h-[180px]">
-                <div className="divide-y divide-border">
+            {/* Two Column Layout */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Hot Leads */}
+              <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+                <div className="px-3 py-2 flex items-center justify-between" style={{ background: "#1B365D" }}>
+                  <span className="text-xs font-semibold text-white">Hot Leads</span>
+                  <Plus className="w-3 h-3 text-white/70" />
+                </div>
+                <div className="divide-y" style={{ borderColor: "#E2E8F0" }}>
                   {GRANOT_DEMO_LEADS.map((lead, i) => (
                     <div 
                       key={i} 
                       onClick={() => setSelectedLead(selectedLead === i ? null : i)}
-                      className={`px-3 py-2 cursor-pointer transition-colors ${
-                        selectedLead === i ? "bg-primary/10" : "hover:bg-muted/20"
-                      }`}
+                      className="px-3 py-2 cursor-pointer transition-colors hover:bg-gray-50"
+                      style={{ background: selectedLead === i ? "#F0FDF4" : "transparent" }}
                     >
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Users className="w-3.5 h-3.5 text-primary" />
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#E8F5E9" }}>
+                          <Users className="w-3.5 h-3.5" style={{ color: "#4CAF50" }} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-xs text-foreground truncate">{lead.name}</div>
-                          <div className="text-[10px] text-muted-foreground truncate">{lead.move}</div>
+                          <div className="font-medium text-xs text-gray-900 truncate">{lead.name}</div>
+                          <div className="text-[10px] text-gray-500 truncate">{lead.move}</div>
                         </div>
                         <Badge 
-                          variant={lead.status === "Hot" ? "default" : "secondary"} 
-                          className={`text-[9px] ${lead.status === "Hot" ? "bg-primary" : ""}`}
+                          className="text-[9px]"
+                          style={{ 
+                            background: lead.status === "Hot" ? "#EF4444" : lead.status === "Warm" ? "#F59E0B" : "#6B7280",
+                            color: "white"
+                          }}
                         >
                           {lead.value}
                         </Badge>
                       </div>
                       {selectedLead === i && (
-                        <div className="mt-2 pt-2 border-t border-border/50 space-y-1">
-                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                        <div className="mt-2 pt-2 space-y-1" style={{ borderTop: "1px solid #E2E8F0" }}>
+                          <div className="flex items-center gap-2 text-[10px] text-gray-600">
                             <Phone className="w-3 h-3" />
                             {lead.phone}
                           </div>
-                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                          <div className="flex items-center gap-2 text-[10px] text-gray-600">
                             <Mail className="w-3 h-3" />
                             {lead.email}
                           </div>
                           <div className="flex gap-1 mt-2">
-                            <Button size="sm" className="h-6 text-[10px] flex-1 gap-1">
-                              <Phone className="w-3 h-3" /> Call
-                            </Button>
-                            <Button size="sm" variant="outline" className="h-6 text-[10px] flex-1 gap-1">
-                              <Mail className="w-3 h-3" /> Email
-                            </Button>
+                            <button className="flex-1 py-1 rounded text-[10px] font-medium text-white" style={{ background: "#4CAF50" }}>
+                              Call
+                            </button>
+                            <button className="flex-1 py-1 rounded text-[10px] font-medium" style={{ background: "#E2E8F0", color: "#1B365D" }}>
+                              Email
+                            </button>
                           </div>
                         </div>
                       )}
                     </div>
                   ))}
                 </div>
-              </ScrollArea>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="rounded-lg border border-border bg-card overflow-hidden">
-              <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent Activity</span>
-                <RefreshCw className="w-3 h-3 text-muted-foreground" />
               </div>
-              <ScrollArea className="h-[180px]">
-                <div className="divide-y divide-border">
-                  {GRANOT_RECENT_ACTIVITY.map((item, i) => (
-                    <div key={i} className="px-3 py-2 flex items-center gap-2 hover:bg-muted/20 transition-colors">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        item.type === "booking" ? "bg-primary/20" : 
-                        item.type === "lead" ? "bg-blue-500/20" : "bg-muted/50"
-                      }`}>
-                        <item.icon className={`w-3 h-3 ${
-                          item.type === "booking" ? "text-primary" :
-                          item.type === "lead" ? "text-blue-500" : "text-muted-foreground"
-                        }`} />
+
+              {/* Recent Activity */}
+              <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+                <div className="px-3 py-2 flex items-center justify-between" style={{ background: "#1B365D" }}>
+                  <span className="text-xs font-semibold text-white">Recent Activity</span>
+                  <RefreshCw className="w-3 h-3 text-white/70" />
+                </div>
+                <div className="divide-y" style={{ borderColor: "#E2E8F0" }}>
+                  {GRANOT_RECENT_ACTIVITY.slice(0, 4).map((item, i) => (
+                    <div key={i} className="px-3 py-2 flex items-center gap-2 hover:bg-gray-50 transition-colors">
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ 
+                        background: item.type === "booking" ? "#E8F5E9" : item.type === "lead" ? "#E3F2FD" : "#F5F5F5"
+                      }}>
+                        <item.icon className="w-3 h-3" style={{ 
+                          color: item.type === "booking" ? "#4CAF50" : item.type === "lead" ? "#2196F3" : "#757575"
+                        }} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs text-foreground truncate">{item.text}</div>
-                        <div className="text-[10px] text-muted-foreground">{item.time}</div>
+                        <div className="text-xs text-gray-900 truncate">{item.text}</div>
+                        <div className="text-[10px] text-gray-500">{item.time}</div>
                       </div>
                     </div>
                   ))}
                 </div>
-              </ScrollArea>
-            </div>
-          </div>
-
-          {/* Weekly Bookings Chart */}
-          <div className="rounded-lg border border-border bg-card p-3">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold text-muted-foreground">Weekly Performance</span>
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-[9px]">This Week</Badge>
-                <TrendingUp className="w-4 h-4 text-primary" />
               </div>
             </div>
-            <div className="flex items-end gap-1 h-16">
-              {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <div 
-                    className="w-full bg-primary/20 rounded-t transition-all hover:bg-primary/40 relative group"
-                    style={{ height: `${h}%` }}
-                  >
-                    <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-foreground text-background text-[9px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      {Math.round(h / 10)} bookings
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-between mt-2 text-[9px] text-muted-foreground">
-              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Pipeline View */}
-      {activeView === "pipeline" && (
-        <div className="space-y-3">
-          {/* Pipeline Funnel */}
-          <div className="rounded-lg border border-border bg-card overflow-hidden">
-            <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Sales Funnel</span>
-              <Badge variant="secondary" className="text-[10px]">$226K Total</Badge>
-            </div>
-            <div className="p-3 space-y-2">
-              {GRANOT_PIPELINE_STAGES.map((stage, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-20 text-xs text-muted-foreground truncate">{stage.stage}</div>
-                  <div className="flex-1 h-6 bg-muted/30 rounded-full overflow-hidden relative">
+            {/* Weekly Chart */}
+            <div className="rounded-lg p-3" style={{ border: "1px solid #E2E8F0" }}>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-semibold text-gray-700">Weekly Performance</span>
+                <TrendingUp className="w-4 h-4" style={{ color: "#4CAF50" }} />
+              </div>
+              <div className="flex items-end gap-1 h-16">
+                {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1">
                     <div 
-                      className={`h-full ${stage.color} transition-all`}
-                      style={{ width: `${(stage.count / 23) * 100}%` }}
+                      className="w-full rounded-t transition-all hover:opacity-80"
+                      style={{ height: `${h}%`, background: "linear-gradient(180deg, #4CAF50 0%, #1B365D 100%)" }}
                     />
-                    <div className="absolute inset-0 flex items-center justify-between px-2">
-                      <span className="text-[10px] font-medium text-foreground">{stage.count}</span>
-                      <span className="text-[10px] font-medium text-foreground">{stage.value}</span>
-                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Pipeline Cards */}
-          <div className="grid grid-cols-5 gap-2">
-            {GRANOT_PIPELINE_STAGES.map((stage, i) => (
-              <div key={i} className="rounded-lg border border-border bg-card p-2 text-center">
-                <div className={`w-2 h-2 rounded-full ${stage.color} mx-auto mb-1`} />
-                <div className="text-lg font-bold text-foreground">{stage.count}</div>
-                <div className="text-[9px] text-muted-foreground truncate">{stage.stage}</div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Calendar View */}
-      {activeView === "calendar" && (
-        <div className="space-y-3">
-          <div className="rounded-lg border border-border bg-card overflow-hidden">
-            <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Upcoming Moves</span>
-              <Badge variant="secondary" className="text-[10px]">3 This Week</Badge>
+              <div className="flex justify-between mt-2 text-[9px] text-gray-500">
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+              </div>
             </div>
-            <div className="divide-y divide-border">
-              {GRANOT_UPCOMING_MOVES.map((move, i) => (
-                <div key={i} className="px-3 py-3 hover:bg-muted/20 transition-colors">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Truck className="w-4 h-4 text-primary" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-sm text-foreground">{move.customer}</div>
-                        <div className="text-[10px] text-muted-foreground">{move.crew}</div>
+          </div>
+        )}
+
+        {/* Pipeline View */}
+        {activeView === "pipeline" && (
+          <div className="space-y-3">
+            <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+              <div className="px-3 py-2" style={{ background: "#1B365D" }}>
+                <span className="text-xs font-semibold text-white">Sales Funnel</span>
+              </div>
+              <div className="p-3 space-y-2">
+                {GRANOT_PIPELINE_STAGES.map((stage, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-20 text-xs text-gray-600 truncate">{stage.stage}</div>
+                    <div className="flex-1 h-6 rounded-full overflow-hidden relative" style={{ background: "#F1F5F9" }}>
+                      <div 
+                        className="h-full transition-all"
+                        style={{ width: `${(stage.count / 23) * 100}%`, background: stage.color }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-between px-2">
+                        <span className="text-[10px] font-medium text-gray-700">{stage.count}</span>
+                        <span className="text-[10px] font-medium text-gray-700">{stage.value}</span>
                       </div>
                     </div>
-                    <Badge 
-                      variant={move.status === "Confirmed" ? "default" : move.status === "In Progress" ? "secondary" : "outline"}
-                      className={`text-[9px] ${move.status === "Confirmed" ? "bg-primary" : ""}`}
-                    >
-                      {move.status}
-                    </Badge>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <MapPin className="w-3 h-3" />
-                    <span>{move.from}</span>
-                    <ArrowRight className="w-3 h-3" />
-                    <span>{move.to}</span>
-                    <span className="ml-auto font-medium text-foreground">{move.date}</span>
-                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="grid grid-cols-5 gap-2">
+              {GRANOT_PIPELINE_STAGES.map((stage, i) => (
+                <div key={i} className="rounded-lg p-2 text-center" style={{ border: "1px solid #E2E8F0" }}>
+                  <div className="w-2 h-2 rounded-full mx-auto mb-1" style={{ background: stage.color }} />
+                  <div className="text-lg font-bold" style={{ color: "#1B365D" }}>{stage.count}</div>
+                  <div className="text-[9px] text-gray-500 truncate">{stage.stage}</div>
                 </div>
               ))}
             </div>
           </div>
+        )}
 
-          {/* Mini Calendar Grid */}
-          <div className="rounded-lg border border-border bg-card p-3">
-            <div className="text-xs font-semibold text-muted-foreground mb-2">February 2025</div>
-            <div className="grid grid-cols-7 gap-1 text-center">
-              {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-                <div key={i} className="text-[9px] text-muted-foreground font-medium py-1">{d}</div>
-              ))}
-              {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
-                <div 
-                  key={day}
-                  className={`text-[10px] py-1 rounded cursor-pointer transition-colors ${
-                    [10, 11, 12].includes(day) 
-                      ? "bg-primary text-primary-foreground font-medium" 
-                      : [15, 18, 22].includes(day)
-                        ? "bg-primary/20 text-primary font-medium"
-                        : "hover:bg-muted/50"
-                  }`}
-                >
-                  {day}
-                </div>
-              ))}
+        {/* Calendar View */}
+        {activeView === "calendar" && (
+          <div className="space-y-3">
+            <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+              <div className="px-3 py-2" style={{ background: "#1B365D" }}>
+                <span className="text-xs font-semibold text-white">Upcoming Moves</span>
+              </div>
+              <div className="divide-y" style={{ borderColor: "#E2E8F0" }}>
+                {GRANOT_UPCOMING_MOVES.map((move, i) => (
+                  <div key={i} className="px-3 py-3 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#E8F5E9" }}>
+                          <Truck className="w-4 h-4" style={{ color: "#4CAF50" }} />
+                        </div>
+                        <div>
+                          <div className="font-medium text-sm text-gray-900">{move.customer}</div>
+                          <div className="text-[10px] text-gray-500">{move.crew}</div>
+                        </div>
+                      </div>
+                      <Badge 
+                        className="text-[9px]"
+                        style={{ 
+                          background: move.status === "Confirmed" ? "#E8F5E9" : move.status === "In Progress" ? "#FFF8E1" : "#F5F5F5",
+                          color: move.status === "Confirmed" ? "#4CAF50" : move.status === "In Progress" ? "#F59E0B" : "#757575"
+                        }}
+                      >
+                        {move.status}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <MapPin className="w-3 h-3" />
+                      <span>{move.from}</span>
+                      <ArrowRight className="w-3 h-3" />
+                      <span>{move.to}</span>
+                      <span className="ml-auto font-medium" style={{ color: "#1B365D" }}>{move.date}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Activity View */}
-      {activeView === "activity" && (
-        <div className="rounded-lg border border-border bg-card overflow-hidden">
-          <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Activity Log</span>
-            <div className="flex items-center gap-1">
-              <Button variant="ghost" size="sm" className="h-6 px-2 text-[10px]">
-                <Filter className="w-3 h-3 mr-1" /> Filter
-              </Button>
+        {/* Activity View */}
+        {activeView === "activity" && (
+          <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+            <div className="px-3 py-2 flex items-center justify-between" style={{ background: "#1B365D" }}>
+              <span className="text-xs font-semibold text-white">Activity Log</span>
+              <Filter className="w-3 h-3 text-white/70" />
             </div>
+            <ScrollArea className="h-[280px]">
+              <div className="divide-y" style={{ borderColor: "#E2E8F0" }}>
+                {[...GRANOT_RECENT_ACTIVITY, ...GRANOT_RECENT_ACTIVITY].map((item, i) => (
+                  <div key={i} className="px-3 py-3 flex items-start gap-3 hover:bg-gray-50 transition-colors">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ 
+                      background: item.type === "booking" ? "#E8F5E9" : item.type === "lead" ? "#E3F2FD" : "#F5F5F5"
+                    }}>
+                      <item.icon className="w-4 h-4" style={{ 
+                        color: item.type === "booking" ? "#4CAF50" : item.type === "lead" ? "#2196F3" : "#757575"
+                      }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm text-gray-900">{item.text}</div>
+                      <div className="text-xs text-gray-500 mt-0.5">{item.time}</div>
+                    </div>
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <MoreHorizontal className="w-3 h-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
-          <ScrollArea className="h-[280px]">
-            <div className="divide-y divide-border">
-              {[...GRANOT_RECENT_ACTIVITY, ...GRANOT_RECENT_ACTIVITY].map((item, i) => (
-                <div key={i} className="px-3 py-3 flex items-start gap-3 hover:bg-muted/20 transition-colors">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    item.type === "booking" ? "bg-primary/20" : 
-                    item.type === "lead" ? "bg-blue-500/20" : 
-                    item.type === "call" ? "bg-green-500/20" : "bg-muted/50"
-                  }`}>
-                    <item.icon className={`w-4 h-4 ${
-                      item.type === "booking" ? "text-primary" :
-                      item.type === "lead" ? "text-blue-500" :
-                      item.type === "call" ? "text-green-500" : "text-muted-foreground"
-                    }`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm text-foreground">{item.text}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{item.time}</div>
-                  </div>
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                    <MoreHorizontal className="w-3 h-3" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Live Demo Badge */}
-      <div className="flex items-center justify-center gap-2 py-2">
-        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-        <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Live Demo Mode</span>
+      <div className="flex items-center justify-center gap-2 py-2" style={{ background: "#F8FAFC", borderTop: "1px solid #E2E8F0" }}>
+        <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#4CAF50" }} />
+        <span className="text-[10px] text-gray-500 uppercase tracking-wide">Live Demo Mode</span>
       </div>
     </div>
   );
 }
 
+// ============ RINGCENTRAL DEMO ============
 function RingCentralDemoVisual() {
+  const [activeTab, setActiveTab] = useState<"calls" | "messages" | "video">("calls");
+
+  const RC_MESSAGES = [
+    { from: "Marketing Team", preview: "Q1 campaign results are in...", time: "11:30 AM", unread: true },
+    { from: "John Smith", preview: "Thanks for the follow-up call!", time: "10:20 AM", unread: true },
+    { from: "Support Queue", preview: "New ticket assigned to you", time: "9:15 AM", unread: false },
+  ];
+
   return (
-    <div className="space-y-4">
-      {/* Stats Row */}
-      <div className="grid grid-cols-4 gap-2">
-        {RINGCENTRAL_DEMO_STATS.map((stat) => (
-          <div key={stat.label} className="p-3 rounded-lg bg-muted/40 text-center">
-            <div className="text-lg font-bold text-foreground">{stat.value}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{stat.label}</div>
+    <div className="rounded-xl overflow-hidden" style={{ border: "2px solid #0684BC", background: "#FFFFFF" }}>
+      {/* RingCentral Header - Orange/Blue branding */}
+      <div className="px-4 py-3 flex items-center justify-between" style={{ background: "linear-gradient(90deg, #FF6A00 0%, #FF8533 100%)" }}>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "white" }}>
+            <Phone className="w-5 h-5" style={{ color: "#FF6A00" }} />
           </div>
+          <span className="font-bold text-white text-lg tracking-tight">RingCentral</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge className="text-[10px]" style={{ background: "white", color: "#FF6A00" }}>MVP</Badge>
+          <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-xs font-medium text-white">AG</div>
+        </div>
+      </div>
+
+      {/* Tab Navigation - RingCentral Blue */}
+      <div className="flex" style={{ background: "#0684BC" }}>
+        {[
+          { id: "calls", label: "Phone", icon: Phone },
+          { id: "messages", label: "Message", icon: MessageSquare },
+          { id: "video", label: "Video", icon: Video },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as typeof activeTab)}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors relative"
+            style={{ color: "white", opacity: activeTab === tab.id ? 1 : 0.7 }}
+          >
+            <tab.icon className="w-4 h-4" />
+            {tab.label}
+            {activeTab === tab.id && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: "#FF6A00" }} />
+            )}
+          </button>
         ))}
       </div>
 
-      {/* Call Log Preview */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent Calls</span>
-          <Badge variant="secondary" className="text-[10px]">Live Demo</Badge>
-        </div>
-        <div className="divide-y divide-border">
-          {RINGCENTRAL_DEMO_CALLS.map((call, i) => {
-            const Icon = call.type === "incoming" ? PhoneIncoming : 
-                         call.type === "outgoing" ? PhoneOutgoing :
-                         call.type === "voicemail" ? Voicemail : Phone;
-            const iconColor = call.status === "missed" ? "text-destructive" : 
-                              call.status === "voicemail" ? "text-amber-500" : "text-primary";
-            
-            return (
-              <div key={i} className="px-3 py-2 flex items-center gap-3 hover:bg-muted/20 transition-colors">
-                <div className={`w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center flex-shrink-0`}>
-                  <Icon className={`w-4 h-4 ${iconColor}`} />
+      {/* Content */}
+      <div className="max-h-[350px] overflow-y-auto">
+        {activeTab === "calls" && (
+          <div>
+            {/* Stats Row */}
+            <div className="grid grid-cols-4 gap-px" style={{ background: "#E5E7EB" }}>
+              {RINGCENTRAL_DEMO_STATS.map((stat) => (
+                <div key={stat.label} className="p-3 text-center" style={{ background: "#F8FAFC" }}>
+                  <div className="text-lg font-bold" style={{ color: "#0684BC" }}>{stat.value}</div>
+                  <div className="text-[10px] text-gray-500">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Call Log */}
+            <div className="divide-y" style={{ borderColor: "#E5E7EB" }}>
+              {RINGCENTRAL_DEMO_CALLS.map((call, i) => {
+                const Icon = call.type === "incoming" ? PhoneIncoming : 
+                             call.type === "outgoing" ? PhoneOutgoing :
+                             call.type === "voicemail" ? Voicemail : Phone;
+                return (
+                  <div key={i} className="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors cursor-pointer">
+                    <div 
+                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ 
+                        background: call.status === "missed" ? "#FEE2E2" : 
+                                   call.status === "voicemail" ? "#FEF3C7" : "#E0F7FA"
+                      }}
+                    >
+                      <Icon className="w-5 h-5" style={{ 
+                        color: call.status === "missed" ? "#DC2626" : 
+                               call.status === "voicemail" ? "#D97706" : "#0684BC"
+                      }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-900">{call.name}</div>
+                      <div className="text-sm text-gray-500 capitalize">{call.type} call</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-mono text-sm text-gray-900">{call.duration}</div>
+                      <div className="text-xs text-gray-500">{call.time}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Dial Button */}
+            <div className="p-4 flex justify-center">
+              <button 
+                className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                style={{ background: "#FF6A00" }}
+              >
+                <Phone className="w-6 h-6 text-white" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "messages" && (
+          <div className="divide-y" style={{ borderColor: "#E5E7EB" }}>
+            {RC_MESSAGES.map((msg, i) => (
+              <div 
+                key={i} 
+                className="px-4 py-3 flex items-start gap-3 hover:bg-gray-50 transition-colors cursor-pointer"
+                style={{ background: msg.unread ? "#FFF7ED" : "transparent" }}
+              >
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#0684BC" }}>
+                  <MessageSquare className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm text-foreground truncate">{call.name}</div>
-                  <div className="text-[11px] text-muted-foreground capitalize">{call.type} call</div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-gray-900">{msg.from}</span>
+                    {msg.unread && <span className="w-2 h-2 rounded-full" style={{ background: "#FF6A00" }} />}
+                  </div>
+                  <div className="text-sm text-gray-500 truncate">{msg.preview}</div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <div className="font-mono text-sm text-foreground">{call.duration}</div>
-                  <div className="text-[11px] text-muted-foreground">{call.time}</div>
-                </div>
+                <div className="text-xs text-gray-400">{msg.time}</div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+            <div className="p-4 flex justify-center">
+              <button 
+                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white"
+                style={{ background: "#0684BC" }}
+              >
+                <Mail className="w-4 h-4" />
+                New Message
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "video" && (
+          <div className="p-4 space-y-4">
+            <div className="rounded-xl p-4" style={{ background: "#FFF7ED", border: "1px solid #FDBA74" }}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium" style={{ color: "#C2410C" }}>Next Meeting</span>
+                <Badge style={{ background: "#FF6A00", color: "white" }}>In 30 min</Badge>
+              </div>
+              <div className="font-semibold text-lg text-gray-900 mb-1">Weekly Team Sync</div>
+              <div className="text-sm text-gray-600 mb-3">2:00 PM - 3:00 PM • 6 participants</div>
+              <button 
+                className="w-full py-2 rounded-lg text-white font-medium flex items-center justify-center gap-2"
+                style={{ background: "#0684BC" }}
+              >
+                <Video className="w-4 h-4" />
+                Join Meeting
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <button className="p-4 rounded-xl text-center hover:bg-gray-50 transition-colors" style={{ border: "1px solid #E5E7EB" }}>
+                <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ background: "#E0F7FA" }}>
+                  <Video className="w-5 h-5" style={{ color: "#0684BC" }} />
+                </div>
+                <div className="text-sm font-medium text-gray-900">Start Meeting</div>
+              </button>
+              <button className="p-4 rounded-xl text-center hover:bg-gray-50 transition-colors" style={{ border: "1px solid #E5E7EB" }}>
+                <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ background: "#FFF7ED" }}>
+                  <Calendar className="w-5 h-5" style={{ color: "#FF6A00" }} />
+                </div>
+                <div className="text-sm font-medium text-gray-900">Schedule</div>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Active Call Widget */}
-      <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4">
+      <div className="p-3 flex items-center justify-between" style={{ background: "#10B981" }}>
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
-            <PhoneCall className="w-6 h-6 text-primary" />
+          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center animate-pulse">
+            <Phone className="w-4 h-4 text-white" />
           </div>
-          <div className="flex-1">
-            <div className="font-semibold text-foreground">No Active Call</div>
-            <div className="text-sm text-muted-foreground">Click to start a new call</div>
+          <div>
+            <div className="text-sm font-medium text-white">Active Call</div>
+            <div className="text-xs text-white/80">John Smith • 02:34</div>
           </div>
-          <Button size="sm" className="gap-2">
-            <Phone className="w-4 h-4" />
-            New Call
-          </Button>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors">
+            <Voicemail className="w-4 h-4 text-white" />
+          </button>
+          <button className="p-2 rounded-full bg-red-500 hover:bg-red-600 transition-colors">
+            <Phone className="w-4 h-4 text-white" />
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
+// ============ INTEGRATION MODAL ============
 export function IntegrationModal({ open, onOpenChange, integration }: IntegrationModalProps) {
   const isGranot = integration === "granot";
   const features = isGranot ? GRANOT_FEATURES : RINGCENTRAL_FEATURES;
@@ -489,103 +596,126 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto bg-card border-border">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto p-0 gap-0">
+        {/* Branded Header */}
+        <DialogHeader 
+          className="px-6 pt-6 pb-4"
+          style={{ 
+            background: isGranot 
+              ? "linear-gradient(135deg, #1B365D 0%, #2E4A7D 100%)" 
+              : "linear-gradient(90deg, #FF6A00 0%, #FF8533 100%)"
+          }}
+        >
           <DialogTitle className="flex items-center gap-3 text-xl">
             {isGranot ? (
-              <div className="w-10 h-10 rounded-lg bg-primary/80 flex items-center justify-center">
-                <Users className="w-5 h-5 text-primary-foreground" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#4CAF50" }}>
+                <BarChart3 className="w-5 h-5 text-white" />
               </div>
             ) : (
-              <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center">
-                <Phone className="w-5 h-5 text-accent-foreground" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "white" }}>
+                <Phone className="w-5 h-5" style={{ color: "#FF6A00" }} />
               </div>
             )}
             <div>
-              <span className="block">{title}</span>
-              <span className="text-sm font-normal text-muted-foreground">{subtitle}</span>
+              <span className="block text-white">{title}</span>
+              <span className="text-sm font-normal text-white/80">{subtitle}</span>
             </div>
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="demo" className="mt-4">
-          <TabsList className="grid w-full grid-cols-3 bg-muted/50">
-            <TabsTrigger value="demo">Live Demo</TabsTrigger>
-            <TabsTrigger value="features">Features</TabsTrigger>
-            <TabsTrigger value="pricing">Pricing</TabsTrigger>
-          </TabsList>
+        <div className="p-6">
+          <Tabs defaultValue="demo">
+            <TabsList className="grid w-full grid-cols-3 bg-muted/50">
+              <TabsTrigger value="demo">Live Demo</TabsTrigger>
+              <TabsTrigger value="features">Features</TabsTrigger>
+              <TabsTrigger value="pricing">Pricing</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="demo" className="mt-4">
-            {isGranot ? <GranotDemoVisual /> : <RingCentralDemoVisual />}
-          </TabsContent>
+            <TabsContent value="demo" className="mt-4">
+              {isGranot ? <GranotDemoVisual /> : <RingCentralDemoVisual />}
+            </TabsContent>
 
-          <TabsContent value="features" className="mt-4">
-            <div className="grid grid-cols-2 gap-3">
-              {features.map((feature) => (
+            <TabsContent value="features" className="mt-4">
+              <div className="grid grid-cols-2 gap-3">
+                {features.map((feature) => (
+                  <div 
+                    key={feature.title}
+                    className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  >
+                    <div 
+                      className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
+                      style={{ background: isGranot ? "#1B365D20" : "#FF6A0020" }}
+                    >
+                      <feature.icon className="w-4 h-4" style={{ color: isGranot ? "#1B365D" : "#FF6A00" }} />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-sm text-foreground">{feature.title}</div>
+                      <div className="text-xs text-muted-foreground">{feature.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="pricing" className="mt-4">
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg border border-border bg-muted/20">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold">Starter</span>
+                    <Badge variant="secondary">$49/mo</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {isGranot 
+                      ? "Up to 500 contacts, 2 users, basic reporting"
+                      : "5 users, 1000 minutes, video meetings"}
+                  </p>
+                </div>
                 <div 
-                  key={feature.title}
-                  className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  className="p-4 rounded-lg border-2"
+                  style={{ 
+                    borderColor: isGranot ? "#4CAF50" : "#FF6A00",
+                    background: isGranot ? "#4CAF5010" : "#FF6A0010"
+                  }}
                 >
-                  <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="w-4 h-4 text-primary" />
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold">Professional</span>
+                    <Badge style={{ background: isGranot ? "#4CAF50" : "#FF6A00", color: "white" }}>$99/mo</Badge>
                   </div>
-                  <div>
-                    <div className="font-semibold text-sm text-foreground">{feature.title}</div>
-                    <div className="text-xs text-muted-foreground">{feature.desc}</div>
+                  <p className="text-sm text-muted-foreground">
+                    {isGranot 
+                      ? "Unlimited contacts, 10 users, advanced analytics"
+                      : "25 users, unlimited minutes, contact center"}
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg border border-border bg-muted/20">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold">Enterprise</span>
+                    <Badge variant="secondary">Custom</Badge>
                   </div>
+                  <p className="text-sm text-muted-foreground">
+                    {isGranot 
+                      ? "White-label, API access, dedicated support"
+                      : "Unlimited users, SLA, dedicated account manager"}
+                  </p>
                 </div>
-              ))}
-            </div>
-          </TabsContent>
+              </div>
+            </TabsContent>
+          </Tabs>
 
-          <TabsContent value="pricing" className="mt-4">
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg border border-border bg-muted/20">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold">Starter</span>
-                  <Badge variant="secondary">$49/mo</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {isGranot 
-                    ? "Up to 500 contacts, 2 users, basic reporting"
-                    : "5 users, 1000 minutes, video meetings"}
-                </p>
-              </div>
-              <div className="p-4 rounded-lg border-2 border-primary bg-primary/5">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold">Professional</span>
-                  <Badge className="bg-primary">$99/mo</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {isGranot 
-                    ? "Unlimited contacts, 10 users, advanced analytics"
-                    : "25 users, unlimited minutes, contact center"}
-                </p>
-              </div>
-              <div className="p-4 rounded-lg border border-border bg-muted/20">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold">Enterprise</span>
-                  <Badge variant="secondary">Custom</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {isGranot 
-                    ? "White-label, API access, dedicated support"
-                    : "Unlimited users, SLA, dedicated account manager"}
-                </p>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
-          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
-            <ExternalLink className="w-4 h-4" />
-            Visit Website
-          </Button>
-          <Button size="sm" className="gap-2">
-            Connect {title}
-            <ArrowRight className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
+            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
+              <ExternalLink className="w-4 h-4" />
+              Visit Website
+            </Button>
+            <Button 
+              size="sm" 
+              className="gap-2 text-white"
+              style={{ background: isGranot ? "#4CAF50" : "#FF6A00" }}
+            >
+              Connect {title}
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

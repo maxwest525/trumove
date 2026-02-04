@@ -33,6 +33,16 @@ const demoOptions = [
     iconColor: "text-primary"
   },
   {
+    id: "inventory",
+    title: "Manual Inventory Builder",
+    description: "Build your household inventory room by room with our visual catalog",
+    icon: Package,
+    route: "/online-estimate",
+    skipToInventory: true,
+    color: "from-amber-500/20 to-amber-500/5 border-amber-500/30",
+    iconColor: "text-amber-500"
+  },
+  {
     id: "tracking",
     title: "Shipment Tracker",
     description: "Track a demo shipment from Jacksonville to Miami in real-time",
@@ -41,16 +51,6 @@ const demoOptions = [
     demoCode: "12345",
     color: "from-blue-500/20 to-blue-500/5 border-blue-500/30",
     iconColor: "text-blue-500"
-  },
-  {
-    id: "inventory",
-    title: "Manual Inventory",
-    description: "Build your household inventory room by room",
-    icon: Package,
-    route: "/online-estimate",
-    skipToInventory: true,
-    color: "from-amber-500/20 to-amber-500/5 border-amber-500/30",
-    iconColor: "text-amber-500"
   },
   {
     id: "scan",
