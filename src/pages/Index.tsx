@@ -562,20 +562,14 @@ function TrackingPreview() {
                 <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.6" />
               </linearGradient>
             </defs>
-            {/* Glow layer - squiggly road-like path */}
+            {/* Glow layer - route path matching actual coordinates */}
             <path 
-              d="M 380 178 
-                 C 370 182 362 188 355 185 
-                 C 345 180 338 190 328 195 
-                 C 318 200 308 198 298 205 
-                 C 288 212 280 208 270 215 
-                 C 258 222 250 218 240 225 
-                 C 228 232 220 228 210 235 
-                 C 198 242 188 238 178 245 
-                 C 165 252 155 248 145 255 
-                 C 132 263 120 258 108 265 
-                 C 95 272 82 268 70 275 
-                 C 58 282 48 278 40 282"
+              d="M 365 168 
+                 C 350 175 335 178 320 185 
+                 C 300 195 280 200 260 210 
+                 C 235 222 210 230 185 238 
+                 C 160 248 135 258 110 270 
+                 C 90 280 75 290 60 300"
               stroke="hsl(145, 63%, 42%)"
               strokeWidth="10"
               strokeOpacity="0.3"
@@ -584,42 +578,35 @@ function TrackingPreview() {
               strokeLinejoin="round"
               className="tru-tracker-route-glow"
             />
-            {/* Animated drawing line - squiggly road-like path */}
+            {/* Animated drawing line - route path */}
             <path 
-              d="M 380 178 
-                 C 370 182 362 188 355 185 
-                 C 345 180 338 190 328 195 
-                 C 318 200 308 198 298 205 
-                 C 288 212 280 208 270 215 
-                 C 258 222 250 218 240 225 
-                 C 228 232 220 228 210 235 
-                 C 198 242 188 238 178 245 
-                 C 165 252 155 248 145 255 
-                 C 132 263 120 258 108 265 
-                 C 95 272 82 268 70 275 
-                 C 58 282 48 278 40 282"
+              d="M 365 168 
+                 C 350 175 335 178 320 185 
+                 C 300 195 280 200 260 210 
+                 C 235 222 210 230 185 238 
+                 C 160 248 135 258 110 270 
+                 C 90 280 75 290 60 300"
               className="tru-tracker-route-draw"
               stroke="url(#satRouteGradient)"
               strokeWidth="5"
               fill="none"
               strokeLinecap="round"
             />
-            {/* Origin marker (NY) */}
-            <circle cx="380" cy="178" r="10" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="3" />
+            {/* Origin marker (NY) - positioned to match Mapbox pin */}
+            <circle cx="365" cy="168" r="10" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="3" />
             {/* City waypoints along route */}
-            <circle cx="328" cy="195" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Pittsburgh */}
-            <circle cx="270" cy="215" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Indianapolis */}
-            <circle cx="210" cy="235" r="6" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" opacity="0.9" /> {/* Kansas City */}
-            <circle cx="145" cy="255" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Oklahoma City */}
-            <circle cx="70" cy="275" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Phoenix */}
-            {/* Destination marker (CA) */}
-            <circle cx="40" cy="282" r="10" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="3" />
+            <circle cx="320" cy="185" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Pittsburgh */}
+            <circle cx="260" cy="210" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Indianapolis */}
+            <circle cx="185" cy="238" r="6" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" opacity="0.9" /> {/* Kansas City */}
+            <circle cx="110" cy="270" r="5" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="1.5" opacity="0.85" /> {/* Albuquerque */}
+            {/* Destination marker (LA) - positioned to match Mapbox pin */}
+            <circle cx="60" cy="300" r="10" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="3" />
           </svg>
         </div>
         
         {/* City waypoint labels */}
-        <div className="tru-tracker-waypoint-label" style={{ top: '38%', left: '72%' }}>Kansas City</div>
-        <div className="tru-tracker-waypoint-label" style={{ top: '52%', left: '12%' }}>Phoenix</div>
+        <div className="tru-tracker-waypoint-label" style={{ top: '48%', left: '38%' }}>Kansas City</div>
+        <div className="tru-tracker-waypoint-label" style={{ top: '55%', left: '18%' }}>Albuquerque</div>
         
         {/* City Labels */}
         <div className="tru-tracker-city-label tru-tracker-city-origin">
