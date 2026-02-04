@@ -1,9 +1,17 @@
 
 
 ## Summary
-Enhance the Route Overview panel with:
-1. **More realistic waypoints** following actual I-10/I-40/I-70 highway corridors
-2. **Discreet map style toggle** to switch between dark mode and standard roadmap view
+Replace the Route Overview panel with a **dark road-style Mapbox static map** (matching the Truck View aesthetic) that shows the full LA-to-NY route. Remove the toggle button.
+
+---
+
+## The Approach
+
+Use Mapbox Static API with `navigation-night-v1` style (same as Truck View) to render a fixed overhead view of the entire route. This gives a consistent dark theme across both panels while the Route Overview shows the full cross-country path.
+
+**Key difference from Truck View:**
+- Route Overview: Overhead view, zoomed out to show full route (zoom ~3.5)
+- Truck View: Tilted 3D view, zoomed in to street level (zoom 15)
 
 ---
 
@@ -11,145 +19,46 @@ Enhance the Route Overview panel with:
 
 ### File: `src/pages/Index.tsx`
 
-#### 1. Add Comprehensive Highway Waypoints
-
-Replace the current 4 waypoints with ~12 realistic highway corridor points:
+Replace the `RouteOverviewPanel` function:
 
 ```tsx
-// Realistic I-10/I-40/I-70 highway corridor waypoints (lat,lng)
-const waypoints = [
-  [34.05, -118.24],   // Los Angeles, CA
-  [34.14, -114.29],   // Needles, CA (I-40)
-  [35.19, -111.65],   // Flagstaff, AZ
-  [35.08, -106.65],   // Albuquerque, NM
-  [35.22, -101.83],   // Amarillo, TX
-  [35.47, -97.52],    // Oklahoma City, OK
-  [37.69, -97.34],    // Wichita, KS
-  [39.10, -94.58],    // Kansas City, MO
-  [38.63, -90.20],    // St. Louis, MO
-  [39.77, -86.16],    // Indianapolis, IN
-  [40.00, -82.98],    // Columbus, OH
-  [40.44, -79.99],    // Pittsburgh, PA
-  [40.71, -74.00],    // New York, NY
-];
-```
-
-#### 2. Add State for Map Style Toggle
-
-```tsx
-const [isDarkStyle, setIsDarkStyle] = useState(false);
-```
-
-#### 3. Create Style Variants
-
-**Dark Style** (using Google Maps styled map or dark map type):
-```tsx
-// Google Maps supports styled maps via style parameter
-// For dark mode, we can use a custom style or just invert colors
-const darkStyleParam = '&style=feature:all|element:geometry|color:0x242f3e' +
-  '&style=feature:all|element:labels.text.stroke|color:0x242f3e' +
-  '&style=feature:all|element:labels.text.fill|color:0x746855' +
-  '&style=feature:road|element:geometry|color:0x38414e' +
-  '&style=feature:water|element:geometry|color:0x17263c';
-```
-
-**Standard Roadmap Style**: No additional style parameters needed.
-
-#### 4. Build Dynamic URL
-
-```tsx
-const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?` +
-  `size=420x480` +
-  `&scale=2` +
-  `&maptype=roadmap` +
-  `&markers=color:0x22c55e|size:mid|label:A|${laLat},${laLng}` +
-  `&markers=color:0xef4444|size:mid|label:B|${nyLat},${nyLng}` +
-  `&path=color:0x4285F4|weight:4|${pathPoints}` +
-  `${isDarkStyle ? darkStyleParam : ''}` +
-  `&key=${googleApiKey}`;
-```
-
-#### 5. Add Discreet Toggle Button
-
-Small toggle in the corner of the panel:
-
-```tsx
-{/* Discreet map style toggle */}
-<button 
-  onClick={() => setIsDarkStyle(!isDarkStyle)}
-  className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm 
-             border border-white/20 flex items-center justify-center 
-             hover:bg-black/60 transition-all group"
-  aria-label={isDarkStyle ? 'Switch to light map' : 'Switch to dark map'}
->
-  {isDarkStyle ? (
-    <Sun className="w-3 h-3 text-white/80 group-hover:text-white" />
-  ) : (
-    <Moon className="w-3 h-3 text-white/80 group-hover:text-white" />
-  )}
-</button>
-```
-
----
-
-## Complete Updated Component
-
-```tsx
+// Route Overview Panel - Mapbox dark road style (matches Truck View aesthetic)
 function RouteOverviewPanel() {
-  const [isDarkStyle, setIsDarkStyle] = useState(false);
+  const laCoords = [-118.24, 34.05]; // [lng, lat] for Mapbox
+  const nyCoords = [-74.00, 40.71];
   
-  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
-  
-  const laLat = 34.05, laLng = -118.24;
-  const nyLat = 40.71, nyLng = -74.00;
-  
-  // Realistic I-10/I-40/I-70 highway corridor
+  // Realistic I-10/I-40/I-70 highway corridor waypoints [lng, lat]
   const waypoints = [
-    [34.05, -118.24],   // Los Angeles
-    [34.14, -114.29],   // Needles
-    [35.19, -111.65],   // Flagstaff
-    [35.08, -106.65],   // Albuquerque
-    [35.22, -101.83],   // Amarillo
-    [35.47, -97.52],    // Oklahoma City
-    [37.69, -97.34],    // Wichita
-    [39.10, -94.58],    // Kansas City
-    [38.63, -90.20],    // St. Louis
-    [39.77, -86.16],    // Indianapolis
-    [40.00, -82.98],    // Columbus
-    [40.44, -79.99],    // Pittsburgh
-    [40.71, -74.00],    // New York
+    [-118.24, 34.05],   // Los Angeles
+    [-114.29, 34.14],   // Needles, CA
+    [-111.65, 35.19],   // Flagstaff, AZ
+    [-106.65, 35.08],   // Albuquerque, NM
+    [-101.83, 35.22],   // Amarillo, TX
+    [-97.52, 35.47],    // Oklahoma City, OK
+    [-97.34, 37.69],    // Wichita, KS
+    [-94.58, 39.10],    // Kansas City, MO
+    [-90.20, 38.63],    // St. Louis, MO
+    [-86.16, 39.77],    // Indianapolis, IN
+    [-82.98, 40.00],    // Columbus, OH
+    [-79.99, 40.44],    // Pittsburgh, PA
+    [-74.00, 40.71],    // New York, NY
   ];
   
-  const pathPoints = waypoints.map(([lat, lng]) => `${lat},${lng}`).join('|');
+  // Build path overlay for Mapbox: path-strokeWidth+color(coords)
+  const pathCoords = waypoints.map(([lng, lat]) => `${lng},${lat}`).join(',');
+  const pathOverlay = `path-4+4285F4-0.9(${pathCoords})`;
   
-  // Dark mode styling for Google Static Maps
-  const darkStyleParam = '&style=feature:all|element:geometry|color:0x242f3e' +
-    '&style=feature:all|element:labels.text.stroke|color:0x242f3e' +
-    '&style=feature:all|element:labels.text.fill|color:0x746855' +
-    '&style=feature:road|element:geometry|color:0x38414e' +
-    '&style=feature:water|element:geometry|color:0x17263c';
+  // Markers
+  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
+  const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
   
-  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?` +
-    `size=420x480&scale=2&maptype=roadmap` +
-    `&markers=color:0x22c55e|size:mid|label:A|${laLat},${laLng}` +
-    `&markers=color:0xef4444|size:mid|label:B|${nyLat},${nyLng}` +
-    `&path=color:0x4285F4|weight:4|${pathPoints}` +
-    `${isDarkStyle ? darkStyleParam : ''}` +
-    `&key=${googleApiKey}`;
+  // Use navigation-night-v1 for dark theme (same as Truck View)
+  // Center on continental US, zoom 3.5 to see full route
+  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${pathOverlay},${originMarker},${destMarker}/-98,38,3.5/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
       <img src={staticMapUrl} alt="Route Overview" className="w-full h-full object-cover" />
-      
-      {/* Discreet style toggle */}
-      <button 
-        onClick={() => setIsDarkStyle(!isDarkStyle)}
-        className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-black/40 backdrop-blur-sm 
-                   border border-white/20 flex items-center justify-center hover:bg-black/60 transition-all"
-        aria-label={isDarkStyle ? 'Switch to light map' : 'Switch to dark map'}
-      >
-        {isDarkStyle ? <Sun className="w-3 h-3 text-white/80" /> : <Moon className="w-3 h-3 text-white/80" />}
-      </button>
       
       <div className="tru-tracker-satellite-label">
         <Radar className="w-3 h-3" />
@@ -160,38 +69,45 @@ function RouteOverviewPanel() {
 }
 ```
 
+**Changes:**
+1. Remove `useState` for toggle (no longer needed)
+2. Switch from Google Static Maps to Mapbox Static API
+3. Use `navigation-night-v1` style (same dark theme as Truck View)
+4. Coordinates in `[lng, lat]` order (Mapbox format)
+5. Remove toggle button entirely
+
 ---
 
 ## Visual Result
 
 ```text
-┌────────────────────────────────┐
-│ Route Overview Panel           │
-│                          [🌙]  │  ← Tiny toggle (top-right)
-│                                │
-│    🟢 Los Angeles              │
-│      ╲                         │
-│       ╲ (follows I-40)         │
-│        ╲                       │
-│         → → → →                │
-│                 ╲              │
-│                  🔴 New York   │
-│                                │
-│ [Radar] Route Overview         │
-└────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────┐
+│                       SHIPMENT TRACKER                             │
+├─────────────────────┬─────────────────────┬───────────────────────┤
+│                     │                     │                       │
+│   ROUTE OVERVIEW    │     TRUCK VIEW      │      CONTENT          │
+│   (dark road style) │   (dark road style) │                       │
+│                     │                     │                       │
+│   🟢 LA             │    [tilted 3D       │   Real-Time Tracking  │
+│     ╲               │     street view     │   Know where your     │
+│      ╲ blue line    │     with truck]     │   belongings are...   │
+│       ╲             │                     │                       │
+│        🔴 NY        │                     │                       │
+│                     │                     │                       │
+│   [overhead view]   │   [zoomed in,       │                       │
+│   [zoom 3.5]        │    tilted]          │                       │
+└─────────────────────┴─────────────────────┴───────────────────────┘
 ```
 
-**Toggle behavior:**
-- 🌙 Moon = Click to switch to dark mode
-- ☀️ Sun = Click to switch to light/standard mode
+Both panels now share the **same dark navy aesthetic** from `navigation-night-v1`.
 
 ---
 
 ## Technical Notes
 
-1. **Truck View**: NOT modified - stays exactly as is
-2. **Google Maps Styling**: Uses `&style=` parameters for dark mode (same technique as Google Maps JS API)
-3. **13 waypoints** create a realistic curved route following major interstate highways
-4. **Toggle size**: 24x24px (w-6 h-6) - very discreet, won't distract from the map
-5. **Import needed**: Add `Moon, Sun` from lucide-react if not already imported
+- **No toggle** - single consistent dark style
+- Uses same Mapbox `navigation-night-v1` as Truck View for visual consistency
+- Blue route line (`#4285F4`) with 90% opacity
+- Green marker on LA, red marker on NY
+- Import `Sun`, `Moon` can be removed from lucide-react if not used elsewhere
 
