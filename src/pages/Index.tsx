@@ -435,25 +435,39 @@ const ROUTE_WAYPOINTS = [
 // Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
 // Homepage now uses static demo preview - no animation needed
 
-// Route Overview Panel - Google Maps Static API (roadmap style like reference screenshot)
+// Route Overview Panel - Mapbox Streets style (roadmap look like Google Maps)
 function RouteOverviewPanel() {
-  // LA and NY coordinates for markers
-  const laLat = 34.05, laLng = -118.24;
-  const nyLat = 40.71, nyLng = -74.00;
+  // LA and NY coordinates
+  const laCoords = [-118.24, 34.05];
+  const nyCoords = [-74.00, 40.71];
   
-  // Google Maps API key from environment
-  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+  // Key waypoints along I-40/I-70 corridor for realistic routing
+  const waypoints = [
+    [-118.24, 34.05],  // Los Angeles
+    [-111.89, 33.45],  // Phoenix area
+    [-106.65, 35.08],  // Albuquerque
+    [-97.52, 35.47],   // Oklahoma City
+    [-90.05, 35.15],   // Memphis
+    [-86.78, 36.16],   // Nashville
+    [-77.03, 38.90],   // Washington DC
+    [-74.00, 40.71],   // New York
+  ];
   
-  // Google Static Maps API with roadmap style - clean, standard Google Maps look
-  // Path via key waypoints along the route
-  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?` +
-    `size=420x480` +
-    `&scale=2` +
-    `&maptype=roadmap` +
-    `&markers=color:green%7Clabel:A%7C${laLat},${laLng}` +
-    `&markers=color:red%7Clabel:B%7C${nyLat},${nyLng}` +
-    `&path=color:0x4285F4%7Cweight:4%7C${laLat},${laLng}%7C35.08,-106.65%7C35.47,-97.52%7C${nyLat},${nyLng}` +
-    `&key=${googleApiKey}`;
+  // Build path string for Mapbox - blue color matching Google Maps style
+  const pathCoords = waypoints.map(([lng, lat]) => `${lng},${lat}`).join(',');
+  const pathOverlay = `path-4+4285F4-0.9(${encodeURIComponent(pathCoords)})`;
+  
+  // Origin marker (green) and destination marker (red)
+  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
+  const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
+  
+  // Use fixed zoom level centered on continental US
+  const centerLng = -98;
+  const centerLat = 38;
+  const zoom = 3.5;
+  
+  // Use streets-v12 for roadmap style (like Google Maps)
+  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${pathOverlay},${originMarker},${destMarker}/${centerLng},${centerLat},${zoom}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
