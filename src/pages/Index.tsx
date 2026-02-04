@@ -534,8 +534,8 @@ function RoadMapPanel() {
     }
   }, [mapCenter]);
   
-  // Fine-tuned 3D perspective for cinematic navigation view
-  const bearing = 30; // Forward-looking direction  
+  // Cinematic 3D perspective: 45° bearing for diagonal view, 60° pitch for depth
+  const bearing = 45; // Diagonal northeast - most cinematic perspective  
   const pitch = 60;   // 3D tilt (max supported in Static API is 60)
   const zoom = 15;    // Street-level detail
   
