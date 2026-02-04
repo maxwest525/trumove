@@ -471,9 +471,9 @@ function useTruckAnimation() {
 
 // Satellite Map Panel - Route Overview (matches tracking page style)
 function SatelliteMapPanel() {
-  // Use satellite-v9 style centered on US with proper zoom to show LA to NY route
-  // Center: -98, 39 (Kansas - center of US), zoom 3.2 shows full continental US
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/-98,39,3.0,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Use satellite-streets-v12 (hybrid) style centered on US - same as tracking page
+  // Center: -98, 39 (Kansas - center of US), zoom 3.3 for better route visibility
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/-98,39,3.3,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Pixel positions for cities on a 420x480 map centered at -98,39 zoom 3.0
   // LA is roughly at -118.24, 34.05 → pixel ~85, 265
