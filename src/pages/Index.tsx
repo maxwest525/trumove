@@ -445,6 +445,8 @@ import { addTerrain, setFogPreset } from '@/lib/mapbox3DConfig';
 function RouteOverviewPanel() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<mapboxgl.Map | null>(null);
+  const orbitAnimationRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number>(Date.now());
   
   // Realistic I-10/I-40/I-70 highway corridor waypoints [lng, lat]
   const waypoints: [number, number][] = useMemo(() => [
@@ -467,6 +469,9 @@ function RouteOverviewPanel() {
     if (!mapContainer.current || mapInstance.current) return;
     
     mapboxgl.accessToken = MAPBOX_TOKEN;
+    
+    // Reset start time for orbit animation
+    startTimeRef.current = Date.now();
     
     mapInstance.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -555,9 +560,30 @@ function RouteOverviewPanel() {
       new mapboxgl.Marker({ element: destEl })
         .setLngLat(waypoints[waypoints.length - 1])
         .addTo(mapInstance.current!);
+      
+      // Start slow auto-orbit animation
+      const animateOrbit = () => {
+        if (!mapInstance.current) return;
+        
+        // Calculate elapsed time for smooth continuous rotation
+        const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
+        
+        // Very slow orbit: complete one rotation every ~120 seconds (2 minutes)
+        // 360 degrees / 120 seconds = 3 degrees per second = 0.05 degrees per frame at 60fps
+        const orbitBearing = -15 + (elapsedSeconds * 0.5) % 360;
+        
+        mapInstance.current.setBearing(orbitBearing);
+        
+        orbitAnimationRef.current = requestAnimationFrame(animateOrbit);
+      };
+      
+      orbitAnimationRef.current = requestAnimationFrame(animateOrbit);
     });
     
     return () => {
+      if (orbitAnimationRef.current) {
+        cancelAnimationFrame(orbitAnimationRef.current);
+      }
       if (mapInstance.current) {
         mapInstance.current.remove();
         mapInstance.current = null;

@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
-import { Loader2, Navigation, Box, Eye, Globe, Sun, Moon, Sunrise } from "lucide-react";
+import { Loader2, Navigation, Box, Eye, Globe, Sun, Moon, Sunrise, Play, Pause } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
 import { MiniRouteOverview } from "./MiniRouteOverview";
@@ -276,7 +276,8 @@ export function TruckTrackingMap({
         }
       });
 
-      // Detect user interaction to disable follow mode
+      // Detect user interaction to disable follow mode temporarily
+      // User can pause by interacting, but will auto-resume after 5 seconds
       map.current.on('dragstart', () => {
         userInteractingRef.current = true;
         if (internalFollowMode) {
@@ -293,11 +294,29 @@ export function TruckTrackingMap({
       });
 
       map.current.on('dragend', () => {
-        setTimeout(() => { userInteractingRef.current = false; }, 500);
+        userInteractingRef.current = false;
+        // Auto-resume follow mode after 5 seconds of inactivity
+        if (isTracking) {
+          setTimeout(() => {
+            if (!userInteractingRef.current) {
+              setInternalFollowMode(true);
+              onFollowModeChange?.(true);
+            }
+          }, 5000);
+        }
       });
 
       map.current.on('zoomend', () => {
-        setTimeout(() => { userInteractingRef.current = false; }, 500);
+        userInteractingRef.current = false;
+        // Auto-resume follow mode after 5 seconds of inactivity
+        if (isTracking) {
+          setTimeout(() => {
+            if (!userInteractingRef.current) {
+              setInternalFollowMode(true);
+              onFollowModeChange?.(true);
+            }
+          }, 5000);
+        }
       });
 
       map.current.on("load", () => {
@@ -728,20 +747,28 @@ export function TruckTrackingMap({
         </div>
       )}
 
-      {/* Follow Mode Toggle Button */}
+      {/* Follow Mode Toggle Button - Original style */}
       <button
+        id="tracking-map-go-btn"
         onClick={toggleFollowMode}
         className={cn(
-          "absolute top-4 right-16 z-20 flex items-center gap-2 px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300",
+          "absolute top-4 right-16 z-20 flex items-center gap-2 px-4 py-2.5 rounded-lg border font-semibold text-sm transition-all duration-200",
           internalFollowMode
-            ? "bg-black/60 border-primary text-primary shadow-lg shadow-primary/30"
-            : "bg-black/60 border-white/20 text-white/80 hover:bg-black/80"
+            ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/25"
+            : "bg-background/80 hover:bg-muted border-border text-foreground"
         )}
       >
-        <Navigation className={cn("w-4 h-4", internalFollowMode && "animate-pulse")} />
-        <span className="text-xs font-semibold uppercase tracking-wider">
-          {internalFollowMode ? "Following" : "Follow"}
-        </span>
+        {internalFollowMode ? (
+          <>
+            <Pause className="w-4 h-4" />
+            <span>Pause</span>
+          </>
+        ) : (
+          <>
+            <Play className="w-4 h-4" />
+            <span>Follow Truck</span>
+          </>
+        )}
       </button>
 
       {/* Lighting Preset Toggle */}
