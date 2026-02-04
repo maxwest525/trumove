@@ -510,14 +510,18 @@ function SatelliteMapPanel() {
   );
 }
 
-// Road Map Panel - Live GPS View with 3D tilt
+// Road Map Panel - Live GPS View with 3D tilt and buildings
 function RoadMapPanel() {
   const { truckProgress, mapCenter } = useTruckAnimation();
   
-  // Use pitch=60 for 3D tilt effect, bearing follows road direction
-  const bearing = 45; // Northeast direction for visual interest
-  const pitch = 60;   // 3D tilt angle
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${mapCenter.lng},${mapCenter.lat})/${mapCenter.lng},${mapCenter.lat},14,${bearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Enhanced 3D perspective: higher pitch for dramatic view, bearing follows route
+  const bearing = 35; // Slight northeast for natural movement feel
+  const pitch = 75;   // Maximum 3D tilt for buildings visibility
+  const zoom = 15.5;  // Higher zoom to see building detail
+  
+  // Use standard-satellite style which shows 3D buildings on satellite imagery
+  // Fallback: navigation-night-v1 also has building extrusions
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/standard-satellite/static/pin-s+22c55e(${mapCenter.lng},${mapCenter.lat})/${mapCenter.lng},${mapCenter.lat},${zoom},${bearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-road-map">
