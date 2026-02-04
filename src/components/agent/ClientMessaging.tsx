@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Mail, MessageSquare, Send, FileText, Sparkles, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { formatPhoneNumber } from "@/lib/phoneFormat";
 
 const EMAIL_TEMPLATES = [
   {
@@ -293,7 +294,7 @@ export function ClientMessaging() {
                   <Input
                     type="tel"
                     value={recipient}
-                    onChange={(e) => setRecipient(e.target.value)}
+                    onChange={(e) => setRecipient(formatPhoneNumber(e.target.value))}
                     placeholder="(555) 123-4567"
                   />
                 </div>

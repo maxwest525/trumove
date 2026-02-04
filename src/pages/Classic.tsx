@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { formatPhoneNumber, isValidPhoneNumber } from '@/lib/phoneFormat';
 import heroImage from '@/assets/classic-hero-truck.jpg';
 import familyPhoto from '@/assets/classic-family-1.jpg';
 import familyMovingPhoto from '@/assets/classic-family-moving.jpg';
@@ -342,7 +343,7 @@ Variant: classic
                     type="tel"
                     placeholder="Phone Number"
                     value={formData.phone}
-                    onChange={(e) => handleFieldChange('phone', e.target.value)}
+                    onChange={(e) => handleFieldChange('phone', formatPhoneNumber(e.target.value))}
                     className="h-11 border-gray-200 focus:border-amber-400 focus:ring-amber-400/20"
                   />
                   <div className="grid grid-cols-2 gap-3">
@@ -523,7 +524,7 @@ Variant: classic
                   <Input
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) => handleFieldChange('phone', e.target.value)}
+                    onChange={(e) => handleFieldChange('phone', formatPhoneNumber(e.target.value))}
                     placeholder="(555) 123-4567"
                     className={`h-12 text-base border-gray-300 focus:border-amber-500 focus:ring-amber-500 ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
                   />
