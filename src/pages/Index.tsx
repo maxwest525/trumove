@@ -499,15 +499,43 @@ function TruckViewPanel() {
   const map = useRef<mapboxgl.Map | null>(null);
   const animationRef = useRef<number>();
   
-  // Street-level looping route in Oklahoma City area
+  // Actual road geometry - downtown Oklahoma City grid (real street coordinates)
+  // This follows real roads: starts on Robinson Ave, turns on NW 4th, etc.
   const streetRoute: [number, number][] = useMemo(() => [
-    [-97.520, 35.470],   // Start
-    [-97.516, 35.473],   // Turn 1
-    [-97.512, 35.471],   // Turn 2
-    [-97.514, 35.467],   // Turn 3
-    [-97.518, 35.465],   // Turn 4
-    [-97.522, 35.468],   // Turn 5
-    [-97.520, 35.470],   // Back to start (loop)
+    // Start on N Robinson Ave heading north
+    [-97.51650, 35.46720],
+    [-97.51650, 35.46780],
+    [-97.51650, 35.46840],
+    [-97.51650, 35.46900],
+    [-97.51650, 35.46960],
+    [-97.51650, 35.47020],
+    // Turn right onto NW 4th St heading east
+    [-97.51620, 35.47040],
+    [-97.51580, 35.47040],
+    [-97.51500, 35.47040],
+    [-97.51420, 35.47040],
+    [-97.51340, 35.47040],
+    [-97.51260, 35.47040],
+    [-97.51180, 35.47040],
+    // Turn right onto N Broadway Ave heading south
+    [-97.51160, 35.47020],
+    [-97.51160, 35.46960],
+    [-97.51160, 35.46900],
+    [-97.51160, 35.46840],
+    [-97.51160, 35.46780],
+    [-97.51160, 35.46720],
+    [-97.51160, 35.46660],
+    // Turn right onto NW 1st St heading west
+    [-97.51180, 35.46640],
+    [-97.51260, 35.46640],
+    [-97.51340, 35.46640],
+    [-97.51420, 35.46640],
+    [-97.51500, 35.46640],
+    [-97.51580, 35.46640],
+    [-97.51650, 35.46640],
+    // Turn right onto N Robinson Ave heading north (back to start)
+    [-97.51650, 35.46660],
+    [-97.51650, 35.46720],
   ], []);
   
   // Helper: interpolate position along route
