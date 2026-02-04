@@ -12262,33 +12262,11 @@
   position: relative;
   margin-right: 24px;
   margin-left: -100px;
-  z-index: 10;
-}
-
-/* Enhanced logo backdrop for visibility */
-.header-logo::before {
-  content: '';
-  position: absolute;
-  inset: -12px -40px -12px -60px;
-  background: linear-gradient(
-    90deg,
-    hsl(0 0% 0% / 0.85) 0%,
-    hsl(0 0% 0% / 0.7) 30%,
-    hsl(0 0% 0% / 0.4) 70%,
-    hsl(0 0% 0% / 0) 100%
-  );
-  border-radius: 0 24px 24px 0;
-  z-index: -1;
-  pointer-events: none;
 }
 
 .header-logo img {
   height: 36px;
   width: auto;
-  position: relative;
-  z-index: 1;
-  /* Subtle drop shadow for extra pop */
-  filter: drop-shadow(0 2px 8px hsl(0 0% 0% / 0.5));
 }
 
 .header-nav {
