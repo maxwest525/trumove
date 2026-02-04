@@ -1552,25 +1552,17 @@
     drop-shadow(0 2px 8px hsl(var(--tm-green) / 0.35));
 }
 
-/* Feature line - single line, with backdrop blur and text stroke for readability */
+/* Feature line - single line, muted, elegant spacing */
 .tru-hero-feature-line {
   font-size: clamp(12px, 1.1vw, 15px);
   font-weight: 500;
-  color: hsl(0 0% 100% / 0.9);
+  color: hsl(0 0% 100% / 0.75);
   letter-spacing: 0.03em;
   line-height: 1.6;
   margin: 0;
-  /* Subtle backdrop blur for contrast */
-  background: hsl(0 0% 0% / 0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 8px 16px;
-  border-radius: 20px;
-  /* Text stroke for definition */
-  -webkit-text-stroke: 0.3px hsl(0 0% 0% / 0.4);
   text-shadow: 
-    0 1px 3px hsl(0 0% 0% / 0.9),
-    0 2px 8px hsl(0 0% 0% / 0.6);
+    0 2px 6px hsl(0 0% 0% / 0.9),
+    0 4px 16px hsl(0 0% 0% / 0.7);
   /* Entrance animation with 250ms delay */
   opacity: 0;
   animation: hero-element-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
