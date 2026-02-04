@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
+import { toast } from "sonner";
 import { 
   Sparkles, Search, Globe, TrendingUp, Target, 
   BarChart3, DollarSign, MousePointer,
@@ -14,7 +15,8 @@ import {
   Copy, ExternalLink, Lightbulb,
   Type, Play, Pause, FlaskConical, LineChart,
   ArrowRight, Percent, Timer, Eye, Users, Layers,
-  Plus, Trophy, Zap, Activity
+  Plus, Trophy, Zap, Activity, Download, Mail, 
+  Share2, FileDown, Radio
 } from "lucide-react";
 
 interface PPCDemoModalProps {
@@ -22,8 +24,8 @@ interface PPCDemoModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-// Demo data
-const DEMO_KEYWORDS = [
+// Initial demo data
+const INITIAL_KEYWORDS = [
   { keyword: "long distance moving", volume: 12400, cpc: "$4.82", competition: "High", score: 92, trend: "up" },
   { keyword: "interstate movers near me", volume: 8200, cpc: "$5.15", competition: "High", score: 88, trend: "up" },
   { keyword: "cross country moving companies", volume: 6800, cpc: "$4.20", competition: "Medium", score: 85, trend: "stable" },
@@ -32,7 +34,7 @@ const DEMO_KEYWORDS = [
   { keyword: "moving cost calculator", volume: 9100, cpc: "$2.40", competition: "Medium", score: 75, trend: "down" },
 ];
 
-const DEMO_ADS = [
+const INITIAL_ADS = [
   { 
     id: 1,
     headline: "TruMove - AI-Powered Moving Quotes",
@@ -84,7 +86,7 @@ const LANDING_PAGE_TEMPLATES = [
   { id: 4, name: "Calculator Tool", conversion: "15.8%", thumbnail: "calculator" },
 ];
 
-const AB_TESTS = [
+const INITIAL_AB_TESTS = [
   {
     id: 1,
     name: "Homepage Hero CTA",
@@ -126,7 +128,7 @@ const AB_TESTS = [
   },
 ];
 
-const CONVERSION_EVENTS = [
+const INITIAL_CONVERSION_EVENTS = [
   { event: "Quote Requested", count: 847, trend: "+12%", value: "$42.35", source: "Google Ads" },
   { event: "Phone Call", count: 234, trend: "+8%", value: "$68.20", source: "Direct" },
   { event: "Form Submitted", count: 1203, trend: "+18%", value: "$28.50", source: "Organic" },
@@ -134,13 +136,20 @@ const CONVERSION_EVENTS = [
   { event: "Booking Completed", count: 89, trend: "+6%", value: "$285.00", source: "Google Ads" },
 ];
 
-const FUNNEL_STAGES = [
+const INITIAL_FUNNEL_STAGES = [
   { stage: "Landing Page Views", count: 28450, rate: 100 },
   { stage: "Quote Started", count: 8234, rate: 28.9 },
   { stage: "Inventory Added", count: 4521, rate: 15.9 },
   { stage: "Quote Completed", count: 2847, rate: 10.0 },
   { stage: "Booking Made", count: 847, rate: 3.0 },
 ];
+
+const INITIAL_STATS = {
+  totalSpend: 1736,
+  clicks: 2373,
+  conversions: 70,
+  costPerConv: 24.80
+};
 
 export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -149,6 +158,78 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
   const [showNewTest, setShowNewTest] = useState(false);
   const [newTestName, setNewTestName] = useState("");
+  
+  // Live demo mode
+  const [liveMode, setLiveMode] = useState(false);
+  const [stats, setStats] = useState(INITIAL_STATS);
+  const [ads, setAds] = useState(INITIAL_ADS);
+  const [abTests, setAbTests] = useState(INITIAL_AB_TESTS);
+  const [conversionEvents, setConversionEvents] = useState(INITIAL_CONVERSION_EVENTS);
+  const [funnelStages, setFunnelStages] = useState(INITIAL_FUNNEL_STAGES);
+  const [chartData, setChartData] = useState([35, 45, 30, 60, 75, 55, 80, 65, 90, 70, 85, 95, 75, 88]);
+  
+  // Export states
+  const [isExporting, setIsExporting] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [exportEmail, setExportEmail] = useState("");
+  const [exportType, setExportType] = useState<"abtest" | "conversions">("abtest");
+
+  // Live mode simulation
+  useEffect(() => {
+    if (!liveMode || !open) return;
+    
+    const interval = setInterval(() => {
+      // Update stats with small random changes
+      setStats(prev => ({
+        totalSpend: prev.totalSpend + Math.random() * 5,
+        clicks: prev.clicks + Math.floor(Math.random() * 3),
+        conversions: prev.conversions + (Math.random() > 0.7 ? 1 : 0),
+        costPerConv: prev.totalSpend / prev.conversions
+      }));
+      
+      // Update ads
+      setAds(prev => prev.map(ad => ad.status === "active" ? {
+        ...ad,
+        clicks: ad.clicks + Math.floor(Math.random() * 2),
+        impressions: ad.impressions + Math.floor(Math.random() * 15),
+        spend: ad.spend + Math.random() * 2,
+        conversions: ad.conversions + (Math.random() > 0.85 ? 1 : 0)
+      } : ad));
+      
+      // Update A/B tests
+      setAbTests(prev => prev.map(test => test.status === "running" ? {
+        ...test,
+        variants: test.variants.map(v => ({
+          ...v,
+          visitors: v.visitors + Math.floor(Math.random() * 3),
+          conversions: v.conversions + (Math.random() > 0.9 ? 1 : 0),
+          rate: parseFloat(((v.conversions / v.visitors) * 100).toFixed(1))
+        })),
+        confidence: Math.min(99, test.confidence + (Math.random() > 0.8 ? 0.1 : 0))
+      } : test));
+      
+      // Update conversion events
+      setConversionEvents(prev => prev.map(event => ({
+        ...event,
+        count: event.count + (Math.random() > 0.7 ? 1 : 0)
+      })));
+      
+      // Update funnel
+      setFunnelStages(prev => prev.map((stage, i) => ({
+        ...stage,
+        count: stage.count + (i === 0 ? Math.floor(Math.random() * 5) : (Math.random() > 0.8 ? 1 : 0))
+      })));
+      
+      // Update chart
+      setChartData(prev => {
+        const newData = [...prev.slice(1), Math.floor(Math.random() * 40) + 60];
+        return newData;
+      });
+      
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, [liveMode, open]);
 
   const handleGenerateContent = () => {
     setIsGenerating(true);
@@ -161,6 +242,88 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   const handleCreateTest = () => {
     setShowNewTest(false);
     setNewTestName("");
+  };
+  
+  // Export functions
+  const generatePDFContent = useCallback((type: "abtest" | "conversions") => {
+    const date = new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    
+    if (type === "abtest") {
+      return {
+        title: "A/B Test Results Report",
+        date,
+        sections: abTests.map(test => ({
+          name: test.name,
+          status: test.status,
+          winner: test.winner,
+          confidence: `${test.confidence}%`,
+          lift: test.lift,
+          variants: test.variants
+        }))
+      };
+    } else {
+      return {
+        title: "Conversion Analytics Report",
+        date,
+        stats: {
+          totalConversions: conversionEvents.reduce((acc, e) => acc + e.count, 0),
+          avgValue: "$" + (conversionEvents.reduce((acc, e) => acc + parseFloat(e.value.replace('$', '')) * e.count, 0) / conversionEvents.reduce((acc, e) => acc + e.count, 0)).toFixed(2),
+        },
+        events: conversionEvents,
+        funnel: funnelStages
+      };
+    }
+  }, [abTests, conversionEvents, funnelStages]);
+  
+  const handleExportPDF = async (type: "abtest" | "conversions") => {
+    setIsExporting(true);
+    setExportType(type);
+    
+    // Simulate PDF generation
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const content = generatePDFContent(type);
+    
+    // Create a simple text representation for demo
+    const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${type === "abtest" ? "ab-test-results" : "conversion-report"}-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    setIsExporting(false);
+    toast.success(`${type === "abtest" ? "A/B Test" : "Conversion"} report downloaded!`);
+  };
+  
+  const handleEmailExport = async () => {
+    if (!exportEmail) {
+      toast.error("Please enter an email address");
+      return;
+    }
+    
+    setIsExporting(true);
+    
+    // Simulate email sending
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    setIsExporting(false);
+    setShowEmailModal(false);
+    setExportEmail("");
+    toast.success(`Report sent to ${exportEmail}!`);
+  };
+  
+  const handleShare = (type: "abtest" | "conversions") => {
+    const shareUrl = `https://trumove.ai/reports/${type}/${Date.now()}`;
+    navigator.clipboard.writeText(shareUrl);
+    toast.success("Shareable link copied to clipboard!");
   };
 
   return (
@@ -175,10 +338,22 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20 backdrop-blur-sm">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <div>
+            <div className="flex-1">
               <span className="block text-white font-bold">AI Marketing Suite</span>
               <span className="text-sm font-normal text-white/80">PPC • SEO • A/B Testing • Conversion Tracking</span>
             </div>
+            {/* Live Mode Toggle */}
+            <button
+              onClick={() => setLiveMode(!liveMode)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                liveMode 
+                  ? "bg-white text-purple-600" 
+                  : "bg-white/20 text-white hover:bg-white/30"
+              }`}
+            >
+              <Radio className={`w-3 h-3 ${liveMode ? "animate-pulse text-red-500" : ""}`} />
+              {liveMode ? "Live" : "Static"}
+            </button>
           </DialogTitle>
         </DialogHeader>
 
@@ -208,6 +383,42 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
           ))}
         </div>
 
+        {/* Email Export Modal */}
+        {showEmailModal && (
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div className="bg-card rounded-xl p-6 w-96 shadow-xl border border-border">
+              <h3 className="font-semibold text-lg mb-4 text-foreground">Email Report</h3>
+              <Input
+                type="email"
+                placeholder="Enter email address..."
+                value={exportEmail}
+                onChange={(e) => setExportEmail(e.target.value)}
+                className="mb-4"
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" onClick={() => setShowEmailModal(false)}>Cancel</Button>
+                <Button 
+                  onClick={handleEmailExport}
+                  disabled={isExporting}
+                  style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
+                >
+                  {isExporting ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="w-4 h-4 mr-2" />
+                      Send Report
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Content */}
         <ScrollArea className="flex-1 max-h-[calc(90vh-180px)]">
           <div className="p-4">
@@ -217,12 +428,12 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                 {/* Stats Row */}
                 <div className="grid grid-cols-4 gap-3">
                   {[
-                    { label: "Total Spend", value: "$1,736", change: "+12%", icon: DollarSign, color: "#7C3AED" },
-                    { label: "Clicks", value: "2,373", change: "+18%", icon: MousePointer, color: "#EC4899" },
-                    { label: "Conversions", value: "70", change: "+24%", icon: Target, color: "#10B981" },
-                    { label: "Cost/Conv.", value: "$24.80", change: "-8%", icon: TrendingUp, color: "#F59E0B" },
+                    { label: "Total Spend", value: `$${stats.totalSpend.toFixed(0)}`, change: "+12%", icon: DollarSign, color: "#7C3AED" },
+                    { label: "Clicks", value: stats.clicks.toLocaleString(), change: "+18%", icon: MousePointer, color: "#EC4899" },
+                    { label: "Conversions", value: stats.conversions.toString(), change: "+24%", icon: Target, color: "#10B981" },
+                    { label: "Cost/Conv.", value: `$${stats.costPerConv.toFixed(2)}`, change: "-8%", icon: TrendingUp, color: "#F59E0B" },
                   ].map((stat) => (
-                    <div key={stat.label} className="p-4 rounded-xl border border-border bg-card">
+                    <div key={stat.label} className={`p-4 rounded-xl border border-border bg-card ${liveMode ? "transition-all duration-500" : ""}`}>
                       <div className="flex items-center justify-between mb-2">
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${stat.color}20` }}>
                           <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
@@ -231,28 +442,34 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                           {stat.change}
                         </span>
                       </div>
-                      <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                      <div className={`text-2xl font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{stat.value}</div>
                       <div className="text-xs text-muted-foreground">{stat.label}</div>
                     </div>
                   ))}
                 </div>
 
-                {/* Performance Chart Placeholder */}
+                {/* Performance Chart */}
                 <div className="rounded-xl border border-border bg-card p-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-foreground">Campaign Performance</h3>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
+                      {liveMode && (
+                        <Badge className="gap-1 text-[10px]" style={{ background: "#EF444420", color: "#EF4444" }}>
+                          <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                          Live
+                        </Badge>
+                      )}
                       <Badge variant="secondary">Last 7 days</Badge>
                     </div>
                   </div>
                   <div className="h-40 flex items-end gap-1">
-                    {[35, 45, 30, 60, 75, 55, 80, 65, 90, 70, 85, 95, 75, 88].map((h, i) => (
+                    {chartData.map((h, i) => (
                       <div key={i} className="flex-1 flex flex-col items-center gap-1">
                         <div 
-                          className="w-full rounded-t transition-all hover:opacity-80"
+                          className={`w-full rounded-t ${liveMode ? "transition-all duration-500" : ""}`}
                           style={{ 
                             height: `${h}%`, 
-                            background: i === 13 ? "linear-gradient(180deg, #7C3AED 0%, #A855F7 100%)" : "#E2E8F0"
+                            background: i === chartData.length - 1 ? "linear-gradient(180deg, #7C3AED 0%, #A855F7 100%)" : "#E2E8F0"
                           }}
                         />
                       </div>
@@ -298,8 +515,8 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                 </div>
 
                 <div className="space-y-3">
-                  {DEMO_ADS.map((ad) => (
-                    <div key={ad.id} className="p-4 rounded-xl border border-border bg-card">
+                  {ads.map((ad) => (
+                    <div key={ad.id} className={`p-4 rounded-xl border border-border bg-card ${liveMode ? "transition-all duration-500" : ""}`}>
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
@@ -322,23 +539,23 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                       </div>
                       <div className="grid grid-cols-5 gap-4 pt-3 border-t border-border">
                         <div>
-                          <div className="text-lg font-bold text-foreground">{ad.clicks.toLocaleString()}</div>
+                          <div className={`text-lg font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{ad.clicks.toLocaleString()}</div>
                           <div className="text-[10px] text-muted-foreground uppercase">Clicks</div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold text-foreground">{ad.impressions.toLocaleString()}</div>
+                          <div className={`text-lg font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{ad.impressions.toLocaleString()}</div>
                           <div className="text-[10px] text-muted-foreground uppercase">Impressions</div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold" style={{ color: "#7C3AED" }}>{ad.ctr}%</div>
+                          <div className="text-lg font-bold" style={{ color: "#7C3AED" }}>{((ad.clicks / ad.impressions) * 100).toFixed(2)}%</div>
                           <div className="text-[10px] text-muted-foreground uppercase">CTR</div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold text-foreground">${ad.spend.toFixed(2)}</div>
+                          <div className={`text-lg font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>${ad.spend.toFixed(2)}</div>
                           <div className="text-[10px] text-muted-foreground uppercase">Spend</div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold" style={{ color: "#10B981" }}>{ad.conversions}</div>
+                          <div className={`text-lg font-bold ${liveMode ? "transition-all duration-300" : ""}`} style={{ color: "#10B981" }}>{ad.conversions}</div>
                           <div className="text-[10px] text-muted-foreground uppercase">Conversions</div>
                         </div>
                       </div>
@@ -365,10 +582,10 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                 <div className="rounded-xl border border-border overflow-hidden">
                   <div className="px-4 py-3 flex items-center justify-between" style={{ background: "#F8FAFC" }}>
                     <span className="font-semibold text-sm text-foreground">Keyword Opportunities</span>
-                    <Badge variant="secondary">{DEMO_KEYWORDS.length} keywords</Badge>
+                    <Badge variant="secondary">{INITIAL_KEYWORDS.length} keywords</Badge>
                   </div>
                   <div className="divide-y divide-border">
-                    {DEMO_KEYWORDS.map((kw, i) => (
+                    {INITIAL_KEYWORDS.map((kw, i) => (
                       <div key={i} className="px-4 py-3 flex items-center gap-4 hover:bg-muted/30 transition-colors">
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-sm text-foreground">{kw.keyword}</div>
@@ -566,15 +783,46 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-foreground">A/B Test Manager</h3>
-                  <Button 
-                    size="sm" 
-                    className="gap-2"
-                    onClick={() => setShowNewTest(true)}
-                    style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
-                  >
-                    <Plus className="w-4 h-4" />
-                    Create Test
-                  </Button>
+                  <div className="flex gap-2">
+                    {/* Export Buttons */}
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-1"
+                      onClick={() => handleExportPDF("abtest")}
+                      disabled={isExporting}
+                    >
+                      <Download className="w-3 h-3" />
+                      PDF
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-1"
+                      onClick={() => { setExportType("abtest"); setShowEmailModal(true); }}
+                    >
+                      <Mail className="w-3 h-3" />
+                      Email
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-1"
+                      onClick={() => handleShare("abtest")}
+                    >
+                      <Share2 className="w-3 h-3" />
+                      Share
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      className="gap-2"
+                      onClick={() => setShowNewTest(true)}
+                      style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
+                    >
+                      <Plus className="w-4 h-4" />
+                      Create Test
+                    </Button>
+                  </div>
                 </div>
 
                 {/* New Test Form */}
@@ -633,8 +881,8 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
 
                 {/* Active Tests */}
                 <div className="space-y-3">
-                  {AB_TESTS.map((test) => (
-                    <div key={test.id} className="p-4 rounded-xl border border-border bg-card">
+                  {abTests.map((test) => (
+                    <div key={test.id} className={`p-4 rounded-xl border border-border bg-card ${liveMode ? "transition-all duration-500" : ""}`}>
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
@@ -678,15 +926,15 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                             </div>
                             <div className="grid grid-cols-3 gap-2 text-center">
                               <div>
-                                <div className="text-sm font-bold text-foreground">{variant.visitors.toLocaleString()}</div>
+                                <div className={`text-sm font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{variant.visitors.toLocaleString()}</div>
                                 <div className="text-[9px] text-muted-foreground">Visitors</div>
                               </div>
                               <div>
-                                <div className="text-sm font-bold text-foreground">{variant.conversions}</div>
+                                <div className={`text-sm font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{variant.conversions}</div>
                                 <div className="text-[9px] text-muted-foreground">Conversions</div>
                               </div>
                               <div>
-                                <div className="text-sm font-bold" style={{ color: variant.name === test.winner ? "#10B981" : "#64748B" }}>{variant.rate}%</div>
+                                <div className={`text-sm font-bold ${liveMode ? "transition-all duration-300" : ""}`} style={{ color: variant.name === test.winner ? "#10B981" : "#64748B" }}>{variant.rate.toFixed(1)}%</div>
                                 <div className="text-[9px] text-muted-foreground">Rate</div>
                               </div>
                             </div>
@@ -699,11 +947,11 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                         <div className="flex-1">
                           <div className="flex items-center justify-between text-xs mb-1">
                             <span className="text-muted-foreground">Statistical Confidence</span>
-                            <span className="font-medium" style={{ color: test.confidence >= 95 ? "#10B981" : "#F59E0B" }}>{test.confidence}%</span>
+                            <span className={`font-medium ${liveMode ? "transition-all duration-300" : ""}`} style={{ color: test.confidence >= 95 ? "#10B981" : "#F59E0B" }}>{test.confidence.toFixed(0)}%</span>
                           </div>
                           <div className="h-2 rounded-full bg-muted overflow-hidden">
                             <div 
-                              className="h-full rounded-full transition-all"
+                              className={`h-full rounded-full ${liveMode ? "transition-all duration-500" : ""}`}
                               style={{ 
                                 width: `${test.confidence}%`,
                                 background: test.confidence >= 95 ? "#10B981" : test.confidence >= 80 ? "#F59E0B" : "#EF4444"
@@ -734,21 +982,56 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             {/* Conversions */}
             {activeTab === "conversions" && (
               <div className="space-y-4">
+                {/* Export Header */}
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-foreground">Conversion Analytics</h3>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-1"
+                      onClick={() => handleExportPDF("conversions")}
+                      disabled={isExporting}
+                    >
+                      <FileDown className="w-3 h-3" />
+                      Export PDF
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-1"
+                      onClick={() => { setExportType("conversions"); setShowEmailModal(true); }}
+                    >
+                      <Mail className="w-3 h-3" />
+                      Email Report
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-1"
+                      onClick={() => handleShare("conversions")}
+                    >
+                      <Share2 className="w-3 h-3" />
+                      Share Link
+                    </Button>
+                  </div>
+                </div>
+
                 {/* Summary Stats */}
                 <div className="grid grid-cols-4 gap-3">
                   {[
-                    { label: "Total Conversions", value: "2,829", icon: Target, color: "#7C3AED" },
+                    { label: "Total Conversions", value: conversionEvents.reduce((acc, e) => acc + e.count, 0).toLocaleString(), icon: Target, color: "#7C3AED" },
                     { label: "Conversion Rate", value: "3.2%", icon: Percent, color: "#10B981" },
                     { label: "Avg. Time to Convert", value: "4.2 days", icon: Timer, color: "#EC4899" },
-                    { label: "Total Value", value: "$84,420", icon: DollarSign, color: "#F59E0B" },
+                    { label: "Total Value", value: "$" + (conversionEvents.reduce((acc, e) => acc + parseFloat(e.value.replace('$', '')) * e.count, 0) / 1000).toFixed(0) + "K", icon: DollarSign, color: "#F59E0B" },
                   ].map((stat) => (
-                    <div key={stat.label} className="p-4 rounded-xl border border-border bg-card">
+                    <div key={stat.label} className={`p-4 rounded-xl border border-border bg-card ${liveMode ? "transition-all duration-500" : ""}`}>
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${stat.color}20` }}>
                           <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
                         </div>
                       </div>
-                      <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                      <div className={`text-2xl font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{stat.value}</div>
                       <div className="text-xs text-muted-foreground">{stat.label}</div>
                     </div>
                   ))}
@@ -758,31 +1041,39 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                 <div className="rounded-xl border border-border bg-card p-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-foreground">Conversion Funnel</h3>
-                    <Badge variant="secondary">Last 30 days</Badge>
+                    <div className="flex gap-2 items-center">
+                      {liveMode && (
+                        <Badge className="gap-1 text-[10px]" style={{ background: "#EF444420", color: "#EF4444" }}>
+                          <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                          Live
+                        </Badge>
+                      )}
+                      <Badge variant="secondary">Last 30 days</Badge>
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    {FUNNEL_STAGES.map((stage, i) => (
+                    {funnelStages.map((stage, i) => (
                       <div key={stage.stage} className="flex items-center gap-3">
                         <div className="w-32 text-xs text-muted-foreground truncate">{stage.stage}</div>
                         <div className="flex-1 h-8 rounded-lg overflow-hidden bg-muted relative">
                           <div 
-                            className="h-full rounded-lg transition-all flex items-center justify-end px-2"
+                            className={`h-full rounded-lg flex items-center justify-end px-2 ${liveMode ? "transition-all duration-500" : ""}`}
                             style={{ 
-                              width: `${stage.rate}%`,
+                              width: `${Math.max(stage.rate, 5)}%`,
                               background: `linear-gradient(90deg, #7C3AED ${100 - stage.rate}%, #A855F7 100%)`,
                               minWidth: "60px"
                             }}
                           >
-                            <span className="text-xs font-bold text-white">{stage.count.toLocaleString()}</span>
+                            <span className={`text-xs font-bold text-white ${liveMode ? "transition-all duration-300" : ""}`}>{stage.count.toLocaleString()}</span>
                           </div>
                         </div>
                         <div className="w-16 text-right">
-                          <span className="text-xs font-medium" style={{ color: "#7C3AED" }}>{stage.rate}%</span>
+                          <span className="text-xs font-medium" style={{ color: "#7C3AED" }}>{stage.rate.toFixed(1)}%</span>
                         </div>
-                        {i < FUNNEL_STAGES.length - 1 && (
+                        {i < funnelStages.length - 1 && (
                           <div className="w-16 text-right">
                             <span className="text-[10px] text-red-500">
-                              -{((1 - (FUNNEL_STAGES[i + 1].count / stage.count)) * 100).toFixed(0)}%
+                              -{((1 - (funnelStages[i + 1].count / stage.count)) * 100).toFixed(0)}%
                             </span>
                           </div>
                         )}
@@ -801,8 +1092,8 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                     </Button>
                   </div>
                   <div className="divide-y divide-border">
-                    {CONVERSION_EVENTS.map((event, i) => (
-                      <div key={i} className="px-4 py-3 flex items-center gap-4 hover:bg-muted/30 transition-colors">
+                    {conversionEvents.map((event, i) => (
+                      <div key={i} className={`px-4 py-3 flex items-center gap-4 hover:bg-muted/30 transition-colors ${liveMode ? "transition-all duration-500" : ""}`}>
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#7C3AED20" }}>
                           <Activity className="w-4 h-4" style={{ color: "#7C3AED" }} />
                         </div>
@@ -811,7 +1102,7 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
                           <div className="text-xs text-muted-foreground">Source: {event.source}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg font-bold text-foreground">{event.count}</div>
+                          <div className={`text-lg font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{event.count}</div>
                           <div className="text-[10px] text-green-500">{event.trend}</div>
                         </div>
                         <div className="text-right">
@@ -875,8 +1166,10 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
         {/* Footer */}
         <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/30">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#7C3AED" }} />
-            <span className="text-xs text-muted-foreground">Demo Mode - No real campaigns affected</span>
+            <div className={`w-2 h-2 rounded-full ${liveMode ? "bg-red-500 animate-pulse" : ""}`} style={{ background: liveMode ? undefined : "#7C3AED" }} />
+            <span className="text-xs text-muted-foreground">
+              {liveMode ? "Live Demo Mode - Data updates in real-time" : "Demo Mode - No real campaigns affected"}
+            </span>
           </div>
           <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground">
             <ExternalLink className="w-3 h-3" />
