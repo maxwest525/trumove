@@ -1,244 +1,127 @@
 
-
-# Hero Section Redesign: Two-Column Layout
+# Navigation Dropdown Polish Plan
 
 ## Overview
-
-Restructure the homepage hero into a clean two-column layout with text content on the left and the existing form on the right. This is a focused, minimal change that only affects the hero section.
-
----
-
-## Current Structure
-
-The hero currently uses a centered layout with:
-- Logo + headline stacked at top (spans full width)
-- Form card below (right-aligned)  
-- Company info + feature carousel cards (stacked below form)
+Refine the mega-menu hover previews with entrance animations, improved typography, and cohesive spacing to create a premium, unified look.
 
 ---
 
-## New Layout
+## Changes
 
-### Desktop (Two Columns)
+### 1. Add Entrance Animations for Preview Images
+Create smooth, staggered entrance animations when the dropdown appears:
+
+- **Preview card**: Subtle scale-up (0.95 → 1) + fade-in with 80ms delay
+- **Image**: Additional subtle zoom effect (1.08 → 1) creating depth
+- **Caption**: Slide up from bottom with fade (100ms delay after image)
+- **Header/CTA elements**: Fade in with 120ms delay for sequential reveal
+
 ```text
-+------------------------------------------+
-|  LEFT COLUMN          |  RIGHT COLUMN    |
-|  (Text Content)       |  (Form)          |
-|                       |                  |
-|  "The Smarter Way     |  [Existing Form] |
-|   To Move"            |                  |
-|                       |  Micro-copy:     |
-|  Feature line         |  "A moving       |
-|  (single line, muted) |  specialist will |
-|                       |  call you        |
-|                       |  shortly."       |
-|                       |                  |
-|                       |  [Call Button]   |
-+------------------------------------------+
+Animation Timeline:
+┌─────────────────────────────────────────┐
+│  0ms   │ Dropdown container fades in    │
+│  50ms  │ Preview image scales up        │
+│  80ms  │ Badge appears with pop         │
+│ 120ms  │ Caption slides up              │
+│ 160ms  │ Title + tagline fade in        │
+│ 200ms  │ CTA button enters              │
+└─────────────────────────────────────────┘
 ```
 
-### Mobile (Stacked)
+### 2. Typography & Font Cohesion
+Standardize fonts across all dropdown elements:
+
+- **Title**: 15px, font-weight 700, letter-spacing -0.01em
+- **Tagline**: 13px, font-weight 500, muted foreground
+- **Caption highlight**: 13px, font-weight 600, with subtle green accent
+- **Badge**: 9px uppercase, tracking 0.05em
+- **CTA button**: 13px, font-weight 600
+
+### 3. Spacing & Layout Improvements
+Tighten the visual rhythm:
+
 ```text
-+----------------------+
-|  Text Content        |
-|  (Headline + Line)   |
-+----------------------+
-|  Form                |
-|  + Micro-copy        |
-|  + Call Button       |
-+----------------------+
+┌────────────────────────────────────┐
+│  Preview Image (16:10 ratio)       │  ← 12px padding
+│  ┌──────────────────────────────┐  │
+│  │  Badge ──────────────────────│  │  ← 8px from top-right
+│  └──────────────────────────────┘  │
+├────────────────────────────────────┤
+│  Caption: "Scan any room..."       │  ← 12px vertical padding
+├────────────────────────────────────┤
+│  🔧 AI Move Estimator              │  ← 10px gap
+│  Point. Scan. Price.               │
+├────────────────────────────────────┤
+│  [Scan Room]  [Build Manually]     │  ← 10px gap, 8px between pills
+├────────────────────────────────────┤
+│  [Try It Now →]                    │  ← 12px bottom padding
+└────────────────────────────────────┘
+
+Padding: 14px (down from 16px)
+Card border-radius: 14px (more refined)
+Image border-radius: 10px
 ```
+
+### 4. Visual Refinements
+- **Softer shadow**: More subtle, layered shadow for premium feel
+- **Border**: Thinner 0.5px border with lower opacity
+- **Caption background**: Gradient fade from transparent to card background
+- **Badge styling**: Frosted glass effect with backdrop-blur
 
 ---
 
-## Content Specifications
+## Technical Details
 
-### LEFT COLUMN
-| Element | Content |
-|---------|---------|
-| Logo | TruMove logo (existing) |
-| Headline | "The Smarter Way To Move" (existing, with green accent on "Move") |
-| Feature Line | "AI-powered estimates · FMCSA-vetted carriers · No van line middlemen · Live video consults · Real-time tracking" |
+### Files to Modify
 
-**Feature line styling:**
-- Single line, small text (~13px)
-- Muted color (60-70% opacity)
-- No icons, just text with bullet separators
+**`src/index.css`** (mega-menu section):
+- Add new keyframes: `mega-preview-enter`, `mega-caption-enter`, `mega-content-stagger`
+- Update `.mega-preview-card` with animation delay and easing
+- Refine spacing values throughout dropdown components
+- Improve typography with consistent font sizes and weights
+- Add gradient overlays and enhanced shadows
 
-### RIGHT COLUMN
-| Element | Content |
-|---------|---------|
-| Form | Existing multi-step form (unchanged) |
-| Micro-copy | "A moving specialist will call you shortly." |
-| Call Button | "Call a moving specialist" with phone icon |
+**`src/components/layout/Header.tsx`**:
+- No structural changes needed - CSS handles all animations
+- Current preview components work as-is
 
----
-
-## Technical Implementation
-
-### File: `src/pages/Index.tsx`
-
-**Changes to hero section (lines ~1105-1625):**
-
-1. **Remove** the centered `.tru-hero-header-section` that spans full width
-2. **Create** new left column structure with:
-   - Logo
-   - Headline with accent
-   - Feature line (new element)
-3. **Move** form to right column (keeping existing logic)
-4. **Add** micro-copy below form footer
-5. **Add** secondary call button below micro-copy
-6. **Remove** the "Why TruMove" company card and Feature Carousel from hero (per constraints - no feature cards in hero)
-
-**Simplified JSX structure:**
-```jsx
-<section className="tru-hero tru-hero-split">
-  {/* Particles and overlays unchanged */}
-  
-  {/* LEFT COLUMN: Text Content */}
-  <div className="tru-hero-left-column">
-    <img src={logoImg} className="tru-hero-logo" />
-    <h1 className="tru-hero-headline">
-      The Smarter Way To <span className="tru-hero-accent">Move</span>
-    </h1>
-    <p className="tru-hero-feature-line">
-      AI-powered estimates · FMCSA-vetted carriers · No van line middlemen · Live video consults · Real-time tracking
-    </p>
-  </div>
-  
-  {/* RIGHT COLUMN: Form + CTA */}
-  <div className="tru-hero-right-column">
-    {/* Existing form card - unchanged internally */}
-    <div className="tru-floating-form-card">
-      {/* ... existing form steps ... */}
-    </div>
-    
-    {/* New: Micro-copy */}
-    <p className="tru-hero-form-microcopy">
-      A moving specialist will call you shortly.
-    </p>
-    
-    {/* New: Call button */}
-    <a href="tel:+16097277647" className="tru-hero-call-btn">
-      <Phone className="w-4 h-4" />
-      Call a moving specialist
-    </a>
-  </div>
-</section>
-```
-
-### File: `src/index.css`
-
-**New/Modified CSS classes:**
-
+### New CSS Keyframes
 ```css
-/* Two-column hero grid */
-.tru-hero.tru-hero-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
-  /* ... existing padding/max-width */
-}
-
-/* Left column - text content */
-.tru-hero-left-column {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-/* Feature line - single line, muted */
-.tru-hero-feature-line {
-  font-size: 13px;
-  color: hsl(0 0% 100% / 0.7);
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  text-shadow: /* existing shadow for legibility */;
-}
-
-/* Right column - form + CTAs */
-.tru-hero-right-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* Micro-copy below form */
-.tru-hero-form-microcopy {
-  text-align: center;
-  font-size: 13px;
-  color: hsl(var(--muted-foreground));
-}
-
-/* Secondary call button */
-.tru-hero-call-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border: 2px solid hsl(var(--border));
-  border-radius: 12px;
-  font-weight: 600;
-  color: hsl(var(--foreground));
-  background: hsl(var(--background));
-  transition: all 0.2s;
-}
-
-.tru-hero-call-btn:hover {
-  border-color: hsl(var(--primary));
-  color: hsl(var(--primary));
-}
-
-/* Mobile: stack columns */
-@media (max-width: 1024px) {
-  .tru-hero.tru-hero-split {
-    grid-template-columns: 1fr;
+@keyframes mega-preview-enter {
+  from { 
+    opacity: 0; 
+    transform: scale(0.96); 
   }
-  
-  .tru-hero-left-column {
-    align-items: center;
-    text-align: center;
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
   }
-  
-  .tru-hero-feature-line {
-    white-space: normal;
-    text-align: center;
+}
+
+@keyframes mega-caption-slide {
+  from { 
+    opacity: 0; 
+    transform: translateY(6px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes mega-badge-pop {
+  from { 
+    opacity: 0; 
+    transform: scale(0.8); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
   }
 }
 ```
 
 ---
 
-## Elements Removed from Hero
-
-Per the constraints, these elements are removed from the hero section:
-- Company Info card ("Why TruMove?")
-- Feature Carousel card
-- Move Summary Modal (appears on location entry)
-
-These sections remain elsewhere on the page (StatsStrip, AI Analysis, etc.) - only the hero is affected.
-
----
-
-## Files Modified
-
-| File | Changes |
-|------|---------|
-| `src/pages/Index.tsx` | Restructure hero JSX: left column (text), right column (form + CTAs) |
-| `src/index.css` | Add/update hero column styles, feature line, micro-copy, call button |
-
----
-
-## What Stays Unchanged
-
-- Navbar
-- Brand colors
-- Light/dark mode
-- Form fields and submission logic
-- Global CSS and shared components
-- All other pages
-- Content below the hero (StatsStrip, AI Analysis, Consult, etc.)
-
+## Result
+The dropdowns will feel more polished and intentional - like a premium software product rather than a generic template. The staggered animations create visual interest without feeling slow, and the consistent typography establishes brand cohesion.
