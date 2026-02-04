@@ -101,7 +101,7 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: 'mapbox://styles/mapbox/satellite-v9',
       bounds: bounds,
       fitBoundsOptions: { padding: 50, maxZoom: 10 },
       interactive: false,
@@ -133,9 +133,9 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
           'line-cap': 'round'
         },
         paint: {
-          'line-color': '#22c55e',
+          'line-color': '#00e5a0',
           'line-width': 6,
-          'line-opacity': 0.2
+          'line-opacity': 0.25
         }
       });
 
@@ -161,7 +161,7 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
           'line-cap': 'round'
         },
         paint: {
-          'line-color': '#22c55e',
+          'line-color': '#00e5a0',
           'line-width': 5,
           'line-opacity': 1
         }
@@ -177,15 +177,15 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
           'line-cap': 'round'
         },
         paint: {
-          'line-color': '#22c55e',
+          'line-color': '#00e5a0',
           'line-width': 12,
-          'line-opacity': 0.3,
+          'line-opacity': 0.35,
           'line-blur': 4
         }
       }, 'route-animated');
 
       // Add origin marker
-      new mapboxgl.Marker({ color: '#22c55e' })
+      new mapboxgl.Marker({ color: '#00e5a0' })
         .setLngLat(fromCoords)
         .addTo(map.current);
 
