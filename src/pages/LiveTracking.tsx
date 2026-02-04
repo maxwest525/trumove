@@ -15,6 +15,7 @@ import { CompactRouteWeather } from "@/components/tracking/CompactRouteWeather";
 import { WeighStationChecklist } from "@/components/tracking/WeighStationChecklist";
 import { type MultiStopTruckStatus } from "@/components/tracking/CheckMyTruckModal";
 import { MultiStopSummaryCard } from "@/components/tracking/MultiStopSummaryCard";
+import { RouteOptimizationCard } from "@/components/tracking/RouteOptimizationCard";
 import { RouteSetupModal } from "@/components/tracking/RouteSetupModal";
 import { useRealtimeETA } from "@/hooks/useRealtimeETA";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
@@ -893,6 +894,13 @@ export default function LiveTracking() {
             isLoading={etaLoading}
             onRefresh={refreshNow}
             isEmpty={!routeData}
+          />
+
+          {/* Route Optimization Card - Shows time/distance saved */}
+          <RouteOptimizationCard
+            originCoords={originCoords}
+            destCoords={destCoords}
+            isMultiStop={!!multiStopData}
           />
 
           {/* Live Truck Street View */}
