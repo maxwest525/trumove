@@ -596,45 +596,24 @@ function TruckViewPanel() {
     });
     
     let progress = 0;
-    let orbitBearing = 0; // For cinematic orbit when truck pauses
-    let orbitMode = false;
-    let orbitStartTime = 0;
-    const ORBIT_INTERVAL = 8000; // Switch to orbit every 8 seconds
-    const ORBIT_DURATION = 3000; // Orbit for 3 seconds
+    let additionalBearing = 0; // Smooth additive rotation on top of driving direction
     
-    const animate = (timestamp: number) => {
+    const animate = () => {
       if (!map.current) return;
       
-      // Check if we should switch modes
-      const cycleTime = timestamp % (ORBIT_INTERVAL + ORBIT_DURATION);
-      const shouldOrbit = cycleTime > ORBIT_INTERVAL;
+      // Continuous driving - never stop
+      progress += 0.00003; // Very slow for realistic city driving speed
+      if (progress > 1) progress = 0;
       
-      if (shouldOrbit && !orbitMode) {
-        // Start orbit mode
-        orbitMode = true;
-        orbitStartTime = timestamp;
-        orbitBearing = map.current.getBearing();
-      } else if (!shouldOrbit && orbitMode) {
-        // Exit orbit mode
-        orbitMode = false;
-      }
+      const position = getPointAlongRoute(progress);
+      const drivingBearing = getBearing(progress);
       
-      if (orbitMode) {
-        // Cinematic orbit: slowly rotate camera around current position
-        const orbitProgress = (timestamp - orbitStartTime) / ORBIT_DURATION;
-        const currentBearing = orbitBearing + (orbitProgress * 90); // 90 degree sweep
-        map.current.setBearing(currentBearing);
-      } else {
-        // Normal driving animation
-        progress += 0.00003; // Very slow for realistic city driving speed
-        if (progress > 1) progress = 0;
-        
-        const position = getPointAlongRoute(progress);
-        const bearing = getBearing(progress);
-        
-        map.current.setCenter(position);
-        map.current.setBearing(bearing);
-      }
+      // Add subtle continuous orbit effect - smoothly oscillates ±30 degrees
+      // Uses sine wave for natural easing (no abrupt stops)
+      additionalBearing = Math.sin(Date.now() / 4000) * 25; // 25 degree sway, 4 second period
+      
+      map.current.setCenter(position);
+      map.current.setBearing(drivingBearing + additionalBearing);
       
       animationRef.current = requestAnimationFrame(animate);
     };
