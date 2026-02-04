@@ -400,23 +400,101 @@ function DetectionList({ visibleCount }: DetectionListProps) {
 }
 
 // Tracking Preview Component - Left column (mirrored layout)
+// Sample route: Miami, FL to Orlando, FL
+const SAMPLE_ROUTE = {
+  origin: { lat: 25.7617, lng: -80.1918, name: "Miami, FL" },
+  destination: { lat: 28.5383, lng: -81.3792, name: "Orlando, FL" },
+  truckPosition: { lat: 27.3361, lng: -80.5639 }, // ~midpoint on I-95
+  distance: "235 mi",
+  eta: "3h 42m",
+  traffic: "Moderate",
+  weather: "72°F Clear"
+};
+
+const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
+
 function TrackingPreview() {
+  // Road map with route line
+  const routeMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-80.8,27,6.5,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  
+  // Satellite overview of the route
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-80.8,27,6.5,0/200x150@2x?access_token=${MAPBOX_TOKEN}`;
+  
+  // Street view at truck position (using satellite as proxy for street-level context)
+  const streetViewUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},15,0/120x80@2x?access_token=${MAPBOX_TOKEN}`;
+
   return (
-    <div className="tru-tracker-preview">
-      <img src={previewPropertyLookup} alt="Live GPS Tracking" />
-      {/* Live badge */}
-      <div className="tru-tracker-live-badge">
-        <span className="tru-tracker-live-dot" />
-        <span>LIVE GPS</span>
+    <div className="tru-tracker-preview-container">
+      {/* Main Road Map */}
+      <div className="tru-tracker-road-map">
+        <img src={routeMapUrl} alt="Live Route Map" />
+        
+        {/* Pulsing Truck Marker */}
+        <div className="tru-tracker-truck-marker">
+          <div className="tru-tracker-truck-pulse" />
+          <div className="tru-tracker-truck-icon">
+            <Truck className="w-4 h-4" />
+          </div>
+        </div>
+        
+        {/* LIVE GPS Badge */}
+        <div className="tru-tracker-live-badge">
+          <span className="tru-tracker-live-dot" />
+          <span>LIVE GPS</span>
+        </div>
+        
+        {/* Stats Overlay - Top Right */}
+        <div className="tru-tracker-stats-overlay">
+          <div className="tru-tracker-stat-item">
+            <Clock className="w-3 h-3" />
+            <span className="tru-tracker-stat-label">ETA</span>
+            <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.eta}</span>
+          </div>
+          <div className="tru-tracker-stat-item">
+            <Route className="w-3 h-3" />
+            <span className="tru-tracker-stat-label">Traffic</span>
+            <span className="tru-tracker-stat-value tru-tracker-traffic-moderate">{SAMPLE_ROUTE.traffic}</span>
+          </div>
+          <div className="tru-tracker-stat-item">
+            <Globe className="w-3 h-3" />
+            <span className="tru-tracker-stat-label">Weather</span>
+            <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.weather}</span>
+          </div>
+        </div>
+        
+        {/* Mini Street View - Bottom Right */}
+        <div className="tru-tracker-street-view-mini">
+          <img src={streetViewUrl} alt="Street View" />
+          <div className="tru-tracker-street-view-label">
+            <Camera className="w-2.5 h-2.5" />
+            <span>Street View</span>
+          </div>
+        </div>
+        
+        {/* Route Info Bar - Bottom */}
+        <div className="tru-tracker-route-bar">
+          <div className="tru-tracker-route-endpoints">
+            <span className="tru-tracker-origin">
+              <MapPin className="w-3 h-3" />
+              {SAMPLE_ROUTE.origin.name}
+            </span>
+            <ArrowRight className="w-3 h-3" />
+            <span className="tru-tracker-destination">
+              <MapPinned className="w-3 h-3" />
+              {SAMPLE_ROUTE.destination.name}
+            </span>
+          </div>
+          <span className="tru-tracker-distance">{SAMPLE_ROUTE.distance}</span>
+        </div>
       </div>
-      {/* Route overlay */}
-      <div className="tru-tracker-route-overlay">
-        <Truck className="w-5 h-5" />
-      </div>
-      {/* Stats bar at bottom */}
-      <div className="tru-tracker-stats-bar">
-        <span><MapPin className="w-3.5 h-3.5" /> Real-time GPS</span>
-        <span><Clock className="w-3.5 h-3.5" /> Live ETA updates</span>
+      
+      {/* Satellite Route Overview - Side Panel */}
+      <div className="tru-tracker-satellite-panel">
+        <img src={satelliteMapUrl} alt="Satellite Route Overview" />
+        <div className="tru-tracker-satellite-label">
+          <Radar className="w-3 h-3" />
+          <span>Route Overview</span>
+        </div>
       </div>
     </div>
   );
