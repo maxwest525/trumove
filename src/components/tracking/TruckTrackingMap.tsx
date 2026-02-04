@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
-import { Loader2, Navigation, Box } from "lucide-react";
+import { Loader2, Navigation, Box, Eye, Globe } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
 import { MiniRouteOverview } from "./MiniRouteOverview";
@@ -97,6 +97,7 @@ interface TruckTrackingMapProps {
   onRouteCalculated?: (route: RouteData) => void;
   followMode?: boolean;
   onFollowModeChange?: (enabled: boolean) => void;
+  googleApiKey?: string;
 }
 
 // Map congestion string to numeric value for styling
@@ -117,7 +118,8 @@ export function TruckTrackingMap({
   isTracking,
   onRouteCalculated,
   followMode = false,
-  onFollowModeChange
+  onFollowModeChange,
+  googleApiKey = ''
 }: TruckTrackingMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -696,6 +698,40 @@ export function TruckTrackingMap({
           }
         }}
       />
+
+      {/* Street View Inset - Bottom Right */}
+      {isTracking && currentTruckPosition && googleApiKey && (
+        <div className="absolute bottom-4 right-4 z-30">
+          <div className="w-[200px] h-[140px] rounded-lg overflow-hidden border-2 border-white/20 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900">
+            <div className="relative w-full h-full">
+              <img
+                src={`https://maps.googleapis.com/maps/api/streetview?size=400x280&location=${currentTruckPosition[1]},${currentTruckPosition[0]}&fov=100&heading=${currentBearing}&pitch=5&key=${googleApiKey}`}
+                alt="Street View at truck location"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to satellite view if street view fails
+                  e.currentTarget.src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentTruckPosition[1]},${currentTruckPosition[0]}&zoom=17&size=400x280&maptype=hybrid&key=${googleApiKey}`;
+                }}
+              />
+              {/* Label overlay */}
+              <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 to-transparent">
+                <div className="flex items-center gap-1.5">
+                  <Eye className="w-3 h-3 text-primary" />
+                  <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">Street View</span>
+                </div>
+                {currentLocationName && (
+                  <p className="text-[9px] text-white/60 truncate mt-0.5">{currentLocationName}</p>
+                )}
+              </div>
+              {/* Live indicator */}
+              <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-[8px] font-bold text-white/80 tracking-wider">LIVE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div ref={mapContainer} className="w-full h-full" />
     </div>

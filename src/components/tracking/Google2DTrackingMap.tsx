@@ -105,6 +105,8 @@ export function Google2DTrackingMap({
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [internalFollowMode, setInternalFollowMode] = useState(followMode);
   const [currentSpeed, setCurrentSpeed] = useState<number>(0);
+  const [currentTruckCoords, setCurrentTruckCoords] = useState<[number, number] | null>(null);
+  const [currentBearing, setCurrentBearing] = useState<number>(0);
   const lastPositionRef = useRef<{ lat: number; lng: number; time: number } | null>(null);
 
   // Sync follow mode with prop
@@ -472,6 +474,19 @@ export function Google2DTrackingMap({
 
     const newPosition = { lat, lng };
     truckMarkerRef.current.setPosition(newPosition);
+    
+    // Update truck position state for Street View inset
+    setCurrentTruckCoords([lng, lat]);
+
+    // Calculate bearing for Street View heading
+    if (lowerIndex < totalPoints - 1) {
+      const nextPoint = path[Math.min(lowerIndex + 1, totalPoints - 1)];
+      const bearing = Math.atan2(
+        nextPoint[0] - lowerPoint[0],
+        nextPoint[1] - lowerPoint[1]
+      ) * (180 / Math.PI);
+      setCurrentBearing((bearing + 360) % 360);
+    }
 
     // Calculate speed based on position change
     const now = Date.now();
@@ -581,7 +596,7 @@ export function Google2DTrackingMap({
               <p className="text-sm font-medium text-foreground">Loading satellite view</p>
               <p className="text-xs text-muted-foreground mt-1">Preparing map data...</p>
             </div>
-          </div>
+        </div>
         </div>
       )}
 
@@ -594,6 +609,38 @@ export function Google2DTrackingMap({
           </div>
         </div>
       )}
+
+      {/* Street View Inset - Bottom Right */}
+      {isTracking && currentTruckCoords && googleApiKey && (
+        <div className="absolute bottom-4 right-4 z-30">
+          <div className="w-[200px] h-[140px] rounded-lg overflow-hidden border-2 border-white/20 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900">
+            <div className="relative w-full h-full">
+              <img
+                src={`https://maps.googleapis.com/maps/api/streetview?size=400x280&location=${currentTruckCoords[1]},${currentTruckCoords[0]}&fov=100&heading=${currentBearing}&pitch=5&key=${googleApiKey}`}
+                alt="Street View at truck location"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to satellite view if street view fails
+                  e.currentTarget.src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentTruckCoords[1]},${currentTruckCoords[0]}&zoom=17&size=400x280&maptype=hybrid&key=${googleApiKey}`;
+                }}
+              />
+              {/* Label overlay */}
+              <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 to-transparent">
+                <div className="flex items-center gap-1.5">
+                  <Eye className="w-3 h-3 text-primary" />
+                  <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">Street View</span>
+                </div>
+              </div>
+              {/* Live indicator */}
+              <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-[8px] font-bold text-white/80 tracking-wider">LIVE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Map container */}
       <div 
         ref={containerRef} 
