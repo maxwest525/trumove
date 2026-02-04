@@ -498,85 +498,90 @@ function TruckViewPanel() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const animationRef = useRef<number>();
+  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   
-  // Actual road geometry - downtown Oklahoma City grid (real street coordinates)
-  // This follows real roads: starts on Robinson Ave, turns on NW 4th, etc.
-  const streetRoute: [number, number][] = useMemo(() => [
-    // Start on N Robinson Ave heading north
-    [-97.51650, 35.46720],
-    [-97.51650, 35.46780],
-    [-97.51650, 35.46840],
-    [-97.51650, 35.46900],
-    [-97.51650, 35.46960],
-    [-97.51650, 35.47020],
-    // Turn right onto NW 4th St heading east
-    [-97.51620, 35.47040],
-    [-97.51580, 35.47040],
-    [-97.51500, 35.47040],
-    [-97.51420, 35.47040],
-    [-97.51340, 35.47040],
-    [-97.51260, 35.47040],
-    [-97.51180, 35.47040],
-    // Turn right onto N Broadway Ave heading south
-    [-97.51160, 35.47020],
-    [-97.51160, 35.46960],
-    [-97.51160, 35.46900],
-    [-97.51160, 35.46840],
-    [-97.51160, 35.46780],
-    [-97.51160, 35.46720],
-    [-97.51160, 35.46660],
-    // Turn right onto NW 1st St heading west
-    [-97.51180, 35.46640],
-    [-97.51260, 35.46640],
-    [-97.51340, 35.46640],
-    [-97.51420, 35.46640],
-    [-97.51500, 35.46640],
-    [-97.51580, 35.46640],
-    [-97.51650, 35.46640],
-    // Turn right onto N Robinson Ave heading north (back to start)
-    [-97.51650, 35.46660],
-    [-97.51650, 35.46720],
-  ], []);
+  // Fetch actual road geometry from Mapbox Directions API
+  useEffect(() => {
+    const fetchRoadRoute = async () => {
+      // Define a small loop route with waypoints - Mapbox will snap to roads
+      const waypoints = [
+        [-97.5065, 35.4692], // Start point
+        [-97.5020, 35.4720], // East
+        [-97.5020, 35.4760], // North  
+        [-97.5065, 35.4760], // West
+        [-97.5065, 35.4692], // Back to start
+      ];
+      
+      const coordsString = waypoints.map(p => `${p[0]},${p[1]}`).join(';');
+      
+      try {
+        const response = await fetch(
+          `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsString}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
+        );
+        const data = await response.json();
+        
+        if (data.routes && data.routes[0]) {
+          // Get the road-snapped coordinates
+          const coords = data.routes[0].geometry.coordinates as [number, number][];
+          setRouteCoords(coords);
+        }
+      } catch (error) {
+        console.error('Failed to fetch road route:', error);
+        // Fallback to a simple straight route
+        setRouteCoords([
+          [-97.5065, 35.4692],
+          [-97.5020, 35.4720],
+        ]);
+      }
+    };
+    
+    fetchRoadRoute();
+  }, []);
   
   // Helper: interpolate position along route
   const getPointAlongRoute = useCallback((progress: number): [number, number] => {
-    const numSegments = streetRoute.length - 1;
+    if (routeCoords.length < 2) return routeCoords[0] || [-97.5065, 35.4692];
+    
+    const numSegments = routeCoords.length - 1;
     const segmentProgress = progress * numSegments;
     const segmentIndex = Math.min(Math.floor(segmentProgress), numSegments - 1);
     const t = segmentProgress - segmentIndex;
     
-    const start = streetRoute[segmentIndex];
-    const end = streetRoute[segmentIndex + 1];
+    const start = routeCoords[segmentIndex];
+    const end = routeCoords[Math.min(segmentIndex + 1, routeCoords.length - 1)];
     
     return [
       start[0] + (end[0] - start[0]) * t,
       start[1] + (end[1] - start[1]) * t
     ];
-  }, [streetRoute]);
+  }, [routeCoords]);
   
   // Helper: calculate bearing between two points
   const getBearing = useCallback((progress: number): number => {
-    const numSegments = streetRoute.length - 1;
+    if (routeCoords.length < 2) return 45;
+    
+    const numSegments = routeCoords.length - 1;
     const segmentIndex = Math.min(Math.floor(progress * numSegments), numSegments - 1);
     
-    const start = streetRoute[segmentIndex];
-    const end = streetRoute[segmentIndex + 1];
+    const start = routeCoords[segmentIndex];
+    const end = routeCoords[Math.min(segmentIndex + 1, routeCoords.length - 1)];
     
     const dLng = end[0] - start[0];
     const dLat = end[1] - start[1];
     
     return (Math.atan2(dLng, dLat) * 180) / Math.PI;
-  }, [streetRoute]);
+  }, [routeCoords]);
   
+  // Initialize map and start animation when route is ready
   useEffect(() => {
-    if (!mapContainer.current || map.current) return;
+    if (!mapContainer.current || map.current || routeCoords.length < 2) return;
     
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/navigation-night-v1',
-      center: streetRoute[0],
+      center: routeCoords[0],
       zoom: 17,
       pitch: 60,
       bearing: 45,
@@ -589,7 +594,7 @@ function TruckViewPanel() {
     const animate = () => {
       if (!map.current) return;
       
-      progress += 0.00015; // Slow for realistic driving speed (~20 sec loop)
+      progress += 0.0001; // Slow for realistic driving speed
       if (progress > 1) progress = 0;
       
       const position = getPointAlongRoute(progress);
@@ -614,7 +619,7 @@ function TruckViewPanel() {
         map.current = null;
       }
     };
-  }, [streetRoute, getPointAlongRoute, getBearing]);
+  }, [routeCoords, getPointAlongRoute, getBearing]);
   
   return (
     <div className="tru-tracker-road-map tru-map-window-frame">
