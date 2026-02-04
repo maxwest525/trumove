@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Eye, X, Maximize2, Move, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
+import { Eye, X, Maximize2, Move, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ZoomIn, ZoomOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
@@ -13,6 +13,7 @@ export function StreetViewInset({ coords, bearing, googleApiKey }: StreetViewIns
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentHeading, setCurrentHeading] = useState(bearing);
   const [currentPitch, setCurrentPitch] = useState(5);
+  const [currentFov, setCurrentFov] = useState(100); // Field of view: 10-120, lower = more zoomed in
   const [imageFailed, setImageFailed] = useState(false);
 
   // Update heading when bearing changes (if not expanded)
@@ -37,7 +38,15 @@ export function StreetViewInset({ coords, bearing, googleApiKey }: StreetViewIns
     }
   }, []);
 
-  const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=800x600&location=${coords[1]},${coords[0]}&fov=100&heading=${currentHeading}&pitch=${currentPitch}&key=${googleApiKey}`;
+  const handleZoom = useCallback((direction: 'in' | 'out') => {
+    if (direction === 'in') {
+      setCurrentFov((f) => Math.max(f - 20, 20)); // Lower FOV = more zoomed in
+    } else {
+      setCurrentFov((f) => Math.min(f + 20, 120)); // Higher FOV = more zoomed out
+    }
+  }, []);
+
+  const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=800x600&location=${coords[1]},${coords[0]}&fov=${currentFov}&heading=${currentHeading}&pitch=${currentPitch}&key=${googleApiKey}`;
   const fallbackUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${coords[1]},${coords[0]}&zoom=17&size=800x600&maptype=hybrid&key=${googleApiKey}`;
 
   return (
@@ -148,6 +157,32 @@ export function StreetViewInset({ coords, bearing, googleApiKey }: StreetViewIns
               >
                 <ChevronDown className="w-6 h-6 text-white" />
               </button>
+
+              {/* Zoom controls - right side vertical stack */}
+              <div className="pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2">
+                <button
+                  onClick={() => handleZoom('in')}
+                  className={cn(
+                    "p-3 rounded-full bg-black/60 hover:bg-black/80 border border-white/20 hover:border-primary/50 transition-all backdrop-blur-sm",
+                    currentFov <= 20 && "opacity-40 cursor-not-allowed"
+                  )}
+                  aria-label="Zoom in"
+                  disabled={currentFov <= 20}
+                >
+                  <ZoomIn className="w-5 h-5 text-white" />
+                </button>
+                <button
+                  onClick={() => handleZoom('out')}
+                  className={cn(
+                    "p-3 rounded-full bg-black/60 hover:bg-black/80 border border-white/20 hover:border-primary/50 transition-all backdrop-blur-sm",
+                    currentFov >= 120 && "opacity-40 cursor-not-allowed"
+                  )}
+                  aria-label="Zoom out"
+                  disabled={currentFov >= 120}
+                >
+                  <ZoomOut className="w-5 h-5 text-white" />
+                </button>
+              </div>
             </div>
 
             {/* View info badge */}
@@ -161,10 +196,17 @@ export function StreetViewInset({ coords, bearing, googleApiKey }: StreetViewIns
               </span>
             </div>
 
-            {/* Heading indicator */}
-            <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-black/70 backdrop-blur-sm border border-white/10">
-              <span className="text-xs text-white/60">Heading:</span>
-              <span className="text-sm font-medium text-white">{Math.round(currentHeading)}°</span>
+            {/* Heading & Zoom indicator */}
+            <div className="absolute bottom-4 right-4 flex items-center gap-3 px-3 py-2 rounded-lg bg-black/70 backdrop-blur-sm border border-white/10">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-white/60">Heading:</span>
+                <span className="text-sm font-medium text-white">{Math.round(currentHeading)}°</span>
+              </div>
+              <div className="w-px h-4 bg-white/20" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-white/60">Zoom:</span>
+                <span className="text-sm font-medium text-white">{Math.round((120 - currentFov) / 20 + 1)}x</span>
+              </div>
             </div>
           </div>
         </DialogContent>
