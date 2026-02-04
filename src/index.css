@@ -3404,103 +3404,109 @@
 }
 
 .tru-tracker-animated-route {
-  animation: route-dash-flow 1.5s linear infinite;
+  animation: route-dash-flow-west 2s linear infinite;
+  filter: drop-shadow(0 0 4px hsl(145, 63%, 42% / 0.6));
 }
 
-@keyframes route-dash-flow {
+@keyframes route-dash-flow-west {
   0% { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: -20; }
+  100% { stroke-dashoffset: 25; }
 }
 
 .tru-tracker-traveled-route {
-  filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.5));
+  filter: drop-shadow(0 0 6px hsl(145, 63%, 42% / 0.8));
 }
 
-/* Pulsing Truck Marker */
-.tru-tracker-truck-marker {
-  position: absolute;
-  top: 48%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 15;
-}
-
-.tru-tracker-truck-animated {
-  animation: truck-bob 3s ease-in-out infinite;
-}
-
-@keyframes truck-bob {
-  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-  50% { transform: translate(-50%, -50%) translateY(-3px); }
-}
-
-.tru-tracker-truck-pulse {
+/* Homepage Truck Marker - Matching tracking page style */
+.tru-homepage-truck-marker {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 48px;
-  height: 48px;
-  background: hsl(var(--primary) / 0.3);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+}
+
+.tru-homepage-truck-glow {
+  position: absolute;
+  inset: -12px;
+  background: radial-gradient(circle, hsl(145, 63%, 42% / 0.5) 0%, transparent 70%);
+  animation: homepage-truck-pulse 2s ease-in-out infinite;
   border-radius: 50%;
-  animation: truck-marker-pulse 2s ease-in-out infinite;
+  pointer-events: none;
 }
 
-.tru-tracker-truck-pulse-2 {
+.tru-homepage-truck-glow-2 {
   animation-delay: 0.5s;
-  width: 64px;
-  height: 64px;
+  inset: -20px;
 }
 
-@keyframes truck-marker-pulse {
+@keyframes homepage-truck-pulse {
   0%, 100% { 
-    transform: translate(-50%, -50%) scale(1); 
-    opacity: 0.6; 
+    transform: scale(1); 
+    opacity: 0.8; 
   }
   50% { 
-    transform: translate(-50%, -50%) scale(1.5); 
-    opacity: 0; 
+    transform: scale(1.4); 
+    opacity: 0.2; 
   }
 }
 
-.tru-tracker-truck-icon {
-  position: relative;
-  width: 36px;
-  height: 36px;
-  background: hsl(var(--primary));
+.tru-homepage-truck-icon {
+  width: 44px;
+  height: 44px;
+  background: hsl(145, 63%, 42%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: hsl(var(--primary-foreground));
+  color: #000000;
   box-shadow: 
-    0 4px 16px hsl(var(--primary) / 0.6),
-    0 0 0 3px hsl(220 15% 15%),
-    0 0 0 5px hsl(var(--primary) / 0.4);
+    0 0 20px hsl(145, 63%, 42% / 0.6),
+    0 0 40px hsl(145, 63%, 42% / 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 1;
 }
 
-/* Direction indicator arrow */
-.tru-tracker-direction-arrow {
+/* Satellite Route Overlay */
+.tru-tracker-satellite-route-overlay {
   position: absolute;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 20px;
-  background: hsl(var(--primary));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: hsl(var(--primary-foreground));
-  font-size: 10px;
-  animation: direction-pulse 1s ease-in-out infinite;
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.5);
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
 }
 
-@keyframes direction-pulse {
-  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
-  50% { transform: translateX(-50%) translateY(-2px); opacity: 0.8; }
+.tru-tracker-satellite-route-overlay svg {
+  width: 100%;
+  height: 100%;
+}
+
+.tru-tracker-satellite-route-line {
+  filter: drop-shadow(0 0 8px hsl(145, 63%, 42% / 0.8));
+}
+
+.tru-tracker-satellite-truck-dot {
+  animation: satellite-truck-blink 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px hsl(145, 63%, 42%));
+}
+
+@keyframes satellite-truck-blink {
+  0%, 100% { opacity: 1; r: 6; }
+  50% { opacity: 0.6; r: 8; }
+}
+
+/* Traffic status colors */
+.tru-tracker-traffic-light {
+  color: hsl(145, 63%, 50%);
+}
+
+.tru-tracker-traffic-moderate {
+  color: hsl(45 100% 60%);
 }
 
 /* Live GPS Badge */
