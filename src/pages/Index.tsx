@@ -400,31 +400,34 @@ function DetectionList({ visibleCount }: DetectionListProps) {
 }
 
 // Tracking Preview Component - Left column (mirrored layout)
-// Sample route: Miami, FL to Orlando, FL
+// Sample route: New York, NY to Los Angeles, CA (cross-country)
 const SAMPLE_ROUTE = {
-  origin: { lat: 25.7617, lng: -80.1918, name: "Miami, FL" },
-  destination: { lat: 28.5383, lng: -81.3792, name: "Orlando, FL" },
-  truckPosition: { lat: 27.3361, lng: -80.5639 }, // ~midpoint on I-95
-  distance: "235 mi",
-  eta: "3h 42m",
-  traffic: "Moderate",
-  weather: "72°F Clear"
+  origin: { lat: 40.7128, lng: -74.0060, name: "New York, NY" },
+  destination: { lat: 34.0522, lng: -118.2437, name: "Los Angeles, CA" },
+  truckPosition: { lat: 39.0997, lng: -94.5786 }, // Kansas City, MO - midpoint
+  distance: "2,789 mi",
+  eta: "41h 15m",
+  traffic: "Light",
+  weather: "58°F Clear"
 };
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN2MTgzeHc3In0.nlM6XCog7Y0nrPt-5v-E2g';
 
+// Supabase URL for edge function proxying
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://nhoagucgcqjfbtifykha.supabase.co';
+
 function TrackingPreview() {
-  // Encoded polyline for Miami to Orlando route (simplified I-95/Turnpike path)
-  const routePolyline = encodeURIComponent('_pflCz{qhNgGkB{FwCeHoFkIgJaKoMmLoQwMqTuNkWoPsZqQq]iR_`@{Roc@aSkf@eSmi@eS_l@cSso@aSur@_Squ@}Rox@{R_{@yR}~@wRaaBuRocBsRieByRggBqRkiBqRmkBoRonBoRqpBoRsrBqRusBqRwuBqRyvBoRaxBoR');
+  // Encoded polyline for NY to LA route via I-80/I-70 corridor
+  const routePolyline = encodeURIComponent('o}wtFtdubM~CbB|FpDnInGtJzIbLnMxMrQpNlUlOlYlPz]nQxb@pRzf@rSzj@tTpo@vUxt@xVzy@zWh~@|Xv`A~Yx~Az[pbB|\\xlBz\\zpB~]`tB~^~wBz_@j{Bz`@v~Br`@haBra@`eBtb@fcB|b@xbBzc@jbBrd@|aBte@raB~e@~`Bxf@h`B|g@r_Bzh@z~Ari@d~Azj@l}A|k@r|Anl@x{Axm@~zAnm@dzApn@lzAzo@pyA~o@lyAtp@fzAzp@|zAbq@r{Atq@h|Axr@~|Azr@r}A|s@h~Art@`Bt');
   
-  // Dark mode zoomed-in road map centered on truck position (zoom level 14 for close-up)
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/path-4+22c55e-0.8(${routePolyline})/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},14,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Dark mode zoomed-in road map centered on truck position (Kansas City area)
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/path-4+22c55e-0.8(${routePolyline})/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},12,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
-  // Satellite overview showing full route with markers - enlarged to match road map
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/path-4+22c55e-1(${routePolyline}),pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-80.8,27,6.5,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Satellite overview showing full USA route with markers
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/path-3+22c55e-1(${routePolyline}),pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-98,39,3.5,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
-  // Street view at truck position (using satellite as proxy for street-level context)
-  const streetViewUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},17,0/120x80@2x?access_token=${MAPBOX_TOKEN}`;
+  // Google Street View via edge function proxy (I-70 highway in Kansas City)
+  const streetViewUrl = `${SUPABASE_URL}/functions/v1/google-street-view?lat=${SAMPLE_ROUTE.truckPosition.lat}&lng=${SAMPLE_ROUTE.truckPosition.lng}&heading=270&size=240x160`;
 
   return (
     <div className="tru-tracker-preview-container">
