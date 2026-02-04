@@ -5,6 +5,7 @@ import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { Loader2, Navigation, Box } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
+import { MiniRouteOverview } from "./MiniRouteOverview";
 import { findWeighStationsOnRoute, type WeighStation } from "@/data/weighStations";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,50 @@ interface RouteData {
   congestionLevels?: string[];
 }
 
+// Major cities for waypoint detection
+interface CityWaypoint {
+  name: string;
+  lat: number;
+  lon: number;
+}
+
+const MAJOR_CITIES: CityWaypoint[] = [
+  // Florida
+  { name: "Tampa", lat: 27.9506, lon: -82.4572 },
+  { name: "Orlando", lat: 28.5383, lon: -81.3792 },
+  { name: "Jacksonville", lat: 30.3322, lon: -81.6557 },
+  { name: "West Palm Beach", lat: 26.7153, lon: -80.0534 },
+  { name: "Fort Lauderdale", lat: 26.1224, lon: -80.1373 },
+  // East Coast
+  { name: "Atlanta", lat: 33.749, lon: -84.388 },
+  { name: "Charlotte", lat: 35.2271, lon: -80.8431 },
+  { name: "Washington DC", lat: 38.9072, lon: -77.0369 },
+  { name: "Philadelphia", lat: 39.9526, lon: -75.1652 },
+  { name: "New York", lat: 40.7128, lon: -74.006 },
+  { name: "Boston", lat: 42.3601, lon: -71.0589 },
+  // Midwest
+  { name: "Chicago", lat: 41.8781, lon: -87.6298 },
+  { name: "Detroit", lat: 42.3314, lon: -83.0458 },
+  { name: "Indianapolis", lat: 39.7684, lon: -86.1581 },
+  { name: "Kansas City", lat: 39.0997, lon: -94.5786 },
+  { name: "St. Louis", lat: 38.627, lon: -90.1994 },
+  { name: "Minneapolis", lat: 44.9778, lon: -93.265 },
+  // Southwest
+  { name: "Dallas", lat: 32.7767, lon: -96.797 },
+  { name: "Houston", lat: 29.7604, lon: -95.3698 },
+  { name: "San Antonio", lat: 29.4241, lon: -98.4936 },
+  { name: "Phoenix", lat: 33.4484, lon: -112.074 },
+  { name: "Albuquerque", lat: 35.0844, lon: -106.6504 },
+  { name: "Denver", lat: 39.7392, lon: -104.9903 },
+  // West Coast
+  { name: "Los Angeles", lat: 34.0522, lon: -118.2437 },
+  { name: "San Diego", lat: 32.7157, lon: -117.1611 },
+  { name: "San Francisco", lat: 37.7749, lon: -122.4194 },
+  { name: "Seattle", lat: 47.6062, lon: -122.3321 },
+  { name: "Portland", lat: 45.5152, lon: -122.6784 },
+  { name: "Las Vegas", lat: 36.1699, lon: -115.1398 },
+];
+
 // Sample rest stops along major routes
 const REST_STOPS = [
   { id: 'rest-1', name: 'Flying J Travel Center', lat: 30.1897, lon: -82.6392, type: 'rest' as const },
@@ -22,6 +67,27 @@ const REST_STOPS = [
   { id: 'rest-3', name: 'Love\'s Travel Stop', lat: 29.5500, lon: -81.2100, type: 'rest' as const },
   { id: 'rest-4', name: 'TA Travel Center', lat: 26.1200, lon: -80.1400, type: 'rest' as const },
 ];
+
+// Find cities near the route
+function findCitiesOnRoute(routeCoords: [number, number][], maxDistanceMiles: number = 15): CityWaypoint[] {
+  const citiesOnRoute: CityWaypoint[] = [];
+  const degreeThreshold = maxDistanceMiles / 69; // Approximate miles to degrees
+  
+  for (const city of MAJOR_CITIES) {
+    for (const coord of routeCoords) {
+      const dist = Math.sqrt(
+        Math.pow(coord[0] - city.lon, 2) + 
+        Math.pow(coord[1] - city.lat, 2)
+      );
+      if (dist < degreeThreshold) {
+        citiesOnRoute.push(city);
+        break;
+      }
+    }
+  }
+  
+  return citiesOnRoute;
+}
 
 interface TruckTrackingMapProps {
   originCoords: [number, number] | null;
@@ -199,7 +265,33 @@ export function TruckTrackingMap({
           }
         });
 
-        // Route glow layer
+        // Route outer glow layer (largest, most diffuse)
+        map.current?.addLayer({
+          id: "route-glow-outer",
+          type: "line",
+          source: "route",
+          paint: {
+            "line-color": "#22c55e",
+            "line-width": 28,
+            "line-opacity": 0.15,
+            "line-blur": 16
+          }
+        });
+
+        // Route middle glow layer
+        map.current?.addLayer({
+          id: "route-glow-middle",
+          type: "line",
+          source: "route",
+          paint: {
+            "line-color": "#22c55e",
+            "line-width": 18,
+            "line-opacity": 0.25,
+            "line-blur": 10
+          }
+        });
+
+        // Route inner glow layer
         map.current?.addLayer({
           id: "route-glow",
           type: "line",
@@ -207,12 +299,12 @@ export function TruckTrackingMap({
           paint: {
             "line-color": "#22c55e",
             "line-width": 12,
-            "line-opacity": 0.3,
-            "line-blur": 8
+            "line-opacity": 0.4,
+            "line-blur": 4
           }
         });
 
-        // Main route line
+        // Main route line (thicker)
         map.current?.addLayer({
           id: "route-line",
           type: "line",
@@ -223,8 +315,8 @@ export function TruckTrackingMap({
           },
           paint: {
             "line-color": "#22c55e",
-            "line-width": 4,
-            "line-opacity": 0.9
+            "line-width": 6,
+            "line-opacity": 0.95
           }
         });
 
@@ -368,6 +460,21 @@ export function TruckTrackingMap({
         `;
         const marker = new mapboxgl.Marker({ element: el })
           .setLngLat([stop.lon, stop.lat])
+          .addTo(map.current!);
+        waypointMarkers.current.push(marker);
+      });
+
+      // Add city waypoint markers along route
+      const citiesOnRoute = findCitiesOnRoute(coords, 20);
+      citiesOnRoute.forEach(city => {
+        const el = document.createElement("div");
+        el.className = "tracking-waypoint-marker city-waypoint";
+        el.innerHTML = `
+          <div class="city-waypoint-dot"></div>
+          <div class="city-waypoint-label">${city.name}</div>
+        `;
+        const marker = new mapboxgl.Marker({ element: el })
+          .setLngLat([city.lon, city.lat])
           .addTo(map.current!);
         waypointMarkers.current.push(marker);
       });
@@ -583,6 +690,25 @@ export function TruckTrackingMap({
           </div>
         </div>
       )}
+
+      {/* Mini Route Overview - visible when zoomed in/following */}
+      <MiniRouteOverview
+        originCoords={originCoords}
+        destCoords={destCoords}
+        truckPosition={currentTruckPosition}
+        progress={progress}
+        isVisible={isTracking && internalFollowMode}
+        onExpand={() => {
+          setInternalFollowMode(false);
+          onFollowModeChange?.(false);
+          // Zoom out to show full route
+          if (map.current && originCoords && destCoords) {
+            const bounds = new mapboxgl.LngLatBounds();
+            routeCoords.current.forEach(coord => bounds.extend(coord));
+            map.current.fitBounds(bounds, { padding: 80, maxZoom: 8 });
+          }
+        }}
+      />
 
       <div ref={mapContainer} className="w-full h-full" />
     </div>
