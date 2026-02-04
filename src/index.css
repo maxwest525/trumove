@@ -1607,7 +1607,7 @@
     0 2px 8px hsl(0 0% 0% / 0.6);
 }
 
-/* Secondary call button */
+/* Secondary call button - NO green text on hover */
 .tru-hero-call-btn {
   display: flex;
   align-items: center;
@@ -1627,15 +1627,16 @@
 }
 
 .tru-hero-call-btn:hover {
-  border-color: hsl(var(--primary));
-  color: hsl(var(--primary));
+  border-color: hsl(var(--primary) / 0.5);
+  color: hsl(0 0% 100%);
   background: hsl(0 0% 0% / 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.2);
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.1);
 }
 
 .tru-hero-call-btn svg {
   flex-shrink: 0;
+  color: currentColor;
 }
 
 /* Mobile: stack columns */
@@ -2797,7 +2798,7 @@
   background: hsl(var(--border));
 }
 
-/* CTA Button */
+/* CTA Button - Premium dark, white text/icons, NO green text on hover */
 .tru-ai-cta-btn {
   display: inline-flex;
   align-items: center;
@@ -2812,14 +2813,19 @@
   cursor: pointer;
   width: fit-content;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 16px hsl(var(--tm-ink) / 0.2);
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.15);
 }
 
 .tru-ai-cta-btn:hover {
   background: hsl(var(--foreground));
-  color: hsl(var(--primary));
+  color: hsl(var(--background));
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px hsl(var(--tm-ink) / 0.3);
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.2);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.tru-ai-cta-btn svg {
+  color: currentColor;
 }
 
 /* Responsive adjustments for new design */
@@ -2993,9 +2999,10 @@
 
 .tru-ai-scanner-start-btn:hover {
   background: hsl(var(--foreground));
-  color: hsl(var(--primary));
+  color: hsl(var(--background));
   transform: scale(1.05);
-  box-shadow: 0 6px 20px hsl(var(--primary) / 0.5);
+  border: 1px solid hsl(var(--primary) / 0.3);
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.3);
 }
 
 /* AI Demo Info Callout */
@@ -3042,7 +3049,7 @@
   margin: 0;
 }
 
-/* Start AI Analysis Button - Premium Dark Style */
+/* Start AI Analysis Button - Premium Dark Style, reduced glow */
 .tru-ai-start-btn {
   display: inline-flex;
   align-items: center;
@@ -3057,14 +3064,15 @@
   cursor: pointer;
   margin: 0 auto 24px;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.15);
 }
 
 .tru-ai-start-btn:hover {
-  background: hsl(var(--primary));
-  color: hsl(var(--foreground));
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px hsl(var(--primary) / 0.5);
+  border: 1px solid hsl(var(--primary) / 0.3);
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.2);
 }
 
 /* Live Scan Preview */
@@ -3234,9 +3242,10 @@
 
 .tru-ai-scanner-badge:hover {
   background: hsl(var(--foreground));
-  color: hsl(var(--primary));
+  color: hsl(var(--background));
   transform: scale(1.05);
-  box-shadow: 0 6px 20px hsl(var(--primary) / 0.5);
+  border: 1px solid hsl(var(--primary) / 0.3);
+  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.3);
 }
 
 /* Ensure no grey overlay on scanner preview */
@@ -28429,7 +28438,7 @@
   gap: 8px;
 }
 
-/* Go Button - Premium dark with green accent */
+/* Go Button - Premium dark with green icon accent, reduced glow */
 .tracking-map-go-btn {
   background: hsl(220 15% 8%) !important;
   color: white !important;
@@ -28439,7 +28448,7 @@
   gap: 8px !important;
   border-radius: 10px !important;
   border: 2px solid hsl(var(--border) / 0.3) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease;
 }
 
@@ -28449,7 +28458,8 @@
 
 .tracking-map-go-btn:hover:not(:disabled) {
   background: hsl(220 15% 12%) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: hsl(var(--primary) / 0.25) !important;
   transform: translateY(-1px);
 }
 

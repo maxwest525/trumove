@@ -1526,7 +1526,7 @@ export default function Index() {
                         {fromLocationDisplay && toLocationDisplay && (
                           <button
                             type="button"
-                            className="w-full py-2.5 text-sm text-muted-foreground hover:text-primary border border-dashed border-border/50 hover:border-primary/50 rounded-lg transition-colors flex items-center justify-center gap-2 mt-2"
+                            className="w-full py-2.5 text-sm text-muted-foreground hover:text-foreground border border-dashed border-border/50 hover:border-primary/40 hover:shadow-[0_0_6px_hsl(var(--primary)/0.08)] rounded-lg transition-all flex items-center justify-center gap-2 mt-2"
                             onClick={() => {
                               localStorage.setItem('trumove_pending_route', JSON.stringify({
                                 originAddress: fromLocationDisplay,
