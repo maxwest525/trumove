@@ -522,13 +522,25 @@ function SatelliteMapPanel() {
 function RoadMapPanel() {
   const { truckProgress, mapCenter, currentBearing } = useTruckAnimation();
   
+  // Throttle map image updates to avoid rate limiting (update every 500ms)
+  const [throttledCenter, setThrottledCenter] = useState(mapCenter);
+  const lastUpdateRef = useRef(0);
+  
+  useEffect(() => {
+    const now = Date.now();
+    if (now - lastUpdateRef.current > 500) {
+      setThrottledCenter(mapCenter);
+      lastUpdateRef.current = now;
+    }
+  }, [mapCenter]);
+  
   // Fine-tuned 3D perspective for cinematic navigation view
   const bearing = 30; // Forward-looking direction  
   const pitch = 60;   // 3D tilt (max supported in Static API is 60)
   const zoom = 15;    // Street-level detail
   
   // Use navigation-night-v1 for dark theme consistency (3D tilt still works)
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${mapCenter.lng},${mapCenter.lat})/${mapCenter.lng},${mapCenter.lat},${zoom},${bearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${throttledCenter.lng},${throttledCenter.lat})/${throttledCenter.lng},${throttledCenter.lat},${zoom},${bearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Google API key for Street View
   const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
