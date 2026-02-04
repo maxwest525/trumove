@@ -621,7 +621,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   color: hsl(var(--foreground));
-  background: hsl(var(--muted));
+  background: transparent;
   border: 1px solid hsl(var(--border));
   border-radius: 9999px;
   transition: all 0.2s ease;
@@ -629,11 +629,14 @@
 }
 
 .tru-secondary-action-btn:hover {
-  background: hsl(var(--accent));
-  border-color: hsl(var(--primary));
-  color: hsl(var(--primary));
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px hsl(var(--primary) / 0.15);
+}
+
+.tru-secondary-action-btn:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline-offset: 2px;
 }
 
 /* Modal Primary Button - High contrast dark CTA */
@@ -672,8 +675,8 @@
   font-size: 0.875rem;
   font-weight: 600;
   color: hsl(var(--foreground));
-  background: hsl(var(--background));
-  border: 2px solid hsl(var(--border));
+  background: transparent;
+  border: 1px solid hsl(var(--border));
   border-radius: 9999px;
   transition: all 0.2s ease;
   text-decoration: none;
@@ -681,11 +684,14 @@
 }
 
 .tru-modal-secondary-btn:hover {
-  background: hsl(var(--muted));
-  border-color: hsl(var(--tm-ink));
-  color: hsl(var(--tm-ink));
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.1);
+}
+
+.tru-modal-secondary-btn:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline-offset: 2px;
 }
 
 /* Scan Progress Indicator */
@@ -8435,21 +8441,26 @@
   height: 48px;
   padding: 0 20px;
   border-radius: 14px;
-  border: 1px solid hsl(var(--tm-ink) / 0.16);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.96));
-  box-shadow: 0 16px 40px hsl(var(--tm-ink) / 0.1);
+  border: 1px solid hsl(var(--border));
+  background: transparent;
   font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
   cursor: pointer;
-  transition: transform 150ms ease, box-shadow 150ms ease;
+  transition: all 0.2s ease;
 }
 
 .tru-hero-btn-secondary:hover {
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 16px hsl(var(--primary) / 0.15);
   transform: translateY(-1px);
-  box-shadow: 0 24px 60px hsl(var(--tm-ink) / 0.14);
+}
+
+.tru-hero-btn-secondary:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline-offset: 2px;
 }
 
 .tru-hero-btn-secondary .chevron {
@@ -11027,24 +11038,30 @@
   gap: 8px;
   padding: 10px 16px;
   border-radius: 12px;
-  border: 1px solid hsl(var(--tm-ink) / 0.14);
-  background: #ffffff;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
   font-size: 13px;
   font-weight: 700;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
   cursor: pointer;
-  transition: transform 150ms ease, box-shadow 150ms ease;
+  transition: all 0.2s ease;
 }
 
 .tru-contact-secondary-btn:hover {
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
   transform: translateY(-1px);
-  box-shadow: 0 12px 32px hsl(var(--tm-ink) / 0.1);
+}
+
+.tru-contact-secondary-btn:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline-offset: 2px;
 }
 
 .tru-contact-secondary-btn svg {
   width: 18px;
   height: 18px;
-  stroke: hsl(var(--tm-ink) / 0.6);
+  color: currentColor;
 }
 
 .tru-contact-secondary-btn .chevron {
@@ -12494,19 +12511,24 @@
   height: 52px;
   padding: 0 28px;
   border-radius: 14px;
-  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
-  background: #ffffff;
-  color: hsl(var(--tm-ink));
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--foreground));
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 200ms ease;
+  transition: all 0.2s ease;
 }
 
 .tru-btn-secondary-lg:hover {
-  border-color: hsl(var(--tm-ink) / 0.3);
-  background: hsl(var(--tm-ink) / 0.02);
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 16px hsl(var(--primary) / 0.15);
   transform: translateY(-1px);
+}
+
+.tru-btn-secondary-lg:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline-offset: 2px;
 }
 
 /* Update hero actions */
@@ -17965,14 +17987,14 @@
 }
 
 .tru-qb-cta-secondary {
-  background: hsl(var(--background));
-  border: 1px solid hsl(var(--tm-ink) / 0.12);
-  color: hsl(var(--tm-ink));
+  background: transparent;
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
 }
 
 .tru-qb-cta-secondary:hover {
-  background: hsl(var(--tm-ink) / 0.04);
-  border-color: hsl(var(--tm-ink) / 0.2);
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 10px hsl(var(--primary) / 0.12);
 }
 
 .tru-qb-cta-primary {
@@ -22229,18 +22251,23 @@
   gap: 8px;
   padding: 14px 24px;
   background: transparent;
-  color: hsl(var(--tm-ink) / 0.7);
+  color: hsl(var(--foreground));
   font-size: 14px;
   font-weight: 600;
   border-radius: 12px;
-  border: none;
+  border: 1px solid hsl(var(--border));
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .tru-scan-header-btn-secondary:hover {
-  color: hsl(var(--tm-ink));
-  background: hsl(var(--tm-ink) / 0.04);
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
+}
+
+.tru-scan-header-btn-secondary:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline-offset: 2px;
 }
 
 /* =============================================
@@ -23767,18 +23794,23 @@
   gap: 8px;
   padding: 14px 24px;
   background: transparent;
-  color: hsl(var(--tm-ink));
+  color: hsl(var(--foreground));
   font-size: 14px;
   font-weight: 600;
   border-radius: 14px;
-  border: 1.5px solid hsl(var(--tm-ink) / 0.15);
+  border: 1px solid hsl(var(--border));
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .tru-scan-secondary-btn:hover {
-  border-color: hsl(var(--primary) / 0.4);
-  background: hsl(var(--primary) / 0.05);
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
+}
+
+.tru-scan-secondary-btn:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline-offset: 2px;
 }
 
 /* Hero Visual - Premium Preview Card */
@@ -25035,6 +25067,33 @@
     0 8px 30px hsl(var(--primary) / 0.35),
     0 0 0 1px hsl(var(--tm-ink) / 0.1);
   transform: translateY(-2px);
+}
+
+/* Vetting Secondary Button - Unified outline style */
+.tru-vetting-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: transparent;
+  color: hsl(var(--foreground));
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 14px;
+  border: 1px solid hsl(var(--border));
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.tru-vetting-secondary-btn:hover {
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 0 16px hsl(var(--primary) / 0.15);
+  transform: translateY(-1px);
+}
+
+.tru-vetting-secondary-btn:focus-visible {
+  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline-offset: 2px;
 }
 
 /* Hero Visual - Premium Preview Card */
