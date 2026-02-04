@@ -3365,6 +3365,33 @@
   z-index: 10;
 }
 
+/* Preview container - LEFT side (flipped layout: maps on left) */
+.tru-tracker-preview-left {
+  position: absolute;
+  left: 550px;
+  top: 50%;
+  transform: translate(-100%, -50%);
+  margin-left: -4rem;
+  z-index: 10;
+}
+
+/* Content container - RIGHT side (flipped layout: text on right) */
+.tru-tracker-content-right {
+  position: absolute;
+  left: 550px;
+  top: 50%;
+  transform: translate(0, -50%);
+  margin-left: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  width: auto;
+  max-width: 26rem;
+  z-index: 5;
+}
+
 /* Enhanced Tracking Preview Container */
 .tru-tracker-preview-container {
   display: flex;
@@ -3869,7 +3896,9 @@
   }
   
   .tru-tracker-content-left,
-  .tru-tracker-preview-right {
+  .tru-tracker-preview-right,
+  .tru-tracker-content-right,
+  .tru-tracker-preview-left {
     position: relative;
     left: auto;
     top: auto;
@@ -3877,7 +3906,8 @@
     margin-left: 0;
   }
   
-  .tru-tracker-content-left {
+  .tru-tracker-content-left,
+  .tru-tracker-content-right {
     width: 100%;
     max-width: 31.25rem;
     text-align: center;
@@ -3885,7 +3915,8 @@
     order: 1; /* Content appears first on mobile */
   }
   
-  .tru-tracker-preview-right {
+  .tru-tracker-preview-right,
+  .tru-tracker-preview-left {
     order: 2; /* Preview appears second on mobile */
   }
   
