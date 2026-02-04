@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Maximize2, Minimize2, MapPin, Loader2 } from 'lucide-react';
 import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
+import { addTerrain, add3DBuildingsWithShadows, setFogPreset, on3DReady } from '@/lib/mapbox3DConfig';
 
 interface MapboxMoveMapProps {
   fromZip?: string;
@@ -505,11 +506,12 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-v9',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
       center: [-98.5795, 39.8283],
       zoom: 3,
-      pitch: 0,
+      pitch: 25, // Initial tilt for depth
       interactive: true,
+      antialias: true
     });
 
     map.current.on('error', (e) => {
@@ -523,22 +525,23 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
     map.current.on('load', () => {
       if (!map.current) return;
 
-      try {
-        map.current.addSource('mapbox-dem', {
-          type: 'raster-dem',
-          url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
-          tileSize: 512,
-          maxzoom: 14
+      // Apply 3D scene using centralized config
+      on3DReady(map.current, () => {
+        if (!map.current) return;
+        
+        // Add terrain with moderate exaggeration
+        addTerrain(map.current, 1.2);
+        
+        // Add satellite-appropriate atmospheric fog
+        setFogPreset(map.current, 'satellite');
+        
+        // Add 3D buildings for urban route context
+        add3DBuildingsWithShadows(map.current, {
+          baseColor: '#2a2a3a',
+          highlightColor: '#3a3a4a',
+          opacity: 0.85,
+          minZoom: 13
         });
-        map.current.setTerrain({ source: 'mapbox-dem', exaggeration: 1.2 });
-      } catch (e) {
-        console.warn('Terrain not available with this token');
-      }
-
-      map.current.setFog({
-        color: 'rgb(255, 255, 255)',
-        'high-color': 'rgb(200, 210, 230)',
-        'horizon-blend': 0.1
       });
 
       setIsMapLoaded(true);
@@ -586,11 +589,12 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
     if (fromCoords && !toCoords) {
       const fromName = getLocationName(fromZip);
       
-      // Fly to origin with focused zoom
+      // Fly to origin with focused zoom and tilt
       currentMap.flyTo({ 
         center: fromCoords, 
-        zoom: 10, 
-        pitch: 25,
+        zoom: 12, 
+        pitch: 40,
+        bearing: -15,
         duration: 1500,
         essential: true
       });
