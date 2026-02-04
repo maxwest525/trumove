@@ -1,14 +1,14 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { MAPBOX_TOKEN, MAPBOX_STYLES } from "@/lib/mapboxToken";
+import { MAPBOX_TOKEN, MAPBOX_STYLES, applyStandardStyleConfig, type LightPreset } from "@/lib/mapboxToken";
 import { Loader2, Navigation, Box, Eye, Globe, Sun, Moon, Sunrise, Play, Pause } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
 import { MiniRouteOverview } from "./MiniRouteOverview";
 import { findWeighStationsOnRoute, type WeighStation } from "@/data/weighStations";
 import { cn } from "@/lib/utils";
-import { addTerrain, add3DBuildingsWithShadows, setFogPreset, on3DReady, add3DBuildings, cinematicFlyTo, type FogPreset } from "@/lib/mapbox3DConfig";
+import { cinematicFlyTo } from "@/lib/mapbox3DConfig";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface RouteData {
@@ -141,36 +141,19 @@ export function TruckTrackingMap({
   const userInteractingRef = useRef(false);
   const introPlayedRef = useRef(false); // Track if intro animation has played
 
-  // Apply lighting preset changes
+  // Apply lighting preset changes using Standard style's native lightPreset
   const applyLightingPreset = useCallback((preset: 'day' | 'dusk' | 'night') => {
     if (!map.current) return;
     
-    const fogPresets: Record<string, FogPreset> = {
+    // Map our presets to Standard style's lightPreset values
+    const lightPresetMap: Record<string, LightPreset> = {
       day: 'day',
       dusk: 'dusk', 
       night: 'night'
     };
     
-    const buildingColors: Record<string, { base: string; highlight: string }> = {
-      day: { base: '#dcdcdc', highlight: '#f0f0f0' },
-      dusk: { base: '#5a4a4a', highlight: '#7a6a6a' },
-      night: { base: '#1a1a2e', highlight: '#2a2a4e' }
-    };
-    
-    // Update fog
-    setFogPreset(map.current, fogPresets[preset]);
-    
-    // Update 3D building colors
-    if (map.current.getLayer('3d-buildings')) {
-      map.current.setPaintProperty('3d-buildings', 'fill-extrusion-color', [
-        'interpolate',
-        ['linear'],
-        ['get', 'height'],
-        0, buildingColors[preset].base,
-        50, buildingColors[preset].highlight,
-        200, buildingColors[preset].highlight
-      ]);
-    }
+    // Use Standard style's built-in light preset API
+    map.current.setConfigProperty('basemap', 'lightPreset', lightPresetMap[preset]);
   }, []);
 
   // Handle lighting change
@@ -254,10 +237,10 @@ export function TruckTrackingMap({
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
     try {
-      // Simplified initialization - let Mapbox handle WebGL internally
+      // Use Mapbox Standard style with built-in 3D buildings, terrain, and lighting
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: MAPBOX_STYLES.default,
+        style: MAPBOX_STYLES.standard,
         center: [-98.5, 39.8],
         zoom: 4,
         pitch: 30, // Start with slight tilt for depth
@@ -322,24 +305,17 @@ export function TruckTrackingMap({
       map.current.on("load", () => {
         setIsLoaded(true);
 
-        // Apply 3D scene: terrain, fog, and buildings
-        on3DReady(map.current!, () => {
-          if (!map.current) return;
-          
-          // Add terrain with subtle exaggeration
-          addTerrain(map.current, 1.2);
-          
-          // Add atmospheric fog for depth
-          setFogPreset(map.current, 'night');
-          
-          // Add 3D buildings with shadow effect (visible when zoomed in)
-          add3DBuildingsWithShadows(map.current, {
-            baseColor: '#1a1a2e',
-            highlightColor: '#2a2a4e',
-            opacity: 0.9,
-            minZoom: 13
+        // Apply Standard style configuration with night preset for dramatic effect
+        if (map.current) {
+          applyStandardStyleConfig(map.current, {
+            lightPreset: 'night',
+            show3dObjects: true,
+            showPlaceLabels: true,
+            showRoadLabels: true,
+            showPointOfInterestLabels: false,
+            theme: 'default'
           });
-        });
+        }
 
         // Add route source (empty initially)
         map.current?.addSource("route", {
