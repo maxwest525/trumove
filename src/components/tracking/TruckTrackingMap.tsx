@@ -8,6 +8,7 @@ import { TrafficLegend } from "./TrafficLegend";
 import { MiniRouteOverview } from "./MiniRouteOverview";
 import { findWeighStationsOnRoute, type WeighStation } from "@/data/weighStations";
 import { cn } from "@/lib/utils";
+import { addTerrain, add3DBuildingsWithShadows, setFogPreset, on3DReady } from "@/lib/mapbox3DConfig";
 
 interface RouteData {
   coordinates: [number, number][];
@@ -216,8 +217,10 @@ export function TruckTrackingMap({
         style: "mapbox://styles/mapbox/dark-v11",
         center: [-98.5, 39.8],
         zoom: 4,
-        pitch: 0,
-        interactive: true
+        pitch: 30, // Start with slight tilt for depth
+        bearing: -10,
+        interactive: true,
+        antialias: true // Smoother 3D rendering
       });
 
       map.current.addControl(new mapboxgl.NavigationControl({ showCompass: true }), "top-right");
@@ -256,6 +259,25 @@ export function TruckTrackingMap({
 
       map.current.on("load", () => {
         setIsLoaded(true);
+
+        // Apply 3D scene: terrain, fog, and buildings
+        on3DReady(map.current!, () => {
+          if (!map.current) return;
+          
+          // Add terrain with subtle exaggeration
+          addTerrain(map.current, 1.2);
+          
+          // Add atmospheric fog for depth
+          setFogPreset(map.current, 'night');
+          
+          // Add 3D buildings with shadow effect (visible when zoomed in)
+          add3DBuildingsWithShadows(map.current, {
+            baseColor: '#1a1a2e',
+            highlightColor: '#2a2a4e',
+            opacity: 0.9,
+            minZoom: 13
+          });
+        });
 
         // Add route source (empty initially)
         map.current?.addSource("route", {
@@ -564,14 +586,14 @@ export function TruckTrackingMap({
       setCurrentBearing(bearing);
     }
 
-    // Follow mode: Smooth camera transition to truck position
+    // Follow mode: Cinematic 3D camera following truck
     if (internalFollowMode && isTracking && !userInteractingRef.current) {
       map.current.easeTo({
         center: currentPos,
         bearing: bearing,
-        zoom: 14,
-        pitch: 45, // Tilted view for 3D feel
-        duration: 500,
+        zoom: 16, // Closer zoom for 3D building visibility
+        pitch: 60, // Dramatic tilt for cinematic 3D view
+        duration: 600,
         easing: (t) => t * (2 - t) // Ease out quad
       });
     }

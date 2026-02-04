@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
+import { addTerrain, setFogPreset, on3DReady } from '@/lib/mapbox3DConfig';
 
 interface AnimatedRouteMapProps {
   fromCoords: [number, number]; // [lng, lat]
@@ -101,15 +102,30 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-v9',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
       bounds: bounds,
       fitBoundsOptions: { padding: 50, maxZoom: 10 },
       interactive: false,
-      attributionControl: false
+      attributionControl: false,
+      pitch: 35, // Tilted view for depth
+      bearing: -10,
+      antialias: true
     });
 
     map.current.on('load', () => {
       if (!map.current) return;
+
+      // Apply 3D terrain and atmospheric effects
+      on3DReady(map.current, () => {
+        if (!map.current) return;
+        
+        // Add terrain with moderate exaggeration for route visualization
+        addTerrain(map.current, 1.3);
+        
+        // Apply satellite-appropriate fog
+        setFogPreset(map.current, 'satellite');
+      });
+
 
       // Add shadow source for contrast on satellite
       map.current.addSource('route-shadow', {

@@ -4,6 +4,7 @@ import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 import { MapPin, Truck, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StopLocation } from "./MultiStopLocationList";
+import { addTerrain, add3DBuildings, setFogPreset, on3DReady } from "@/lib/mapbox3DConfig";
 
 interface MultiStopRoutePreviewProps {
   pickupLocations: StopLocation[];
@@ -41,12 +42,34 @@ export default function MultiStopRoutePreview({
       style: "mapbox://styles/mapbox/light-v11",
       center: [-98.5795, 39.8283], // Center of US
       zoom: 3,
+      pitch: 30, // Slight tilt for depth
       interactive: true,
       attributionControl: false,
+      antialias: true
     });
 
     map.current.on("load", () => {
       setIsLoading(false);
+
+      // Apply 3D features for urban stop previews
+      on3DReady(map.current!, () => {
+        if (!map.current) return;
+        
+        // Add subtle terrain
+        addTerrain(map.current, 1.0);
+        
+        // Add light fog for depth
+        setFogPreset(map.current, 'day');
+        
+        // Add 3D buildings (visible when zoomed into urban areas)
+        add3DBuildings(map.current, {
+          color: '#c8c8c8',
+          opacity: 0.7,
+          minZoom: 14,
+          lightPreset: 'day'
+        });
+      });
+
       
       // Add route line source
       map.current?.addSource("route-line", {
