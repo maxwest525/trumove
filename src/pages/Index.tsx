@@ -40,6 +40,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
 
 import { calculateDistance } from "@/lib/distanceCalculator";
+import { formatPhoneNumber, isValidPhoneNumber, getDigitsOnly } from "@/lib/phoneFormat";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
   Shield, Video, Boxes, CheckCircle, Info,
@@ -1162,7 +1163,7 @@ export default function Index() {
   const canContinue = () => {
     switch (step) {
       case 1: return fromZip.length === 5 && fromCity && toZip.length === 5 && toCity && moveDate !== null;
-      case 2: return name.trim().length >= 2 && email.includes("@") && phone.trim().length >= 10;
+      case 2: return name.trim().length >= 2 && email.includes("@") && isValidPhoneNumber(phone);
       case 3: return true; // Always can proceed from method selection
       default: return false;
     }
@@ -1586,10 +1587,13 @@ export default function Index() {
                           <div className="tru-qb-input-wrap">
                             <input
                               type="tel"
-                              className={`tru-qb-input ${formError && phone.trim().length < 10 ? 'has-error' : ''}`}
-                              placeholder="Phone / SMS number"
+                              className={`tru-qb-input ${formError && !isValidPhoneNumber(phone) ? 'has-error' : ''}`}
+                              placeholder="(555) 123-4567"
                               value={phone}
-                              onChange={(e) => { setPhoneNum(e.target.value); setFormError(""); }}
+                              onChange={(e) => { 
+                                setPhoneNum(formatPhoneNumber(e.target.value)); 
+                                setFormError(""); 
+                              }}
                               onKeyDown={handleKeyDown}
                             />
                           </div>
@@ -1615,7 +1619,7 @@ export default function Index() {
                               setHasProvidedContactInfo(true);
                               setStep(3);
                             } else {
-                              setFormError("Please enter your name, a valid email, and phone number (10+ digits).");
+                              setFormError("Please enter your name, a valid email, and phone number.");
                             }
                           }}
                         >
@@ -1679,6 +1683,29 @@ export default function Index() {
                             <div className="tru-qb-method-content">
                               <span className="tru-qb-method-title">Manual Builder</span>
                               <span className="tru-qb-method-desc">Select items room-by-room</span>
+                            </div>
+                            <ArrowRight className="w-5 h-5 tru-qb-method-arrow" />
+                          </button>
+                          
+                          {/* Video Consult Option */}
+                          <button 
+                            type="button" 
+                            className="tru-qb-method-card"
+                            onClick={() => {
+                              handleSubmit(new Event('submit') as any);
+                              navigate("/book");
+                            }}
+                          >
+                            <div className="tru-qb-method-icon-wrap">
+                              <Video className="w-6 h-6" />
+                            </div>
+                            <div className="tru-qb-method-content">
+                              <span className="tru-qb-method-title">Video Consult</span>
+                              <span className="tru-qb-method-desc">Live walkthrough with a specialist</span>
+                              <span className="tru-qb-method-badge tru-qb-method-badge-alt">
+                                <Headphones className="w-3 h-3" />
+                                Personal
+                              </span>
                             </div>
                             <ArrowRight className="w-5 h-5 tru-qb-method-arrow" />
                           </button>
