@@ -30451,11 +30451,16 @@
    CARD BACKGROUND FIXES - Smooth edges
    ============================================= */
 .tru-floating-form-card {
+  background: hsl(var(--background));
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+/* Only apply glassmorphism blur on hero sections */
+.tru-hero-form-panel .tru-floating-form-card {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   background: hsl(var(--background) / 0.98);
-  overflow: hidden;
-  border-radius: 24px;
 }
 
 /* =============================================
