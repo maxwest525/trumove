@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { FileText, Receipt, CreditCard, Truck, Users, BarChart3, Mail, ArrowLeft, Phone } from "lucide-react";
+import { FileText, Receipt, CreditCard, Truck, Users, BarChart3, Mail, ArrowLeft, Phone, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import { CCACHAuthorizationForm } from "@/components/agent/CCACHAuthorizationForm";
@@ -10,8 +10,9 @@ import { CustomerLookup } from "@/components/agent/CustomerLookup";
 import { CarrierDashboard } from "@/components/agent/CarrierDashboard";
 import { ClientMessaging } from "@/components/agent/ClientMessaging";
 import { IntegrationModal } from "@/components/integrations/IntegrationModals";
+import PPCDemoModal from "@/components/demo/PPCDemoModal";
 
-type ActiveTool = null | "estimate" | "bol" | "ccach" | "carrier" | "customer" | "messaging" | "granot" | "ringcentral";
+type ActiveTool = null | "estimate" | "bol" | "ccach" | "carrier" | "customer" | "messaging" | "granot" | "ringcentral" | "ppc";
 
 const AGENT_TOOLS = [
   {
@@ -58,6 +59,14 @@ const AGENT_TOOLS = [
     external: false,
   },
   {
+    id: "ppc" as const,
+    title: "AI Marketing Suite",
+    description: "PPC, SEO, A/B testing & conversions",
+    icon: Sparkles,
+    external: false,
+    isIntegration: true,
+  },
+  {
     id: "granot" as const,
     title: "Granot CRM",
     description: "Moving industry CRM for brokers",
@@ -74,13 +83,13 @@ const AGENT_TOOLS = [
     isIntegration: true,
   },
 ];
-
 export default function AgentLogin() {
   const [showLoginModal, setShowLoginModal] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTool, setActiveTool] = useState<ActiveTool>(null);
   const [granotOpen, setGranotOpen] = useState(false);
   const [ringcentralOpen, setRingcentralOpen] = useState(false);
+  const [ppcOpen, setPpcOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -94,11 +103,12 @@ export default function AgentLogin() {
       setGranotOpen(true);
     } else if (toolId === "ringcentral") {
       setRingcentralOpen(true);
+    } else if (toolId === "ppc") {
+      setPpcOpen(true);
     } else {
       setActiveTool(toolId);
     }
   };
-
   const renderActiveTool = () => {
     switch (activeTool) {
       case "bol":
@@ -135,7 +145,10 @@ export default function AgentLogin() {
         onOpenChange={setRingcentralOpen} 
         integration="ringcentral" 
       />
-
+      <PPCDemoModal 
+        open={ppcOpen} 
+        onOpenChange={setPpcOpen} 
+      />
       <div className="agent-dashboard-page">
         {activeTool ? (
           <div className="space-y-6">
