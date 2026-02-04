@@ -50,7 +50,7 @@ import {
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar, Compass
+  Play, Pause, MapPinned, Calendar
 } from "lucide-react";
 
 
@@ -432,94 +432,32 @@ const ROUTE_WAYPOINTS = [
   { lat: 34.0522, lng: -118.2437 },  // LA
 ];
 
-// Custom hook for shared truck animation state - loops continuously
-function useTruckAnimation() {
-  const [truckProgress, setTruckProgress] = useState(0);
-  const [mapCenter, setMapCenter] = useState({ lat: SAMPLE_ROUTE.origin.lat, lng: SAMPLE_ROUTE.origin.lng });
-  const [currentBearing, setCurrentBearing] = useState(90); // East-facing by default
-  const startTimeRef = useRef(Date.now());
-  
-  useEffect(() => {
-    const duration = 30000; // 30 seconds for full route (slower for better observation)
-    let animationId: number;
-    
-    const animate = () => {
-      const elapsed = Date.now() - startTimeRef.current;
-      let progress = (elapsed % duration) / duration; // Loop using modulo
-      
-      // Reset start time when loop completes for smoother transitions
-      if (elapsed >= duration) {
-        startTimeRef.current = Date.now();
-        progress = 0;
-      }
-      
-      setTruckProgress(progress);
-      
-      const totalSegments = ROUTE_WAYPOINTS.length - 1;
-      const segmentProgress = progress * totalSegments;
-      const currentSegment = Math.min(Math.floor(segmentProgress), totalSegments - 1);
-      const segmentFraction = segmentProgress - currentSegment;
-      
-      const start = ROUTE_WAYPOINTS[currentSegment];
-      const end = ROUTE_WAYPOINTS[Math.min(currentSegment + 1, ROUTE_WAYPOINTS.length - 1)];
-      
-      const currentLat = start.lat + (end.lat - start.lat) * segmentFraction;
-      const currentLng = start.lng + (end.lng - start.lng) * segmentFraction;
-      
-      // Calculate bearing from current segment direction
-      const dLng = end.lng - start.lng;
-      const dLat = end.lat - start.lat;
-      const bearing = (Math.atan2(dLng, dLat) * 180 / Math.PI + 360) % 360;
-      setCurrentBearing(bearing);
-      
-      setMapCenter({ lat: currentLat, lng: currentLng });
-      
-      animationId = requestAnimationFrame(animate);
-    };
-    
-    animationId = requestAnimationFrame(animate);
-    
-    return () => cancelAnimationFrame(animationId);
-  }, []);
-  
-  return { truckProgress, mapCenter, currentBearing };
-}
+// Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
+// Homepage now uses static demo preview - no animation needed
 
-// Satellite Map Panel - Route Overview (uses Mapbox path overlay for real roads)
-function SatelliteMapPanel() {
-  // LA and NY coordinates
-  const laCoords = [-118.24, 34.05];
-  const nyCoords = [-74.00, 40.71];
+// Route Overview Panel - Google Maps Static API (roadmap style like reference screenshot)
+function RouteOverviewPanel() {
+  // LA and NY coordinates for markers
+  const laLat = 34.05, laLng = -118.24;
+  const nyLat = 40.71, nyLng = -74.00;
   
-  // Key waypoints along I-40/I-70 corridor for realistic routing
-  const waypoints = [
-    [-118.24, 34.05],  // Los Angeles
-    [-111.89, 33.45],  // Phoenix area
-    [-106.65, 35.08],  // Albuquerque
-    [-97.52, 35.47],   // Oklahoma City
-    [-90.05, 35.15],   // Memphis
-    [-86.78, 36.16],   // Nashville
-    [-77.03, 38.90],   // Washington DC
-    [-74.00, 40.71],   // New York
-  ];
+  // Google Maps API key from environment
+  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
   
-  // Build path string for Mapbox - cyan color with width
-  const pathCoords = waypoints.map(([lng, lat]) => `${lng},${lat}`).join(',');
-  const pathOverlay = `path-5+00e5a0-0.8(${encodeURIComponent(pathCoords)})`;
-  
-  // Origin marker (green) and destination marker (red with truck)
-  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
-  const destMarker = `pin-l+00e5a0(${nyCoords[0]},${nyCoords[1]})`;
-  
-  // Use fixed zoom level centered on continental US to show highways
-  const centerLng = -98;  // Center of continental US
-  const centerLat = 38;
-  const zoom = 4;
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${pathOverlay},${originMarker},${destMarker}/${centerLng},${centerLat},${zoom}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Google Static Maps API with roadmap style - clean, standard Google Maps look
+  // Path via key waypoints along the route
+  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?` +
+    `size=420x480` +
+    `&scale=2` +
+    `&maptype=roadmap` +
+    `&markers=color:green%7Clabel:A%7C${laLat},${laLng}` +
+    `&markers=color:red%7Clabel:B%7C${nyLat},${nyLng}` +
+    `&path=color:0x4285F4%7Cweight:4%7C${laLat},${laLng}%7C35.08,-106.65%7C35.47,-97.52%7C${nyLat},${nyLng}` +
+    `&key=${googleApiKey}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
-      <img src={satelliteMapUrl} alt="Satellite Route Overview" />
+      <img src={staticMapUrl} alt="Route Overview" />
       
       <div className="tru-tracker-satellite-label">
         <Radar className="w-3 h-3" />
@@ -529,35 +467,16 @@ function SatelliteMapPanel() {
   );
 }
 
-// Road Map Panel - Live GPS View with 3D tilt and Street View inset
-function RoadMapPanel() {
-  const { truckProgress, mapCenter, currentBearing } = useTruckAnimation();
-  const [isChaseMode, setIsChaseMode] = useState(true); // true = dynamic chase-cam, false = fixed north
+// Truck View Panel - Static tilted dark mode map with truck logo (no animation)
+function TruckViewPanel() {
+  // Static position - Oklahoma City area (mid-route) with northeast heading
+  const fixedCenter = { lat: 35.47, lng: -97.52 };
+  const fixedBearing = 45;  // Northeast heading
+  const pitch = 60;         // 3D tilt
+  const zoom = 15;          // Street-level detail
   
-  // Throttle map image updates to avoid rate limiting (update every 500ms)
-  const [throttledCenter, setThrottledCenter] = useState(mapCenter);
-  const [throttledBearing, setThrottledBearing] = useState(currentBearing);
-  const lastUpdateRef = useRef(0);
-  
-  useEffect(() => {
-    const now = Date.now();
-    if (now - lastUpdateRef.current > 500) {
-      setThrottledCenter(mapCenter);
-      setThrottledBearing(currentBearing);
-      lastUpdateRef.current = now;
-    }
-  }, [mapCenter, currentBearing]);
-  
-  // Use dynamic bearing in chase mode, fixed 0° (north) otherwise
-  const bearing = isChaseMode ? throttledBearing : 0;
-  const pitch = 60;   // 3D tilt (max supported in Static API is 60)
-  const zoom = 15;    // Street-level detail
-  
-  // Use navigation-night-v1 for dark theme consistency (3D tilt still works)
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${throttledCenter.lng},${throttledCenter.lat})/${throttledCenter.lng},${throttledCenter.lat},${zoom},${bearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
-  
-  // Google API key for Street View
-  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+  // Use navigation-night-v1 for dark theme (tilted view)
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${fixedCenter.lng},${fixedCenter.lat})/${fixedCenter.lng},${fixedCenter.lat},${zoom},${fixedBearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-road-map">
@@ -567,7 +486,7 @@ function RoadMapPanel() {
         className="tru-tracker-road-map-img"
       />
       
-      {/* Truck marker - matching tracking page style */}
+      {/* Truck marker - centered, static */}
       <div className="tru-homepage-truck-marker">
         <div className="tru-homepage-truck-glow" />
         <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
@@ -576,52 +495,29 @@ function RoadMapPanel() {
         </div>
       </div>
       
+      {/* LIVE GPS badge for visual effect */}
       <div className="tru-tracker-live-badge">
         <span className="tru-tracker-live-dot" />
         <span>LIVE GPS</span>
       </div>
-      
-      {/* Camera Mode Toggle with Tooltip */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={() => setIsChaseMode(!isChaseMode)}
-            className="absolute top-2 right-2 z-20 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/70 hover:bg-black/90 border border-white/20 hover:border-primary/50 backdrop-blur-sm transition-all"
-            aria-label={isChaseMode ? "Switch to North-facing view" : "Switch to Chase-cam view"}
-          >
-            <Compass className="w-3 h-3 text-primary" />
-            <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">
-              {isChaseMode ? "Chase" : "North"}
-            </span>
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="left" className="max-w-[200px]">
-          <p className="text-xs">
-            {isChaseMode 
-              ? "Chase: Camera follows truck's heading direction" 
-              : "North: Fixed north-facing orientation"}
-          </p>
-        </TooltipContent>
-      </Tooltip>
-      
     </div>
   );
 }
 
-// Shipment Tracker Section - 3-column layout: Satellite | Road Map (centered) | Description
+// Shipment Tracker Section - 3-column layout: Route Overview | Truck View (centered) | Description
 function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void }) {
   return (
     <section className="tru-tracker-section">
       <div className="tru-tracker-inner">
         <div className="tru-tracker-header-row">
-          {/* Satellite map - LEFT */}
+          {/* Route Overview - LEFT */}
           <div className="tru-tracker-satellite-left">
-            <SatelliteMapPanel />
+            <RouteOverviewPanel />
           </div>
           
-          {/* Road map - CENTER (aligned with AI demo above) */}
+          {/* Truck View - CENTER (aligned with AI demo above) */}
           <div className="tru-tracker-roadmap-center">
-            <RoadMapPanel />
+            <TruckViewPanel />
           </div>
           
           {/* Content - RIGHT */}
