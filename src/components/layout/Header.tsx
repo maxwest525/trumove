@@ -2,121 +2,73 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Menu, X, Phone, Video, ChevronDown, User,
-  Calculator, Calendar, Home, Shield, Bed, Bath, Square, CheckCircle2, Clock, Scan, MessageSquare
+  Calculator, Calendar, MapPin, Shield, Scan, ArrowRight
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-// Mega-menu preview components
+// Import preview images
+import previewAiScanner from "@/assets/preview-ai-scanner.jpg";
+import previewVideoConsult from "@/assets/preview-video-consult.jpg";
+import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
+import previewCarrierVetting from "@/assets/preview-carrier-vetting.jpg";
+
+// Mega-menu preview components - Image-based with feature highlights
 const EstimatorPreview = () => (
-  <div className="mega-menu-demo">
-    <div className="mega-demo-rooms">
-      <div className="mega-demo-room">
-        <img 
-          src="/inventory/living-room/sofa-3-cushion.png" 
-          alt="Sofa" 
-          className="mega-demo-room-img"
-        />
-        <span>Living Room</span>
-      </div>
-      <div className="mega-demo-room">
-        <img 
-          src="/inventory/bedroom/bed-queen.png" 
-          alt="Bed" 
-          className="mega-demo-room-img"
-        />
-        <span>Master Bedroom</span>
-      </div>
-      <div className="mega-demo-room">
-        <img 
-          src="/inventory/kitchen/kitchen-table.png" 
-          alt="Kitchen Table" 
-          className="mega-demo-room-img"
-        />
-        <span>Kitchen</span>
+  <div className="mega-preview-card">
+    <div className="mega-preview-image">
+      <img src={previewAiScanner} alt="AI Move Estimator" />
+      <div className="mega-preview-overlay">
+        <span className="mega-preview-badge">Live Demo</span>
       </div>
     </div>
-    <div className="mega-demo-stats">
-      <div className="mega-demo-stat">
-        <span className="mega-demo-stat-label">Est. Weight</span>
-        <span className="mega-demo-stat-value">~4,200 lbs</span>
-      </div>
-      <div className="mega-demo-stat">
-        <span className="mega-demo-stat-label">Est. Range</span>
-        <span className="mega-demo-stat-value">$2,100–$2,800</span>
-      </div>
+    <div className="mega-preview-caption">
+      <span className="mega-preview-highlight">Scan any room → Instant inventory</span>
     </div>
   </div>
 );
 
 const ConsultPreview = () => (
-  <div className="mega-menu-consult">
-    <div className="mega-consult-visual">
-      <div className="mega-consult-icons">
-        <div className="mega-consult-icon">
-          <Video className="w-5 h-5 text-foreground" />
-        </div>
-        <div className="mega-consult-icon">
-          <Phone className="w-5 h-5 text-foreground" />
-        </div>
-        <div className="mega-consult-icon">
-          <MessageSquare className="w-5 h-5 text-foreground" />
-        </div>
+  <div className="mega-preview-card">
+    <div className="mega-preview-image">
+      <img src={previewVideoConsult} alt="Video Consultation" />
+      <div className="mega-preview-overlay">
+        <span className="mega-preview-live">
+          <span className="mega-live-dot" />
+          Available Now
+        </span>
       </div>
     </div>
-    <div className="mega-consult-info">
-      <div className="mega-consult-badge">
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-        <span>Specialists Available Now</span>
-      </div>
-      <div className="mega-consult-stats">
-        <span className="mega-consult-stat">
-          <Clock className="w-3 h-3" />
-          ~2 min wait
-        </span>
-        <span className="mega-consult-stat">
-          <CheckCircle2 className="w-3 h-3" />
-          Free consultation
-        </span>
-      </div>
+    <div className="mega-preview-caption">
+      <span className="mega-preview-highlight">Talk to a real person, not a bot</span>
     </div>
   </div>
 );
 
-const PropertyPreview = () => (
-  <div className="mega-menu-property">
-    <div className="mega-property-image">
-      <Home className="w-8 h-8 text-foreground" />
-    </div>
-    <div className="mega-property-info">
-      <span className="mega-property-address">123 Main St, Anytown</span>
-      <div className="mega-property-stats">
-        <span><Bed className="w-3 h-3" /> 3 bed</span>
-        <span><Bath className="w-3 h-3" /> 2 bath</span>
-        <span><Square className="w-3 h-3" /> 1,850 sqft</span>
+const TrackingPreview = () => (
+  <div className="mega-preview-card">
+    <div className="mega-preview-image">
+      <img src={previewPropertyLookup} alt="Live Tracking" />
+      <div className="mega-preview-overlay">
+        <span className="mega-preview-badge">Real-time GPS</span>
       </div>
+    </div>
+    <div className="mega-preview-caption">
+      <span className="mega-preview-highlight">Know exactly where your belongings are</span>
     </div>
   </div>
 );
 
 const VettingPreview = () => (
-  <div className="mega-menu-vetting">
-    <div className="mega-vetting-shield">
-      <Shield className="w-10 h-10" />
+  <div className="mega-preview-card">
+    <div className="mega-preview-image">
+      <img src={previewCarrierVetting} alt="Carrier Vetting" />
+      <div className="mega-preview-overlay">
+        <span className="mega-preview-badge">FMCSA Data</span>
+      </div>
     </div>
-    <div className="mega-vetting-badges">
-      <div className="mega-vetting-badge is-verified">
-        <CheckCircle2 className="w-3 h-3" />
-        FMCSA Licensed
-      </div>
-      <div className="mega-vetting-badge is-verified">
-        <CheckCircle2 className="w-3 h-3" />
-        Insurance Verified
-      </div>
-      <div className="mega-vetting-badge is-verified">
-        <CheckCircle2 className="w-3 h-3" />
-        Safety Record Clean
-      </div>
+    <div className="mega-preview-caption">
+      <span className="mega-preview-highlight">Verify any mover's safety record</span>
     </div>
   </div>
 );
@@ -129,8 +81,7 @@ interface NavItem {
   dropdownContent?: {
     icon: React.ElementType;
     title: string;
-    description: string;
-    features: string[];
+    tagline: string;
     cta: string;
     ctaHref?: string;
     PreviewComponent: React.FC;
@@ -154,23 +105,22 @@ const NAV: NavItem[] = [
     dropdownContent: {
       icon: Calculator,
       title: "AI Move Estimator",
-      description: "Build your inventory and get instant estimates",
-      features: ["Visual item selection", "AI-powered suggestions", "Real-time pricing"],
-      cta: "Start Your Estimate",
+      tagline: "Point. Scan. Price.",
+      cta: "Try It Now",
       PreviewComponent: EstimatorPreview
     },
     subItems: [
       {
         href: "/scan-room",
         label: "Scan Your Room",
-        description: "Use your phone camera to auto-detect furniture",
+        description: "AI auto-detects your furniture",
         icon: Scan,
-        badge: "Coming Soon"
+        badge: "Beta"
       },
       {
         href: "/online-estimate",
         label: "Build Manually",
-        description: "Select items from our visual inventory catalog",
+        description: "Pick from 200+ items",
         icon: Calculator
       }
     ]
@@ -182,9 +132,8 @@ const NAV: NavItem[] = [
     dropdownContent: {
       icon: Calendar,
       title: "Connect With Us",
-      description: "15-min free session with a TruMove client advocate",
-      features: ["No sales pressure", "Get answers fast", "Instant callback option"],
-      cta: "Book Now",
+      tagline: "Real humans. Zero pressure.",
+      cta: "Schedule Free Call",
       PreviewComponent: ConsultPreview
     }
   },
@@ -193,12 +142,11 @@ const NAV: NavItem[] = [
     label: "Shipment Tracking",
     hasDropdown: true,
     dropdownContent: {
-      icon: Home,
-      title: "Shipment Tracking",
-      description: "Track your moving truck in real-time",
-      features: ["Live GPS tracking", "Route visualization", "Weather conditions"],
+      icon: MapPin,
+      title: "Live Tracking",
+      tagline: "GPS + Weather + ETA",
       cta: "Track Shipment",
-      PreviewComponent: PropertyPreview
+      PreviewComponent: TrackingPreview
     }
   },
   { 
@@ -207,10 +155,9 @@ const NAV: NavItem[] = [
     hasDropdown: true,
     dropdownContent: {
       icon: Shield,
-      title: "FMCSA Carrier Vetting",
-      description: "Real-time safety & compliance data from the Federal Motor Carrier Safety Administration",
-      features: ["Live FMCSA data", "Insurance verification", "Side-by-side compare"],
-      cta: "Vet a Carrier",
+      title: "Carrier Vetting",
+      tagline: "FMCSA verified. Instant results.",
+      cta: "Check Any Mover",
       PreviewComponent: VettingPreview
     }
   },
@@ -265,63 +212,46 @@ export default function Header({ whiteLogo = false }: HeaderProps) {
                 {item.hasDropdown && activeMenu === item.href && (
                   <div className="header-mega-menu">
                     <div className="mega-menu-content">
-                      {item.dropdownContent && (
-                        <div className="mega-menu-header">
-                          <item.dropdownContent.icon className="mega-menu-icon" />
-                          <div className="mega-menu-text">
-                            <h3>{item.dropdownContent.title}</h3>
-                            <p>{item.dropdownContent.description}</p>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Sub-items for AI Estimator - Choose Your Method */}
-                      {item.subItems && item.subItems.length > 0 && (
-                        <div className="mega-menu-method-selector">
-                          <span className="mega-menu-method-label">Choose Your Method</span>
-                          <div className="mega-menu-method-options">
-                            {item.subItems.map((subItem) => (
-                              <Link 
-                                key={subItem.href} 
-                                to={subItem.href}
-                                className="mega-menu-method-option"
-                              >
-                                <div className="mega-menu-method-icon">
-                                  <subItem.icon className="w-5 h-5" />
-                                </div>
-                                <div className="mega-menu-method-content">
-                                  <span className="mega-menu-method-title">
-                                    {subItem.label}
-                                    {subItem.badge && (
-                                      <span className="mega-menu-method-badge">{subItem.badge}</span>
-                                    )}
-                                  </span>
-                                  <span className="mega-menu-method-desc">{subItem.description}</span>
-                                </div>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Preview Component - show for items with subitems too */}
+                      {/* Preview Component - visual first */}
                       {item.dropdownContent && (
                         <item.dropdownContent.PreviewComponent />
                       )}
 
-                      {/* Features List */}
-                      {item.dropdownContent && item.dropdownContent.features.length > 0 && (
-                        <ul className="mega-menu-features">
-                          {item.dropdownContent.features.map(f => (
-                            <li key={f}>{f}</li>
+                      {/* Compact Header */}
+                      {item.dropdownContent && (
+                        <div className="mega-menu-header-compact">
+                          <div className="mega-menu-title-row">
+                            <item.dropdownContent.icon className="w-4 h-4" />
+                            <h3>{item.dropdownContent.title}</h3>
+                          </div>
+                          <span className="mega-menu-tagline">{item.dropdownContent.tagline}</span>
+                        </div>
+                      )}
+
+                      {/* Sub-items for AI Estimator */}
+                      {item.subItems && item.subItems.length > 0 && (
+                        <div className="mega-menu-methods-compact">
+                          {item.subItems.map((subItem) => (
+                            <Link 
+                              key={subItem.href} 
+                              to={subItem.href}
+                              className="mega-method-pill"
+                            >
+                              <subItem.icon className="w-4 h-4" />
+                              <span>{subItem.label}</span>
+                              {subItem.badge && (
+                                <span className="mega-method-badge">{subItem.badge}</span>
+                              )}
+                            </Link>
                           ))}
-                        </ul>
+                        </div>
                       )}
 
                       {/* CTA - only show if no subitems */}
                       {item.dropdownContent && !item.subItems && (
-                        <Link to={item.dropdownContent.ctaHref || item.href} className="mega-menu-cta">
-                          {item.dropdownContent.cta}
+                        <Link to={item.dropdownContent.ctaHref || item.href} className="mega-menu-cta-compact">
+                          <span>{item.dropdownContent.cta}</span>
+                          <ArrowRight className="w-4 h-4" />
                         </Link>
                       )}
                     </div>
