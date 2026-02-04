@@ -537,10 +537,10 @@ export default function LiveTracking() {
     setIsDemoMode(true);
     // Auto-fill move date for demo
     setMoveDate(new Date());
-    // Pre-populate Jacksonville to Miami demo route
-    handleOriginSelect('Jacksonville', '', 'Jacksonville, FL 32202');
-    handleDestSelect('Miami', '', 'Miami, FL 33101');
-    toast.success('🚚 Demo mode activated - Jacksonville to Miami');
+    // Pre-populate New York to Los Angeles demo route (cross-country)
+    handleOriginSelect('New York', '', 'New York, NY 10001');
+    handleDestSelect('Los Angeles', '', 'Los Angeles, CA 90001');
+    toast.success('🚚 Demo mode activated - New York to Los Angeles');
   };
 
   // Handle booking search
