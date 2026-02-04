@@ -1556,7 +1556,7 @@
 .tru-hero-feature-line {
   font-size: clamp(12px, 1.1vw, 15px);
   font-weight: 500;
-  color: hsl(0 0% 100% / 0.75);
+  color: hsl(0 0% 100% / 0.88);
   letter-spacing: 0.03em;
   line-height: 1.6;
   margin: 0;
