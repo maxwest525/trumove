@@ -1843,28 +1843,6 @@ export default function Index() {
           {/* FEATURE TRUST STRIP - Between AI Analysis and Tracking */}
           <FeatureTrustStrip />
 
-          {/* CONSULT SECTION - Compact */}
-          <section className="tru-consult-compact">
-            <div className="tru-consult-compact-inner">
-              <div className="tru-consult-compact-icon">
-                <Headphones className="w-6 h-6" />
-              </div>
-              <div className="tru-consult-compact-content">
-                <h2 className="tru-consult-compact-title">Need a real conversation?</h2>
-                <p className="tru-consult-compact-text">Talk to a TruMove specialist — no pressure, no upsells.</p>
-              </div>
-              <div className="tru-consult-compact-actions">
-                <button className="tru-consult-compact-btn tru-consult-compact-btn-video" onClick={() => navigate("/book")}>
-                  <Video className="w-4 h-4" />
-                  Video Consult
-                </button>
-                <a href="tel:+16097277647" className="tru-consult-compact-btn tru-consult-compact-btn-phone">
-                  <Phone className="w-4 h-4" />
-                  (609) 727-7647
-                </a>
-              </div>
-            </div>
-          </section>
 
           {/* SHIPMENT TRACKER - Mirrored Layout */}
           <ShipmentTrackerSection navigate={navigate} />
