@@ -12,9 +12,9 @@ interface SiteShellProps {
 export default function SiteShell({ children, centered = false, hideTrustStrip = false }: SiteShellProps) {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
-      {/* Sticky Header + Trust Strip Together - solid background with gradient fade */}
+      {/* Sticky Header + Trust Strip Together - solid background with gradient fade + shadow */}
       <div className="sticky top-0 z-[90]">
-        <div className="bg-background pt-2 px-6 pb-[25px] relative z-10">
+        <div className="bg-background pt-2 px-6 pb-[25px] relative z-10 shadow-[0_4px_12px_-4px_hsl(var(--tm-ink)/0.08)]">
           <Header />
           {!hideTrustStrip && <SaferTrustStrip />}
         </div>
