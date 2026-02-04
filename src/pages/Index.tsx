@@ -596,24 +596,51 @@ function TruckViewPanel() {
     });
     
     let progress = 0;
+    let orbitBearing = 0; // For cinematic orbit when truck pauses
+    let orbitMode = false;
+    let orbitStartTime = 0;
+    const ORBIT_INTERVAL = 8000; // Switch to orbit every 8 seconds
+    const ORBIT_DURATION = 3000; // Orbit for 3 seconds
     
-    const animate = () => {
+    const animate = (timestamp: number) => {
       if (!map.current) return;
       
-      progress += 0.00003; // Very slow for realistic city driving speed
-      if (progress > 1) progress = 0;
+      // Check if we should switch modes
+      const cycleTime = timestamp % (ORBIT_INTERVAL + ORBIT_DURATION);
+      const shouldOrbit = cycleTime > ORBIT_INTERVAL;
       
-      const position = getPointAlongRoute(progress);
-      const bearing = getBearing(progress);
+      if (shouldOrbit && !orbitMode) {
+        // Start orbit mode
+        orbitMode = true;
+        orbitStartTime = timestamp;
+        orbitBearing = map.current.getBearing();
+      } else if (!shouldOrbit && orbitMode) {
+        // Exit orbit mode
+        orbitMode = false;
+      }
       
-      map.current.setCenter(position);
-      map.current.setBearing(bearing);
+      if (orbitMode) {
+        // Cinematic orbit: slowly rotate camera around current position
+        const orbitProgress = (timestamp - orbitStartTime) / ORBIT_DURATION;
+        const currentBearing = orbitBearing + (orbitProgress * 90); // 90 degree sweep
+        map.current.setBearing(currentBearing);
+      } else {
+        // Normal driving animation
+        progress += 0.00003; // Very slow for realistic city driving speed
+        if (progress > 1) progress = 0;
+        
+        const position = getPointAlongRoute(progress);
+        const bearing = getBearing(progress);
+        
+        map.current.setCenter(position);
+        map.current.setBearing(bearing);
+      }
       
       animationRef.current = requestAnimationFrame(animate);
     };
     
     map.current.on('load', () => {
-      animate();
+      animationRef.current = requestAnimationFrame(animate);
     });
     
     return () => {

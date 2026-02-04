@@ -2,13 +2,14 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
-import { Loader2, Navigation, Box, Eye, Globe } from "lucide-react";
+import { Loader2, Navigation, Box, Eye, Globe, Sun, Moon, Sunrise } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
 import { MiniRouteOverview } from "./MiniRouteOverview";
 import { findWeighStationsOnRoute, type WeighStation } from "@/data/weighStations";
 import { cn } from "@/lib/utils";
-import { addTerrain, add3DBuildingsWithShadows, setFogPreset, on3DReady } from "@/lib/mapbox3DConfig";
+import { addTerrain, add3DBuildingsWithShadows, setFogPreset, on3DReady, add3DBuildings, type FogPreset } from "@/lib/mapbox3DConfig";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface RouteData {
   coordinates: [number, number][];
@@ -136,7 +137,48 @@ export function TruckTrackingMap({
   const [routeWaypoints, setRouteWaypoints] = useState<{ station: WeighStation; routeIndex: number }[]>([]);
   const [internalFollowMode, setInternalFollowMode] = useState(followMode);
   const [currentBearing, setCurrentBearing] = useState(0);
+  const [lightingPreset, setLightingPreset] = useState<'day' | 'dusk' | 'night'>('night');
   const userInteractingRef = useRef(false);
+
+  // Apply lighting preset changes
+  const applyLightingPreset = useCallback((preset: 'day' | 'dusk' | 'night') => {
+    if (!map.current) return;
+    
+    const fogPresets: Record<string, FogPreset> = {
+      day: 'day',
+      dusk: 'dusk', 
+      night: 'night'
+    };
+    
+    const buildingColors: Record<string, { base: string; highlight: string }> = {
+      day: { base: '#dcdcdc', highlight: '#f0f0f0' },
+      dusk: { base: '#5a4a4a', highlight: '#7a6a6a' },
+      night: { base: '#1a1a2e', highlight: '#2a2a4e' }
+    };
+    
+    // Update fog
+    setFogPreset(map.current, fogPresets[preset]);
+    
+    // Update 3D building colors
+    if (map.current.getLayer('3d-buildings')) {
+      map.current.setPaintProperty('3d-buildings', 'fill-extrusion-color', [
+        'interpolate',
+        ['linear'],
+        ['get', 'height'],
+        0, buildingColors[preset].base,
+        50, buildingColors[preset].highlight,
+        200, buildingColors[preset].highlight
+      ]);
+    }
+  }, []);
+
+  // Handle lighting change
+  const handleLightingChange = useCallback((value: string) => {
+    if (value && (value === 'day' || value === 'dusk' || value === 'night')) {
+      setLightingPreset(value);
+      applyLightingPreset(value);
+    }
+  }, [applyLightingPreset]);
 
   // Sync internal follow mode with prop
   useEffect(() => {
@@ -671,6 +713,38 @@ export function TruckTrackingMap({
         </span>
       </button>
 
+      {/* Lighting Preset Toggle */}
+      <div className="absolute bottom-20 right-4 z-20">
+        <ToggleGroup 
+          type="single" 
+          value={lightingPreset} 
+          onValueChange={handleLightingChange}
+          className="bg-black/70 backdrop-blur-md rounded-lg border border-white/20 p-1"
+        >
+          <ToggleGroupItem 
+            value="day" 
+            aria-label="Day mode"
+            className="data-[state=on]:bg-amber-500/30 data-[state=on]:text-amber-300 text-white/70 hover:text-white px-2.5 py-1.5"
+          >
+            <Sun className="w-4 h-4" />
+          </ToggleGroupItem>
+          <ToggleGroupItem 
+            value="dusk" 
+            aria-label="Dusk mode"
+            className="data-[state=on]:bg-orange-500/30 data-[state=on]:text-orange-300 text-white/70 hover:text-white px-2.5 py-1.5"
+          >
+            <Sunrise className="w-4 h-4" />
+          </ToggleGroupItem>
+          <ToggleGroupItem 
+            value="night" 
+            aria-label="Night mode"
+            className="data-[state=on]:bg-indigo-500/30 data-[state=on]:text-indigo-300 text-white/70 hover:text-white px-2.5 py-1.5"
+          >
+            <Moon className="w-4 h-4" />
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
       {/* Traffic Legend */}
       <TrafficLegend isVisible={isTracking} />
 
@@ -721,39 +795,7 @@ export function TruckTrackingMap({
         }}
       />
 
-      {/* Street View Inset - Bottom Right */}
-      {isTracking && currentTruckPosition && googleApiKey && (
-        <div className="absolute bottom-4 right-4 z-30">
-          <div className="w-[200px] h-[140px] rounded-lg overflow-hidden border-2 border-white/20 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900">
-            <div className="relative w-full h-full">
-              <img
-                src={`https://maps.googleapis.com/maps/api/streetview?size=400x280&location=${currentTruckPosition[1]},${currentTruckPosition[0]}&fov=100&heading=${currentBearing}&pitch=5&key=${googleApiKey}`}
-                alt="Street View at truck location"
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  // Fallback to satellite view if street view fails
-                  e.currentTarget.src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentTruckPosition[1]},${currentTruckPosition[0]}&zoom=17&size=400x280&maptype=hybrid&key=${googleApiKey}`;
-                }}
-              />
-              {/* Label overlay */}
-              <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 to-transparent">
-                <div className="flex items-center gap-1.5">
-                  <Eye className="w-3 h-3 text-primary" />
-                  <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">Street View</span>
-                </div>
-                {currentLocationName && (
-                  <p className="text-[9px] text-white/60 truncate mt-0.5">{currentLocationName}</p>
-                )}
-              </div>
-              {/* Live indicator */}
-              <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span className="text-[8px] font-bold text-white/80 tracking-wider">LIVE</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Street View inset removed - cleaner map focus */}
 
       <div ref={mapContainer} className="w-full h-full" />
     </div>
