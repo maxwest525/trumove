@@ -399,6 +399,83 @@ function DetectionList({ visibleCount }: DetectionListProps) {
   );
 }
 
+// Tracking Preview Component - Left column (mirrored layout)
+function TrackingPreview() {
+  return (
+    <div className="tru-tracker-preview">
+      <img src={previewPropertyLookup} alt="Live GPS Tracking" />
+      {/* Live badge */}
+      <div className="tru-tracker-live-badge">
+        <span className="tru-tracker-live-dot" />
+        <span>LIVE GPS</span>
+      </div>
+      {/* Route overlay */}
+      <div className="tru-tracker-route-overlay">
+        <Truck className="w-5 h-5" />
+      </div>
+      {/* Stats bar at bottom */}
+      <div className="tru-tracker-stats-bar">
+        <span><MapPin className="w-3.5 h-3.5" /> Real-time GPS</span>
+        <span><Clock className="w-3.5 h-3.5" /> Live ETA updates</span>
+      </div>
+    </div>
+  );
+}
+
+// Shipment Tracker Section (mirrored layout)
+function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void }) {
+  return (
+    <section className="tru-tracker-section">
+      <div className="tru-tracker-inner">
+        <div className="tru-tracker-header-row">
+          {/* Preview on LEFT (mirrored) */}
+          <div className="tru-tracker-preview-left">
+            <TrackingPreview />
+          </div>
+          
+          {/* Content on RIGHT (mirrored) */}
+          <div className="tru-tracker-content-right">
+            <div className="tru-ai-headline-block">
+              <h3 className="tru-ai-section-title">Real-Time Tracking</h3>
+              <h2 className="tru-ai-main-headline">
+                Track. Monitor.<br />
+                <span className="tru-ai-headline-accent">Arrive.</span>
+              </h2>
+              <p className="tru-ai-subheadline">
+                Know exactly where your belongings are. GPS tracking, live ETAs, and instant updates—from pickup to delivery.
+              </p>
+            </div>
+            
+            {/* Step pills */}
+            <div className="tru-ai-step-pills">
+              {[
+                { num: "01", label: "Enter booking" },
+                { num: "02", label: "Live GPS view" },
+                { num: "03", label: "Arrive on time" }
+              ].map((step) => (
+                <div key={step.num} className="tru-ai-step-pill">
+                  <span className="tru-ai-step-num">{step.num}</span>
+                  <span className="tru-ai-step-label">{step.label}</span>
+                </div>
+              ))}
+            </div>
+            
+            {/* CTA Button */}
+            <button 
+              onClick={() => navigate("/track")}
+              className="tru-ai-cta-btn"
+            >
+              <MapPin className="w-4 h-4" />
+              Track Your Shipment
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // Trust Compact Section with scroll-triggered staggered reveal
 function TrustCompactSection() {
   const [sectionRef, isInView] = useScrollAnimation<HTMLElement>({
@@ -1573,8 +1650,8 @@ export default function Index() {
             </div>
           </section>
 
-          {/* HOW IT WORKS - Compact with Parallax */}
-          <StepsCompactSection navigate={navigate} />
+          {/* SHIPMENT TRACKER - Mirrored Layout */}
+          <ShipmentTrackerSection navigate={navigate} />
 
         </div>
       </div>
