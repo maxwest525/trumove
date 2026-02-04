@@ -12,8 +12,8 @@ interface SiteShellProps {
 export default function SiteShell({ children, centered = false, hideTrustStrip = false }: SiteShellProps) {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
-      {/* Sticky Header + Trust Strip Together */}
-      <div className="sticky top-0 z-[90]">
+      {/* Sticky Header + Trust Strip Together - solid background to prevent see-through */}
+      <div className="sticky top-0 z-[90] bg-background">
         <Header />
         {!hideTrustStrip && <SaferTrustStrip />}
       </div>
