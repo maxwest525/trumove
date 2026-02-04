@@ -265,46 +265,33 @@ export function TruckTrackingMap({
           }
         });
 
-        // Route outer glow layer (largest, most diffuse)
+        // Route black outline layer (creates contrast on satellite)
         map.current?.addLayer({
           id: "route-glow-outer",
           type: "line",
           source: "route",
           paint: {
-            "line-color": "#22c55e",
-            "line-width": 28,
-            "line-opacity": 0.15,
-            "line-blur": 16
+            "line-color": "#000000",
+            "line-width": 10,
+            "line-opacity": 0.6,
+            "line-blur": 2
           }
         });
 
-        // Route middle glow layer
-        map.current?.addLayer({
-          id: "route-glow-middle",
-          type: "line",
-          source: "route",
-          paint: {
-            "line-color": "#22c55e",
-            "line-width": 18,
-            "line-opacity": 0.25,
-            "line-blur": 10
-          }
-        });
-
-        // Route inner glow layer
+        // Route inner glow layer (cyan glow)
         map.current?.addLayer({
           id: "route-glow",
           type: "line",
           source: "route",
           paint: {
-            "line-color": "#22c55e",
-            "line-width": 12,
-            "line-opacity": 0.4,
+            "line-color": "#00e5a0",
+            "line-width": 8,
+            "line-opacity": 0.3,
             "line-blur": 4
           }
         });
 
-        // Main route line (thicker)
+        // Main route line (cyan)
         map.current?.addLayer({
           id: "route-line",
           type: "line",
@@ -314,9 +301,9 @@ export function TruckTrackingMap({
             "line-cap": "round"
           },
           paint: {
-            "line-color": "#22c55e",
-            "line-width": 6,
-            "line-opacity": 0.95
+            "line-color": "#00e5a0",
+            "line-width": 4,
+            "line-opacity": 1
           }
         });
 

@@ -185,7 +185,7 @@ export function Google2DTrackingMap({
         map,
         suppressMarkers: true, // We'll use custom markers
         polylineOptions: {
-          strokeColor: '#22c55e',
+          strokeColor: '#00e5a0',
           strokeWeight: 5,
           strokeOpacity: 0 // Start invisible for animation
         }
@@ -321,15 +321,15 @@ export function Google2DTrackingMap({
             zIndex: 4
           });
           
-          // Create gradient effect using multiple polyline segments
+          // Create gradient effect using cyan color (matching satellite reference)
           const gradientColors = [
-            '#16a34a', // darker green (start)
-            '#1cb454',
-            '#22c55e', // primary green (middle)
-            '#34d06a',
-            '#22c55e', // primary green
-            '#1cb454',
-            '#16a34a', // darker green (end)
+            '#00c896', // slightly darker cyan (start)
+            '#00d89d',
+            '#00e5a0', // primary cyan (middle)
+            '#00f0a8',
+            '#00e5a0', // primary cyan
+            '#00d89d',
+            '#00c896', // slightly darker cyan (end)
           ];
           
           const segmentCount = gradientColors.length;

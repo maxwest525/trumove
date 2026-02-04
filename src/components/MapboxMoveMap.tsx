@@ -505,10 +505,10 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: 'mapbox://styles/mapbox/satellite-v9',
       center: [-98.5795, 39.8283],
       zoom: 3,
-      pitch: 20,
+      pitch: 0,
       interactive: true,
     });
 
@@ -667,28 +667,28 @@ export default function MapboxMoveMap({ fromZip = '', toZip = '', visible = true
         }
       });
       
-      // Add glow layer
+      // Add glow layer (black outline)
       map.current.addLayer({
         id: 'route-glow',
         type: 'line',
         source: 'route',
         paint: {
-          'line-color': '#00ff6a',
-          'line-width': 12,
-          'line-opacity': 0.2,
-          'line-blur': 8
+          'line-color': '#000000',
+          'line-width': 8,
+          'line-opacity': 0.7,
+          'line-blur': 2
         }
       });
 
-      // Add route line
+      // Add route line (cyan/green gradient-like)
       map.current.addLayer({
         id: 'route-line',
         type: 'line',
         source: 'route',
         paint: {
-          'line-color': '#00ff6a',
+          'line-color': '#00e5a0',
           'line-width': 4,
-          'line-opacity': 0.9,
+          'line-opacity': 1,
         }
       });
       
