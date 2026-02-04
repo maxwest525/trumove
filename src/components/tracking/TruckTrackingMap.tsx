@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+import { MAPBOX_TOKEN, MAPBOX_STYLES } from "@/lib/mapboxToken";
 import { Loader2, Navigation, Box, Eye, Globe, Sun, Moon, Sunrise, Play, Pause } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
@@ -257,7 +257,7 @@ export function TruckTrackingMap({
       // Simplified initialization - let Mapbox handle WebGL internally
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: "mapbox://styles/mapbox/dark-v11",
+        style: MAPBOX_STYLES.default,
         center: [-98.5, 39.8],
         zoom: 4,
         pitch: 30, // Start with slight tilt for depth
