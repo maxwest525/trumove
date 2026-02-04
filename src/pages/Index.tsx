@@ -16,7 +16,7 @@ import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import RouteAnalysisSection from "@/components/RouteAnalysisSection";
-import { StreetViewInset } from "@/components/tracking/StreetViewInset";
+// Static Street View preview used instead of interactive component
 import FeatureCarousel from "@/components/FeatureCarousel";
 import FeatureTrustStrip from "@/components/FeatureTrustStrip";
 import StatsStrip from "@/components/StatsStrip";
@@ -50,7 +50,7 @@ import {
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar, Compass
+  Play, Pause, MapPinned, Calendar, Compass, Eye
 } from "lucide-react";
 
 
@@ -637,14 +637,28 @@ function RoadMapPanel() {
         <span className="tru-tracker-distance">{SAMPLE_ROUTE.distance}</span>
       </div>
       
-      {/* Street View Inset - shows street-level perspective at truck location */}
-      {googleApiKey && (
-        <StreetViewInset 
-          coords={[mapCenter.lng, mapCenter.lat]} 
-          bearing={currentBearing} 
-          googleApiKey={googleApiKey} 
-        />
-      )}
+      {/* Static Street View preview - demo only */}
+      <div className="absolute bottom-4 right-4 z-30">
+        <div className="relative w-[200px] h-[140px] rounded-lg overflow-hidden border-2 border-white/20 shadow-xl">
+          <img
+            src="https://maps.googleapis.com/maps/api/streetview?size=400x280&location=35.2,-111.6&fov=100&heading=90&pitch=5&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo"
+            alt="Street View preview"
+            className="w-full h-full object-cover"
+          />
+          {/* Label */}
+          <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 to-transparent">
+            <div className="flex items-center gap-1.5">
+              <Eye className="w-3 h-3 text-primary" />
+              <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">Street View</span>
+            </div>
+          </div>
+          {/* Live badge */}
+          <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[8px] font-bold text-white/80 tracking-wider">LIVE</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
