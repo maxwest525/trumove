@@ -1946,16 +1946,16 @@ export default function Book() {
               </Card>
               </div>
 
-              {/* Quick Tools - Pronounced card buttons - Always visible */}
+              {/* Quick Tools - Premium dark button style - Always visible */}
               <div className="flex items-center justify-center gap-6">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setShowScheduleModal(true)}
-                      className="group flex items-center gap-3 h-12 px-6 rounded-lg bg-card border-2 border-border hover:border-primary/50 hover:bg-muted transition-all duration-200"
+                      className="tru-dark-action-btn"
                     >
-                      <CalendarDays className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" strokeWidth={2} />
-                      <span className="text-base font-semibold text-foreground">Schedule a Call</span>
+                      <CalendarDays className="w-5 h-5" strokeWidth={2} />
+                      <span>Schedule a Call</span>
                     </button>
                   </TooltipTrigger>
                   <TooltipContent><p>Schedule a Call</p></TooltipContent>
@@ -1965,10 +1965,10 @@ export default function Book() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setShowWhiteboardModal(true)}
-                      className="group flex items-center gap-3 h-12 px-6 rounded-lg bg-card border-2 border-border hover:border-primary/50 hover:bg-muted transition-all duration-200"
+                      className="tru-dark-action-btn"
                     >
-                      <PenTool className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" strokeWidth={2} />
-                      <span className="text-base font-semibold text-foreground">Whiteboard</span>
+                      <PenTool className="w-5 h-5" strokeWidth={2} />
+                      <span>Whiteboard</span>
                     </button>
                   </TooltipTrigger>
                   <TooltipContent><p>Open Whiteboard</p></TooltipContent>
@@ -1978,10 +1978,10 @@ export default function Book() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={handleScreenShare}
-                      className="group flex items-center gap-3 h-12 px-6 rounded-lg bg-card border-2 border-border hover:border-primary/50 hover:bg-muted transition-all duration-200"
+                      className="tru-dark-action-btn"
                     >
-                      <Monitor className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" strokeWidth={2} />
-                      <span className="text-base font-semibold text-foreground">Share Screen</span>
+                      <Monitor className="w-5 h-5" strokeWidth={2} />
+                      <span>Share Screen</span>
                     </button>
                   </TooltipTrigger>
                   <TooltipContent><p>Share Your Screen</p></TooltipContent>
@@ -2193,16 +2193,15 @@ export default function Book() {
                     {/* Live Agent Queue Section */}
                     {supportChatMessages.length === 0 && !isAgentTyping && !agentConnected && (
                       <div className="shrink-0 mb-2">
-                        {!hasJoinedQueue ? (
+                          {!hasJoinedQueue ? (
                           <div className="bg-muted/50 border border-border rounded-lg p-3 text-center">
-                            <Button
+                            <button
                               onClick={() => setHasJoinedQueue(true)}
-                              className="w-full h-10 text-sm bg-foreground text-background hover:bg-foreground/90 font-semibold"
-                              size="sm"
+                              className="tru-dark-action-btn w-full"
                             >
-                              <MessageSquare className="w-4 h-4 mr-2" />
+                              <MessageSquare className="w-4 h-4" />
                               Connect with Live Specialist
-                            </Button>
+                            </button>
                           </div>
                         ) : (
                           <AgentQueueIndicator 

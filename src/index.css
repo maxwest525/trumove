@@ -6349,7 +6349,7 @@
   color: hsl(var(--tm-ink) / 0.5);
 }
 
-/* Engine Button - High-Tech CTA */
+/* Engine Button - High-Tech CTA with reduced glow */
 .tru-qb-continue.tru-engine-btn {
   background: hsl(var(--tm-ink));
   color: hsl(0 0% 100%);
@@ -6357,30 +6357,30 @@
   font-family: 'Inter', system-ui, sans-serif;
   letter-spacing: 0.02em;
   margin-top: 40px;
-  border: 1px solid hsl(var(--primary) / 0.3);
+  border: 1px solid hsl(var(--primary) / 0.2);
   box-shadow: 
-    0 0 12px hsl(var(--primary) / 0.12),
-    0 4px 16px hsl(var(--tm-ink) / 0.3);
+    0 0 8px hsl(var(--primary) / 0.06),
+    0 4px 16px hsl(var(--tm-ink) / 0.25);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 
 .tru-qb-continue.tru-engine-btn:hover:not(:disabled) {
-  box-shadow: 
-    0 0 18px hsl(var(--primary) / 0.18),
-    0 6px 24px hsl(var(--tm-ink) / 0.4);
   transform: translateY(-2px);
-  border-color: hsl(var(--primary) / 0.5);
+  border-color: hsl(var(--primary) / 0.35);
+  box-shadow: 
+    0 0 10px hsl(var(--primary) / 0.1),
+    0 6px 20px hsl(var(--tm-ink) / 0.35);
 }
 
-/* Green glow pulse animation - subtle */
+/* Green glow pulse animation - very subtle */
 .tru-qb-continue.tru-engine-btn::before {
   content: '';
   position: absolute;
   inset: -2px;
   border-radius: 12px;
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.15), transparent, hsl(var(--primary) / 0.1));
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.08), transparent, hsl(var(--primary) / 0.05));
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -6392,30 +6392,19 @@
 }
 
 @keyframes engine-glow-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.02); }
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.01); }
 }
 
-.tru-qb-continue.tru-engine-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  border-color: hsl(var(--primary) / 0.6);
-  box-shadow: 
-    0 0 0 2px hsl(var(--primary) / 0.3),
-    0 0 30px hsl(var(--primary) / 0.4),
-    0 0 60px hsl(var(--primary) / 0.2),
-    0 8px 32px hsl(var(--tm-ink) / 0.5),
-    inset 0 1px 0 hsl(0 0% 100% / 0.1);
-}
-
-/* Green accent on icons */
+/* Green accent on icons - reduced glow */
 .tru-qb-continue.tru-engine-btn .tru-btn-scan {
   color: hsl(var(--primary));
-  filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.6));
+  filter: drop-shadow(0 0 2px hsl(var(--primary) / 0.4));
 }
 
 .tru-qb-continue.tru-engine-btn .tru-btn-arrow {
   color: hsl(var(--primary));
-  filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.6));
+  filter: drop-shadow(0 0 2px hsl(var(--primary) / 0.4));
   transition: transform 0.2s ease;
 }
 
@@ -6428,7 +6417,7 @@
   color: hsl(var(--tm-ink) / 0.35);
   border-color: hsl(var(--tm-ink) / 0.1);
   box-shadow: 
-    0 0 10px hsl(var(--primary) / 0.08),
+    0 0 6px hsl(var(--primary) / 0.04),
     0 2px 8px hsl(var(--tm-ink) / 0.1);
   cursor: not-allowed;
 }
@@ -6437,6 +6426,51 @@
 .tru-qb-continue.tru-engine-btn:disabled .tru-btn-arrow {
   color: hsl(var(--tm-ink) / 0.3);
   filter: none;
+}
+
+/* ====================================================
+   Global Dark Button Style - Premium theme
+   Used for: Schedule a Call, Whiteboard, Share Screen,
+   Connect with Live Specialist, Join Queue, etc.
+   ==================================================== */
+.tru-dark-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 20px;
+  background: hsl(220 15% 10%);
+  color: hsl(0 0% 100%);
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid hsl(0 0% 100% / 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.tru-dark-action-btn:hover {
+  background: hsl(220 15% 14%);
+  border-color: hsl(var(--primary) / 0.25);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    0 0 8px hsl(var(--primary) / 0.08);
+  transform: translateY(-1px);
+}
+
+.tru-dark-action-btn:active {
+  transform: translateY(0);
+}
+
+.tru-dark-action-btn svg {
+  color: hsl(0 0% 100%);
+  transition: color 0.2s ease;
+}
+
+.tru-dark-action-btn:hover svg {
+  color: hsl(0 0% 100%);
 }
 
 .tru-qb-continue .tru-btn-arrow {
@@ -28438,7 +28472,7 @@
   gap: 8px;
 }
 
-/* Go Button - Premium dark with green icon accent, reduced glow */
+/* Go Button - Premium dark with green icon accent, subtle glow */
 .tracking-map-go-btn {
   background: hsl(220 15% 8%) !important;
   color: white !important;
@@ -28447,7 +28481,7 @@
   height: 42px !important;
   gap: 8px !important;
   border-radius: 10px !important;
-  border: 2px solid hsl(var(--border) / 0.3) !important;
+  border: 1px solid hsl(0 0% 100% / 0.1) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease;
 }
@@ -28458,8 +28492,10 @@
 
 .tracking-map-go-btn:hover:not(:disabled) {
   background: hsl(220 15% 12%) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  border-color: hsl(var(--primary) / 0.25) !important;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    0 0 6px hsl(var(--primary) / 0.08);
+  border-color: hsl(var(--primary) / 0.2) !important;
   transform: translateY(-1px);
 }
 
