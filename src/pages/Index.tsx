@@ -435,31 +435,35 @@ const ROUTE_WAYPOINTS = [
 // Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
 // Homepage now uses static demo preview - no animation needed
 
-// Route Overview Panel - Mapbox Streets style (roadmap look like Google Maps)
+// Route Overview Panel - Google Static Maps API (roadmap style)
 function RouteOverviewPanel() {
-  // LA and NY coordinates [lng, lat]
-  const laCoords = [-118.24, 34.05];
-  const nyCoords = [-74.00, 40.71];
+  // Google Maps API key
+  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
   
-  // Key waypoints along the route for a realistic path
+  // LA and NY coordinates [lat, lng] - Google uses lat,lng order
+  const laLat = 34.05, laLng = -118.24;
+  const nyLat = 40.71, nyLng = -74.00;
+  
+  // Key waypoints along the route (lat,lng pairs)
   const waypoints = [
-    [-118.24, 34.05],  // Los Angeles
-    [-106.65, 35.08],  // Albuquerque
-    [-97.52, 35.47],   // Oklahoma City
-    [-74.00, 40.71],   // New York
+    [34.05, -118.24],   // Los Angeles
+    [35.08, -106.65],   // Albuquerque  
+    [35.47, -97.52],    // Oklahoma City
+    [40.71, -74.00],    // New York
   ];
   
-  // Build path overlay - correct Mapbox format: path-strokeWidth+color-opacity(coords)
-  // Coords format: lng,lat,lng,lat,lng,lat (no URL encoding needed)
-  const pathCoords = waypoints.map(([lng, lat]) => `${lng},${lat}`).join(',');
-  const pathOverlay = `path-4+4285F4-0.8(${pathCoords})`;
+  // Build path string for Google Static Maps
+  const pathPoints = waypoints.map(([lat, lng]) => `${lat},${lng}`).join('|');
   
-  // Markers: pin-s = small pin, +color, (lng,lat)
-  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
-  const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
-  
-  // Center on continental US with zoom to see full route
-  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${pathOverlay},${originMarker},${destMarker}/-98,38,3.5/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Build the Google Static Maps URL
+  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?` +
+    `size=420x480` +
+    `&scale=2` +
+    `&maptype=roadmap` +
+    `&markers=color:0x22c55e|size:mid|label:A|${laLat},${laLng}` +
+    `&markers=color:0xef4444|size:mid|label:B|${nyLat},${nyLng}` +
+    `&path=color:0x4285F4|weight:4|${pathPoints}` +
+    `&key=${googleApiKey}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
