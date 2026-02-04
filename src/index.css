@@ -629,13 +629,13 @@
 }
 
 .tru-secondary-action-btn:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.08);
   transform: translateY(-1px);
 }
 
 .tru-secondary-action-btn:focus-visible {
-  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline: 2px solid hsl(var(--primary) / 0.3);
   outline-offset: 2px;
 }
 
@@ -684,14 +684,27 @@
 }
 
 .tru-modal-secondary-btn:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.08);
   transform: translateY(-1px);
 }
 
 .tru-modal-secondary-btn:focus-visible {
-  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline: 2px solid hsl(var(--primary) / 0.3);
   outline-offset: 2px;
+}
+
+/* Ensure secondary button icons inherit text color */
+.tru-modal-secondary-btn svg,
+.tru-secondary-action-btn svg,
+.tru-hero-btn-secondary svg,
+.tru-contact-secondary-btn svg,
+.tru-btn-secondary-lg svg,
+.tru-qb-cta-secondary svg,
+.tru-scan-secondary-btn svg,
+.tru-scan-header-btn-secondary svg,
+.tru-vetting-secondary-btn svg {
+  color: currentColor;
 }
 
 /* Scan Progress Indicator */
@@ -8453,13 +8466,13 @@
 }
 
 .tru-hero-btn-secondary:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 16px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.08);
   transform: translateY(-1px);
 }
 
 .tru-hero-btn-secondary:focus-visible {
-  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline: 2px solid hsl(var(--primary) / 0.3);
   outline-offset: 2px;
 }
 
@@ -11048,13 +11061,13 @@
 }
 
 .tru-contact-secondary-btn:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.08);
   transform: translateY(-1px);
 }
 
 .tru-contact-secondary-btn:focus-visible {
-  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline: 2px solid hsl(var(--primary) / 0.3);
   outline-offset: 2px;
 }
 
@@ -12521,13 +12534,13 @@
 }
 
 .tru-btn-secondary-lg:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 16px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.08);
   transform: translateY(-1px);
 }
 
 .tru-btn-secondary-lg:focus-visible {
-  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline: 2px solid hsl(var(--primary) / 0.3);
   outline-offset: 2px;
 }
 
@@ -17993,8 +18006,8 @@
 }
 
 .tru-qb-cta-secondary:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 10px hsl(var(--primary) / 0.12);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.06);
 }
 
 .tru-qb-cta-primary {
@@ -22261,12 +22274,12 @@
 }
 
 .tru-scan-header-btn-secondary:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.08);
 }
 
 .tru-scan-header-btn-secondary:focus-visible {
-  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline: 2px solid hsl(var(--primary) / 0.3);
   outline-offset: 2px;
 }
 
@@ -23804,12 +23817,12 @@
 }
 
 .tru-scan-secondary-btn:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.08);
 }
 
 .tru-scan-secondary-btn:focus-visible {
-  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline: 2px solid hsl(var(--primary) / 0.3);
   outline-offset: 2px;
 }
 
@@ -23835,7 +23848,7 @@
   transform: translate(-50%, -50%);
   width: 120%;
   height: 120%;
-  background: radial-gradient(ellipse at center, hsl(var(--primary) / 0.2) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, hsl(var(--primary) / 0.1) 0%, transparent 70%);
   filter: blur(60px);
   pointer-events: none;
   z-index: 0;
@@ -23847,7 +23860,7 @@
   right: -10%;
   width: 60%;
   height: 60%;
-  background: radial-gradient(ellipse at center, hsl(160 80% 50% / 0.15) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, hsl(160 80% 50% / 0.06) 0%, transparent 70%);
   filter: blur(40px);
   pointer-events: none;
   z-index: 0;
@@ -25086,13 +25099,13 @@
 }
 
 .tru-vetting-secondary-btn:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 16px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.08);
   transform: translateY(-1px);
 }
 
 .tru-vetting-secondary-btn:focus-visible {
-  outline: 2px solid hsl(var(--primary) / 0.5);
+  outline: 2px solid hsl(var(--primary) / 0.3);
   outline-offset: 2px;
 }
 
@@ -25118,7 +25131,7 @@
   transform: translate(-50%, -50%);
   width: 120%;
   height: 120%;
-  background: radial-gradient(ellipse at center, hsl(var(--primary) / 0.18) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, hsl(var(--primary) / 0.1) 0%, transparent 70%);
   filter: blur(60px);
   pointer-events: none;
   z-index: 0;
@@ -25130,7 +25143,7 @@
   right: -15%;
   width: 50%;
   height: 50%;
-  background: radial-gradient(ellipse at center, hsl(160 80% 50% / 0.12) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, hsl(160 80% 50% / 0.06) 0%, transparent 70%);
   filter: blur(40px);
   pointer-events: none;
   z-index: 0;
