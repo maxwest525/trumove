@@ -3403,65 +3403,46 @@
   height: 100%;
 }
 
-.tru-tracker-animated-route {
-  animation: route-dash-flow-west 1.5s linear infinite;
-  filter: drop-shadow(0 0 6px hsl(145, 63%, 42% / 0.8));
+/* Route line drawing animation for satellite map */
+.tru-tracker-route-draw {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: draw-route-line 4s ease-out forwards;
+  filter: drop-shadow(0 0 8px hsl(145, 63%, 42%));
 }
 
-@keyframes route-dash-flow-west {
-  0% { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: 30; }
+.tru-tracker-route-glow {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: draw-route-line 4s ease-out forwards;
+}
+
+@keyframes draw-route-line {
+  0% { stroke-dashoffset: 500; }
+  100% { stroke-dashoffset: 0; }
 }
 
 .tru-tracker-traveled-route {
   filter: drop-shadow(0 0 8px hsl(145, 63%, 42%));
 }
 
-/* Homepage Truck Marker - Matching tracking page style */
+/* Homepage Truck Marker - Centered on map */
 .tru-homepage-truck-marker {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 15;
 }
 
-/* Animated truck movement along route */
-.tru-homepage-truck-animated {
-  animation: truck-move-along-route 8s ease-in-out infinite;
-}
-
-@keyframes truck-move-along-route {
-  0% {
-    top: 38%;
-    left: 70%;
-  }
-  25% {
-    top: 48%;
-    left: 55%;
-  }
-  50% {
-    top: 52%;
-    left: 42%;
-  }
-  75% {
-    top: 54%;
-    left: 28%;
-  }
-  100% {
-    top: 38%;
-    left: 70%;
-  }
-}
-
 .tru-homepage-truck-glow {
   position: absolute;
-  inset: -14px;
+  inset: -16px;
   background: radial-gradient(circle, hsl(145, 63%, 42% / 0.6) 0%, transparent 70%);
   animation: homepage-truck-pulse 2s ease-in-out infinite;
   border-radius: 50%;
@@ -3470,7 +3451,7 @@
 
 .tru-homepage-truck-glow-2 {
   animation-delay: 0.5s;
-  inset: -24px;
+  inset: -28px;
 }
 
 @keyframes homepage-truck-pulse {
@@ -3485,8 +3466,8 @@
 }
 
 .tru-homepage-truck-icon {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   background: hsl(145, 63%, 42%);
   border-radius: 50%;
   display: flex;
@@ -3494,11 +3475,27 @@
   justify-content: center;
   color: #000000;
   box-shadow: 
-    0 0 24px hsl(145, 63%, 42% / 0.8),
-    0 0 48px hsl(145, 63%, 42% / 0.4),
-    0 4px 16px rgba(0, 0, 0, 0.5);
+    0 0 28px hsl(145, 63%, 42% / 0.9),
+    0 0 56px hsl(145, 63%, 42% / 0.5),
+    0 4px 20px rgba(0, 0, 0, 0.6);
   position: relative;
   z-index: 1;
+}
+
+/* Progress badge */
+.tru-tracker-progress-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: hsl(0 0% 0% / 0.85);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(145, 63%, 42%);
+  border: 1px solid hsl(145, 63%, 42% / 0.3);
+  z-index: 20;
 }
 
 /* City Labels on Satellite Map */
@@ -3545,35 +3542,6 @@
 
 .tru-tracker-satellite-route-line {
   filter: drop-shadow(0 0 10px hsl(145, 63%, 42%));
-}
-
-/* Moving truck dot on satellite map */
-.tru-tracker-satellite-truck-moving {
-  animation: satellite-truck-move 8s ease-in-out infinite;
-  filter: drop-shadow(0 0 8px hsl(145, 63%, 42%));
-}
-
-@keyframes satellite-truck-move {
-  0% {
-    cx: 340;
-    cy: 192;
-  }
-  25% {
-    cx: 280;
-    cy: 210;
-  }
-  50% {
-    cx: 210;
-    cy: 225;
-  }
-  75% {
-    cx: 140;
-    cy: 245;
-  }
-  100% {
-    cx: 340;
-    cy: 192;
-  }
 }
 
 .tru-tracker-satellite-truck-dot {
