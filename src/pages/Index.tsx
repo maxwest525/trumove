@@ -447,6 +447,7 @@ function RouteOverviewPanel() {
   const mapInstance = useRef<mapboxgl.Map | null>(null);
   const orbitAnimationRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(Date.now());
+  const dashOffsetRef = useRef<number>(0);
   
   // Realistic I-10/I-40/I-70 highway corridor waypoints [lng, lat]
   const waypoints: [number, number][] = useMemo(() => [
@@ -493,9 +494,10 @@ function RouteOverviewPanel() {
       // Add atmospheric fog for depth
       setFogPreset(mapInstance.current, 'satellite');
       
-      // Add route shadow for contrast
+      // Add route source with lineMetrics enabled for gradient effects
       mapInstance.current.addSource('route', {
         type: 'geojson',
+        lineMetrics: true,
         data: {
           type: 'Feature',
           properties: {},
@@ -510,13 +512,26 @@ function RouteOverviewPanel() {
         source: 'route',
         paint: {
           'line-color': '#000000',
-          'line-width': 8,
-          'line-opacity': 0.5,
-          'line-blur': 3
+          'line-width': 10,
+          'line-opacity': 0.6,
+          'line-blur': 4
         }
       });
       
-      // Outer glow - cyan
+      // Outer glow - cyan (wider, more diffuse)
+      mapInstance.current.addLayer({
+        id: 'route-glow-outer',
+        type: 'line',
+        source: 'route',
+        paint: {
+          'line-color': '#00e5a0',
+          'line-width': 12,
+          'line-opacity': 0.2,
+          'line-blur': 8
+        }
+      });
+      
+      // Inner glow - brighter cyan
       mapInstance.current.addLayer({
         id: 'route-glow',
         type: 'line',
@@ -529,9 +544,9 @@ function RouteOverviewPanel() {
         }
       });
       
-      // Main route line - bright cyan
+      // Base solid route line - bright cyan
       mapInstance.current.addLayer({
-        id: 'route-line',
+        id: 'route-line-base',
         type: 'line',
         source: 'route',
         layout: {
@@ -541,7 +556,24 @@ function RouteOverviewPanel() {
         paint: {
           'line-color': '#00e5a0',
           'line-width': 3,
-          'line-opacity': 0.95
+          'line-opacity': 0.8
+        }
+      });
+      
+      // Animated dashed overlay - creates flowing motion effect
+      mapInstance.current.addLayer({
+        id: 'route-line-animated',
+        type: 'line',
+        source: 'route',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'butt'
+        },
+        paint: {
+          'line-color': '#ffffff',
+          'line-width': 2,
+          'line-opacity': 0.6,
+          'line-dasharray': [2, 4] // Short dash, longer gap
         }
       });
       
@@ -561,23 +593,42 @@ function RouteOverviewPanel() {
         .setLngLat(waypoints[waypoints.length - 1])
         .addTo(mapInstance.current!);
       
-      // Start slow auto-orbit animation
-      const animateOrbit = () => {
+      // Combined animation: slow orbit + flowing dash effect
+      const animateScene = () => {
         if (!mapInstance.current) return;
         
         // Calculate elapsed time for smooth continuous rotation
         const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
         
         // Very slow orbit: complete one rotation every ~120 seconds (2 minutes)
-        // 360 degrees / 120 seconds = 3 degrees per second = 0.05 degrees per frame at 60fps
         const orbitBearing = -15 + (elapsedSeconds * 0.5) % 360;
-        
         mapInstance.current.setBearing(orbitBearing);
         
-        orbitAnimationRef.current = requestAnimationFrame(animateOrbit);
+        // Animate dash offset to create flowing motion along the route
+        // The dash moves from LA towards NY
+        dashOffsetRef.current = (dashOffsetRef.current + 0.05) % 6; // 6 = dash (2) + gap (4)
+        
+        // Update dasharray to create animation effect
+        // By cycling the pattern, we create the illusion of movement
+        const phase = dashOffsetRef.current;
+        if (mapInstance.current.getLayer('route-line-animated')) {
+          mapInstance.current.setPaintProperty(
+            'route-line-animated',
+            'line-dasharray',
+            [2, 4] // Fixed pattern, but we shift it via translation
+          );
+          // Use line-translate to shift the pattern
+          mapInstance.current.setPaintProperty(
+            'route-line-animated',
+            'line-translate',
+            [phase * 2, 0]
+          );
+        }
+        
+        orbitAnimationRef.current = requestAnimationFrame(animateScene);
       };
       
-      orbitAnimationRef.current = requestAnimationFrame(animateOrbit);
+      orbitAnimationRef.current = requestAnimationFrame(animateScene);
     });
     
     return () => {
