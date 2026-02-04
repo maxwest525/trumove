@@ -8,7 +8,7 @@ import { TrafficLegend } from "./TrafficLegend";
 import { MiniRouteOverview } from "./MiniRouteOverview";
 import { findWeighStationsOnRoute, type WeighStation } from "@/data/weighStations";
 import { cn } from "@/lib/utils";
-import { addTerrain, add3DBuildingsWithShadows, setFogPreset, on3DReady, add3DBuildings, type FogPreset } from "@/lib/mapbox3DConfig";
+import { addTerrain, add3DBuildingsWithShadows, setFogPreset, on3DReady, add3DBuildings, cinematicFlyTo, type FogPreset } from "@/lib/mapbox3DConfig";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface RouteData {
@@ -139,6 +139,7 @@ export function TruckTrackingMap({
   const [currentBearing, setCurrentBearing] = useState(0);
   const [lightingPreset, setLightingPreset] = useState<'day' | 'dusk' | 'night'>('night');
   const userInteractingRef = useRef(false);
+  const introPlayedRef = useRef(false); // Track if intro animation has played
 
   // Apply lighting preset changes
   const applyLightingPreset = useCallback((preset: 'day' | 'dusk' | 'night') => {
@@ -416,6 +417,33 @@ export function TruckTrackingMap({
     };
   }, []);
 
+  // Cinematic intro fly-through animation
+  const triggerIntroAnimation = useCallback(() => {
+    if (!map.current || !originCoords || introPlayedRef.current) return;
+    
+    introPlayedRef.current = true;
+    
+    // Start from continental overview
+    map.current.jumpTo({
+      center: [-98, 39], // Center of US
+      zoom: 4,
+      pitch: 0,
+      bearing: 0
+    });
+    
+    // Cinematic fly-in to origin after brief pause
+    setTimeout(() => {
+      if (!map.current) return;
+      cinematicFlyTo(map.current, originCoords, {
+        zoom: 15,
+        pitch: 55,
+        bearing: -20,
+        duration: 3500,
+        curve: 1.8
+      });
+    }, 500);
+  }, [originCoords]);
+
   // Add route and markers when coordinates change
   useEffect(() => {
     if (!map.current || !isLoaded || !originCoords || !destCoords) return;
@@ -423,6 +451,9 @@ export function TruckTrackingMap({
     const setupRoute = async () => {
       const result = await fetchRoute(originCoords, destCoords);
       if (!result || !map.current) return;
+      
+      // Trigger intro animation on first route setup
+      triggerIntroAnimation();
 
       const { coords, congestion } = result;
 
