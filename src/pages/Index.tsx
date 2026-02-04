@@ -50,7 +50,7 @@ import {
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar, Compass, Eye
+  Play, Pause, MapPinned, Calendar, Compass
 } from "lucide-react";
 
 
@@ -511,8 +511,11 @@ function SatelliteMapPanel() {
   const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
   const destMarker = `pin-l+00e5a0(${nyCoords[0]},${nyCoords[1]})`;
   
-  // Use auto-fit bounds to show entire route
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${pathOverlay},${originMarker},${destMarker}/auto/420x480@2x?access_token=${MAPBOX_TOKEN}&padding=40`;
+  // Use fixed zoom level centered on continental US to show highways
+  const centerLng = -98;  // Center of continental US
+  const centerLat = 38;
+  const zoom = 4;
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${pathOverlay},${originMarker},${destMarker}/${centerLng},${centerLat},${zoom}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
@@ -564,12 +567,13 @@ function RoadMapPanel() {
         className="tru-tracker-road-map-img"
       />
       
-      <div 
-        className="tru-tracker-truck-overlay"
-        style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
-      >
-        <div className="tru-tracker-truck-pulse" />
-        <Truck className="w-5 h-5 text-white" />
+      {/* Truck marker - matching tracking page style */}
+      <div className="tru-homepage-truck-marker">
+        <div className="tru-homepage-truck-glow" />
+        <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
+        <div className="tru-homepage-truck-icon">
+          <Truck className="w-6 h-6" />
+        </div>
       </div>
       
       <div className="tru-tracker-live-badge">
@@ -600,65 +604,6 @@ function RoadMapPanel() {
         </TooltipContent>
       </Tooltip>
       
-      <div className="tru-tracker-progress-badge">
-        <span>{Math.round(truckProgress * 100)}% Complete</span>
-      </div>
-      
-      <div className="tru-tracker-stats-overlay">
-        <div className="tru-tracker-stat-item">
-          <Clock className="w-3 h-3" />
-          <span className="tru-tracker-stat-label">ETA</span>
-          <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.eta}</span>
-        </div>
-        <div className="tru-tracker-stat-item">
-          <Route className="w-3 h-3" />
-          <span className="tru-tracker-stat-label">Traffic</span>
-          <span className="tru-tracker-stat-value tru-tracker-traffic-light">{SAMPLE_ROUTE.traffic}</span>
-        </div>
-        <div className="tru-tracker-stat-item">
-          <Globe className="w-3 h-3" />
-          <span className="tru-tracker-stat-label">Weather</span>
-          <span className="tru-tracker-stat-value">{SAMPLE_ROUTE.weather}</span>
-        </div>
-      </div>
-      
-      <div className="tru-tracker-route-bar">
-        <div className="tru-tracker-route-endpoints">
-          <span className="tru-tracker-origin">
-            <MapPin className="w-3 h-3" />
-            {SAMPLE_ROUTE.origin.name}
-          </span>
-          <ArrowRight className="w-3 h-3" />
-          <span className="tru-tracker-destination">
-            <MapPinned className="w-3 h-3" />
-            {SAMPLE_ROUTE.destination.name}
-          </span>
-        </div>
-        <span className="tru-tracker-distance">{SAMPLE_ROUTE.distance}</span>
-      </div>
-      
-      {/* Static Street View preview - demo only */}
-      <div className="absolute bottom-4 right-4 z-30">
-        <div className="relative w-[200px] h-[140px] rounded-lg overflow-hidden border-2 border-white/20 shadow-xl">
-          <img
-            src="https://maps.googleapis.com/maps/api/streetview?size=400x280&location=35.2,-111.6&fov=100&heading=90&pitch=5&key=AIzaSyCWDpAPlxVRXnl1w5rz0Df5S3vGsHY6Xoo"
-            alt="Street View preview"
-            className="w-full h-full object-cover"
-          />
-          {/* Label */}
-          <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 to-transparent">
-            <div className="flex items-center gap-1.5">
-              <Eye className="w-3 h-3 text-primary" />
-              <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">Street View</span>
-            </div>
-          </div>
-          {/* Live badge */}
-          <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <span className="text-[8px] font-bold text-white/80 tracking-wider">LIVE</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
