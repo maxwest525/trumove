@@ -20,7 +20,6 @@ import RouteAnalysisSection from "@/components/RouteAnalysisSection";
 import FeatureCarousel from "@/components/FeatureCarousel";
 import FeatureTrustStrip from "@/components/FeatureTrustStrip";
 import StatsStrip from "@/components/StatsStrip";
-import OriginalStatsStrip from "@/components/OriginalStatsStrip";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallax } from "@/hooks/useParallax";
 import logoImg from "@/assets/logo.png";
@@ -1244,6 +1243,33 @@ export default function Index() {
             </span>
           </div>
 
+          {/* Center - Trust Items */}
+          <div className="tracking-header-trust">
+            <span className="tracking-header-trust-item">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              AI-POWERED
+            </span>
+            <span className="tracking-header-trust-dot">•</span>
+            <span className="tracking-header-trust-item">
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+              FMCSA VERIFIED
+            </span>
+            <span className="tracking-header-trust-dot">•</span>
+            <span className="tracking-header-trust-item">
+              <DollarSign className="w-3.5 h-3.5 text-primary" />
+              REAL-TIME PRICING
+            </span>
+            <span className="tracking-header-trust-dot">•</span>
+            <span className="tracking-header-trust-item">
+              <Headphones className="w-3.5 h-3.5 text-primary" />
+              24/7 SUPPORT
+            </span>
+            <span className="tracking-header-trust-dot">•</span>
+            <span className="tracking-header-trust-item">
+              <Shield className="w-3.5 h-3.5 text-primary" />
+              ZERO HIDDEN FEES
+            </span>
+          </div>
 
           {/* Right - Session ID */}
           <div className="flex items-center gap-4">
@@ -1361,7 +1387,7 @@ export default function Index() {
                 The Smarter Way To <span className="tru-hero-accent">Move</span>
               </h1>
               <p className="tru-hero-feature-line">
-                AI-powered inventory · FMCSA-vetted carriers that care · Live video consults · Shipment Tracking
+                AI-powered estimates · FMCSA-vetted carriers · No van line middlemen · Live video consults · Real-time tracking
               </p>
             </div>
 
@@ -1380,14 +1406,11 @@ export default function Index() {
                   
                   <div className="tru-qb-form-header tru-qb-form-header-pill">
                     <div className="tru-qb-form-title-group animate-fade-scale-in opacity-0">
-                      <span className="tru-qb-form-label-top" style={{ animationDelay: '0.05s' }}>
-                        AI-Verified Moving
+                      <span className="tru-qb-form-title tru-qb-form-title-large" style={{ animationDelay: '0.1s' }}>
+                        AI-powered <span className="tru-qb-title-accent">Moving</span>
                       </span>
-                      <span className="tru-qb-form-subtitle-compact" style={{ animationDelay: '0.15s' }}>
-                        FMCSA-verified carriers · Real-time pricing
-                      </span>
-                      <span className="tru-qb-form-title tru-qb-form-title-large" style={{ animationDelay: '0.25s' }}>
-                        Get Your Move Plan
+                      <span className="tru-qb-form-subtitle-compact" style={{ animationDelay: '0.25s' }}>
+                        FMCSA-vetted carriers, AI precision
                       </span>
                     </div>
                   </div>
@@ -1497,7 +1520,7 @@ export default function Index() {
                         </button>
                         
                         {/* Micro-copy below Analyze Route */}
-                        <p className="tru-qb-microcopy tru-qb-microcopy-prominent">A moving specialist will call you shortly.</p>
+                        <p className="tru-qb-microcopy">A moving specialist will call you shortly.</p>
                         
                         {/* Track My Move Button */}
                         {fromLocationDisplay && toLocationDisplay && (
@@ -1761,11 +1784,8 @@ export default function Index() {
           </section>
         </div> {/* End tru-hero-wrapper */}
 
-        {/* FEATURE STRIP - Section Divider */}
+        {/* BLACK STATS STRIP - Section Divider */}
         <StatsStrip />
-
-        {/* ORIGINAL STATS STRIP - Between hero and AI Analysis */}
-        <OriginalStatsStrip />
 
           {/* START YOUR AI INVENTORY ANALYSIS - Enhanced with Preview */}
           <section className="tru-ai-steps-section">
