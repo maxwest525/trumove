@@ -524,23 +524,24 @@ function RoadMapPanel() {
   
   // Throttle map image updates to avoid rate limiting (update every 500ms)
   const [throttledCenter, setThrottledCenter] = useState(mapCenter);
+  const [throttledBearing, setThrottledBearing] = useState(currentBearing);
   const lastUpdateRef = useRef(0);
   
   useEffect(() => {
     const now = Date.now();
     if (now - lastUpdateRef.current > 500) {
       setThrottledCenter(mapCenter);
+      setThrottledBearing(currentBearing);
       lastUpdateRef.current = now;
     }
-  }, [mapCenter]);
+  }, [mapCenter, currentBearing]);
   
-  // 0° bearing for north-facing view - clean vertical street perspective
-  const bearing = 0; // North-facing - vertical streets layout  
+  // Dynamic bearing - camera follows truck's direction of travel
   const pitch = 60;   // 3D tilt (max supported in Static API is 60)
   const zoom = 15;    // Street-level detail
   
   // Use navigation-night-v1 for dark theme consistency (3D tilt still works)
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${throttledCenter.lng},${throttledCenter.lat})/${throttledCenter.lng},${throttledCenter.lat},${zoom},${bearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${throttledCenter.lng},${throttledCenter.lat})/${throttledCenter.lng},${throttledCenter.lat},${zoom},${throttledBearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Google API key for Street View
   const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
