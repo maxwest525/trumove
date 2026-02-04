@@ -3492,8 +3492,12 @@
   width: 420px;
   height: clamp(24rem, 38vh, 30rem);
   min-height: 24rem;
-  border: 1px solid hsl(var(--border));
+  border: 2px solid hsl(0 0% 100% / 0.15);
   box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.1);
+}
+
+.dark .tru-tracker-road-map {
+  border: 2px solid hsl(0 0% 100% / 0.2);
 }
 
 .tru-tracker-road-map img,
@@ -3904,6 +3908,11 @@
   width: 420px;
   height: clamp(24rem, 38vh, 30rem);
   min-height: 24rem;
+  border: 2px solid hsl(0 0% 100% / 0.15);
+}
+
+.dark .tru-tracker-satellite-enlarged {
+  border: 2px solid hsl(0 0% 100% / 0.2);
 }
 
 .tru-tracker-satellite-panel img {
