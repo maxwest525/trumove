@@ -3390,13 +3390,48 @@
   object-fit: cover;
 }
 
+/* Animated Route Line Overlay */
+.tru-tracker-route-line-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.tru-tracker-route-line-overlay svg {
+  width: 100%;
+  height: 100%;
+}
+
+.tru-tracker-animated-route {
+  animation: route-dash-flow 1.5s linear infinite;
+}
+
+@keyframes route-dash-flow {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -20; }
+}
+
+.tru-tracker-traveled-route {
+  filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.5));
+}
+
 /* Pulsing Truck Marker */
 .tru-tracker-truck-marker {
   position: absolute;
-  top: 50%;
-  left: 48%;
+  top: 48%;
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 15;
+}
+
+.tru-tracker-truck-animated {
+  animation: truck-bob 3s ease-in-out infinite;
+}
+
+@keyframes truck-bob {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-3px); }
 }
 
 .tru-tracker-truck-pulse {
@@ -3409,6 +3444,12 @@
   background: hsl(var(--primary) / 0.3);
   border-radius: 50%;
   animation: truck-marker-pulse 2s ease-in-out infinite;
+}
+
+.tru-tracker-truck-pulse-2 {
+  animation-delay: 0.5s;
+  width: 64px;
+  height: 64px;
 }
 
 @keyframes truck-marker-pulse {
@@ -3424,8 +3465,8 @@
 
 .tru-tracker-truck-icon {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   background: hsl(var(--primary));
   border-radius: 50%;
   display: flex;
@@ -3433,9 +3474,33 @@
   justify-content: center;
   color: hsl(var(--primary-foreground));
   box-shadow: 
-    0 4px 12px hsl(var(--primary) / 0.5),
-    0 0 0 3px hsl(var(--background)),
-    0 0 0 5px hsl(var(--primary) / 0.3);
+    0 4px 16px hsl(var(--primary) / 0.6),
+    0 0 0 3px hsl(220 15% 15%),
+    0 0 0 5px hsl(var(--primary) / 0.4);
+}
+
+/* Direction indicator arrow */
+.tru-tracker-direction-arrow {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--primary-foreground));
+  font-size: 10px;
+  animation: direction-pulse 1s ease-in-out infinite;
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.5);
+}
+
+@keyframes direction-pulse {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+  50% { transform: translateX(-50%) translateY(-2px); opacity: 0.8; }
 }
 
 /* Live GPS Badge */
@@ -3610,30 +3675,54 @@
   flex-shrink: 0;
 }
 
+/* Enlarged satellite panel to match road map */
+.tru-tracker-satellite-enlarged {
+  width: 420px;
+  height: clamp(24rem, 38vh, 30rem);
+  min-height: 24rem;
+}
+
 .tru-tracker-satellite-panel img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
+/* Satellite route overlay */
+.tru-tracker-satellite-route-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.tru-tracker-satellite-route-overlay svg {
+  width: 100%;
+  height: 100%;
+}
+
+.tru-tracker-satellite-route {
+  filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.8));
+}
+
 .tru-tracker-satellite-label {
   position: absolute;
-  bottom: 8px;
-  left: 8px;
-  right: 8px;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 4px 8px;
-  background: hsl(var(--foreground) / 0.85);
+  gap: 6px;
+  padding: 8px 12px;
+  background: hsl(var(--foreground) / 0.9);
   backdrop-filter: blur(8px);
-  border-radius: 6px;
+  border-radius: 8px;
   color: hsl(var(--background));
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
 }
 
 .tru-tracker-satellite-label svg {
