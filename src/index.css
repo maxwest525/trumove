@@ -3404,17 +3404,17 @@
 }
 
 .tru-tracker-animated-route {
-  animation: route-dash-flow-west 2s linear infinite;
-  filter: drop-shadow(0 0 4px hsl(145, 63%, 42% / 0.6));
+  animation: route-dash-flow-west 1.5s linear infinite;
+  filter: drop-shadow(0 0 6px hsl(145, 63%, 42% / 0.8));
 }
 
 @keyframes route-dash-flow-west {
   0% { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: 25; }
+  100% { stroke-dashoffset: 30; }
 }
 
 .tru-tracker-traveled-route {
-  filter: drop-shadow(0 0 6px hsl(145, 63%, 42% / 0.8));
+  filter: drop-shadow(0 0 8px hsl(145, 63%, 42%));
 }
 
 /* Homepage Truck Marker - Matching tracking page style */
@@ -3423,18 +3423,46 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 15;
 }
 
+/* Animated truck movement along route */
+.tru-homepage-truck-animated {
+  animation: truck-move-along-route 8s ease-in-out infinite;
+}
+
+@keyframes truck-move-along-route {
+  0% {
+    top: 38%;
+    left: 70%;
+  }
+  25% {
+    top: 48%;
+    left: 55%;
+  }
+  50% {
+    top: 52%;
+    left: 42%;
+  }
+  75% {
+    top: 54%;
+    left: 28%;
+  }
+  100% {
+    top: 38%;
+    left: 70%;
+  }
+}
+
 .tru-homepage-truck-glow {
   position: absolute;
-  inset: -12px;
-  background: radial-gradient(circle, hsl(145, 63%, 42% / 0.5) 0%, transparent 70%);
+  inset: -14px;
+  background: radial-gradient(circle, hsl(145, 63%, 42% / 0.6) 0%, transparent 70%);
   animation: homepage-truck-pulse 2s ease-in-out infinite;
   border-radius: 50%;
   pointer-events: none;
@@ -3442,23 +3470,23 @@
 
 .tru-homepage-truck-glow-2 {
   animation-delay: 0.5s;
-  inset: -20px;
+  inset: -24px;
 }
 
 @keyframes homepage-truck-pulse {
   0%, 100% { 
     transform: scale(1); 
-    opacity: 0.8; 
+    opacity: 0.9; 
   }
   50% { 
-    transform: scale(1.4); 
+    transform: scale(1.5); 
     opacity: 0.2; 
   }
 }
 
 .tru-homepage-truck-icon {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   background: hsl(145, 63%, 42%);
   border-radius: 50%;
   display: flex;
@@ -3466,11 +3494,40 @@
   justify-content: center;
   color: #000000;
   box-shadow: 
-    0 0 20px hsl(145, 63%, 42% / 0.6),
-    0 0 40px hsl(145, 63%, 42% / 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.4);
+    0 0 24px hsl(145, 63%, 42% / 0.8),
+    0 0 48px hsl(145, 63%, 42% / 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.5);
   position: relative;
   z-index: 1;
+}
+
+/* City Labels on Satellite Map */
+.tru-tracker-city-label {
+  position: absolute;
+  z-index: 10;
+  background: hsl(0 0% 0% / 0.85);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: white;
+  white-space: nowrap;
+  border: 1px solid hsl(0 0% 100% / 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tru-tracker-city-origin {
+  top: 32%;
+  right: 6%;
+  border-left: 3px solid hsl(145, 63%, 42%);
+}
+
+.tru-tracker-city-destination {
+  bottom: 36%;
+  left: 4%;
+  border-left: 3px solid hsl(0, 84%, 60%);
 }
 
 /* Satellite Route Overlay */
@@ -3487,7 +3544,36 @@
 }
 
 .tru-tracker-satellite-route-line {
-  filter: drop-shadow(0 0 8px hsl(145, 63%, 42% / 0.8));
+  filter: drop-shadow(0 0 10px hsl(145, 63%, 42%));
+}
+
+/* Moving truck dot on satellite map */
+.tru-tracker-satellite-truck-moving {
+  animation: satellite-truck-move 8s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px hsl(145, 63%, 42%));
+}
+
+@keyframes satellite-truck-move {
+  0% {
+    cx: 340;
+    cy: 192;
+  }
+  25% {
+    cx: 280;
+    cy: 210;
+  }
+  50% {
+    cx: 210;
+    cy: 225;
+  }
+  75% {
+    cx: 140;
+    cy: 245;
+  }
+  100% {
+    cx: 340;
+    cy: 192;
+  }
 }
 
 .tru-tracker-satellite-truck-dot {

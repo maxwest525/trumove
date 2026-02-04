@@ -441,31 +441,49 @@ function TrackingPreview() {
                 <stop offset="50%" stopColor="hsl(145, 63%, 42%)" stopOpacity="1" />
                 <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.2" />
               </linearGradient>
+              {/* Glow filter */}
+              <filter id="roadRouteGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
+            {/* Glow base layer */}
+            <path 
+              d="M 400 180 C 350 200 300 240 250 250 C 200 260 150 240 100 260 C 60 275 30 300 20 320"
+              stroke="hsl(145, 63%, 42%)"
+              strokeWidth="14"
+              strokeOpacity="0.25"
+              fill="none"
+              strokeLinecap="round"
+            />
             {/* Animated route from right (east) to left (west) */}
             <path 
               d="M 400 180 C 350 200 300 240 250 250 C 200 260 150 240 100 260 C 60 275 30 300 20 320"
               className="tru-tracker-animated-route"
               stroke="url(#routeGradientHomepage)"
-              strokeWidth="5"
-              strokeDasharray="15 10"
+              strokeWidth="7"
+              strokeDasharray="18 12"
               fill="none"
               strokeLinecap="round"
+              filter="url(#roadRouteGlow)"
             />
             {/* Solid traveled portion (from origin to truck) */}
             <path 
               d="M 400 180 C 350 200 300 240 250 250 C 230 255 210 250 210 245"
               className="tru-tracker-traveled-route"
               stroke="hsl(145, 63%, 42%)"
-              strokeWidth="5"
+              strokeWidth="7"
               fill="none"
               strokeLinecap="round"
             />
           </svg>
         </div>
         
-        {/* Truck Marker - Matching tracking page style */}
-        <div className="tru-homepage-truck-marker">
+        {/* Truck Marker - Animated along route */}
+        <div className="tru-homepage-truck-marker tru-homepage-truck-animated">
           <div className="tru-homepage-truck-glow" />
           <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
           <div className="tru-homepage-truck-icon">
@@ -542,24 +560,50 @@ function TrackingPreview() {
                 <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="1" />
                 <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.4" />
               </linearGradient>
+              {/* Glow filter for route */}
+              <filter id="routeGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
+            {/* Glow layer for route */}
+            <path 
+              d="M 380 180 C 340 190 300 200 260 210 C 220 220 180 235 140 245 C 100 255 60 265 40 280"
+              stroke="hsl(145, 63%, 42%)"
+              strokeWidth="12"
+              strokeOpacity="0.3"
+              fill="none"
+              strokeLinecap="round"
+            />
             {/* Full route from NY (right) to CA (left) */}
             <path 
               d="M 380 180 C 340 190 300 200 260 210 C 220 220 180 235 140 245 C 100 255 60 265 40 280"
               className="tru-tracker-animated-route tru-tracker-satellite-route-line"
               stroke="url(#satRouteGradient)"
-              strokeWidth="4"
-              strokeDasharray="12 8"
+              strokeWidth="6"
+              strokeDasharray="16 10"
               fill="none"
               strokeLinecap="round"
+              filter="url(#routeGlow)"
             />
             {/* Origin marker (NY) */}
-            <circle cx="380" cy="180" r="8" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" />
+            <circle cx="380" cy="180" r="10" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="3" />
             {/* Destination marker (CA) */}
-            <circle cx="40" cy="280" r="8" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="2" />
-            {/* Truck position indicator */}
-            <circle cx="210" cy="225" r="6" fill="hsl(145, 63%, 42%)" className="tru-tracker-satellite-truck-dot" />
+            <circle cx="40" cy="280" r="10" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="3" />
+            {/* Moving Truck position indicator */}
+            <circle cx="210" cy="225" r="8" fill="hsl(145, 63%, 42%)" className="tru-tracker-satellite-truck-moving" stroke="white" strokeWidth="2" />
           </svg>
+        </div>
+        
+        {/* City Labels */}
+        <div className="tru-tracker-city-label tru-tracker-city-origin">
+          <span>New York, NY</span>
+        </div>
+        <div className="tru-tracker-city-label tru-tracker-city-destination">
+          <span>Los Angeles, CA</span>
         </div>
         
         <div className="tru-tracker-satellite-label">
