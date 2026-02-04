@@ -442,12 +442,48 @@ const ROUTE_WAYPOINTS = [
 // Route Overview Panel - Live Mapbox GL with 3D terrain
 import { addTerrain, setFogPreset } from '@/lib/mapbox3DConfig';
 
+// Generate an animated dot pattern image for the route line
+function createDotPatternImageData(offset: number = 0): { width: number; height: number; data: Uint8Array } {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d')!;
+  
+  // Pattern dimensions - wider for smoother animation
+  const width = 32;
+  const height = 8;
+  canvas.width = width;
+  canvas.height = height;
+  
+  // Clear with transparent background
+  ctx.clearRect(0, 0, width, height);
+  
+  // Draw dots with offset for animation
+  ctx.fillStyle = '#ffffff';
+  const dotRadius = 2;
+  const spacing = 12;
+  const centerY = height / 2;
+  
+  // Draw multiple dots across the pattern with animated offset
+  for (let x = (offset % spacing) - spacing; x < width + spacing; x += spacing) {
+    ctx.beginPath();
+    ctx.arc(x, centerY, dotRadius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Convert to format Mapbox expects
+  const imageData = ctx.getImageData(0, 0, width, height);
+  return {
+    width,
+    height,
+    data: new Uint8Array(imageData.data.buffer)
+  };
+}
+
 function RouteOverviewPanel() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<mapboxgl.Map | null>(null);
   const orbitAnimationRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(Date.now());
-  const dashOffsetRef = useRef<number>(0);
+  const patternOffsetRef = useRef<number>(0);
   
   // Realistic I-10/I-40/I-70 highway corridor waypoints [lng, lat]
   const waypoints: [number, number][] = useMemo(() => [
@@ -494,7 +530,11 @@ function RouteOverviewPanel() {
       // Add atmospheric fog for depth
       setFogPreset(mapInstance.current, 'satellite');
       
-      // Add route source with lineMetrics enabled for gradient effects
+      // Add initial pattern image
+      const initialPattern = createDotPatternImageData(0);
+      mapInstance.current.addImage('dot-pattern', initialPattern);
+      
+      // Add route source with lineMetrics enabled
       mapInstance.current.addSource('route', {
         type: 'geojson',
         lineMetrics: true,
@@ -512,9 +552,9 @@ function RouteOverviewPanel() {
         source: 'route',
         paint: {
           'line-color': '#000000',
-          'line-width': 10,
+          'line-width': 12,
           'line-opacity': 0.6,
-          'line-blur': 4
+          'line-blur': 5
         }
       });
       
@@ -525,9 +565,9 @@ function RouteOverviewPanel() {
         source: 'route',
         paint: {
           'line-color': '#00e5a0',
-          'line-width': 12,
-          'line-opacity': 0.2,
-          'line-blur': 8
+          'line-width': 14,
+          'line-opacity': 0.15,
+          'line-blur': 10
         }
       });
       
@@ -538,9 +578,9 @@ function RouteOverviewPanel() {
         source: 'route',
         paint: {
           'line-color': '#00e5a0',
-          'line-width': 6,
-          'line-opacity': 0.4,
-          'line-blur': 4
+          'line-width': 8,
+          'line-opacity': 0.35,
+          'line-blur': 5
         }
       });
       
@@ -555,25 +595,23 @@ function RouteOverviewPanel() {
         },
         paint: {
           'line-color': '#00e5a0',
-          'line-width': 3,
-          'line-opacity': 0.8
+          'line-width': 4,
+          'line-opacity': 0.9
         }
       });
       
-      // Animated dashed overlay - creates flowing motion effect
+      // Animated pattern overlay using line-pattern
       mapInstance.current.addLayer({
         id: 'route-line-animated',
         type: 'line',
         source: 'route',
         layout: {
-          'line-join': 'round',
+          'line-join': 'none', // Required for smooth pattern rendering
           'line-cap': 'butt'
         },
         paint: {
-          'line-color': '#ffffff',
-          'line-width': 2,
-          'line-opacity': 0.6,
-          'line-dasharray': [2, 4] // Short dash, longer gap
+          'line-pattern': 'dot-pattern',
+          'line-width': 8
         }
       });
       
@@ -593,7 +631,7 @@ function RouteOverviewPanel() {
         .setLngLat(waypoints[waypoints.length - 1])
         .addTo(mapInstance.current!);
       
-      // Combined animation: slow orbit + flowing dash effect
+      // Combined animation: slow orbit + flowing pattern
       const animateScene = () => {
         if (!mapInstance.current) return;
         
@@ -604,26 +642,15 @@ function RouteOverviewPanel() {
         const orbitBearing = -15 + (elapsedSeconds * 0.5) % 360;
         mapInstance.current.setBearing(orbitBearing);
         
-        // Animate dash offset to create flowing motion along the route
-        // The dash moves from LA towards NY
-        dashOffsetRef.current = (dashOffsetRef.current + 0.05) % 6; // 6 = dash (2) + gap (4)
+        // Animate pattern offset (smooth flowing dots)
+        patternOffsetRef.current = (patternOffsetRef.current + 0.15) % 12;
         
-        // Update dasharray to create animation effect
-        // By cycling the pattern, we create the illusion of movement
-        const phase = dashOffsetRef.current;
-        if (mapInstance.current.getLayer('route-line-animated')) {
-          mapInstance.current.setPaintProperty(
-            'route-line-animated',
-            'line-dasharray',
-            [2, 4] // Fixed pattern, but we shift it via translation
-          );
-          // Use line-translate to shift the pattern
-          mapInstance.current.setPaintProperty(
-            'route-line-animated',
-            'line-translate',
-            [phase * 2, 0]
-          );
+        // Update the pattern image with new offset
+        if (mapInstance.current.hasImage('dot-pattern')) {
+          mapInstance.current.removeImage('dot-pattern');
         }
+        const newPattern = createDotPatternImageData(patternOffsetRef.current);
+        mapInstance.current.addImage('dot-pattern', newPattern);
         
         orbitAnimationRef.current = requestAnimationFrame(animateScene);
       };
