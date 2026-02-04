@@ -21,57 +21,62 @@ declare global {
   }
 }
 
-// Truck SVG icon as data URL (static version)
-const TRUCK_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+// Clean truck silhouette SVG - matches satellite route aesthetic
+const TRUCK_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="32" viewBox="0 0 48 32">
   <defs>
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
+    <filter id="truckShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.6"/>
     </filter>
   </defs>
-  <circle cx="20" cy="20" r="18" fill="#22c55e" filter="url(#shadow)"/>
-  <path d="M12 24h-1c-.6 0-1-.4-1-1v-6c0-.6.4-1 1-1h12l4 4v4c0 .6-.4 1-1 1h-1" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
-  <circle cx="15" cy="22" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
-  <circle cx="23" cy="22" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
-  <path d="M17 22h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" transform="translate(2, -2)"/>
-  <path d="M22 16v4h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
+  <!-- Truck body -->
+  <rect x="0" y="6" width="28" height="16" rx="2" fill="#1a1a1a" filter="url(#truckShadow)"/>
+  <!-- Cab section -->
+  <path d="M28 6 L28 22 L40 22 L40 12 L34 6 Z" fill="#1a1a1a" filter="url(#truckShadow)"/>
+  <!-- Windshield accent -->
+  <path d="M29 7 L33 7 L38 12 L38 14 L29 14 Z" fill="#00e5a0" opacity="0.9"/>
+  <!-- Cargo stripes -->
+  <rect x="4" y="10" width="20" height="2" fill="#00e5a0" opacity="0.6"/>
+  <rect x="4" y="14" width="20" height="2" fill="#00e5a0" opacity="0.4"/>
+  <!-- Wheels -->
+  <circle cx="10" cy="24" r="5" fill="#333"/>
+  <circle cx="10" cy="24" r="3" fill="#1a1a1a" stroke="#00e5a0" stroke-width="1.5"/>
+  <circle cx="34" cy="24" r="5" fill="#333"/>
+  <circle cx="34" cy="24" r="3" fill="#1a1a1a" stroke="#00e5a0" stroke-width="1.5"/>
+  <!-- Direction arrow -->
+  <path d="M42 10 L48 16 L42 22 L42 18 L46 16 L42 14 Z" fill="#00e5a0"/>
 </svg>`;
 
-// Truck SVG with animated pulse ring and glow for active tracking
-const TRUCK_ICON_PULSING_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+// Truck SVG with animated pulse ring for active tracking
+const TRUCK_ICON_PULSING_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
   <defs>
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
-    </filter>
-    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
-      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+    <filter id="truckGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.5"/>
     </filter>
   </defs>
-  <!-- Glow background -->
-  <circle cx="32" cy="32" r="26" fill="#22c55e" opacity="0.25" filter="url(#glow)">
-    <animate attributeName="opacity" values="0.25;0.4;0.25" dur="2s" repeatCount="indefinite"/>
-  </circle>
   <!-- Outer pulse ring -->
-  <circle cx="32" cy="32" r="28" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.4">
-    <animate attributeName="r" values="24;30;24" dur="1.5s" repeatCount="indefinite"/>
+  <circle cx="36" cy="36" r="32" fill="none" stroke="#00e5a0" stroke-width="2" opacity="0.5">
+    <animate attributeName="r" values="28;34;28" dur="1.5s" repeatCount="indefinite"/>
     <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.5s" repeatCount="indefinite"/>
   </circle>
   <!-- Inner pulse ring -->
-  <circle cx="32" cy="32" r="22" fill="none" stroke="#22c55e" stroke-width="1.5" opacity="0.3">
-    <animate attributeName="r" values="20;25;20" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
+  <circle cx="36" cy="36" r="26" fill="none" stroke="#00e5a0" stroke-width="1.5" opacity="0.3">
+    <animate attributeName="r" values="24;29;24" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
     <animate attributeName="opacity" values="0.5;0.15;0.5" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
   </circle>
-  <!-- Main truck circle with glow -->
-  <circle cx="32" cy="32" r="18" fill="#22c55e" filter="url(#shadow)"/>
-  <!-- Truck icon -->
-  <path d="M24 36h-1c-.6 0-1-.4-1-1v-6c0-.6.4-1 1-1h12l4 4v4c0 .6-.4 1-1 1h-1" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
-  <circle cx="27" cy="34" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
-  <circle cx="35" cy="34" r="2" fill="none" stroke="white" stroke-width="1.5" transform="translate(2, -2)"/>
-  <path d="M29 34h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" transform="translate(2, -2)"/>
-  <path d="M34 28v4h4" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(2, -2)"/>
+  <!-- Truck body -->
+  <rect x="16" y="28" width="28" height="16" rx="2" fill="#1a1a1a" filter="url(#truckGlow)"/>
+  <!-- Cab section -->
+  <path d="M44 28 L44 44 L56 44 L56 34 L50 28 Z" fill="#1a1a1a" filter="url(#truckGlow)"/>
+  <!-- Windshield -->
+  <path d="M45 29 L49 29 L54 34 L54 36 L45 36 Z" fill="#00e5a0" opacity="0.9"/>
+  <!-- Cargo stripes -->
+  <rect x="20" y="32" width="20" height="2" fill="#00e5a0" opacity="0.5"/>
+  <rect x="20" y="36" width="20" height="2" fill="#00e5a0" opacity="0.3"/>
+  <!-- Wheels -->
+  <circle cx="26" cy="46" r="4" fill="#333"/>
+  <circle cx="26" cy="46" r="2.5" fill="#1a1a1a" stroke="#00e5a0" stroke-width="1"/>
+  <circle cx="50" cy="46" r="4" fill="#333"/>
+  <circle cx="50" cy="46" r="2.5" fill="#1a1a1a" stroke="#00e5a0" stroke-width="1"/>
 </svg>`;
 
 /**
@@ -430,8 +435,8 @@ export function Google2DTrackingMap({
               map: mapRef.current,
               icon: {
                 url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(TRUCK_ICON_PULSING_SVG)}`,
-                scaledSize: new window.google.maps.Size(64, 64),
-                anchor: new window.google.maps.Point(32, 32)
+                scaledSize: new window.google.maps.Size(72, 72),
+                anchor: new window.google.maps.Point(36, 46)
               },
               zIndex: 100,
               animation: window.google.maps.Animation.DROP
