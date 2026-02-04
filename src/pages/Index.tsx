@@ -837,7 +837,7 @@ export default function Index() {
     }
     const interval = setInterval(() => {
       setScanVisibleCount(prev => prev >= SCAN_DEMO_ITEMS.length ? prev : prev + 1);
-    }, 800);
+    }, 1500);
     return () => clearInterval(interval);
   }, [scanDemoRunning]);
   
