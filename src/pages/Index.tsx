@@ -370,9 +370,6 @@ function DetectionList({ visibleCount }: DetectionListProps) {
       <div className="tru-ai-live-header">
         <Sparkles className="w-4 h-4" />
         <span>Live Inventory Detection</span>
-        {!isRunning && (
-          <span className="tru-ai-live-sample-badge">Sample</span>
-        )}
       </div>
       <div className={`tru-ai-live-items ${!isRunning ? 'is-sample' : ''}`}>
         {displayItems.map((item, i) => (
