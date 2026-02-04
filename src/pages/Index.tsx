@@ -16,6 +16,7 @@ import HeroParticles from "@/components/HeroParticles";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import LeadCaptureModal from "@/components/LeadCaptureModal";
 import RouteAnalysisSection from "@/components/RouteAnalysisSection";
+import { StreetViewInset } from "@/components/tracking/StreetViewInset";
 import FeatureCarousel from "@/components/FeatureCarousel";
 import FeatureTrustStrip from "@/components/FeatureTrustStrip";
 import StatsStrip from "@/components/StatsStrip";
@@ -435,6 +436,7 @@ const ROUTE_WAYPOINTS = [
 function useTruckAnimation() {
   const [truckProgress, setTruckProgress] = useState(0);
   const [mapCenter, setMapCenter] = useState({ lat: SAMPLE_ROUTE.origin.lat, lng: SAMPLE_ROUTE.origin.lng });
+  const [currentBearing, setCurrentBearing] = useState(90); // East-facing by default
   
   useEffect(() => {
     const duration = 10000;
@@ -456,6 +458,12 @@ function useTruckAnimation() {
       const currentLat = start.lat + (end.lat - start.lat) * segmentFraction;
       const currentLng = start.lng + (end.lng - start.lng) * segmentFraction;
       
+      // Calculate bearing from current segment direction
+      const dLng = end.lng - start.lng;
+      const dLat = end.lat - start.lat;
+      const bearing = (Math.atan2(dLng, dLat) * 180 / Math.PI + 360) % 360;
+      setCurrentBearing(bearing);
+      
       setMapCenter({ lat: currentLat, lng: currentLng });
       
       if (progress < 1) {
@@ -466,7 +474,7 @@ function useTruckAnimation() {
     animate();
   }, []);
   
-  return { truckProgress, mapCenter };
+  return { truckProgress, mapCenter, currentBearing };
 }
 
 // Satellite Map Panel - Route Overview (uses Mapbox path overlay for real roads)
@@ -510,18 +518,20 @@ function SatelliteMapPanel() {
   );
 }
 
-// Road Map Panel - Live GPS View with 3D tilt
+// Road Map Panel - Live GPS View with 3D tilt and Street View inset
 function RoadMapPanel() {
-  const { truckProgress, mapCenter } = useTruckAnimation();
+  const { truckProgress, mapCenter, currentBearing } = useTruckAnimation();
   
   // Fine-tuned 3D perspective for cinematic navigation view
   const bearing = 30; // Forward-looking direction  
   const pitch = 60;   // 3D tilt (max supported in Static API is 60)
   const zoom = 15;    // Street-level detail
   
-  // Use navigation-night-v1 for dark theme with road details
-  // streets-v12 also works but navigation-night has better road visibility
+  // Use navigation-night-v1 for dark theme consistency (3D tilt still works)
   const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${mapCenter.lng},${mapCenter.lat})/${mapCenter.lng},${mapCenter.lat},${zoom},${bearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  
+  // Google API key for Street View
+  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
   
   return (
     <div className="tru-tracker-road-map">
@@ -580,6 +590,15 @@ function RoadMapPanel() {
         </div>
         <span className="tru-tracker-distance">{SAMPLE_ROUTE.distance}</span>
       </div>
+      
+      {/* Street View Inset - shows street-level perspective at truck location */}
+      {googleApiKey && (
+        <StreetViewInset 
+          coords={[mapCenter.lng, mapCenter.lat]} 
+          bearing={currentBearing} 
+          googleApiKey={googleApiKey} 
+        />
+      )}
     </div>
   );
 }
