@@ -50,7 +50,7 @@ import {
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
-  Play, Pause, MapPinned, Calendar
+  Play, Pause, MapPinned, Calendar, Compass
 } from "lucide-react";
 
 
@@ -521,6 +521,7 @@ function SatelliteMapPanel() {
 // Road Map Panel - Live GPS View with 3D tilt and Street View inset
 function RoadMapPanel() {
   const { truckProgress, mapCenter, currentBearing } = useTruckAnimation();
+  const [isChaseMode, setIsChaseMode] = useState(true); // true = dynamic chase-cam, false = fixed north
   
   // Throttle map image updates to avoid rate limiting (update every 500ms)
   const [throttledCenter, setThrottledCenter] = useState(mapCenter);
@@ -536,12 +537,13 @@ function RoadMapPanel() {
     }
   }, [mapCenter, currentBearing]);
   
-  // Dynamic bearing - camera follows truck's direction of travel
+  // Use dynamic bearing in chase mode, fixed 0° (north) otherwise
+  const bearing = isChaseMode ? throttledBearing : 0;
   const pitch = 60;   // 3D tilt (max supported in Static API is 60)
   const zoom = 15;    // Street-level detail
   
   // Use navigation-night-v1 for dark theme consistency (3D tilt still works)
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${throttledCenter.lng},${throttledCenter.lat})/${throttledCenter.lng},${throttledCenter.lat},${zoom},${throttledBearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${throttledCenter.lng},${throttledCenter.lat})/${throttledCenter.lng},${throttledCenter.lat},${zoom},${bearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Google API key for Street View
   const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
@@ -566,6 +568,18 @@ function RoadMapPanel() {
         <span className="tru-tracker-live-dot" />
         <span>LIVE GPS</span>
       </div>
+      
+      {/* Camera Mode Toggle */}
+      <button
+        onClick={() => setIsChaseMode(!isChaseMode)}
+        className="absolute top-2 right-2 z-20 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/70 hover:bg-black/90 border border-white/20 hover:border-primary/50 backdrop-blur-sm transition-all"
+        aria-label={isChaseMode ? "Switch to North-facing view" : "Switch to Chase-cam view"}
+      >
+        <Compass className="w-3 h-3 text-primary" />
+        <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">
+          {isChaseMode ? "Chase" : "North"}
+        </span>
+      </button>
       
       <div className="tru-tracker-progress-badge">
         <span>{Math.round(truckProgress * 100)}% Complete</span>
