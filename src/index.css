@@ -29025,11 +29025,11 @@
   border-color: hsl(var(--primary) / 0.3);
 }
 
-/* Truck Marker - Main */
+/* Truck Marker - Main (Homepage Style) */
 .tracking-truck-marker {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29037,16 +29037,25 @@
 
 .tracking-truck-glow {
   position: absolute;
-  inset: -10px;
-  background: radial-gradient(circle, hsl(145, 63%, 42% / 0.5) 0%, transparent 70%);
+  inset: -16px;
+  background: radial-gradient(circle, hsl(145, 63%, 42% / 0.6) 0%, transparent 70%);
   animation: truck-pulse 2s ease-in-out infinite;
   border-radius: 50%;
   pointer-events: none;
 }
 
+.tracking-truck-glow-2 {
+  position: absolute;
+  inset: -28px;
+  background: radial-gradient(circle, hsl(145, 63%, 42% / 0.4) 0%, transparent 70%);
+  animation: truck-pulse 2s ease-in-out infinite 0.5s;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
 .tracking-truck-icon {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   background: hsl(145, 63%, 42%);
   border-radius: 50%;
   display: flex;
@@ -29054,9 +29063,9 @@
   justify-content: center;
   color: #000000;
   box-shadow: 
-    0 0 20px hsl(145, 63%, 42% / 0.6),
-    0 0 40px hsl(145, 63%, 42% / 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.4);
+    0 0 28px hsl(145, 63%, 42% / 0.9),
+    0 0 56px hsl(145, 63%, 42% / 0.5),
+    0 4px 20px rgba(0, 0, 0, 0.6);
   position: relative;
   z-index: 1;
 }
@@ -29064,11 +29073,11 @@
 @keyframes truck-pulse {
   0%, 100% { 
     transform: scale(1); 
-    opacity: 0.8; 
+    opacity: 0.9; 
   }
   50% { 
-    transform: scale(1.3); 
-    opacity: 0.4; 
+    transform: scale(1.5); 
+    opacity: 0.2; 
   }
 }
 
