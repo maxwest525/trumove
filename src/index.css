@@ -3075,11 +3075,14 @@
 
 .tru-ai-live-scanner {
   position: relative;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   height: 340px;
   width: 420px;
-  border: 1px solid hsl(var(--border));
+  border: 2px solid hsl(0 0% 0%);
+  box-shadow:
+    0 4px 20px hsl(0 0% 0% / 0.5),
+    0 8px 40px hsl(0 0% 0% / 0.3);
 }
 
 .tru-ai-live-scanner img {
@@ -3102,24 +3105,9 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2px;
   background: linear-gradient(90deg, transparent 0%, hsl(var(--primary)) 20%, hsl(var(--primary)) 80%, transparent 100%);
-  box-shadow: 
-    0 0 12px hsl(var(--primary)),
-    0 0 24px hsl(var(--primary) / 0.6),
-    0 0 36px hsl(var(--primary) / 0.3);
   animation: scan-sweep 2.5s ease-in-out infinite;
-}
-
-/* Trailing glow effect */
-.tru-ai-scanner-line::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 20px;
-  top: -10px;
-  background: linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.15), transparent);
 }
 
 @keyframes scan-sweep {
@@ -3222,13 +3210,16 @@
 
 .tru-ai-live-inventory {
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 12px;
+  border: 2px solid hsl(0 0% 0%);
+  border-radius: 8px;
   padding: 12px;
   display: flex;
   flex-direction: column;
   width: 350px;
   height: 340px;
+  box-shadow:
+    0 4px 20px hsl(0 0% 0% / 0.5),
+    0 8px 40px hsl(0 0% 0% / 0.3);
 }
 
 .tru-ai-live-header {
