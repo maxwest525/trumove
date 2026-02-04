@@ -441,7 +441,7 @@ function RouteOverviewPanel() {
   const nyCoords = [-74.00, 40.71];
   
   // Realistic I-10/I-40/I-70 highway corridor waypoints [lng, lat]
-  const waypoints = [
+  const waypoints: [number, number][] = [
     [-118.24, 34.05],   // Los Angeles
     [-114.29, 34.14],   // Needles, CA
     [-111.65, 35.19],   // Flagstaff, AZ
@@ -457,17 +457,31 @@ function RouteOverviewPanel() {
     [-74.00, 40.71],    // New York, NY
   ];
   
-  // Build path overlay for Mapbox: path-strokeWidth+color-opacity(coords)
-  const pathCoords = waypoints.map(([lng, lat]) => `${lng},${lat}`).join(',');
-  const pathOverlay = `path-4+4285F4-0.9(${encodeURIComponent(pathCoords)})`;
+  // Build GeoJSON LineString for the route with styling
+  const routeGeoJSON = {
+    type: "Feature",
+    properties: {
+      stroke: "#4285F4",
+      "stroke-width": 4,
+      "stroke-opacity": 0.9
+    },
+    geometry: {
+      type: "LineString",
+      coordinates: waypoints
+    }
+  };
+  
+  // URI encode the GeoJSON
+  const geoJsonEncoded = encodeURIComponent(JSON.stringify(routeGeoJSON));
+  const geoJsonOverlay = `geojson(${geoJsonEncoded})`;
   
   // Markers
   const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
   const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
   
-  // Use navigation-night-v1 for dark theme (same as Truck View)
-  // Center on continental US, zoom 3.5 to see full route
-  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${pathOverlay},${originMarker},${destMarker}/-98,38,3.5/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Use 'auto' to fit all overlays (route + markers) in view
+  // navigation-night-v1 for dark theme matching Truck View
+  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${geoJsonOverlay},${originMarker},${destMarker}/auto/420x480@2x?padding=40&access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
