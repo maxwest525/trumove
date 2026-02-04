@@ -15535,14 +15535,47 @@
 .tru-analyze-strip-shimmer {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    hsl(var(--primary) / 0.08) 50%,
-    transparent 100%
-  );
-  animation: shimmer 1.5s infinite;
   z-index: 1;
+  background: hsl(var(--muted));
+  overflow: hidden;
+}
+
+.tru-analyze-strip-shimmer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 25%,
+    hsl(var(--primary) / 0.12) 50%,
+    transparent 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+
+/* Skeleton grid pattern overlay */
+.tru-analyze-strip-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(hsl(var(--border) / 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.4) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.5;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Hide shimmer when image loads */
+.tru-analyze-strip-img.is-loaded ~ .tru-analyze-strip-shimmer,
+.tru-analyze-strip-frame:has(.is-loaded) .tru-analyze-strip-shimmer {
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .tru-analyze-strip-img {
