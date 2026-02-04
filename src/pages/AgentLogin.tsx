@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { FileText, Receipt, CreditCard, Truck, Users, BarChart3, Mail, ArrowLeft } from "lucide-react";
+import { FileText, Receipt, CreditCard, Truck, Users, BarChart3, Mail, ArrowLeft, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import { CCACHAuthorizationForm } from "@/components/agent/CCACHAuthorizationForm";
@@ -9,8 +9,9 @@ import { BillOfLadingForm } from "@/components/agent/BillOfLadingForm";
 import { CustomerLookup } from "@/components/agent/CustomerLookup";
 import { CarrierDashboard } from "@/components/agent/CarrierDashboard";
 import { ClientMessaging } from "@/components/agent/ClientMessaging";
+import { IntegrationModal } from "@/components/integrations/IntegrationModals";
 
-type ActiveTool = null | "estimate" | "bol" | "ccach" | "carrier" | "customer" | "messaging";
+type ActiveTool = null | "estimate" | "bol" | "ccach" | "carrier" | "customer" | "messaging" | "granot" | "ringcentral";
 
 const AGENT_TOOLS = [
   {
@@ -56,12 +57,30 @@ const AGENT_TOOLS = [
     icon: Mail,
     external: false,
   },
+  {
+    id: "granot" as const,
+    title: "Granot CRM",
+    description: "Moving industry CRM for brokers",
+    icon: BarChart3,
+    external: false,
+    isIntegration: true,
+  },
+  {
+    id: "ringcentral" as const,
+    title: "RingCentral",
+    description: "Cloud phone & video communications",
+    icon: Phone,
+    external: false,
+    isIntegration: true,
+  },
 ];
 
 export default function AgentLogin() {
   const [showLoginModal, setShowLoginModal] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTool, setActiveTool] = useState<ActiveTool>(null);
+  const [granotOpen, setGranotOpen] = useState(false);
+  const [ringcentralOpen, setRingcentralOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -71,7 +90,13 @@ export default function AgentLogin() {
   };
 
   const handleToolClick = (toolId: ActiveTool) => {
-    setActiveTool(toolId);
+    if (toolId === "granot") {
+      setGranotOpen(true);
+    } else if (toolId === "ringcentral") {
+      setRingcentralOpen(true);
+    } else {
+      setActiveTool(toolId);
+    }
   };
 
   const renderActiveTool = () => {
@@ -97,6 +122,18 @@ export default function AgentLogin() {
         open={showLoginModal && !isLoggedIn} 
         onClose={() => setShowLoginModal(false)}
         onLogin={handleLogin}
+      />
+
+      {/* Integration Modals */}
+      <IntegrationModal 
+        open={granotOpen} 
+        onOpenChange={setGranotOpen} 
+        integration="granot" 
+      />
+      <IntegrationModal 
+        open={ringcentralOpen} 
+        onOpenChange={setRingcentralOpen} 
+        integration="ringcentral" 
       />
 
       <div className="agent-dashboard-page">

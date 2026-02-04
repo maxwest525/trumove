@@ -6,7 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Users, Phone, Calendar, MessageSquare, BarChart3, 
   FileText, Mail, Video, Headphones, Clock, 
-  CheckCircle2, ArrowRight, ExternalLink
+  CheckCircle2, ArrowRight, ExternalLink, TrendingUp,
+  PhoneCall, PhoneIncoming, PhoneOutgoing, Voicemail,
+  UserPlus, DollarSign, Truck, MapPin, Star
 } from "lucide-react";
 
 interface IntegrationModalProps {
@@ -33,6 +35,175 @@ const RINGCENTRAL_FEATURES = [
   { icon: CheckCircle2, title: "CRM Integration", desc: "Sync calls with Granot CRM" },
 ];
 
+// Fake demo data for Granot CRM
+const GRANOT_DEMO_LEADS = [
+  { name: "Sarah Johnson", status: "Hot", value: "$4,200", move: "NYC → Miami", date: "Feb 15" },
+  { name: "Michael Chen", status: "Warm", value: "$2,800", move: "LA → Seattle", date: "Feb 18" },
+  { name: "Emily Rodriguez", status: "New", value: "$3,500", move: "Chicago → Denver", date: "Feb 22" },
+  { name: "David Kim", status: "Hot", value: "$5,100", move: "Boston → Austin", date: "Feb 12" },
+];
+
+const GRANOT_DEMO_STATS = [
+  { label: "Active Leads", value: "47", change: "+12%" },
+  { label: "Booked This Month", value: "23", change: "+8%" },
+  { label: "Revenue Pipeline", value: "$142K", change: "+18%" },
+  { label: "Conversion Rate", value: "34%", change: "+5%" },
+];
+
+// Fake demo data for RingCentral
+const RINGCENTRAL_DEMO_CALLS = [
+  { type: "incoming", name: "Sarah Johnson", duration: "4:32", time: "2 min ago", status: "answered" },
+  { type: "outgoing", name: "Michael Chen", duration: "2:15", time: "15 min ago", status: "completed" },
+  { type: "missed", name: "Unknown", duration: "-", time: "32 min ago", status: "missed" },
+  { type: "voicemail", name: "Emily Rodriguez", duration: "0:45", time: "1 hr ago", status: "voicemail" },
+];
+
+const RINGCENTRAL_DEMO_STATS = [
+  { label: "Calls Today", value: "34" },
+  { label: "Avg Duration", value: "3:42" },
+  { label: "Answer Rate", value: "92%" },
+  { label: "Queue Wait", value: "0:18" },
+];
+
+function GranotDemoVisual() {
+  return (
+    <div className="space-y-4">
+      {/* Stats Row */}
+      <div className="grid grid-cols-4 gap-2">
+        {GRANOT_DEMO_STATS.map((stat) => (
+          <div key={stat.label} className="p-3 rounded-lg bg-muted/40 text-center">
+            <div className="text-lg font-bold text-foreground">{stat.value}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{stat.label}</div>
+            <div className="text-[10px] text-primary font-medium">{stat.change}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pipeline Preview */}
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
+        <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Lead Pipeline</span>
+          <Badge variant="secondary" className="text-[10px]">Live Demo</Badge>
+        </div>
+        <div className="divide-y divide-border">
+          {GRANOT_DEMO_LEADS.map((lead, i) => (
+            <div key={i} className="px-3 py-2 flex items-center gap-3 hover:bg-muted/20 transition-colors">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Users className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-sm text-foreground truncate">{lead.name}</div>
+                <div className="text-[11px] text-muted-foreground flex items-center gap-2">
+                  <MapPin className="w-3 h-3" />
+                  {lead.move}
+                </div>
+              </div>
+              <div className="text-right flex-shrink-0">
+                <div className="font-semibold text-sm text-foreground">{lead.value}</div>
+                <Badge 
+                  variant={lead.status === "Hot" ? "default" : "secondary"} 
+                  className={`text-[9px] ${lead.status === "Hot" ? "bg-primary" : ""}`}
+                >
+                  {lead.status}
+                </Badge>
+              </div>
+              <div className="text-[11px] text-muted-foreground flex-shrink-0 w-12 text-right">
+                {lead.date}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Mini Chart */}
+      <div className="rounded-lg border border-border bg-card p-3">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-semibold text-muted-foreground">Weekly Bookings</span>
+          <TrendingUp className="w-4 h-4 text-primary" />
+        </div>
+        <div className="flex items-end gap-1 h-12">
+          {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
+            <div 
+              key={i} 
+              className="flex-1 bg-primary/20 rounded-t transition-all hover:bg-primary/40"
+              style={{ height: `${h}%` }}
+            />
+          ))}
+        </div>
+        <div className="flex justify-between mt-1 text-[9px] text-muted-foreground">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RingCentralDemoVisual() {
+  return (
+    <div className="space-y-4">
+      {/* Stats Row */}
+      <div className="grid grid-cols-4 gap-2">
+        {RINGCENTRAL_DEMO_STATS.map((stat) => (
+          <div key={stat.label} className="p-3 rounded-lg bg-muted/40 text-center">
+            <div className="text-lg font-bold text-foreground">{stat.value}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Call Log Preview */}
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
+        <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent Calls</span>
+          <Badge variant="secondary" className="text-[10px]">Live Demo</Badge>
+        </div>
+        <div className="divide-y divide-border">
+          {RINGCENTRAL_DEMO_CALLS.map((call, i) => {
+            const Icon = call.type === "incoming" ? PhoneIncoming : 
+                         call.type === "outgoing" ? PhoneOutgoing :
+                         call.type === "voicemail" ? Voicemail : Phone;
+            const iconColor = call.status === "missed" ? "text-destructive" : 
+                              call.status === "voicemail" ? "text-amber-500" : "text-primary";
+            
+            return (
+              <div key={i} className="px-3 py-2 flex items-center gap-3 hover:bg-muted/20 transition-colors">
+                <div className={`w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center flex-shrink-0`}>
+                  <Icon className={`w-4 h-4 ${iconColor}`} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm text-foreground truncate">{call.name}</div>
+                  <div className="text-[11px] text-muted-foreground capitalize">{call.type} call</div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <div className="font-mono text-sm text-foreground">{call.duration}</div>
+                  <div className="text-[11px] text-muted-foreground">{call.time}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Active Call Widget */}
+      <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
+            <PhoneCall className="w-6 h-6 text-primary" />
+          </div>
+          <div className="flex-1">
+            <div className="font-semibold text-foreground">No Active Call</div>
+            <div className="text-sm text-muted-foreground">Click to start a new call</div>
+          </div>
+          <Button size="sm" className="gap-2">
+            <Phone className="w-4 h-4" />
+            New Call
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function IntegrationModal({ open, onOpenChange, integration }: IntegrationModalProps) {
   const isGranot = integration === "granot";
   const features = isGranot ? GRANOT_FEATURES : RINGCENTRAL_FEATURES;
@@ -43,7 +214,7 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-card border-border">
+      <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-xl">
             {isGranot ? (
@@ -62,12 +233,16 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="features" className="mt-4">
+        <Tabs defaultValue="demo" className="mt-4">
           <TabsList className="grid w-full grid-cols-3 bg-muted/50">
+            <TabsTrigger value="demo">Live Demo</TabsTrigger>
             <TabsTrigger value="features">Features</TabsTrigger>
             <TabsTrigger value="pricing">Pricing</TabsTrigger>
-            <TabsTrigger value="demo">Live Demo</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="demo" className="mt-4">
+            {isGranot ? <GranotDemoVisual /> : <RingCentralDemoVisual />}
+          </TabsContent>
 
           <TabsContent value="features" className="mt-4">
             <div className="grid grid-cols-2 gap-3">
@@ -123,26 +298,6 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
                     : "Unlimited users, SLA, dedicated account manager"}
                 </p>
               </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="demo" className="mt-4">
-            <div className="text-center py-8">
-              <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                {isGranot ? (
-                  <Users className="w-8 h-8 text-muted-foreground" />
-                ) : (
-                  <Video className="w-8 h-8 text-muted-foreground" />
-                )}
-              </div>
-              <h3 className="font-semibold text-lg mb-2">Interactive Demo Coming Soon</h3>
-              <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-                Experience {title} with a fully interactive sandbox environment.
-              </p>
-              <Button className="gap-2">
-                Request Early Access
-                <ArrowRight className="w-4 h-4" />
-              </Button>
             </div>
           </TabsContent>
         </Tabs>
