@@ -417,16 +417,13 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtuZTY0cTgwcGIzM2VweTN
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://nhoagucgcqjfbtifykha.supabase.co';
 
 function TrackingPreview() {
-  // Encoded polyline for NY to LA route via I-80/I-70 corridor
-  const routePolyline = encodeURIComponent('o}wtFtdubM~CbB|FpDnInGtJzIbLnMxMrQpNlUlOlYlPz]nQxb@pRzf@rSzj@tTpo@vUxt@xVzy@zWh~@|Xv`A~Yx~Az[pbB|\\xlBz\\zpB~]`tB~^~wBz_@j{Bz`@v~Br`@haBra@`eBtb@fcB|b@xbBzc@jbBrd@|aBte@raB~e@~`Bxf@h`B|g@r_Bzh@z~Ari@d~Azj@l}A|k@r|Anl@x{Axm@~zAnm@dzApn@lzAzo@pyA~o@lyAtp@fzAzp@|zAbq@r{Atq@h|Axr@~|Azr@r}A|s@h~Art@`Bt');
+  // Dark mode road map - zoomed on truck position showing highway
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},13,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
-  // Dark mode zoomed-in road map centered on truck position (Kansas City area)
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/path-4+22c55e-0.8(${routePolyline})/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},12,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Satellite overview showing full USA with route markers
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-98,39,3.2,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
-  // Satellite overview showing full USA route with markers
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/path-3+22c55e-1(${routePolyline}),pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-98,39,3.5,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
-  
-  // Google Street View via edge function proxy (I-70 highway in Kansas City)
+  // Google Street View via edge function proxy
   const streetViewUrl = `${SUPABASE_URL}/functions/v1/google-street-view?lat=${SAMPLE_ROUTE.truckPosition.lat}&lng=${SAMPLE_ROUTE.truckPosition.lng}&heading=270&size=240x160`;
 
   return (
@@ -435,48 +432,50 @@ function TrackingPreview() {
       <div className="tru-tracker-road-map">
         <img src={roadMapUrl} alt="Live Route Map" />
         
-        {/* Animated Route Line Overlay */}
+        {/* SVG Route Line Overlay - East to West (NY to CA) */}
         <div className="tru-tracker-route-line-overlay">
           <svg viewBox="0 0 420 480" preserveAspectRatio="none">
             <defs>
-              <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="hsl(142, 71%, 45%)" stopOpacity="0.3" />
-                <stop offset="50%" stopColor="hsl(142, 71%, 45%)" stopOpacity="1" />
-                <stop offset="100%" stopColor="hsl(142, 71%, 45%)" stopOpacity="0.3" />
+              <linearGradient id="routeGradientHomepage" x1="100%" y1="50%" x2="0%" y2="50%">
+                <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.2" />
+                <stop offset="50%" stopColor="hsl(145, 63%, 42%)" stopOpacity="1" />
+                <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.2" />
               </linearGradient>
             </defs>
-            {/* Animated dashed route line */}
+            {/* Animated route from right (east) to left (west) */}
             <path 
-              d="M 50 430 Q 120 380 180 320 Q 240 260 280 200 Q 320 140 350 80 Q 380 40 400 20"
+              d="M 400 180 C 350 200 300 240 250 250 C 200 260 150 240 100 260 C 60 275 30 300 20 320"
               className="tru-tracker-animated-route"
-              stroke="url(#routeGradient)"
-              strokeWidth="4"
-              strokeDasharray="12 8"
+              stroke="url(#routeGradientHomepage)"
+              strokeWidth="5"
+              strokeDasharray="15 10"
               fill="none"
               strokeLinecap="round"
             />
-            {/* Solid traveled portion */}
+            {/* Solid traveled portion (from origin to truck) */}
             <path 
-              d="M 50 430 Q 120 380 180 320 Q 210 290 210 260"
+              d="M 400 180 C 350 200 300 240 250 250 C 230 255 210 250 210 245"
               className="tru-tracker-traveled-route"
-              stroke="hsl(142, 71%, 45%)"
-              strokeWidth="4"
+              stroke="hsl(145, 63%, 42%)"
+              strokeWidth="5"
               fill="none"
               strokeLinecap="round"
             />
           </svg>
         </div>
         
-        {/* Pulsing Truck Marker - Animated movement */}
-        <div className="tru-tracker-truck-marker tru-tracker-truck-animated">
-          <div className="tru-tracker-truck-pulse" />
-          <div className="tru-tracker-truck-pulse tru-tracker-truck-pulse-2" />
-          <div className="tru-tracker-truck-icon">
-            <Truck className="w-4 h-4" />
-          </div>
-          {/* Direction indicator */}
-          <div className="tru-tracker-direction-arrow">
-            <ArrowUp className="w-3 h-3" />
+        {/* Truck Marker - Matching tracking page style */}
+        <div className="tru-homepage-truck-marker">
+          <div className="tru-homepage-truck-glow" />
+          <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
+          <div className="tru-homepage-truck-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+              <path d="M15 18H9"/>
+              <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
+              <circle cx="17" cy="18" r="2"/>
+              <circle cx="7" cy="18" r="2"/>
+            </svg>
           </div>
         </div>
         
@@ -496,7 +495,7 @@ function TrackingPreview() {
           <div className="tru-tracker-stat-item">
             <Route className="w-3 h-3" />
             <span className="tru-tracker-stat-label">Traffic</span>
-            <span className="tru-tracker-stat-value tru-tracker-traffic-moderate">{SAMPLE_ROUTE.traffic}</span>
+            <span className="tru-tracker-stat-value tru-tracker-traffic-light">{SAMPLE_ROUTE.traffic}</span>
           </div>
           <div className="tru-tracker-stat-item">
             <Globe className="w-3 h-3" />
@@ -531,23 +530,38 @@ function TrackingPreview() {
         </div>
       </div>
       
-      {/* Satellite Route Overview - Enlarged to match road map */}
+      {/* Satellite Route Overview - Full USA */}
       <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
         <img src={satelliteMapUrl} alt="Satellite Route Overview" />
-        {/* Animated route overlay on satellite */}
+        
+        {/* Animated Route Line - NY to CA (right to left) */}
         <div className="tru-tracker-satellite-route-overlay">
           <svg viewBox="0 0 420 480" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="satRouteGradient" x1="100%" y1="0%" x2="0%" y2="0%">
+                <stop offset="0%" stopColor="hsl(145, 63%, 42%)" stopOpacity="1" />
+                <stop offset="100%" stopColor="hsl(145, 63%, 42%)" stopOpacity="0.4" />
+              </linearGradient>
+            </defs>
+            {/* Full route from NY (right) to CA (left) */}
             <path 
-              d="M 100 420 Q 150 350 200 280 Q 250 210 300 150 Q 340 100 370 60"
-              className="tru-tracker-animated-route tru-tracker-satellite-route"
-              stroke="hsl(142, 71%, 45%)"
-              strokeWidth="3"
-              strokeDasharray="10 6"
+              d="M 380 180 C 340 190 300 200 260 210 C 220 220 180 235 140 245 C 100 255 60 265 40 280"
+              className="tru-tracker-animated-route tru-tracker-satellite-route-line"
+              stroke="url(#satRouteGradient)"
+              strokeWidth="4"
+              strokeDasharray="12 8"
               fill="none"
               strokeLinecap="round"
             />
+            {/* Origin marker (NY) */}
+            <circle cx="380" cy="180" r="8" fill="hsl(145, 63%, 42%)" stroke="white" strokeWidth="2" />
+            {/* Destination marker (CA) */}
+            <circle cx="40" cy="280" r="8" fill="hsl(0, 84%, 60%)" stroke="white" strokeWidth="2" />
+            {/* Truck position indicator */}
+            <circle cx="210" cy="225" r="6" fill="hsl(145, 63%, 42%)" className="tru-tracker-satellite-truck-dot" />
           </svg>
         </div>
+        
         <div className="tru-tracker-satellite-label">
           <Radar className="w-3 h-3" />
           <span>Route Overview</span>
