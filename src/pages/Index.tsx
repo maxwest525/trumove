@@ -43,7 +43,7 @@ import { calculateDistance } from "@/lib/distanceCalculator";
 import { calculateEstimate, formatCurrency } from "@/lib/priceCalculator";
 import { 
   Shield, Video, Boxes, CheckCircle, Info,
-  MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown,
+  MapPin, Route, Clock, DollarSign, Headphones, Phone, ArrowRight, ArrowDown, ArrowUp,
   CalendarIcon, ChevronLeft, Lock, Truck, Sparkles, Star, Users,
   Database, ChevronRight, Radar, CreditCard, ShieldCheck, BarChart3, Zap,
   Home, Building2, MoveVertical, ArrowUpDown, Scan, ChevronUp, ChevronDown, Camera, Globe,
@@ -417,26 +417,63 @@ function TrackingPreview() {
   // Encoded polyline for Miami to Orlando route (simplified I-95/Turnpike path)
   const routePolyline = encodeURIComponent('_pflCz{qhNgGkB{FwCeHoFkIgJaKoMmLoQwMqTuNkWoPsZqQq]iR_`@{Roc@aSkf@eSmi@eS_l@cSso@aSur@_Squ@}Rox@{R_{@yR}~@wRaaBuRocBsRieByRggBqRkiBqRmkBoRonBoRqpBoRsrBqRusBqRwuBqRyvBoRaxBoR');
   
-  // Zoomed-in road map centered on truck position (showing truck on route)
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/path-4+22c55e-0.7(${routePolyline}),pin-s+16a34a(${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat})/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},11,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Dark mode zoomed-in road map centered on truck position (zoom level 14 for close-up)
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/path-4+22c55e-0.8(${routePolyline})/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},14,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
-  // Satellite overview showing full route with markers
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/path-3+22c55e-0.8(${routePolyline}),pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-80.8,27,6.5,0/200x150@2x?access_token=${MAPBOX_TOKEN}`;
+  // Satellite overview showing full route with markers - enlarged to match road map
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/path-4+22c55e-1(${routePolyline}),pin-s-a+22c55e(${SAMPLE_ROUTE.origin.lng},${SAMPLE_ROUTE.origin.lat}),pin-s-b+ef4444(${SAMPLE_ROUTE.destination.lng},${SAMPLE_ROUTE.destination.lat})/-80.8,27,6.5,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   // Street view at truck position (using satellite as proxy for street-level context)
-  const streetViewUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},16,0/120x80@2x?access_token=${MAPBOX_TOKEN}`;
+  const streetViewUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${SAMPLE_ROUTE.truckPosition.lng},${SAMPLE_ROUTE.truckPosition.lat},17,0/120x80@2x?access_token=${MAPBOX_TOKEN}`;
 
   return (
     <div className="tru-tracker-preview-container">
-      {/* Main Road Map */}
+      {/* Main Road Map - Dark mode zoomed on truck */}
       <div className="tru-tracker-road-map">
         <img src={roadMapUrl} alt="Live Route Map" />
         
-        {/* Pulsing Truck Marker */}
-        <div className="tru-tracker-truck-marker">
+        {/* Animated Route Line Overlay */}
+        <div className="tru-tracker-route-line-overlay">
+          <svg viewBox="0 0 420 480" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="hsl(142, 71%, 45%)" stopOpacity="0.3" />
+                <stop offset="50%" stopColor="hsl(142, 71%, 45%)" stopOpacity="1" />
+                <stop offset="100%" stopColor="hsl(142, 71%, 45%)" stopOpacity="0.3" />
+              </linearGradient>
+            </defs>
+            {/* Animated dashed route line */}
+            <path 
+              d="M 50 430 Q 120 380 180 320 Q 240 260 280 200 Q 320 140 350 80 Q 380 40 400 20"
+              className="tru-tracker-animated-route"
+              stroke="url(#routeGradient)"
+              strokeWidth="4"
+              strokeDasharray="12 8"
+              fill="none"
+              strokeLinecap="round"
+            />
+            {/* Solid traveled portion */}
+            <path 
+              d="M 50 430 Q 120 380 180 320 Q 210 290 210 260"
+              className="tru-tracker-traveled-route"
+              stroke="hsl(142, 71%, 45%)"
+              strokeWidth="4"
+              fill="none"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+        
+        {/* Pulsing Truck Marker - Animated movement */}
+        <div className="tru-tracker-truck-marker tru-tracker-truck-animated">
           <div className="tru-tracker-truck-pulse" />
+          <div className="tru-tracker-truck-pulse tru-tracker-truck-pulse-2" />
           <div className="tru-tracker-truck-icon">
             <Truck className="w-4 h-4" />
+          </div>
+          {/* Direction indicator */}
+          <div className="tru-tracker-direction-arrow">
+            <ArrowUp className="w-3 h-3" />
           </div>
         </div>
         
@@ -491,9 +528,23 @@ function TrackingPreview() {
         </div>
       </div>
       
-      {/* Satellite Route Overview - Side Panel */}
-      <div className="tru-tracker-satellite-panel">
+      {/* Satellite Route Overview - Enlarged to match road map */}
+      <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
         <img src={satelliteMapUrl} alt="Satellite Route Overview" />
+        {/* Animated route overlay on satellite */}
+        <div className="tru-tracker-satellite-route-overlay">
+          <svg viewBox="0 0 420 480" preserveAspectRatio="none">
+            <path 
+              d="M 100 420 Q 150 350 200 280 Q 250 210 300 150 Q 340 100 370 60"
+              className="tru-tracker-animated-route tru-tracker-satellite-route"
+              stroke="hsl(142, 71%, 45%)"
+              strokeWidth="3"
+              strokeDasharray="10 6"
+              fill="none"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
         <div className="tru-tracker-satellite-label">
           <Radar className="w-3 h-3" />
           <span>Route Overview</span>
