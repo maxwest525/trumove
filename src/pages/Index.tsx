@@ -469,100 +469,38 @@ function useTruckAnimation() {
   return { truckProgress, mapCenter };
 }
 
-// Satellite Map Panel - Route Overview (matches tracking page style)
+// Satellite Map Panel - Route Overview (uses Mapbox path overlay for real roads)
 function SatelliteMapPanel() {
-  // Use satellite-streets-v12 (hybrid) style centered on US - same as tracking page
-  // Center: -98, 39 (Kansas - center of US), zoom 3.3 for better route visibility
-  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/-98,39,3.3,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // LA and NY coordinates
+  const laCoords = [-118.24, 34.05];
+  const nyCoords = [-74.00, 40.71];
   
-  // Pixel positions for cities on a 420x480 map centered at -98,39 zoom 3.3
-  // Scale: ~8 pixels per degree longitude, ~9 pixels per degree latitude
-  // LA (-118.24, 34.05) - far left, lower (Southern California)
-  const laPos = { x: 52, y: 290 };
-  // NY (-74.00, 40.71) - far right, slightly above center (East Coast)
-  const nyPos = { x: 375, y: 218 };
+  // Key waypoints along I-40/I-70 corridor for realistic routing
+  const waypoints = [
+    [-118.24, 34.05],  // Los Angeles
+    [-111.89, 33.45],  // Phoenix area
+    [-106.65, 35.08],  // Albuquerque
+    [-97.52, 35.47],   // Oklahoma City
+    [-90.05, 35.15],   // Memphis
+    [-86.78, 36.16],   // Nashville
+    [-77.03, 38.90],   // Washington DC
+    [-74.00, 40.71],   // New York
+  ];
   
-  // I-40/I-70 corridor waypoints for realistic route
-  const albuquerque = { x: 125, y: 275 };  // -106.6, 35.1 (NM)
-  const oklahomaCity = { x: 200, y: 268 }; // -97.5, 35.5 (OK)
-  const memphis = { x: 265, y: 272 };      // -90.0, 35.1 (TN)
-  const nashville = { x: 290, y: 258 };    // -86.8, 36.2 (TN)
-  const dcArea = { x: 350, y: 235 };       // -77.0, 38.9 (VA/DC)
+  // Build path string for Mapbox - cyan color with width
+  const pathCoords = waypoints.map(([lng, lat]) => `${lng},${lat}`).join(',');
+  const pathOverlay = `path-5+00e5a0-0.8(${encodeURIComponent(pathCoords)})`;
+  
+  // Origin marker (green) and destination marker (red with truck)
+  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
+  const destMarker = `pin-l+00e5a0(${nyCoords[0]},${nyCoords[1]})`;
+  
+  // Use auto-fit bounds to show entire route
+  const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${pathOverlay},${originMarker},${destMarker}/auto/420x480@2x?access_token=${MAPBOX_TOKEN}&padding=40`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
       <img src={satelliteMapUrl} alt="Satellite Route Overview" />
-      
-      {/* Route overlay with cyan neon line matching tracking page */}
-      <div className="tru-tracker-satellite-route-overlay">
-        <svg viewBox="0 0 420 480" preserveAspectRatio="none">
-          <defs>
-            {/* Outer glow filter for route visibility */}
-            <filter id="routeGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-          
-          {/* Black shadow layer for terrain visibility */}
-          <path 
-            d={`M ${laPos.x} ${laPos.y} C ${albuquerque.x} ${albuquerque.y}, ${oklahomaCity.x} ${oklahomaCity.y}, ${memphis.x} ${memphis.y} S ${dcArea.x} ${dcArea.y}, ${nyPos.x} ${nyPos.y}`}
-            stroke="#000000"
-            strokeWidth="10"
-            strokeOpacity="0.7"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          
-          {/* Outer glow - cyan neon */}
-          <path 
-            d={`M ${laPos.x} ${laPos.y} C ${albuquerque.x} ${albuquerque.y}, ${oklahomaCity.x} ${oklahomaCity.y}, ${memphis.x} ${memphis.y} S ${dcArea.x} ${dcArea.y}, ${nyPos.x} ${nyPos.y}`}
-            stroke="#00e5a0"
-            strokeWidth="6"
-            strokeOpacity="0.5"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            filter="url(#routeGlow)"
-          />
-          
-          {/* Core route line - bright cyan */}
-          <path 
-            d={`M ${laPos.x} ${laPos.y} C ${albuquerque.x} ${albuquerque.y}, ${oklahomaCity.x} ${oklahomaCity.y}, ${memphis.x} ${memphis.y} S ${dcArea.x} ${dcArea.y}, ${nyPos.x} ${nyPos.y}`}
-            className="tru-tracker-route-draw"
-            stroke="#00e5a0"
-            strokeWidth="3"
-            fill="none"
-            strokeLinecap="round"
-          />
-          
-          {/* Origin marker - Red circle (Los Angeles) */}
-          <circle cx={laPos.x} cy={laPos.y} r="8" fill="#ef4444" stroke="white" strokeWidth="2" />
-          
-          {/* Destination marker - Truck in green pulsing circle (New York) */}
-          <circle cx={nyPos.x} cy={nyPos.y} r="18" fill="none" stroke="#00e5a0" strokeWidth="2" opacity="0.4">
-            <animate attributeName="r" values="16;22;16" dur="2s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.4;0.1;0.4" dur="2s" repeatCount="indefinite" />
-          </circle>
-          <circle cx={nyPos.x} cy={nyPos.y} r="12" fill="#0f1419" stroke="#00e5a0" strokeWidth="2" />
-          
-          {/* Truck icon using Lucide-style path */}
-          <g transform={`translate(${nyPos.x - 8}, ${nyPos.y - 6})`}>
-            <path 
-              d="M1 3h9v7H1V3z M10 5.5h3.5l2.5 3v4h-2.5M10 12.5H3.5M5 14a1.5 1.5 0 110-3 1.5 1.5 0 010 3zM12 14a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" 
-              fill="none" 
-              stroke="#00e5a0" 
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </g>
-        </svg>
-      </div>
       
       <div className="tru-tracker-satellite-label">
         <Radar className="w-3 h-3" />
@@ -572,11 +510,14 @@ function SatelliteMapPanel() {
   );
 }
 
-// Road Map Panel - Live GPS View
+// Road Map Panel - Live GPS View with 3D tilt
 function RoadMapPanel() {
   const { truckProgress, mapCenter } = useTruckAnimation();
   
-  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${mapCenter.lng},${mapCenter.lat})/${mapCenter.lng},${mapCenter.lat},13,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Use pitch=60 for 3D tilt effect, bearing follows road direction
+  const bearing = 45; // Northeast direction for visual interest
+  const pitch = 60;   // 3D tilt angle
+  const roadMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/pin-s+22c55e(${mapCenter.lng},${mapCenter.lat})/${mapCenter.lng},${mapCenter.lat},14,${bearing},${pitch}/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-road-map">
