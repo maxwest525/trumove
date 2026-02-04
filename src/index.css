@@ -1476,8 +1476,20 @@
   gap: 20px;
 }
 
+/* Hero Element Entrance Animation */
+@keyframes hero-element-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .tru-hero-logo {
-  height: 72px;
+  height: 80px;
   width: auto;
   filter: 
     /* White underglow halo effect */
@@ -1488,41 +1500,64 @@
     drop-shadow(0 4px 8px hsl(0 0% 0% / 0.7))
     drop-shadow(0 8px 20px hsl(0 0% 0% / 0.5))
     drop-shadow(0 16px 40px hsl(0 0% 0% / 0.3));
+  /* Entrance animation */
+  opacity: 0;
+  animation: hero-element-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Responsive logo sizing - larger on wide screens */
+@media (min-width: 1200px) {
+  .tru-hero-logo {
+    height: 96px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .tru-hero-logo {
+    height: 110px;
+  }
 }
 
 .tru-hero-headline {
-  font-size: clamp(36px, 5vw, 58px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
   color: hsl(0 0% 100%);
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   text-shadow: 
     0 2px 4px hsl(0 0% 0% / 0.95),
     0 4px 12px hsl(0 0% 0% / 0.85),
     0 8px 20px hsl(0 0% 0% / 0.7),
     0 16px 40px hsl(0 0% 0% / 0.5);
+  /* Entrance animation with 100ms delay */
+  opacity: 0;
+  animation: hero-element-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
 }
 
 .tru-hero-accent {
   color: hsl(var(--tm-green));
   -webkit-text-fill-color: hsl(var(--tm-green));
   filter: 
-    drop-shadow(0 0 12px hsl(var(--tm-green) / 0.5))
+    drop-shadow(0 0 8px hsl(var(--tm-green) / 0.6))
+    drop-shadow(0 0 16px hsl(var(--tm-green) / 0.4))
     drop-shadow(0 2px 8px hsl(var(--tm-green) / 0.35));
 }
 
 /* Feature line - single line, muted, elegant spacing */
 .tru-hero-feature-line {
-  font-size: 12px;
+  font-size: clamp(12px, 1.1vw, 15px);
   font-weight: 500;
-  color: hsl(0 0% 100% / 0.65);
-  letter-spacing: 0.02em;
+  color: hsl(0 0% 100% / 0.75);
+  letter-spacing: 0.03em;
   line-height: 1.6;
   margin: 0;
   text-shadow: 
     0 2px 6px hsl(0 0% 0% / 0.9),
     0 4px 16px hsl(0 0% 0% / 0.7);
+  /* Entrance animation with 250ms delay */
+  opacity: 0;
+  animation: hero-element-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
 }
 
 /* RIGHT COLUMN - Form + CTAs */
