@@ -475,16 +475,19 @@ function SatelliteMapPanel() {
   // Center: -98, 39 (Kansas - center of US), zoom 3.3 for better route visibility
   const satelliteMapUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/-98,39,3.3,0/420x480@2x?access_token=${MAPBOX_TOKEN}`;
   
-  // Pixel positions for cities on a 420x480 map centered at -98,39 zoom 3.0
-  // LA is roughly at -118.24, 34.05 → pixel ~85, 265
-  // NY is roughly at -74.00, 40.71 → pixel ~335, 215
-  const laPos = { x: 85, y: 265 };
-  const nyPos = { x: 335, y: 215 };
+  // Pixel positions for cities on a 420x480 map centered at -98,39 zoom 3.3
+  // Scale: ~8 pixels per degree longitude, ~9 pixels per degree latitude
+  // LA (-118.24, 34.05) - far left, lower (Southern California)
+  const laPos = { x: 52, y: 290 };
+  // NY (-74.00, 40.71) - far right, slightly above center (East Coast)
+  const nyPos = { x: 375, y: 218 };
   
-  // Midpoint waypoints for realistic curved route
-  const kansasCity = { x: 210, y: 235 }; // -94.5, 39.1
-  const denver = { x: 145, y: 230 };     // -104.9, 39.7
-  const stLouis = { x: 235, y: 240 };    // -90.2, 38.6
+  // I-40/I-70 corridor waypoints for realistic route
+  const albuquerque = { x: 125, y: 275 };  // -106.6, 35.1 (NM)
+  const oklahomaCity = { x: 200, y: 268 }; // -97.5, 35.5 (OK)
+  const memphis = { x: 265, y: 272 };      // -90.0, 35.1 (TN)
+  const nashville = { x: 290, y: 258 };    // -86.8, 36.2 (TN)
+  const dcArea = { x: 350, y: 235 };       // -77.0, 38.9 (VA/DC)
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
@@ -506,7 +509,7 @@ function SatelliteMapPanel() {
           
           {/* Black shadow layer for terrain visibility */}
           <path 
-            d={`M ${laPos.x} ${laPos.y} Q ${denver.x} ${denver.y - 20}, ${kansasCity.x} ${kansasCity.y} Q ${stLouis.x} ${stLouis.y}, ${nyPos.x} ${nyPos.y}`}
+            d={`M ${laPos.x} ${laPos.y} C ${albuquerque.x} ${albuquerque.y}, ${oklahomaCity.x} ${oklahomaCity.y}, ${memphis.x} ${memphis.y} S ${dcArea.x} ${dcArea.y}, ${nyPos.x} ${nyPos.y}`}
             stroke="#000000"
             strokeWidth="10"
             strokeOpacity="0.7"
@@ -517,7 +520,7 @@ function SatelliteMapPanel() {
           
           {/* Outer glow - cyan neon */}
           <path 
-            d={`M ${laPos.x} ${laPos.y} Q ${denver.x} ${denver.y - 20}, ${kansasCity.x} ${kansasCity.y} Q ${stLouis.x} ${stLouis.y}, ${nyPos.x} ${nyPos.y}`}
+            d={`M ${laPos.x} ${laPos.y} C ${albuquerque.x} ${albuquerque.y}, ${oklahomaCity.x} ${oklahomaCity.y}, ${memphis.x} ${memphis.y} S ${dcArea.x} ${dcArea.y}, ${nyPos.x} ${nyPos.y}`}
             stroke="#00e5a0"
             strokeWidth="6"
             strokeOpacity="0.5"
@@ -529,7 +532,7 @@ function SatelliteMapPanel() {
           
           {/* Core route line - bright cyan */}
           <path 
-            d={`M ${laPos.x} ${laPos.y} Q ${denver.x} ${denver.y - 20}, ${kansasCity.x} ${kansasCity.y} Q ${stLouis.x} ${stLouis.y}, ${nyPos.x} ${nyPos.y}`}
+            d={`M ${laPos.x} ${laPos.y} C ${albuquerque.x} ${albuquerque.y}, ${oklahomaCity.x} ${oklahomaCity.y}, ${memphis.x} ${memphis.y} S ${dcArea.x} ${dcArea.y}, ${nyPos.x} ${nyPos.y}`}
             className="tru-tracker-route-draw"
             stroke="#00e5a0"
             strokeWidth="3"
