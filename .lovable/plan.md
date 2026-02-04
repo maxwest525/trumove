@@ -1,60 +1,65 @@
 
 
 ## Summary
-Fix the Route Overview panel to properly display a marker on California (Los Angeles), a marker on New York, and a route line connecting them using the correct Mapbox Static Images API syntax.
+Switch the Route Overview panel from Mapbox to **Google Static Maps API** to properly display markers on Los Angeles and New York with a route line connecting them.
 
 ---
 
 ## The Problem
 
-The current Mapbox Static API URL has incorrect path encoding syntax. The path overlay format `path-4+4285F4-0.9(encodedCoords)` is malformed - Mapbox expects a different format.
+The current code uses **Mapbox Static API** (`api.mapbox.com`) when you wanted **Google Static Maps API** (`maps.googleapis.com`). The Mapbox URL syntax is completely different from Google's and may not be rendering correctly.
 
 ---
 
 ## The Fix
 
-Use the correct Mapbox Static Images API path overlay syntax:
+Replace the Mapbox API call with Google Static Maps API using the same format already working in `GoogleStaticRouteMap.tsx`.
 
-**Correct format:**
-```
-path-{strokeWidth}+{strokeColor}-{strokeOpacity}({lng},{lat},{lng},{lat}...)
-```
-
-The coordinates should NOT be URL-encoded when inside the parentheses - they're already part of the URL path.
+**Key differences:**
+| | Mapbox | Google |
+|---|---|---|
+| **Coord order** | `lng,lat` | `lat,lng` |
+| **Marker syntax** | `pin-s+color(lng,lat)` | `markers=color:0xHEX\|label:A\|lat,lng` |
+| **Path syntax** | `path-width+color-opacity(coords)` | `path=color:0xHEX\|weight:N\|lat1,lng1\|lat2,lng2` |
 
 ---
 
 ## Implementation
 
-### File: `src/pages/Index.tsx` (lines 439-470)
+### File: `src/pages/Index.tsx`
 
-Replace the `RouteOverviewPanel` function with correct Mapbox syntax:
+**Replace the entire `RouteOverviewPanel` function (lines 438-478):**
 
 ```tsx
+// Route Overview Panel - Google Static Maps API (roadmap style)
 function RouteOverviewPanel() {
-  // LA and NY coordinates [lng, lat]
-  const laCoords = [-118.24, 34.05];
-  const nyCoords = [-74.00, 40.71];
+  // Google Maps API key
+  const googleApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
   
-  // Key waypoints along the route for a realistic path
+  // LA and NY coordinates [lat, lng] - Google uses lat,lng order
+  const laLat = 34.05, laLng = -118.24;
+  const nyLat = 40.71, nyLng = -74.00;
+  
+  // Key waypoints along the route (lat,lng pairs)
   const waypoints = [
-    [-118.24, 34.05],  // Los Angeles
-    [-106.65, 35.08],  // Albuquerque
-    [-97.52, 35.47],   // Oklahoma City
-    [-74.00, 40.71],   // New York
+    [34.05, -118.24],   // Los Angeles
+    [35.08, -106.65],   // Albuquerque  
+    [35.47, -97.52],    // Oklahoma City
+    [40.71, -74.00],    // New York
   ];
   
-  // Build path overlay - correct Mapbox format: path-strokeWidth+color-opacity(coords)
-  // Coords format: lng,lat,lng,lat,lng,lat (no URL encoding needed)
-  const pathCoords = waypoints.map(([lng, lat]) => `${lng},${lat}`).join(',');
-  const pathOverlay = `path-4+4285F4-0.8(${pathCoords})`;
+  // Build path string for Google Static Maps
+  const pathPoints = waypoints.map(([lat, lng]) => `${lat},${lng}`).join('|');
   
-  // Markers: pin-s = small pin, +color, (lng,lat)
-  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
-  const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
-  
-  // Center on continental US with zoom to see full route
-  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${pathOverlay},${originMarker},${destMarker}/-98,38,3.5/420x480@2x?access_token=${MAPBOX_TOKEN}`;
+  // Build the Google Static Maps URL
+  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?` +
+    `size=420x480` +
+    `&scale=2` +
+    `&maptype=roadmap` +
+    `&markers=color:0x22c55e|size:mid|label:A|${laLat},${laLng}` +  // Green marker on LA
+    `&markers=color:0xef4444|size:mid|label:B|${nyLat},${nyLng}` +  // Red marker on NY
+    `&path=color:0x4285F4|weight:4|${pathPoints}` +                  // Blue route line
+    `&key=${googleApiKey}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged">
@@ -73,12 +78,6 @@ function RouteOverviewPanel() {
 }
 ```
 
-**Key changes:**
-1. Remove `encodeURIComponent()` - coordinates shouldn't be encoded
-2. Simplify waypoints to 4 key points (cleaner line)
-3. Add `className` to img for proper sizing
-4. Keep the green origin marker (LA) and red destination marker (NY)
-
 ---
 
 ## Visual Result
@@ -89,15 +88,11 @@ function RouteOverviewPanel() {
 ├──────────────────┬────────────────────┬────────────────────────┤
 │                  │                    │                        │
 │   ROUTE OVERVIEW │    TRUCK VIEW      │    CONTENT             │
-│                  │    (unchanged)     │                        │
-│   🟢 Los Angeles │                    │                        │
-│      ↓           │                    │                        │
-│   ━━━blue line━━ │                    │                        │
-│      ↓           │                    │                        │
-│   🔴 New York    │                    │                        │
+│   (Google Maps   │    (unchanged -    │                        │
+│   roadmap with   │    Mapbox dark     │                        │
+│   A/B markers    │    tilted view)    │                        │
+│   + blue line)   │                    │                        │
 │                  │                    │                        │
-│   [roadmap       │   [tilted dark     │                        │
-│    style]        │    mode + truck]   │                        │
 └──────────────────┴────────────────────┴────────────────────────┘
 ```
 
@@ -105,8 +100,9 @@ function RouteOverviewPanel() {
 
 ## Technical Notes
 
-- **Truck View Panel**: Will NOT be modified - it's working perfectly
-- The path uses Google Maps blue color (`#4285F4`) for familiarity
-- Green marker (`#22c55e`) on LA, red marker (`#ef4444`) on NY
-- Zoom level 3.5 shows the full continental US route
+1. **Truck View Panel**: NOT modified - stays as Mapbox dark tilted view
+2. Uses the existing `VITE_GOOGLE_MAPS_API_KEY` already configured in secrets
+3. Green marker (A) on Los Angeles, Red marker (B) on New York
+4. Blue route line (`#4285F4`) connecting them via waypoints
+5. Google automatically fits the map to show all markers and path
 
