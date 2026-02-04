@@ -500,16 +500,16 @@ function TruckViewPanel() {
   const animationRef = useRef<number>();
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   
-  // Fetch actual road geometry from Mapbox Directions API
+  // Fetch actual road geometry from Mapbox Directions API - city streets loop
   useEffect(() => {
     const fetchRoadRoute = async () => {
-      // Define a small loop route with waypoints - Mapbox will snap to roads
+      // Downtown Oklahoma City street grid loop - actual city streets
       const waypoints = [
-        [-97.5065, 35.4692], // Start point
-        [-97.5020, 35.4720], // East
-        [-97.5020, 35.4760], // North  
-        [-97.5065, 35.4760], // West
-        [-97.5065, 35.4692], // Back to start
+        [-97.5165, 35.4672], // N Robinson Ave & NW 1st St
+        [-97.5165, 35.4702], // N Robinson Ave & NW 4th St  
+        [-97.5125, 35.4702], // NW 4th St & N Broadway Ave
+        [-97.5125, 35.4672], // N Broadway Ave & NW 1st St
+        [-97.5165, 35.4672], // Back to start - complete the block
       ];
       
       const coordsString = waypoints.map(p => `${p[0]},${p[1]}`).join(';');
@@ -527,10 +527,12 @@ function TruckViewPanel() {
         }
       } catch (error) {
         console.error('Failed to fetch road route:', error);
-        // Fallback to a simple straight route
+        // Fallback to downtown grid
         setRouteCoords([
-          [-97.5065, 35.4692],
-          [-97.5020, 35.4720],
+          [-97.5165, 35.4672],
+          [-97.5165, 35.4702],
+          [-97.5125, 35.4702],
+          [-97.5125, 35.4672],
         ]);
       }
     };
@@ -594,7 +596,7 @@ function TruckViewPanel() {
     const animate = () => {
       if (!map.current) return;
       
-      progress += 0.0001; // Slow for realistic driving speed
+      progress += 0.00003; // Very slow for realistic city driving speed
       if (progress > 1) progress = 0;
       
       const position = getPointAlongRoute(progress);
