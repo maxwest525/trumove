@@ -2590,7 +2590,7 @@
 /* Steps left container - center-relative positioning for consistent gap */
 .tru-ai-steps-left {
   position: absolute;
-  left: 550px;
+  left: 737.5px;
   top: 50%;
   transform: translate(-100%, -50%);
   margin-left: -4rem;
@@ -2863,7 +2863,7 @@
 /* Previews container - center-relative positioning for consistent gap */
 .tru-ai-header-previews {
   position: absolute;
-  left: 550px;
+  left: 737.5px;
   top: 50%;
   transform: translate(0, -50%);
   margin-left: 4rem;
