@@ -2598,8 +2598,8 @@
   position: absolute;
   left: 770px;
   top: 50%;
-  transform: translate(-50%, -50%);
-  margin-left: calc(-210px - 24px - 210px - 4rem); /* Half scanner + gap + half detection + extra gap */
+  transform: translate(-100%, -50%);
+  margin-left: calc(-210px - 24px); /* Negative half scanner width - gap */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2624,8 +2624,8 @@
   position: absolute;
   left: 770px;
   top: 50%;
-  transform: translate(-50%, -50%);
-  margin-left: calc(210px + 24px); /* Half scanner + gap */
+  transform: translate(0, -50%);
+  margin-left: calc(210px + 24px); /* Half scanner width + gap */
   z-index: 10;
 }
 
