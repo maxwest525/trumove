@@ -216,24 +216,41 @@ export function TruckAerialView({
         <div className="flex flex-col h-[calc(100%-3rem)]">
           
           <div className="relative flex-1 rounded-lg overflow-hidden bg-gradient-to-br from-muted to-muted/50 border border-border">
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            {/* Show pause message when tracking is active but not paused */}
+            {isTracking && !isPaused ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/95 z-20">
+                <div className="text-center max-w-xs px-6">
+                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Pause className="w-7 h-7 text-primary" />
+                  </div>
+                  <p className="text-base font-semibold text-foreground mb-2">
+                    Please pause progress tracker to view live truck view
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Pause the tracker using the control button below the map
+                  </p>
+                </div>
               </div>
+            ) : (
+              <>
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
+                )}
+                
+                {/* Interactive Street View iframe */}
+                <iframe
+                  src={getInteractiveStreetViewUrl() || ''}
+                  className="w-full h-full border-0"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  onLoad={() => setIsLoading(false)}
+                  onError={() => setIsLoading(false)}
+                />
+              </>
             )}
-            
-            {/* Interactive Street View iframe */}
-            <iframe
-              src={getInteractiveStreetViewUrl() || ''}
-              className="w-full h-full border-0"
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              onLoad={() => setIsLoading(false)}
-              onError={() => setIsLoading(false)}
-            />
-
-
           </div>
 
           {/* Location info footer */}
@@ -244,7 +261,7 @@ export function TruckAerialView({
           )}
 
           <p className="text-xs text-muted-foreground mt-2">
-            Drag to look around • Use scroll to zoom
+            {isTracking && !isPaused ? "Pause tracking to interact with street view" : "Drag to look around • Use scroll to zoom"}
           </p>
         </div>
       ) : (
