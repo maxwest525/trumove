@@ -1,186 +1,79 @@
 
-# Fix Orbit Animation, Add 3D Terrain to Route Overview, and Intro Fly-Through
+# Plan: Implement Route Optimization Using Mapbox Directions API
 
-This plan addresses all your feedback: fixing the broken camera orbit, making the maps look as cool as the Mapbox documentation examples, and removing Street View from the tracking map.
+## Context
+The Mapbox Optimization API (`optimized-trips`) requires premium account scopes that aren't available with a standard token. However, the **Mapbox Directions API** (which works with your public token) supports up to 25 waypoints with traffic-aware routing.
 
-## What's Wrong with the Current Orbit
-
-The current sine wave oscillation (`Math.sin(Date.now() / 4000) * 25`) has a problem:
-- `Date.now()` returns huge values (milliseconds since 1970)
-- When divided by 4000, it creates very large radians for the sine function
-- This causes the sine wave to appear "choppy" because it's cycling through many complete periods rapidly
-- The camera appears to jump 5% then reset because you're seeing micro-slices of fast oscillation
-
-## Implementation Plan
-
-### 1. Fix the Orbit Animation (Index.tsx Homepage)
-
-Replace the current choppy sine wave with a **proper elapsed-time-based oscillation**:
-
-```text
-Current (broken):
-  additionalBearing = Math.sin(Date.now() / 4000) * 25
-  ↳ Date.now() is huge → sine cycles too fast → appears jerky
-
-Fixed:
-  startTime = Date.now() at animation start
-  elapsedSeconds = (Date.now() - startTime) / 1000
-  additionalBearing = Math.sin(elapsedSeconds * 0.25) * 35
-  ↳ Counts from 0 → smooth 8-second oscillation cycle
-```
-
-This creates a natural, cinematic camera sway that:
-- Oscillates ±35° smoothly over ~25 seconds (full cycle)
-- Never resets or jumps
-- Feels like a drone camera naturally panning while following the truck
-
-### 2. Add 3D Terrain to Route Overview Panel (Homepage)
-
-Convert the static image Route Overview to a **live Mapbox GL JS map** with:
-
-```text
-+------------------------------------------+
-|  [3D Globe view with terrain hillshade]  |
-|                                          |
-|      LA ●━━━━━━━━━━━━━━━━━━━● NY         |
-|           Rocky Mountains visible        |
-|           with elevation shading         |
-|                                          |
-|  [Subtle atmospheric fog at horizon]     |
-+------------------------------------------+
-```
-
-Features:
-- Use `mapbox://styles/mapbox/satellite-streets-v12` for hybrid terrain view
-- Add DEM terrain with **2.5x exaggeration** (dramatic mountains)
-- Add atmospheric fog for depth
-- 30° pitch angle to show elevation
-- GeoJSON route line with cyan neon glow
-
-### 3. Add Intro Fly-Through on Tracking Page
-
-When the user starts tracking, add a **cinematic intro animation** that zooms from overview to street level:
-
-```text
-Sequence (3 seconds total):
-1. Start: Continental overview (zoom 4, pitch 0°)
-2. Mid: Regional view (zoom 8, pitch 30°) 
-3. End: Street level at truck (zoom 15, pitch 55°)
-```
-
-Using the existing `cinematicFlyTo()` function from `mapbox3DConfig.ts`:
-- Triggered when tracking starts AND route is calculated
-- Smooth cubic easing for dramatic effect
-- Ends at the origin point with tilted perspective
-
-### 4. Confirm Street View Removal
-
-The Street View inset was already removed from `TruckTrackingMap.tsx` (line 798 shows the comment: `{/* Street View inset removed - cleaner map focus */}`). I'll verify no other Street View overlays exist within the map component.
+## Solution
+Create a new edge function that implements multi-stop route optimization using the Mapbox Directions API with a permutation-based algorithm to find the optimal stop order.
 
 ---
 
-## Files to Modify
+## Implementation Steps
 
-| File | Changes |
-|------|---------|
-| `src/pages/Index.tsx` | Fix orbit animation with elapsed-time tracking; Convert RouteOverviewPanel from static image to live Mapbox GL map with 3D terrain |
-| `src/components/tracking/TruckTrackingMap.tsx` | Add intro fly-through animation when tracking starts |
+### 1. Create New Edge Function: `mapbox-directions-optimize`
+Replace the current `mapbox-optimization` function with a new implementation that:
+- Uses the Directions API (`/directions/v5/mapbox/driving-traffic/`)
+- Tests multiple route permutations to find the optimal order
+- Preserves first pickup and last drop-off as fixed endpoints
+- Returns optimized order, distance, duration, savings, and route geometry
+
+**Algorithm approach:**
+- For small sets (2-6 intermediate stops): Test all permutations to find shortest route
+- For larger sets (7+ stops): Use nearest-neighbor heuristic for efficiency
+- Compare optimized route against original order to calculate savings
+
+### 2. Update Mapbox Token Usage
+- Use your existing public token (`MAPBOX_ACCESS_TOKEN`) - no secret token needed
+- The Directions API is included in standard token scopes
+
+### 3. Update `useRouteOptimization` Hook
+- Point to the new `mapbox-directions-optimize` function
+- Keep Google fallback as backup
+
+---
 
 ## Technical Details
 
-### Fixed Orbit Animation Logic
-
-```javascript
-// In TruckViewPanel
-const startTimeRef = useRef<number>(Date.now());
-
-const animate = () => {
-  // Calculate elapsed time since animation started
-  const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
-  
-  // Smooth sine wave: completes one oscillation every ~25 seconds
-  // ±35° range for natural camera sway
-  const orbitOffset = Math.sin(elapsedSeconds * 0.25) * 35;
-  
-  // Apply to driving bearing
-  map.current.setBearing(drivingBearing + orbitOffset);
-};
+### Edge Function Structure
+```text
+supabase/functions/mapbox-directions-optimize/index.ts
+├── Permutation generator for small waypoint sets
+├── Nearest-neighbor heuristic for larger sets
+├── Mapbox Directions API calls with driving-traffic profile
+├── Route comparison logic for savings calculation
+└── Response with optimized order, geometry, and metrics
 ```
 
-### 3D Route Overview Panel Structure
-
-```javascript
-// Convert RouteOverviewPanel to live Mapbox GL
-function RouteOverviewPanel() {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  
-  useEffect(() => {
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      center: [-98, 38], // Center of US
-      zoom: 3.5,
-      pitch: 35,
-      bearing: -15,
-      interactive: false
-    });
-    
-    map.current.on('load', () => {
-      // Add dramatic terrain
-      addTerrain(map.current, 2.5);
-      setFogPreset(map.current, 'satellite');
-      
-      // Add route line with glow
-      map.current.addSource('route', { ... });
-      map.current.addLayer({ id: 'route-glow', ... });
-      map.current.addLayer({ id: 'route-line', ... });
-    });
-  }, []);
-  
-  return <div ref={mapContainer} className="w-full h-full" />;
-}
+### API Endpoint Used
+```
+GET https://api.mapbox.com/directions/v5/mapbox/driving-traffic/{coordinates}
+  ?access_token={public_token}
+  &geometries=polyline6
+  &overview=full
+  &annotations=distance,duration,congestion
 ```
 
-### Intro Fly-Through Trigger
-
-```javascript
-// In TruckTrackingMap.tsx - when route is calculated
-const triggerIntroAnimation = useCallback(() => {
-  if (!map.current || !originCoords || introPlayedRef.current) return;
-  
-  introPlayedRef.current = true;
-  
-  // Start zoomed out
-  map.current.jumpTo({
-    center: [-98, 39], // US center
-    zoom: 4,
-    pitch: 0,
-    bearing: 0
-  });
-  
-  // Cinematic fly to origin
-  setTimeout(() => {
-    cinematicFlyTo(map.current!, originCoords, {
-      zoom: 15,
-      pitch: 55,
-      bearing: -20,
-      duration: 3500,
-      curve: 1.8
-    });
-  }, 500);
-}, [originCoords]);
-```
+### Key Benefits
+- Works with your existing public Mapbox token
+- Traffic-aware routing with real-time congestion data
+- Supports up to 25 waypoints (vs 12 for Optimization API)
+- No premium API access required
 
 ---
 
-## Visual Impact
+## Files to Create/Modify
 
-| Element | Before | After |
-|---------|--------|-------|
-| Homepage Truck View | Camera sways 5% then resets | Smooth continuous ±35° sway |
-| Homepage Route Overview | Static 2D image | Live 3D terrain with visible mountains |
-| Tracking Page Load | Instant view at origin | Cinematic zoom from space to street |
-| Tracking Map | May have Street View inset | Clean map-only focus |
+| File | Action |
+|------|--------|
+| `supabase/functions/mapbox-directions-optimize/index.ts` | Create new optimization function |
+| `supabase/config.toml` | Add function configuration |
+| `src/hooks/useRouteOptimization.ts` | Update to use new function |
 
-These changes will make your maps match the stunning Mapbox documentation examples - with dramatic terrain, cinematic camera moves, and smooth animations throughout.
+---
+
+## Expected Results
+- Multi-stop route optimization working with your public Mapbox token
+- Real traffic conditions considered in route calculations
+- Accurate ETA predictions for moving truck arrivals
+- Visual display of optimized route on map
