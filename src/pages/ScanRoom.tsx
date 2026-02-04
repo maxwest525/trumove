@@ -759,11 +759,36 @@ export default function ScanRoom() {
         </section>
 
 
+        {/* Trust Strip - Above Build Manually */}
+        <section className="tru-scan-trust-strip-slim tru-scan-trust-strip-bottom">
+          <div className="container max-w-6xl mx-auto px-4">
+            <div className="tru-scan-trust-row-slim tru-scan-trust-spread">
+              <div className="tru-scan-trust-item-slim">
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>No App Required</span>
+              </div>
+              <div className="tru-scan-trust-item-slim">
+                <Zap className="w-3.5 h-3.5" />
+                <span>500+ Item Types</span>
+              </div>
+              <div className="tru-scan-trust-item-slim">
+                <Ruler className="w-3.5 h-3.5" />
+                <span>Auto Dimensions</span>
+              </div>
+              <div className="tru-scan-trust-item-slim">
+                <Clock className="w-3.5 h-3.5" />
+                <span>Save 30+ Minutes</span>
+              </div>
+              <div className="tru-scan-trust-item-slim">
+                <Shield className="w-3.5 h-3.5" />
+                <span>Secure & Private</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Bottom CTA */}
         <section className="tru-scan-bottom-cta">
-          <p className="tru-scan-bottom-text">
-            Can't wait? Try our AI-powered inventory tools now.
-          </p>
           <div className="tru-scan-bottom-buttons">
             <button
               onClick={() => navigate("/online-estimate")}

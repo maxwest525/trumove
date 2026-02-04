@@ -22124,6 +22124,16 @@
   color: hsl(var(--primary));
 }
 
+/* Bottom trust strip - above Build Manually button */
+.tru-scan-trust-strip-bottom {
+  margin-top: 2rem;
+  margin-bottom: 0;
+  border-radius: 12px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Legacy trust strip (kept for compatibility) */
 .tru-scan-trust-strip {
   padding: 20px 24px;
