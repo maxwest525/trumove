@@ -13,6 +13,7 @@ import logoImg from "@/assets/logo.png";
 import ChatModal from "@/components/chat/ChatModal";
 import MultiStopWizard, { type MultiStopMoveDetails } from "./MultiStopWizard";
 import type { StopLocation } from "./MultiStopLocationList";
+import { formatPhoneNumber, isValidPhoneNumber } from "@/lib/phoneFormat";
 
 export interface ExtendedMoveDetails {
   // Contact
@@ -589,9 +590,9 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
                   <input
                     type="tel"
                     value={details.phone}
-                    onChange={(e) => updateDetails({ phone: e.target.value })}
+                    onChange={(e) => updateDetails({ phone: formatPhoneNumber(e.target.value) })}
                     onKeyDown={handleKeyDown}
-                    placeholder="Phone Number"
+                    placeholder="(555) 123-4567"
                     className="tru-qb-input"
                   />
                 </div>

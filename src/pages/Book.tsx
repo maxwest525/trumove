@@ -17,6 +17,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { formatPhoneNumber, isValidPhoneNumber } from "@/lib/phoneFormat";
 import logoImg from "@/assets/logo.png";
 import AIChatContainer from "@/components/chat/AIChatContainer";
 import { getPageContext } from "@/components/chat/pageContextConfig";
@@ -2592,7 +2593,7 @@ export default function Book() {
                   type="tel"
                   placeholder="(555) 123-4567"
                   value={callbackPhone}
-                  onChange={(e) => setCallbackPhone(e.target.value)}
+                  onChange={(e) => setCallbackPhone(formatPhoneNumber(e.target.value))}
                   className="h-11"
                 />
               </div>
@@ -2603,7 +2604,7 @@ export default function Book() {
                 </Button>
                 <Button 
                   onClick={() => {
-                    if (callbackPhone.trim().length >= 10) {
+                    if (isValidPhoneNumber(callbackPhone)) {
                       setCallbackSubmitted(true);
                       toast.success("Callback requested! An agent will call you shortly.");
                     } else {

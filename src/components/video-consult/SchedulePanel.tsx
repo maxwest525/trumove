@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BookingCalendar } from "./BookingCalendar";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { formatPhoneNumber, isValidPhoneNumber } from "@/lib/phoneFormat";
 
 interface SchedulePanelProps {
   className?: string;
@@ -32,8 +33,8 @@ export function SchedulePanel({ className }: SchedulePanelProps) {
       toast.error("Please enter your name");
       return;
     }
-    if (!phone.trim()) {
-      toast.error("Please enter your phone number");
+    if (!isValidPhoneNumber(phone)) {
+      toast.error("Please enter a valid phone number");
       return;
     }
     if (!tcpaConsent) {
@@ -122,7 +123,7 @@ export function SchedulePanel({ className }: SchedulePanelProps) {
               id="schedule-phone"
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
               placeholder="(555) 123-4567"
               className="h-9"
             />
@@ -158,7 +159,7 @@ export function SchedulePanel({ className }: SchedulePanelProps) {
         <Button
           onClick={handleSchedule}
           className="w-full h-10 font-semibold"
-          disabled={!selectedDate || !selectedTime || !name.trim() || !phone.trim() || !tcpaConsent}
+          disabled={!selectedDate || !selectedTime || !name.trim() || !isValidPhoneNumber(phone) || !tcpaConsent}
         >
           <Calendar className="w-4 h-4 mr-2" />
           Schedule {callType === 'video' ? 'Video' : 'Voice'} Call

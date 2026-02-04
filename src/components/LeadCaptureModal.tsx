@@ -3,6 +3,7 @@ import { X, User, Phone, Mail, ArrowRight, Lock } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { formatPhoneNumber, isValidPhoneNumber } from "@/lib/phoneFormat";
 
 interface LeadCaptureModalProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
     const newErrors: typeof errors = {};
     if (!name.trim()) newErrors.name = "Name is required";
     if (!email.includes("@")) newErrors.email = "Valid email is required";
-    if (phone.trim().length < 10) newErrors.phone = "Valid phone number is required";
+    if (!isValidPhoneNumber(phone)) newErrors.phone = "Valid phone number is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -85,7 +86,7 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, targetFlow
             <Input
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
               placeholder="(555) 123-4567"
               className={`tru-lead-capture-input ${errors.phone ? 'has-error' : ''}`}
             />
