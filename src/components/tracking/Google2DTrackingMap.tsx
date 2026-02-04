@@ -104,6 +104,9 @@ export function Google2DTrackingMap({
   const destMarkerRef = useRef<any>(null);
   const animatedPolylineRef = useRef<any>(null);
   const routePathRef = useRef<[number, number][]>([]);
+  const trailPolylineRef = useRef<any>(null);
+  const trailGlowOuterRef = useRef<any>(null);
+  const trailGlowInnerRef = useRef<any>(null);
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -491,6 +494,75 @@ export function Google2DTrackingMap({
         nextPoint[1] - lowerPoint[1]
       ) * (180 / Math.PI);
       setCurrentBearing((bearing + 360) % 360);
+    }
+
+    // Update glowing trail behind the truck
+    if (mapRef.current && isTracking && progress > 0) {
+      // Get the traveled portion of the route
+      const traveledPath = path.slice(0, lowerIndex + 1).map(p => ({ lat: p[1], lng: p[0] }));
+      // Add current truck position
+      traveledPath.push(newPosition);
+
+      // Create or update the outer glow (widest, most diffuse)
+      if (!trailGlowOuterRef.current) {
+        trailGlowOuterRef.current = new window.google.maps.Polyline({
+          path: traveledPath,
+          geodesic: true,
+          strokeColor: '#00e5a0',
+          strokeOpacity: 0.15,
+          strokeWeight: 24,
+          map: mapRef.current,
+          zIndex: 50
+        });
+      } else {
+        trailGlowOuterRef.current.setPath(traveledPath);
+      }
+
+      // Create or update the inner glow (brighter, narrower)
+      if (!trailGlowInnerRef.current) {
+        trailGlowInnerRef.current = new window.google.maps.Polyline({
+          path: traveledPath,
+          geodesic: true,
+          strokeColor: '#00e5a0',
+          strokeOpacity: 0.35,
+          strokeWeight: 14,
+          map: mapRef.current,
+          zIndex: 51
+        });
+      } else {
+        trailGlowInnerRef.current.setPath(traveledPath);
+      }
+
+      // Create or update the core trail (brightest, narrowest)
+      if (!trailPolylineRef.current) {
+        trailPolylineRef.current = new window.google.maps.Polyline({
+          path: traveledPath,
+          geodesic: true,
+          strokeColor: '#00ffb3',
+          strokeOpacity: 0.9,
+          strokeWeight: 6,
+          map: mapRef.current,
+          zIndex: 52
+        });
+      } else {
+        trailPolylineRef.current.setPath(traveledPath);
+      }
+    }
+
+    // Clear trail when not tracking or progress is 0
+    if (!isTracking || progress === 0) {
+      if (trailGlowOuterRef.current) {
+        trailGlowOuterRef.current.setMap(null);
+        trailGlowOuterRef.current = null;
+      }
+      if (trailGlowInnerRef.current) {
+        trailGlowInnerRef.current.setMap(null);
+        trailGlowInnerRef.current = null;
+      }
+      if (trailPolylineRef.current) {
+        trailPolylineRef.current.setMap(null);
+        trailPolylineRef.current = null;
+      }
     }
 
     // Calculate speed based on position change
