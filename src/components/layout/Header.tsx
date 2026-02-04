@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Menu, X, Phone, Video, ChevronDown, User,
@@ -13,64 +13,102 @@ import previewVideoConsult from "@/assets/preview-video-consult.jpg";
 import previewPropertyLookup from "@/assets/preview-property-lookup.jpg";
 import previewCarrierVetting from "@/assets/preview-carrier-vetting.jpg";
 
-// Mega-menu preview components - Image-based with feature highlights
-const EstimatorPreview = () => (
-  <div className="mega-preview-card">
-    <div className="mega-preview-image">
-      <img src={previewAiScanner} alt="AI Move Estimator" />
-      <div className="mega-preview-overlay">
-        <span className="mega-preview-badge">Live Demo</span>
+// Reusable Preview Card with skeleton + parallax
+interface PreviewCardProps {
+  src: string;
+  alt: string;
+  badge?: string;
+  badgeType?: 'default' | 'live';
+  caption: string;
+}
+
+const PreviewCard = ({ src, alt, badge, badgeType = 'default', caption }: PreviewCardProps) => {
+  const [loaded, setLoaded] = useState(false);
+  const [transform, setTransform] = useState('');
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    // Subtle tilt: max 4deg rotation, 6px translation
+    setTransform(`perspective(600px) rotateY(${x * 4}deg) rotateX(${-y * 4}deg) translateX(${x * 6}px) translateY(${y * 6}px)`);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setTransform('');
+  }, []);
+
+  return (
+    <div 
+      ref={cardRef}
+      className="mega-preview-card"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="mega-preview-image" style={{ transform, transition: transform ? 'transform 0.1s ease-out' : 'transform 0.3s ease-out' }}>
+        {!loaded && <div className="mega-preview-skeleton" />}
+        <img 
+          src={src} 
+          alt={alt} 
+          onLoad={() => setLoaded(true)}
+          style={{ opacity: loaded ? 1 : 0 }}
+        />
+        <div className="mega-preview-overlay">
+          {badgeType === 'live' ? (
+            <span className="mega-preview-live">
+              <span className="mega-live-dot" />
+              {badge}
+            </span>
+          ) : badge ? (
+            <span className="mega-preview-badge">{badge}</span>
+          ) : null}
+        </div>
+      </div>
+      <div className="mega-preview-caption">
+        <span className="mega-preview-highlight">{caption}</span>
       </div>
     </div>
-    <div className="mega-preview-caption">
-      <span className="mega-preview-highlight">Scan any room → Instant inventory</span>
-    </div>
-  </div>
+  );
+};
+
+// Mega-menu preview components using shared PreviewCard
+const EstimatorPreview = () => (
+  <PreviewCard 
+    src={previewAiScanner} 
+    alt="AI Move Estimator"
+    badge="Live Demo"
+    caption="Scan any room → Instant inventory"
+  />
 );
 
 const ConsultPreview = () => (
-  <div className="mega-preview-card">
-    <div className="mega-preview-image">
-      <img src={previewVideoConsult} alt="Video Consultation" />
-      <div className="mega-preview-overlay">
-        <span className="mega-preview-live">
-          <span className="mega-live-dot" />
-          Available Now
-        </span>
-      </div>
-    </div>
-    <div className="mega-preview-caption">
-      <span className="mega-preview-highlight">Talk to a real person, not a bot</span>
-    </div>
-  </div>
+  <PreviewCard 
+    src={previewVideoConsult} 
+    alt="Video Consultation"
+    badge="Available Now"
+    badgeType="live"
+    caption="Talk to a real person, not a bot"
+  />
 );
 
 const TrackingPreview = () => (
-  <div className="mega-preview-card">
-    <div className="mega-preview-image">
-      <img src={previewPropertyLookup} alt="Live Tracking" />
-      <div className="mega-preview-overlay">
-        <span className="mega-preview-badge">Real-time GPS</span>
-      </div>
-    </div>
-    <div className="mega-preview-caption">
-      <span className="mega-preview-highlight">Know exactly where your belongings are</span>
-    </div>
-  </div>
+  <PreviewCard 
+    src={previewPropertyLookup} 
+    alt="Live Tracking"
+    badge="Real-time GPS"
+    caption="Know exactly where your belongings are"
+  />
 );
 
 const VettingPreview = () => (
-  <div className="mega-preview-card">
-    <div className="mega-preview-image">
-      <img src={previewCarrierVetting} alt="Carrier Vetting" />
-      <div className="mega-preview-overlay">
-        <span className="mega-preview-badge">FMCSA Data</span>
-      </div>
-    </div>
-    <div className="mega-preview-caption">
-      <span className="mega-preview-highlight">Verify any mover's safety record</span>
-    </div>
-  </div>
+  <PreviewCard 
+    src={previewCarrierVetting} 
+    alt="Carrier Vetting"
+    badge="FMCSA Data"
+    caption="Verify any mover's safety record"
+  />
 );
 
 interface NavItem {
