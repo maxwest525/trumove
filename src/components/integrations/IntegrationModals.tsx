@@ -3,12 +3,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Users, Phone, Calendar, MessageSquare, BarChart3, 
   FileText, Mail, Video, Headphones, Clock, 
   CheckCircle2, ArrowRight, ExternalLink, TrendingUp,
   PhoneCall, PhoneIncoming, PhoneOutgoing, Voicemail,
-  UserPlus, DollarSign, Truck, MapPin, Star
+  UserPlus, DollarSign, Truck, MapPin, Star, Bell,
+  Search, Filter, MoreHorizontal, Plus, ChevronRight,
+  Activity, Target, Zap, AlertCircle, RefreshCw
 } from "lucide-react";
 
 interface IntegrationModalProps {
@@ -35,19 +38,41 @@ const RINGCENTRAL_FEATURES = [
   { icon: CheckCircle2, title: "CRM Integration", desc: "Sync calls with Granot CRM" },
 ];
 
-// Fake demo data for Granot CRM
+// Enhanced demo data for Granot CRM
 const GRANOT_DEMO_LEADS = [
-  { name: "Sarah Johnson", status: "Hot", value: "$4,200", move: "NYC → Miami", date: "Feb 15" },
-  { name: "Michael Chen", status: "Warm", value: "$2,800", move: "LA → Seattle", date: "Feb 18" },
-  { name: "Emily Rodriguez", status: "New", value: "$3,500", move: "Chicago → Denver", date: "Feb 22" },
-  { name: "David Kim", status: "Hot", value: "$5,100", move: "Boston → Austin", date: "Feb 12" },
+  { name: "Sarah Johnson", status: "Hot", value: "$4,200", move: "NYC → Miami", date: "Feb 15", phone: "(555) 123-4567", email: "sarah.j@email.com", lastContact: "2 hours ago" },
+  { name: "Michael Chen", status: "Warm", value: "$2,800", move: "LA → Seattle", date: "Feb 18", phone: "(555) 234-5678", email: "m.chen@email.com", lastContact: "Yesterday" },
+  { name: "Emily Rodriguez", status: "New", value: "$3,500", move: "Chicago → Denver", date: "Feb 22", phone: "(555) 345-6789", email: "emily.r@email.com", lastContact: "Just now" },
+  { name: "David Kim", status: "Hot", value: "$5,100", move: "Boston → Austin", date: "Feb 12", phone: "(555) 456-7890", email: "d.kim@email.com", lastContact: "3 hours ago" },
 ];
 
 const GRANOT_DEMO_STATS = [
-  { label: "Active Leads", value: "47", change: "+12%" },
-  { label: "Booked This Month", value: "23", change: "+8%" },
-  { label: "Revenue Pipeline", value: "$142K", change: "+18%" },
-  { label: "Conversion Rate", value: "34%", change: "+5%" },
+  { label: "Active Leads", value: "47", change: "+12%", icon: Users },
+  { label: "Booked This Month", value: "23", change: "+8%", icon: CheckCircle2 },
+  { label: "Revenue Pipeline", value: "$142K", change: "+18%", icon: DollarSign },
+  { label: "Conversion Rate", value: "34%", change: "+5%", icon: Target },
+];
+
+const GRANOT_RECENT_ACTIVITY = [
+  { type: "call", text: "Called Sarah Johnson", time: "2 min ago", icon: Phone },
+  { type: "email", text: "Sent estimate to Michael Chen", time: "15 min ago", icon: Mail },
+  { type: "booking", text: "New booking: David Kim", time: "1 hr ago", icon: CheckCircle2 },
+  { type: "lead", text: "New lead: Emily Rodriguez", time: "2 hrs ago", icon: UserPlus },
+  { type: "task", text: "Follow-up reminder: James Wilson", time: "3 hrs ago", icon: Bell },
+];
+
+const GRANOT_UPCOMING_MOVES = [
+  { customer: "Robert Taylor", from: "Phoenix, AZ", to: "Portland, OR", date: "Feb 10", crew: "Team Alpha", status: "Confirmed" },
+  { customer: "Lisa Wang", from: "Denver, CO", to: "San Diego, CA", date: "Feb 11", crew: "Team Beta", status: "In Progress" },
+  { customer: "David Kim", from: "Boston, MA", to: "Austin, TX", date: "Feb 12", crew: "Team Gamma", status: "Pending" },
+];
+
+const GRANOT_PIPELINE_STAGES = [
+  { stage: "New Leads", count: 12, value: "$38K", color: "bg-blue-500" },
+  { stage: "Contacted", count: 18, value: "$52K", color: "bg-yellow-500" },
+  { stage: "Quoted", count: 9, value: "$31K", color: "bg-orange-500" },
+  { stage: "Negotiating", count: 5, value: "$16K", color: "bg-purple-500" },
+  { stage: "Won", count: 23, value: "$89K", color: "bg-primary" },
 ];
 
 // Fake demo data for RingCentral
@@ -66,73 +91,323 @@ const RINGCENTRAL_DEMO_STATS = [
 ];
 
 function GranotDemoVisual() {
+  const [activeView, setActiveView] = useState<"dashboard" | "pipeline" | "calendar" | "activity">("dashboard");
+  const [selectedLead, setSelectedLead] = useState<number | null>(null);
+
   return (
-    <div className="space-y-4">
-      {/* Stats Row */}
-      <div className="grid grid-cols-4 gap-2">
-        {GRANOT_DEMO_STATS.map((stat) => (
-          <div key={stat.label} className="p-3 rounded-lg bg-muted/40 text-center">
-            <div className="text-lg font-bold text-foreground">{stat.value}</div>
-            <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{stat.label}</div>
-            <div className="text-[10px] text-primary font-medium">{stat.change}</div>
-          </div>
+    <div className="space-y-3">
+      {/* Dashboard Navigation */}
+      <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/30">
+        {[
+          { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+          { id: "pipeline", label: "Pipeline", icon: Target },
+          { id: "calendar", label: "Schedule", icon: Calendar },
+          { id: "activity", label: "Activity", icon: Activity },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveView(tab.id as typeof activeView)}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium transition-all ${
+              activeView === tab.id
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            }`}
+          >
+            <tab.icon className="w-3.5 h-3.5" />
+            {tab.label}
+          </button>
         ))}
       </div>
 
-      {/* Pipeline Preview */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Lead Pipeline</span>
-          <Badge variant="secondary" className="text-[10px]">Live Demo</Badge>
-        </div>
-        <div className="divide-y divide-border">
-          {GRANOT_DEMO_LEADS.map((lead, i) => (
-            <div key={i} className="px-3 py-2 flex items-center gap-3 hover:bg-muted/20 transition-colors">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Users className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-medium text-sm text-foreground truncate">{lead.name}</div>
-                <div className="text-[11px] text-muted-foreground flex items-center gap-2">
-                  <MapPin className="w-3 h-3" />
-                  {lead.move}
+      {/* Dashboard View */}
+      {activeView === "dashboard" && (
+        <div className="space-y-3">
+          {/* Stats Row */}
+          <div className="grid grid-cols-4 gap-2">
+            {GRANOT_DEMO_STATS.map((stat) => (
+              <div key={stat.label} className="p-3 rounded-lg bg-muted/40 hover:bg-muted/60 transition-colors cursor-pointer group">
+                <div className="flex items-center justify-between mb-1">
+                  <stat.icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <span className="text-[10px] text-primary font-medium">{stat.change}</span>
                 </div>
+                <div className="text-xl font-bold text-foreground">{stat.value}</div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{stat.label}</div>
               </div>
-              <div className="text-right flex-shrink-0">
-                <div className="font-semibold text-sm text-foreground">{lead.value}</div>
-                <Badge 
-                  variant={lead.status === "Hot" ? "default" : "secondary"} 
-                  className={`text-[9px] ${lead.status === "Hot" ? "bg-primary" : ""}`}
-                >
-                  {lead.status}
-                </Badge>
+            ))}
+          </div>
+
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Lead Pipeline Mini */}
+            <div className="rounded-lg border border-border bg-card overflow-hidden">
+              <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Hot Leads</span>
+                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                  <Plus className="w-3 h-3" />
+                </Button>
               </div>
-              <div className="text-[11px] text-muted-foreground flex-shrink-0 w-12 text-right">
-                {lead.date}
+              <ScrollArea className="h-[180px]">
+                <div className="divide-y divide-border">
+                  {GRANOT_DEMO_LEADS.map((lead, i) => (
+                    <div 
+                      key={i} 
+                      onClick={() => setSelectedLead(selectedLead === i ? null : i)}
+                      className={`px-3 py-2 cursor-pointer transition-colors ${
+                        selectedLead === i ? "bg-primary/10" : "hover:bg-muted/20"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Users className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-xs text-foreground truncate">{lead.name}</div>
+                          <div className="text-[10px] text-muted-foreground truncate">{lead.move}</div>
+                        </div>
+                        <Badge 
+                          variant={lead.status === "Hot" ? "default" : "secondary"} 
+                          className={`text-[9px] ${lead.status === "Hot" ? "bg-primary" : ""}`}
+                        >
+                          {lead.value}
+                        </Badge>
+                      </div>
+                      {selectedLead === i && (
+                        <div className="mt-2 pt-2 border-t border-border/50 space-y-1">
+                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                            <Phone className="w-3 h-3" />
+                            {lead.phone}
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                            <Mail className="w-3 h-3" />
+                            {lead.email}
+                          </div>
+                          <div className="flex gap-1 mt-2">
+                            <Button size="sm" className="h-6 text-[10px] flex-1 gap-1">
+                              <Phone className="w-3 h-3" /> Call
+                            </Button>
+                            <Button size="sm" variant="outline" className="h-6 text-[10px] flex-1 gap-1">
+                              <Mail className="w-3 h-3" /> Email
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="rounded-lg border border-border bg-card overflow-hidden">
+              <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent Activity</span>
+                <RefreshCw className="w-3 h-3 text-muted-foreground" />
+              </div>
+              <ScrollArea className="h-[180px]">
+                <div className="divide-y divide-border">
+                  {GRANOT_RECENT_ACTIVITY.map((item, i) => (
+                    <div key={i} className="px-3 py-2 flex items-center gap-2 hover:bg-muted/20 transition-colors">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        item.type === "booking" ? "bg-primary/20" : 
+                        item.type === "lead" ? "bg-blue-500/20" : "bg-muted/50"
+                      }`}>
+                        <item.icon className={`w-3 h-3 ${
+                          item.type === "booking" ? "text-primary" :
+                          item.type === "lead" ? "text-blue-500" : "text-muted-foreground"
+                        }`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs text-foreground truncate">{item.text}</div>
+                        <div className="text-[10px] text-muted-foreground">{item.time}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </div>
+
+          {/* Weekly Bookings Chart */}
+          <div className="rounded-lg border border-border bg-card p-3">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold text-muted-foreground">Weekly Performance</span>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="text-[9px]">This Week</Badge>
+                <TrendingUp className="w-4 h-4 text-primary" />
               </div>
             </div>
-          ))}
+            <div className="flex items-end gap-1 h-16">
+              {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                  <div 
+                    className="w-full bg-primary/20 rounded-t transition-all hover:bg-primary/40 relative group"
+                    style={{ height: `${h}%` }}
+                  >
+                    <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-foreground text-background text-[9px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {Math.round(h / 10)} bookings
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between mt-2 text-[9px] text-muted-foreground">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Mini Chart */}
-      <div className="rounded-lg border border-border bg-card p-3">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-muted-foreground">Weekly Bookings</span>
-          <TrendingUp className="w-4 h-4 text-primary" />
+      {/* Pipeline View */}
+      {activeView === "pipeline" && (
+        <div className="space-y-3">
+          {/* Pipeline Funnel */}
+          <div className="rounded-lg border border-border bg-card overflow-hidden">
+            <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Sales Funnel</span>
+              <Badge variant="secondary" className="text-[10px]">$226K Total</Badge>
+            </div>
+            <div className="p-3 space-y-2">
+              {GRANOT_PIPELINE_STAGES.map((stage, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-20 text-xs text-muted-foreground truncate">{stage.stage}</div>
+                  <div className="flex-1 h-6 bg-muted/30 rounded-full overflow-hidden relative">
+                    <div 
+                      className={`h-full ${stage.color} transition-all`}
+                      style={{ width: `${(stage.count / 23) * 100}%` }}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-between px-2">
+                      <span className="text-[10px] font-medium text-foreground">{stage.count}</span>
+                      <span className="text-[10px] font-medium text-foreground">{stage.value}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Pipeline Cards */}
+          <div className="grid grid-cols-5 gap-2">
+            {GRANOT_PIPELINE_STAGES.map((stage, i) => (
+              <div key={i} className="rounded-lg border border-border bg-card p-2 text-center">
+                <div className={`w-2 h-2 rounded-full ${stage.color} mx-auto mb-1`} />
+                <div className="text-lg font-bold text-foreground">{stage.count}</div>
+                <div className="text-[9px] text-muted-foreground truncate">{stage.stage}</div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex items-end gap-1 h-12">
-          {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
-            <div 
-              key={i} 
-              className="flex-1 bg-primary/20 rounded-t transition-all hover:bg-primary/40"
-              style={{ height: `${h}%` }}
-            />
-          ))}
+      )}
+
+      {/* Calendar View */}
+      {activeView === "calendar" && (
+        <div className="space-y-3">
+          <div className="rounded-lg border border-border bg-card overflow-hidden">
+            <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Upcoming Moves</span>
+              <Badge variant="secondary" className="text-[10px]">3 This Week</Badge>
+            </div>
+            <div className="divide-y divide-border">
+              {GRANOT_UPCOMING_MOVES.map((move, i) => (
+                <div key={i} className="px-3 py-3 hover:bg-muted/20 transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Truck className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-sm text-foreground">{move.customer}</div>
+                        <div className="text-[10px] text-muted-foreground">{move.crew}</div>
+                      </div>
+                    </div>
+                    <Badge 
+                      variant={move.status === "Confirmed" ? "default" : move.status === "In Progress" ? "secondary" : "outline"}
+                      className={`text-[9px] ${move.status === "Confirmed" ? "bg-primary" : ""}`}
+                    >
+                      {move.status}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <MapPin className="w-3 h-3" />
+                    <span>{move.from}</span>
+                    <ArrowRight className="w-3 h-3" />
+                    <span>{move.to}</span>
+                    <span className="ml-auto font-medium text-foreground">{move.date}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mini Calendar Grid */}
+          <div className="rounded-lg border border-border bg-card p-3">
+            <div className="text-xs font-semibold text-muted-foreground mb-2">February 2025</div>
+            <div className="grid grid-cols-7 gap-1 text-center">
+              {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+                <div key={i} className="text-[9px] text-muted-foreground font-medium py-1">{d}</div>
+              ))}
+              {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
+                <div 
+                  key={day}
+                  className={`text-[10px] py-1 rounded cursor-pointer transition-colors ${
+                    [10, 11, 12].includes(day) 
+                      ? "bg-primary text-primary-foreground font-medium" 
+                      : [15, 18, 22].includes(day)
+                        ? "bg-primary/20 text-primary font-medium"
+                        : "hover:bg-muted/50"
+                  }`}
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="flex justify-between mt-1 text-[9px] text-muted-foreground">
-          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+      )}
+
+      {/* Activity View */}
+      {activeView === "activity" && (
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
+          <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Activity Log</span>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="sm" className="h-6 px-2 text-[10px]">
+                <Filter className="w-3 h-3 mr-1" /> Filter
+              </Button>
+            </div>
+          </div>
+          <ScrollArea className="h-[280px]">
+            <div className="divide-y divide-border">
+              {[...GRANOT_RECENT_ACTIVITY, ...GRANOT_RECENT_ACTIVITY].map((item, i) => (
+                <div key={i} className="px-3 py-3 flex items-start gap-3 hover:bg-muted/20 transition-colors">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    item.type === "booking" ? "bg-primary/20" : 
+                    item.type === "lead" ? "bg-blue-500/20" : 
+                    item.type === "call" ? "bg-green-500/20" : "bg-muted/50"
+                  }`}>
+                    <item.icon className={`w-4 h-4 ${
+                      item.type === "booking" ? "text-primary" :
+                      item.type === "lead" ? "text-blue-500" :
+                      item.type === "call" ? "text-green-500" : "text-muted-foreground"
+                    }`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm text-foreground">{item.text}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{item.time}</div>
+                  </div>
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                    <MoreHorizontal className="w-3 h-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
+      )}
+
+      {/* Live Demo Badge */}
+      <div className="flex items-center justify-center gap-2 py-2">
+        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Live Demo Mode</span>
       </div>
     </div>
   );
@@ -214,7 +489,7 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto bg-card border-border">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-xl">
             {isGranot ? (
