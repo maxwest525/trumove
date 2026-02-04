@@ -18,6 +18,7 @@ import LeadCaptureModal from "@/components/LeadCaptureModal";
 import RouteAnalysisSection from "@/components/RouteAnalysisSection";
 import FeatureCarousel from "@/components/FeatureCarousel";
 import StatsStrip from "@/components/StatsStrip";
+import { IntegrationTabs } from "@/components/integrations/IntegrationModals";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallax } from "@/hooks/useParallax";
 import logoImg from "@/assets/logo.png";
@@ -965,8 +966,9 @@ export default function Index() {
             </span>
           </div>
 
-          {/* Right - Session ID */}
+          {/* Right - Integration Tabs + Session ID */}
           <div className="flex items-center gap-4">
+            <IntegrationTabs />
             <div className="text-right">
               <div className="text-[11px] text-white/80 uppercase tracking-wider">Session ID</div>
               <div className="text-sm font-mono text-white">TM-{String(Date.now()).slice(-8)}</div>
