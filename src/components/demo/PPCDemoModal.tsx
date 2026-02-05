@@ -3,23 +3,25 @@ import DraggableModal from "@/components/ui/DraggableModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { 
   Sparkles, Search, Globe, TrendingUp, Target, 
   BarChart3, DollarSign, MousePointer,
-  FileText, Layout, RefreshCw, 
+  Layout, RefreshCw, 
   CheckCircle2, AlertTriangle, ArrowUp, ArrowDown,
   Copy, ExternalLink, Lightbulb,
-  Type, Play, Pause, FlaskConical, LineChart,
-  Radio, Mail
+  Play, Pause, FlaskConical, LineChart,
+  Radio, Mail, Home, ArrowLeft
 } from "lucide-react";
 import { ABTest, ConversionEvent, FunnelStage, Stats, Ad } from "./ppc/types";
 import { ABTestManager } from "./ppc/ABTestManager";
 import { ConversionsPanel } from "./ppc/ConversionsPanel";
 import { AILandingPageGenerator } from "./ppc/AILandingPageGenerator";
+import { MarketingHubDashboard } from "./ppc/MarketingHubDashboard";
+import { WelcomeFlow } from "./ppc/WelcomeFlow";
+import { QuickStartWizard } from "./ppc/QuickStartWizard";
 
 interface PPCDemoModalProps {
   open: boolean;
@@ -155,6 +157,8 @@ const INITIAL_STATS: Stats = {
 
 export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [viewMode, setViewMode] = useState<'welcome' | 'hub' | 'wizard' | 'detail'>('hub');
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
@@ -174,6 +178,15 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   const [exportType, setExportType] = useState<"abtest" | "conversions">("abtest");
   const [isExporting, setIsExporting] = useState(false);
 
+  // Check for first visit
+  useEffect(() => {
+    const visited = localStorage.getItem('tm_marketing_visited');
+    if (!visited) {
+      setIsFirstVisit(true);
+      setViewMode('welcome');
+    }
+  }, []);
+ 
   // Live mode simulation
   useEffect(() => {
     if (!liveMode || !open) return;
@@ -261,6 +274,58 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
     setShowEmailModal(true);
   };
 
+  const handleWelcomeComplete = (mode: 'quickstart' | 'explore') => {
+    localStorage.setItem('tm_marketing_visited', 'true');
+    setIsFirstVisit(false);
+    if (mode === 'quickstart') {
+      setViewMode('wizard');
+    } else {
+      setViewMode('hub');
+    }
+  };
+ 
+  const handleQuickCreate = (businessInfo: { name: string; location: string; service: string }) => {
+    localStorage.setItem('tm_marketing_visited', 'true');
+    setIsFirstVisit(false);
+    setViewMode('detail');
+    setActiveTab('landing');
+    toast.success('Landing page created!', {
+      description: `${businessInfo.name} - ${businessInfo.location}`
+    });
+  };
+ 
+  const handleNavigate = (section: string) => {
+    if (section === 'ai-create' || section === 'landing') {
+      setViewMode('wizard');
+    } else if (section === 'performance') {
+      setViewMode('detail');
+      setActiveTab('dashboard');
+    } else if (section === 'abtest') {
+      setViewMode('detail');
+      setActiveTab('abtest');
+    } else if (section === 'keywords') {
+      setViewMode('detail');
+      setActiveTab('keywords');
+    } else if (section === 'seo') {
+      setViewMode('detail');
+      setActiveTab('seo');
+    } else if (section === 'campaigns') {
+      setViewMode('detail');
+      setActiveTab('ads');
+    } else {
+      setViewMode('detail');
+      setActiveTab(section);
+    }
+  };
+ 
+  const handleWizardComplete = (pageData: any) => {
+    setViewMode('detail');
+    setActiveTab('landing');
+    toast.success('Landing page created!', {
+      description: `${pageData.businessName} - ${pageData.location}`
+    });
+  };
+ 
   return (
     <DraggableModal
       isOpen={open}
@@ -282,6 +347,16 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             <span className="block text-white font-bold">AI Marketing Suite</span>
             <span className="text-sm font-normal text-white/80">PPC • SEO • A/B Testing • Conversion Tracking</span>
           </div>
+          {/* Home Button */}
+          {viewMode !== 'hub' && viewMode !== 'welcome' && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setViewMode('hub'); }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-white/20 text-white hover:bg-white/30"
+            >
+              <Home className="w-3 h-3" />
+              Hub
+            </button>
+          )}
           {/* Live Mode Toggle */}
           <button
             onClick={(e) => { e.stopPropagation(); setLiveMode(!liveMode); }}
@@ -297,8 +372,19 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
         </div>
       }
       footer={
-        <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/30">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between px-4 py-2.5 border-t border-border bg-muted/30">
+          <div className="flex items-center gap-3">
+            {viewMode === 'detail' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1 h-7 text-xs"
+                onClick={() => setViewMode('hub')}
+              >
+                <ArrowLeft className="w-3 h-3" />
+                Back to Hub
+              </Button>
+            )}
             <div className={`w-2 h-2 rounded-full ${liveMode ? "bg-red-500 animate-pulse" : ""}`} style={{ background: liveMode ? undefined : "#7C3AED" }} />
             <span className="text-xs text-muted-foreground">
               {liveMode ? "Live Demo Mode - Data updates in real-time" : "Demo Mode - No real campaigns affected"}
@@ -312,31 +398,33 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
       }
     >
 
-        {/* Navigation */}
-        <div className="flex gap-1 px-4 py-2 overflow-x-auto" style={{ background: "#F8FAFC", borderBottom: "1px solid #E2E8F0" }}>
-          {[
-            { id: "dashboard", label: "Dashboard", icon: BarChart3 },
-            { id: "ads", label: "Google Ads", icon: Target },
-            { id: "keywords", label: "Keywords", icon: Search },
-            { id: "seo", label: "SEO Audit", icon: Globe },
-            { id: "landing", label: "Landing Pages", icon: Layout },
-            { id: "abtest", label: "A/B Tests", icon: FlaskConical },
-            { id: "conversions", label: "Conversions", icon: LineChart },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
-              style={{
-                background: activeTab === tab.id ? "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" : "transparent",
-                color: activeTab === tab.id ? "white" : "#64748B",
-              }}
-            >
-              <tab.icon className="w-3.5 h-3.5" />
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {/* Navigation - Only show in detail view */}
+        {viewMode === 'detail' && (
+          <div className="flex gap-1 px-4 py-2 overflow-x-auto" style={{ background: "#F8FAFC", borderBottom: "1px solid #E2E8F0" }}>
+            {[
+              { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+              { id: "ads", label: "Google Ads", icon: Target },
+              { id: "keywords", label: "Keywords", icon: Search },
+              { id: "seo", label: "SEO Audit", icon: Globe },
+              { id: "landing", label: "Landing Pages", icon: Layout },
+              { id: "abtest", label: "A/B Tests", icon: FlaskConical },
+              { id: "conversions", label: "Conversions", icon: LineChart },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap"
+                style={{
+                  background: activeTab === tab.id ? "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" : "transparent",
+                  color: activeTab === tab.id ? "white" : "#64748B",
+                }}
+              >
+                <tab.icon className="w-3.5 h-3.5" />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Email Export Modal */}
         {showEmailModal && (
@@ -374,8 +462,44 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
           </div>
         )}
 
-        {/* Content */}
-        <ScrollArea className="flex-1 max-h-[calc(90vh-180px)]">
+        {/* Welcome Flow */}
+        {viewMode === 'welcome' && (
+          <ScrollArea className="flex-1 max-h-[calc(90vh-140px)]">
+            <WelcomeFlow 
+              onComplete={handleWelcomeComplete}
+              onQuickCreate={handleQuickCreate}
+            />
+          </ScrollArea>
+        )}
+ 
+        {/* Hub View */}
+        {viewMode === 'hub' && (
+          <ScrollArea className="flex-1 max-h-[calc(90vh-140px)]">
+            <MarketingHubDashboard 
+              onNavigate={handleNavigate}
+              stats={{
+                totalSpend: Math.round(stats.totalSpend),
+                conversions: stats.conversions,
+                activePages: 4,
+                testsRunning: abTests.filter(t => t.status === 'running').length
+              }}
+            />
+          </ScrollArea>
+        )}
+ 
+        {/* Wizard View */}
+        {viewMode === 'wizard' && (
+          <ScrollArea className="flex-1 max-h-[calc(90vh-140px)]">
+            <QuickStartWizard 
+              onComplete={handleWizardComplete}
+              onCancel={() => setViewMode('hub')}
+            />
+          </ScrollArea>
+        )}
+ 
+        {/* Detail View - Original Content */}
+        {viewMode === 'detail' && (
+          <ScrollArea className="flex-1 max-h-[calc(90vh-180px)]">
           <div className="p-4">
             {/* Dashboard */}
             {activeTab === "dashboard" && (
@@ -669,6 +793,7 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             )}
           </div>
         </ScrollArea>
+        )}
     </DraggableModal>
   );
 }
