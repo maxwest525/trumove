@@ -509,8 +509,8 @@ export default function InventoryBuilder({
               className={cn(
                 "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all",
                 isActive 
-                  ? "border-2 border-primary bg-primary/5 text-foreground shadow-sm" 
-                  : "border-2 border-transparent hover:bg-muted/60 text-foreground/70 hover:text-foreground"
+                  ? "border-2 border-primary bg-primary/5 text-foreground shadow-md" 
+                  : "border-2 border-transparent hover:bg-muted/60 text-foreground/70 hover:text-foreground shadow-sm hover:shadow-md"
               )}
             >
               <Icon className="w-4 h-4 flex-shrink-0" />
@@ -537,7 +537,7 @@ export default function InventoryBuilder({
             type="button"
             onClick={onAIEstimate}
             disabled={isEstimating || !homeSize}
-            className="flex items-center gap-3 p-3 rounded-xl border border-border bg-muted/50 hover:bg-muted transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-3 p-3 rounded-xl border border-border bg-muted/50 hover:bg-muted transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
           >
             <div className={cn("p-2 rounded-lg", isEstimating ? "bg-muted" : "bg-muted")}>
               {isEstimating ? (
@@ -565,7 +565,7 @@ export default function InventoryBuilder({
           <button
             type="button"
             onClick={() => navigate("/scan-room")}
-            className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all text-left cursor-pointer"
+            className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all text-left cursor-pointer shadow-sm hover:shadow-md"
           >
             <div className="p-2 rounded-lg bg-primary/10">
               <Camera className="w-4 h-4 text-primary" />
@@ -969,10 +969,10 @@ interface ItemCardProps {
 function ItemCard({ item, room, quantity, onAdd, onRemove, showRoom, icon: Icon, isAnimating }: ItemCardProps) {
   return (
     <div className={cn(
-      "group flex flex-col p-2 rounded-xl border transition-all",
+      "group flex flex-col p-2 rounded-xl border transition-all shadow-sm hover:shadow-md",
       quantity > 0 
-        ? "border-primary/40 bg-primary/5 shadow-sm" 
-        : "border-border/60 bg-card hover:border-primary/20",
+        ? "border-primary/40 bg-primary/5 shadow-md" 
+        : "border-border/60 bg-card hover:border-primary/20 hover:shadow-lg",
       isAnimating && "tru-item-just-added"
     )}>
       {/* Item Image or Icon - white background for furniture images */}
@@ -1056,10 +1056,10 @@ interface ItemListRowProps {
 function ItemListRow({ item, quantity, onAdd, onRemove, icon: Icon, isAnimating }: ItemListRowProps) {
   return (
     <div className={cn(
-      "group flex items-center gap-3 p-3 rounded-xl border transition-all",
+      "group flex items-center gap-3 p-3 rounded-xl border transition-all shadow-sm hover:shadow-md",
       quantity > 0 
-        ? "border-primary/40 bg-primary/5 shadow-sm" 
-        : "border-border/60 bg-card hover:border-primary/20",
+        ? "border-primary/40 bg-primary/5 shadow-md" 
+        : "border-border/60 bg-card hover:border-primary/20 hover:shadow-lg",
       isAnimating && "tru-item-just-added"
     )}>
       {/* Item Image or Icon - white background for furniture images */}
