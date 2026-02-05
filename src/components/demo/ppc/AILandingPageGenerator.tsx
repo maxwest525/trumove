@@ -21,11 +21,27 @@ import { toast } from "sonner";
    Download, Palette, Copy, Maximize2, Minimize2, FileText, Eye, EyeOff, Filter as FilterIcon,
    FileUp, Database
  } from "lucide-react";
-  import { Upload, MousePointerClick, PieChart, UserCheck, Map, TrendingDown } from "lucide-react";
+import { Upload, MousePointerClick, PieChart, UserCheck, Map, TrendingDown, Lock, Timer, ArrowUp, Heart } from "lucide-react";
  import jsPDF from "jspdf";
  import autoTable from "jspdf-autotable";
  import logoImg from "@/assets/logo.png";
 import DraggableModal from "@/components/ui/DraggableModal";
+import { 
+  TruMoveLogo, 
+  PoweredByBadge, 
+  TruMoveGuaranteeBadge,
+  TrustBadgeStrip,
+  SocialProofTicker,
+  CountdownTimer,
+  UrgencyBanner,
+  ThreeStepProcess,
+  TripleGuaranteeSection,
+  VideoTestimonialGrid,
+  ComparisonTableSection,
+  FAQSection,
+  FinalCTASection,
+  TruMoveFooter
+} from "./TruMoveBrandingElements";
 
 // Heatmap positions per template
 const TEMPLATE_HEATMAP_POSITIONS: Record<string, {
@@ -1149,84 +1165,307 @@ interface EditableSection {
 
   // Template-specific landing page renders
   const renderQuoteFunnelPage = () => (
-    <div className="bg-white dark:bg-slate-900">
+    <div className="bg-white dark:bg-slate-900 relative">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b-2" style={{ borderColor: theme.primary }}>
+        <div className="flex items-center justify-between px-6 py-3">
+          <TruMoveLogo className="h-8" />
+          <div className="flex items-center gap-4">
+            <a href="tel:1-800-TRUMOVE" className="flex items-center gap-2 text-slate-700 hover:text-green-600 transition-colors">
+              <Phone className="w-4 h-4" />
+              <span className="font-semibold text-sm">1-800-TRUMOVE</span>
+            </a>
+            <Button size="sm" style={{ background: theme.primary }}>Get a Quote</Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Urgency Banner */}
+      <div className="py-2.5 text-center text-white" style={{ background: `linear-gradient(90deg, #DC2626, #EA580C)` }}>
+        <span className="flex items-center justify-center gap-2 text-sm font-medium">
+          <Zap className="w-4 h-4 animate-pulse" />
+          🔥 Limited Time: $200 Off Long-Distance Moves — Only 3 Spots Left This Week!
+          <Zap className="w-4 h-4 animate-pulse" />
+        </span>
+      </div>
+
       {/* Hero Section - Dark with green CTAs */}
       <div 
-        className="relative px-8 py-16 text-center"
-        style={{ background: `linear-gradient(135deg, ${theme.secondary} 0%, #1E293B 50%, ${theme.secondary} 100%)` }}
+        className="relative px-8 py-20 text-center"
+        style={{ background: `linear-gradient(135deg, ${theme.secondary} 0%, #0F172A 50%, ${theme.secondary} 100%)` }}
       >
         <div className="absolute top-4 left-4 flex gap-2">
           <Badge className="bg-green-500/20 text-green-400 border border-green-500/30">
             <CheckCircle2 className="w-3 h-3 mr-1" />
             FMCSA Licensed
           </Badge>
+          <Badge className="bg-blue-500/20 text-blue-400 border border-blue-500/30">
+            <Shield className="w-3 h-3 mr-1" />
+            Bonded & Insured
+          </Badge>
         </div>
         <div className="absolute top-4 right-4">
           <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30">
-            ⭐ 4.9/5 Rating
+            ⭐ 4.9/5 Rating • 50K+ Moves
           </Badge>
         </div>
 
-        <img src={logoImg} alt="TruMove" className="h-10 mx-auto mb-6 brightness-0 invert" />
+        <TruMoveLogo className="h-12 mx-auto mb-6 brightness-0 invert" />
         
-        <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-          <EditableText sectionId="main-headline" as="span" className="block" /><br />
-          <span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(90deg, ${theme.primary}, ${theme.accentLight})` }}>
+        <Badge className="mb-6 bg-purple-500/20 text-purple-300 border border-purple-500/30 px-4 py-1.5">
+          <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+          AI-Powered Moving Technology
+        </Badge>
+        
+        <h1 className="text-5xl md:text-6xl font-black text-white mb-4 leading-tight max-w-4xl mx-auto">
+          <EditableText sectionId="main-headline" as="span" className="block" />
+          <span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(90deg, ${theme.primary}, ${theme.accentLight}, ${theme.primary})` }}>
             <EditableText sectionId="sub-headline" as="span" />
           </span>
         </h1>
         
-        <div className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
+        <div className="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
           <EditableText sectionId="hero-body" as="p" />
         </div>
 
-        <div className="max-w-md mx-auto bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-          <div className="space-y-3 mb-4">
-            <Input placeholder="Moving from (ZIP code)" className="bg-white/90 border-0 text-slate-900" />
-            <Input placeholder="Moving to (ZIP code)" className="bg-white/90 border-0 text-slate-900" />
-          </div>
-          <Button className="w-full py-6 text-lg font-bold gap-2" style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}>
-            <EditableText sectionId="cta-primary" as="span" /> <ArrowRight className="w-5 h-5" />
-          </Button>
-          <p className="text-xs text-slate-400 mt-3">🔒 No credit card required • Instant results</p>
-        </div>
-
-        <div className="flex items-center justify-center gap-6 mt-8 text-slate-400 text-sm">
-          <span className="flex items-center gap-1"><Shield className="w-4 h-4" /> Price Lock Guarantee</span>
-          <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> 60-Second Quotes</span>
-          <span className="flex items-center gap-1"><Users className="w-4 h-4" /> 50,000+ Moves</span>
-        </div>
-      </div>
-
-      {/* Social Proof Strip */}
-      <div className="bg-slate-50 dark:bg-slate-800 py-4 px-8 border-y border-slate-200 dark:border-slate-700">
-        <div className="flex items-center justify-center gap-8 text-sm">
-          <span className="text-slate-600 dark:text-slate-400">As featured in:</span>
-          <span className="font-bold text-slate-400">Forbes</span>
-          <span className="font-bold text-slate-400">Inc.</span>
-          <span className="font-bold text-slate-400">TechCrunch</span>
-        </div>
-      </div>
-
-      {/* How It Works */}
-      <div className="py-12 px-8">
-        <h2 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-8">Get Your Quote in 3 Simple Steps</h2>
-        <div className="grid grid-cols-3 gap-6 max-w-3xl mx-auto">
+        {/* Feature checkmarks */}
+        <div className="flex items-center justify-center gap-6 mb-10 text-sm">
           {[
-            { step: "1", title: "Enter Your Route", desc: "Tell us where you're moving", icon: MapPin },
-            { step: "2", title: "AI Scans Your Home", desc: "Instant inventory estimate", icon: Zap },
-            { step: "3", title: "Compare & Book", desc: "Choose verified carriers", icon: CheckCircle2 },
-          ].map((item) => (
-            <div key={item.step} className="text-center">
-              <div className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-xl" style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}>
-                {item.step}
+            "Instant AI-Powered Quotes",
+            "Verified Carriers Only", 
+            "Price Lock Guarantee",
+            "24/7 Live Support"
+          ].map((item, i) => (
+            <span key={i} className="flex items-center gap-1.5 text-white/90">
+              <CheckCircle2 className="w-4 h-4" style={{ color: theme.primary }} />
+              {item}
+            </span>
+          ))}
+        </div>
+
+        {/* Quote Form with animated glow */}
+        <div 
+          className="max-w-lg mx-auto rounded-3xl p-8 border-2 shadow-2xl relative overflow-hidden"
+          style={{ 
+            background: 'rgba(255,255,255,0.08)', 
+            borderColor: `${theme.primary}50`,
+            boxShadow: `0 0 60px ${theme.primary}30`
+          }}
+        >
+          <div 
+            className="absolute inset-0 rounded-3xl animate-pulse opacity-30"
+            style={{ background: `linear-gradient(45deg, transparent, ${theme.primary}20, transparent)` }}
+          />
+          <div className="relative">
+            <h3 className="text-white font-bold text-xl mb-4">Get Your Free TruMove Quote</h3>
+            <div className="space-y-3 mb-4">
+              <Input placeholder="Moving from (ZIP code)" className="bg-white/95 border-0 text-slate-900 py-5" />
+              <Input placeholder="Moving to (ZIP code)" className="bg-white/95 border-0 text-slate-900 py-5" />
+              <Input placeholder="Phone number" className="bg-white/95 border-0 text-slate-900 py-5" />
+            </div>
+            <Button 
+              className="w-full py-7 text-lg font-bold gap-2 shadow-lg" 
+              style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}
+            >
+              <EditableText sectionId="cta-primary" as="span" /> <ArrowRight className="w-5 h-5" />
+            </Button>
+            <div className="flex items-center justify-center gap-4 mt-4 text-xs text-slate-400">
+              <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Secure</span>
+              <span>•</span>
+              <span>No Credit Card</span>
+              <span>•</span>
+              <span>Instant Results</span>
+            </div>
+          </div>
+        </div>
+
+        {/* As Seen In */}
+        <div className="mt-12 flex items-center justify-center gap-8 text-slate-500">
+          <span className="text-sm">As seen in:</span>
+          <span className="font-bold text-lg opacity-50">Forbes</span>
+          <span className="font-bold text-lg opacity-50">Inc.</span>
+          <span className="font-bold text-lg opacity-50">TechCrunch</span>
+          <span className="font-bold text-lg opacity-50">WSJ</span>
+        </div>
+      </div>
+
+      {/* Social Proof Ticker */}
+      <div className="bg-slate-900 text-white py-3 overflow-hidden relative">
+        <div className="flex animate-marquee whitespace-nowrap">
+          {[
+            "Sarah from Austin just saved $847 on her move",
+            "Michael in Denver got a quote in 47 seconds", 
+            "The Johnson family completed their TruMove today",
+            "Emily from Seattle rated TruMove 5 stars",
+            "1,247 quotes generated today",
+            "David from Miami just booked his move",
+            "Sarah from Austin just saved $847 on her move",
+            "Michael in Denver got a quote in 47 seconds",
+          ].map((proof, i) => (
+            <span key={i} className="mx-8 flex items-center gap-2">
+              <span style={{ color: theme.primary }}>●</span>
+              <span className="text-sm">{proof}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Trust Badge Strip */}
+      <div className="flex justify-center items-center gap-8 py-5 border-b border-slate-200 bg-slate-50">
+        {[
+          { icon: Shield, text: "FMCSA Licensed" },
+          { icon: Award, text: "BBB A+ Rated" },
+          { icon: Users, text: "50,000+ Moves" },
+          { icon: Star, text: "4.9/5 Rating" },
+        ].map((badge, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <badge.icon className="w-4 h-4" style={{ color: theme.primary }} />
+            <span className="text-sm font-medium text-slate-700">{badge.text}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* 3-Step Process */}
+      <div className="py-16 px-8 bg-white">
+        <div className="text-center mb-12">
+          <Badge className="mb-4" style={{ background: `${theme.primary}15`, color: theme.primary, borderColor: `${theme.primary}30` }}>
+            How TruMove Works
+          </Badge>
+          <h2 className="text-3xl font-bold text-slate-900 mb-3">3 Simple Steps to Your Perfect Move</h2>
+          <p className="text-lg text-slate-600">Powered by TruMove AI technology</p>
+        </div>
+        
+        <div className="relative max-w-4xl mx-auto">
+          {/* Connecting line */}
+          <div className="absolute top-14 left-20 right-20 h-0.5 hidden md:block" style={{ background: `linear-gradient(90deg, ${theme.primary}, ${theme.accent}, ${theme.primary})` }} />
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { number: 1, icon: "📱", title: "Scan Your Home", description: "Use our AI scanner to instantly inventory your belongings" },
+              { number: 2, icon: "🔍", title: "Get Matched", description: "TruMove AI matches you with verified carriers in seconds" },
+              { number: 3, icon: "🚚", title: "Move Stress-Free", description: "Track your move in real-time with TruTrack technology" },
+            ].map((step, i) => (
+              <div key={i} className="relative text-center">
+                <div 
+                  className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center text-4xl shadow-lg relative z-10"
+                  style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.primaryDark})`, boxShadow: `0 8px 32px ${theme.primary}40` }}
+                >
+                  {step.icon}
+                </div>
+                <div className="absolute -top-2 right-1/3 w-8 h-8 rounded-full bg-slate-900 text-white text-sm font-bold flex items-center justify-center z-20">
+                  {step.number}
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{step.title}</h3>
+                <p className="text-sm text-slate-600">{step.description}</p>
               </div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-1">{item.title}</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">{item.desc}</p>
+            ))}
+          </div>
+        </div>
+        
+        <div className="text-center mt-10">
+          <PoweredByBadge />
+        </div>
+      </div>
+
+      {/* Video Testimonials */}
+      <div className="py-16 px-8 bg-slate-50">
+        <div className="text-center mb-12">
+          <Badge className="mb-4 bg-purple-500/10 text-purple-600 border border-purple-500/30">Real Stories</Badge>
+          <h2 className="text-3xl font-bold text-slate-900 mb-3">Watch Real TruMove Stories</h2>
+          <p className="text-lg text-slate-600">See why families across America trust TruMove</p>
+        </div>
+        
+        <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          {[
+            { name: "Sarah M.", location: "Austin, TX", saved: "$847", thumbnail: "👩‍💼" },
+            { name: "Michael C.", location: "Denver, CO", saved: "$623", thumbnail: "👨‍💻" },
+            { name: "Emily R.", location: "Seattle, WA", saved: "$1,200", thumbnail: "👩‍🎨" },
+            { name: "David K.", location: "Miami, FL", saved: "$445", thumbnail: "👨‍🔧" },
+          ].map((t, i) => (
+            <div key={i} className="group relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow">
+              <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center text-5xl relative">
+                {t.thumbnail}
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                  <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-lg">
+                    <Play className="w-6 h-6 ml-1" style={{ color: theme.primary }} />
+                  </div>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="flex items-center gap-0.5 mb-2">
+                  {Array(5).fill(0).map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="font-bold text-slate-900 text-sm">{t.name}</p>
+                <p className="text-xs text-slate-500">{t.location}</p>
+                <Badge className="mt-2 text-[10px]" style={{ background: `${theme.primary}15`, color: theme.primary }}>
+                  Saved {t.saved}
+                </Badge>
+              </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Comparison Table */}
+      <ComparisonTableSection />
+
+      {/* Calculator Preview */}
+      <div className="py-16 px-8 bg-slate-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <Badge className="mb-4" style={{ background: `${theme.accent}15`, color: theme.accent }}>
+            <Calculator className="w-3 h-3 mr-1" /> Cost Estimator
+          </Badge>
+          <h2 className="text-3xl font-bold text-slate-900 mb-3">See Your TruMove Price Instantly</h2>
+          <p className="text-lg text-slate-600 mb-8">Our AI calculates your exact cost based on distance, inventory, and timing</p>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { label: "Avg. Savings", value: "$847", icon: DollarSign },
+              { label: "Quote Time", value: "47 sec", icon: Timer },
+              { label: "Happy Customers", value: "50K+", icon: Heart },
+            ].map((stat, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                <stat.icon className="w-8 h-8 mx-auto mb-3" style={{ color: theme.primary }} />
+                <div className="text-3xl font-black text-slate-900">{stat.value}</div>
+                <div className="text-sm text-slate-500">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Triple Guarantee */}
+      <TripleGuaranteeSection />
+
+      {/* FAQ Section */}
+      <FAQSection />
+
+      {/* Final CTA */}
+      <FinalCTASection theme={theme} />
+
+      {/* Footer */}
+      <TruMoveFooter />
+
+      {/* Floating Elements */}
+      <button 
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full text-white shadow-lg hover:shadow-xl transition-shadow"
+        style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.primaryDark})` }}
+      >
+        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center relative">
+          <Truck className="w-4 h-4" />
+          <Sparkles className="w-2.5 h-2.5 absolute -top-0.5 -right-0.5 text-amber-300" />
+        </div>
+        <span className="font-medium">Chat with Trudy</span>
+      </button>
+
+      <button 
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-6 left-6 z-50 w-12 h-12 rounded-full bg-slate-900 text-white shadow-lg hover:bg-slate-800 transition-colors flex items-center justify-center"
+      >
+        <ArrowUp className="w-5 h-5" />
+      </button>
     </div>
   );
 

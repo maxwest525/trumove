@@ -3,9 +3,33 @@ import { X, GripHorizontal, Maximize2, Minimize2 } from "lucide-react";
  import { cn } from "@/lib/utils";
  
 type SnapZone = 'center' | 'left' | 'right' | 'top' | 'bottom' | null;
+type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
 
 const SNAP_THRESHOLD = 40;
 const SNAP_MARGIN = 20;
+const RESIZE_SNAP_THRESHOLD = 30;
+
+// Common size presets for snap-to-grid resizing
+const SIZE_PRESETS = [
+  { width: 640, height: 480, label: "Small" },
+  { width: 800, height: 600, label: "Standard" },
+  { width: 1024, height: 768, label: "Large" },
+  { width: 1280, height: 720, label: "HD" },
+  { width: 1440, height: 900, label: "Wide" },
+  { width: 1600, height: 900, label: "Ultrawide" },
+];
+
+const findNearestPreset = (width: number, height: number) => {
+  for (const preset of SIZE_PRESETS) {
+    if (
+      Math.abs(width - preset.width) < RESIZE_SNAP_THRESHOLD &&
+      Math.abs(height - preset.height) < RESIZE_SNAP_THRESHOLD
+    ) {
+      return preset;
+    }
+  }
+  return null;
+};
 
  interface StoredModalState {
    position: { x: number; y: number };
@@ -81,6 +105,8 @@ const saveState = (
    });
   const [isMaximized, setIsMaximized] = useState(false);
   const [snapZone, setSnapZone] = useState<SnapZone>(null);
+  const [resizeDirection, setResizeDirection] = useState<ResizeDirection>(null);
+  const [sizePresetHint, setSizePresetHint] = useState<typeof SIZE_PRESETS[0] | null>(null);
    const [isDragging, setIsDragging] = useState(false);
    const [isResizing, setIsResizing] = useState(false);
    const [hasInitialized, setHasInitialized] = useState(false);
@@ -159,11 +185,12 @@ const saveState = (
      };
   }, [position, isMaximized]);
  
-   const handleResizeMouseDown = useCallback((e: React.MouseEvent) => {
+  const handleResizeMouseDown = useCallback((e: React.MouseEvent, direction: ResizeDirection = 'se') => {
     if (isMaximized) return; // Disable resize when maximized
      e.preventDefault();
      e.stopPropagation();
      setIsResizing(true);
+    setResizeDirection(direction);
      resizeStart.current = {
        x: e.clientX,
        y: e.clientY,
@@ -212,10 +239,41 @@ const saveState = (
        if (isResizing) {
          const deltaX = e.clientX - resizeStart.current.x;
          const deltaY = e.clientY - resizeStart.current.y;
-         const newWidth = Math.max(minWidth, Math.min(maxWidth, resizeStart.current.width + deltaX));
-         const newHeight = Math.max(minHeight, Math.min(maxHeight, resizeStart.current.height + deltaY));
+        
+        let newWidth = resizeStart.current.width;
+        let newHeight = resizeStart.current.height;
+        let newX = position.x;
+        let newY = position.y;
+        
+        // Handle different resize directions
+        if (resizeDirection?.includes('e')) {
+          newWidth = Math.max(minWidth, Math.min(maxWidth, resizeStart.current.width + deltaX));
+        }
+        if (resizeDirection?.includes('w')) {
+          const widthChange = Math.min(resizeStart.current.width - minWidth, Math.max(-(maxWidth - resizeStart.current.width), -deltaX));
+          newWidth = resizeStart.current.width + widthChange;
+          newX = position.x - widthChange + (resizeStart.current.width - size.width);
+        }
+        if (resizeDirection?.includes('s')) {
+          newHeight = Math.max(minHeight, Math.min(maxHeight, resizeStart.current.height + deltaY));
+        }
+        if (resizeDirection?.includes('n')) {
+          const heightChange = Math.min(resizeStart.current.height - minHeight, Math.max(-(maxHeight - resizeStart.current.height), -deltaY));
+          newHeight = resizeStart.current.height + heightChange;
+          newY = position.y - heightChange + (resizeStart.current.height - size.height);
+        }
+        
+        // Check for size preset snap
+        const nearestPreset = findNearestPreset(newWidth, newHeight);
+        setSizePresetHint(nearestPreset);
+        
          currentSize = { width: newWidth, height: newHeight };
          setSize(currentSize);
+        
+        if (resizeDirection?.includes('w') || resizeDirection?.includes('n')) {
+          setPosition({ x: newX, y: newY });
+          currentPosition = { x: newX, y: newY };
+        }
        }
      };
  
@@ -231,7 +289,14 @@ const saveState = (
         setSnapZone(null);
       }
       if (isResizing) {
+        // Apply size preset snap if near one
+        if (sizePresetHint) {
+          currentSize = { width: sizePresetHint.width, height: sizePresetHint.height };
+          setSize(currentSize);
+        }
         saveState(storageKey, currentPosition, currentSize);
+        setSizePresetHint(null);
+        setResizeDirection(null);
        }
        setIsDragging(false);
        setIsResizing(false);
@@ -245,7 +310,7 @@ const saveState = (
          document.removeEventListener('mouseup', handleMouseUp);
        };
      }
-  }, [isDragging, isResizing, size.width, size.height, minWidth, maxWidth, minHeight, maxHeight, storageKey, getSnappedPosition, size]);
+  }, [isDragging, isResizing, size.width, size.height, minWidth, maxWidth, minHeight, maxHeight, storageKey, getSnappedPosition, size, resizeDirection, position, sizePresetHint]);
  
    if (!isOpen) return null;
  
@@ -277,6 +342,20 @@ const saveState = (
             <div className="fixed left-0 right-0 h-1 bg-blue-500/60 z-[105] transition-all" style={{ bottom: SNAP_MARGIN }} />
           )}
         </>
+      )}
+
+      {/* Size preset hint badge */}
+      {isResizing && sizePresetHint && (
+        <div 
+          className="fixed z-[115] px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium shadow-lg animate-pulse"
+          style={{
+            left: position.x + size.width / 2,
+            top: position.y + size.height + 8,
+            transform: 'translateX(-50%)'
+          }}
+        >
+          📐 Snap to {sizePresetHint.label} ({sizePresetHint.width}×{sizePresetHint.height})
+        </div>
       )}
 
        {/* Semi-transparent backdrop */}
@@ -355,20 +434,85 @@ const saveState = (
          
          {/* Resize Handle */}
         {!isMaximized && (
-          <div
-            className="absolute bottom-0 right-0 w-5 h-5 cursor-se-resize"
-            onMouseDown={handleResizeMouseDown}
-           >
-            <svg
-              className="w-5 h-5 text-muted-foreground/40"
-              viewBox="0 0 16 16"
-              fill="currentColor"
+          <>
+            {/* Corner resize handles with visible grip indicators */}
+            {/* SE Corner */}
+            <div
+              className="absolute bottom-0 right-0 w-5 h-5 cursor-se-resize group/handle"
+              onMouseDown={(e) => handleResizeMouseDown(e, 'se')}
             >
-              <path d="M14 14H10V12H12V10H14V14Z" />
-              <path d="M14 8H12V6H14V8Z" />
-              <path d="M8 14H6V12H8V14Z" />
-            </svg>
-          </div>
+              <div className="absolute bottom-1 right-1 w-3 h-3 opacity-40 group-hover/handle:opacity-100 transition-opacity">
+                <div className="absolute bottom-0 right-0 w-2 h-0.5 bg-muted-foreground group-hover/handle:bg-primary group-hover/handle:shadow-[0_0_6px_hsl(var(--primary))]" />
+                <div className="absolute bottom-0 right-0 w-0.5 h-2 bg-muted-foreground group-hover/handle:bg-primary group-hover/handle:shadow-[0_0_6px_hsl(var(--primary))]" />
+              </div>
+            </div>
+            
+            {/* SW Corner */}
+            <div
+              className="absolute bottom-0 left-0 w-5 h-5 cursor-sw-resize group/handle"
+              onMouseDown={(e) => handleResizeMouseDown(e, 'sw')}
+            >
+              <div className="absolute bottom-1 left-1 w-3 h-3 opacity-40 group-hover/handle:opacity-100 transition-opacity">
+                <div className="absolute bottom-0 left-0 w-2 h-0.5 bg-muted-foreground group-hover/handle:bg-primary group-hover/handle:shadow-[0_0_6px_hsl(var(--primary))]" />
+                <div className="absolute bottom-0 left-0 w-0.5 h-2 bg-muted-foreground group-hover/handle:bg-primary group-hover/handle:shadow-[0_0_6px_hsl(var(--primary))]" />
+              </div>
+            </div>
+            
+            {/* NE Corner */}
+            <div
+              className="absolute top-0 right-0 w-5 h-5 cursor-ne-resize group/handle"
+              onMouseDown={(e) => handleResizeMouseDown(e, 'ne')}
+            >
+              <div className="absolute top-1 right-1 w-3 h-3 opacity-40 group-hover/handle:opacity-100 transition-opacity">
+                <div className="absolute top-0 right-0 w-2 h-0.5 bg-muted-foreground group-hover/handle:bg-primary group-hover/handle:shadow-[0_0_6px_hsl(var(--primary))]" />
+                <div className="absolute top-0 right-0 w-0.5 h-2 bg-muted-foreground group-hover/handle:bg-primary group-hover/handle:shadow-[0_0_6px_hsl(var(--primary))]" />
+              </div>
+            </div>
+            
+            {/* NW Corner */}
+            <div
+              className="absolute top-0 left-0 w-5 h-5 cursor-nw-resize group/handle"
+              onMouseDown={(e) => handleResizeMouseDown(e, 'nw')}
+            >
+              <div className="absolute top-1 left-1 w-3 h-3 opacity-40 group-hover/handle:opacity-100 transition-opacity">
+                <div className="absolute top-0 left-0 w-2 h-0.5 bg-muted-foreground group-hover/handle:bg-primary group-hover/handle:shadow-[0_0_6px_hsl(var(--primary))]" />
+                <div className="absolute top-0 left-0 w-0.5 h-2 bg-muted-foreground group-hover/handle:bg-primary group-hover/handle:shadow-[0_0_6px_hsl(var(--primary))]" />
+              </div>
+            </div>
+            
+            {/* Edge resize handles */}
+            {/* Top edge */}
+            <div
+              className="absolute top-0 left-5 right-5 h-2 cursor-n-resize group/handle"
+              onMouseDown={(e) => handleResizeMouseDown(e, 'n')}
+            >
+              <div className="absolute top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-muted-foreground/20 group-hover/handle:bg-primary/60 transition-colors" />
+            </div>
+            
+            {/* Bottom edge */}
+            <div
+              className="absolute bottom-0 left-5 right-5 h-2 cursor-s-resize group/handle"
+              onMouseDown={(e) => handleResizeMouseDown(e, 's')}
+            >
+              <div className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-muted-foreground/20 group-hover/handle:bg-primary/60 transition-colors" />
+            </div>
+            
+            {/* Left edge */}
+            <div
+              className="absolute left-0 top-5 bottom-5 w-2 cursor-w-resize group/handle"
+              onMouseDown={(e) => handleResizeMouseDown(e, 'w')}
+            >
+              <div className="absolute left-0.5 top-1/2 -translate-y-1/2 w-1 h-8 rounded-full bg-muted-foreground/20 group-hover/handle:bg-primary/60 transition-colors" />
+            </div>
+            
+            {/* Right edge */}
+            <div
+              className="absolute right-0 top-5 bottom-5 w-2 cursor-e-resize group/handle"
+              onMouseDown={(e) => handleResizeMouseDown(e, 'e')}
+            >
+              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 w-1 h-8 rounded-full bg-muted-foreground/20 group-hover/handle:bg-primary/60 transition-colors" />
+            </div>
+          </>
         )}
        </div>
      </>
