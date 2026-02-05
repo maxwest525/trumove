@@ -97,77 +97,28 @@ function getPartialRoute(coords: [number, number][], progress: number): [number,
   return partialCoords;
 }
 
-// Google Maps API key from environment
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
-
-// Load Google Maps script for Directions API
-function loadGoogleMapsScript(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if ((window as any).google?.maps) {
-      resolve();
-      return;
-    }
-    
-    const existingScript = document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]');
-    if (existingScript) {
-      existingScript.addEventListener('load', () => resolve());
-      if ((window as any).google?.maps) {
-        resolve();
-      }
-      return;
-    }
-    
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places,geometry`;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Failed to load Google Maps'));
-    document.head.appendChild(script);
-  });
-}
-
-// Fetch road-snapped route from Google Directions API
+// Fetch road-snapped route from Mapbox Directions API (matches homepage pattern)
 async function fetchRoadSnappedRoute(
   origin: [number, number],
   dest: [number, number]
 ): Promise<{ coordinates: [number, number][]; distance: number; duration: number } | null> {
   try {
-    await loadGoogleMapsScript();
+    const response = await fetch(
+      `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
+    );
+    const data = await response.json();
     
-    const directionsService = new (window as any).google.maps.DirectionsService();
-    
-    return new Promise((resolve) => {
-      directionsService.route(
-        {
-          origin: { lat: origin[1], lng: origin[0] },
-          destination: { lat: dest[1], lng: dest[0] },
-          travelMode: (window as any).google.maps.TravelMode.DRIVING,
-        },
-        (result: any, status: any) => {
-          if (status === 'OK' && result?.routes?.[0]) {
-            const route = result.routes[0];
-            const path = route.overview_path;
-            const coordinates: [number, number][] = path.map((p: any) => [p.lng(), p.lat()]);
-            
-            const leg = route.legs[0];
-            const distanceInMiles = leg.distance.value / 1609.34;
-            const durationInSeconds = leg.duration.value;
-            
-            resolve({
-              coordinates,
-              distance: distanceInMiles,
-              duration: durationInSeconds,
-            });
-          } else {
-            console.error('Google Directions failed:', status);
-            resolve(null);
-          }
-        }
-      );
-    });
+    if (data.routes && data.routes[0]) {
+      const route = data.routes[0];
+      return {
+        coordinates: route.geometry.coordinates as [number, number][],
+        distance: route.distance / 1609.34, // meters to miles
+        duration: route.duration, // seconds
+      };
+    }
+    return null;
   } catch (error) {
-    console.error('Failed to fetch road-snapped route:', error);
+    console.error('Mapbox Directions failed:', error);
     return null;
   }
 }
@@ -195,7 +146,13 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
   // Use detailed route if available, otherwise fall back to parent route
   const activeRoute = detailedRoute.length > 10 ? detailedRoute : routeCoordinates;
 
-  // Fetch road-snapped route if parent data is insufficient
+  // Reset route when coordinates change
+  useEffect(() => {
+    routeFetchedRef.current = false;
+    setDetailedRoute([]);
+  }, [originCoords?.[0], originCoords?.[1], destCoords?.[0], destCoords?.[1]]);
+
+  // Fetch road-snapped route from Mapbox (self-contained, no parent dependency)
   useEffect(() => {
     // Already have detailed route from parent (>10 points = road-snapped)
     if (routeCoordinates.length > 10) {
