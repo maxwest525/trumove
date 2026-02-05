@@ -1,14 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { 
-  ArrowRight, ChevronLeft, MapPin, Home, Building2, 
-  ArrowUpDown, CalendarIcon, HelpCircle, Footprints, Check, MoveVertical, Sparkles,
-  Car, Package, Route, Truck
+  ArrowRight, ChevronLeft, MapPin, Home, Building2,
+  ArrowUpDown, HelpCircle, Footprints, Check, MoveVertical, Sparkles,
+  Route, Truck
 } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import logoImg from "@/assets/logo.png";
 import ChatModal from "@/components/chat/ChatModal";
 import MultiStopWizard, { type MultiStopMoveDetails } from "./MultiStopWizard";
@@ -79,7 +76,6 @@ const FLOOR_OPTIONS = [
 export default function EstimateWizard({ onComplete, initialDetails }: EstimateWizardProps) {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [showMultiStopWizard, setShowMultiStopWizard] = useState(false);
   const prevStep = useRef(1);
@@ -180,7 +176,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
   const canContinue = () => {
     switch (step) {
       case 1:
-        return details.moveDate !== null && details.fromLocation && details.fromPropertyType && details.homeSize;
+        return details.fromLocation && details.fromPropertyType && details.homeSize;
       case 2:
         return details.toLocation && details.toPropertyType && details.toHomeSize;
       case 3:
@@ -265,36 +261,7 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
             {step === 1 && (
             <div className="tru-qb-step-content" key="step-1">
               <h1 className="tru-qb-question">Where are you moving from?</h1>
-              <p className="tru-qb-subtitle">Enter your move date and current address</p>
-
-              {/* Move Date - First field */}
-              <p className="tru-qb-section-label">Move Date</p>
-              <div className="tru-qb-input-wrap">
-                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <button type="button" className="tru-qb-date-btn">
-                      <CalendarIcon className="w-4 h-4" />
-                      <span>
-                        {details.moveDate 
-                          ? format(details.moveDate, "MMMM d, yyyy") 
-                          : "Select a date"}
-                      </span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="form-date-popover" align="center">
-                    <CalendarComponent
-                      mode="single"
-                      selected={details.moveDate || undefined}
-                      onSelect={(date) => {
-                        updateDetails({ moveDate: date || null });
-                        setDatePopoverOpen(false);
-                      }}
-                      disabled={(date) => date < new Date()}
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+              <p className="tru-qb-subtitle">Enter your current address details</p>
 
               <p className="tru-qb-section-label">Current Address</p>
               <div className="tru-qb-input-wrap tru-qb-zip-wrap">
@@ -402,27 +369,6 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
                 ))}
               </div>
 
-              {/* Additional Services - Compact toggles without descriptions */}
-              <p className="tru-qb-section-label">Additional Services (Optional)</p>
-              <div className="tru-qb-toggles">
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card tru-qb-toggle-compact ${details.hasVehicleTransport ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ hasVehicleTransport: !details.hasVehicleTransport })}
-                >
-                  <Car className="tru-qb-toggle-icon" />
-                  <span className="tru-qb-toggle-title">Vehicle Transport</span>
-                </button>
-                
-                <button
-                  type="button"
-                  className={`tru-qb-toggle-card tru-qb-toggle-compact ${details.needsPackingService ? 'is-active' : ''}`}
-                  onClick={() => updateDetails({ needsPackingService: !details.needsPackingService })}
-                >
-                  <Package className="tru-qb-toggle-icon" />
-                  <span className="tru-qb-toggle-title">Packing Service</span>
-                </button>
-              </div>
 
               <button
                 type="button"

@@ -41,6 +41,7 @@ import {
   Zap,
   Camera,
   Wand2,
+  Car,
   type LucideIcon
 } from "lucide-react";
 import { ROOM_SUGGESTIONS, type InventoryItem, type ItemDefinition } from "@/lib/priceCalculator";
@@ -89,6 +90,10 @@ interface InventoryBuilderProps {
   onAIEstimate?: () => void;
   isEstimating?: boolean;
   homeSize?: string;
+  hasVehicleTransport?: boolean;
+  onVehicleTransportChange?: (value: boolean) => void;
+  needsPackingService?: boolean;
+  onPackingServiceChange?: (value: boolean) => void;
 }
 
 const ROOM_CONFIG = [
@@ -280,7 +285,11 @@ export default function InventoryBuilder({
   isLocked = false,
   onAIEstimate,
   isEstimating = false,
-  homeSize
+  homeSize,
+  hasVehicleTransport = false,
+  onVehicleTransportChange,
+  needsPackingService = false,
+  onPackingServiceChange
 }: InventoryBuilderProps) {
   const navigate = useNavigate();
   const [activeRoom, setActiveRoom] = useState('Living Room');
@@ -672,6 +681,43 @@ export default function InventoryBuilder({
               className="ml-1 scale-90"
             />
           </div>
+        </div>
+
+        {/* Additional Services Row */}
+        <div className="flex items-center gap-3 px-1">
+          <span className="text-[10px] font-black tracking-[0.15em] uppercase text-muted-foreground">
+            Add-ons:
+          </span>
+          
+          {/* Vehicle Transport Toggle */}
+          <button
+            type="button"
+            onClick={() => onVehicleTransportChange?.(!hasVehicleTransport)}
+            className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-xs font-semibold",
+              hasVehicleTransport 
+                ? "border-primary/50 bg-primary/10 text-primary" 
+                : "border-border/60 bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground"
+            )}
+          >
+            <Car className="w-3.5 h-3.5" />
+            <span>Vehicle Transport</span>
+          </button>
+          
+          {/* Packing Service Toggle */}
+          <button
+            type="button"
+            onClick={() => onPackingServiceChange?.(!needsPackingService)}
+            className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-xs font-semibold",
+              needsPackingService 
+                ? "border-primary/50 bg-primary/10 text-primary" 
+                : "border-border/60 bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground"
+            )}
+          >
+            <Package className="w-3.5 h-3.5" />
+            <span>Packing Service</span>
+          </button>
         </div>
 
         {/* Room Section Header with View Controls */}
