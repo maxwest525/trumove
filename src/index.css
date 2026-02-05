@@ -3516,13 +3516,9 @@
    Shifted 220px right from AI section anchor
    ============================================= */
 
-/* Satellite map - LEFT of center (offset by road map width + gap) */
+/* Satellite map - LEFT column in grid */
 .tru-tracker-satellite-left {
-  position: absolute;
-  left: 770px;
-  top: 50%;
-  transform: translate(-100%, -50%);
-  margin-left: calc(-210px - 32px); /* Negative half road map (210px) - gap (32px) */
+  position: relative;
   z-index: 10;
 }
 
@@ -3574,22 +3570,15 @@
   border-radius: 2px;
 }
 
-/* Road map - CENTERED at 770px anchor */
+/* Road map - CENTER column in grid */
 .tru-tracker-roadmap-center {
-  position: absolute;
-  left: 770px;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   z-index: 10;
 }
 
 /* Description - RIGHT of center (offset by road map width + gap) */
 .tru-tracker-content-right {
-  position: absolute;
-  left: 770px;
-  top: 50%;
-  transform: translate(0, -50%);
-  margin-left: calc(210px + 32px); /* Half road map (210px) + gap (32px) */
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
