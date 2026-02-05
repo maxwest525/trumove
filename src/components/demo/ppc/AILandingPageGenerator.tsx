@@ -46,6 +46,8 @@ import { MarketingAnalyticsDashboard } from "./MarketingAnalyticsDashboard";
 import { LandingPageBoard, INITIAL_MOCK_PAGES } from "./LandingPageBoard";
 import { LandingPage } from "./types";
 import { AIEditRecommendations } from "./AIEditRecommendations";
+import { TemplatePreviewCard } from "./TemplatePreviewCard";
+import { PostGenerationEditor } from "./PostGenerationEditor";
 
 // Heatmap positions per template
 const TEMPLATE_HEATMAP_POSITIONS: Record<string, {
@@ -479,6 +481,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
   const [showDomainConnect, setShowDomainConnect] = useState(false);
   const [domainInput, setDomainInput] = useState('');
   const [isVerifyingDomain, setIsVerifyingDomain] = useState(false);
+  const [showPostGenEditor, setShowPostGenEditor] = useState(false);
 
    // Update heatmap positions when template changes
    useEffect(() => {
@@ -600,11 +603,13 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
          if (step === 5) {
            setTimeout(() => {
              setShowLandingPage(true);
+             setShowPostGenEditor(true); // Show editor immediately after generation
              setGenerationStep(0);
            }, 800);
          }
        }, (index + 1) * 600);
      });
+   };
    };
  
    // Simulate data import
@@ -3454,10 +3459,20 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                 <div className="h-6 w-px bg-border" />
                 
                 <Button 
+                  variant={showPostGenEditor ? "default" : "ghost"}
+                  size="sm" 
+                  onClick={() => setShowPostGenEditor(!showPostGenEditor)}
+                  className={`h-7 text-xs gap-1 ${showPostGenEditor ? 'bg-primary text-primary-foreground' : ''}`}
+                >
+                  <Pencil className="w-3 h-3" />
+                  Edit
+                </Button>
+                
+                <Button 
                  variant="ghost" 
                  size="sm" 
                  onClick={() => setIsSideBySide(!isSideBySide)}
-                  className={`h-7 text-xs ${isSideBySide ? 'bg-purple-100 dark:bg-purple-900/50' : ''}`}
+                  className={`h-7 text-xs ${isSideBySide ? 'bg-primary/20' : ''}`}
                >
                   <BarChart3 className="w-3 h-3 mr-1" />
                  {isSideBySide ? 'Preview Only' : 'Side-by-Side'}
@@ -3898,14 +3913,45 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                </ScrollArea>
              </div>
            </div>
-         ) : (
-           /* Full width preview only */
-           <div className="flex-1 overflow-hidden">
-             <ScrollArea className="h-full">
-               {renderSelectedTemplate()}
-             </ScrollArea>
-           </div>
-         )}
+          ) : showPostGenEditor ? (
+            /* Post-generation Editor + Preview */
+            <div className="flex-1 flex overflow-hidden">
+              <div className="w-[400px] border-r border-border bg-background overflow-hidden flex flex-col">
+                <PostGenerationEditor
+                  sections={sections.map(s => ({
+                    id: s.id,
+                    label: s.id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+                    type: s.type,
+                    content: s.content,
+                    maxLength: s.type === 'headline' ? 60 : s.type === 'body' ? 300 : 100
+                  }))}
+                  onSave={(updatedSections) => {
+                    setSections(updatedSections.map(s => ({
+                      id: s.id,
+                      type: s.type,
+                      content: s.content
+                    })));
+                    setShowPostGenEditor(false);
+                  }}
+                  onCancel={() => setShowPostGenEditor(false)}
+                  businessName={businessName}
+                  targetLocation={targetLocation}
+                />
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <ScrollArea className="h-full">
+                  {renderSelectedTemplate()}
+                </ScrollArea>
+              </div>
+            </div>
+          ) : (
+            /* Full width preview only */
+            <div className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full">
+                {renderSelectedTemplate()}
+              </ScrollArea>
+            </div>
+          )}
        </DraggableModal>
      </>
    );
@@ -4013,31 +4059,22 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
          </div>
        </div>
  
-      {/* Template Selection */}
+      {/* Template Selection with Hover Previews */}
       <div className="rounded-xl border border-border bg-card p-5">
         <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xs font-bold">1</span>
+          <span className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-bold">1</span>
           Choose a template style
+          <span className="text-xs text-muted-foreground font-normal ml-auto">Hover to preview</span>
         </h4>
         
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {LANDING_PAGE_TEMPLATES.map((template) => (
-            <button
+            <TemplatePreviewCard
               key={template.id}
-              onClick={() => setSelectedTemplate(template.id)}
-              className={`p-3 rounded-xl border-2 transition-all text-left ${
-                selectedTemplate === template.id 
-                  ? "border-purple-500 bg-purple-50 dark:bg-purple-950/30" 
-                  : "border-border bg-card hover:border-purple-300"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-sm text-foreground">{template.name}</span>
-                <Badge variant="secondary" className="text-[9px]">{template.conversion}</Badge>
-              </div>
-              <p className="text-xs text-muted-foreground mb-1">{template.description}</p>
-              <span className="text-[10px] text-purple-600 dark:text-purple-400">{template.style}</span>
-            </button>
+              template={template}
+              isSelected={selectedTemplate === template.id}
+              onSelect={setSelectedTemplate}
+            />
           ))}
         </div>
       </div>
