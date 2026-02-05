@@ -10,6 +10,7 @@ import {
   CheckCircle2, AlertTriangle, Star, Search, Layout, FlaskConical,
   ArrowRight, MousePointer, Eye, Clock, Percent
 } from "lucide-react";
+import { BudgetAlerts } from "./BudgetAlerts";
 
 // Animated number component for live mode
 function AnimatedNumber({ value, prefix = "", suffix = "", decimals = 0, liveMode = false }: {
@@ -157,6 +158,9 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
             <span className="text-xs text-muted-foreground">+{liveClickCount} clicks this session</span>
           </div>
         )}
+
+        {/* Budget & Performance Alerts */}
+        <BudgetAlerts liveMode={liveMode} />
 
         {/* KPI Strip - 8 Key Metrics */}
         <div className="grid grid-cols-8 gap-2">

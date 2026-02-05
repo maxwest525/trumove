@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { 
   RefreshCw, CheckCircle2, AlertCircle, Clock, 
   TrendingUp, TrendingDown, Minus, Link2, Unlink,
-  ChevronDown, ChevronUp, Zap
+  ChevronDown, ChevronUp, Zap, Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { lovable } from "@/integrations/lovable/index";
 
 interface ConnectedAccount {
   id: string;
@@ -119,11 +120,68 @@ export function ConnectedAccountsPanel({ compact = false, liveMode = false }: Co
     toast.success(`${accounts.find(a => a.id === accountId)?.platform} synced!`);
   };
 
-  const handleConnect = (accountId: string) => {
+  const [connectingId, setConnectingId] = useState<string | null>(null);
+
+  const handleConnect = async (accountId: string) => {
     const account = accounts.find(a => a.id === accountId);
-    toast.info(`Connect to ${account?.platform}`, {
-      description: 'This would open OAuth flow in production'
-    });
+    
+    // Only Google has real OAuth integration in Lovable Cloud
+    if (accountId === 'google') {
+      setConnectingId(accountId);
+      try {
+        const { error } = await lovable.auth.signInWithOAuth("google", {
+          redirect_uri: window.location.origin,
+        });
+        
+        if (error) {
+          toast.error("Failed to connect Google Ads", {
+            description: error.message
+          });
+        } else {
+          // Update account status on success
+          setAccounts(prev => prev.map(acc => 
+            acc.id === accountId 
+              ? { 
+                  ...acc, 
+                  status: 'connected' as const, 
+                  lastSync: new Date(),
+                  metrics: { spend: 0, clicks: 0, conversions: 0, trend: 'stable' as const }
+                } 
+              : acc
+          ));
+          toast.success(`${account?.platform} connected successfully!`);
+        }
+      } catch (err) {
+        toast.error("Connection failed", {
+          description: "Please try again"
+        });
+      } finally {
+        setConnectingId(null);
+      }
+    } else {
+      // Other platforms show demo message (Meta OAuth not supported in Lovable Cloud)
+      toast.info(`Connect to ${account?.platform}`, {
+        description: accountId === 'meta' 
+          ? 'Meta OAuth integration coming soon. Using demo mode.'
+          : 'This would open OAuth flow in production'
+      });
+      
+      // Simulate connection for demo
+      setConnectingId(accountId);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setAccounts(prev => prev.map(acc => 
+        acc.id === accountId 
+          ? { 
+              ...acc, 
+              status: 'connected' as const, 
+              lastSync: new Date(),
+              metrics: { spend: 0, clicks: 0, conversions: 0, trend: 'stable' as const }
+            } 
+          : acc
+      ));
+      setConnectingId(null);
+      toast.success(`${account?.platform} connected (demo mode)`);
+    }
   };
 
   const getTimeSince = (date: Date | null) => {
@@ -296,9 +354,14 @@ export function ConnectedAccountsPanel({ compact = false, liveMode = false }: Co
                   size="sm"
                   className="h-8 gap-1.5 text-xs"
                   onClick={() => handleConnect(account.id)}
+                  disabled={connectingId === account.id}
                 >
-                  <Link2 className="w-3 h-3" />
-                  Connect
+                  {connectingId === account.id ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <Link2 className="w-3 h-3" />
+                  )}
+                  {connectingId === account.id ? 'Connecting...' : 'Connect'}
                 </Button>
               )}
             </div>
