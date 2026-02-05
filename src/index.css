@@ -2605,10 +2605,15 @@
 
 /* Header row: centered title with previews on right */
 .tru-ai-header-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
-  position: relative;
-  margin-bottom: 0;
+  justify-items: center;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  gap: 0;
+  padding: 0 48px;
   height: var(--demo-section-height);
   min-height: var(--demo-section-height);
   max-height: var(--demo-section-height);
@@ -2622,37 +2627,26 @@
 
 /* Description - LEFT of center */
 .tru-ai-content-left {
-  position: absolute;
-  left: 770px;
-  top: 50%;
-  transform: translate(-100%, -50%);
-  margin-left: calc(-210px - 32px); /* Negative half scanner width (210px) - gap (32px) */
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 1.25rem;
+  gap: 1.5rem;
   width: auto;
-  max-width: 22rem;
+  max-width: 24rem;
   z-index: 5;
 }
 
 /* Room Scanner Demo - CENTERED at 770px anchor */
 .tru-ai-scanner-center {
-  position: absolute;
-  left: 770px;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   z-index: 10;
 }
 
 /* Detection List - RIGHT of center */
 .tru-ai-detection-right {
-  position: absolute;
-  left: 770px;
-  top: 50%;
-  transform: translate(0, -50%);
-  margin-left: calc(210px + 32px); /* Half scanner width (210px) + gap (32px) */
+  position: relative;
   z-index: 10;
 }
 
