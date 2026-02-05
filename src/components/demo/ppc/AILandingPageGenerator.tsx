@@ -2779,13 +2779,13 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                 {importedData ? "Data Imported" : "Import Data"}
               </Button>
               <Button 
-                variant="outline" 
+                variant="default" 
                 size="sm" 
                 onClick={() => setIsPopoutOpen(true)}
-                className="border-purple-300 text-purple-600 hover:bg-purple-50"
+                className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5 shadow-lg"
               >
-                <Maximize2 className="w-3 h-3 mr-1" />
-                Pop Out
+                <ExternalLink className="w-4 h-4" />
+                View Full Page
               </Button>
              <Button size="sm" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
                Publish Page
@@ -2795,13 +2795,14 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
  
          {/* Generated Landing Page Preview */}
           <div className="rounded-xl border-2 border-purple-300 overflow-hidden shadow-lg relative group">
-            {/* Quick Pop Out Button on Preview */}
+            {/* Always Visible Pop Out Button on Preview */}
             <button
               onClick={() => setIsPopoutOpen(true)}
-              className="absolute top-12 right-3 z-10 p-2 rounded-lg bg-white/90 dark:bg-slate-800/90 shadow-md border border-border opacity-0 group-hover:opacity-100 transition-opacity hover:bg-purple-50 dark:hover:bg-purple-900/50"
+              className="absolute top-14 right-3 z-10 px-3 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white shadow-lg border-2 border-purple-400 flex items-center gap-2 transition-all hover:scale-105"
               title="Pop out to larger view"
             >
-              <Maximize2 className="w-4 h-4 text-purple-600" />
+              <ExternalLink className="w-4 h-4" />
+              <span className="text-sm font-medium">View Full</span>
             </button>
            {/* Browser Chrome */}
            <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 border-b border-border">
@@ -3385,26 +3386,32 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
          onClose={() => setIsPopoutOpen(false)}
          title={
            <div className="flex items-center gap-3">
-             <Sparkles className="w-4 h-4 text-white" />
-             <span className="text-white font-semibold">Landing Page Preview</span>
-             <Badge className="bg-white/20 text-white border-white/30 text-xs">
-               {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
-             </Badge>
-             {isSideBySide && (
-               <Badge className="bg-green-500/30 text-green-200 border-green-400/30 text-xs">
-                 Side-by-Side
-               </Badge>
-             )}
+             <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+               <Sparkles className="w-5 h-5 text-white" />
+             </div>
+             <div>
+               <span className="text-white font-bold text-lg">Landing Page Preview</span>
+               <div className="flex items-center gap-2 mt-0.5">
+                 <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                   {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
+                 </Badge>
+                 {isSideBySide && (
+                   <Badge className="bg-green-500/30 text-green-200 border-green-400/30 text-xs">
+                     Side-by-Side
+                   </Badge>
+                 )}
+               </div>
+             </div>
            </div>
          }
          storageKey="tm_landing_page_popout"
-         defaultWidth={1200}
-        defaultHeight={850}
-         minWidth={600}
-         minHeight={400}
-         maxWidth={1800}
-        maxHeight={1400}
-         headerClassName="bg-gradient-to-r from-purple-600 to-purple-500"
+         defaultWidth={1400}
+         defaultHeight={900}
+         minWidth={800}
+         minHeight={500}
+         maxWidth={2000}
+         maxHeight={1600}
+         headerStyle={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%)" }}
          footer={
             <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/30">
               {/* Left: Template Switcher */}
