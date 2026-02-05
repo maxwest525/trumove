@@ -3,10 +3,14 @@
  import { Button } from "@/components/ui/button";
  import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
  import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
  import {
    TrendingUp, TrendingDown, DollarSign, Users, Globe, Target,
    Smartphone, Monitor, MapPin, BarChart3, PieChart, Hash, Zap,
-   CheckCircle2, AlertTriangle, ArrowRight, ExternalLink, Star
+  CheckCircle2, AlertTriangle, ArrowRight, ExternalLink, Star,
+  Sparkles, Building2, Phone, Link2
  } from "lucide-react";
  
  interface KeywordData {
@@ -83,64 +87,273 @@
  
  export function MarketingAnalyticsDashboard({ onProceedToCreate }: MarketingAnalyticsDashboardProps) {
    const [activeTab, setActiveTab] = useState<'keywords' | 'platforms' | 'geo' | 'demo' | 'seo'>('keywords');
+  
+  // Business inputs with AI-recommended defaults
+  const [businessName, setBusinessName] = useState("TruMove");
+  const [serviceType, setServiceType] = useState("Long-Distance Moving, Local Moving, Packing Services");
+  const [targetLocations, setTargetLocations] = useState("California, Texas, Florida, New York, Arizona");
+  const [targetAudience, setTargetAudience] = useState("Homeowners 35-54, Young Professionals 25-34");
+  const [dailyBudget, setDailyBudget] = useState("150");
+  const [phoneNumber, setPhoneNumber] = useState("1-800-TRUMOVE");
+  const [websiteUrl, setWebsiteUrl] = useState("trumove.com");
+  
+  // Platform selections based on best performers
+  const [selectedPlatforms, setSelectedPlatforms] = useState({
+    googleSearch: true,
+    googleDisplay: true,
+    meta: true,
+    microsoft: true,
+    tiktok: false,
+  });
+  
+  // Keyword selections
+  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([
+    "ai moving estimate",
+    "cross country movers near me",
+    "long distance moving company",
+    "moving cost calculator",
+  ]);
  
    const totalSpend = BEST_PLATFORMS.reduce((sum, p) => sum + p.spend, 0);
    const totalConversions = BEST_PLATFORMS.reduce((sum, p) => sum + p.conversions, 0);
    const avgCPA = totalSpend / totalConversions;
    const avgROAS = BEST_PLATFORMS.reduce((sum, p) => sum + p.roas, 0) / BEST_PLATFORMS.length;
+  
+  const toggleKeyword = (kw: string) => {
+    setSelectedKeywords(prev => 
+      prev.includes(kw) ? prev.filter(k => k !== kw) : [...prev, kw]
+    );
+  };
  
    return (
      <div className="space-y-6">
+      {/* Business Info Section - AI Pre-filled */}
+      <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
+            Your Business Profile
+            <Badge className="ml-2 bg-primary/20 text-primary border-primary/30">AI Pre-filled from Top Performers</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
+                Business Name
+              </label>
+              <Input 
+                value={businessName} 
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Your company name"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-1.5">
+                <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+                Phone Number
+              </label>
+              <Input 
+                value={phoneNumber} 
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="1-800-XXX-XXXX"
+              />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Services Offered</label>
+            <Textarea 
+              value={serviceType} 
+              onChange={(e) => setServiceType(e.target.value)}
+              placeholder="What services do you offer?"
+              className="min-h-[60px]"
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-1.5">
+                <Link2 className="w-3.5 h-3.5 text-muted-foreground" />
+                Website URL
+              </label>
+              <Input 
+                value={websiteUrl} 
+                onChange={(e) => setWebsiteUrl(e.target.value)}
+                placeholder="yoursite.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-1.5">
+                <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
+                Daily Budget
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                <Input 
+                  value={dailyBudget} 
+                  onChange={(e) => setDailyBudget(e.target.value)}
+                  className="pl-7"
+                  type="number"
+                />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* AI Recommended Targeting */}
+      <div className="grid grid-cols-2 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Globe className="w-4 h-4 text-primary" />
+              Recommended Locations
+              <Badge variant="secondary" className="text-[10px]">Based on 7.8% avg conv rate</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Textarea 
+              value={targetLocations} 
+              onChange={(e) => setTargetLocations(e.target.value)}
+              className="min-h-[60px] text-sm"
+            />
+            <p className="text-xs text-muted-foreground mt-2">
+              💡 NYC has highest conv rate (8.10%) - consider increasing budget
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Users className="w-4 h-4 text-primary" />
+              Recommended Audience
+              <Badge variant="secondary" className="text-[10px]">$3,240 avg order value</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Textarea 
+              value={targetAudience} 
+              onChange={(e) => setTargetAudience(e.target.value)}
+              className="min-h-[60px] text-sm"
+            />
+            <p className="text-xs text-muted-foreground mt-2">
+              💡 Corporate Relocation has $8,900 AOV - add B2B targeting
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Platform Selection */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-primary" />
+            Ad Platforms
+            <Badge className="bg-green-500/10 text-green-600 border-green-500/30 text-[10px]">AI Optimized</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-5 gap-3">
+            {[
+              { key: 'googleSearch', label: 'Google Search', roas: 4.2, recommended: true },
+              { key: 'googleDisplay', label: 'Display', roas: 2.8, recommended: true },
+              { key: 'meta', label: 'Meta (FB/IG)', roas: 3.1, recommended: true },
+              { key: 'microsoft', label: 'Microsoft', roas: 3.4, recommended: true },
+              { key: 'tiktok', label: 'TikTok', roas: 1.9, recommended: false },
+            ].map(platform => (
+              <div 
+                key={platform.key}
+                className={`p-3 rounded-lg border-2 transition-all cursor-pointer ${
+                  selectedPlatforms[platform.key as keyof typeof selectedPlatforms]
+                    ? 'border-primary bg-primary/5'
+                    : 'border-muted hover:border-muted-foreground/30'
+                } ${!platform.recommended ? 'opacity-60' : ''}`}
+                onClick={() => setSelectedPlatforms(prev => ({
+                  ...prev,
+                  [platform.key]: !prev[platform.key as keyof typeof selectedPlatforms]
+                }))}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <Checkbox 
+                    checked={selectedPlatforms[platform.key as keyof typeof selectedPlatforms]}
+                    className="pointer-events-none"
+                  />
+                  <span className="text-xs font-medium">{platform.label}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Badge 
+                    variant={platform.roas >= 3 ? 'default' : 'destructive'} 
+                    className="text-[10px]"
+                  >
+                    {platform.roas}x ROAS
+                  </Badge>
+                  {!platform.recommended && (
+                    <AlertTriangle className="w-3 h-3 text-amber-500" />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1">
+            <AlertTriangle className="w-3 h-3 text-amber-500" />
+            TikTok has low ROAS (1.9x) - not recommended until creative refresh
+          </p>
+        </CardContent>
+      </Card>
+
        {/* Header Stats */}
-       <div className="grid grid-cols-4 gap-4">
-         <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20">
-           <CardContent className="p-4">
+      <div className="grid grid-cols-4 gap-3">
+        <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
+          <CardContent className="p-3">
              <div className="flex items-center justify-between">
                <div>
-                 <p className="text-sm text-muted-foreground">Total Spend</p>
-                 <p className="text-2xl font-bold">${totalSpend.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">Historical Spend</p>
+                <p className="text-xl font-bold">${totalSpend.toLocaleString()}</p>
                </div>
-               <DollarSign className="w-8 h-8 text-green-500" />
+              <DollarSign className="w-6 h-6 text-green-500" />
              </div>
            </CardContent>
          </Card>
-         <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
-           <CardContent className="p-4">
+        <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
+          <CardContent className="p-3">
              <div className="flex items-center justify-between">
                <div>
-                 <p className="text-sm text-muted-foreground">Conversions</p>
-                 <p className="text-2xl font-bold">{totalConversions.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">Conversions</p>
+                <p className="text-xl font-bold">{totalConversions.toLocaleString()}</p>
                </div>
-               <Users className="w-8 h-8 text-blue-500" />
+              <Users className="w-6 h-6 text-blue-500" />
              </div>
            </CardContent>
          </Card>
-         <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
-           <CardContent className="p-4">
+        <Card className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/20">
+          <CardContent className="p-3">
              <div className="flex items-center justify-between">
                <div>
-                 <p className="text-sm text-muted-foreground">Avg. CPA</p>
-                 <p className="text-2xl font-bold">${avgCPA.toFixed(2)}</p>
+                <p className="text-xs text-muted-foreground">Avg. CPA</p>
+                <p className="text-xl font-bold">${avgCPA.toFixed(2)}</p>
                </div>
-               <Target className="w-8 h-8 text-purple-500" />
+              <Target className="w-6 h-6 text-purple-500" />
              </div>
            </CardContent>
          </Card>
-         <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border-amber-500/20">
-           <CardContent className="p-4">
+        <Card className="bg-gradient-to-br from-amber-500/10 to-amber-500/5 border-amber-500/20">
+          <CardContent className="p-3">
              <div className="flex items-center justify-between">
                <div>
-                 <p className="text-sm text-muted-foreground">Avg. ROAS</p>
-                 <p className="text-2xl font-bold">{avgROAS.toFixed(1)}x</p>
+                <p className="text-xs text-muted-foreground">Avg. ROAS</p>
+                <p className="text-xl font-bold">{avgROAS.toFixed(1)}x</p>
                </div>
-               <TrendingUp className="w-8 h-8 text-amber-500" />
+              <TrendingUp className="w-6 h-6 text-amber-500" />
              </div>
            </CardContent>
          </Card>
        </div>
  
        {/* Tabs */}
-       <div className="flex items-center gap-2 border-b pb-2">
+      <div className="flex items-center gap-1 border-b pb-2">
          {[
            { id: 'keywords', label: 'Keywords', icon: Hash },
            { id: 'platforms', label: 'Platforms', icon: BarChart3 },
@@ -153,30 +366,39 @@
              variant={activeTab === tab.id ? 'default' : 'ghost'}
              size="sm"
              onClick={() => setActiveTab(tab.id as typeof activeTab)}
-             className="gap-1.5"
+            className="gap-1 text-xs h-8"
            >
-             <tab.icon className="w-3.5 h-3.5" />
+            <tab.icon className="w-3 h-3" />
              {tab.label}
            </Button>
          ))}
        </div>
  
        {/* Tab Content */}
-       <ScrollArea className="h-[400px]">
+      <ScrollArea className="h-[260px]">
          {activeTab === 'keywords' && (
-           <div className="space-y-3">
+          <div className="space-y-2">
              <div className="flex items-center justify-between mb-4">
                <h3 className="font-semibold flex items-center gap-2">
                  <Star className="w-4 h-4 text-amber-500" />
-                 Top Performing Keywords
+                Select Keywords for Campaign
                </h3>
-               <Badge className="bg-green-500/10 text-green-600 border-green-500/30">Sorted by ROI</Badge>
+              <Badge className="bg-green-500/10 text-green-600 border-green-500/30">{selectedKeywords.length} selected</Badge>
              </div>
              {BEST_KEYWORDS.map((kw, i) => (
-               <Card key={i} className={i === 0 ? 'border-green-500/50 bg-green-500/5' : ''}>
-                 <CardContent className="p-4">
-                   <div className="flex items-start justify-between mb-2">
+              <Card 
+                key={i} 
+                className={`cursor-pointer transition-all ${
+                  selectedKeywords.includes(kw.keyword) 
+                    ? 'border-primary bg-primary/5' 
+                    : 'hover:border-muted-foreground/30'
+                } ${i === 0 ? 'ring-2 ring-amber-500/30' : ''}`}
+                onClick={() => toggleKeyword(kw.keyword)}
+              >
+                <CardContent className="p-3">
+                  <div className="flex items-start justify-between mb-1">
                      <div className="flex items-center gap-2">
+                      <Checkbox checked={selectedKeywords.includes(kw.keyword)} className="pointer-events-none" />
                        {i === 0 && <Badge className="bg-amber-500 text-white">🏆 #1</Badge>}
                        <span className="font-medium">{kw.keyword}</span>
                        {kw.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
@@ -184,13 +406,13 @@
                      </div>
                      <Badge variant="outline" className="text-xs">${kw.cpa.toFixed(2)} CPA</Badge>
                    </div>
-                   <div className="grid grid-cols-4 gap-4 text-sm mb-2">
+                  <div className="grid grid-cols-4 gap-4 text-xs ml-6 mb-1">
                      <div><span className="text-muted-foreground">Clicks:</span> {kw.clicks.toLocaleString()}</div>
                      <div><span className="text-muted-foreground">CTR:</span> {kw.ctr.toFixed(2)}%</div>
                      <div><span className="text-muted-foreground">Conv:</span> {kw.conversions}</div>
                      <div><span className="text-muted-foreground">Impr:</span> {kw.impressions.toLocaleString()}</div>
                    </div>
-                   <p className="text-sm text-muted-foreground bg-muted/50 rounded px-2 py-1">{kw.recommendation}</p>
+                  <p className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1 ml-6">{kw.recommendation}</p>
                  </CardContent>
                </Card>
              ))}
@@ -352,13 +574,13 @@
  
        {/* Action Button */}
        <div className="pt-4 border-t">
-         <Button onClick={onProceedToCreate} className="w-full gap-2" size="lg">
+        <Button onClick={onProceedToCreate} className="w-full gap-2" size="lg" disabled={selectedKeywords.length === 0}>
            <Zap className="w-4 h-4" />
-           Create Landing Page Based on This Data
+          Create Landing Page with These Settings
            <ArrowRight className="w-4 h-4" />
          </Button>
          <p className="text-xs text-center text-muted-foreground mt-2">
-           AI will pre-populate targeting based on your best performing segments
+          {selectedKeywords.length} keywords • {Object.values(selectedPlatforms).filter(Boolean).length} platforms • {targetLocations.split(',').length} locations
          </p>
        </div>
      </div>
