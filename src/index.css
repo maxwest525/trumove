@@ -3539,53 +3539,6 @@
   border-radius: 2px;
 }
 
-/* Bottom Trust Strip - Above Footer */
-.tru-bottom-trust-strip {
-  width: 100%;
-  padding: 2.5rem 1.5rem;
-  background: hsl(var(--muted));
-  border-top: 1px solid hsl(var(--border));
-  margin-top: 3rem;
-}
-
-.tru-bottom-trust-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-}
-
-.tru-bottom-trust-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: hsl(var(--foreground));
-  white-space: nowrap;
-}
-
-.tru-bottom-trust-dot {
-  color: hsl(var(--muted-foreground));
-  font-size: 1rem;
-}
-
-@media (max-width: 768px) {
-  .tru-bottom-trust-inner {
-    gap: 1rem;
-  }
-  
-  .tru-bottom-trust-item {
-    font-size: 0.8125rem;
-  }
-  
-  .tru-bottom-trust-dot {
-    display: none;
-  }
-}
 /* Road map - CENTERED at 770px anchor */
 .tru-tracker-roadmap-center {
   position: absolute;
