@@ -1,101 +1,145 @@
 
-# Fix Section Height Mismatch - Comprehensive Approach
 
-## Root Cause Analysis
+# Fix Panel Sizing for Consistent Heights at All Zoom Levels
 
-The CSS changes are being correctly applied to the outer section containers:
+## Problem Analysis
+
+The demo section panels (AI Scanner, Live Inventory, Route Overview, and Road Map) currently use **viewport-relative heights**:
+
 ```css
-.tru-ai-steps-section,
-.tru-tracker-section {
-  height: var(--demo-section-height); /* 425px */
-  min-height: var(--demo-section-height);
-}
+height: clamp(24rem, 38vh, 30rem)
 ```
 
-However, **the visual height difference persists** because:
+The `38vh` component varies with:
+1. **Browser zoom level** - zooming in/out changes the effective viewport height
+2. **Window resize** - different browser window sizes
+3. **Screen resolution** - varies between devices
 
-1. **Inner rows have independent min-height**: Both `.tru-ai-header-row` and `.tru-tracker-header-row` use `min-height: clamp(26rem, 40vh, 32rem)` which is viewport-dependent
-2. **Content differences**: The panels within each section may be rendering at slightly different heights
-3. **Padding arithmetic**: Section padding + inner row margin + content creates unpredictable total heights
-4. **The height: 425px on the outer section is being applied**, but inner content overflows or underflows it
+This causes mismatched heights between panels when users adjust their browser zoom.
 
 ## Solution
 
-Apply the fixed height directly to the **inner header rows** (where the content lives) instead of just the outer sections. This ensures the content containers themselves match.
+Replace the viewport-relative `clamp()` heights with a **fixed rem-based height** using a shared CSS variable. Since `rem` units scale with the root font size (which is also affected by zoom), all panels will maintain equal heights regardless of zoom level.
 
 ## Changes Required
 
 ### File: `src/index.css`
 
-**1. Update the shared height variable comment for clarity**
+**1. Add a new CSS variable for panel height**
+
+In the `:root` section (around line 35), add a dedicated panel height variable:
+
 ```css
 :root {
-  /* Unified height for demo panel content rows (not outer sections) */
-  --demo-section-height: 425px;
+  /* ... existing variables ... */
+  
+  /* Fixed panel height for demo sections - rem-based for zoom consistency */
+  --demo-panel-height: 26.5rem; /* ~424px at default 16px root */
 }
 ```
 
-**2. Apply fixed height to inner header rows**
+**2. Update AI Scanner panel height**
+
+Around line 3111-3123, change:
 ```css
-/* Before */
-.tru-ai-header-row {
-  display: flex;
-  align-items: center;
-  position: relative;
-  margin-bottom: var(--spacing-sm);
-  min-height: var(--ai-section-min-height);
-  height: auto;
-}
-
-.tru-tracker-header-row {
-  display: flex;
-  align-items: center;
-  position: relative;
-  margin-bottom: var(--spacing-sm);
-  min-height: var(--ai-section-min-height);
-  height: auto;
-}
-
-/* After - Apply fixed height to inner rows */
-.tru-ai-header-row,
-.tru-tracker-header-row {
-  display: flex;
-  align-items: center;
-  position: relative;
-  margin-bottom: var(--spacing-sm);
-  height: var(--demo-section-height);
-  min-height: var(--demo-section-height);
-  max-height: var(--demo-section-height);
+.tru-ai-live-scanner {
+  /* Change FROM: */
+  height: clamp(24rem, 38vh, 30rem);
+  min-height: 24rem;
+  
+  /* Change TO: */
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
 }
 ```
 
-**3. Keep outer sections with auto height to contain fixed inner rows**
+**3. Update AI Live Inventory panel height**
+
+Around line 3274-3288, change:
 ```css
-.tru-ai-steps-section,
-.tru-tracker-section {
-  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md) var(--spacing-md);
-  margin-top: 0;
-  background: hsl(var(--background));
-  position: relative;
-  z-index: 5;
-  height: auto;       /* Let outer wrap the fixed inner */
-  min-height: auto;
-  overflow: hidden;
+.tru-ai-live-inventory {
+  /* Change FROM: */
+  height: clamp(24rem, 38vh, 30rem);
+  min-height: 24rem;
+  
+  /* Change TO: */
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
+}
+```
+
+**4. Update Tracker Satellite panel height**
+
+Around line 4013-4019, change:
+```css
+.tru-tracker-satellite-enlarged {
+  /* Change FROM: */
+  height: clamp(24rem, 38vh, 30rem);
+  min-height: 24rem;
+  
+  /* Change TO: */
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
+}
+```
+
+**5. Update Road Map panel height**
+
+Around line 3595-3600, change:
+```css
+.tru-tracker-road-map {
+  /* Change FROM: */
+  height: clamp(24rem, 38vh, 30rem);
+  
+  /* Change TO: */
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
+}
+```
+
+**6. Update legacy tracker preview (if present)**
+
+Around line 4073-4082, update `.tru-tracker-preview` similarly.
+
+**7. Update the header preview containers**
+
+Around line 2968-2973:
+```css
+.tru-ai-header-previews .tru-ai-live-scanner,
+.tru-ai-header-previews .tru-ai-live-inventory {
+  width: var(--ai-preview-width);
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
 }
 ```
 
 ## Summary
 
-| Layer | Before | After |
-|-------|--------|-------|
-| Outer section height | 425px (fixed) | auto (wraps inner) |
-| Inner header-row height | clamp(26rem, 40vh, 32rem) min | 425px fixed |
-| Content clipping | On outer section | On outer section |
+| Component | Before | After |
+|-----------|--------|-------|
+| AI Scanner | `clamp(24rem, 38vh, 30rem)` | `var(--demo-panel-height)` (26.5rem) |
+| Live Inventory | `clamp(24rem, 38vh, 30rem)` | `var(--demo-panel-height)` (26.5rem) |
+| Route Overview | `clamp(24rem, 38vh, 30rem)` | `var(--demo-panel-height)` (26.5rem) |
+| Road Map | `clamp(24rem, 38vh, 30rem)` | `var(--demo-panel-height)` (26.5rem) |
 
-This approach locks the **content container** to 425px rather than the wrapper, ensuring both sections render identically regardless of their internal content differences.
+## Why This Works
 
-## Technical Details
+1. **rem units** are relative to the root font size, which scales proportionally with browser zoom
+2. All panels reference the **same CSS variable**, ensuring they stay perfectly synchronized
+3. The fixed value (26.5rem ≈ 424px) matches the existing `--demo-section-height` variable
+4. Using `min-height` + `max-height` in addition to `height` prevents any content-based expansion
 
-The inner rows (`.tru-ai-header-row` and `.tru-tracker-header-row`) contain absolutely positioned elements that reference them as positioning context. By fixing these to exactly 425px with `height`, `min-height`, and `max-height`, both sections will have identical content area heights.
+## Testing Checklist
 
-The outer sections will then naturally size to contain the fixed inner rows plus their padding, resulting in identical total heights.
+After implementation, verify:
+- ✓ AI Scanner and Live Inventory have matching heights
+- ✓ Route Overview and Road Map have matching heights  
+- ✓ All four panels match each other across sections
+- ✓ Heights remain consistent at 90%, 100%, and 110% browser zoom
+- ✓ No content clipping or overflow issues
+
