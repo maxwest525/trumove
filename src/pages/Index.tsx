@@ -1420,7 +1420,7 @@ export default function Index() {
                 The Smarter Way To <span className="tru-hero-accent">Move</span>
               </h1>
               <p className="tru-hero-feature-line">
-                AI-powered inventory · FMCSA-vetted carriers that care · Live video consults · Shipment Tracking
+                AI-powered inventory · FMCSA-vetted carriers · Live video consults · Shipment Tracking
               </p>
             </div>
 
