@@ -396,23 +396,29 @@ const saveState = (
              {title}
            </div>
            
-          <div className="flex items-center gap-1 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0">
             {showMaximize && (
               <button
                 onClick={handleMaximize}
-                className="p-1.5 rounded-md hover:bg-white/20 transition-colors"
-                title={isMaximized ? "Restore" : "Maximize"}
+                className="px-2 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 border border-white/30 transition-all flex items-center gap-1.5 hover:scale-105"
+                title={isMaximized ? "Restore Window" : "Maximize Window"}
               >
                 {isMaximized ? (
-                  <Minimize2 className="w-4 h-4 text-white" />
+                  <>
+                    <Minimize2 className="w-4 h-4 text-white" />
+                    <span className="text-xs font-medium text-white hidden sm:inline">Restore</span>
+                  </>
                 ) : (
-                  <Maximize2 className="w-4 h-4 text-white" />
+                  <>
+                    <Maximize2 className="w-4 h-4 text-white" />
+                    <span className="text-xs font-medium text-white hidden sm:inline">Fullscreen</span>
+                  </>
                 )}
               </button>
             )}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-md hover:bg-white/20 transition-colors"
+              className="p-2 rounded-lg bg-white/10 hover:bg-red-500/80 border border-white/20 hover:border-red-400 transition-all hover:scale-105"
               title="Close"
             >
               <X className="w-4 h-4 text-white" />
