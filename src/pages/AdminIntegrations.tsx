@@ -18,53 +18,80 @@
    status: "not_configured" | "configured" | "error";
  }
  
- const INTEGRATIONS: IntegrationConfig[] = [
-   {
-     id: "granot",
-     name: "Granot CRM",
-     description: "Moving industry CRM for brokers and carriers",
-     fields: [
-       { key: "GRANOT_API_KEY", label: "API Key", placeholder: "Enter Granot API key", type: "password" },
-       { key: "GRANOT_SECRET", label: "Secret Token", placeholder: "Enter secret token", type: "password" },
-     ],
-     docsUrl: "https://granot.io/api-docs",
-     status: "not_configured",
-   },
-   {
-     id: "ringcentral",
-     name: "RingCentral",
-     description: "Cloud phone, video, and messaging communications",
-     fields: [
-       { key: "RINGCENTRAL_CLIENT_ID", label: "Client ID", placeholder: "Enter client ID", type: "text" },
-       { key: "RINGCENTRAL_CLIENT_SECRET", label: "Client Secret", placeholder: "Enter client secret", type: "password" },
-       { key: "RINGCENTRAL_JWT_TOKEN", label: "JWT Token (optional)", placeholder: "Enter JWT token", type: "password" },
-     ],
-     docsUrl: "https://developers.ringcentral.com/api-reference",
-     status: "not_configured",
-   },
-   {
-     id: "dashclicks",
-     name: "DashClicks",
-     description: "White-label marketing platform and fulfillment services",
-     fields: [
-       { key: "DASHCLICKS_API_KEY", label: "API Key", placeholder: "Enter DashClicks API key", type: "password" },
-       { key: "DASHCLICKS_AGENCY_ID", label: "Agency ID", placeholder: "Enter agency ID", type: "text" },
-     ],
-     docsUrl: "https://www.dashclicks.com/api",
-     status: "not_configured",
-   },
-   {
-     id: "yembo",
-     name: "Yembo",
-     description: "AI-powered video surveys for moving inventory analysis",
-     fields: [
-       { key: "YEMBO_API_KEY", label: "API Key", placeholder: "Enter Yembo API key", type: "password" },
-       { key: "YEMBO_COMPANY_ID", label: "Company ID", placeholder: "Enter company ID", type: "text" },
-     ],
-     docsUrl: "https://www.yembo.ai/developers",
-     status: "not_configured",
-   },
- ];
+const INTEGRATIONS: IntegrationConfig[] = [
+  {
+    id: "google_ads",
+    name: "Google Ads",
+    description: "Google Ads API for campaign management and performance data",
+    fields: [
+      { key: "GOOGLE_ADS_CLIENT_ID", label: "OAuth Client ID", placeholder: "Enter Google OAuth client ID", type: "text" },
+      { key: "GOOGLE_ADS_CLIENT_SECRET", label: "OAuth Client Secret", placeholder: "Enter OAuth client secret", type: "password" },
+      { key: "GOOGLE_ADS_DEVELOPER_TOKEN", label: "Developer Token", placeholder: "Enter Google Ads developer token", type: "password" },
+      { key: "GOOGLE_ADS_CUSTOMER_ID", label: "Customer ID", placeholder: "Enter customer ID (without dashes)", type: "text" },
+      { key: "GOOGLE_ADS_REFRESH_TOKEN", label: "Refresh Token (optional)", placeholder: "Generated after OAuth flow", type: "password" },
+    ],
+    docsUrl: "https://developers.google.com/google-ads/api/docs/start",
+    status: "not_configured",
+  },
+  {
+    id: "meta_business",
+    name: "Meta Business (Facebook/Instagram Ads)",
+    description: "Meta Marketing API for Facebook and Instagram ad campaigns",
+    fields: [
+      { key: "META_APP_ID", label: "App ID", placeholder: "Enter Meta App ID", type: "text" },
+      { key: "META_APP_SECRET", label: "App Secret", placeholder: "Enter Meta App secret", type: "password" },
+      { key: "META_ACCESS_TOKEN", label: "Access Token", placeholder: "Enter system user access token", type: "password" },
+      { key: "META_AD_ACCOUNT_ID", label: "Ad Account ID", placeholder: "act_XXXXXXXXX", type: "text" },
+    ],
+    docsUrl: "https://developers.facebook.com/docs/marketing-apis",
+    status: "not_configured",
+  },
+  {
+    id: "granot",
+    name: "Granot CRM",
+    description: "Moving industry CRM for brokers and carriers",
+    fields: [
+      { key: "GRANOT_API_KEY", label: "API Key", placeholder: "Enter Granot API key", type: "password" },
+      { key: "GRANOT_SECRET", label: "Secret Token", placeholder: "Enter secret token", type: "password" },
+    ],
+    docsUrl: "https://granot.io/api-docs",
+    status: "not_configured",
+  },
+  {
+    id: "ringcentral",
+    name: "RingCentral",
+    description: "Cloud phone, video, and messaging communications",
+    fields: [
+      { key: "RINGCENTRAL_CLIENT_ID", label: "Client ID", placeholder: "Enter client ID", type: "text" },
+      { key: "RINGCENTRAL_CLIENT_SECRET", label: "Client Secret", placeholder: "Enter client secret", type: "password" },
+      { key: "RINGCENTRAL_JWT_TOKEN", label: "JWT Token (optional)", placeholder: "Enter JWT token", type: "password" },
+    ],
+    docsUrl: "https://developers.ringcentral.com/api-reference",
+    status: "not_configured",
+  },
+  {
+    id: "dashclicks",
+    name: "DashClicks",
+    description: "White-label marketing platform and fulfillment services",
+    fields: [
+      { key: "DASHCLICKS_API_KEY", label: "API Key", placeholder: "Enter DashClicks API key", type: "password" },
+      { key: "DASHCLICKS_AGENCY_ID", label: "Agency ID", placeholder: "Enter agency ID", type: "text" },
+    ],
+    docsUrl: "https://www.dashclicks.com/api",
+    status: "not_configured",
+  },
+  {
+    id: "yembo",
+    name: "Yembo",
+    description: "AI-powered video surveys for moving inventory analysis",
+    fields: [
+      { key: "YEMBO_API_KEY", label: "API Key", placeholder: "Enter Yembo API key", type: "password" },
+      { key: "YEMBO_COMPANY_ID", label: "Company ID", placeholder: "Enter company ID", type: "text" },
+    ],
+    docsUrl: "https://www.yembo.ai/developers",
+    status: "not_configured",
+  },
+];
  
  export default function AdminIntegrations() {
    const navigate = useNavigate();
