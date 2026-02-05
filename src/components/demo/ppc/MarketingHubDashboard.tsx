@@ -3,16 +3,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Layout, TrendingUp, Zap, Target, Rocket,
+  Layout, TrendingUp, Target, Rocket,
   ArrowRight, DollarSign, BarChart3,
-  Bot, ChevronRight, Sparkles, Image, Play
+  Bot, ChevronRight, Sparkles
 } from "lucide-react";
 import { TrudyMarketingChat } from "./TrudyMarketingChat";
+import { ConnectedAccountsPanel } from "./ConnectedAccountsPanel";
 import { cn } from "@/lib/utils";
 
 interface MarketingHubDashboardProps {
   onNavigate: (section: string) => void;
   onQuickCreate?: (type: 'ad' | 'landing' | 'campaign') => void;
+  liveMode?: boolean;
   stats: {
     totalSpend: number;
     conversions: number;
@@ -53,7 +55,7 @@ const QUICK_ACTIONS = [
   },
 ];
 
-export function MarketingHubDashboard({ onNavigate, onQuickCreate, stats }: MarketingHubDashboardProps) {
+export function MarketingHubDashboard({ onNavigate, onQuickCreate, liveMode = false, stats }: MarketingHubDashboardProps) {
   const [showTrudyPanel, setShowTrudyPanel] = useState(false);
 
   const handleQuickAction = (type: 'ad' | 'landing' | 'campaign') => {
@@ -127,6 +129,9 @@ export function MarketingHubDashboard({ onNavigate, onQuickCreate, stats }: Mark
             </Card>
           ))}
         </div>
+
+        {/* Connected Accounts Panel */}
+        <ConnectedAccountsPanel compact liveMode={liveMode} />
 
         {/* Quick Stats Bar */}
         <div className="grid grid-cols-4 gap-3">
