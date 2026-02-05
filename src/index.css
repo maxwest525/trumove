@@ -2809,6 +2809,7 @@
 .tru-ai-cta-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   padding: 12px 24px;
   background: hsl(var(--foreground));
@@ -2818,7 +2819,8 @@
   border-radius: 10px;
   border: 2px solid transparent;
   cursor: pointer;
-  width: fit-content;
+  width: auto;
+  text-align: center;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.15);
 }
@@ -3460,7 +3462,7 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  gap: 40px;
+  gap: 80px;
   height: var(--demo-section-height);
   min-height: var(--demo-section-height);
   max-height: var(--demo-section-height);
