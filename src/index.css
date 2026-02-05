@@ -2595,8 +2595,8 @@
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
-   height: var(--demo-section-height);
-   min-height: var(--demo-section-height);
+  height: auto;
+  min-height: auto;
   overflow: hidden;
 }
 
@@ -2606,8 +2606,9 @@
   align-items: center;
   position: relative;
   margin-bottom: var(--spacing-sm);
-  min-height: var(--ai-section-min-height);
-  height: auto; /* Allow natural expansion beyond min-height */
+  height: var(--demo-section-height);
+  min-height: var(--demo-section-height);
+  max-height: var(--demo-section-height);
 }
 
 /* Steps left container - center-relative positioning for consistent gap */
@@ -3433,8 +3434,8 @@
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
-   height: var(--demo-section-height);
-   min-height: var(--demo-section-height);
+  height: auto;
+  min-height: auto;
   overflow: hidden;
 }
 
@@ -3449,8 +3450,9 @@
   align-items: center;
   position: relative;
   margin-bottom: var(--spacing-sm);
-  min-height: var(--ai-section-min-height);
-  height: auto;
+  height: var(--demo-section-height);
+  min-height: var(--demo-section-height);
+  max-height: var(--demo-section-height);
 }
 
 /* Content container - LEFT side (matches AI section .tru-ai-steps-left) */
