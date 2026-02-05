@@ -1,4 +1,4 @@
-import { LucideIcon, Video, Phone, ScanLine, Lightbulb, Truck, Scale, HelpCircle, CloudSun, Headphones, Package, DollarSign, Calendar, MapPin, Shield, Clock, Home, Building2, Users } from 'lucide-react';
+import { LucideIcon, Video, Phone, ScanLine, Lightbulb, Truck, Scale, HelpCircle, CloudSun, Headphones, Package, DollarSign, Calendar, MapPin, Shield, Clock, Home, Building2, Users, Image, Layout, TrendingUp, Target } from 'lucide-react';
 
 export interface QuickAction {
   id: string;
@@ -270,3 +270,16 @@ export function getPageContext(pathname: string): PageContext {
   // Default fallback
   return pageContexts.general;
 }
+
+// Marketing-specific context for the AI Marketing Suite
+export const marketingContext: PageContext = {
+  key: 'marketing',
+  firstMessage: "Hi! I'm Trudy, your AI marketing assistant. 🎨\n\nI can help you:\n- **Create ads** with custom images (try: 'ad with a llama')\n- **Build landing pages** for any location\n- **Find keywords** for your campaigns\n- **Launch on Google, Meta, or TikTok**\n\nWhat would you like to create today?",
+  quickActions: [
+    { id: 'create-ad', label: 'Create Ad', icon: Image, action: 'message', message: 'Help me create an ad for TruMove' },
+    { id: 'landing-page', label: 'Landing Page', icon: Layout, action: 'message', message: 'Build a landing page for California moves' },
+    { id: 'keywords', label: 'Find Keywords', icon: Target, action: 'message', message: 'What keywords should I target for moving services?' },
+    { id: 'optimize', label: 'Optimize', icon: TrendingUp, action: 'message', message: 'How can I improve my campaign performance?' },
+  ],
+  agentContext: "User is in the AI Marketing Suite. You are Trudy, the AI marketing assistant. You CAN generate images when users request specific visuals (like 'ad with a llama'). Help create ads, landing pages, suggest keywords, and provide platform-specific launch guidance for Google Ads, Meta/Facebook, and TikTok.",
+};

@@ -1,5 +1,8 @@
 project_id = "nhoagucgcqjfbtifykha"
 
+[functions.marketing-ai-assistant]
+verify_jwt = false
+
 [functions.estimate-inventory]
 verify_jwt = false
 
