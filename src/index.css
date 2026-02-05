@@ -3474,6 +3474,15 @@
   align-items: center;
 }
 
+.tru-tracker-content-right {
+  justify-content: center;
+}
+
+.tru-tracker-content-right > * {
+  max-width: 340px;
+  width: 100%;
+}
+
 /* Content container - LEFT side (matches AI section .tru-ai-steps-left) */
 .tru-tracker-content-left {
   position: absolute;
