@@ -1,25 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { FileText, Briefcase, BarChart3, ArrowLeft, Phone, Sparkles, Headphones, Trophy, Key, MessageSquare, LayoutGrid } from "lucide-react";
+import { Briefcase, ArrowLeft, Sparkles, Trophy, Key, MessageSquare, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
-import { ESignHub } from "@/components/agent/ESignHub";
-import { IntegrationModal } from "@/components/integrations/IntegrationModals";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
 import { CoachingSummaryModal } from "@/components/coaching/CoachingSummaryModal";
 import { InternalMessagingModal } from "@/components/messaging/InternalMessagingModal";
 import { CombinedWorkspaceModal } from "@/components/agent/CombinedWorkspaceModal";
 
-type ActiveTool = null | "esign" | "operations" | "granot" | "ringcentral" | "ppc" | "crm-dialer" | "coaching-summary" | "messaging" | "workspace";
-
 const AGENT_TOOLS = [
   {
-    id: "esign" as const,
-    title: "E-Sign Hub",
-    description: "Send, track & assist with document signing",
-    icon: FileText,
+    id: "workspace" as const,
+    title: "Agent Workspace",
+    description: "CRM, Dialer & E-Sign in one split-panel view",
+    icon: LayoutGrid,
     external: false,
   },
   {
@@ -44,13 +40,6 @@ const AGENT_TOOLS = [
     external: false,
   },
   {
-    id: "workspace" as const,
-    title: "CRM + Dialer Workspace",
-    description: "Split-panel view with CRM & phone side-by-side",
-    icon: LayoutGrid,
-    external: false,
-  },
-  {
     id: "ppc" as const,
     title: "AI Marketing Suite",
     description: "PPC, SEO, A/B testing & conversions",
@@ -58,37 +47,10 @@ const AGENT_TOOLS = [
     external: false,
     isIntegration: true,
   },
-  {
-    id: "crm-dialer" as const,
-    title: "CRM / Dialer (Separate)",
-    description: "Open CRM & phone in separate windows",
-    icon: Headphones,
-    external: false,
-    isIntegration: true,
-  },
-  {
-    id: "granot" as const,
-    title: "Granot CRM",
-    description: "Moving industry CRM for brokers",
-    icon: BarChart3,
-    external: false,
-    isIntegration: true,
-  },
-  {
-    id: "ringcentral" as const,
-    title: "RingCentral",
-    description: "Cloud phone & video communications",
-    icon: Phone,
-    external: false,
-    isIntegration: true,
-  },
 ];
 export default function AgentLogin() {
   const [showLoginModal, setShowLoginModal] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [activeTool, setActiveTool] = useState<ActiveTool>(null);
-  const [granotOpen, setGranotOpen] = useState(false);
-  const [ringcentralOpen, setRingcentralOpen] = useState(false);
   const [ppcOpen, setPpcOpen] = useState(false);
   const [operationsOpen, setOperationsOpen] = useState(false);
   const [coachingSummaryOpen, setCoachingSummaryOpen] = useState(false);
@@ -102,16 +64,9 @@ export default function AgentLogin() {
     setShowLoginModal(false);
   };
 
-  const handleToolClick = (toolId: ActiveTool) => {
-    if (toolId === "granot") {
-      setGranotOpen(true);
-    } else if (toolId === "ringcentral") {
-      setRingcentralOpen(true);
-    } else if (toolId === "ppc") {
+  const handleToolClick = (toolId: typeof AGENT_TOOLS[number]['id']) => {
+    if (toolId === "ppc") {
       setPpcOpen(true);
-    } else if (toolId === "crm-dialer") {
-      setGranotOpen(true);
-      setRingcentralOpen(true);
     } else if (toolId === "operations") {
       setOperationsOpen(true);
     } else if (toolId === "coaching-summary") {
@@ -120,16 +75,6 @@ export default function AgentLogin() {
       setMessagingOpen(true);
     } else if (toolId === "workspace") {
       setWorkspaceOpen(true);
-    } else {
-      setActiveTool(toolId);
-    }
-  };
-  const renderActiveTool = () => {
-    switch (activeTool) {
-      case "esign":
-        return <ESignHub />;
-      default:
-        return null;
     }
   };
 
@@ -141,17 +86,6 @@ export default function AgentLogin() {
         onLogin={handleLogin}
       />
 
-      {/* Integration Modals */}
-      <IntegrationModal 
-        open={granotOpen} 
-        onOpenChange={setGranotOpen} 
-        integration="granot" 
-      />
-      <IntegrationModal 
-        open={ringcentralOpen} 
-        onOpenChange={setRingcentralOpen} 
-        integration="ringcentral" 
-      />
       <PPCDemoModal 
         open={ppcOpen} 
         onOpenChange={setPpcOpen} 
@@ -173,20 +107,6 @@ export default function AgentLogin() {
         onOpenChange={setWorkspaceOpen}
       />
       <div className="agent-dashboard-page">
-        {activeTool ? (
-          <div className="space-y-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => setActiveTool(null)}
-              className="gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Tools
-            </Button>
-            {renderActiveTool()}
-          </div>
-        ) : (
-          <>
             <div className="agent-dashboard-header">
               <div className="flex items-center justify-between mb-2">
                 <h1 className="agent-dashboard-title">Agent Tools</h1>
@@ -256,8 +176,6 @@ export default function AgentLogin() {
                 );
               })}
             </div>
-          </>
-        )}
       </div>
     </SiteShell>
   );
