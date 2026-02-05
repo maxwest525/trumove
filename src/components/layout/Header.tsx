@@ -137,6 +137,18 @@ interface SubNavItem {
 const NAV: NavItem[] = [
   { href: "/", label: "Home" },
   { 
+    href: "/book", 
+    label: "Connect With Us",
+    hasDropdown: true,
+    dropdownContent: {
+      icon: Calendar,
+      title: "Connect With Us",
+      tagline: "Real humans. Zero pressure.",
+      cta: "Schedule Free Call",
+      PreviewComponent: ConsultPreview
+    }
+  },
+  { 
     href: "/online-estimate", 
     label: "AI Move Estimator",
     hasDropdown: true,
@@ -162,18 +174,6 @@ const NAV: NavItem[] = [
         icon: Calculator
       }
     ]
-  },
-  { 
-    href: "/book", 
-    label: "Connect With Us",
-    hasDropdown: true,
-    dropdownContent: {
-      icon: Calendar,
-      title: "Connect With Us",
-      tagline: "Real humans. Zero pressure.",
-      cta: "Schedule Free Call",
-      PreviewComponent: ConsultPreview
-    }
   },
   { 
     href: "/track", 
