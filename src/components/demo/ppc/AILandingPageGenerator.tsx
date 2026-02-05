@@ -1,4 +1,4 @@
- import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
  import { Button } from "@/components/ui/button";
  import { Input } from "@/components/ui/input";
  import { Textarea } from "@/components/ui/textarea";
@@ -18,12 +18,14 @@ import { toast } from "sonner";
   ChevronDown, Quote, Award, Truck, Pencil, X, Check,
   MapPin, Search, Target, Globe, BarChart3, Hash, DollarSign,
   Calculator, Video, ThumbsUp, Building, Home, Package, ArrowDown,
-   Download, Palette, Copy, Maximize2, Minimize2, FileText, Eye, EyeOff, Filter as FilterIcon
+   Download, Palette, Copy, Maximize2, Minimize2, FileText, Eye, EyeOff, Filter as FilterIcon,
+   FileUp, Database
  } from "lucide-react";
- import { Upload, FileUp, MousePointerClick, PieChart, UserCheck, Map, TrendingDown } from "lucide-react";
+  import { Upload, MousePointerClick, PieChart, UserCheck, Map, TrendingDown } from "lucide-react";
  import jsPDF from "jspdf";
  import autoTable from "jspdf-autotable";
  import logoImg from "@/assets/logo.png";
+import DraggableModal from "@/components/ui/DraggableModal";
 
 // Heatmap positions per template
 const TEMPLATE_HEATMAP_POSITIONS: Record<string, {
@@ -411,6 +413,7 @@ interface EditableSection {
    const [importedData, setImportedData] = useState<ImportedDataset | null>(null);
    const [activeDataTab, setActiveDataTab] = useState<'keywords' | 'geographic' | 'demographic' | 'clicks'>('keywords');
    const [isPopoutOpen, setIsPopoutOpen] = useState(false);
+   const [isSideBySide, setIsSideBySide] = useState(false);
    
    // Keyword filter state
    const [keywordTrendFilter, setKeywordTrendFilter] = useState<'all' | 'up' | 'down' | 'stable'>('all');
@@ -439,192 +442,6 @@ interface EditableSection {
        prev.map(pos => pos.id === id ? { ...pos, [field]: value } : pos)
      );
    };
-  
-  // LocalStorage key for popout state
-  const POPOUT_STORAGE_KEY = 'tm_landing_page_popout';
-  
-  // Load saved popout state from localStorage
-  const loadPopoutState = () => {
-    try {
-      const saved = localStorage.getItem(POPOUT_STORAGE_KEY);
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch (e) {
-      console.warn('Failed to load popout state:', e);
-    }
-    return { x: 0, y: 0, width: null, height: null };
-  };
-  
-  // Popout modal drag and resize state
-  const [popoutPosition, setPopoutPosition] = useState(() => {
-    const saved = loadPopoutState();
-    return { x: saved.x || 0, y: saved.y || 0 };
-  });
-  const [popoutSize, setPopoutSize] = useState<{ width: number | null; height: number | null }>(() => {
-    const saved = loadPopoutState();
-    return { width: saved.width || null, height: saved.height || null };
-  });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [isResizing, setIsResizing] = useState<string | null>(null);
-  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  const [isSideBySide, setIsSideBySide] = useState(false);
-  const popoutRef = useRef<HTMLDivElement>(null);
-
-  // Save popout state to localStorage
-  const savePopoutState = useCallback(() => {
-    try {
-      localStorage.setItem(POPOUT_STORAGE_KEY, JSON.stringify({
-        x: popoutPosition.x,
-        y: popoutPosition.y,
-        width: popoutSize.width,
-        height: popoutSize.height,
-      }));
-    } catch (e) {
-      console.warn('Failed to save popout state:', e);
-    }
-  }, [popoutPosition, popoutSize]);
-
-  // Save state when position or size changes (debounced via mouseup)
-  useEffect(() => {
-    if (!isDragging && !isResizing && isPopoutOpen) {
-      savePopoutState();
-    }
-  }, [isDragging, isResizing, isPopoutOpen, savePopoutState]);
-
-  // Handle drag start
-  const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest('button, select, input')) return;
-    setIsDragging(true);
-    setDragOffset({
-      x: e.clientX - popoutPosition.x,
-      y: e.clientY - popoutPosition.y,
-    });
-  }, [popoutPosition]);
-
-  // Handle drag move
-  useEffect(() => {
-    if (!isDragging) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setPopoutPosition({
-        x: e.clientX - dragOffset.x,
-        y: e.clientY - dragOffset.y,
-      });
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, dragOffset]);
-
-  // Handle resize start
-  const handleResizeStart = useCallback((e: React.MouseEvent, corner: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsResizing(corner);
-    
-    const rect = popoutRef.current?.getBoundingClientRect();
-    setResizeStart({
-      x: e.clientX,
-      y: e.clientY,
-      width: rect?.width || 1200,
-      height: rect?.height || 700,
-    });
-  }, []);
-
-  // Handle resize move
-  useEffect(() => {
-    if (!isResizing) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const deltaX = e.clientX - resizeStart.x;
-      const deltaY = e.clientY - resizeStart.y;
-      
-      let newWidth = resizeStart.width;
-      let newHeight = resizeStart.height;
-      let newX = popoutPosition.x;
-      let newY = popoutPosition.y;
-      
-      // Min/max constraints
-      const minWidth = 600;
-      const minHeight = 400;
-      const maxWidth = window.innerWidth - 40;
-      const maxHeight = window.innerHeight - 40;
-      
-      if (isResizing.includes('e')) {
-        newWidth = Math.min(Math.max(resizeStart.width + deltaX, minWidth), maxWidth);
-      }
-      if (isResizing.includes('w')) {
-        const widthDelta = -deltaX;
-        newWidth = Math.min(Math.max(resizeStart.width + widthDelta, minWidth), maxWidth);
-        if (newWidth !== resizeStart.width + widthDelta) {
-          // Hit constraint, don't move position
-        } else {
-          newX = popoutPosition.x + deltaX;
-        }
-      }
-      if (isResizing.includes('s')) {
-        newHeight = Math.min(Math.max(resizeStart.height + deltaY, minHeight), maxHeight);
-      }
-      if (isResizing.includes('n')) {
-        const heightDelta = -deltaY;
-        newHeight = Math.min(Math.max(resizeStart.height + heightDelta, minHeight), maxHeight);
-        if (newHeight !== resizeStart.height + heightDelta) {
-          // Hit constraint, don't move position
-        } else {
-          newY = popoutPosition.y + deltaY;
-        }
-      }
-      
-      setPopoutSize({ width: newWidth, height: newHeight });
-      if (isResizing.includes('w') || isResizing.includes('n')) {
-        setPopoutPosition({ x: newX, y: newY });
-      }
-    };
-
-    const handleMouseUp = () => {
-      setIsResizing(null);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isResizing, resizeStart, popoutPosition]);
-
-  // Load saved position when opening (but don't reset if already saved)
-  useEffect(() => {
-    if (isPopoutOpen) {
-      const saved = loadPopoutState();
-      if (saved.x || saved.y) {
-        setPopoutPosition({ x: saved.x || 0, y: saved.y || 0 });
-      }
-      if (saved.width || saved.height) {
-        setPopoutSize({ width: saved.width, height: saved.height });
-      }
-    }
-  }, [isPopoutOpen]);
-
-  // Reset popout to default size
-  const resetPopoutSize = () => {
-    setPopoutPosition({ x: 0, y: 0 });
-    setPopoutSize({ width: null, height: null });
-    localStorage.removeItem(POPOUT_STORAGE_KEY);
-    toast.success("Window reset to default size");
-  };
  
    const handleGenerateLandingPage = () => {
      setGenerationStep(1);
@@ -652,7 +469,15 @@ interface EditableSection {
      });
      setTimeout(() => {
        setImportedData(MOCK_IMPORTED_DATA);
-       setShowDataImport(false);
+       // Auto-populate form fields from imported data
+       const topStates = MOCK_IMPORTED_DATA.geographic.slice(0, 3).map(g => g.state).join(", ");
+       setTargetLocation(topStates);
+       
+       // Set target audience from top demographic
+       const topDemo = MOCK_IMPORTED_DATA.demographic[0];
+       if (topDemo) {
+         setTargetAudience(`${topDemo.segment} (${topDemo.device})`);
+       }
      }, 1500);
    };
  
@@ -2381,478 +2206,260 @@ interface EditableSection {
          </div>
          </div>
       
-       {/* Popout Modal for Larger View */}
-       {isPopoutOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{ pointerEvents: 'none' }}>
-           {/* Backdrop */}
-           <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            style={{ pointerEvents: 'auto' }}
-             onClick={() => setIsPopoutOpen(false)}
-           />
-           
-           {/* Wide Modal */}
-           <div 
-            ref={popoutRef}
-            className="relative bg-background rounded-2xl shadow-2xl border border-border overflow-visible"
-            style={{ 
-              width: popoutSize.width ? `${popoutSize.width}px` : (isSideBySide ? "95vw" : "90vw"), 
-              maxWidth: popoutSize.width ? undefined : (isSideBySide ? "1800px" : "1400px"), 
-              height: popoutSize.height ? `${popoutSize.height}px` : "85vh",
-              pointerEvents: 'auto',
-              transform: `translate(${popoutPosition.x}px, ${popoutPosition.y}px)`,
-              cursor: isDragging ? 'grabbing' : isResizing ? `${isResizing}-resize` : 'default',
-            }}
-           >
-             {/* Resize Handles */}
-             {/* Corners */}
-             <div 
-               className="absolute -top-1 -left-1 w-4 h-4 cursor-nw-resize z-50 group"
-               onMouseDown={(e) => handleResizeStart(e, 'nw')}
-             >
-               <div className="absolute inset-1 rounded-full bg-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+       {/* Popout Modal using DraggableModal */}
+       <DraggableModal
+         isOpen={isPopoutOpen}
+         onClose={() => setIsPopoutOpen(false)}
+         title={
+           <div className="flex items-center gap-3">
+             <Sparkles className="w-4 h-4 text-white" />
+             <span className="text-white font-semibold">Landing Page Preview</span>
+             <Badge className="bg-white/20 text-white border-white/30 text-xs">
+               {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
+             </Badge>
+             {isSideBySide && (
+               <Badge className="bg-green-500/30 text-green-200 border-green-400/30 text-xs">
+                 Side-by-Side
+               </Badge>
+             )}
+           </div>
+         }
+         storageKey="tm_landing_page_popout"
+         defaultWidth={1200}
+         defaultHeight={700}
+         minWidth={600}
+         minHeight={400}
+         maxWidth={1800}
+         maxHeight={1000}
+         headerClassName="bg-gradient-to-r from-purple-600 to-purple-500"
+         footer={
+           <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-muted/30">
+             <div className="flex items-center gap-2">
+               <Button 
+                 variant="ghost" 
+                 size="sm" 
+                 onClick={() => setIsSideBySide(!isSideBySide)}
+                 className={`h-8 ${isSideBySide ? 'bg-purple-100 dark:bg-purple-900/50' : ''}`}
+               >
+                 <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
+                 {isSideBySide ? 'Preview Only' : 'Side-by-Side'}
+               </Button>
+               <Select value={selectedTheme} onValueChange={setSelectedTheme}>
+                 <SelectTrigger className="w-[140px] h-8 text-xs">
+                   <Palette className="w-3 h-3 mr-1.5" />
+                   <SelectValue placeholder="Theme" />
+                 </SelectTrigger>
+                 <SelectContent>
+                   {COLOR_THEMES.map((colorTheme) => (
+                     <SelectItem key={colorTheme.id} value={colorTheme.id}>
+                       <div className="flex items-center gap-2">
+                         <div 
+                           className="w-4 h-4 rounded-full border border-border"
+                           style={{ background: `linear-gradient(135deg, ${colorTheme.primary}, ${colorTheme.accent})` }}
+                         />
+                         {colorTheme.name}
+                       </div>
+                     </SelectItem>
+                   ))}
+                 </SelectContent>
+               </Select>
              </div>
-             <div 
-               className="absolute -top-1 -right-1 w-4 h-4 cursor-ne-resize z-50 group"
-               onMouseDown={(e) => handleResizeStart(e, 'ne')}
-             >
-               <div className="absolute inset-1 rounded-full bg-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+             <div className="flex items-center gap-2">
+               <Button variant="outline" size="sm" onClick={exportAsHtml} className="h-8 gap-1">
+                 <Download className="w-3.5 h-3.5" /> Export HTML
+               </Button>
+               <Button variant="outline" size="sm" onClick={copyHtmlToClipboard} className="h-8 gap-1">
+                 <Copy className="w-3.5 h-3.5" /> Copy
+               </Button>
+               {importedData && (
+                 <Button variant="outline" size="sm" onClick={exportAnalyticsPdf} className="h-8 gap-1">
+                   <FileText className="w-3.5 h-3.5" /> PDF Report
+                 </Button>
+               )}
              </div>
-             <div 
-               className="absolute -bottom-1 -left-1 w-4 h-4 cursor-sw-resize z-50 group"
-               onMouseDown={(e) => handleResizeStart(e, 'sw')}
-             >
-               <div className="absolute inset-1 rounded-full bg-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+           </div>
+         }
+       >
+         {/* Browser Chrome */}
+         <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 border-b border-border shrink-0">
+           <div className="flex gap-1.5">
+             <div className="w-3 h-3 rounded-full bg-red-400" />
+             <div className="w-3 h-3 rounded-full bg-amber-400" />
+             <div className="w-3 h-3 rounded-full bg-green-400" />
+           </div>
+           <div className="flex-1 mx-4">
+             <div className="bg-background rounded-md px-3 py-1.5 text-sm text-muted-foreground font-mono border border-border">
+               https://{businessName.toLowerCase().replace(/\s/g, '')}.com/{selectedTemplate}
              </div>
-             <div 
-               className="absolute -bottom-1 -right-1 w-4 h-4 cursor-se-resize z-50 group"
-               onMouseDown={(e) => handleResizeStart(e, 'se')}
+           </div>
+           {importedData && (
+             <Button 
+               variant={showHeatmapOverlay ? "default" : "outline"} 
+               size="sm" 
+               onClick={() => setShowHeatmapOverlay(!showHeatmapOverlay)}
+               className="h-7 text-xs"
              >
-               <div className="absolute inset-1 rounded-full bg-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-             </div>
-             
-             {/* Edges */}
-             <div 
-               className="absolute -top-1 left-4 right-4 h-2 cursor-n-resize z-50"
-               onMouseDown={(e) => handleResizeStart(e, 'n')}
-             />
-             <div 
-               className="absolute -bottom-1 left-4 right-4 h-2 cursor-s-resize z-50"
-               onMouseDown={(e) => handleResizeStart(e, 's')}
-             />
-             <div 
-               className="absolute -left-1 top-4 bottom-4 w-2 cursor-w-resize z-50"
-               onMouseDown={(e) => handleResizeStart(e, 'w')}
-             />
-             <div 
-               className="absolute -right-1 top-4 bottom-4 w-2 cursor-e-resize z-50"
-               onMouseDown={(e) => handleResizeStart(e, 'e')}
-             />
-             
-             {/* Modal content wrapper with overflow hidden */}
-             <div className="w-full h-full rounded-2xl overflow-hidden flex flex-col">
-             {/* Modal Header */}
-            <div 
-              className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-purple-600 to-purple-500 select-none"
-              onMouseDown={handleDragStart}
-              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-            >
-               <div className="flex items-center gap-3">
-                 <Sparkles className="w-5 h-5 text-white" />
-                 <span className="font-semibold text-white">Landing Page Preview</span>
-                 <Badge className="bg-white/20 text-white border-white/30 text-xs">
-                   {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
-                 </Badge>
-                {isSideBySide && (
-                  <Badge className="bg-green-500/30 text-green-200 border-green-400/30 text-xs">
-                    Side-by-Side View
-                  </Badge>
-                )}
-                {(popoutSize.width || popoutSize.height) && (
-                  <Badge className="bg-white/10 text-white/70 border-white/20 text-[10px]">
-                    {popoutSize.width ? Math.round(popoutSize.width) : '—'}×{popoutSize.height ? Math.round(popoutSize.height) : '—'}
-                  </Badge>
-                )}
-               </div>
-               <div className="flex items-center gap-2">
-                {/* Reset Size Button */}
-                {(popoutSize.width || popoutSize.height || popoutPosition.x || popoutPosition.y) && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={resetPopoutSize}
-                    className="text-white hover:bg-white/20 h-8 text-xs"
-                    title="Reset window size and position"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                  </Button>
-                )}
-                {/* Side-by-Side Toggle */}
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setIsSideBySide(!isSideBySide)}
-                  className={`text-white hover:bg-white/20 h-8 ${isSideBySide ? 'bg-white/20' : ''}`}
-                >
-                  <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
-                  {isSideBySide ? 'Preview Only' : 'Side-by-Side'}
-                </Button>
-                 {/* Theme Selector in Popout */}
-                 <Select value={selectedTheme} onValueChange={setSelectedTheme}>
-                   <SelectTrigger className="w-[140px] h-8 bg-white/10 border-white/20 text-white text-xs">
-                     <Palette className="w-3 h-3 mr-1.5" />
-                     <SelectValue placeholder="Theme" />
-                   </SelectTrigger>
-                   <SelectContent>
-                     {COLOR_THEMES.map((colorTheme) => (
-                       <SelectItem key={colorTheme.id} value={colorTheme.id}>
-                         <div className="flex items-center gap-2">
-                           <div 
-                             className="w-4 h-4 rounded-full border border-border"
-                             style={{ background: `linear-gradient(135deg, ${colorTheme.primary}, ${colorTheme.accent})` }}
-                           />
-                           {colorTheme.name}
+               {showHeatmapOverlay ? <EyeOff className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />}
+               Heatmap
+             </Button>
+           )}
+         </div>
+         
+         {/* Content Area - Side by Side or Full */}
+         {isSideBySide ? (
+           <div className="flex flex-1 overflow-hidden">
+             {/* Landing Page Preview */}
+             <div className="flex-1 border-r border-border relative">
+               <ScrollArea className="h-full">
+                 {renderSelectedTemplate()}
+               </ScrollArea>
+               
+               {/* Heatmap Overlay in side-by-side */}
+               {showHeatmapOverlay && importedData && (
+                 <div className="absolute inset-0 pointer-events-none z-20">
+                   {getCurrentHeatmapPositions().map((pos, i) => {
+                     const clickData = importedData.clickBehavior.find(c => c.element.toLowerCase().includes(pos.element.toLowerCase().split(' ')[0]));
+                     const intensity = pos.intensity;
+                     const colors = {
+                       high: { bg: "rgba(239, 68, 68, 0.6)", shadow: "rgba(239, 68, 68, 0.4)", badge: "bg-red-600" },
+                       medium: { bg: "rgba(249, 115, 22, 0.5)", shadow: "rgba(249, 115, 22, 0.3)", badge: "bg-amber-600" },
+                       low: { bg: "rgba(59, 130, 246, 0.4)", shadow: "rgba(59, 130, 246, 0.2)", badge: "bg-blue-600" },
+                     };
+                     const color = colors[intensity];
+                     
+                     return (
+                       <div 
+                         key={pos.id}
+                         className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-lg ${intensity === 'high' ? 'animate-pulse' : ''}`}
+                         style={{ 
+                           top: pos.top,
+                           left: pos.left,
+                           width: pos.width,
+                           height: pos.height,
+                           background: `radial-gradient(ellipse, ${color.bg} 0%, ${color.bg.replace('0.6', '0.2').replace('0.5', '0.15').replace('0.4', '0.1')} 40%, transparent 70%)`,
+                           boxShadow: intensity === 'high' ? `0 0 40px 20px ${color.shadow}` : undefined
+                         }}
+                       >
+                         <div className={`absolute -top-6 left-1/2 -translate-x-1/2 ${color.badge} text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium`}>
+                           {intensity === 'high' ? '🔥' : intensity === 'medium' ? '⚡' : '❄️'} {clickData?.percentage || ((5 - i) * 8)}% clicks
                          </div>
-                       </SelectItem>
-                     ))}
-                   </SelectContent>
-                 </Select>
-                 <Button 
-                   variant="ghost" 
-                   size="sm" 
-                   onClick={exportAsHtml}
-                   className="text-white hover:bg-white/20 h-8"
-                 >
-                   <Download className="w-3.5 h-3.5 mr-1.5" />
-                   Export
-                 </Button>
-                 <Button 
-                   variant="ghost" 
-                   size="sm" 
-                   onClick={copyHtmlToClipboard}
-                   className="text-white hover:bg-white/20 h-8"
-                 >
-                   <Copy className="w-3.5 h-3.5 mr-1.5" />
-                   Copy
-                 </Button>
-                 <button
-                   onClick={() => setIsPopoutOpen(false)}
-                   className="p-1.5 rounded-md hover:bg-white/20 transition-colors text-white"
-                   title="Close"
-                 >
-                   <X className="w-5 h-5" />
-                 </button>
-               </div>
+                       </div>
+                     );
+                   })}
+                 </div>
+               )}
              </div>
              
-             {/* Browser Chrome */}
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border-b border-border shrink-0">
-               <div className="flex gap-1.5">
-                 <div className="w-3 h-3 rounded-full bg-red-400" />
-                 <div className="w-3 h-3 rounded-full bg-amber-400" />
-                 <div className="w-3 h-3 rounded-full bg-green-400" />
-               </div>
-               <div className="flex-1 mx-4">
-                 <div className="bg-white dark:bg-slate-700 rounded-md px-3 py-1.5 text-sm text-muted-foreground font-mono">
-                   https://{businessName.toLowerCase().replace(/\s/g, '')}.com/{selectedTemplate}
+             {/* Analytics Panel */}
+             <div className="w-[380px] flex flex-col bg-muted/30">
+               <div className="p-3 border-b border-border bg-card shrink-0">
+                 <div className="flex items-center justify-between">
+                   <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
+                     <BarChart3 className="w-4 h-4 text-purple-500" />
+                     Analytics & SEO
+                   </h4>
                  </div>
                </div>
-              {isSideBySide && (
-                <Badge variant="secondary" className="text-[10px]">
-                  Preview • Drag header to reposition
-                </Badge>
-              )}
-               <button
-                 onClick={() => setIsPopoutOpen(false)}
-                 className="p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-muted-foreground"
-                 title="Minimize back to panel"
-               >
-                 <Minimize2 className="w-4 h-4" />
-               </button>
+               
+               <ScrollArea className="flex-1">
+                 <div className="p-3 space-y-4">
+                   {/* Quick Stats */}
+                   {importedData && (
+                     <div className="grid grid-cols-3 gap-2">
+                       <div className="p-2 rounded-lg bg-card border border-border text-center">
+                         <p className="text-lg font-bold text-foreground">{(importedData.totalClicks / 1000).toFixed(1)}K</p>
+                         <p className="text-[10px] text-muted-foreground">Clicks</p>
+                       </div>
+                       <div className="p-2 rounded-lg bg-card border border-border text-center">
+                         <p className="text-lg font-bold text-green-600">{importedData.totalConversions.toLocaleString()}</p>
+                         <p className="text-[10px] text-muted-foreground">Conversions</p>
+                       </div>
+                       <div className="p-2 rounded-lg bg-card border border-border text-center">
+                         <p className="text-lg font-bold text-blue-600">${(importedData.totalRevenue / 1000).toFixed(0)}K</p>
+                         <p className="text-[10px] text-muted-foreground">Revenue</p>
+                       </div>
+                     </div>
+                   )}
+                   
+                   {/* Top Keywords */}
+                   {importedData && (
+                     <div className="p-3 rounded-xl border border-border bg-card">
+                       <div className="flex items-center gap-2 mb-2">
+                         <Target className="w-4 h-4 text-green-500" />
+                         <h5 className="font-semibold text-xs text-foreground">Top Keywords</h5>
+                       </div>
+                       <div className="space-y-2">
+                         {importedData.keywords.slice(0, 4).map((kw, i) => (
+                           <div key={i} className="flex items-center justify-between text-xs">
+                             <span className="text-muted-foreground truncate flex-1">{kw.keyword}</span>
+                             <div className="flex items-center gap-2">
+                               <span className="text-green-600 font-medium">{kw.conversions}</span>
+                               {kw.trend === 'up' && <TrendingUp className="w-3 h-3 text-green-500" />}
+                               {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-red-500" />}
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   )}
+                   
+                   {/* Click Behavior */}
+                   {importedData && (
+                     <div className="p-3 rounded-xl border border-border bg-card">
+                       <div className="flex items-center gap-2 mb-2">
+                         <MousePointerClick className="w-4 h-4 text-red-500" />
+                         <h5 className="font-semibold text-xs text-foreground">Click Behavior</h5>
+                       </div>
+                       <div className="space-y-2">
+                         {importedData.clickBehavior.slice(0, 4).map((click, i) => (
+                           <div key={i} className="flex items-center justify-between text-xs">
+                             <div className="flex items-center gap-1.5">
+                               <span 
+                                 className={`w-2 h-2 rounded-full ${
+                                   click.heatmapIntensity === 'high' ? 'bg-red-500' :
+                                   click.heatmapIntensity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
+                                 }`}
+                               />
+                               <span className="text-muted-foreground truncate">{click.element}</span>
+                             </div>
+                             <span className="font-medium text-foreground">{click.percentage}%</span>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   )}
+                   
+                   {/* AI Insights */}
+                   <div className="p-3 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:border-purple-800">
+                     <div className="flex items-center gap-2 mb-2">
+                       <Sparkles className="w-4 h-4 text-purple-500" />
+                       <h5 className="font-semibold text-xs text-purple-900 dark:text-purple-200">AI Insights</h5>
+                     </div>
+                     <div className="space-y-2 text-[10px] text-purple-700 dark:text-purple-300">
+                       <p>• "Stop Overpaying" triggers loss aversion (2x more powerful)</p>
+                       <p>• Specific numbers ($847) increase trust by 27%</p>
+                       <p>• Green CTAs on dark backgrounds have 21% higher CTR</p>
+                     </div>
+                   </div>
+                   
+                   {!importedData && (
+                     <div className="p-4 text-center border-2 border-dashed border-border rounded-xl">
+                       <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                       <p className="text-xs text-muted-foreground">No analytics data imported</p>
+                       <p className="text-[10px] text-muted-foreground mt-1">Import before generating to see insights</p>
+                     </div>
+                   )}
+                 </div>
+               </ScrollArea>
              </div>
-             
-            {/* Content Area - Side by Side or Full */}
-            {isSideBySide ? (
-              <div className="flex flex-1 overflow-hidden">
-                {/* Landing Page Preview */}
-                <div className="flex-1 border-r border-border relative">
-                  <ScrollArea className="h-full">
-                    {renderSelectedTemplate()}
-                  </ScrollArea>
-                  
-                  {/* Heatmap Overlay in side-by-side */}
-                  {showHeatmapOverlay && importedData && (
-                    <div className="absolute inset-0 pointer-events-none z-20">
-                      {getCurrentHeatmapPositions().map((pos, i) => {
-                        const clickData = importedData.clickBehavior.find(c => c.element.toLowerCase().includes(pos.element.toLowerCase().split(' ')[0]));
-                        const intensity = pos.intensity;
-                        const colors = {
-                          high: { bg: "rgba(239, 68, 68, 0.6)", shadow: "rgba(239, 68, 68, 0.4)", badge: "bg-red-600" },
-                          medium: { bg: "rgba(249, 115, 22, 0.5)", shadow: "rgba(249, 115, 22, 0.3)", badge: "bg-amber-600" },
-                          low: { bg: "rgba(59, 130, 246, 0.4)", shadow: "rgba(59, 130, 246, 0.2)", badge: "bg-blue-600" },
-                        };
-                        const color = colors[intensity];
-                        
-                        return (
-                          <div 
-                            key={pos.id}
-                            className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-lg ${intensity === 'high' ? 'animate-pulse' : ''}`}
-                            style={{ 
-                              top: pos.top,
-                              left: pos.left,
-                              width: pos.width,
-                              height: pos.height,
-                              background: `radial-gradient(ellipse, ${color.bg} 0%, ${color.bg.replace('0.6', '0.2').replace('0.5', '0.15').replace('0.4', '0.1')} 40%, transparent 70%)`,
-                              boxShadow: intensity === 'high' ? `0 0 40px 20px ${color.shadow}` : undefined
-                            }}
-                          >
-                            <div className={`absolute -top-6 left-1/2 -translate-x-1/2 ${color.badge} text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium`}>
-                              {intensity === 'high' ? '🔥' : intensity === 'medium' ? '⚡' : '❄️'} {clickData?.percentage || ((5 - i) * 8)}% clicks
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Analytics Panel */}
-                <div className="w-[420px] flex flex-col bg-muted/30">
-                  <div className="p-3 border-b border-border bg-card shrink-0">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
-                        <BarChart3 className="w-4 h-4 text-purple-500" />
-                        Analytics & SEO
-                      </h4>
-                      <div className="flex items-center gap-1">
-                        {importedData && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => setShowHeatmapOverlay(!showHeatmapOverlay)}
-                            className="h-7 text-xs"
-                          >
-                            {showHeatmapOverlay ? <EyeOff className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />}
-                            Heatmap
-                          </Button>
-                        )}
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={exportAnalyticsPdf}
-                          className="h-7 text-xs"
-                        >
-                          <FileText className="w-3 h-3 mr-1" />
-                          PDF
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    {/* Heatmap Customization */}
-                    {showHeatmapOverlay && (
-                      <div className="mt-2 p-2 rounded-lg bg-muted border border-border">
-                        <p className="text-[10px] text-muted-foreground mb-2">Customize heatmap positions for {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}:</p>
-                        <div className="space-y-1.5 max-h-32 overflow-y-auto">
-                          {getCurrentHeatmapPositions().map((pos) => (
-                            <div key={pos.id} className="flex items-center gap-2 text-[10px]">
-                              <span 
-                                className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                                  pos.intensity === 'high' ? 'bg-red-500' :
-                                  pos.intensity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
-                                }`}
-                              />
-                              <span className="flex-1 truncate text-foreground">{pos.element}</span>
-                              {editingHeatmapId === pos.id ? (
-                                <div className="flex items-center gap-1">
-                                  <input
-                                    type="text"
-                                    value={pos.top}
-                                    onChange={(e) => updateHeatmapPosition(pos.id, 'top', e.target.value)}
-                                    className="w-12 px-1 py-0.5 text-[9px] rounded border border-border bg-background"
-                                    placeholder="top"
-                                  />
-                                  <input
-                                    type="text"
-                                    value={pos.left}
-                                    onChange={(e) => updateHeatmapPosition(pos.id, 'left', e.target.value)}
-                                    className="w-12 px-1 py-0.5 text-[9px] rounded border border-border bg-background"
-                                    placeholder="left"
-                                  />
-                                  <button 
-                                    onClick={() => setEditingHeatmapId(null)}
-                                    className="p-0.5 rounded hover:bg-muted-foreground/20"
-                                  >
-                                    <Check className="w-3 h-3 text-green-500" />
-                                  </button>
-                                </div>
-                              ) : (
-                                <button 
-                                  onClick={() => setEditingHeatmapId(pos.id)}
-                                  className="p-0.5 rounded hover:bg-muted-foreground/20"
-                                >
-                                  <Pencil className="w-3 h-3 text-muted-foreground" />
-                                </button>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <ScrollArea className="flex-1">
-                    <div className="p-3 space-y-4">
-                      {/* Quick Stats */}
-                      {importedData && (
-                        <div className="grid grid-cols-3 gap-2">
-                          <div className="p-2 rounded-lg bg-card border border-border text-center">
-                            <p className="text-lg font-bold text-foreground">{(importedData.totalClicks / 1000).toFixed(1)}K</p>
-                            <p className="text-[10px] text-muted-foreground">Clicks</p>
-                          </div>
-                          <div className="p-2 rounded-lg bg-card border border-border text-center">
-                            <p className="text-lg font-bold text-green-600">{importedData.totalConversions.toLocaleString()}</p>
-                            <p className="text-[10px] text-muted-foreground">Conversions</p>
-                          </div>
-                          <div className="p-2 rounded-lg bg-card border border-border text-center">
-                            <p className="text-lg font-bold text-blue-600">${(importedData.totalRevenue / 1000).toFixed(0)}K</p>
-                            <p className="text-[10px] text-muted-foreground">Revenue</p>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Keywords Targeted */}
-                      <div className="p-3 rounded-xl border border-border bg-card">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Hash className="w-4 h-4 text-purple-500" />
-                          <h5 className="font-semibold text-xs text-foreground">Keywords Targeted</h5>
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {[
-                            "long distance moving",
-                            "moving quote",
-                            "cross country movers",
-                            "moving cost calculator",
-                            "AI moving estimate",
-                          ].map((kw) => (
-                            <Badge key={kw} variant="secondary" className="text-[9px]">
-                              {kw}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Top Performing Keywords */}
-                      {importedData && (
-                        <div className="p-3 rounded-xl border border-border bg-card">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <Target className="w-4 h-4 text-green-500" />
-                              <h5 className="font-semibold text-xs text-foreground">Top Keywords</h5>
-                            </div>
-                            <Badge variant="secondary" className="text-[9px]">
-                              {importedData.keywords.length} tracked
-                            </Badge>
-                          </div>
-                          <div className="space-y-2">
-                            {importedData.keywords.slice(0, 4).map((kw, i) => (
-                              <div key={i} className="flex items-center justify-between text-xs">
-                                <span className="text-muted-foreground truncate flex-1">{kw.keyword}</span>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-green-600 font-medium">{kw.conversions}</span>
-                                  {kw.trend === 'up' && <TrendingUp className="w-3 h-3 text-green-500" />}
-                                  {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-red-500" />}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Geographic Targeting */}
-                      <div className="p-3 rounded-xl border border-border bg-card">
-                        <div className="flex items-center gap-2 mb-2">
-                          <MapPin className="w-4 h-4 text-pink-500" />
-                          <h5 className="font-semibold text-xs text-foreground">Geographic Targeting</h5>
-                        </div>
-                        <div className="space-y-1.5 text-xs">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Primary Markets:</span>
-                            <span className="font-medium text-foreground">CA, TX, FL, NY</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Search Intent:</span>
-                            <Badge variant="secondary" className="text-[9px]">Transactional</Badge>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Click Behavior */}
-                      {importedData && (
-                        <div className="p-3 rounded-xl border border-border bg-card">
-                          <div className="flex items-center gap-2 mb-2">
-                            <MousePointerClick className="w-4 h-4 text-red-500" />
-                            <h5 className="font-semibold text-xs text-foreground">Click Behavior</h5>
-                          </div>
-                          <div className="space-y-2">
-                            {importedData.clickBehavior.slice(0, 4).map((click, i) => (
-                              <div key={i} className="flex items-center justify-between text-xs">
-                                <div className="flex items-center gap-1.5">
-                                  <span 
-                                    className={`w-2 h-2 rounded-full ${
-                                      click.heatmapIntensity === 'high' ? 'bg-red-500' :
-                                      click.heatmapIntensity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
-                                    }`}
-                                  />
-                                  <span className="text-muted-foreground truncate">{click.element}</span>
-                                </div>
-                                <span className="font-medium text-foreground">{click.percentage}%</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* AI Insights */}
-                      <div className="p-3 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:border-purple-800">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Sparkles className="w-4 h-4 text-purple-500" />
-                          <h5 className="font-semibold text-xs text-purple-900 dark:text-purple-200">AI Insights</h5>
-                        </div>
-                        <div className="space-y-2 text-[10px] text-purple-700 dark:text-purple-300">
-                          <p>• "Stop Overpaying" triggers loss aversion (2x more powerful)</p>
-                          <p>• Specific numbers ($847) increase trust by 27%</p>
-                          <p>• Green CTAs on dark backgrounds have 21% higher CTR</p>
-                        </div>
-                      </div>
-                      
-                      {!importedData && (
-                        <div className="p-4 text-center border-2 border-dashed border-border rounded-xl">
-                          <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                          <p className="text-xs text-muted-foreground">Import analytics data to see performance insights</p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => { setIsPopoutOpen(false); setShowDataImport(true); }}
-                            className="mt-2 text-xs h-7"
-                          >
-                            Import Data
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </ScrollArea>
-                </div>
-              </div>
-            ) : (
-              /* Full width preview only */
-              <ScrollArea className="flex-1">
-                {renderSelectedTemplate()}
-              </ScrollArea>
-            )}
-            </div>
            </div>
-         </div>
-       )}
+         ) : (
+           /* Full width preview only */
+           <ScrollArea className="flex-1">
+             {renderSelectedTemplate()}
+           </ScrollArea>
+         )}
+       </DraggableModal>
      </>
    );
  }
@@ -2968,11 +2575,121 @@ interface EditableSection {
          </div>
        </div>
  
+       {/* Step 3: Import Analytics Data (Optional) */}
+       <div className="rounded-xl border border-border bg-card p-5">
+         <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
+           <span className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xs font-bold">3</span>
+           Import Analytics Data
+           <Badge variant="secondary" className="text-[10px] ml-1">Optional</Badge>
+         </h4>
+         
+         {!importedData ? (
+           <div className="space-y-4">
+             <p className="text-xs text-muted-foreground">
+               Import your existing campaign data to auto-populate fields and enable data-driven generation.
+             </p>
+             
+             <div className="grid grid-cols-3 gap-3">
+               <button 
+                 onClick={handleImportData}
+                 className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/30 transition-all text-center group"
+               >
+                 <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                   <BarChart3 className="w-5 h-5 text-blue-600" />
+                 </div>
+                 <p className="font-medium text-sm text-foreground">Google Ads</p>
+                 <p className="text-xs text-muted-foreground">Import campaigns</p>
+               </button>
+               <button 
+                 onClick={handleImportData}
+                 className="p-4 rounded-xl border border-border bg-card hover:border-orange-400 hover:bg-orange-50/50 dark:hover:bg-orange-950/30 transition-all text-center group"
+               >
+                 <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                   <PieChart className="w-5 h-5 text-orange-600" />
+                 </div>
+                 <p className="font-medium text-sm text-foreground">Analytics</p>
+                 <p className="text-xs text-muted-foreground">Import behavior</p>
+               </button>
+               <button 
+                 onClick={handleImportData}
+                 className="p-4 rounded-xl border border-border bg-card hover:border-green-400 hover:bg-green-50/50 dark:hover:bg-green-950/30 transition-all text-center group"
+               >
+                 <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                   <Upload className="w-5 h-5 text-green-600" />
+                 </div>
+                 <p className="font-medium text-sm text-foreground">Upload CSV</p>
+                 <p className="text-xs text-muted-foreground">Custom data</p>
+               </button>
+             </div>
+             
+             <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border">
+               <Database className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+               <p className="text-xs text-muted-foreground">
+                 <strong>Demo Mode:</strong> Click any source to load sample data with 24,847 clicks and 1,892 conversions.
+               </p>
+             </div>
+           </div>
+         ) : (
+           <div className="space-y-3">
+             {/* Imported Data Summary */}
+             <div className="flex items-center justify-between p-3 rounded-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
+               <div className="flex items-center gap-3">
+                 <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center">
+                   <CheckCircle2 className="w-4 h-4 text-white" />
+                 </div>
+                 <div>
+                   <p className="font-medium text-sm text-green-900 dark:text-green-200">Data Imported Successfully</p>
+                   <p className="text-xs text-green-600 dark:text-green-400">{importedData.dateRange}</p>
+                 </div>
+               </div>
+               <Button 
+                 variant="ghost" 
+                 size="sm" 
+                 onClick={() => setImportedData(null)}
+                 className="text-green-700 hover:text-green-900 hover:bg-green-100 dark:hover:bg-green-900/50"
+               >
+                 <X className="w-4 h-4" />
+               </Button>
+             </div>
+             
+             {/* Quick Stats */}
+             <div className="grid grid-cols-3 gap-3">
+               <div className="p-3 rounded-lg bg-muted/50 border border-border text-center">
+                 <p className="text-xl font-bold text-foreground">{importedData.totalClicks.toLocaleString()}</p>
+                 <p className="text-xs text-muted-foreground">Total Clicks</p>
+               </div>
+               <div className="p-3 rounded-lg bg-muted/50 border border-border text-center">
+                 <p className="text-xl font-bold text-green-600">{importedData.totalConversions.toLocaleString()}</p>
+                 <p className="text-xs text-muted-foreground">Conversions</p>
+               </div>
+               <div className="p-3 rounded-lg bg-muted/50 border border-border text-center">
+                 <p className="text-xl font-bold text-blue-600">${(importedData.totalRevenue / 1000).toFixed(1)}K</p>
+                 <p className="text-xs text-muted-foreground">Revenue</p>
+               </div>
+             </div>
+             
+             {/* Auto-populated info */}
+             <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800">
+               <div className="flex items-start gap-2">
+                 <Sparkles className="w-4 h-4 text-purple-500 flex-shrink-0 mt-0.5" />
+                 <div className="text-xs text-purple-700 dark:text-purple-300">
+                   <p className="font-medium mb-1">Fields auto-populated from data:</p>
+                   <ul className="space-y-0.5">
+                     <li>• Target Location: Top 3 geographic markets</li>
+                     <li>• Target Audience: Highest converting demographic</li>
+                   </ul>
+                 </div>
+               </div>
+             </div>
+           </div>
+         )}
+       </div>
+ 
        {/* Generate Button */}
        <Button 
          onClick={handleGenerateLandingPage}
          disabled={isGenerating || generationStep > 0}
-         className="w-full py-6 text-lg font-bold gap-2"
+         className="w-full py-6 text-lg font-bold gap-2 text-white"
          style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
        >
          {generationStep > 0 ? (
@@ -2987,7 +2704,11 @@ interface EditableSection {
          ) : (
            <>
              <Sparkles className="w-5 h-5" />
-             Generate Landing Page with AI
+             {importedData ? (
+               <>Generate Data-Driven Landing Page</>
+             ) : (
+               <>Generate Landing Page with AI</>
+             )}
            </>
          )}
        </Button>
