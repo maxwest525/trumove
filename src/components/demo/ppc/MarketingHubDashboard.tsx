@@ -6,7 +6,9 @@ import {
   ChevronRight
 } from "lucide-react";
 import { TrudyMarketingChat } from "./TrudyMarketingChat";
+import { RecentCreations } from "./RecentCreations";
 import { cn } from "@/lib/utils";
+import { LandingPage } from "./types";
 
 interface MarketingHubDashboardProps {
   onNavigate: (section: string) => void;
@@ -18,13 +20,40 @@ interface MarketingHubDashboardProps {
     activePages: number;
     testsRunning: number;
   };
+  recentPages?: LandingPage[];
+  onViewPage?: (page: LandingPage) => void;
+  onEditPage?: (page: LandingPage) => void;
 }
 
-export function MarketingHubDashboard({ onNavigate, onQuickCreate, liveMode = false, stats }: MarketingHubDashboardProps) {
+export function MarketingHubDashboard({ 
+  onNavigate, 
+  onQuickCreate, 
+  liveMode = false, 
+  stats,
+  recentPages = [],
+  onViewPage,
+  onEditPage
+}: MarketingHubDashboardProps) {
   
   const handleCreateLandingPage = () => {
     if (onQuickCreate) {
       onQuickCreate('landing');
+    }
+  };
+
+  const handleViewPage = (page: LandingPage) => {
+    if (onViewPage) {
+      onViewPage(page);
+    } else {
+      onNavigate('manage');
+    }
+  };
+
+  const handleEditPage = (page: LandingPage) => {
+    if (onEditPage) {
+      onEditPage(page);
+    } else {
+      onNavigate('manage');
     }
   };
 
@@ -39,7 +68,7 @@ export function MarketingHubDashboard({ onNavigate, onQuickCreate, liveMode = fa
       </div>
 
       {/* Right: Compact Stats Sidebar */}
-      <div className="w-[220px] border-l border-border bg-muted/20 flex flex-col overflow-hidden">
+      <div className="w-[240px] border-l border-border bg-muted/20 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="px-3 py-2.5 border-b border-border">
           <div className="flex items-center justify-between">
@@ -54,30 +83,42 @@ export function MarketingHubDashboard({ onNavigate, onQuickCreate, liveMode = fa
         </div>
 
         {/* Stats List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2">
-          {[
-            { label: 'Total Spend', value: `$${stats.totalSpend.toLocaleString()}`, icon: DollarSign, color: '#7C3AED' },
-            { label: 'Conversions', value: stats.conversions.toString(), icon: Target, color: '#10B981' },
-            { label: 'Active Pages', value: stats.activePages.toString(), icon: Layout, color: '#3B82F6' },
-            { label: 'Tests Running', value: stats.testsRunning.toString(), icon: BarChart3, color: '#EC4899' },
-          ].map((stat) => (
-            <div 
-              key={stat.label} 
-              className="flex items-center gap-2.5 p-2.5 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors"
-              onClick={() => onNavigate('performance')}
-            >
+        <div className="flex-1 overflow-y-auto p-3 space-y-4">
+          {/* Stats Cards */}
+          <div className="space-y-2">
+            {[
+              { label: 'Total Spend', value: `$${stats.totalSpend.toLocaleString()}`, icon: DollarSign, color: 'hsl(var(--primary))' },
+              { label: 'Conversions', value: stats.conversions.toString(), icon: Target, color: 'hsl(142 71% 45%)' },
+              { label: 'Active Pages', value: stats.activePages.toString(), icon: Layout, color: 'hsl(217 91% 60%)' },
+              { label: 'Tests Running', value: stats.testsRunning.toString(), icon: BarChart3, color: 'hsl(330 81% 60%)' },
+            ].map((stat) => (
               <div 
-                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: `${stat.color}15` }}
+                key={stat.label} 
+                className="flex items-center gap-2.5 p-2.5 rounded-lg bg-background border border-border cursor-pointer hover:border-primary/30 transition-colors"
+                onClick={() => onNavigate('performance')}
               >
-                <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
+                <div 
+                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ background: `color-mix(in srgb, ${stat.color} 15%, transparent)` }}
+                >
+                  <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-foreground truncate">{stat.value}</p>
+                  <p className="text-[10px] text-muted-foreground truncate">{stat.label}</p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="text-sm font-bold text-foreground truncate">{stat.value}</p>
-                <p className="text-[10px] text-muted-foreground truncate">{stat.label}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Recent Creations */}
+          {recentPages.length > 0 && (
+            <RecentCreations 
+              pages={recentPages}
+              onView={handleViewPage}
+              onEdit={handleEditPage}
+            />
+          )}
         </div>
 
         {/* Quick Links */}
@@ -88,10 +129,9 @@ export function MarketingHubDashboard({ onNavigate, onQuickCreate, liveMode = fa
           >
             <CardContent className="p-2.5 flex items-center gap-2">
               <div 
-                className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
-                style={{ background: '#3B82F615' }}
+                className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 bg-primary/10"
               >
-                <TrendingUp className="w-3.5 h-3.5" style={{ color: '#3B82F6' }} />
+                <TrendingUp className="w-3.5 h-3.5 text-primary" />
               </div>
               <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors flex-1">Analytics</span>
               <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
@@ -104,10 +144,9 @@ export function MarketingHubDashboard({ onNavigate, onQuickCreate, liveMode = fa
           >
             <CardContent className="p-2.5 flex items-center gap-2">
               <div 
-                className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
-                style={{ background: '#10B98115' }}
+                className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 bg-green-500/10"
               >
-                <Layout className="w-3.5 h-3.5" style={{ color: '#10B981' }} />
+                <Layout className="w-3.5 h-3.5 text-green-500" />
               </div>
               <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors flex-1">Pages ({stats.activePages})</span>
               <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
