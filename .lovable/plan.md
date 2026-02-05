@@ -1,82 +1,99 @@
 
-# Match AI Analysis Section Layout to Shipment Tracker Section
+# Match AI Analysis Section Height to Shipment Tracker Section
 
-## Summary
-The user wants the AI Analysis section (description + 2 images) to have pixel-perfect matching with the Shipment Tracker section (2 images + description). Both sections use a 3-column centered layout at 770px, but their element dimensions differ.
+## Problem
+You measured:
+- **Shipment Tracker section**: 423px height
+- **AI Analysis section**: 398px height
+- **Difference**: 25px
 
-## Current State Analysis
+Despite identical CSS variables for padding and min-height, the sections render at different heights due to content differences.
 
-### Shipment Tracker Section (Reference)
-| Element | Width | Height |
-|---------|-------|--------|
-| Route Overview (left) | 420px | clamp(24rem, 38vh, 30rem) |
-| Truck View (center) | 420px | clamp(24rem, 38vh, 30rem) |
-| Description (right) | max-width: 22rem | auto |
-| Gap from center | 210px + 32px = 242px | - |
-
-### AI Analysis Section (Current - MISMATCHED)
-| Element | Width | Height | Issue |
-|---------|-------|--------|-------|
-| Description (left) | max-width: 22rem | auto | OK |
-| Room Scanner (center) | 420px | **340px** | Height mismatch |
-| Detection List (right) | **350px** | **340px** | Both mismatch |
+## Solution
+Add an explicit **fixed height** to both sections to ensure pixel-perfect matching. I'll set both to **423px** (the larger value, from the Tracker section).
 
 ## Changes Required
 
 ### File: `src/index.css`
 
-**1. Fix `.tru-ai-live-scanner` (center element)**
+**1. Add explicit height to AI Analysis section**
 ```css
 /* Current */
-.tru-ai-live-scanner {
-  height: 340px;
-  width: 420px;
+.tru-ai-steps-section {
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  margin-top: 0;
+  background: hsl(var(--background));
+  position: relative;
+  z-index: 5;
+  height: auto;
+  min-height: auto;
+  overflow: hidden;
 }
 
-/* Updated - Match tracker road map */
-.tru-ai-live-scanner {
-  width: 420px;
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
+/* Updated */
+.tru-ai-steps-section {
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  margin-top: 0;
+  background: hsl(var(--background));
+  position: relative;
+  z-index: 5;
+  height: 423px;           /* Match tracker section exactly */
+  min-height: 423px;
+  overflow: hidden;
 }
 ```
 
-**2. Fix `.tru-ai-live-inventory` (right element)**
+**2. Add explicit height to Tracker section** (for consistency)
 ```css
 /* Current */
-.tru-ai-live-inventory {
-  width: 350px;
-  height: 340px;
+.tru-tracker-section {
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  margin-top: 0;
+  background: hsl(var(--background));
+  position: relative;
+  z-index: 5;
+  height: auto;
+  min-height: auto;
+  overflow: hidden;
 }
 
-/* Updated - Match tracker satellite panel */
-.tru-ai-live-inventory {
-  width: 420px;
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
+/* Updated */
+.tru-tracker-section {
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  margin-top: 0;
+  background: hsl(var(--background));
+  position: relative;
+  z-index: 5;
+  height: 423px;           /* Explicit height for consistency */
+  min-height: 423px;
+  overflow: hidden;
 }
 ```
 
-**3. Apply matching box-shadow and border styling**
-Both elements should use the same `tru-map-window-frame` shadow/border pattern as the tracker panels:
-- 2px solid black border
-- Deep multi-layer shadow for depth
+**3. Create shared CSS custom property** (cleaner approach)
+```css
+:root {
+  /* Existing variables... */
+  
+  /* Unified section height for demo panels */
+  --demo-section-height: 423px;
+}
 
-### Summary of Pixel Values to Match
+.tru-ai-steps-section,
+.tru-tracker-section {
+  height: var(--demo-section-height);
+  min-height: var(--demo-section-height);
+}
+```
 
-| Property | Tracker Value | AI Analysis Value (Updated) |
-|----------|---------------|------------------------------|
-| Panel width | 420px | 420px |
-| Panel height | clamp(24rem, 38vh, 30rem) | clamp(24rem, 38vh, 30rem) |
-| Panel min-height | 24rem | 24rem |
-| Border | 2px solid hsl(0 0% 0%) | 2px solid hsl(0 0% 0%) |
-| Border radius | 12px | 8px (consider updating to 12px) |
-| Gap offset | 210px + 32px | 210px + 32px (already matches) |
-| Center anchor | 770px | 770px (already matches) |
+## Technical Notes
+| Property | Before | After |
+|----------|--------|-------|
+| AI Analysis height | auto → 398px | 423px |
+| Tracker height | auto → 423px | 423px |
+| CSS approach | Independent auto heights | Shared CSS variable |
 
-## Verification Checklist
-- Both sections have identical 420px wide panels
-- Both sections have matching responsive height (clamp)
-- Gap between center element and side elements is identical (242px)
-- Shadow/border styling is consistent
-- Responsive breakpoints remain functional
+## Verification
+- Both sections will now render at exactly 423px
+- The `overflow: hidden` ensures any content that exceeds this height is clipped cleanly
+- Using a shared CSS variable ensures they always match if adjusted later
