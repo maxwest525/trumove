@@ -2,10 +2,12 @@
  import { Card, CardContent } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
  import {
-   Layout, TrendingUp, Zap, Search, Globe, FlaskConical,
-   ArrowRight, Target, Users, DollarSign, BarChart3,
-   Play, Sparkles
+  Layout, TrendingUp, Zap, Search, Globe, FlaskConical,
+  ArrowRight, Target, Users, DollarSign, BarChart3,
+  Play, Sparkles, MessageSquare, Bot, ChevronRight
  } from "lucide-react";
+import { TrudyMarketingChat } from "./TrudyMarketingChat";
+import { useState } from "react";
  
  interface FeatureCard {
    id: string;
@@ -84,9 +86,13 @@
    },
  ];
  
- export function MarketingHubDashboard({ onNavigate, stats }: MarketingHubDashboardProps) {
+export function MarketingHubDashboard({ onNavigate, stats }: MarketingHubDashboardProps) {
+  const [showTrudyPanel, setShowTrudyPanel] = useState(true);
+
    return (
-     <div className="space-y-6 p-4">
+    <div className="flex h-full">
+      {/* Main Content */}
+      <div className={`flex-1 space-y-6 p-4 overflow-y-auto transition-all ${showTrudyPanel ? 'pr-2' : ''}`}>
        {/* Welcome Header */}
        <div className="text-center space-y-2 py-4">
          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium">
@@ -169,16 +175,19 @@
        </div>
  
        {/* Quick Create CTA */}
-       <Card className="border-2 border-dashed border-primary/30 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
+      <Card 
+        className="border-2 border-dashed border-primary/30 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 cursor-pointer hover:border-primary/50 transition-colors"
+        onClick={() => setShowTrudyPanel(true)}
+      >
          <CardContent className="p-6 flex items-center justify-between">
            <div className="flex items-center gap-4">
-             <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center">
-               <Sparkles className="w-7 h-7 text-primary" />
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+              <Bot className="w-7 h-7 text-primary" />
              </div>
              <div>
-               <h3 className="font-semibold text-lg text-foreground">Create with AI</h3>
+              <h3 className="font-semibold text-lg text-foreground">Ask Trudy</h3>
                <p className="text-muted-foreground">
-                 Tell us what you need in plain English — AI builds it for you
+                "Create an ad with a llama" — Trudy designs & launches it for you
                </p>
              </div>
            </div>
@@ -186,13 +195,51 @@
              size="lg" 
              className="gap-2"
              style={{ background: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)' }}
-             onClick={() => onNavigate('ai-create')}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowTrudyPanel(true);
+            }}
            >
-             <Play className="w-4 h-4" />
-             Start Creating
+            <MessageSquare className="w-4 h-4" />
+            Chat with Trudy
            </Button>
          </CardContent>
        </Card>
+      </div>
+
+      {/* Trudy Chat Panel */}
+      {showTrudyPanel && (
+        <div className="w-[380px] border-l border-border flex flex-col bg-background">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30">
+            <div className="flex items-center gap-2">
+              <Bot className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium">Trudy AI Assistant</span>
+            </div>
+            <button
+              onClick={() => setShowTrudyPanel(false)}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="flex-1 min-h-0">
+            <TrudyMarketingChat 
+              onNavigate={onNavigate}
+              onCreateLandingPage={() => onNavigate('landing')}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Collapsed Trudy Toggle */}
+      {!showTrudyPanel && (
+        <button
+          onClick={() => setShowTrudyPanel(true)}
+          className="absolute right-4 bottom-4 w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center group"
+        >
+          <Bot className="w-6 h-6 group-hover:scale-110 transition-transform" />
+        </button>
+      )}
      </div>
    );
  }
