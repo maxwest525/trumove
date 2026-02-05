@@ -1276,33 +1276,6 @@ export default function Index() {
             </span>
           </div>
 
-          {/* Center - Trust Items */}
-          <div className="tracking-header-trust">
-            <span className="tracking-header-trust-item">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
-              AI-POWERED
-            </span>
-            <span className="tracking-header-trust-dot">•</span>
-            <span className="tracking-header-trust-item">
-              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-              FMCSA VERIFIED
-            </span>
-            <span className="tracking-header-trust-dot">•</span>
-            <span className="tracking-header-trust-item">
-              <DollarSign className="w-3.5 h-3.5 text-primary" />
-              REAL-TIME PRICING
-            </span>
-            <span className="tracking-header-trust-dot">•</span>
-            <span className="tracking-header-trust-item">
-              <Headphones className="w-3.5 h-3.5 text-primary" />
-              24/7 SUPPORT
-            </span>
-            <span className="tracking-header-trust-dot">•</span>
-            <span className="tracking-header-trust-item">
-              <Shield className="w-3.5 h-3.5 text-primary" />
-              ZERO HIDDEN FEES
-            </span>
-          </div>
 
           {/* Right - Session ID */}
           <div className="flex items-center gap-4">
@@ -1893,6 +1866,36 @@ export default function Index() {
 
           {/* SHIPMENT TRACKER - Mirrored Layout */}
           <ShipmentTrackerSection navigate={navigate} />
+
+          {/* BOTTOM TRUST STRIP - Above Footer */}
+          <section className="tru-bottom-trust-strip">
+            <div className="tru-bottom-trust-inner">
+              <div className="tru-bottom-trust-item">
+                <Sparkles className="w-5 h-5 text-primary" />
+                <span>AI-Powered Estimates</span>
+              </div>
+              <span className="tru-bottom-trust-dot">•</span>
+              <div className="tru-bottom-trust-item">
+                <ShieldCheck className="w-5 h-5 text-primary" />
+                <span>FMCSA Verified Carriers</span>
+              </div>
+              <span className="tru-bottom-trust-dot">•</span>
+              <div className="tru-bottom-trust-item">
+                <Truck className="w-5 h-5 text-primary" />
+                <span>Live GPS Tracking</span>
+              </div>
+              <span className="tru-bottom-trust-dot">•</span>
+              <div className="tru-bottom-trust-item">
+                <Video className="w-5 h-5 text-primary" />
+                <span>Video Consultations</span>
+              </div>
+              <span className="tru-bottom-trust-dot">•</span>
+              <div className="tru-bottom-trust-item">
+                <Shield className="w-5 h-5 text-primary" />
+                <span>Zero Hidden Fees</span>
+              </div>
+            </div>
+          </section>
 
         </div>
       </div>
