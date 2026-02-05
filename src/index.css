@@ -2600,7 +2600,7 @@
   z-index: 5;
   height: auto;
   min-height: auto;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Header row: centered title with previews on right */
@@ -2613,7 +2613,7 @@
   max-width: 1600px;
   margin: 0 auto;
   gap: 0;
-  padding: 0 48px;
+  padding: 32px 48px;
   height: var(--demo-section-height);
   min-height: var(--demo-section-height);
   max-height: var(--demo-section-height);
@@ -3439,7 +3439,7 @@
   z-index: 5;
   height: auto;
   min-height: auto;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .tru-tracker-inner {
@@ -3458,7 +3458,7 @@
   max-width: 1600px;
   margin: 0 auto;
   gap: 0;
-  padding: 0 48px;
+  padding: 32px 48px;
   height: var(--demo-section-height);
   min-height: var(--demo-section-height);
   max-height: var(--demo-section-height);
