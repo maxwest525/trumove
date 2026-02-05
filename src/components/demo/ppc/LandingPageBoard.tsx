@@ -1,20 +1,21 @@
- import { useState } from "react";
- import { Badge } from "@/components/ui/badge";
- import { Button } from "@/components/ui/button";
- import { Card, CardContent } from "@/components/ui/card";
- import { ScrollArea } from "@/components/ui/scroll-area";
- import {
-  Play, Pause, Trash2, Edit3, Eye, TrendingUp,
-  DollarSign, Users, Target, Plus, ExternalLink,
-  BarChart3, Globe, MoreHorizontal, Share2
- } from "lucide-react";
- import {
-   DropdownMenu,
-   DropdownMenuContent,
-   DropdownMenuItem,
-   DropdownMenuTrigger,
- } from "@/components/ui/dropdown-menu";
- import { toast } from "sonner";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+ Play, Pause, Trash2, Edit3, Eye, TrendingUp,
+ DollarSign, Users, Target, Plus, ExternalLink,
+ BarChart3, Globe, MoreHorizontal, Share2, X, CheckSquare
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 import { LandingPage } from "./types";
  
 export const INITIAL_MOCK_PAGES: LandingPage[] = [
@@ -96,10 +97,43 @@ export const INITIAL_MOCK_PAGES: LandingPage[] = [
  }
  
 export function LandingPageBoard({ onCreateNew, onEditPage, pages, onPagesChange }: LandingPageBoardProps) {
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  
   const totalSpend = pages.reduce((sum, p) => sum + p.totalSpend, 0);
   const totalConversions = pages.reduce((sum, p) => sum + p.conversions, 0);
   const activePages = pages.filter(p => p.status === 'active').length;
   const avgCPA = totalConversions > 0 ? totalSpend / totalConversions : 0;
+
+  const toggleSelection = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const selectAll = () => {
+    setSelectedIds(new Set(pages.map(p => p.id)));
+  };
+
+  const clearSelection = () => {
+    setSelectedIds(new Set());
+  };
+
+  const bulkSetStatus = (status: 'active' | 'paused') => {
+    const count = selectedIds.size;
+    onPagesChange(pages.map(p => selectedIds.has(p.id) ? { ...p, status } : p));
+    toast.success(`${count} page${count > 1 ? 's' : ''} ${status === 'active' ? 'activated' : 'paused'}`);
+    clearSelection();
+  };
+
+  const bulkDelete = () => {
+    const count = selectedIds.size;
+    onPagesChange(pages.filter(p => !selectedIds.has(p.id)));
+    toast.success(`${count} page${count > 1 ? 's' : ''} deleted`);
+    clearSelection();
+  };
  
   const toggleStatus = (id: string) => {
     const page = pages.find(p => p.id === id);
@@ -124,6 +158,8 @@ export function LandingPageBoard({ onCreateNew, onEditPage, pages, onPagesChange
       default: return { bg: 'bg-muted', text: 'text-muted-foreground', border: 'border-muted' };
     }
   };
+
+  const hasSelection = selectedIds.size > 0;
  
   return (
     <div className="space-y-5">
@@ -165,17 +201,47 @@ export function LandingPageBoard({ onCreateNew, onEditPage, pages, onPagesChange
         </Badge>
        </div>
  
-      {/* Header with Create Button */}
+      {/* Header with Create Button & Bulk Toolbar */}
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-foreground">Your Landing Pages</h3>
-        <Button 
-          onClick={onCreateNew} 
-          size="sm" 
-          className="gap-1.5"
-          style={{ background: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)' }}
-        >
-          <Plus className="w-4 h-4" /> Create New
-        </Button>
+        <div className="flex items-center gap-3">
+          <h3 className="font-semibold text-foreground">Your Landing Pages</h3>
+          {!hasSelection && pages.length > 1 && (
+            <Button variant="ghost" size="sm" className="h-7 text-xs gap-1" onClick={selectAll}>
+              <CheckSquare className="w-3 h-3" /> Select All
+            </Button>
+          )}
+        </div>
+        
+        {hasSelection ? (
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30">
+            <Badge variant="secondary" className="bg-primary/20 text-primary">
+              {selectedIds.size} selected
+            </Badge>
+            <div className="h-4 w-px bg-border" />
+            <Button variant="ghost" size="sm" className="h-7 text-xs gap-1" onClick={() => bulkSetStatus('active')}>
+              <Play className="w-3 h-3" /> Activate
+            </Button>
+            <Button variant="ghost" size="sm" className="h-7 text-xs gap-1" onClick={() => bulkSetStatus('paused')}>
+              <Pause className="w-3 h-3" /> Pause
+            </Button>
+            <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-destructive hover:text-destructive" onClick={bulkDelete}>
+              <Trash2 className="w-3 h-3" /> Delete
+            </Button>
+            <div className="h-4 w-px bg-border" />
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={clearSelection}>
+              <X className="w-3 h-3" />
+            </Button>
+          </div>
+        ) : (
+          <Button 
+            onClick={onCreateNew} 
+            size="sm" 
+            className="gap-1.5"
+            style={{ background: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)' }}
+          >
+            <Plus className="w-4 h-4" /> Create New
+          </Button>
+        )}
       </div>
  
       {/* Simplified Card-Based Pages List */}
@@ -186,20 +252,28 @@ export function LandingPageBoard({ onCreateNew, onEditPage, pages, onPagesChange
             return (
               <Card 
                 key={page.id} 
-                className={`group transition-all hover:shadow-md ${page.status === 'paused' ? 'opacity-70' : ''} ${perfStyles.border}`}
+                className={`group transition-all hover:shadow-md ${page.status === 'paused' ? 'opacity-70' : ''} ${perfStyles.border} ${selectedIds.has(page.id) ? 'ring-2 ring-primary/50' : ''}`}
               >
                 <CardContent className="p-4 space-y-3">
                   {/* Header */}
                   <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-foreground truncate">{page.name}</h4>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <Badge variant="secondary" className="text-[10px]">{page.template}</Badge>
-                        <Badge 
-                          className={`text-[10px] ${perfStyles.bg} ${perfStyles.text}`}
-                        >
-                          {page.performance}
-                        </Badge>
+                    <div className="flex items-start gap-2">
+                      <Checkbox 
+                        checked={selectedIds.has(page.id)}
+                        onCheckedChange={() => toggleSelection(page.id)}
+                        className="mt-1"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-foreground truncate">{page.name}</h4>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <Badge variant="secondary" className="text-[10px]">{page.template}</Badge>
+                          <Badge 
+                            className={`text-[10px] ${perfStyles.bg} ${perfStyles.text}`}
+                          >
+                            {page.performance}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
                     <Badge 
