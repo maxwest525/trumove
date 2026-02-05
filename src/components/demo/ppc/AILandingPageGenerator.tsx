@@ -42,6 +42,8 @@ import {
   FinalCTASection,
   TruMoveFooter
 } from "./TruMoveBrandingElements";
+import { MarketingAnalyticsDashboard } from "./MarketingAnalyticsDashboard";
+import { LandingPageBoard } from "./LandingPageBoard";
 
 // Heatmap positions per template
 const TEMPLATE_HEATMAP_POSITIONS: Record<string, {
@@ -441,6 +443,7 @@ interface EditableSection {
      TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]
    );
    const [editingHeatmapId, setEditingHeatmapId] = useState<string | null>(null);
+  const [mainView, setMainView] = useState<'analytics' | 'create' | 'manage'>('analytics');
 
    // Update heatmap positions when template changes
    useEffect(() => {
@@ -2702,8 +2705,81 @@ interface EditableSection {
      </>
    );
  }
+
+  const handleProceedToCreate = () => {
+    // Pre-populate from analytics data
+    setTargetLocation("California, Texas, Florida");
+    setTargetAudience("Homeowners 35-54 (Desktop 62%)");
+    setMainView('create');
+  };
+
+  const handleEditPage = (pageId: string) => {
+    // Switch to create view to edit existing page
+    setMainView('create');
+    // Would load page data here
+  };
+
   return (
      <div className="space-y-4">
+      {/* View Tabs */}
+      <div className="flex items-center gap-2 p-1 rounded-xl bg-muted/50 border border-border">
+        <button
+          onClick={() => setMainView('analytics')}
+          className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
+            mainView === 'analytics' 
+              ? 'bg-background text-foreground shadow-sm' 
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <span className="flex items-center justify-center gap-2">
+            <BarChart3 className="w-4 h-4" />
+            Analytics & Insights
+          </span>
+        </button>
+        <button
+          onClick={() => setMainView('create')}
+          className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
+            mainView === 'create' 
+              ? 'bg-background text-foreground shadow-sm' 
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <span className="flex items-center justify-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            Create Page
+          </span>
+        </button>
+        <button
+          onClick={() => setMainView('manage')}
+          className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
+            mainView === 'manage' 
+              ? 'bg-background text-foreground shadow-sm' 
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <span className="flex items-center justify-center gap-2">
+            <Target className="w-4 h-4" />
+            Manage Pages
+          </span>
+        </button>
+      </div>
+
+      {/* Analytics Dashboard View */}
+      {mainView === 'analytics' && (
+        <MarketingAnalyticsDashboard onProceedToCreate={handleProceedToCreate} />
+      )}
+
+      {/* Landing Page Board View */}
+      {mainView === 'manage' && (
+        <LandingPageBoard 
+          onCreateNew={() => setMainView('create')} 
+          onEditPage={handleEditPage}
+        />
+      )}
+
+      {/* Create Page View */}
+      {mainView === 'create' && (
+      <>
        {/* Intro Card */}
        <div className="p-6 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50/50 dark:bg-purple-950/20 dark:border-purple-700">
          <div className="flex items-start gap-4">
@@ -2982,6 +3058,8 @@ interface EditableSection {
            </div>
          </div>
        )}
+      </>
+      )}
      </div>
    );
  }
