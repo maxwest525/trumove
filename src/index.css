@@ -6167,6 +6167,26 @@
     0 12px 32px -4px hsl(var(--primary) / 0.3);
 }
 
+/* Online Estimate / Build Your Move page card frames */
+.tru-estimate-card-frame {
+  border: 2px solid hsl(var(--tm-ink)) !important;
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15) !important;
+}
+
+.dark .tru-estimate-card-frame {
+  border-color: hsl(0 0% 100% / 0.15) !important;
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2) !important;
+}
+
 /* Compact form variant - auto-height, tighter spacing */
 .tru-floating-form-card.tru-floating-form-compact {
   height: auto;
