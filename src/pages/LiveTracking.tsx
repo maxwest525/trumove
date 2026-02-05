@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
 import { Google2DTrackingMap } from "@/components/tracking/Google2DTrackingMap";
+import { TruckViewMap } from "@/components/tracking/TruckViewMap";
 
 import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
 import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
@@ -658,87 +659,106 @@ export default function LiveTracking() {
       <div className="tracking-content tracking-content-2col">
         {/* Left: Map Area */}
         <div className="tracking-map-area">
-          {/* Map Container */}
-          <div className="tracking-map-container">
-            {/* Top Controls - Demo, Map View Toggle */}
-            <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
-              {/* Map View Toggle */}
-              <div className="flex items-center bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-lg overflow-hidden">
+          {/* Split Map Container - Route Overview + Truck View */}
+          <div className="tracking-map-split">
+            {/* Left Panel: Route Overview */}
+            <div className="tracking-map-panel tracking-map-panel-left relative">
+              {/* Panel label */}
+              <div className="absolute top-3 left-3 z-10 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-sm border border-white/10">
+                <span className="text-[10px] font-bold tracking-wider text-white/90 uppercase">
+                  Route Overview
+                </span>
+              </div>
+
+              {/* Top Controls - Map View Toggle + Demo */}
+              <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
+                {/* Map View Toggle */}
+                <div className="flex items-center bg-background/95 backdrop-blur-sm border-2 border-border rounded-lg shadow-lg overflow-hidden">
+                  <Button
+                    onClick={() => setMapViewType('satellite')}
+                    variant="ghost"
+                    size="sm"
+                    className={cn(
+                      "h-8 px-2 gap-1 text-[10px] rounded-none border-r border-border transition-all",
+                      mapViewType === 'satellite' 
+                        ? "bg-foreground text-background font-bold" 
+                        : "hover:bg-muted"
+                    )}
+                  >
+                    <Satellite className="w-3 h-3" />
+                    Sat
+                  </Button>
+                  <Button
+                    onClick={() => setMapViewType('roadmap')}
+                    variant="ghost"
+                    size="sm"
+                    className={cn(
+                      "h-8 px-2 gap-1 text-[10px] rounded-none transition-all",
+                      mapViewType === 'roadmap' 
+                        ? "bg-foreground text-background font-bold" 
+                        : "hover:bg-muted"
+                    )}
+                  >
+                    <Map className="w-3 h-3" />
+                    Map
+                  </Button>
+                </div>
+                
+                {/* Demo Button */}
                 <Button
-                  onClick={() => setMapViewType('satellite')}
-                  variant="ghost"
+                  onClick={handleDemoClick}
+                  variant="outline"
                   size="sm"
-                  className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
-                    mapViewType === 'satellite' 
-                      ? "bg-foreground text-background font-bold" 
-                      : "hover:bg-muted"
-                  )}
+                  className="h-8 px-2 gap-1 text-[10px] bg-background/95 backdrop-blur-sm border-border shadow-lg"
                 >
-                  <Satellite className="w-3.5 h-3.5" />
-                  Satellite
-                </Button>
-                <Button
-                  onClick={() => setMapViewType('roadmap')}
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
-                    mapViewType === 'roadmap' 
-                      ? "bg-foreground text-background font-bold" 
-                      : "hover:bg-muted"
-                  )}
-                >
-                  <Map className="w-3.5 h-3.5" />
-                  Roadmap
+                  <Sparkles className="w-3 h-3" />
+                  Demo
                 </Button>
               </div>
+
+              {/* WebGL warning banner when using static fallback */}
+              {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
+                <div className="absolute top-14 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-3 py-1.5 text-[10px] font-medium flex items-center gap-2">
+                  <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+                  <span>{webglDiagnostics.warnings[0]}</span>
+                </div>
+              )}
               
-              {/* Demo Button */}
-              <Button
-                onClick={handleDemoClick}
-                variant="outline"
-                size="sm"
-                className="h-9 px-3 gap-1.5 text-xs bg-background/95 backdrop-blur-sm border-border shadow-lg"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                Demo
-              </Button>
+              {useStaticMap ? (
+                <GoogleStaticRouteMap
+                  originCoords={originCoords}
+                  destCoords={destCoords}
+                  progress={progress}
+                  isTracking={isTracking}
+                  googleApiKey={GOOGLE_MAPS_API_KEY}
+                  routePolyline={googleRouteData.polyline}
+                  truckPosition={currentTruckPosition}
+                  originName={originName}
+                  destName={destName}
+                />
+              ) : (
+                <Google2DTrackingMap
+                  originCoords={originCoords}
+                  destCoords={destCoords}
+                  progress={progress}
+                  isTracking={isTracking}
+                  onRouteCalculated={handleRouteCalculated}
+                  followMode={true}
+                  onFollowModeChange={() => {}}
+                  mapType={mapViewType}
+                  googleApiKey={GOOGLE_MAPS_API_KEY}
+                />
+              )}
             </div>
 
-            {/* WebGL warning banner when using static fallback */}
-            {useStaticMap && webglDiagnostics && webglDiagnostics.warnings.length > 0 && (
-              <div className="absolute top-16 left-0 right-0 z-30 bg-destructive text-destructive-foreground px-4 py-2 text-xs font-medium flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                <span>{webglDiagnostics.warnings[0]}</span>
-              </div>
-            )}
-            
-            {useStaticMap ? (
-              <GoogleStaticRouteMap
-                originCoords={originCoords}
-                destCoords={destCoords}
-                progress={progress}
-                isTracking={isTracking}
-                googleApiKey={GOOGLE_MAPS_API_KEY}
-                routePolyline={googleRouteData.polyline}
-                truckPosition={currentTruckPosition}
-                originName={originName}
-                destName={destName}
-              />
-            ) : (
-              <Google2DTrackingMap
-                originCoords={originCoords}
-                destCoords={destCoords}
-                progress={progress}
-                isTracking={isTracking}
-                onRouteCalculated={handleRouteCalculated}
-                followMode={true}
-                onFollowModeChange={() => {}}
-                mapType={mapViewType}
-                googleApiKey={GOOGLE_MAPS_API_KEY}
-              />
-            )}
+            {/* Right Panel: Truck View */}
+            <TruckViewMap
+              routeCoordinates={routeCoordinates}
+              progress={progress}
+              isTracking={isTracking}
+              originCoords={originCoords}
+              destCoords={destCoords}
+            />
           </div>
 
           {/* Map Controls Strip - Go/Pause/Reset + Route Info Dropdowns */}
