@@ -7,7 +7,8 @@
  import { 
    Sparkles, RefreshCw, ArrowRight, CheckCircle2, Star, 
    Shield, Clock, Phone, Zap, Users, TrendingUp, Play,
-   ChevronDown, Quote, Award, Truck
+  ChevronDown, Quote, Award, Truck, Pencil, X, Check,
+  MapPin, Search, Target, Globe, BarChart3, Hash
  } from "lucide-react";
  import logoImg from "@/assets/logo.png";
  
@@ -16,12 +17,76 @@
    onGenerate: () => void;
  }
  
+const LANDING_PAGE_TEMPLATES = [
+  { 
+    id: "quote-funnel", 
+    name: "Quote Funnel", 
+    description: "High-converting quote request page with urgency triggers",
+    conversion: "12.4%",
+    style: "Dark hero, green CTAs"
+  },
+  { 
+    id: "comparison", 
+    name: "Comparison Page", 
+    description: "Compare services side-by-side with competitor pricing",
+    conversion: "9.8%",
+    style: "Clean, trust-focused"
+  },
+  { 
+    id: "calculator", 
+    name: "Cost Calculator", 
+    description: "Interactive tool that captures leads through utility",
+    conversion: "15.2%",
+    style: "Tool-first, minimal"
+  },
+  { 
+    id: "testimonial", 
+    name: "Testimonial Heavy", 
+    description: "Social proof focused with video testimonials",
+    conversion: "11.1%",
+    style: "Warm, personal"
+  },
+  { 
+    id: "local-seo", 
+    name: "Local SEO Lander", 
+    description: "Geo-targeted for specific city/region searches",
+    conversion: "14.7%",
+    style: "Location-specific"
+  },
+  { 
+    id: "long-form", 
+    name: "Long-Form Sales", 
+    description: "Detailed sales page with objection handling",
+    conversion: "8.3%",
+    style: "Comprehensive"
+  },
+];
+
+interface EditableSection {
+  id: string;
+  type: 'headline' | 'subheadline' | 'body' | 'cta' | 'testimonial';
+  content: string;
+}
+
  export function AILandingPageGenerator({ isGenerating, onGenerate }: AILandingPageGeneratorProps) {
    const [showLandingPage, setShowLandingPage] = useState(false);
    const [businessName, setBusinessName] = useState("TruMove");
    const [targetAudience, setTargetAudience] = useState("Homeowners planning long-distance moves");
    const [mainOffer, setMainOffer] = useState("Get a guaranteed quote in 60 seconds with AI-powered pricing");
+  const [targetLocation, setTargetLocation] = useState("California, Texas, Florida");
    const [generationStep, setGenerationStep] = useState(0);
+  const [selectedTemplate, setSelectedTemplate] = useState("quote-funnel");
+  
+  // Editable sections
+  const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [sections, setSections] = useState<EditableSection[]>([
+    { id: 'main-headline', type: 'headline', content: 'Stop Overpaying for Your Move.' },
+    { id: 'sub-headline', type: 'subheadline', content: 'Get AI-Powered Pricing Now.' },
+    { id: 'hero-body', type: 'body', content: 'Join 50,000+ families who saved an average of $847 on their move. Our AI scans your inventory and matches you with verified carriers in seconds.' },
+    { id: 'cta-primary', type: 'cta', content: 'Get My Free Quote' },
+    { id: 'testimonial-1', type: 'testimonial', content: 'I was quoted $4,200 by another company. TruMove got me the same service for $3,350. The AI inventory scanner was scary accurate!' },
+  ]);
+  const [tempEditValue, setTempEditValue] = useState("");
  
    const handleGenerateLandingPage = () => {
      setGenerationStep(1);
@@ -42,6 +107,82 @@
      });
    };
  
+  const startEditing = (sectionId: string) => {
+    const section = sections.find(s => s.id === sectionId);
+    if (section) {
+      setEditingSection(sectionId);
+      setTempEditValue(section.content);
+    }
+  };
+
+  const saveEdit = () => {
+    if (editingSection) {
+      setSections(prev => prev.map(s => 
+        s.id === editingSection ? { ...s, content: tempEditValue } : s
+      ));
+      setEditingSection(null);
+      setTempEditValue("");
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingSection(null);
+    setTempEditValue("");
+  };
+
+  const getSection = (id: string) => sections.find(s => s.id === id)?.content || "";
+
+  const EditableText = ({ sectionId, className, as: Component = 'span' }: { sectionId: string; className?: string; as?: 'span' | 'p' | 'h1' | 'h2' }) => {
+    const isEditing = editingSection === sectionId;
+    const content = getSection(sectionId);
+    
+    if (isEditing) {
+      return (
+        <div className="relative inline-flex items-center gap-2 w-full">
+          {Component === 'p' || Component === 'span' ? (
+            <Textarea
+              value={tempEditValue}
+              onChange={(e) => setTempEditValue(e.target.value)}
+              className="text-sm bg-white text-slate-900 border-2 border-purple-500 rounded-lg p-2 min-h-[60px] w-full"
+              autoFocus
+            />
+          ) : (
+            <Input
+              value={tempEditValue}
+              onChange={(e) => setTempEditValue(e.target.value)}
+              className="text-lg font-bold bg-white text-slate-900 border-2 border-purple-500 rounded-lg p-2 w-full"
+              autoFocus
+            />
+          )}
+          <div className="flex gap-1">
+            <button 
+              onClick={saveEdit}
+              className="p-1.5 rounded-lg bg-green-500 text-white hover:bg-green-600"
+            >
+              <Check className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={cancelEdit}
+              className="p-1.5 rounded-lg bg-slate-500 text-white hover:bg-slate-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <Component 
+        className={`${className} group relative cursor-pointer hover:bg-purple-500/20 rounded px-1 -mx-1 transition-colors`}
+        onClick={() => startEditing(sectionId)}
+      >
+        {content}
+        <Pencil className="w-3 h-3 absolute -right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-purple-400 transition-opacity" />
+      </Component>
+    );
+  };
+
    if (showLandingPage) {
      return (
        <div className="space-y-4">
@@ -52,7 +193,9 @@
                <CheckCircle2 className="w-3 h-3" />
                AI Generated
              </Badge>
-             <span className="text-sm text-muted-foreground">High-converting landing page for {businessName}</span>
+            <span className="text-sm text-muted-foreground">
+              Click any text to edit • High-converting page for {businessName}
+            </span>
            </div>
            <div className="flex gap-2">
              <Button variant="outline" size="sm" onClick={() => setShowLandingPage(false)}>
@@ -82,7 +225,7 @@
            </div>
  
            {/* Actual Landing Page Content */}
-           <ScrollArea className="h-[500px]">
+          <ScrollArea className="h-[450px]">
              <div className="bg-white dark:bg-slate-900">
                {/* Hero Section */}
                <div 
@@ -107,16 +250,15 @@
                  <img src={logoImg} alt="TruMove" className="h-10 mx-auto mb-6 brightness-0 invert" />
                  
                  <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-                   Stop Overpaying for Your Move.<br />
+                  <EditableText sectionId="main-headline" as="span" className="block" /><br />
                    <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #22C55E, #4ADE80)" }}>
-                     Get AI-Powered Pricing Now.
+                    <EditableText sectionId="sub-headline" as="span" />
                    </span>
                  </h1>
                  
-                 <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
-                   Join 50,000+ families who saved an average of $847 on their move. 
-                   Our AI scans your inventory and matches you with verified carriers in seconds.
-                 </p>
+                <div className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
+                  <EditableText sectionId="hero-body" as="p" />
+                </div>
  
                  {/* CTA Form */}
                  <div className="max-w-md mx-auto bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
@@ -134,7 +276,7 @@
                      className="w-full py-6 text-lg font-bold gap-2"
                      style={{ background: "linear-gradient(135deg, #22C55E 0%, #16A34A 100%)" }}
                    >
-                     Get My Free Quote <ArrowRight className="w-5 h-5" />
+                    <EditableText sectionId="cta-primary" as="span" /> <ArrowRight className="w-5 h-5" />
                    </Button>
                    <p className="text-xs text-slate-400 mt-3">
                      🔒 No credit card required • Instant results
@@ -189,10 +331,9 @@
                <div className="bg-slate-900 py-12 px-8">
                  <div className="max-w-2xl mx-auto text-center">
                    <Quote className="w-10 h-10 text-green-500 mx-auto mb-4" />
-                   <p className="text-xl text-white italic mb-4">
-                     "I was quoted $4,200 by another company. TruMove got me the same service for $3,350. 
-                     The AI inventory scanner was scary accurate!"
-                   </p>
+                  <div className="text-xl text-white italic mb-4">
+                    "<EditableText sectionId="testimonial-1" as="span" />"
+                  </div>
                    <div className="flex items-center justify-center gap-2">
                      <div className="flex">
                        {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
@@ -227,22 +368,113 @@
            </ScrollArea>
          </div>
  
-         {/* AI Insights */}
-         <div className="p-4 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:border-purple-800">
-           <div className="flex items-start gap-3">
-             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-purple-500">
-               <Sparkles className="w-4 h-4 text-white" />
+        {/* SEO & Keyword Analysis */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Keywords Used */}
+          <div className="p-4 rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "#7C3AED20" }}>
+                <Hash className="w-4 h-4" style={{ color: "#7C3AED" }} />
+              </div>
+              <h4 className="font-semibold text-sm text-foreground">Keywords Targeted</h4>
              </div>
-             <div className="flex-1">
-               <h4 className="font-semibold text-purple-900 dark:text-purple-200 mb-1">AI Optimization Insights</h4>
-               <ul className="text-sm text-purple-700 dark:text-purple-300 space-y-1">
-                 <li>• <strong>Headline:</strong> Uses urgency + pain point (overpaying) - proven to increase conversions by 34%</li>
-                 <li>• <strong>Social Proof:</strong> Specific number (50,000+ families, $847 saved) builds credibility</li>
-                 <li>• <strong>CTA Color:</strong> Green button on dark background increases click-through by 21%</li>
-                 <li>• <strong>Trust Badges:</strong> FMCSA licensing shown immediately addresses #1 customer concern</li>
-               </ul>
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                { keyword: "long distance moving", volume: "12.4K", difficulty: "high" },
+                { keyword: "moving quote", volume: "8.2K", difficulty: "medium" },
+                { keyword: "cross country movers", volume: "6.8K", difficulty: "high" },
+                { keyword: "moving cost calculator", volume: "9.1K", difficulty: "medium" },
+                { keyword: "cheap movers", volume: "14.2K", difficulty: "high" },
+                { keyword: "AI moving estimate", volume: "890", difficulty: "low" },
+              ].map((kw) => (
+                <Badge 
+                  key={kw.keyword} 
+                  variant="secondary" 
+                  className="text-[10px] gap-1"
+                >
+                  {kw.keyword}
+                  <span className="text-muted-foreground">({kw.volume})</span>
+                </Badge>
+              ))}
              </div>
            </div>
+
+          {/* Geographic Targeting */}
+          <div className="p-4 rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "#EC489920" }}>
+                <MapPin className="w-4 h-4" style={{ color: "#EC4899" }} />
+              </div>
+              <h4 className="font-semibold text-sm text-foreground">Geographic Targeting</h4>
+            </div>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Primary Markets:</span>
+                <span className="font-medium text-foreground">CA, TX, FL, NY</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Search Intent:</span>
+                <Badge variant="secondary" className="text-[10px]">Transactional</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Local Modifiers:</span>
+                <span className="text-xs text-muted-foreground">"near me", city names</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Why These Choices - SEO Reasoning */}
+        <div className="p-4 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:border-purple-800">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-purple-500">
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
+            <h4 className="font-semibold text-purple-900 dark:text-purple-200">Why AI Made These Choices</h4>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="space-y-3">
+              <div>
+                <div className="flex items-center gap-1.5 font-medium text-purple-800 dark:text-purple-300 mb-1">
+                  <Target className="w-3.5 h-3.5" /> Headline Strategy
+                </div>
+                <p className="text-purple-700 dark:text-purple-400 text-xs">
+                  "Stop Overpaying" triggers loss aversion (2x more powerful than gain). 
+                  Pain-point headlines convert 34% better than feature-focused ones.
+                </p>
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5 font-medium text-purple-800 dark:text-purple-300 mb-1">
+                  <BarChart3 className="w-3.5 h-3.5" /> Specific Numbers
+                </div>
+                <p className="text-purple-700 dark:text-purple-400 text-xs">
+                  "$847 saved" and "50,000+ families" are specific, not rounded. 
+                  Specific numbers increase trust by 27% vs generic claims.
+                </p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <div className="flex items-center gap-1.5 font-medium text-purple-800 dark:text-purple-300 mb-1">
+                  <Globe className="w-3.5 h-3.5" /> SEO Structure
+                </div>
+                <p className="text-purple-700 dark:text-purple-400 text-xs">
+                  H1 contains primary keyword "move" + modifier "AI-powered". 
+                  Schema markup ready for FAQ rich snippets. Mobile-first layout for Core Web Vitals.
+                </p>
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5 font-medium text-purple-800 dark:text-purple-300 mb-1">
+                  <Zap className="w-3.5 h-3.5" /> CTA Psychology
+                </div>
+                <p className="text-purple-700 dark:text-purple-400 text-xs">
+                  Green buttons on dark backgrounds have 21% higher CTR. 
+                  "Get My" uses possessive language increasing ownership feeling.
+                </p>
+              </div>
+            </div>
+          </div>
          </div>
        </div>
      );
@@ -270,19 +502,49 @@
                <Badge variant="secondary" className="gap-1"><CheckCircle2 className="w-3 h-3" /> Conversion-Optimized</Badge>
                <Badge variant="secondary" className="gap-1"><Zap className="w-3 h-3" /> Instant Generation</Badge>
                <Badge variant="secondary" className="gap-1"><TrendingUp className="w-3 h-3" /> A/B Test Ready</Badge>
+              <Badge variant="secondary" className="gap-1"><Pencil className="w-3 h-3" /> Inline Editing</Badge>
              </div>
            </div>
          </div>
        </div>
  
+      {/* Template Selection */}
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
+          <span className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xs font-bold">1</span>
+          Choose a template style
+        </h4>
+        
+        <div className="grid grid-cols-3 gap-3">
+          {LANDING_PAGE_TEMPLATES.map((template) => (
+            <button
+              key={template.id}
+              onClick={() => setSelectedTemplate(template.id)}
+              className={`p-3 rounded-xl border-2 transition-all text-left ${
+                selectedTemplate === template.id 
+                  ? "border-purple-500 bg-purple-50 dark:bg-purple-950/30" 
+                  : "border-border bg-card hover:border-purple-300"
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium text-sm text-foreground">{template.name}</span>
+                <Badge variant="secondary" className="text-[9px]">{template.conversion}</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mb-1">{template.description}</p>
+              <span className="text-[10px] text-purple-600 dark:text-purple-400">{template.style}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
        {/* Input Form */}
        <div className="rounded-xl border border-border bg-card p-5">
          <h4 className="font-semibold text-sm text-foreground mb-4 flex items-center gap-2">
-           <span className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xs font-bold">1</span>
-           Tell us about your page
+          <span className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xs font-bold">2</span>
+          Tell us about your business
          </h4>
          
-         <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
            <div>
              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
                Business Name
@@ -296,16 +558,27 @@
            
            <div>
              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
-               Target Audience
+              Target Location(s)
              </label>
              <Input 
-               value={targetAudience}
-               onChange={(e) => setTargetAudience(e.target.value)}
-               placeholder="Who are you trying to reach?"
+              value={targetLocation}
+              onChange={(e) => setTargetLocation(e.target.value)}
+              placeholder="Cities, states, or regions"
              />
            </div>
            
-           <div>
+          <div className="col-span-2">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
+              Target Audience
+            </label>
+            <Input 
+              value={targetAudience}
+              onChange={(e) => setTargetAudience(e.target.value)}
+              placeholder="Who are you trying to reach?"
+            />
+          </div>
+          
+          <div className="col-span-2">
              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
                Main Offer / Value Proposition
              </label>
