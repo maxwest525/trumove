@@ -232,10 +232,26 @@ const AUDIENCE_OPTIONS = [
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Globe className="w-4 h-4 text-primary" />
-              Recommended Locations
-              <Badge variant="secondary" className="text-[10px]">Based on 7.8% avg conv rate</Badge>
+            <CardTitle className="text-sm flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-primary" />
+                Recommended Locations
+                <Badge variant="secondary" className="text-[10px]">Based on 7.8% avg conv rate</Badge>
+              </div>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setSelectedLocations(LOCATION_OPTIONS.map(l => l.value))}
+                  className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium"
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={() => setSelectedLocations([])}
+                  className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition-colors font-medium"
+                >
+                  Clear
+                </button>
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -267,10 +283,26 @@ const AUDIENCE_OPTIONS = [
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Users className="w-4 h-4 text-primary" />
-              Recommended Audience
-              <Badge variant="secondary" className="text-[10px]">$3,240 avg order value</Badge>
+            <CardTitle className="text-sm flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-primary" />
+                Recommended Audience
+                <Badge variant="secondary" className="text-[10px]">$3,240 avg order value</Badge>
+              </div>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setSelectedAudiences(AUDIENCE_OPTIONS.map(a => a.value))}
+                  className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-medium"
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={() => setSelectedAudiences([])}
+                  className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition-colors font-medium"
+                >
+                  Clear
+                </button>
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
