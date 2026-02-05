@@ -3466,6 +3466,14 @@
   max-height: var(--demo-section-height);
 }
 
+.tru-tracker-satellite-left,
+.tru-tracker-roadmap-center,
+.tru-tracker-content-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Content container - LEFT side (matches AI section .tru-ai-steps-left) */
 .tru-tracker-content-left {
   position: absolute;
