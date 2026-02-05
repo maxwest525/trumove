@@ -14,6 +14,7 @@ import {
   Radio, Mail, Home, ArrowLeft
 } from "lucide-react";
 import { ABTest, ConversionEvent, FunnelStage, Stats, Ad } from "./ppc/types";
+import { AnalyticsPrefillData } from "./ppc/UnifiedAnalyticsDashboard";
 import { ABTestManager } from "./ppc/ABTestManager";
 import { AILandingPageGenerator } from "./ppc/AILandingPageGenerator";
 import { MarketingHubDashboard } from "./ppc/MarketingHubDashboard";
@@ -166,6 +167,9 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   const [conversionEvents, setConversionEvents] = useState(INITIAL_CONVERSION_EVENTS);
   const [funnelStages, setFunnelStages] = useState(INITIAL_FUNNEL_STAGES);
   const [chartData, setChartData] = useState([35, 45, 30, 60, 75, 55, 80, 65, 90, 70, 85, 95, 75, 88]);
+  
+  // Prefill data from analytics
+  const [landingPagePrefill, setLandingPagePrefill] = useState<AnalyticsPrefillData | null>(null);
   
   // Export states
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -466,7 +470,10 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             {/* Unified Analytics Dashboard */}
             {activeTab === "analytics" && (
               <UnifiedAnalyticsDashboard 
-                onCreateLandingPage={() => setActiveTab("landing")}
+                onCreateLandingPage={(prefillData) => {
+                  setLandingPagePrefill(prefillData);
+                  setActiveTab("landing");
+                }}
                 liveMode={liveMode}
               />
             )}
@@ -538,6 +545,7 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
               <AILandingPageGenerator 
                 isGenerating={isGenerating}
                 onGenerate={handleGenerateContent}
+                prefillData={landingPagePrefill}
               />
             )}
 

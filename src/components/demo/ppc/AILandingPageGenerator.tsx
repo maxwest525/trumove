@@ -184,11 +184,13 @@ function drawBarChart(
     doc.text(labelLines[0].substring(0, 10), barX + barWidth / 2, chartBottom + 5, { align: 'center' });
   });
 }
- 
- interface AILandingPageGeneratorProps {
-   isGenerating: boolean;
-   onGenerate: () => void;
- }
+import { AnalyticsPrefillData } from "./UnifiedAnalyticsDashboard";
+
+interface AILandingPageGeneratorProps {
+  isGenerating: boolean;
+  onGenerate: () => void;
+  prefillData?: AnalyticsPrefillData | null;
+}
  
 const LANDING_PAGE_TEMPLATES = [
   { 
@@ -407,7 +409,7 @@ interface EditableSection {
    ],
  };
  
- export function AILandingPageGenerator({ isGenerating, onGenerate }: AILandingPageGeneratorProps) {
+export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }: AILandingPageGeneratorProps) {
    const [showLandingPage, setShowLandingPage] = useState(false);
    const [businessName, setBusinessName] = useState("TruMove");
    const [targetAudience, setTargetAudience] = useState("Homeowners planning long-distance moves");
@@ -441,6 +443,29 @@ interface EditableSection {
    
    // Heatmap overlay state
    const [showHeatmapOverlay, setShowHeatmapOverlay] = useState(false);
+   
+  // Auto-populate from analytics prefill data
+  useEffect(() => {
+    if (prefillData) {
+      setTargetAudience(prefillData.audience);
+      setTargetLocation(prefillData.locations.slice(0, 3).join(", "));
+      
+      // Update main offer based on top keyword
+      if (prefillData.topKeyword) {
+        const keywordCapitalized = prefillData.topKeyword.charAt(0).toUpperCase() + prefillData.topKeyword.slice(1);
+        setMainOffer(`Get the best ${keywordCapitalized.toLowerCase()} quotes instantly with AI-powered pricing`);
+      }
+      
+      // Update headline based on location
+      if (prefillData.topLocation) {
+        setSections(prev => prev.map(s => 
+          s.id === 'main-headline' 
+            ? { ...s, content: `${prefillData.topLocation}'s #1 Rated Moving Service` }
+            : s
+        ));
+      }
+    }
+  }, [prefillData]);
    const [customHeatmapPositions, setCustomHeatmapPositions] = useState<typeof TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]>(
      TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]
    );
