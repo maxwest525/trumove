@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Briefcase, ArrowLeft, Sparkles, Trophy, Key, MessageSquare, LayoutGrid } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal } from "lucide-react";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
 import { CoachingSummaryModal } from "@/components/coaching/CoachingSummaryModal";
 import { InternalMessagingModal } from "@/components/messaging/InternalMessagingModal";
 import { CombinedWorkspaceModal } from "@/components/agent/CombinedWorkspaceModal";
+import { AgentCommissionBoard } from "@/components/agent/AgentCommissionBoard";
 
 const AGENT_TOOLS = [
   {
@@ -16,6 +16,13 @@ const AGENT_TOOLS = [
     title: "Agent Workspace",
     description: "CRM, Dialer & E-Sign in one split-panel view",
     icon: LayoutGrid,
+    external: false,
+  },
+  {
+    id: "commission-board" as const,
+    title: "Commission Leaderboard",
+    description: "Agent rankings by deposits, jobs & premium",
+    icon: Medal,
     external: false,
   },
   {
@@ -48,6 +55,7 @@ const AGENT_TOOLS = [
     isIntegration: true,
   },
 ];
+
 export default function AgentLogin() {
   const [showLoginModal, setShowLoginModal] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -56,6 +64,7 @@ export default function AgentLogin() {
   const [coachingSummaryOpen, setCoachingSummaryOpen] = useState(false);
   const [messagingOpen, setMessagingOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [commissionBoardOpen, setCommissionBoardOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -75,6 +84,8 @@ export default function AgentLogin() {
       setMessagingOpen(true);
     } else if (toolId === "workspace") {
       setWorkspaceOpen(true);
+    } else if (toolId === "commission-board") {
+      setCommissionBoardOpen(true);
     }
   };
 
@@ -105,6 +116,10 @@ export default function AgentLogin() {
       <CombinedWorkspaceModal
         open={workspaceOpen}
         onOpenChange={setWorkspaceOpen}
+      />
+      <AgentCommissionBoard
+        open={commissionBoardOpen}
+        onOpenChange={setCommissionBoardOpen}
       />
       <div className="agent-dashboard-page">
             <div className="agent-dashboard-header">
