@@ -1,4 +1,4 @@
- import { useState } from "react";
+ import { useState, useRef, useCallback, useEffect } from "react";
  import { Button } from "@/components/ui/button";
  import { Input } from "@/components/ui/input";
  import { Textarea } from "@/components/ui/textarea";
@@ -280,6 +280,54 @@ interface EditableSection {
    
    // Heatmap overlay state
    const [showHeatmapOverlay, setShowHeatmapOverlay] = useState(false);
+  
+  // Popout modal drag state
+  const [popoutPosition, setPopoutPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isSideBySide, setIsSideBySide] = useState(false);
+  const popoutRef = useRef<HTMLDivElement>(null);
+
+  // Handle drag start
+  const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button, select, input')) return;
+    setIsDragging(true);
+    setDragOffset({
+      x: e.clientX - popoutPosition.x,
+      y: e.clientY - popoutPosition.y,
+    });
+  }, [popoutPosition]);
+
+  // Handle drag move
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      setPopoutPosition({
+        x: e.clientX - dragOffset.x,
+        y: e.clientY - dragOffset.y,
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, dragOffset]);
+
+  // Reset popout position when opening
+  useEffect(() => {
+    if (isPopoutOpen) {
+      setPopoutPosition({ x: 0, y: 0 });
+    }
+  }, [isPopoutOpen]);
  
    const handleGenerateLandingPage = () => {
      setGenerationStep(1);
@@ -1979,28 +2027,56 @@ interface EditableSection {
       
        {/* Popout Modal for Larger View */}
        {isPopoutOpen && (
-         <div className="fixed inset-0 z-[200] flex items-center justify-center">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{ pointerEvents: 'none' }}>
            {/* Backdrop */}
            <div 
-             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            style={{ pointerEvents: 'auto' }}
              onClick={() => setIsPopoutOpen(false)}
            />
            
            {/* Wide Modal */}
            <div 
-             className="relative bg-background rounded-2xl shadow-2xl border border-border overflow-hidden"
-             style={{ width: "90vw", maxWidth: "1400px", height: "85vh" }}
+            ref={popoutRef}
+            className="relative bg-background rounded-2xl shadow-2xl border border-border overflow-hidden"
+            style={{ 
+              width: isSideBySide ? "95vw" : "90vw", 
+              maxWidth: isSideBySide ? "1800px" : "1400px", 
+              height: "85vh",
+              pointerEvents: 'auto',
+              transform: `translate(${popoutPosition.x}px, ${popoutPosition.y}px)`,
+              cursor: isDragging ? 'grabbing' : 'default',
+            }}
            >
              {/* Modal Header */}
-             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-purple-600 to-purple-500">
+            <div 
+              className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-purple-600 to-purple-500 select-none"
+              onMouseDown={handleDragStart}
+              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+            >
                <div className="flex items-center gap-3">
                  <Sparkles className="w-5 h-5 text-white" />
                  <span className="font-semibold text-white">Landing Page Preview</span>
                  <Badge className="bg-white/20 text-white border-white/30 text-xs">
                    {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
                  </Badge>
+                {isSideBySide && (
+                  <Badge className="bg-green-500/30 text-green-200 border-green-400/30 text-xs">
+                    Side-by-Side View
+                  </Badge>
+                )}
                </div>
                <div className="flex items-center gap-2">
+                {/* Side-by-Side Toggle */}
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setIsSideBySide(!isSideBySide)}
+                  className={`text-white hover:bg-white/20 h-8 ${isSideBySide ? 'bg-white/20' : ''}`}
+                >
+                  <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
+                  {isSideBySide ? 'Preview Only' : 'Side-by-Side'}
+                </Button>
                  {/* Theme Selector in Popout */}
                  <Select value={selectedTheme} onValueChange={setSelectedTheme}>
                    <SelectTrigger className="w-[140px] h-8 bg-white/10 border-white/20 text-white text-xs">
@@ -2050,7 +2126,7 @@ interface EditableSection {
              </div>
              
              {/* Browser Chrome */}
-             <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border-b border-border">
+            <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border-b border-border shrink-0">
                <div className="flex gap-1.5">
                  <div className="w-3 h-3 rounded-full bg-red-400" />
                  <div className="w-3 h-3 rounded-full bg-amber-400" />
@@ -2061,6 +2137,11 @@ interface EditableSection {
                    https://{businessName.toLowerCase().replace(/\s/g, '')}.com/{selectedTemplate}
                  </div>
                </div>
+              {isSideBySide && (
+                <Badge variant="secondary" className="text-[10px]">
+                  Preview • Drag header to reposition
+                </Badge>
+              )}
                <button
                  onClick={() => setIsPopoutOpen(false)}
                  className="p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-muted-foreground"
@@ -2070,10 +2151,221 @@ interface EditableSection {
                </button>
              </div>
              
-             {/* Landing Page Content - Full Height */}
-             <ScrollArea className="h-[calc(85vh-110px)]">
-               {renderSelectedTemplate()}
-             </ScrollArea>
+            {/* Content Area - Side by Side or Full */}
+            {isSideBySide ? (
+              <div className="flex h-[calc(85vh-110px)]">
+                {/* Landing Page Preview */}
+                <div className="flex-1 border-r border-border relative">
+                  <ScrollArea className="h-full">
+                    {renderSelectedTemplate()}
+                  </ScrollArea>
+                  
+                  {/* Heatmap Overlay in side-by-side */}
+                  {showHeatmapOverlay && importedData && (
+                    <div className="absolute inset-0 pointer-events-none z-20">
+                      <div 
+                        className="absolute left-1/2 -translate-x-1/2 top-[55%] w-48 h-12 rounded-lg animate-pulse"
+                        style={{ 
+                          background: "radial-gradient(ellipse, rgba(239, 68, 68, 0.6) 0%, rgba(239, 68, 68, 0.3) 40%, transparent 70%)",
+                          boxShadow: "0 0 40px 20px rgba(239, 68, 68, 0.4)"
+                        }}
+                      >
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
+                          🔥 35.9% clicks
+                        </div>
+                      </div>
+                      <div 
+                        className="absolute left-1/2 -translate-x-1/2 top-[45%] w-56 h-20 rounded-lg"
+                        style={{ 
+                          background: "radial-gradient(ellipse, rgba(249, 115, 22, 0.5) 0%, rgba(249, 115, 22, 0.2) 40%, transparent 70%)"
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                
+                {/* Analytics Panel */}
+                <div className="w-[420px] flex flex-col bg-muted/30">
+                  <div className="p-3 border-b border-border bg-card shrink-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
+                        <BarChart3 className="w-4 h-4 text-purple-500" />
+                        Analytics & SEO
+                      </h4>
+                      <div className="flex items-center gap-1">
+                        {importedData && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => setShowHeatmapOverlay(!showHeatmapOverlay)}
+                            className="h-7 text-xs"
+                          >
+                            {showHeatmapOverlay ? <EyeOff className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />}
+                            Heatmap
+                          </Button>
+                        )}
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={exportAnalyticsPdf}
+                          className="h-7 text-xs"
+                        >
+                          <FileText className="w-3 h-3 mr-1" />
+                          PDF
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <ScrollArea className="flex-1">
+                    <div className="p-3 space-y-4">
+                      {/* Quick Stats */}
+                      {importedData && (
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="p-2 rounded-lg bg-card border border-border text-center">
+                            <p className="text-lg font-bold text-foreground">{(importedData.totalClicks / 1000).toFixed(1)}K</p>
+                            <p className="text-[10px] text-muted-foreground">Clicks</p>
+                          </div>
+                          <div className="p-2 rounded-lg bg-card border border-border text-center">
+                            <p className="text-lg font-bold text-green-600">{importedData.totalConversions.toLocaleString()}</p>
+                            <p className="text-[10px] text-muted-foreground">Conversions</p>
+                          </div>
+                          <div className="p-2 rounded-lg bg-card border border-border text-center">
+                            <p className="text-lg font-bold text-blue-600">${(importedData.totalRevenue / 1000).toFixed(0)}K</p>
+                            <p className="text-[10px] text-muted-foreground">Revenue</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Keywords Targeted */}
+                      <div className="p-3 rounded-xl border border-border bg-card">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Hash className="w-4 h-4 text-purple-500" />
+                          <h5 className="font-semibold text-xs text-foreground">Keywords Targeted</h5>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {[
+                            "long distance moving",
+                            "moving quote",
+                            "cross country movers",
+                            "moving cost calculator",
+                            "AI moving estimate",
+                          ].map((kw) => (
+                            <Badge key={kw} variant="secondary" className="text-[9px]">
+                              {kw}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Top Performing Keywords */}
+                      {importedData && (
+                        <div className="p-3 rounded-xl border border-border bg-card">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <Target className="w-4 h-4 text-green-500" />
+                              <h5 className="font-semibold text-xs text-foreground">Top Keywords</h5>
+                            </div>
+                            <Badge variant="secondary" className="text-[9px]">
+                              {importedData.keywords.length} tracked
+                            </Badge>
+                          </div>
+                          <div className="space-y-2">
+                            {importedData.keywords.slice(0, 4).map((kw, i) => (
+                              <div key={i} className="flex items-center justify-between text-xs">
+                                <span className="text-muted-foreground truncate flex-1">{kw.keyword}</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-green-600 font-medium">{kw.conversions}</span>
+                                  {kw.trend === 'up' && <TrendingUp className="w-3 h-3 text-green-500" />}
+                                  {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-red-500" />}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Geographic Targeting */}
+                      <div className="p-3 rounded-xl border border-border bg-card">
+                        <div className="flex items-center gap-2 mb-2">
+                          <MapPin className="w-4 h-4 text-pink-500" />
+                          <h5 className="font-semibold text-xs text-foreground">Geographic Targeting</h5>
+                        </div>
+                        <div className="space-y-1.5 text-xs">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Primary Markets:</span>
+                            <span className="font-medium text-foreground">CA, TX, FL, NY</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Search Intent:</span>
+                            <Badge variant="secondary" className="text-[9px]">Transactional</Badge>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Click Behavior */}
+                      {importedData && (
+                        <div className="p-3 rounded-xl border border-border bg-card">
+                          <div className="flex items-center gap-2 mb-2">
+                            <MousePointerClick className="w-4 h-4 text-red-500" />
+                            <h5 className="font-semibold text-xs text-foreground">Click Behavior</h5>
+                          </div>
+                          <div className="space-y-2">
+                            {importedData.clickBehavior.slice(0, 4).map((click, i) => (
+                              <div key={i} className="flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-1.5">
+                                  <span 
+                                    className={`w-2 h-2 rounded-full ${
+                                      click.heatmapIntensity === 'high' ? 'bg-red-500' :
+                                      click.heatmapIntensity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
+                                    }`}
+                                  />
+                                  <span className="text-muted-foreground truncate">{click.element}</span>
+                                </div>
+                                <span className="font-medium text-foreground">{click.percentage}%</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* AI Insights */}
+                      <div className="p-3 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:border-purple-800">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Sparkles className="w-4 h-4 text-purple-500" />
+                          <h5 className="font-semibold text-xs text-purple-900 dark:text-purple-200">AI Insights</h5>
+                        </div>
+                        <div className="space-y-2 text-[10px] text-purple-700 dark:text-purple-300">
+                          <p>• "Stop Overpaying" triggers loss aversion (2x more powerful)</p>
+                          <p>• Specific numbers ($847) increase trust by 27%</p>
+                          <p>• Green CTAs on dark backgrounds have 21% higher CTR</p>
+                        </div>
+                      </div>
+                      
+                      {!importedData && (
+                        <div className="p-4 text-center border-2 border-dashed border-border rounded-xl">
+                          <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-xs text-muted-foreground">Import analytics data to see performance insights</p>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => { setIsPopoutOpen(false); setShowDataImport(true); }}
+                            className="mt-2 text-xs h-7"
+                          >
+                            Import Data
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </div>
+              </div>
+            ) : (
+              /* Full width preview only */
+              <ScrollArea className="h-[calc(85vh-110px)]">
+                {renderSelectedTemplate()}
+              </ScrollArea>
+            )}
            </div>
          </div>
        )}
