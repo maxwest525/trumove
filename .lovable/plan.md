@@ -1,179 +1,227 @@
 
-# ClickFunnels-Style Overhaul for All Landing Page Templates
+# Trudy Marketing AI Assistant Integration
 
-## Problem Analysis
-The Quote Funnel template has been overhauled with professional, conversion-focused sections including:
-- Sticky header with phone CTA
-- Urgency banner with countdown
-- Dark hero with glowing quote form
-- Social proof ticker
-- Trust badge strip
-- 3-step process
-- Video testimonials
-- Comparison table
-- Calculator preview stats
-- Triple guarantee section
-- FAQ accordion
-- Final CTA with countdown
-- Full footer
-- Floating chat and back-to-top buttons
-
-The other 5 templates (Comparison, Calculator, Testimonial, Local SEO, Long-Form) are currently basic and lack visual separation, depth, and professional polish. This makes them hard to see and differentiate.
+## Overview
+Integrate Trudy as a full-service AI marketing assistant inside the Marketing Hub. Users can describe what they need in plain language (e.g., "I want an ad with a llama"), and Trudy will:
+1. **Design & create** the marketing asset (ad copy, landing page, campaign)
+2. **Generate images** using Lovable AI image generation
+3. **Show where to launch** the asset across platforms (Google Ads, Meta, etc.)
+4. **Handle any backend marketing tasks** through natural conversation
 
 ---
 
-## Solution: Apply Consistent ClickFunnels-Style Overhaul
+## Architecture
 
-Each template will receive the same professional treatment while maintaining its unique purpose and conversion goal.
-
-### Common Elements for ALL Templates
-
-Every template will include:
-1. **Sticky Header** - Logo + phone number + CTA button
-2. **Urgency Banner** - Template-specific message with countdown
-3. **Social Proof Ticker** - Scrolling real-time activity
-4. **Trust Badge Strip** - FMCSA, BBB, ratings, move count
-5. **FAQ Section** - Template-specific questions
-6. **Triple Guarantee** - Price lock, insurance, on-time
-7. **Final CTA Section** - Full-width with form
-8. **Footer** - Full TruMove footer
-9. **Floating Elements** - Chat with Trudy + back to top
-
----
-
-## Template-Specific Enhancements
-
-### 1. Comparison Page Template
-**Current:** Basic table with minimal styling
-**Enhanced:**
-- Sticky header + urgency banner ("See Why 50,000+ Chose TruMove")
-- Dark hero with "We Win on Every Metric" headline
-- Animated comparison table with pulsing checkmarks
-- Feature deep-dive cards (expandable details)
-- Video testimonials from comparison shoppers
-- Competitor pricing breakdown
-- "Request Price Match" CTA
-- Full footer with guarantees
-
-### 2. Calculator Page Template
-**Current:** Simple split layout with form and placeholder
-**Enhanced:**
-- Sticky header + urgency banner ("Calculate & Save Up to $847")
-- Clean hero with trust indicators
-- Interactive calculator with animated results
-- Savings breakdown visualization (pie chart style)
-- "Similar Moves" social proof cards
-- Step-by-step "What Happens Next" section
-- Email capture for detailed quote
-- Trust signals footer
-- Full footer
-
-### 3. Testimonial Page Template
-**Current:** Basic star rating header and 4-card grid
-**Enhanced:**
-- Sticky header with phone CTA
-- Hero with massive 4.9/5 rating and animated stars
-- Video testimonial carousel (hero placement)
-- Written testimonial masonry grid
-- "Before & After" story highlights
-- Trust metrics strip (50K+ moves, 99% satisfaction)
-- Platform badges (Google, Yelp, BBB reviews)
-- "Share Your Story" CTA section
-- Full footer
-
-### 4. Local SEO Lander Template
-**Current:** Location-specific hero with basic form
-**Enhanced:**
-- Sticky header with local phone number
-- Urgency banner ("#1 in [Location] for 10 Years")
-- Hero with Google Maps integration style
-- Local trust signals (local office address, team photo placeholder)
-- Service area map visualization
-- Local testimonials with city-specific quotes
-- "Free Local Estimate" form with ZIP validation
-- Local partnership badges
-- Local FAQ (city-specific questions)
-- Full footer with location schema markup callout
-
-### 5. Long-Form Sales Page Template
-**Current:** Editorial style with TOC and basic content sections
-**Enhanced:**
-- Minimal sticky header (logo only, clean)
-- Reading progress indicator bar
-- Rich editorial hero with author/authority section
-- Expandable table of contents
-- Content sections with pull quotes and callout boxes
-- Inline CTAs every 2-3 sections
-- Trust sidebar (sticky on desktop)
-- Video break section mid-content
-- "TL;DR" summary section
-- Sticky bottom CTA bar (mobile-first)
-- Full footer
+```text
++------------------------------------------+
+|        Marketing Hub + Trudy Chat        |
++------------------------------------------+
+|  +----------------+  +-----------------+ |
+|  | Feature Cards  |  | Trudy AI Panel  | |
+|  |                |  |                 | |
+|  | Landing Pages  |  | "I want an ad   | |
+|  | A/B Tests      |  |  with a llama"  | |
+|  | Keywords       |  |                 | |
+|  | Campaigns      |  | [Designing...]  | |
+|  |                |  |                 | |
+|  | [or just ask   |  | Here's your ad: | |
+|  |  Trudy →]      |  | [Preview Image] | |
+|  +----------------+  |                 | |
+|                      | Launch on:      | |
+|                      | ○ Google Ads    | |
+|                      | ○ Meta/FB       | |
+|                      | ○ TikTok        | |
+|                      +-----------------+ |
++------------------------------------------+
+```
 
 ---
 
-## Visual Consistency Standards
+## Implementation Plan
 
-All templates will follow these design rules:
+### Phase 1: Create Marketing AI Edge Function
+**New file: `supabase/functions/marketing-ai-assistant/index.ts`**
 
-| Element | Specification |
-|---------|--------------|
-| **Header** | Sticky, white bg, 2px primary border-bottom, logo left, phone + CTA right |
-| **Urgency Banner** | Red/orange gradient, centered text, Zap icons, pulse animation |
-| **Hero Sections** | Dark gradient (secondary color), primary color accents, glassmorphic forms |
-| **Social Proof Ticker** | Dark bg, marquee animation, green bullet points |
-| **Trust Badge Strip** | Light gray bg, centered, 4 badges with icons |
-| **Section Padding** | py-16 px-8 consistent throughout |
-| **Cards** | rounded-2xl, border, shadow-lg on hover |
-| **CTAs** | Primary gradient, py-5 min height, font-bold, arrow icon |
-| **Footer** | Dark slate-900, 4-column grid, powered-by badge |
+Uses Lovable AI Gateway to power Trudy's marketing capabilities:
+- Natural language understanding for marketing requests
+- Image generation using `google/gemini-2.5-flash-image` for ad creatives
+- Structured output for campaign configurations
+- Platform-specific ad format recommendations
+
+```typescript
+// Key capabilities:
+// 1. Parse user intent: "ad with llama" → {type: "ad", creative: "llama image"}
+// 2. Generate ad copy with brand voice
+// 3. Create images using Nano banana model
+// 4. Suggest launch platforms with step-by-step guidance
+```
+
+### Phase 2: Create Trudy Marketing Chat Component
+**New file: `src/components/demo/ppc/TrudyMarketingChat.tsx`**
+
+A specialized chat interface embedded in the Marketing Hub:
+- Streaming responses for real-time feedback
+- Image preview cards for generated creatives
+- Platform selection with "Launch" buttons
+- Context-aware suggestions based on current page
+- Inline action buttons (Create, Edit, Launch)
+
+```text
++------------------------------------------+
+| 💬 Ask Trudy                             |
++------------------------------------------+
+| You: I want an ad with a llama for our   |
+|      California moving service           |
+|                                          |
+| Trudy: Great choice! 🦙 Here's what I    |
+| created for you:                         |
+|                                          |
+| [Generated Image Preview]                |
+| "Move with the pack, not the hassle"     |
+|                                          |
+| Ad copy:                                 |
+| ✓ Headline: Moving Made Easy - CA        |
+| ✓ Description: Join 50,000+ happy...     |
+|                                          |
+| Ready to launch? Pick your platform:     |
+| [Google Ads] [Meta] [TikTok]             |
++------------------------------------------+
+| [Ask Trudy anything about marketing...]  |
++------------------------------------------+
+```
+
+### Phase 3: Integrate into Marketing Hub Dashboard
+**Modify: `src/components/demo/ppc/MarketingHubDashboard.tsx`**
+
+Add Trudy chat panel as a persistent sidebar or expandable panel:
+- Split layout: Feature cards (left) + Trudy chat (right)
+- "Ask Trudy" floating button when collapsed
+- Quick prompts for common tasks:
+  - "Create a landing page for [location]"
+  - "Design a Facebook ad"
+  - "Optimize my campaign"
+  - "What keywords should I target?"
+
+### Phase 4: Add Marketing Context to Trudy
+**Modify: `src/components/chat/pageContextConfig.ts`**
+
+Add marketing-specific context:
+```typescript
+marketing: {
+  key: 'marketing',
+  firstMessage: "Hi! I'm Trudy, your AI marketing assistant. I can create ads, design landing pages, generate images, and help you launch campaigns. What would you like to create today?",
+  quickActions: [
+    { id: 'create-ad', label: 'Create Ad', icon: Image, action: 'message', message: 'Help me create an ad' },
+    { id: 'landing-page', label: 'Landing Page', icon: Layout, action: 'message', message: 'Build a landing page' },
+    { id: 'optimize', label: 'Optimize Campaign', icon: TrendingUp, action: 'message', message: 'How can I improve my campaigns?' },
+  ],
+  agentContext: "User is in the Marketing Hub. Help create ads, landing pages, campaigns. You CAN generate images and provide specific marketing guidance.",
+}
+```
+
+### Phase 5: Image Generation Integration
+**Modify: `supabase/functions/marketing-ai-assistant/index.ts`**
+
+Add image generation capability:
+```typescript
+// When user requests creative with specific imagery:
+if (needsImageGeneration) {
+  const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${LOVABLE_API_KEY}` },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash-image",
+      messages: [{ role: "user", content: imagePrompt }],
+      modalities: ["image", "text"]
+    })
+  });
+  // Return base64 image to display in chat
+}
+```
+
+### Phase 6: Platform Launch Guidance
+**New file: `src/components/demo/ppc/PlatformLaunchGuide.tsx`**
+
+Interactive component showing users how to launch their created assets:
+- Platform-specific step-by-step instructions
+- Copy-to-clipboard for ad copy
+- Download buttons for generated images
+- Direct links to ad platforms (Google Ads, Meta Business Suite)
+- Budget recommendations based on campaign type
 
 ---
+
+## Files to Create
+
+| File | Purpose |
+|------|---------|
+| `supabase/functions/marketing-ai-assistant/index.ts` | AI backend for marketing tasks with image generation |
+| `src/components/demo/ppc/TrudyMarketingChat.tsx` | Specialized marketing chat UI with image previews |
+| `src/components/demo/ppc/PlatformLaunchGuide.tsx` | Launch guidance for each ad platform |
+| `src/components/demo/ppc/GeneratedAdPreview.tsx` | Preview card for AI-generated ad creatives |
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/components/demo/ppc/AILandingPageGenerator.tsx` | Update `renderComparisonPage()`, `renderCalculatorPage()`, `renderTestimonialPage()`, `renderLocalSeoPage()`, `renderLongFormPage()` functions (~lines 1574-1880) |
-| `src/components/demo/ppc/TruMoveBrandingElements.tsx` | Add new reusable components: `SavingsVisualization`, `LocalTrustSignals`, `ReadingProgressBar`, `VideoTestimonialCarousel`, `CompetitorPricingBreakdown` |
+| `src/components/demo/ppc/MarketingHubDashboard.tsx` | Add Trudy chat panel, split layout |
+| `src/components/demo/PPCDemoModal.tsx` | Integrate TrudyMarketingChat component |
+| `src/components/chat/pageContextConfig.ts` | Add marketing context for Trudy |
+| `supabase/config.toml` | Add new edge function configuration |
 
 ---
 
-## Implementation Approach
+## User Experience Flow
 
-### Phase 1: Shared Components
-Add new reusable components to `TruMoveBrandingElements.tsx`:
-- `LocalTrustSection` - For local SEO pages
-- `SavingsBreakdown` - For calculator pages
-- `TestimonialCarousel` - For testimonial pages
-- `ReadingProgress` - For long-form pages
-
-### Phase 2: Update Each Template Renderer
-For each of the 5 template render functions:
-1. Add Sticky Header with theme-aware primary color
-2. Add template-specific Urgency Banner
-3. Enhance hero section with dark gradient and glowing form
-4. Add Social Proof Ticker
-5. Add Trust Badge Strip after hero
-6. Add template-specific middle sections
-7. Add Triple Guarantee Section
-8. Add FAQ Section (with template-specific questions)
-9. Add Final CTA Section
-10. Add TruMove Footer
-11. Add Floating Elements (Chat + Back to Top)
-
-### Phase 3: Preview Improvements
-- Add a visible page boundary/frame in the popout modal
-- Add subtle shadow/border around the preview area
-- Ensure smooth scrolling through all sections
+1. **User opens Marketing Hub** → Sees feature cards + Trudy chat panel
+2. **User types** "I want an ad with a llama for California moves"
+3. **Trudy responds** with streaming text:
+   - "Great idea! Let me create that for you..."
+   - Generates image using AI
+   - Writes ad copy
+   - Shows preview card
+4. **User sees** generated ad with llama image + copy
+5. **User clicks** "Launch on Google Ads"
+6. **Trudy shows** step-by-step guide:
+   - "Go to ads.google.com"
+   - "Click 'New Campaign'"
+   - "Download this image [button]"
+   - "Copy this headline [button]"
+   - "Set budget: $50-100/day recommended"
 
 ---
 
-## Expected Result
+## Trudy Marketing Capabilities
 
-All 6 landing page templates will have:
-- Professional, conversion-focused design matching ClickFunnels/Unbounce quality
-- Consistent visual language and branding
-- Clear section separation with distinct backgrounds
-- Full-page scrolling experience with all conversion elements
-- Easy to see, easy to understand, easy to customize
+| Capability | How Trudy Handles It |
+|------------|---------------------|
+| **Create ad with custom image** | Uses Nano banana image gen + writes copy |
+| **Build landing page** | Uses QuickStartWizard with AI-generated content |
+| **Suggest keywords** | Analyzes business + returns keyword list |
+| **Optimize campaign** | Reviews current settings + suggests improvements |
+| **Explain metrics** | Natural language explanation of CTR, ROAS, etc. |
+| **Launch guidance** | Platform-specific step-by-step instructions |
+| **A/B test ideas** | Suggests variants to test based on goals |
+
+---
+
+## Technical Approach
+
+### Edge Function: Marketing AI Assistant
+- Uses `google/gemini-3-flash-preview` for text (fast, capable)
+- Uses `google/gemini-2.5-flash-image` for image generation
+- Structured output via tool calling for campaign configs
+- Streaming responses for better UX
+
+### Frontend: TrudyMarketingChat
+- Token-by-token streaming render
+- Image preview cards with download/copy actions
+- Platform launch buttons with guided flows
+- Context preservation between messages
+- Quick action chips for common tasks
+
+### Integration Points
+- Uses existing `LOVABLE_API_KEY` (already configured)
+- Follows patterns from `AIChatContainer.tsx`
+- Reuses TruMove branding elements
+- Works alongside existing Marketing Hub features
