@@ -19,6 +19,7 @@ import {
 import { ABTest, ConversionEvent, FunnelStage, Stats, Ad } from "./ppc/types";
 import { ABTestManager } from "./ppc/ABTestManager";
 import { ConversionsPanel } from "./ppc/ConversionsPanel";
+import { AILandingPageGenerator } from "./ppc/AILandingPageGenerator";
 
 interface PPCDemoModalProps {
   open: boolean;
@@ -621,95 +622,10 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
 
             {/* Landing Pages */}
             {activeTab === "landing" && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-foreground">Landing Page Builder</h3>
-                  <Button size="sm" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
-                    <Layout className="w-4 h-4 mr-2" />
-                    Create New
-                  </Button>
-                </div>
-
-                {/* Templates */}
-                <div className="grid grid-cols-4 gap-3">
-                  {LANDING_PAGE_TEMPLATES.map((template) => (
-                    <button
-                      key={template.id}
-                      onClick={() => setSelectedTemplate(template.id)}
-                      className={`p-3 rounded-xl border-2 transition-all text-left ${
-                        selectedTemplate === template.id 
-                          ? "border-purple-500 bg-purple-50 dark:bg-purple-950/30" 
-                          : "border-border bg-card hover:border-purple-300"
-                      }`}
-                    >
-                      <div className="aspect-video rounded-lg mb-2 flex items-center justify-center" style={{ background: "#F1F5F9" }}>
-                        <Layout className="w-8 h-8 text-muted-foreground/50" />
-                      </div>
-                      <div className="font-medium text-sm text-foreground">{template.name}</div>
-                      <div className="text-xs text-muted-foreground">Avg. {template.conversion} conversion</div>
-                    </button>
-                  ))}
-                </div>
-
-                {/* AI Content Generator */}
-                <div className="rounded-xl border border-border bg-card p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Sparkles className="w-4 h-4" style={{ color: "#7C3AED" }} />
-                    <h4 className="font-semibold text-sm text-foreground">AI Content Generator</h4>
-                  </div>
-                  <Textarea 
-                    placeholder="Describe your landing page goal... (e.g., 'A landing page for long-distance moving quotes targeting homeowners in California')"
-                    className="mb-3"
-                    rows={3}
-                  />
-                  <div className="flex items-center justify-between">
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="gap-1">
-                        <Type className="w-3 h-3" />
-                        Headlines
-                      </Button>
-                      <Button variant="outline" size="sm" className="gap-1">
-                        <FileText className="w-3 h-3" />
-                        Body Copy
-                      </Button>
-                      <Button variant="outline" size="sm" className="gap-1">
-                        <Lightbulb className="w-3 h-3" />
-                        CTA Ideas
-                      </Button>
-                    </div>
-                    <Button 
-                      onClick={handleGenerateContent}
-                      disabled={isGenerating}
-                      style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
-                    >
-                      {isGenerating ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                          Generating...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          Generate
-                        </>
-                      )}
-                    </Button>
-                  </div>
-
-                  {generatedContent && (
-                    <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Generated Content</span>
-                        <Button variant="ghost" size="sm" className="gap-1">
-                          <Copy className="w-3 h-3" />
-                          Copy
-                        </Button>
-                      </div>
-                      <pre className="text-sm text-foreground whitespace-pre-wrap font-sans">{generatedContent}</pre>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <AILandingPageGenerator 
+                isGenerating={isGenerating}
+                onGenerate={handleGenerateContent}
+              />
             )}
 
             {/* A/B Testing - Using new component with drag-and-drop */}
