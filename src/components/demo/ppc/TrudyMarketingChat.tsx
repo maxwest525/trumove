@@ -89,6 +89,29 @@
      
      return null;
    };
+
+    // Detect if user is asking for a landing page
+    const detectLandingPageRequest = (text: string): boolean => {
+      const lowerText = text.toLowerCase();
+      const landingKeywords = [
+        "landing page",
+        "landing-page", 
+        "build a page",
+        "create a page",
+        "make a page",
+        "new page",
+        "funnel",
+        "quote page",
+        "lead page",
+        "squeeze page",
+        "conversion page",
+        "build page",
+        "create page",
+        "design page",
+        "make page",
+      ];
+      return landingKeywords.some(k => lowerText.includes(k));
+    };
  
    // Stream chat response
    const streamChat = async (userMessage: string) => {
@@ -203,7 +226,28 @@
      }]);
  
      try {
-       // Check if user is requesting an image
+        // Check if user is requesting a landing page
+        const isLandingPageRequest = detectLandingPageRequest(userMessage);
+        
+        if (isLandingPageRequest && onCreateLandingPage) {
+          // Add response and trigger wizard
+          setMessages(prev => [...prev, {
+            id: `lp-${Date.now()}`,
+            role: "assistant",
+            content: "🚀 **Great choice!** I'm opening the Landing Page Wizard for you now.\n\nYou'll be able to:\n- Choose from 6 high-converting templates\n- Customize colors, copy, and CTAs\n- Preview and publish instantly\n\n*Opening wizard...*",
+            timestamp: new Date(),
+          }]);
+          
+          // Small delay for UX, then trigger the wizard
+          setTimeout(() => {
+            onCreateLandingPage();
+          }, 800);
+          
+          setIsLoading(false);
+          return;
+        }
+        
+        // Check if user is requesting an image
        const imageRequest = detectImageRequest(userMessage);
        
        if (imageRequest) {
