@@ -447,16 +447,29 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
    const [showHeatmapOverlay, setShowHeatmapOverlay] = useState(false);
    const [showVideoPreview, setShowVideoPreview] = useState(false);
    
+   // Track which fields were auto-populated from analytics
+   const [autoPopulatedFields, setAutoPopulatedFields] = useState<Set<string>>(new Set());
+    
   // Auto-populate from analytics prefill data
   useEffect(() => {
     if (prefillData) {
-      setTargetAudience(prefillData.audience);
-      setTargetLocation(prefillData.locations.slice(0, 3).join(", "));
+      const populatedFields = new Set<string>();
+      
+      if (prefillData.audience) {
+        setTargetAudience(prefillData.audience);
+        populatedFields.add('audience');
+      }
+      
+      if (prefillData.locations && prefillData.locations.length > 0) {
+        setTargetLocation(prefillData.locations.slice(0, 3).join(", "));
+        populatedFields.add('location');
+      }
       
       // Update main offer based on top keyword
       if (prefillData.topKeyword) {
         const keywordCapitalized = prefillData.topKeyword.charAt(0).toUpperCase() + prefillData.topKeyword.slice(1);
         setMainOffer(`Get the best ${keywordCapitalized.toLowerCase()} quotes instantly with AI-powered pricing`);
+        populatedFields.add('offer');
       }
       
       // Update headline based on location
@@ -466,7 +479,14 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
             ? { ...s, content: `${prefillData.topLocation}'s #1 Rated Moving Service` }
             : s
         ));
+        populatedFields.add('headline');
       }
+      
+      if (prefillData.keywords && prefillData.keywords.length > 0) {
+        populatedFields.add('keywords');
+      }
+      
+      setAutoPopulatedFields(populatedFields);
     }
   }, [prefillData]);
    const [customHeatmapPositions, setCustomHeatmapPositions] = useState<typeof TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]>(
@@ -4032,6 +4052,42 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
       {/* Create Page View */}
       {mainView === 'create' && (
       <>
+        {/* Auto-Populated Data Banner */}
+        {autoPopulatedFields.size > 0 && (
+          <div className="p-4 rounded-xl border border-primary/30 bg-gradient-to-r from-primary/5 via-primary/10 to-pink-500/5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-sm text-foreground flex items-center gap-2">
+                  Auto-filled from Analytics Data
+                  <Badge className="text-[9px] bg-primary/20 text-primary border-primary/30">
+                    {autoPopulatedFields.size} fields
+                  </Badge>
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  We've pre-populated your form with insights from your selected keywords and locations. 
+                  {prefillData?.keywords && prefillData.keywords.length > 0 && (
+                    <span className="text-primary font-medium"> {prefillData.keywords.length} keywords</span>
+                  )}
+                  {prefillData?.locations && prefillData.locations.length > 0 && (
+                    <span className="text-primary font-medium"> • {prefillData.locations.length} locations</span>
+                  )}
+                </p>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs text-muted-foreground"
+                onClick={() => setAutoPopulatedFields(new Set())}
+              >
+                Clear
+              </Button>
+            </div>
+          </div>
+        )}
+
        {/* Intro Card */}
        <div className="p-6 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50/50 dark:bg-purple-950/20 dark:border-purple-700">
          <div className="flex items-start gap-4">
@@ -4098,38 +4154,59 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
            </div>
            
            <div>
-             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
-              Target Location(s)
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 flex items-center gap-2">
+               Target Location(s)
+               {autoPopulatedFields.has('location') && (
+                 <Badge variant="outline" className="text-[9px] h-4 gap-1 border-primary/50 bg-primary/5 text-primary font-normal normal-case">
+                   <Sparkles className="w-2.5 h-2.5" />
+                   From Analytics
+                 </Badge>
+               )}
+              </label>
+              <Input 
+               value={targetLocation}
+               onChange={(e) => setTargetLocation(e.target.value)}
+               placeholder="Cities, states, or regions"
+               className={autoPopulatedFields.has('location') ? 'border-primary/30 bg-primary/5' : ''}
+              />
+            </div>
+            
+           <div className="col-span-2">
+             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 flex items-center gap-2">
+               Target Audience
+               {autoPopulatedFields.has('audience') && (
+                 <Badge variant="outline" className="text-[9px] h-4 gap-1 border-primary/50 bg-primary/5 text-primary font-normal normal-case">
+                   <Sparkles className="w-2.5 h-2.5" />
+                   From Analytics
+                 </Badge>
+               )}
              </label>
              <Input 
-              value={targetLocation}
-              onChange={(e) => setTargetLocation(e.target.value)}
-              placeholder="Cities, states, or regions"
+               value={targetAudience}
+               onChange={(e) => setTargetAudience(e.target.value)}
+               placeholder="Who are you trying to reach?"
+               className={autoPopulatedFields.has('audience') ? 'border-primary/30 bg-primary/5' : ''}
              />
            </div>
            
-          <div className="col-span-2">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
-              Target Audience
-            </label>
-            <Input 
-              value={targetAudience}
-              onChange={(e) => setTargetAudience(e.target.value)}
-              placeholder="Who are you trying to reach?"
-            />
-          </div>
-          
-          <div className="col-span-2">
-             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
-               Main Offer / Value Proposition
-             </label>
-             <Textarea 
-               value={mainOffer}
-               onChange={(e) => setMainOffer(e.target.value)}
-               placeholder="What's the main benefit you're offering?"
-               rows={2}
-             />
-           </div>
+           <div className="col-span-2">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 flex items-center gap-2">
+                Main Offer / Value Proposition
+                {autoPopulatedFields.has('offer') && (
+                  <Badge variant="outline" className="text-[9px] h-4 gap-1 border-primary/50 bg-primary/5 text-primary font-normal normal-case">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    From Keywords
+                  </Badge>
+                )}
+              </label>
+              <Textarea 
+                value={mainOffer}
+                onChange={(e) => setMainOffer(e.target.value)}
+                placeholder="What's the main benefit you're offering?"
+                rows={2}
+                className={autoPopulatedFields.has('offer') ? 'border-primary/30 bg-primary/5' : ''}
+              />
+            </div>
          </div>
        </div>
  
