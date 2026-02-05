@@ -443,6 +443,7 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
    
    // Heatmap overlay state
    const [showHeatmapOverlay, setShowHeatmapOverlay] = useState(false);
+   const [showVideoPreview, setShowVideoPreview] = useState(false);
    
   // Auto-populate from analytics prefill data
   useEffect(() => {
@@ -3639,6 +3640,16 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
                https://{businessName.toLowerCase().replace(/\s/g, '')}.com/{selectedTemplate}
              </div>
            </div>
+           {/* Video Preview Toggle */}
+           <Button 
+             variant={showVideoPreview ? "default" : "outline"} 
+             size="sm" 
+             onClick={() => setShowVideoPreview(!showVideoPreview)}
+             className={`h-7 text-xs gap-1 ${showVideoPreview ? 'bg-purple-600 hover:bg-purple-700 text-white' : ''}`}
+           >
+             <Video className="w-3 h-3" />
+             {showVideoPreview ? 'Hide Preview' : 'Video Demo'}
+           </Button>
            {importedData && (
              <Button 
                variant={showHeatmapOverlay ? "default" : "outline"} 
@@ -3652,8 +3663,95 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
            )}
          </div>
          
-         {/* Content Area - Side by Side or Full */}
-         {isSideBySide ? (
+         {/* Video Preview Mode */}
+         {showVideoPreview ? (
+           <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900 p-8">
+             <div className="max-w-4xl w-full space-y-6">
+               {/* Video Player Mockup */}
+               <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-purple-500/30">
+                 {/* Video Container */}
+                 <div className="aspect-video bg-black relative">
+                   {/* Sample Thumbnail/Preview */}
+                   <img 
+                     src="/inventory/living-room/sofa-3-cushion.png" 
+                     alt="Landing Page Preview" 
+                     className="w-full h-full object-cover opacity-60"
+                   />
+                   
+                   {/* Video Overlay */}
+                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-black/80 via-transparent to-black/40">
+                     {/* Play Button */}
+                     <button className="w-24 h-24 rounded-full bg-purple-600 hover:bg-purple-500 flex items-center justify-center shadow-2xl shadow-purple-500/50 transition-all hover:scale-110 group">
+                       <Play className="w-10 h-10 text-white ml-1 group-hover:scale-110 transition-transform" />
+                     </button>
+                     <p className="mt-4 text-white/80 text-lg font-medium">Click to Play Demo</p>
+                   </div>
+                   
+                   {/* Template Info Overlay */}
+                   <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent">
+                     <div className="flex items-end justify-between">
+                       <div>
+                         <Badge className="bg-purple-600 text-white mb-2">
+                           {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
+                         </Badge>
+                         <h3 className="text-2xl font-bold text-white">
+                           {businessName} - Landing Page Demo
+                         </h3>
+                         <p className="text-white/70 mt-1">
+                           See how your high-converting page looks and works in action
+                         </p>
+                       </div>
+                       <div className="flex flex-col items-end gap-2">
+                         <Badge className="bg-green-600 text-white text-lg px-4 py-1">
+                           {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.conversion} Conversion
+                         </Badge>
+                         <span className="text-white/50 text-sm">Avg. performance</span>
+                       </div>
+                     </div>
+                   </div>
+                   
+                   {/* Video Progress Bar */}
+                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+                     <div className="h-full w-0 bg-purple-500 animate-[progressDemo_8s_ease-in-out_infinite]" />
+                   </div>
+                 </div>
+                 
+                 {/* Video Controls */}
+                 <div className="bg-slate-900 px-4 py-3 flex items-center justify-between">
+                   <div className="flex items-center gap-4">
+                     <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                       <Play className="w-5 h-5 text-white" />
+                     </button>
+                     <div className="text-white/60 text-sm font-mono">0:00 / 2:34</div>
+                   </div>
+                   <div className="flex items-center gap-3">
+                     <Badge variant="outline" className="text-purple-400 border-purple-400/50">
+                       HD 1080p
+                     </Badge>
+                     <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                       <Maximize2 className="w-5 h-5 text-white" />
+                     </button>
+                   </div>
+                 </div>
+               </div>
+               
+               {/* Key Features Below Video */}
+               <div className="grid grid-cols-3 gap-4">
+                 {[
+                   { icon: TrendingUp, label: "Conversion Tracking", desc: "Real-time analytics" },
+                   { icon: Users, label: "Lead Capture", desc: "Instant notifications" },
+                   { icon: Zap, label: "Fast Loading", desc: "< 2s load time" }
+                 ].map((feature, i) => (
+                   <div key={i} className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 text-center">
+                     <feature.icon className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                     <h4 className="text-white font-semibold text-sm">{feature.label}</h4>
+                     <p className="text-white/50 text-xs mt-1">{feature.desc}</p>
+                   </div>
+                 ))}
+               </div>
+             </div>
+           </div>
+         ) : isSideBySide ? (
            <div className="flex flex-1 overflow-hidden">
              {/* Landing Page Preview */}
              <div className="flex-1 border-r border-border relative">

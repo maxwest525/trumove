@@ -7276,6 +7276,12 @@
   }
 }
 
+/* Video Progress Demo Animation */
+@keyframes progressDemo {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
 /* =============================================
    SATELLITE THUMBNAILS
    ============================================= */
