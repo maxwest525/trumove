@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { FileText, Receipt, CreditCard, Truck, Users, BarChart3, Mail, ArrowLeft, Phone, Sparkles } from "lucide-react";
+import { FileText, Truck, Users, BarChart3, Mail, ArrowLeft, Phone, Sparkles, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
  import { ESignHub } from "@/components/agent/ESignHub";
@@ -11,7 +11,7 @@ import { ClientMessaging } from "@/components/agent/ClientMessaging";
 import { IntegrationModal } from "@/components/integrations/IntegrationModals";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 
-type ActiveTool = null | "esign" | "carrier" | "customer" | "messaging" | "granot" | "ringcentral" | "ppc";
+type ActiveTool = null | "esign" | "carrier" | "customer" | "messaging" | "granot" | "ringcentral" | "ppc" | "crm-dialer";
 
 const AGENT_TOOLS = [
   {
@@ -47,6 +47,14 @@ const AGENT_TOOLS = [
     title: "AI Marketing Suite",
     description: "PPC, SEO, A/B testing & conversions",
     icon: Sparkles,
+    external: false,
+    isIntegration: true,
+  },
+  {
+    id: "crm-dialer" as const,
+    title: "CRM / Dialer",
+    description: "Open CRM & phone system together",
+    icon: Headphones,
     external: false,
     isIntegration: true,
   },
@@ -89,6 +97,9 @@ export default function AgentLogin() {
       setRingcentralOpen(true);
     } else if (toolId === "ppc") {
       setPpcOpen(true);
+    } else if (toolId === "crm-dialer") {
+      setGranotOpen(true);
+      setRingcentralOpen(true);
     } else {
       setActiveTool(toolId);
     }
