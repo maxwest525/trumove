@@ -1,139 +1,68 @@
 
-# AI Landing Page Generator Enhancements
+
+# DraggableModal Maximize & Snap Features
 
 ## Overview
-This plan addresses two key improvements to the AI Landing Page Generator:
-
-1. **Landing pages as editable popout modals** - The generated landing page should use the reusable `DraggableModal` component (like Granot and RingCentral), allowing users to edit content while the modal is popped out
-2. **Import data before generation** - Move the "Import Data" functionality to the pre-generation form so analytics data can inform the input fields before the landing page is created
-
----
-
-## Current Architecture
-
-The `AILandingPageGenerator` component has two main states:
-- **Pre-generation view** (`showLandingPage === false`): Shows template selection, input form (Business Name, Target Location, Target Audience, Main Offer), and Generate button
-- **Post-generation view** (`showLandingPage === true`): Shows the generated landing page with inline editing, popout capability, and data import
-
-The current popout modal is a custom inline implementation (~200 lines of code) with:
-- Manual drag/resize handling
-- Position/size persistence in localStorage
-- Side-by-side analytics view
+Enhance the reusable `DraggableModal` component with two new features:
+1. **Maximize button** - Fills the entire screen with a single click, with ability to restore
+2. **Snap-to-edges/center** - When dragging near screen boundaries or center, shows visual guides and snaps into position
 
 ---
 
 ## Implementation Plan
 
-### Part 1: Move Import Data to Pre-Generation Form
+### Part 1: Maximize Button
 
-**Goal**: Allow users to import analytics data before generating a landing page, so the AI can use this data to inform better defaults.
+**Add new state and logic:**
+- Add `isMaximized` state to track fullscreen mode
+- Store pre-maximize position/size for restoration
+- Add maximize/restore button next to close button in header
 
-**Changes to AILandingPageGenerator.tsx:**
-
-1. **Add new section (Step 3) before the Generate button**:
-   - Add "Import Analytics Data (Optional)" section between the business form and generate button
-   - Show the same import options (Google Ads, Google Analytics, Upload CSV)
-   - Display a condensed summary of imported data if available
-
-2. **Pre-populate form fields from imported data**:
-   - When data is imported, auto-fill `targetLocation` from top geographic markets (e.g., "California, Texas, Florida")
-   - Auto-fill `targetAudience` from top demographic segments
-   - Suggest `mainOffer` improvements based on winning keyword insights
-
-3. **Update generation flow**:
-   - Pass imported data context to influence template selection recommendations
-   - Show badges indicating "Data-Driven" generation when analytics are pre-imported
+**Behavior:**
+- Click maximize → Modal fills viewport (with 20px margin)
+- Click restore → Returns to previous position/size
+- Maximized state is NOT persisted to localStorage (always opens restored)
 
 ```text
-┌─────────────────────────────────────────┐
-│  Step 1: Choose Template                │
-├─────────────────────────────────────────┤
-│  Step 2: Business Info                  │
-├─────────────────────────────────────────┤
-│  Step 3: Import Analytics (Optional)    │  ← NEW
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐   │
-│  │ Google  │ │Analytics│ │ Upload  │   │
-│  │  Ads    │ │         │ │  CSV    │   │
-│  └─────────┘ └─────────┘ └─────────┘   │
-│  [Imported: 24,847 clicks, 1,892 conv]  │
-├─────────────────────────────────────────┤
-│  [🌟 Generate Landing Page with AI]     │
-└─────────────────────────────────────────┘
+Header Layout:
+┌─────────────────────────────────────────────────┐
+│ [≡] Title + Badges          [□] Maximize  [✕]  │
+└─────────────────────────────────────────────────┘
+                                ↑ New button
 ```
 
 ---
 
-### Part 2: Convert Popout to DraggableModal Component
+### Part 2: Snap-to-Edges/Center
 
-**Goal**: Replace the 200+ lines of custom popout modal code with the reusable `DraggableModal` component, ensuring editing still works.
+**Snap zones (40px threshold):**
+- **Center**: When within 40px of screen center (both axes)
+- **Left edge**: When x < 40px → snap to x=20
+- **Right edge**: When x > viewport - width - 40 → snap to right edge
+- **Top edge**: When y < 40px → snap to y=20
+- **Bottom edge**: When y > viewport - height - 40 → snap to bottom
 
-**Changes:**
+**Visual feedback:**
+- Show snap indicator lines/highlights when in snap zone
+- Subtle animation when snapping into place
 
-1. **Replace custom popout with DraggableModal**:
-   - Remove inline popout state management (`popoutPosition`, `popoutSize`, `isDragging`, `isResizing`, etc.)
-   - Import and use `DraggableModal` from `@/components/ui/DraggableModal`
-   - Configure with appropriate defaults for landing page preview
+**Implementation:**
+- During drag, check if position is near snap zones
+- Show visual guides for active snap zones
+- On mouse up, apply snap if in zone
 
-2. **Pass editing capability to modal**:
-   - The `EditableText` component and editing state (`editingSection`, `tempEditValue`, etc.) already work via React state
-   - Move the template rendering and `EditableText` components inside the `DraggableModal` children
-   - Editing will continue to work as state is shared with the parent component
-
-3. **Maintain side-by-side analytics view**:
-   - Add a toggle inside the modal to switch between "Preview Only" and "Side-by-Side" views
-   - Keep the analytics panel implementation but render it inside the modal content area
-
-4. **Configure DraggableModal props**:
-```typescript
-<DraggableModal
-  isOpen={isPopoutOpen}
-  onClose={() => setIsPopoutOpen(false)}
-  title={
-    <div className="flex items-center gap-2">
-      <Sparkles className="w-4 h-4" />
-      <span>Landing Page Preview</span>
-      <Badge>{selectedTemplate}</Badge>
-    </div>
-  }
-  storageKey="tm_landing_page_popout"
-  defaultWidth={1200}
-  defaultHeight={700}
-  minWidth={600}
-  minHeight={400}
-  maxWidth={1800}
-  maxHeight={1000}
-  headerClassName="bg-gradient-to-r from-purple-600 to-purple-500"
-  footer={<ActionButtons />}
->
-  {/* Browser chrome + editable preview */}
-</DraggableModal>
+```text
+Snap Zones Visualization:
+┌─────────────────────────────────────────────────┐
+│ ↑ Top snap zone (40px)                          │
+│ ←──────────────  Center  ──────────────→        │
+│                    ⊕                            │
+│ ← Left snap        │           Right snap →    │
+│   zone (40px)      │             zone (40px)   │
+│                    ↓                            │
+│              Bottom snap zone (40px)            │
+└─────────────────────────────────────────────────┘
 ```
-
----
-
-### Part 3: Enhance Editing in Popout Mode
-
-**Goal**: Ensure all editing capabilities work seamlessly in the popout modal.
-
-**Changes:**
-
-1. **Inline text editing in popout**:
-   - The `EditableText` component with click-to-edit already works
-   - Verify editing state persists when opening/closing popout
-
-2. **Add template switching in popout**:
-   - Add template selector in the popout header or footer
-   - Allow switching templates without closing the modal
-
-3. **Add theme selector in popout** (already exists, will be maintained):
-   - Color theme dropdown
-   - Real-time preview updates
-
-4. **Add export actions in popout footer**:
-   - Export HTML button
-   - Copy HTML button
-   - PDF export button (if data imported)
-   - Publish button
 
 ---
 
@@ -141,58 +70,135 @@ The current popout modal is a custom inline implementation (~200 lines of code) 
 
 | File | Changes |
 |------|---------|
-| `src/components/demo/ppc/AILandingPageGenerator.tsx` | Main refactor - move import section, replace popout with DraggableModal, reorganize state |
+| `src/components/ui/DraggableModal.tsx` | Add maximize button, snap logic, and visual indicators |
 
 ---
 
 ## Technical Details
 
-### State Management Updates
+### New State Variables
+```typescript
+const [isMaximized, setIsMaximized] = useState(false);
+const [snapZone, setSnapZone] = useState<'center' | 'left' | 'right' | 'top' | 'bottom' | null>(null);
+const preMaximizeState = useRef({ position: { x: 0, y: 0 }, size: { width: 0, height: 0 } });
+```
 
-**Remove** (replaced by DraggableModal):
-- `popoutPosition`
-- `popoutSize`
-- `isDragging`
-- `dragOffset`
-- `isResizing`
-- `resizeStart`
-- `popoutRef`
-- `loadPopoutState()` / `savePopoutState()`
-- `handleDragStart()` / `handleResizeStart()`
-- Mouse event listeners for drag/resize
+### New Imports
+```typescript
+import { X, GripHorizontal, Maximize2, Minimize2 } from "lucide-react";
+```
 
-**Keep**:
-- `isPopoutOpen` - controls modal visibility
-- `isSideBySide` - controls layout inside modal
-- `showHeatmapOverlay` - controls heatmap display
-- `editingSection` / `tempEditValue` - controls inline editing
-- All section content state
+### Maximize Handler
+```typescript
+const handleMaximize = () => {
+  if (isMaximized) {
+    // Restore
+    setPosition(preMaximizeState.current.position);
+    setSize(preMaximizeState.current.size);
+  } else {
+    // Save current state and maximize
+    preMaximizeState.current = { position, size };
+    setPosition({ x: 20, y: 20 });
+    setSize({ 
+      width: window.innerWidth - 40, 
+      height: window.innerHeight - 40 
+    });
+  }
+  setIsMaximized(!isMaximized);
+};
+```
 
-### Pre-Generation Import Flow
+### Snap Detection (in handleMouseMove)
+```typescript
+const SNAP_THRESHOLD = 40;
+const SNAP_MARGIN = 20;
 
+// During drag, detect snap zones
+const centerX = (window.innerWidth - size.width) / 2;
+const centerY = (window.innerHeight - size.height) / 2;
+
+let detectedSnap: typeof snapZone = null;
+
+// Center snap (both axes must be close)
+if (Math.abs(newX - centerX) < SNAP_THRESHOLD && 
+    Math.abs(newY - centerY) < SNAP_THRESHOLD) {
+  detectedSnap = 'center';
+}
+// Edge snaps
+else if (newX < SNAP_THRESHOLD) detectedSnap = 'left';
+else if (newX > window.innerWidth - size.width - SNAP_THRESHOLD) detectedSnap = 'right';
+else if (newY < SNAP_THRESHOLD) detectedSnap = 'top';
+else if (newY > window.innerHeight - size.height - SNAP_THRESHOLD) detectedSnap = 'bottom';
+
+setSnapZone(detectedSnap);
+```
+
+### Apply Snap on Mouse Up
+```typescript
+const handleMouseUp = () => {
+  if (isDragging && snapZone) {
+    // Apply snap position
+    const snappedPosition = getSnappedPosition(snapZone, size);
+    setPosition(snappedPosition);
+    saveState(storageKey, snappedPosition, size);
+  }
+  setSnapZone(null);
+  setIsDragging(false);
+  setIsResizing(false);
+};
+```
+
+### Snap Visual Indicators
+```typescript
+{/* Snap guide lines */}
+{isDragging && snapZone && (
+  <>
+    {snapZone === 'center' && (
+      <div className="fixed inset-0 pointer-events-none z-[105]">
+        {/* Vertical center line */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-purple-500/50" />
+        {/* Horizontal center line */}
+        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-purple-500/50" />
+      </div>
+    )}
+    {snapZone === 'left' && (
+      <div className="fixed left-5 top-0 bottom-0 w-0.5 bg-blue-500/50 z-[105]" />
+    )}
+    {/* ... similar for other edges */}
+  </>
+)}
+```
+
+---
+
+## UI Preview
+
+**Header with maximize button:**
 ```text
-User clicks "Import Data" in Step 3
-        ↓
-Show import options (Google Ads, Analytics, CSV)
-        ↓
-User selects source → Load MOCK_IMPORTED_DATA
-        ↓
-Auto-populate form fields:
-  - targetLocation = Top 3 states from geographic data
-  - Suggest targetAudience from demographics
-        ↓
-Show "Data Imported" badge with summary stats
-        ↓
-User clicks Generate → AI uses data context
+┌────────────────────────────────────────────────────────┐
+│ [≡] Landing Page Preview  [Template]   [□] [✕]        │
+└────────────────────────────────────────────────────────┘
+                                          ↑    ↑
+                                     Maximize  Close
+```
+
+**Snap indicator when dragging near center:**
+```text
+          │
+          │  (purple center lines appear)
+──────────┼──────────
+          │
+     ┌────┴────┐
+     │  Modal  │
+     └─────────┘
 ```
 
 ---
 
 ## Summary
+- Adds maximize/restore button to header (toggles fullscreen mode)
+- Detects 5 snap zones: center, left, right, top, bottom
+- Shows visual guide lines when in snap zone during drag
+- Snaps to position on mouse release
+- Clean, reusable enhancement to the shared component
 
-This refactor:
-- Reduces code by ~150 lines by reusing `DraggableModal`
-- Moves data import to a more logical position in the workflow
-- Enables data-driven landing page generation
-- Maintains all existing editing and export functionality
-- Follows established patterns used by Granot and RingCentral modals
