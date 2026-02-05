@@ -1,296 +1,350 @@
 
-
-# Auto-Publish to Board & Custom Domain Connection
+# Simplified Marketing Hub Redesign
 
 ## Overview
-After publishing a landing page, it will automatically appear in the "Manage Pages" board with active status and tracking initialized. Additionally, users can connect a custom domain to their published pages, with a link to the Lovable custom domain documentation.
+Transform the current AI Marketing Suite into a streamlined, user-friendly marketing hub inspired by ClickFunnels, DashClicks, Perspective, and involve.me. The goal is to make powerful marketing tools accessible to anyone - not just marketing experts.
 
 ---
 
-## Part 1: Auto-Add Published Pages to Board
+## Key Inspiration Takeaways
 
-### Current Architecture
-- `AILandingPageGenerator` manages the publish flow (`handlePublish`)
-- `LandingPageBoard` has its own internal `pages` state (isolated)
-- No communication between publish action and board state
+From analyzing the reference platforms:
 
-### Solution: Lift State & Add Callback
-
-**Changes to `LandingPageBoard.tsx`:**
-- Accept `pages` and `setPages` as props (or a callback `onAddPage`)
-- Export the `LandingPage` interface for type sharing
-
-**Changes to `AILandingPageGenerator.tsx`:**
-- Manage shared `pages` state at the parent level
-- Pass `onAddPage` callback to `LandingPageBoard`
-- After successful publish, create a new page entry and add it to the board
-
-### New Page Entry on Publish:
-```typescript
-const newPage: LandingPage = {
-  id: crypto.randomUUID(),
-  name: `${businessName} - ${templateName}`,
-  template: templateName,
-  status: 'active',
-  dailyBudget: 100,  // Default budget
-  totalSpend: 0,
-  conversions: 0,
-  conversionRate: 0,
-  cpa: 0,
-  trend: 'stable',
-  url: `${businessName.toLowerCase().replace(/\s/g, '')}.com/${selectedTemplate}`,
-  createdAt: new Date().toISOString().split('T')[0],
-  performance: 'new',
-  customDomain: null  // New field
-};
-```
+| Platform | Key UI Pattern | Applying to TruMove |
+|----------|---------------|---------------------|
+| **ClickFunnels** | Tab-based product categories (Funnel, Store, CRM, Email, Courses) + simple email signup to start | Single-step onboarding flow |
+| **DashClicks** | Service cards with visual icons + clear action buttons per feature | Feature cards with "Get Started" CTAs |
+| **Perspective** | Clean hero + "Create free funnel in 30 min" promise + mobile-first preview | Fast-start wizard with live preview |
+| **involve.me** | "Create with AI" button prominent + drag-and-drop emphasis | AI-first creation with simple builder |
 
 ---
 
-## Part 2: Custom Domain Connection
+## Part 1: Simplified Entry Point & Navigation
 
-### Feature Design
-After publishing, show a "Connect Custom Domain" section that:
-1. Shows the generated URL (e.g., `trumove.com/quote-ca`)
-2. Allows users to enter their own domain
-3. Links to Lovable's custom domain documentation
-4. Simulates DNS verification flow
+### Current State
+- Complex tabbed navigation: Dashboard, Google Ads, Keywords, SEO Audit, Landing Pages, A/B Tests, Conversions
+- Overwhelming for non-technical users
+- Analytics-heavy first view
 
-### UI Components
+### New State: Goal-Oriented Navigation
+Replace technical tabs with simple, goal-oriented cards:
 
-**In Popout Footer (after publish):**
 ```text
-┌──────────────────────────────────────────────────────────┐
-│ 🎉 Published!                                            │
-│ ────────────────────────────────────────────────────────│
-│ 🌐 Your page is live at:                                 │
-│    https://trumove.lovable.app/quote-ca                  │
-│                                                          │
-│ ┌─────────────────────────────────────────────────────┐ │
-│ │ Connect Custom Domain                        [→]    │ │
-│ │ Use your own domain like mycompany.com             │ │
-│ └─────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────┘
++------------------------------------------+
+|          What do you want to do?          |
++------------------------------------------+
+|  +------------+  +------------+  +------------+
+|  |   [icon]   |  |   [icon]   |  |   [icon]   |
+|  | CREATE     |  | OPTIMIZE   |  | TRACK      |
+|  | Landing    |  | Campaigns  |  | Results    |
+|  | Page       |  |            |  |            |
+|  | [Start →]  |  | [Start →]  |  | [Start →]  |
+|  +------------+  +------------+  +------------+
+|  +------------+  +------------+  +------------+
+|  |   [icon]   |  |   [icon]   |  |   [icon]   |
+|  | RUN        |  | FIND       |  | CHECK      |
+|  | A/B Tests  |  | Keywords   |  | SEO Score  |
+|  | [Start →]  |  | [Start →]  |  | [Start →]  |
+|  +------------+  +------------+  +------------+
++------------------------------------------+
 ```
 
-**Domain Connection Modal/Drawer:**
+### Files to Modify
+- `src/components/demo/PPCDemoModal.tsx` - Replace tab navigation with goal cards
+
+---
+
+## Part 2: Simplified Landing Page Builder
+
+### Current State
+- Multi-step process: Analytics view -> Create view -> Template selection -> Form filling -> Generation
+- Complex data import feature
+- Many input fields before seeing results
+
+### New State: 3-Step Wizard (ClickFunnels-style)
+
 ```text
-┌──────────────────────────────────────────────────────────┐
-│ Connect Custom Domain                              [X]   │
-├──────────────────────────────────────────────────────────┤
-│                                                          │
-│  Enter your domain:                                      │
-│  ┌────────────────────────────────────────────────────┐ │
-│  │ moves.mycompany.com                                │ │
-│  └────────────────────────────────────────────────────┘ │
-│                                                          │
-│  DNS Configuration Required:                             │
-│  ┌────────────────────────────────────────────────────┐ │
-│  │ Type: A Record                                     │ │
-│  │ Name: @ (or subdomain)                             │ │
-│  │ Value: 185.158.133.1                               │ │
-│  └────────────────────────────────────────────────────┘ │
-│                                                          │
-│  📚 Need help? See the full setup guide                  │
-│     [docs.lovable.dev/features/custom-domain]            │
-│                                                          │
-│  ┌──────────────┐  ┌───────────────────────────────┐    │
-│  │ Verify DNS   │  │ 🔗 Get a domain on GoDaddy → │    │
-│  └──────────────┘  └───────────────────────────────┘    │
-│                                                          │
-│  ⏳ DNS propagation can take up to 72 hours              │
-└──────────────────────────────────────────────────────────┘
+Step 1: Choose Your Goal
++---------------------------------------+
+| What's your landing page for?         |
+|                                        |
+|  [ ] Get Quote Requests               |
+|  [ ] Compare Services                 |
+|  [ ] Calculate Costs                  |
+|  [ ] Show Testimonials                |
+|  [ ] Target Local Area               |
++---------------------------------------+
+
+Step 2: Quick Details
++---------------------------------------+
+| Business Name: [TruMove_________]     |
+| Main Service:  [Long Distance Moving_]|
+| Location:      [California__________] |
++---------------------------------------+
+
+Step 3: AI Creates Your Page (animated)
++---------------------------------------+
+|        ✨ Creating your page...        |
+|        [===========....] 70%           |
+|                                        |
+|   Writing headlines...                 |
+|   Adding trust elements...            |
+|   Optimizing for conversions...       |
++---------------------------------------+
 ```
 
-### Domain Verification Flow (Simulated)
-1. User enters domain
-2. Click "Verify DNS"
-3. Show loading state: "Checking DNS records..."
-4. After 2s, show one of:
-   - Success: "✓ DNS verified! Your page is now live at [domain]"
-   - Pending: "DNS not yet propagated. Check back in a few hours."
+### One-Click Templates
+Show 6 template cards with live mini-previews. Click to select, see instant preview, customize.
+
+### Files to Modify
+- `src/components/demo/ppc/AILandingPageGenerator.tsx` - Simplify to 3-step wizard
+- New component: `src/components/demo/ppc/QuickStartWizard.tsx`
 
 ---
 
-## Files to Modify
+## Part 3: Visual Dashboard Cards (DashClicks-style)
 
-| File | Changes |
-|------|---------|
-| `src/components/demo/ppc/LandingPageBoard.tsx` | Export `LandingPage` interface, accept optional `onAddPage` prop or external pages state, add `customDomain` field display |
-| `src/components/demo/ppc/AILandingPageGenerator.tsx` | Lift `pages` state up, pass to LandingPageBoard, add page to board after publish, add domain connection UI to popout footer |
-| `src/components/demo/ppc/types.ts` | Add `LandingPage` interface with `customDomain` field |
+### Current State
+- Dense stats with many numbers
+- Multiple data visualization areas
+- Technical metrics (CTR, CPA, ROAS)
 
----
+### New State: Visual Feature Cards
+Large, colorful cards with clear icons and single actions:
 
-## Technical Implementation
-
-### Updated LandingPage Interface
-```typescript
-export interface LandingPage {
-  id: string;
-  name: string;
-  template: string;
-  status: 'active' | 'paused' | 'draft';
-  dailyBudget: number;
-  totalSpend: number;
-  conversions: number;
-  conversionRate: number;
-  cpa: number;
-  trend: 'up' | 'down' | 'stable';
-  url: string;
-  createdAt: string;
-  performance: 'excellent' | 'good' | 'poor' | 'new';
-  customDomain?: string | null;
-  domainStatus?: 'pending' | 'active' | 'failed' | null;
-}
-```
-
-### Updated LandingPageBoard Props
-```typescript
-interface LandingPageBoardProps {
-  onCreateNew: () => void;
-  onEditPage: (pageId: string) => void;
-  pages: LandingPage[];
-  onPagesChange: (pages: LandingPage[]) => void;
-}
-```
-
-### Publish Handler with Auto-Add
-```typescript
-const handlePublish = async () => {
-  setIsPublishing(true);
-  // ... existing simulation steps ...
-  
-  // Create new page entry for the board
-  const templateInfo = LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate);
-  const newPage: LandingPage = {
-    id: crypto.randomUUID(),
-    name: `${businessName} - ${targetLocation.split(',')[0]}`,
-    template: templateInfo?.name || 'Quote Funnel',
-    status: 'active',
-    dailyBudget: 100,
-    totalSpend: 0,
-    conversions: 0,
-    conversionRate: 0,
-    cpa: 0,
-    trend: 'stable',
-    url: `${businessName.toLowerCase().replace(/\s/g, '')}.lovable.app/${selectedTemplate}`,
-    createdAt: new Date().toISOString().split('T')[0],
-    performance: 'new',
-    customDomain: null,
-    domainStatus: null
-  };
-  
-  setManagedPages(prev => [newPage, ...prev]);
-  setPublishedPageId(newPage.id);
-  setIsPublished(true);
-  
-  toast.success("🎉 Landing page published!", {
-    description: `Now tracking in Manage Pages`,
-    action: {
-      label: "View Board",
-      onClick: () => setMainView('manage')
-    }
-  });
-};
-```
-
-### Domain Connection Component
-```typescript
-const DomainConnectionSection = ({ page, onDomainUpdate }) => {
-  const [domain, setDomain] = useState('');
-  const [isVerifying, setIsVerifying] = useState(false);
-  
-  const handleVerify = async () => {
-    setIsVerifying(true);
-    await new Promise(r => setTimeout(r, 2000));
-    setIsVerifying(false);
-    
-    // Simulate 70% success rate
-    if (Math.random() > 0.3) {
-      onDomainUpdate(domain, 'active');
-      toast.success(`Domain connected: ${domain}`);
-    } else {
-      onDomainUpdate(domain, 'pending');
-      toast.warning("DNS not yet propagated", {
-        description: "Check back in a few hours"
-      });
-    }
-  };
-  
-  return (
-    <div className="space-y-3 p-4 border rounded-lg">
-      <h4 className="font-medium flex items-center gap-2">
-        <Globe className="w-4 h-4" />
-        Connect Custom Domain
-      </h4>
-      <Input 
-        value={domain}
-        onChange={(e) => setDomain(e.target.value)}
-        placeholder="moves.yourcompany.com"
-      />
-      <div className="text-xs text-muted-foreground p-3 bg-muted rounded">
-        <p className="font-medium mb-1">DNS Configuration:</p>
-        <code className="block">A Record → 185.158.133.1</code>
-      </div>
-      <div className="flex gap-2">
-        <Button onClick={handleVerify} disabled={!domain || isVerifying}>
-          {isVerifying ? <Loader2 className="animate-spin" /> : 'Verify DNS'}
-        </Button>
-        <Button variant="outline" asChild>
-          <a href="https://www.godaddy.com/domains" target="_blank">
-            Get a Domain <ExternalLink className="ml-1 w-3 h-3" />
-          </a>
-        </Button>
-      </div>
-      <a 
-        href="https://docs.lovable.dev/features/custom-domain"
-        target="_blank"
-        className="text-xs text-primary hover:underline flex items-center gap-1"
-      >
-        📚 Full setup guide
-      </a>
-    </div>
-  );
-};
-```
-
----
-
-## UI Flow
-
-1. **User creates & publishes page** → Page auto-added to Manage Pages board with "new" performance badge
-2. **In popout footer after publish** → Shows live URL + "Connect Custom Domain" expandable section
-3. **User clicks Connect Custom Domain** → Expands to show input field + DNS instructions
-4. **User enters domain & clicks Verify** → Simulates DNS check (2s delay)
-5. **Success** → Domain shown in board listing, domain badge displays as "active"
-6. **Pending** → Domain shown with "pending" status, user advised to wait
-
----
-
-## Board Display Updates
-
-After a page has a custom domain connected:
 ```text
-┌────────────────────────────────────────────────────────────┐
-│ TruMove - California  [active] [new]                       │
-│ Quote Funnel • trumove.lovable.app/quote-ca                │
-│               ↳ 🌐 moves.trumove.com [active]              │
-├────────────────────────────────────────────────────────────┤
-│ Spend: $0  │ Conv: 0  │ Rate: 0%  │ CPA: $0  │ Budget: $100│
-└────────────────────────────────────────────────────────────┘
++------------------------------------------+
+|              YOUR MARKETING HUB           |
++------------------------------------------+
+| +------------------+  +------------------+ |
+| | 🎯 Landing Pages |  | 📈 Performance   | |
+| |                  |  |                  | |
+| | 4 Active Pages   |  | 1,892 Leads     | |
+| | $12/lead avg     |  | +24% this week  | |
+| |                  |  |                  | |
+| | [Create New]     |  | [View Reports]  | |
+| +------------------+  +------------------+ |
+|                                           |
+| +------------------+  +------------------+ |
+| | 🔬 A/B Testing   |  | 🔍 SEO Health   | |
+| |                  |  |                  | |
+| | 2 Tests Running  |  | Score: 87/100   | |
+| | +29% lift found  |  | 2 issues found  | |
+| |                  |  |                  | |
+| | [Manage Tests]   |  | [Fix Issues]    | |
+| +------------------+  +------------------+ |
++------------------------------------------+
+```
+
+### Files to Modify
+- `src/components/demo/PPCDemoModal.tsx` - Replace dashboard tab with visual cards
+- New component: `src/components/demo/ppc/MarketingHubDashboard.tsx`
+
+---
+
+## Part 4: Platform Quick Actions (involve.me-style)
+
+### Current State
+- All platforms (Google Ads, Meta, Microsoft) managed separately
+- Complex ad management interface
+
+### New State: Platform Quick-Connect Cards
+
+```text
++------------------------------------------+
+|         CONNECT YOUR AD PLATFORMS         |
++------------------------------------------+
+| +--------+  +--------+  +--------+       |
+| |[Google]|  | [Meta] |  |[TikTok]|       |
+| | Ads    |  |FB + IG |  |  Ads   |       |
+| |        |  |        |  |        |       |
+| |Connected|  |Connect |  |Connect |       |
+| | 4.2x   |  | [→]    |  | [→]    |       |
+| | ROAS   |  |        |  |        |       |
+| +--------+  +--------+  +--------+       |
++------------------------------------------+
+```
+
+### Simplified Campaign Creation
+Instead of complex forms, use AI-powered suggestions:
+
+```text
+"Create a Google Ads campaign that targets homeowners 
+in California looking to move. Budget: $100/day"
+
+[Generate Campaign →]
+```
+
+### Files to Modify
+- `src/components/demo/ppc/MarketingAnalyticsDashboard.tsx` - Simplify platform selection
+
+---
+
+## Part 5: Improved Quick-Start Onboarding
+
+### Current State
+- User lands on Analytics tab with lots of data
+- No clear starting point for new users
+
+### New State: Welcome Flow
+
+First-time users see:
+
+```text
++-----------------------------------------------+
+|      Welcome to Your Marketing Hub! 🎉        |
+|                                               |
+|   Let's set up your first marketing           |
+|   campaign in under 5 minutes.                |
+|                                               |
+|   What would you like to do first?            |
+|                                               |
+|   +-----------------+  +-----------------+    |
+|   | 🚀 Quick Start  |  | 📊 Explore      |    |
+|   | Create my first |  | Show me around |    |
+|   | landing page    |  | first          |    |
+|   +-----------------+  +-----------------+    |
++-----------------------------------------------+
+```
+
+### Files to Modify
+- `src/components/demo/PPCDemoModal.tsx` - Add welcome state detection
+- New component: `src/components/demo/ppc/WelcomeFlow.tsx`
+
+---
+
+## Part 6: Simplified Page Management
+
+### Current State
+- Complex board with many stats columns
+- Budget inputs inline with data
+
+### New State: Card-Based Page Management
+
+```text
++------------------------------------------+
+|              MY LANDING PAGES             |
++------------------------------------------+
+| +--------------------------------------+ |
+| | TruMove - California                 | |
+| | Quote Funnel • Active                | |
+| |                                      | |
+| |  Visitors: 1,234  | Leads: 89       | |
+| |  Cost/Lead: $12   | This Week: +24% | |
+| |                                      | |
+| | [Edit] [Pause] [Analytics] [Share]  | |
+| +--------------------------------------+ |
+|                                          |
+| +--------------------------------------+ |
+| | TruMove - Texas                      | |
+| | Calculator • Active                  | |
+| | ...                                  | |
+| +--------------------------------------+ |
++------------------------------------------+
+```
+
+### Files to Modify
+- `src/components/demo/ppc/LandingPageBoard.tsx` - Simplify to card layout
+
+---
+
+## Part 7: AI-First Content Creation
+
+### Current State
+- Manual form filling with many fields
+- AI generation is a secondary feature
+
+### New State: AI as Primary Interface
+
+```text
++------------------------------------------+
+|          CREATE WITH AI ✨                |
++------------------------------------------+
+|                                          |
+| Tell me what you want to create:         |
+|                                          |
+| +--------------------------------------+ |
+| | I need a landing page for my         | |
+| | California moving business that      | |
+| | shows prices and captures leads      | |
+| +--------------------------------------+ |
+|                                          |
+|           [Generate Page →]              |
+|                                          |
+| Or start from a template:               |
+|                                          |
+| [Quote] [Compare] [Calculator] [Local]  |
++------------------------------------------+
+```
+
+### Files to Modify
+- `src/components/demo/ppc/AILandingPageGenerator.tsx` - Add AI prompt interface
+
+---
+
+## Implementation Order
+
+1. **Phase 1 - Entry Simplification**
+   - Create `MarketingHubDashboard.tsx` with goal-oriented cards
+   - Replace complex tab navigation in `PPCDemoModal.tsx`
+
+2. **Phase 2 - Landing Page Wizard**
+   - Create `QuickStartWizard.tsx` with 3-step flow
+   - Simplify `AILandingPageGenerator.tsx` to use wizard
+
+3. **Phase 3 - Visual Dashboard**
+   - Redesign dashboard cards with clear metrics
+   - Add quick-action buttons to each card
+
+4. **Phase 4 - Page Management**
+   - Simplify `LandingPageBoard.tsx` to card layout
+   - Remove inline budget editing, use modal instead
+
+5. **Phase 5 - AI-First Creation**
+   - Add natural language prompt input
+   - Keep templates as secondary option
+
+---
+
+## New File Structure
+
+```text
+src/components/demo/ppc/
+├── AILandingPageGenerator.tsx  (simplified)
+├── LandingPageBoard.tsx        (card-based)
+├── MarketingHubDashboard.tsx   (NEW - goal cards)
+├── QuickStartWizard.tsx        (NEW - 3-step wizard)
+├── WelcomeFlow.tsx             (NEW - first-time UX)
+├── PlatformConnectCards.tsx    (NEW - ad platform cards)
+├── ABTestManager.tsx           (keep, simplify UI)
+├── ConversionsPanel.tsx        (keep, simplify UI)
+├── TruMoveBrandingElements.tsx (keep)
+├── types.ts                    (keep)
+└── pdfExport.ts                (keep)
 ```
 
 ---
 
-## Summary
+## Technical Summary
 
-This implementation:
-- Auto-adds published pages to the Manage Pages board with tracking initialized
-- Shows live URL in popout footer after publishing  
-- Provides domain connection UI with DNS instructions
-- Links to Lovable's custom domain documentation
-- Links to GoDaddy for domain purchase
-- Simulates DNS verification flow
-- Displays domain status in the board listing
+### Components to Create (3 new)
+| Component | Purpose |
+|-----------|---------|
+| `MarketingHubDashboard.tsx` | Goal-oriented home dashboard |
+| `QuickStartWizard.tsx` | 3-step landing page creation |
+| `WelcomeFlow.tsx` | First-time user onboarding |
+
+### Components to Simplify (4 existing)
+| Component | Changes |
+|-----------|---------|
+| `PPCDemoModal.tsx` | Replace tabs with goal cards |
+| `AILandingPageGenerator.tsx` | Reduce to wizard + AI prompt |
+| `LandingPageBoard.tsx` | Convert to card layout |
+| `MarketingAnalyticsDashboard.tsx` | Simplify to visual cards |
+
+### UX Improvements
+- Reduce clicks-to-value from 5+ to 3
+- Replace technical jargon with plain language
+- Make AI the primary creation interface
+- Add clear "next step" guidance throughout
 
