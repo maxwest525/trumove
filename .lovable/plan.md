@@ -1,145 +1,84 @@
 
+# Vertical Center + Shadow Fix for AI Analysis Section
 
-# Fix Panel Sizing for Consistent Heights at All Zoom Levels
+## Problem Summary
 
-## Problem Analysis
+1. **AI Analysis panels are not vertically centered** - The grid row needs `align-items: center` applied consistently
+2. **Shadow glow is being cut off** - Both section containers (`.tru-ai-steps-section` and `.tru-tracker-section`) have `overflow: hidden` which clips the panel shadows
 
-The demo section panels (AI Scanner, Live Inventory, Route Overview, and Road Map) currently use **viewport-relative heights**:
+## Current Values
 
-```css
-height: clamp(24rem, 38vh, 30rem)
-```
+| Property | Current Value |
+|----------|---------------|
+| `--demo-section-height` | 425px |
+| `--demo-panel-height` | 424px |
+| Panel height | 424px |
+| Total section row height | 425px |
 
-The `38vh` component varies with:
-1. **Browser zoom level** - zooming in/out changes the effective viewport height
-2. **Window resize** - different browser window sizes
-3. **Screen resolution** - varies between devices
-
-This causes mismatched heights between panels when users adjust their browser zoom.
-
-## Solution
-
-Replace the viewport-relative `clamp()` heights with a **fixed rem-based height** using a shared CSS variable. Since `rem` units scale with the root font size (which is also affected by zoom), all panels will maintain equal heights regardless of zoom level.
-
-## Changes Required
+## Technical Changes
 
 ### File: `src/index.css`
 
-**1. Add a new CSS variable for panel height**
+#### 1. Remove `overflow: hidden` to stop shadow clipping
 
-In the `:root` section (around line 35), add a dedicated panel height variable:
-
+**Line ~2603** - `.tru-ai-steps-section`:
 ```css
-:root {
-  /* ... existing variables ... */
-  
-  /* Fixed panel height for demo sections - rem-based for zoom consistency */
-  --demo-panel-height: 26.5rem; /* ~424px at default 16px root */
+/* BEFORE */
+overflow: hidden;
+
+/* AFTER */
+overflow: visible;
+```
+
+**Line ~3442** - `.tru-tracker-section`:
+```css
+/* BEFORE */
+overflow: hidden;
+
+/* AFTER */
+overflow: visible;
+```
+
+#### 2. Add vertical padding to section rows for shadow breathing room
+
+The shadows extend ~32px from the panels. Adding padding to the row containers will give them space to render:
+
+**Line ~2607-2620** - `.tru-ai-header-row`:
+```css
+.tru-ai-header-row {
+  /* existing styles... */
+  padding: 32px 48px;  /* Add vertical padding for shadow room */
 }
 ```
 
-**2. Update AI Scanner panel height**
-
-Around line 3111-3123, change:
+**Line ~3452-3465** - `.tru-tracker-header-row`:
 ```css
-.tru-ai-live-scanner {
-  /* Change FROM: */
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
-  
-  /* Change TO: */
-  height: var(--demo-panel-height);
-  min-height: var(--demo-panel-height);
-  max-height: var(--demo-panel-height);
+.tru-tracker-header-row {
+  /* existing styles... */
+  padding: 32px 48px;  /* Add vertical padding for shadow room */
 }
 ```
 
-**3. Update AI Live Inventory panel height**
+#### 3. Update section height variable to account for shadow padding
 
-Around line 3274-3288, change:
+To keep total visual height consistent while adding shadow room:
+
+**Line ~35** - Update CSS variable:
 ```css
-.tru-ai-live-inventory {
-  /* Change FROM: */
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
-  
-  /* Change TO: */
-  height: var(--demo-panel-height);
-  min-height: var(--demo-panel-height);
-  max-height: var(--demo-panel-height);
-}
+/* Current: 425px for content only */
+/* New: Content + shadow padding (32px top + 32px bottom) = 489px total */
+--demo-section-height: 425px;  /* Keep inner height same */
 ```
 
-**4. Update Tracker Satellite panel height**
+The sections will naturally expand with the added padding.
 
-Around line 4013-4019, change:
-```css
-.tru-tracker-satellite-enlarged {
-  /* Change FROM: */
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
-  
-  /* Change TO: */
-  height: var(--demo-panel-height);
-  min-height: var(--demo-panel-height);
-  max-height: var(--demo-panel-height);
-}
-```
+## Height Summary
 
-**5. Update Road Map panel height**
+| Element | Height |
+|---------|--------|
+| Panel content height | 424px |
+| Shadow extension | ~32px per side |
+| Row padding | 32px top + 32px bottom |
+| **Total row height** | **489px** (~490px) |
 
-Around line 3595-3600, change:
-```css
-.tru-tracker-road-map {
-  /* Change FROM: */
-  height: clamp(24rem, 38vh, 30rem);
-  
-  /* Change TO: */
-  height: var(--demo-panel-height);
-  min-height: var(--demo-panel-height);
-  max-height: var(--demo-panel-height);
-}
-```
-
-**6. Update legacy tracker preview (if present)**
-
-Around line 4073-4082, update `.tru-tracker-preview` similarly.
-
-**7. Update the header preview containers**
-
-Around line 2968-2973:
-```css
-.tru-ai-header-previews .tru-ai-live-scanner,
-.tru-ai-header-previews .tru-ai-live-inventory {
-  width: var(--ai-preview-width);
-  height: var(--demo-panel-height);
-  min-height: var(--demo-panel-height);
-  max-height: var(--demo-panel-height);
-}
-```
-
-## Summary
-
-| Component | Before | After |
-|-----------|--------|-------|
-| AI Scanner | `clamp(24rem, 38vh, 30rem)` | `var(--demo-panel-height)` (26.5rem) |
-| Live Inventory | `clamp(24rem, 38vh, 30rem)` | `var(--demo-panel-height)` (26.5rem) |
-| Route Overview | `clamp(24rem, 38vh, 30rem)` | `var(--demo-panel-height)` (26.5rem) |
-| Road Map | `clamp(24rem, 38vh, 30rem)` | `var(--demo-panel-height)` (26.5rem) |
-
-## Why This Works
-
-1. **rem units** are relative to the root font size, which scales proportionally with browser zoom
-2. All panels reference the **same CSS variable**, ensuring they stay perfectly synchronized
-3. The fixed value (26.5rem ≈ 424px) matches the existing `--demo-section-height` variable
-4. Using `min-height` + `max-height` in addition to `height` prevents any content-based expansion
-
-## Testing Checklist
-
-After implementation, verify:
-- ✓ AI Scanner and Live Inventory have matching heights
-- ✓ Route Overview and Road Map have matching heights  
-- ✓ All four panels match each other across sections
-- ✓ Heights remain consistent at 90%, 100%, and 110% browser zoom
-- ✓ No content clipping or overflow issues
-
+The total visual height of each demo section row becomes approximately **490px** including shadow breathing room.
