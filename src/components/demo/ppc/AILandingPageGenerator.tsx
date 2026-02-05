@@ -2567,11 +2567,11 @@ interface EditableSection {
          }
          storageKey="tm_landing_page_popout"
          defaultWidth={1200}
-         defaultHeight={700}
+        defaultHeight={850}
          minWidth={600}
          minHeight={400}
          maxWidth={1800}
-         maxHeight={1000}
+        maxHeight={1400}
          headerClassName="bg-gradient-to-r from-purple-600 to-purple-500"
          footer={
             <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/30">
@@ -2963,9 +2963,11 @@ interface EditableSection {
            </div>
          ) : (
            /* Full width preview only */
-           <ScrollArea className="flex-1">
-             {renderSelectedTemplate()}
-           </ScrollArea>
+           <div className="flex-1 overflow-hidden">
+             <ScrollArea className="h-full">
+               {renderSelectedTemplate()}
+             </ScrollArea>
+           </div>
          )}
        </DraggableModal>
      </>
