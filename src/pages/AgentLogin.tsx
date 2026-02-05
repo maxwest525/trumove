@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { FileText, Briefcase, BarChart3, ArrowLeft, Phone, Sparkles, Headphones, Trophy } from "lucide-react";
+import { FileText, Briefcase, BarChart3, ArrowLeft, Phone, Sparkles, Headphones, Trophy, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import { ESignHub } from "@/components/agent/ESignHub";
@@ -158,7 +158,18 @@ export default function AgentLogin() {
         ) : (
           <>
             <div className="agent-dashboard-header">
-              <h1 className="agent-dashboard-title">Agent Tools</h1>
+              <div className="flex items-center justify-between mb-2">
+                <h1 className="agent-dashboard-title">Agent Tools</h1>
+                {isLoggedIn && (
+                  <Link
+                    to="/admin/integrations"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-muted hover:bg-muted/80 text-foreground transition-colors"
+                  >
+                    <Key className="w-4 h-4" />
+                    Manage API Keys
+                  </Link>
+                )}
+              </div>
               <p className="agent-dashboard-subtitle">
                 {isLoggedIn 
                   ? "Access your carrier management and authorization tools" 
