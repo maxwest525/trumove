@@ -95,14 +95,20 @@ export default function About() {
             </div>
           </div>
 
-          <div className="p-8 rounded-2xl border border-border/60 bg-card">
-            <h2 className="text-2xl font-black text-foreground mb-4">What TruMove does for you</h2>
+          <div className="p-8 rounded-2xl border border-border/60 bg-card flex flex-col">
+            <h2 className="text-2xl font-black text-foreground mb-4">Technology that works for you</h2>
             <div className="space-y-4 text-muted-foreground">
               <p>
-                When you enter your details, TruMove is doing a lot behind the scenes: checking verified movers on your lanes, cross checking licensing and reviews, and stress testing the quote against what actually happened on similar moves in the past.
+                The moving industry has a trust problem. Big brokers shuffle your job between unknown carriers, and when something goes wrong, you're stuck in a phone tree talking to someone reading from a script who has never seen a moving truck.
               </p>
               <p>
-                The result is a price that is designed to hold up in the real world, not just look good on a website.
+                We built TruMove to flip that equation. Our AI vets every carrier in real time – checking federal licensing, insurance, complaint history, and actual performance data – so you're matched with movers who have skin in the game, not whoever bid lowest that morning.
+              </p>
+              <p>
+                When you have a question, you get answers from people (and AI) who actually understand your move, not a call center halfway around the world. Every price is locked in writing. Every carrier is accountable. Every step is tracked.
+              </p>
+              <p className="font-semibold text-foreground">
+                It's the kind of service that used to be reserved for corporate relocations – now available to everyone.
               </p>
             </div>
           </div>
