@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   TrendingUp, TrendingDown, DollarSign, Users, Globe, Target,
   Smartphone, Monitor, MapPin, BarChart3, PieChart, Hash, Zap,
   CheckCircle2, AlertTriangle, Star, Search, Layout, FlaskConical,
-  ArrowRight, MousePointer, Eye, Clock, Percent
+  ArrowRight, MousePointer, Eye, Clock, Percent, Sparkles
 } from "lucide-react";
 import { BudgetAlerts } from "./BudgetAlerts";
 
@@ -55,6 +56,8 @@ export interface AnalyticsPrefillData {
   topKeyword: string;
   avgCPA: number;
   topLocation: string;
+  // Track which fields came from analytics for visual indicators
+  autoPopulatedFields: ('keywords' | 'locations' | 'audience' | 'headline')[];
 }
 
 interface UnifiedAnalyticsDashboardProps {
@@ -121,15 +124,44 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
   const totalClicks = KEYWORDS_DATA.reduce((sum, k) => sum + k.clicks, 0);
   const avgCTR = KEYWORDS_DATA.reduce((sum, k) => sum + k.ctr, 0) / KEYWORDS_DATA.length;
 
-  // Build prefill data from analytics
+  // Selection state for keywords and locations
+  const [selectedKeywords, setSelectedKeywords] = useState<string[]>(
+    KEYWORDS_DATA.filter(k => k.trend === 'up').map(k => k.keyword)
+  );
+  const [selectedLocations, setSelectedLocations] = useState<string[]>(
+    GEO_DATA.slice(0, 3).map(g => `${g.city}, ${g.state}`)
+  );
+
+  const toggleKeyword = (keyword: string) => {
+    setSelectedKeywords(prev => 
+      prev.includes(keyword) 
+        ? prev.filter(k => k !== keyword) 
+        : [...prev, keyword]
+    );
+  };
+
+  const toggleLocation = (location: string) => {
+    setSelectedLocations(prev => 
+      prev.includes(location) 
+        ? prev.filter(l => l !== location) 
+        : [...prev, location]
+    );
+  };
+
+  // Build prefill data from analytics with selected items
   const handleCreateLandingPage = () => {
+    const topSelectedKeyword = KEYWORDS_DATA
+      .filter(k => selectedKeywords.includes(k.keyword))
+      .sort((a, b) => b.conversions - a.conversions)[0]?.keyword || selectedKeywords[0] || "";
+    
     const prefillData: AnalyticsPrefillData = {
-      keywords: KEYWORDS_DATA.map(k => k.keyword),
-      locations: GEO_DATA.map(g => `${g.city}, ${g.state}`),
+      keywords: selectedKeywords,
+      locations: selectedLocations,
       audience: DEMO_DATA.sort((a, b) => b.conversions - a.conversions)[0]?.segment || "Homeowners",
-      topKeyword: KEYWORDS_DATA.sort((a, b) => b.conversions - a.conversions)[0]?.keyword || "",
+      topKeyword: topSelectedKeyword,
       avgCPA: avgCPA,
-      topLocation: `${GEO_DATA[0]?.city}, ${GEO_DATA[0]?.state}`,
+      topLocation: selectedLocations[0] || `${GEO_DATA[0]?.city}, ${GEO_DATA[0]?.state}`,
+      autoPopulatedFields: ['keywords', 'locations', 'audience', 'headline'],
     };
     onCreateLandingPage(prefillData);
   };
@@ -198,47 +230,66 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
          <div className="grid grid-cols-3 gap-4">
            {/* Column 1: Keywords + SEO */}
            <div className="space-y-4">
-             {/* Top Keywords */}
-             <Card className="border-border">
-               <CardHeader className="pb-2 pt-3 px-3">
-                 <CardTitle className="text-xs font-semibold flex items-center gap-1.5">
-                   <Hash className="w-3.5 h-3.5 text-amber-500" />
-                   Top Keywords
-                   {liveMode && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
-                 </CardTitle>
-               </CardHeader>
-                <CardContent className="px-3 pb-3 space-y-1.5">
-                  {KEYWORDS_DATA.slice(0, 5).map((kw, i) => (
-                    <div 
-                      key={i} 
-                      className={`flex items-center justify-between py-1.5 border-b border-border last:border-0 transition-all duration-300 ${liveMode ? 'hover:bg-primary/5' : ''}`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[10px] text-muted-foreground w-3">{i + 1}.</span>
-                        <span className="text-xs font-medium truncate">{kw.keyword}</span>
-                        {kw.trend === 'up' && <TrendingUp className={`w-3 h-3 text-green-500 shrink-0 ${liveMode ? 'animate-pulse' : ''}`} />}
-                        {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-destructive shrink-0" />}
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <Badge variant="outline" className="text-[9px] h-4">
-                          {liveMode ? (
-                            <AnimatedNumber value={kw.ctr} suffix="% CTR" decimals={2} liveMode={liveMode} />
-                          ) : (
-                            `${kw.ctr}% CTR`
-                          )}
-                        </Badge>
-                        <Badge className="text-[9px] h-4 bg-green-500/10 text-green-600">
-                          {liveMode ? (
-                            <AnimatedNumber value={kw.cpa} prefix="$" decimals={2} liveMode={liveMode} />
-                          ) : (
-                            `$${kw.cpa}`
-                          )}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-             </Card>
+            {/* Top Keywords - Selectable */}
+            <Card className="border-border">
+              <CardHeader className="pb-2 pt-3 px-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xs font-semibold flex items-center gap-1.5">
+                    <Hash className="w-3.5 h-3.5 text-amber-500" />
+                    Top Keywords
+                    {liveMode && <span className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse" />}
+                  </CardTitle>
+                  <Badge variant="outline" className="text-[9px] h-4 gap-1 border-primary/50 text-primary">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    {selectedKeywords.length} selected
+                  </Badge>
+                </div>
+              </CardHeader>
+               <CardContent className="px-3 pb-3 space-y-1.5">
+                 {KEYWORDS_DATA.slice(0, 5).map((kw, i) => {
+                   const isSelected = selectedKeywords.includes(kw.keyword);
+                   return (
+                     <div 
+                       key={i} 
+                       className={`flex items-center justify-between py-1.5 px-2 rounded-md border transition-all duration-300 cursor-pointer ${
+                         isSelected 
+                           ? 'border-primary/50 bg-primary/5' 
+                           : 'border-transparent hover:bg-muted/50'
+                       } ${liveMode ? 'hover:bg-primary/5' : ''}`}
+                       onClick={() => toggleKeyword(kw.keyword)}
+                     >
+                       <div className="flex items-center gap-2 min-w-0">
+                         <Checkbox 
+                           checked={isSelected} 
+                           className="pointer-events-none h-3.5 w-3.5"
+                         />
+                         <span className={`text-xs font-medium truncate ${isSelected ? 'text-primary' : ''}`}>
+                           {kw.keyword}
+                         </span>
+                         {kw.trend === 'up' && <TrendingUp className={`w-3 h-3 text-green-500 shrink-0 ${liveMode ? 'animate-pulse' : ''}`} />}
+                         {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-destructive shrink-0" />}
+                       </div>
+                       <div className="flex items-center gap-2 shrink-0">
+                         <Badge variant="outline" className="text-[9px] h-4">
+                           {liveMode ? (
+                             <AnimatedNumber value={kw.ctr} suffix="% CTR" decimals={2} liveMode={liveMode} />
+                           ) : (
+                             `${kw.ctr}% CTR`
+                           )}
+                         </Badge>
+                         <Badge className="text-[9px] h-4 bg-green-500/10 text-green-600 border-0">
+                           {liveMode ? (
+                             <AnimatedNumber value={kw.cpa} prefix="$" decimals={2} liveMode={liveMode} />
+                           ) : (
+                             `$${kw.cpa}`
+                           )}
+                         </Badge>
+                       </div>
+                     </div>
+                   );
+                 })}
+               </CardContent>
+            </Card>
  
              {/* SEO Scores */}
              <Card className="border-border">
@@ -410,29 +461,51 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
  
            {/* Column 3: Geo + Demographics */}
            <div className="space-y-4">
-             {/* Geographic Performance */}
-             <Card className="border-border">
-               <CardHeader className="pb-2 pt-3 px-3">
-                 <CardTitle className="text-xs font-semibold flex items-center gap-1.5">
-                   <MapPin className="w-3.5 h-3.5 text-red-500" />
-                   Top Locations
-                 </CardTitle>
-               </CardHeader>
-               <CardContent className="px-3 pb-3 space-y-1.5">
-                 {GEO_DATA.map((loc) => (
-                   <div key={loc.city} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
-                     <div className="flex items-center gap-2">
-                       <span className="text-xs font-medium">{loc.city}</span>
-                       <span className="text-[10px] text-muted-foreground">{loc.state}</span>
-                     </div>
-                     <div className="flex items-center gap-2">
-                       <span className="text-[10px] text-muted-foreground">{loc.conversions}</span>
-                       <Badge variant="outline" className="text-[9px] h-4">{loc.rate}%</Badge>
-                     </div>
-                   </div>
-                 ))}
-               </CardContent>
-             </Card>
+            {/* Geographic Performance - Selectable */}
+            <Card className="border-border">
+              <CardHeader className="pb-2 pt-3 px-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xs font-semibold flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-destructive" />
+                    Top Locations
+                  </CardTitle>
+                  <Badge variant="outline" className="text-[9px] h-4 gap-1 border-primary/50 text-primary">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    {selectedLocations.length} selected
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="px-3 pb-3 space-y-1.5">
+                {GEO_DATA.map((loc) => {
+                  const locationString = `${loc.city}, ${loc.state}`;
+                  const isSelected = selectedLocations.includes(locationString);
+                  return (
+                    <div 
+                      key={loc.city} 
+                      className={`flex items-center justify-between py-1.5 px-2 rounded-md border transition-all cursor-pointer ${
+                        isSelected 
+                          ? 'border-primary/50 bg-primary/5' 
+                          : 'border-transparent hover:bg-muted/50'
+                      }`}
+                      onClick={() => toggleLocation(locationString)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Checkbox 
+                          checked={isSelected} 
+                          className="pointer-events-none h-3.5 w-3.5"
+                        />
+                        <span className={`text-xs font-medium ${isSelected ? 'text-primary' : ''}`}>{loc.city}</span>
+                        <span className="text-[10px] text-muted-foreground">{loc.state}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-muted-foreground">{loc.conversions}</span>
+                        <Badge variant="outline" className="text-[9px] h-4">{loc.rate}%</Badge>
+                      </div>
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
  
              {/* Demographics */}
              <Card className="border-border">
@@ -484,23 +557,38 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
            </div>
          </div>
  
-         {/* Action Bar */}
-         <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-pink-500/5">
-           <CardContent className="p-3 flex items-center justify-between">
-             <div className="flex items-center gap-3">
-               <Star className="w-5 h-5 text-primary" />
-               <div>
-                 <p className="text-sm font-medium">Ready to optimize?</p>
-                 <p className="text-xs text-muted-foreground">Create an AI-powered landing page based on these insights</p>
-               </div>
-             </div>
-            <Button onClick={handleCreateLandingPage} className="gap-2" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
-              <Layout className="w-4 h-4" />
-              Create Landing Page Based on This Data
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-           </CardContent>
-         </Card>
+        {/* Action Bar */}
+        <Card className="border-primary/30 bg-gradient-to-r from-primary/5 via-transparent to-pink-500/5">
+          <CardContent className="p-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Star className="w-5 h-5 text-primary" />
+              <div>
+                <p className="text-sm font-medium">Ready to create your landing page?</p>
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <span className="flex items-center gap-1">
+                    <Hash className="w-3 h-3" /> {selectedKeywords.length} keywords
+                  </span>
+                  <span className="text-muted-foreground/50">•</span>
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-3 h-3" /> {selectedLocations.length} locations
+                  </span>
+                  <span className="text-muted-foreground/50">•</span>
+                  <span>Auto-fill enabled</span>
+                </p>
+              </div>
+            </div>
+           <Button 
+             onClick={handleCreateLandingPage} 
+             className="gap-2" 
+             style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
+             disabled={selectedKeywords.length === 0 && selectedLocations.length === 0}
+           >
+             <Layout className="w-4 h-4" />
+             Create with Selected Data
+             <ArrowRight className="w-4 h-4" />
+           </Button>
+          </CardContent>
+        </Card>
        </div>
      </ScrollArea>
    );
