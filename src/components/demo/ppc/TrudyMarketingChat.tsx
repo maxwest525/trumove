@@ -130,21 +130,62 @@ const saveMessagesToStorage = (messages: Message[]) => {
     const detectLandingPageRequest = (text: string): boolean => {
       const lowerText = text.toLowerCase();
       const landingKeywords = [
+        // Direct landing page mentions
         "landing page",
-        "landing-page", 
+        "landing-page",
+        "landingpage",
+        // Page creation phrases
         "build a page",
         "create a page",
         "make a page",
         "new page",
-        "funnel",
-        "quote page",
-        "lead page",
-        "squeeze page",
-        "conversion page",
         "build page",
         "create page",
         "design page",
         "make page",
+        // Form/lead capture related
+        "create a form",
+        "build a form",
+        "lead capture",
+        "lead form",
+        "capture form",
+        "contact form",
+        "quote form",
+        "signup form",
+        "sign-up form",
+        "opt-in form",
+        "optin form",
+        "email capture",
+        "collect leads",
+        "generate leads",
+        // Funnel related
+        "funnel",
+        "sales funnel",
+        "lead funnel",
+        "marketing funnel",
+        "conversion funnel",
+        // Page types
+        "quote page",
+        "lead page",
+        "squeeze page",
+        "conversion page",
+        "sales page",
+        "promo page",
+        "promotional page",
+        "offer page",
+        "signup page",
+        "sign-up page",
+        "opt-in page",
+        "optin page",
+        "thank you page",
+        "confirmation page",
+        // Campaign/marketing pages
+        "campaign page",
+        "ppc page",
+        "ad page",
+        "ads page",
+        "microsite",
+        "mini site",
       ];
       return landingKeywords.some(k => lowerText.includes(k));
     };
