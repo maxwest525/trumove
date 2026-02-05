@@ -440,12 +440,58 @@ interface EditableSection {
      );
    };
   
-  // Popout modal drag state
-  const [popoutPosition, setPopoutPosition] = useState({ x: 0, y: 0 });
+  // LocalStorage key for popout state
+  const POPOUT_STORAGE_KEY = 'tm_landing_page_popout';
+  
+  // Load saved popout state from localStorage
+  const loadPopoutState = () => {
+    try {
+      const saved = localStorage.getItem(POPOUT_STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn('Failed to load popout state:', e);
+    }
+    return { x: 0, y: 0, width: null, height: null };
+  };
+  
+  // Popout modal drag and resize state
+  const [popoutPosition, setPopoutPosition] = useState(() => {
+    const saved = loadPopoutState();
+    return { x: saved.x || 0, y: saved.y || 0 };
+  });
+  const [popoutSize, setPopoutSize] = useState<{ width: number | null; height: number | null }>(() => {
+    const saved = loadPopoutState();
+    return { width: saved.width || null, height: saved.height || null };
+  });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isResizing, setIsResizing] = useState<string | null>(null);
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [isSideBySide, setIsSideBySide] = useState(false);
   const popoutRef = useRef<HTMLDivElement>(null);
+
+  // Save popout state to localStorage
+  const savePopoutState = useCallback(() => {
+    try {
+      localStorage.setItem(POPOUT_STORAGE_KEY, JSON.stringify({
+        x: popoutPosition.x,
+        y: popoutPosition.y,
+        width: popoutSize.width,
+        height: popoutSize.height,
+      }));
+    } catch (e) {
+      console.warn('Failed to save popout state:', e);
+    }
+  }, [popoutPosition, popoutSize]);
+
+  // Save state when position or size changes (debounced via mouseup)
+  useEffect(() => {
+    if (!isDragging && !isResizing && isPopoutOpen) {
+      savePopoutState();
+    }
+  }, [isDragging, isResizing, isPopoutOpen, savePopoutState]);
 
   // Handle drag start
   const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -481,12 +527,104 @@ interface EditableSection {
     };
   }, [isDragging, dragOffset]);
 
-  // Reset popout position when opening
+  // Handle resize start
+  const handleResizeStart = useCallback((e: React.MouseEvent, corner: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(corner);
+    
+    const rect = popoutRef.current?.getBoundingClientRect();
+    setResizeStart({
+      x: e.clientX,
+      y: e.clientY,
+      width: rect?.width || 1200,
+      height: rect?.height || 700,
+    });
+  }, []);
+
+  // Handle resize move
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - resizeStart.x;
+      const deltaY = e.clientY - resizeStart.y;
+      
+      let newWidth = resizeStart.width;
+      let newHeight = resizeStart.height;
+      let newX = popoutPosition.x;
+      let newY = popoutPosition.y;
+      
+      // Min/max constraints
+      const minWidth = 600;
+      const minHeight = 400;
+      const maxWidth = window.innerWidth - 40;
+      const maxHeight = window.innerHeight - 40;
+      
+      if (isResizing.includes('e')) {
+        newWidth = Math.min(Math.max(resizeStart.width + deltaX, minWidth), maxWidth);
+      }
+      if (isResizing.includes('w')) {
+        const widthDelta = -deltaX;
+        newWidth = Math.min(Math.max(resizeStart.width + widthDelta, minWidth), maxWidth);
+        if (newWidth !== resizeStart.width + widthDelta) {
+          // Hit constraint, don't move position
+        } else {
+          newX = popoutPosition.x + deltaX;
+        }
+      }
+      if (isResizing.includes('s')) {
+        newHeight = Math.min(Math.max(resizeStart.height + deltaY, minHeight), maxHeight);
+      }
+      if (isResizing.includes('n')) {
+        const heightDelta = -deltaY;
+        newHeight = Math.min(Math.max(resizeStart.height + heightDelta, minHeight), maxHeight);
+        if (newHeight !== resizeStart.height + heightDelta) {
+          // Hit constraint, don't move position
+        } else {
+          newY = popoutPosition.y + deltaY;
+        }
+      }
+      
+      setPopoutSize({ width: newWidth, height: newHeight });
+      if (isResizing.includes('w') || isResizing.includes('n')) {
+        setPopoutPosition({ x: newX, y: newY });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(null);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, resizeStart, popoutPosition]);
+
+  // Load saved position when opening (but don't reset if already saved)
   useEffect(() => {
     if (isPopoutOpen) {
-      setPopoutPosition({ x: 0, y: 0 });
+      const saved = loadPopoutState();
+      if (saved.x || saved.y) {
+        setPopoutPosition({ x: saved.x || 0, y: saved.y || 0 });
+      }
+      if (saved.width || saved.height) {
+        setPopoutSize({ width: saved.width, height: saved.height });
+      }
     }
   }, [isPopoutOpen]);
+
+  // Reset popout to default size
+  const resetPopoutSize = () => {
+    setPopoutPosition({ x: 0, y: 0 });
+    setPopoutSize({ width: null, height: null });
+    localStorage.removeItem(POPOUT_STORAGE_KEY);
+    toast.success("Window reset to default size");
+  };
  
    const handleGenerateLandingPage = () => {
      setGenerationStep(1);
@@ -2256,16 +2394,63 @@ interface EditableSection {
            {/* Wide Modal */}
            <div 
             ref={popoutRef}
-            className="relative bg-background rounded-2xl shadow-2xl border border-border overflow-hidden"
+            className="relative bg-background rounded-2xl shadow-2xl border border-border overflow-visible"
             style={{ 
-              width: isSideBySide ? "95vw" : "90vw", 
-              maxWidth: isSideBySide ? "1800px" : "1400px", 
-              height: "85vh",
+              width: popoutSize.width ? `${popoutSize.width}px` : (isSideBySide ? "95vw" : "90vw"), 
+              maxWidth: popoutSize.width ? undefined : (isSideBySide ? "1800px" : "1400px"), 
+              height: popoutSize.height ? `${popoutSize.height}px` : "85vh",
               pointerEvents: 'auto',
               transform: `translate(${popoutPosition.x}px, ${popoutPosition.y}px)`,
-              cursor: isDragging ? 'grabbing' : 'default',
+              cursor: isDragging ? 'grabbing' : isResizing ? `${isResizing}-resize` : 'default',
             }}
            >
+             {/* Resize Handles */}
+             {/* Corners */}
+             <div 
+               className="absolute -top-1 -left-1 w-4 h-4 cursor-nw-resize z-50 group"
+               onMouseDown={(e) => handleResizeStart(e, 'nw')}
+             >
+               <div className="absolute inset-1 rounded-full bg-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+             </div>
+             <div 
+               className="absolute -top-1 -right-1 w-4 h-4 cursor-ne-resize z-50 group"
+               onMouseDown={(e) => handleResizeStart(e, 'ne')}
+             >
+               <div className="absolute inset-1 rounded-full bg-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+             </div>
+             <div 
+               className="absolute -bottom-1 -left-1 w-4 h-4 cursor-sw-resize z-50 group"
+               onMouseDown={(e) => handleResizeStart(e, 'sw')}
+             >
+               <div className="absolute inset-1 rounded-full bg-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+             </div>
+             <div 
+               className="absolute -bottom-1 -right-1 w-4 h-4 cursor-se-resize z-50 group"
+               onMouseDown={(e) => handleResizeStart(e, 'se')}
+             >
+               <div className="absolute inset-1 rounded-full bg-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+             </div>
+             
+             {/* Edges */}
+             <div 
+               className="absolute -top-1 left-4 right-4 h-2 cursor-n-resize z-50"
+               onMouseDown={(e) => handleResizeStart(e, 'n')}
+             />
+             <div 
+               className="absolute -bottom-1 left-4 right-4 h-2 cursor-s-resize z-50"
+               onMouseDown={(e) => handleResizeStart(e, 's')}
+             />
+             <div 
+               className="absolute -left-1 top-4 bottom-4 w-2 cursor-w-resize z-50"
+               onMouseDown={(e) => handleResizeStart(e, 'w')}
+             />
+             <div 
+               className="absolute -right-1 top-4 bottom-4 w-2 cursor-e-resize z-50"
+               onMouseDown={(e) => handleResizeStart(e, 'e')}
+             />
+             
+             {/* Modal content wrapper with overflow hidden */}
+             <div className="w-full h-full rounded-2xl overflow-hidden flex flex-col">
              {/* Modal Header */}
             <div 
               className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-purple-600 to-purple-500 select-none"
@@ -2283,8 +2468,25 @@ interface EditableSection {
                     Side-by-Side View
                   </Badge>
                 )}
+                {(popoutSize.width || popoutSize.height) && (
+                  <Badge className="bg-white/10 text-white/70 border-white/20 text-[10px]">
+                    {popoutSize.width ? Math.round(popoutSize.width) : '—'}×{popoutSize.height ? Math.round(popoutSize.height) : '—'}
+                  </Badge>
+                )}
                </div>
                <div className="flex items-center gap-2">
+                {/* Reset Size Button */}
+                {(popoutSize.width || popoutSize.height || popoutPosition.x || popoutPosition.y) && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={resetPopoutSize}
+                    className="text-white hover:bg-white/20 h-8 text-xs"
+                    title="Reset window size and position"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </Button>
+                )}
                 {/* Side-by-Side Toggle */}
                 <Button 
                   variant="ghost" 
@@ -2371,7 +2573,7 @@ interface EditableSection {
              
             {/* Content Area - Side by Side or Full */}
             {isSideBySide ? (
-              <div className="flex h-[calc(85vh-110px)]">
+              <div className="flex flex-1 overflow-hidden">
                 {/* Landing Page Preview */}
                 <div className="flex-1 border-r border-border relative">
                   <ScrollArea className="h-full">
@@ -2643,10 +2845,11 @@ interface EditableSection {
               </div>
             ) : (
               /* Full width preview only */
-              <ScrollArea className="h-[calc(85vh-110px)]">
+              <ScrollArea className="flex-1">
                 {renderSelectedTemplate()}
               </ScrollArea>
             )}
+            </div>
            </div>
          </div>
        )}
