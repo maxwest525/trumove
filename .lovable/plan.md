@@ -192,14 +192,14 @@ Remove lines 702-733 (the entire Street View inset section).
 After implementation, verify:
 
 1. **Tracking Page**
-   - [ ] No Street View mini-window in bottom-right corner
-   - [ ] Green circular truck icon with Lucide truck SVG
-   - [ ] Pulsing glow animation on truck marker
+   - [x] No Street View mini-window in bottom-right corner
+   - [x] Green circular truck icon with Lucide truck SVG
+   - [x] Pulsing glow animation on truck marker
 
 2. **Demo Mode**
-   - [ ] No flash of Orlando/random city when activating demo
-   - [ ] Smooth transition from US overview to NY→LA route
-   - [ ] Route displays correctly after activation
+   - [x] No flash of Orlando/random city when activating demo
+   - [x] Smooth transition from US overview to NY→LA route
+   - [x] Route displays correctly after activation
 
 3. **Route Setup Modal**
    - [ ] Street View previews load correctly (or show fallback gracefully)
@@ -212,6 +212,17 @@ After implementation, verify:
 ---
 
 ## Estimated Impact
-- **Files changed**: 3 (Google2DTrackingMap.tsx, TruckTrackingMap.tsx, LiveTracking.tsx)
-- **Lines modified**: ~80-100 lines (mostly removals)
+- **Files changed**: 2 (Google2DTrackingMap.tsx, TruckTrackingMap.tsx)
+- **Lines modified**: ~100 lines (mostly removals + icon replacement)
 - **Risk**: Low - Removing features and simplifying icons
+
+---
+
+## Implementation Status: COMPLETED
+
+All phases implemented:
+1. ✅ Removed StreetViewInset from Google2DTrackingMap.tsx
+2. ✅ Removed Street View inset from TruckTrackingMap.tsx  
+3. ✅ Changed default map center from Orlando to Kansas (center of US)
+4. ✅ Changed default zoom from 6 to 4 for continental US view
+5. ✅ Replaced complex truck SVG with green circular icon matching original style
