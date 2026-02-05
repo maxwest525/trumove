@@ -20,6 +20,7 @@ import { toast } from "sonner";
   Calculator, Video, ThumbsUp, Building, Home, Package, ArrowDown,
   Download, Palette, Copy
  } from "lucide-react";
+ import { Upload, FileUp, MousePointerClick, PieChart, UserCheck, Map, Filter, TrendingDown } from "lucide-react";
  import logoImg from "@/assets/logo.png";
  
  interface AILandingPageGeneratorProps {
@@ -154,6 +155,96 @@ interface EditableSection {
   content: string;
 }
 
+ // Imported dataset types
+ interface KeywordPerformance {
+   keyword: string;
+   clicks: number;
+   impressions: number;
+   ctr: number;
+   conversions: number;
+   cost: number;
+   position: number;
+   trend: 'up' | 'down' | 'stable';
+   winningReason: string;
+ }
+ 
+ interface GeographicData {
+   region: string;
+   state: string;
+   clicks: number;
+   conversions: number;
+   convRate: number;
+   revenue: number;
+   topCity: string;
+ }
+ 
+ interface DemographicData {
+   segment: string;
+   percentage: number;
+   clicks: number;
+   conversions: number;
+   avgOrderValue: number;
+   device: string;
+ }
+ 
+ interface ClickBehavior {
+   element: string;
+   clicks: number;
+   percentage: number;
+   heatmapIntensity: 'high' | 'medium' | 'low';
+   conversionImpact: string;
+ }
+ 
+ interface ImportedDataset {
+   keywords: KeywordPerformance[];
+   geographic: GeographicData[];
+   demographic: DemographicData[];
+   clickBehavior: ClickBehavior[];
+   dateRange: string;
+   totalClicks: number;
+   totalConversions: number;
+   totalRevenue: number;
+ }
+ 
+ // Mock imported data
+ const MOCK_IMPORTED_DATA: ImportedDataset = {
+   dateRange: "Jan 1 - Feb 5, 2025",
+   totalClicks: 24847,
+   totalConversions: 1892,
+   totalRevenue: 284600,
+   keywords: [
+     { keyword: "long distance moving company", clicks: 4521, impressions: 89420, ctr: 5.06, conversions: 412, cost: 8245, position: 2.1, trend: 'up', winningReason: "High intent + low competition. Users searching this are 3.2x more likely to convert." },
+     { keyword: "cross country movers near me", clicks: 3892, impressions: 67340, ctr: 5.78, conversions: 387, cost: 7120, position: 1.8, trend: 'up', winningReason: "Local modifier 'near me' signals immediate need. 42% higher conversion rate." },
+     { keyword: "moving cost calculator", clicks: 5124, impressions: 124500, ctr: 4.12, conversions: 298, cost: 4890, position: 3.2, trend: 'stable', winningReason: "Tool-based intent captures early funnel. Lower CPA despite lower conversion rate." },
+     { keyword: "cheap movers", clicks: 6234, impressions: 156780, ctr: 3.98, conversions: 245, cost: 11200, position: 4.1, trend: 'down', winningReason: "High volume but price-sensitive audience. Consider for brand awareness only." },
+     { keyword: "ai moving estimate", clicks: 1847, impressions: 23400, ctr: 7.89, conversions: 289, cost: 2340, position: 1.2, trend: 'up', winningReason: "Emerging keyword with 340% YoY growth. Early mover advantage, lowest CPA." },
+     { keyword: "furniture moving service", clicks: 2129, impressions: 45670, ctr: 4.66, conversions: 178, cost: 3980, position: 2.8, trend: 'stable', winningReason: "Specific service intent. Users often bundle with full-service moves." },
+   ],
+   geographic: [
+     { region: "West", state: "California", clicks: 6847, conversions: 521, convRate: 7.61, revenue: 78150, topCity: "Los Angeles" },
+     { region: "South", state: "Texas", clicks: 5234, conversions: 398, convRate: 7.60, revenue: 59700, topCity: "Houston" },
+     { region: "South", state: "Florida", clicks: 4892, conversions: 367, convRate: 7.50, revenue: 55050, topCity: "Miami" },
+     { region: "Northeast", state: "New York", clicks: 3567, conversions: 289, convRate: 8.10, revenue: 43350, topCity: "New York City" },
+     { region: "West", state: "Arizona", clicks: 2134, conversions: 167, convRate: 7.82, revenue: 25050, topCity: "Phoenix" },
+     { region: "Midwest", state: "Illinois", clicks: 1873, conversions: 150, convRate: 8.01, revenue: 22500, topCity: "Chicago" },
+   ],
+   demographic: [
+     { segment: "Homeowners 35-54", percentage: 38, clicks: 9442, conversions: 812, avgOrderValue: 3240, device: "Desktop 62%" },
+     { segment: "Young Professionals 25-34", percentage: 28, clicks: 6957, conversions: 492, avgOrderValue: 2180, device: "Mobile 71%" },
+     { segment: "Retirees 55+", percentage: 18, clicks: 4472, conversions: 378, avgOrderValue: 4120, device: "Desktop 78%" },
+     { segment: "First-time Movers 18-24", percentage: 12, clicks: 2982, conversions: 156, avgOrderValue: 1450, device: "Mobile 89%" },
+     { segment: "Corporate Relocation", percentage: 4, clicks: 994, conversions: 54, avgOrderValue: 8900, device: "Desktop 91%" },
+   ],
+   clickBehavior: [
+     { element: "Primary CTA Button", clicks: 8934, percentage: 35.9, heatmapIntensity: 'high', conversionImpact: "+47% of all conversions" },
+     { element: "Quote Form Fields", clicks: 6721, percentage: 27.0, heatmapIntensity: 'high', conversionImpact: "89% form completion rate" },
+     { element: "Trust Badges", clicks: 3892, percentage: 15.7, heatmapIntensity: 'medium', conversionImpact: "Users who click convert 2.3x more" },
+     { element: "Pricing Section", clicks: 2834, percentage: 11.4, heatmapIntensity: 'medium', conversionImpact: "Reduces bounce by 34%" },
+     { element: "Testimonials", clicks: 1567, percentage: 6.3, heatmapIntensity: 'low', conversionImpact: "Increases time on page 45s" },
+     { element: "Navigation Links", clicks: 899, percentage: 3.6, heatmapIntensity: 'low', conversionImpact: "Often leads to exit - consider removing" },
+   ],
+ };
+ 
  export function AILandingPageGenerator({ isGenerating, onGenerate }: AILandingPageGeneratorProps) {
    const [showLandingPage, setShowLandingPage] = useState(false);
    const [businessName, setBusinessName] = useState("TruMove");
@@ -174,6 +265,11 @@ interface EditableSection {
     { id: 'testimonial-1', type: 'testimonial', content: 'I was quoted $4,200 by another company. TruMove got me the same service for $3,350. The AI inventory scanner was scary accurate!' },
   ]);
   const [tempEditValue, setTempEditValue] = useState("");
+   
+   // Data import state
+   const [showDataImport, setShowDataImport] = useState(false);
+   const [importedData, setImportedData] = useState<ImportedDataset | null>(null);
+   const [activeDataTab, setActiveDataTab] = useState<'keywords' | 'geographic' | 'demographic' | 'clicks'>('keywords');
  
    const handleGenerateLandingPage = () => {
      setGenerationStep(1);
@@ -192,6 +288,17 @@ interface EditableSection {
          }
        }, (index + 1) * 600);
      });
+   };
+ 
+   // Simulate data import
+   const handleImportData = () => {
+     toast.success("Data imported successfully!", {
+       description: "Analyzing keyword performance, geographic & demographic insights..."
+     });
+     setTimeout(() => {
+       setImportedData(MOCK_IMPORTED_DATA);
+       setShowDataImport(false);
+     }, 1500);
    };
  
   const startEditing = (sectionId: string) => {
@@ -1048,6 +1155,15 @@ interface EditableSection {
                <Copy className="w-3 h-3 mr-1" />
                Copy HTML
              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowDataImport(true)}
+                className={importedData ? "border-green-500 text-green-600" : ""}
+              >
+                <Upload className="w-3 h-3 mr-1" />
+                {importedData ? "Data Imported" : "Import Data"}
+              </Button>
              <Button size="sm" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
                Publish Page
              </Button>
@@ -1133,7 +1249,342 @@ interface EditableSection {
         </div>
 
         {/* Why These Choices - SEO Reasoning */}
-        <div className="p-4 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:border-purple-800">
+         {/* Data Import Modal */}
+         {showDataImport && (
+           <div className="p-4 rounded-xl border-2 border-dashed border-blue-300 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-700">
+             <div className="flex items-center justify-between mb-4">
+               <div className="flex items-center gap-2">
+                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-500">
+                   <FileUp className="w-4 h-4 text-white" />
+                 </div>
+                 <div>
+                   <h4 className="font-semibold text-blue-900 dark:text-blue-200">Import Analytics Data</h4>
+                   <p className="text-xs text-blue-600 dark:text-blue-400">Connect your Google Ads, Analytics, or upload CSV</p>
+                 </div>
+               </div>
+               <Button variant="ghost" size="sm" onClick={() => setShowDataImport(false)}>
+                 <X className="w-4 h-4" />
+               </Button>
+             </div>
+             
+             <div className="grid grid-cols-3 gap-3 mb-4">
+               <button 
+                 onClick={handleImportData}
+                 className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 transition-all text-center"
+               >
+                 <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center mx-auto mb-2">
+                   <BarChart3 className="w-5 h-5 text-blue-600" />
+                 </div>
+                 <p className="font-medium text-sm text-foreground">Google Ads</p>
+                 <p className="text-xs text-muted-foreground">Import campaigns</p>
+               </button>
+               <button 
+                 onClick={handleImportData}
+                 className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 transition-all text-center"
+               >
+                 <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center mx-auto mb-2">
+                   <PieChart className="w-5 h-5 text-orange-600" />
+                 </div>
+                 <p className="font-medium text-sm text-foreground">Google Analytics</p>
+                 <p className="text-xs text-muted-foreground">Import behavior</p>
+               </button>
+               <button 
+                 onClick={handleImportData}
+                 className="p-4 rounded-xl border border-border bg-card hover:border-blue-400 transition-all text-center"
+               >
+                 <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center mx-auto mb-2">
+                   <Upload className="w-5 h-5 text-green-600" />
+                 </div>
+                 <p className="font-medium text-sm text-foreground">Upload CSV</p>
+                 <p className="text-xs text-muted-foreground">Custom data</p>
+               </button>
+             </div>
+             
+             <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-100 dark:bg-blue-900/50">
+               <CheckCircle2 className="w-4 h-4 text-blue-600" />
+               <p className="text-xs text-blue-700 dark:text-blue-300">
+                 <strong>Demo Mode:</strong> Click any source to load sample data with keyword performance, geographic & demographic insights.
+               </p>
+             </div>
+           </div>
+         )}
+ 
+         {/* Imported Data Analytics Panel */}
+         {importedData && (
+           <div className="rounded-xl border border-border bg-card overflow-hidden">
+             {/* Header with stats */}
+             <div className="p-4 border-b border-border bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/30 dark:to-blue-950/30">
+               <div className="flex items-center justify-between mb-3">
+                 <div className="flex items-center gap-2">
+                   <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-green-500">
+                     <CheckCircle2 className="w-4 h-4 text-white" />
+                   </div>
+                   <div>
+                     <h4 className="font-semibold text-foreground">Imported Analytics Data</h4>
+                     <p className="text-xs text-muted-foreground">{importedData.dateRange}</p>
+                   </div>
+                 </div>
+                 <Button variant="ghost" size="sm" onClick={() => setImportedData(null)}>
+                   <X className="w-4 h-4" />
+                 </Button>
+               </div>
+               <div className="grid grid-cols-3 gap-4">
+                 <div className="text-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50">
+                   <p className="text-2xl font-bold text-foreground">{importedData.totalClicks.toLocaleString()}</p>
+                   <p className="text-xs text-muted-foreground">Total Clicks</p>
+                 </div>
+                 <div className="text-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50">
+                   <p className="text-2xl font-bold text-green-600">{importedData.totalConversions.toLocaleString()}</p>
+                   <p className="text-xs text-muted-foreground">Conversions</p>
+                 </div>
+                 <div className="text-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50">
+                   <p className="text-2xl font-bold text-blue-600">${(importedData.totalRevenue / 1000).toFixed(1)}K</p>
+                   <p className="text-xs text-muted-foreground">Revenue</p>
+                 </div>
+               </div>
+             </div>
+             
+             {/* Tabs */}
+             <div className="flex border-b border-border">
+               {[
+                 { id: 'keywords', label: 'Keywords', icon: Hash },
+                 { id: 'geographic', label: 'Geographic', icon: Map },
+                 { id: 'demographic', label: 'Demographics', icon: UserCheck },
+                 { id: 'clicks', label: 'Click Behavior', icon: MousePointerClick },
+               ].map((tab) => (
+                 <button
+                   key={tab.id}
+                   onClick={() => setActiveDataTab(tab.id as typeof activeDataTab)}
+                   className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${
+                     activeDataTab === tab.id 
+                       ? "text-primary border-b-2 border-primary bg-primary/5" 
+                       : "text-muted-foreground hover:text-foreground"
+                   }`}
+                 >
+                   <tab.icon className="w-3.5 h-3.5" />
+                   {tab.label}
+                 </button>
+               ))}
+             </div>
+             
+             {/* Tab Content */}
+             <div className="p-4">
+               {activeDataTab === 'keywords' && (
+                 <div className="space-y-3">
+                   <div className="flex items-center justify-between mb-2">
+                     <h5 className="font-medium text-sm text-foreground">Keyword Performance & Why They're Winning</h5>
+                     <Badge variant="secondary" className="text-xs">
+                       <Filter className="w-3 h-3 mr-1" />
+                       Sorted by Conversions
+                     </Badge>
+                   </div>
+                   {importedData.keywords.map((kw, i) => (
+                     <div key={i} className="p-3 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors">
+                       <div className="flex items-start justify-between mb-2">
+                         <div className="flex items-center gap-2">
+                           <Badge 
+                             variant="secondary" 
+                             className={`text-xs ${
+                               kw.trend === 'up' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                               kw.trend === 'down' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                               ''
+                             }`}
+                           >
+                             {kw.trend === 'up' ? <TrendingUp className="w-3 h-3 mr-1" /> : 
+                              kw.trend === 'down' ? <TrendingDown className="w-3 h-3 mr-1" /> : null}
+                             #{kw.position.toFixed(1)}
+                           </Badge>
+                           <span className="font-medium text-sm text-foreground">{kw.keyword}</span>
+                         </div>
+                         <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                           <span>{kw.clicks.toLocaleString()} clicks</span>
+                           <span className="text-green-600 font-medium">{kw.conversions} conv</span>
+                           <span>{kw.ctr.toFixed(2)}% CTR</span>
+                         </div>
+                       </div>
+                       <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-800">
+                         <p className="text-xs text-purple-700 dark:text-purple-300 flex items-start gap-1.5">
+                           <Sparkles className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                           <span><strong>Why it's winning:</strong> {kw.winningReason}</span>
+                         </p>
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               )}
+               
+               {activeDataTab === 'geographic' && (
+                 <div className="space-y-3">
+                   <div className="flex items-center justify-between mb-2">
+                     <h5 className="font-medium text-sm text-foreground">Geographic Markets Performance</h5>
+                     <Badge variant="secondary" className="text-xs">
+                       <Map className="w-3 h-3 mr-1" />
+                       Top 6 States
+                     </Badge>
+                   </div>
+                   <div className="grid grid-cols-2 gap-3">
+                     {importedData.geographic.map((geo, i) => (
+                       <div key={i} className="p-3 rounded-xl border border-border bg-card">
+                         <div className="flex items-center justify-between mb-2">
+                           <div className="flex items-center gap-2">
+                             <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                               <MapPin className="w-4 h-4 text-blue-600" />
+                             </div>
+                             <div>
+                               <p className="font-medium text-sm text-foreground">{geo.state}</p>
+                               <p className="text-xs text-muted-foreground">{geo.region} • {geo.topCity}</p>
+                             </div>
+                           </div>
+                           <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                             {geo.convRate.toFixed(1)}% CVR
+                           </Badge>
+                         </div>
+                         <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                           <div className="p-1.5 rounded bg-muted">
+                             <p className="font-semibold text-foreground">{geo.clicks.toLocaleString()}</p>
+                             <p className="text-muted-foreground">Clicks</p>
+                           </div>
+                           <div className="p-1.5 rounded bg-muted">
+                             <p className="font-semibold text-green-600">{geo.conversions}</p>
+                             <p className="text-muted-foreground">Conv</p>
+                           </div>
+                           <div className="p-1.5 rounded bg-muted">
+                             <p className="font-semibold text-blue-600">${(geo.revenue / 1000).toFixed(1)}K</p>
+                             <p className="text-muted-foreground">Revenue</p>
+                           </div>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               )}
+               
+               {activeDataTab === 'demographic' && (
+                 <div className="space-y-3">
+                   <div className="flex items-center justify-between mb-2">
+                     <h5 className="font-medium text-sm text-foreground">Who's Clicking & Converting</h5>
+                     <Badge variant="secondary" className="text-xs">
+                       <UserCheck className="w-3 h-3 mr-1" />
+                       Audience Segments
+                     </Badge>
+                   </div>
+                   {importedData.demographic.map((demo, i) => (
+                     <div key={i} className="p-3 rounded-xl border border-border bg-card">
+                       <div className="flex items-center justify-between mb-2">
+                         <div className="flex items-center gap-2">
+                           <div 
+                             className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white"
+                             style={{ 
+                               background: `linear-gradient(135deg, ${
+                                 i === 0 ? '#22C55E' : i === 1 ? '#3B82F6' : i === 2 ? '#8B5CF6' : i === 3 ? '#F59E0B' : '#EC4899'
+                               } 0%, ${
+                                 i === 0 ? '#16A34A' : i === 1 ? '#1D4ED8' : i === 2 ? '#7C3AED' : i === 3 ? '#D97706' : '#DB2777'
+                               } 100%)` 
+                             }}
+                           >
+                             {demo.percentage}%
+                           </div>
+                           <div>
+                             <p className="font-medium text-sm text-foreground">{demo.segment}</p>
+                             <p className="text-xs text-muted-foreground">{demo.device}</p>
+                           </div>
+                         </div>
+                         <div className="text-right">
+                           <p className="font-semibold text-sm text-green-600">${demo.avgOrderValue.toLocaleString()}</p>
+                           <p className="text-xs text-muted-foreground">Avg Order</p>
+                         </div>
+                       </div>
+                       <div className="flex items-center gap-4 text-xs">
+                         <div className="flex-1">
+                           <div className="flex items-center justify-between mb-1">
+                             <span className="text-muted-foreground">Clicks</span>
+                             <span className="font-medium text-foreground">{demo.clicks.toLocaleString()}</span>
+                           </div>
+                           <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                             <div 
+                               className="h-full rounded-full bg-blue-500" 
+                               style={{ width: `${(demo.clicks / 9442) * 100}%` }}
+                             />
+                           </div>
+                         </div>
+                         <div className="flex-1">
+                           <div className="flex items-center justify-between mb-1">
+                             <span className="text-muted-foreground">Conversions</span>
+                             <span className="font-medium text-green-600">{demo.conversions}</span>
+                           </div>
+                           <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                             <div 
+                               className="h-full rounded-full bg-green-500" 
+                               style={{ width: `${(demo.conversions / 812) * 100}%` }}
+                             />
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               )}
+               
+               {activeDataTab === 'clicks' && (
+                 <div className="space-y-3">
+                   <div className="flex items-center justify-between mb-2">
+                     <h5 className="font-medium text-sm text-foreground">Click Behavior & Heatmap Insights</h5>
+                     <Badge variant="secondary" className="text-xs">
+                       <MousePointerClick className="w-3 h-3 mr-1" />
+                       Element Analysis
+                     </Badge>
+                   </div>
+                   {importedData.clickBehavior.map((click, i) => (
+                     <div key={i} className="p-3 rounded-xl border border-border bg-card">
+                       <div className="flex items-center justify-between mb-2">
+                         <div className="flex items-center gap-2">
+                           <div 
+                             className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                               click.heatmapIntensity === 'high' ? 'bg-red-100 dark:bg-red-900' :
+                               click.heatmapIntensity === 'medium' ? 'bg-amber-100 dark:bg-amber-900' :
+                               'bg-blue-100 dark:bg-blue-900'
+                             }`}
+                           >
+                             <MousePointerClick className={`w-4 h-4 ${
+                               click.heatmapIntensity === 'high' ? 'text-red-600' :
+                               click.heatmapIntensity === 'medium' ? 'text-amber-600' :
+                               'text-blue-600'
+                             }`} />
+                           </div>
+                           <div>
+                             <p className="font-medium text-sm text-foreground">{click.element}</p>
+                             <p className="text-xs text-muted-foreground">{click.clicks.toLocaleString()} clicks ({click.percentage}%)</p>
+                           </div>
+                         </div>
+                         <Badge 
+                           variant="secondary" 
+                           className={`text-xs ${
+                             click.heatmapIntensity === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                             click.heatmapIntensity === 'medium' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300' :
+                             'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                           }`}
+                         >
+                           {click.heatmapIntensity === 'high' ? '🔥 Hot' : 
+                            click.heatmapIntensity === 'medium' ? '⚡ Warm' : 
+                            '❄️ Cool'}
+                         </Badge>
+                       </div>
+                       <div className="p-2 rounded-lg bg-muted">
+                         <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                           <TrendingUp className="w-3.5 h-3.5 text-green-500" />
+                           <span><strong>Conversion Impact:</strong> {click.conversionImpact}</span>
+                         </p>
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               )}
+             </div>
+           </div>
+         )}
+ 
+         {/* Why These Choices - SEO Reasoning */}
+         <div className="p-4 rounded-xl border border-purple-200 bg-purple-50 dark:bg-purple-950/30 dark:border-purple-800">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-purple-500">
               <Sparkles className="w-4 h-4 text-white" />
