@@ -219,13 +219,13 @@
                  Show me around first
                </p>
              </div>
-             <Button 
-               variant="ghost" 
-               size="sm" 
-               className="gap-1 w-full"
-             >
-               Take Tour <ArrowRight className="w-4 h-4" />
-             </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1 w-full"
+              >
+                Browse Features <ArrowRight className="w-4 h-4" />
+              </Button>
            </CardContent>
          </Card>
        </div>

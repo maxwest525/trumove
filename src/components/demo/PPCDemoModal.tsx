@@ -11,7 +11,7 @@ import {
   Layout, RefreshCw, 
   ExternalLink,
   Play, Pause, FlaskConical,
-  Radio, Mail, Home, ArrowLeft, HelpCircle
+  Radio, Mail, Home, ArrowLeft
 } from "lucide-react";
 import { ABTest, ConversionEvent, FunnelStage, Stats, Ad } from "./ppc/types";
 import { AnalyticsPrefillData } from "./ppc/UnifiedAnalyticsDashboard";
@@ -20,7 +20,6 @@ import { AILandingPageGenerator } from "./ppc/AILandingPageGenerator";
 import { MarketingHubDashboard } from "./ppc/MarketingHubDashboard";
 import { UnifiedAnalyticsDashboard } from "./ppc/UnifiedAnalyticsDashboard";
 import { SimpleMarketingFlow } from "./ppc/SimpleMarketingFlow";
-import { GuidedTour } from "./ppc/GuidedTour";
 import { useMarketingPreferences } from "@/hooks/useMarketingPreferences";
 
 interface PPCDemoModalProps {
@@ -160,7 +159,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   const [viewMode, setViewMode] = useState<'hub' | 'quickcreate' | 'detail'>('hub');
   const [quickCreateType, setQuickCreateType] = useState<'ad' | 'landing' | 'campaign' | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showTour, setShowTour] = useState(false);
   
   // Persisted marketing preferences
   const { preferences, completeTour, isReturningUser } = useMarketingPreferences();
@@ -182,20 +180,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   const [exportEmail, setExportEmail] = useState("");
   const [exportType, setExportType] = useState<"abtest" | "conversions">("abtest");
   const [isExporting, setIsExporting] = useState(false);
-
-  // Show tour for first-time users
-  useEffect(() => {
-    if (open && !preferences.tourCompleted && !isReturningUser) {
-      const timer = setTimeout(() => setShowTour(true), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [open, preferences.tourCompleted, isReturningUser]);
-
-  const handleTourComplete = () => {
-    completeTour();
-    setShowTour(false);
-    toast.success("Tour completed! You're all set.");
-  };
 
   // Live mode simulation
   useEffect(() => {
@@ -344,15 +328,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             <span className="block text-white font-bold">AI Marketing Suite</span>
             <span className="text-sm font-normal text-white/80">PPC • SEO • A/B Testing • Conversion Tracking</span>
           </div>
-          {/* Tour Button */}
-          <button
-            onClick={(e) => { e.stopPropagation(); setShowTour(true); }}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-white/20 text-white hover:bg-white/30"
-            title="Take a tour"
-          >
-            <HelpCircle className="w-3 h-3" />
-            Tour
-          </button>
           {/* Home Button */}
           {viewMode !== 'hub' && (
             <button
@@ -428,14 +403,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             ))}
           </div>
         )}
-
-        {/* Guided Tour */}
-        <GuidedTour
-          isOpen={showTour}
-          onClose={() => setShowTour(false)}
-          onComplete={handleTourComplete}
-          onNavigate={handleNavigate}
-        />
 
         {/* Email Export Modal */}
         {showEmailModal && (
