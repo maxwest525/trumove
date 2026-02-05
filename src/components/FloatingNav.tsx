@@ -21,11 +21,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { icon: Sparkles, label: "AI Estimator", href: "/online-estimate" },
+  { icon: Video, label: "Video Consult", href: "/book" },
   { icon: Shield, label: "Carrier Vetting", href: "/vetting" },
   { icon: MessageSquare, label: "AI Chat", href: null, action: "chat" },
   { icon: MapPin, label: "Shipment Tracking", href: "/track" },
-  { icon: Video, label: "Video Consult", href: "/book" },
+  { icon: Sparkles, label: "AI Estimator", href: "/online-estimate" },
   { icon: Headphones, label: "Call Us", href: "tel:+16097277647" },
   { icon: User, label: "Agent Login", href: "/agent-login", isAgentLogin: true },
 ];
