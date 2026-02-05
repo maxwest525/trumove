@@ -32,7 +32,7 @@
   --ai-preview-height: clamp(18.75rem, 30vh, 27.5rem);
  
    /* Unified section height for demo panels */
-   --demo-section-height: 423px;
+   --demo-section-height: 425px;
 }
 
 /* =============================================
