@@ -34,8 +34,8 @@
   /* Unified section height for demo panels */
   --demo-section-height: 425px;
   
-  /* Fixed panel height for demo sections - rem-based for zoom consistency */
-  --demo-panel-height: 26.5rem; /* ~424px at default 16px root */
+  /* Fixed panel height for demo sections - fixed pixels for zoom consistency */
+  --demo-panel-height: 424px;
 }
 
 /* =============================================
@@ -4103,8 +4103,9 @@
   border-radius: 12px;
   overflow: hidden;
   width: 420px;
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
   border: 1px solid hsl(var(--border));
   box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.1);
 }
