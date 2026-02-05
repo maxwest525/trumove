@@ -6,11 +6,12 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
  import {
    TrendingUp, TrendingDown, DollarSign, Users, Globe, Target,
    Smartphone, Monitor, MapPin, BarChart3, PieChart, Hash, Zap,
   CheckCircle2, AlertTriangle, ArrowRight, ExternalLink, Star,
-  Sparkles, Building2, Phone, Link2
+   Sparkles, Building2, Phone, Link2, ArrowRightLeft
  } from "lucide-react";
  
  interface KeywordData {
@@ -74,6 +75,30 @@ import { Checkbox } from "@/components/ui/checkbox";
    { state: "Arizona", city: "Phoenix", conversions: 167, revenue: 25050, convRate: 7.82 },
  ];
  
+const LOCATION_OPTIONS = [
+  { value: "los-angeles", label: "Los Angeles, CA", convRate: 7.61 },
+  { value: "houston", label: "Houston, TX", convRate: 7.60 },
+  { value: "miami", label: "Miami, FL", convRate: 7.50 },
+  { value: "nyc", label: "New York City, NY", convRate: 8.10 },
+  { value: "phoenix", label: "Phoenix, AZ", convRate: 7.82 },
+  { value: "chicago", label: "Chicago, IL", convRate: 7.20 },
+  { value: "dallas", label: "Dallas, TX", convRate: 7.45 },
+  { value: "atlanta", label: "Atlanta, GA", convRate: 7.30 },
+  { value: "seattle", label: "Seattle, WA", convRate: 7.15 },
+  { value: "denver", label: "Denver, CO", convRate: 7.55 },
+];
+
+const AUDIENCE_OPTIONS = [
+  { value: "homeowners-35-54", label: "Homeowners 35-54", aov: 3240 },
+  { value: "young-professionals", label: "Young Professionals 25-34", aov: 2180 },
+  { value: "retirees", label: "Retirees 55+", aov: 4120 },
+  { value: "corporate-relocation", label: "Corporate Relocation", aov: 8900 },
+  { value: "military-families", label: "Military Families", aov: 2850 },
+  { value: "first-time-movers", label: "First-Time Movers", aov: 1950 },
+  { value: "luxury-movers", label: "Luxury/High-Value Moves", aov: 12400 },
+  { value: "senior-downsizing", label: "Senior Downsizing", aov: 3680 },
+];
+
  const BEST_DEMOGRAPHICS: DemographicData[] = [
    { segment: "Homeowners 35-54", percentage: 38, conversions: 812, avgOrderValue: 3240, device: "Desktop 62%" },
    { segment: "Young Professionals 25-34", percentage: 28, conversions: 492, avgOrderValue: 2180, device: "Mobile 71%" },
@@ -91,11 +116,11 @@ import { Checkbox } from "@/components/ui/checkbox";
   // Business inputs with AI-recommended defaults
   const [businessName, setBusinessName] = useState("TruMove");
   const [serviceType, setServiceType] = useState("Long-Distance Moving, Local Moving, Packing Services");
-  const [targetLocations, setTargetLocations] = useState("California, Texas, Florida, New York, Arizona");
-  const [targetAudience, setTargetAudience] = useState("Homeowners 35-54, Young Professionals 25-34");
+  const [selectedLocations, setSelectedLocations] = useState<string[]>(["los-angeles", "houston", "miami", "nyc", "phoenix"]);
+  const [selectedAudiences, setSelectedAudiences] = useState<string[]>(["homeowners-35-54", "young-professionals"]);
   const [dailyBudget, setDailyBudget] = useState("150");
   const [phoneNumber, setPhoneNumber] = useState("1-800-TRUMOVE");
-  const [websiteUrl, setWebsiteUrl] = useState("trumove.com");
+  const [redirectUrl, setRedirectUrl] = useState("trumove.com/quote");
   
   // Platform selections based on best performers
   const [selectedPlatforms, setSelectedPlatforms] = useState({
@@ -175,13 +200,13 @@ import { Checkbox } from "@/components/ui/checkbox";
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium flex items-center gap-1.5">
-                <Link2 className="w-3.5 h-3.5 text-muted-foreground" />
-                Website URL
+                <ArrowRightLeft className="w-3.5 h-3.5 text-muted-foreground" />
+                Redirect URL
               </label>
               <Input 
-                value={websiteUrl} 
-                onChange={(e) => setWebsiteUrl(e.target.value)}
-                placeholder="yoursite.com"
+                value={redirectUrl} 
+                onChange={(e) => setRedirectUrl(e.target.value)}
+                placeholder="yoursite.com/landing-page"
               />
             </div>
             <div className="space-y-2">
@@ -214,11 +239,26 @@ import { Checkbox } from "@/components/ui/checkbox";
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Textarea 
-              value={targetLocations} 
-              onChange={(e) => setTargetLocations(e.target.value)}
-              className="min-h-[60px] text-sm"
-            />
+            <div className="flex flex-wrap gap-2 min-h-[60px] p-2 border rounded-md bg-background">
+              {LOCATION_OPTIONS.map((loc) => {
+                const isSelected = selectedLocations.includes(loc.value);
+                return (
+                  <Badge
+                    key={loc.value}
+                    variant={isSelected ? "default" : "outline"}
+                    className={`cursor-pointer transition-all ${isSelected ? '' : 'opacity-60 hover:opacity-100'}`}
+                    onClick={() => {
+                      setSelectedLocations(prev => 
+                        isSelected ? prev.filter(l => l !== loc.value) : [...prev, loc.value]
+                      );
+                    }}
+                  >
+                    {loc.label}
+                    {isSelected && <span className="ml-1 text-[10px]">({loc.convRate}%)</span>}
+                  </Badge>
+                );
+              })}
+            </div>
             <p className="text-xs text-muted-foreground mt-2">
               💡 NYC has highest conv rate (8.10%) - consider increasing budget
             </p>
@@ -234,11 +274,26 @@ import { Checkbox } from "@/components/ui/checkbox";
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Textarea 
-              value={targetAudience} 
-              onChange={(e) => setTargetAudience(e.target.value)}
-              className="min-h-[60px] text-sm"
-            />
+            <div className="flex flex-wrap gap-2 min-h-[60px] p-2 border rounded-md bg-background">
+              {AUDIENCE_OPTIONS.map((aud) => {
+                const isSelected = selectedAudiences.includes(aud.value);
+                return (
+                  <Badge
+                    key={aud.value}
+                    variant={isSelected ? "default" : "outline"}
+                    className={`cursor-pointer transition-all ${isSelected ? '' : 'opacity-60 hover:opacity-100'}`}
+                    onClick={() => {
+                      setSelectedAudiences(prev => 
+                        isSelected ? prev.filter(a => a !== aud.value) : [...prev, aud.value]
+                      );
+                    }}
+                  >
+                    {aud.label}
+                    {isSelected && <span className="ml-1 text-[10px]">(${aud.aov.toLocaleString()})</span>}
+                  </Badge>
+                );
+              })}
+            </div>
             <p className="text-xs text-muted-foreground mt-2">
               💡 Corporate Relocation has $8,900 AOV - add B2B targeting
             </p>
@@ -580,7 +635,7 @@ import { Checkbox } from "@/components/ui/checkbox";
            <ArrowRight className="w-4 h-4" />
          </Button>
          <p className="text-xs text-center text-muted-foreground mt-2">
-          {selectedKeywords.length} keywords • {Object.values(selectedPlatforms).filter(Boolean).length} platforms • {targetLocations.split(',').length} locations
+          {selectedKeywords.length} keywords • {Object.values(selectedPlatforms).filter(Boolean).length} platforms • {selectedLocations.length} locations
          </p>
        </div>
      </div>
