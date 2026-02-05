@@ -72,3 +72,21 @@ export interface LandingPageTemplate {
   conversion: string;
   thumbnail: string;
 }
+
+export interface LandingPage {
+  id: string;
+  name: string;
+  template: string;
+  status: 'active' | 'paused' | 'draft';
+  dailyBudget: number;
+  totalSpend: number;
+  conversions: number;
+  conversionRate: number;
+  cpa: number;
+  trend: 'up' | 'down' | 'stable';
+  url: string;
+  createdAt: string;
+  performance: 'excellent' | 'good' | 'poor' | 'new';
+  customDomain?: string | null;
+  domainStatus?: 'pending' | 'active' | 'failed' | null;
+}

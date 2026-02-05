@@ -43,7 +43,8 @@ import {
   TruMoveFooter
 } from "./TruMoveBrandingElements";
 import { MarketingAnalyticsDashboard } from "./MarketingAnalyticsDashboard";
-import { LandingPageBoard } from "./LandingPageBoard";
+import { LandingPageBoard, INITIAL_MOCK_PAGES } from "./LandingPageBoard";
+import { LandingPage } from "./types";
 
 // Heatmap positions per template
 const TEMPLATE_HEATMAP_POSITIONS: Record<string, {
@@ -446,6 +447,11 @@ interface EditableSection {
   const [mainView, setMainView] = useState<'analytics' | 'create' | 'manage'>('analytics');
   const [isPublishing, setIsPublishing] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
+  const [managedPages, setManagedPages] = useState<LandingPage[]>(INITIAL_MOCK_PAGES);
+  const [publishedPageId, setPublishedPageId] = useState<string | null>(null);
+  const [showDomainConnect, setShowDomainConnect] = useState(false);
+  const [domainInput, setDomainInput] = useState('');
+  const [isVerifyingDomain, setIsVerifyingDomain] = useState(false);
 
    // Update heatmap positions when template changes
    useEffect(() => {
@@ -478,13 +484,69 @@ interface EditableSection {
     await new Promise(r => setTimeout(r, 600));
     setIsPublishing(false);
     setIsPublished(true);
+    
+    // Create new page entry for the board
+    const templateInfo = LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate);
+    const newPageId = crypto.randomUUID();
+    const newPage: LandingPage = {
+      id: newPageId,
+      name: `${businessName} - ${targetLocation.split(',')[0].trim()}`,
+      template: templateInfo?.name || 'Quote Funnel',
+      status: 'active',
+      dailyBudget: 100,
+      totalSpend: 0,
+      conversions: 0,
+      conversionRate: 0,
+      cpa: 0,
+      trend: 'stable',
+      url: `${businessName.toLowerCase().replace(/\s/g, '')}.lovable.app/${selectedTemplate}`,
+      createdAt: new Date().toISOString().split('T')[0],
+      performance: 'new',
+      customDomain: null,
+      domainStatus: null
+    };
+    
+    setManagedPages(prev => [newPage, ...prev]);
+    setPublishedPageId(newPageId);
+    
     toast.success("🎉 Landing page published!", {
-      description: `Live at ${businessName.toLowerCase().replace(/\s/g, '')}.com/${selectedTemplate}`,
+      description: `Now tracking in Manage Pages`,
       action: {
-        label: "View Live",
-        onClick: () => window.open("#", "_blank")
+        label: "View Board",
+        onClick: () => setMainView('manage')
       }
     });
+  };
+  
+  const handleVerifyDomain = async () => {
+    if (!domainInput || !publishedPageId) return;
+    setIsVerifyingDomain(true);
+    await new Promise(r => setTimeout(r, 2000));
+    setIsVerifyingDomain(false);
+    
+    // Simulate 70% success rate
+    const success = Math.random() > 0.3;
+    
+    if (success) {
+      setManagedPages(prev => prev.map(p => 
+        p.id === publishedPageId 
+          ? { ...p, customDomain: domainInput, domainStatus: 'active' as const }
+          : p
+      ));
+      toast.success(`Domain connected: ${domainInput}`, {
+        description: "Your landing page is now live on your custom domain"
+      });
+      setShowDomainConnect(false);
+    } else {
+      setManagedPages(prev => prev.map(p => 
+        p.id === publishedPageId 
+          ? { ...p, customDomain: domainInput, domainStatus: 'pending' as const }
+          : p
+      ));
+      toast.warning("DNS not yet propagated", {
+        description: "Check back in a few hours. Propagation can take up to 72 hours."
+      });
+    }
   };
 
    // Get current heatmap positions
@@ -2598,15 +2660,27 @@ interface EditableSection {
                 <div className="h-6 w-px bg-border" />
                 
                 {isPublished ? (
-                  <Button 
-                    size="sm" 
-                    className="h-8 gap-1.5 bg-green-600 hover:bg-green-700 text-white"
-                    onClick={() => window.open("#", "_blank")}
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    Published
-                    <ExternalLink className="w-3 h-3 ml-1" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      size="sm" 
+                      className="h-8 gap-1.5 bg-green-600 hover:bg-green-700 text-white"
+                      onClick={() => window.open("#", "_blank")}
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Published
+                      <ExternalLink className="w-3 h-3 ml-1" />
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 gap-1.5"
+                      onClick={() => setShowDomainConnect(!showDomainConnect)}
+                    >
+                      <Globe className="w-3.5 h-3.5" />
+                      {showDomainConnect ? 'Hide Domain' : 'Connect Domain'}
+                    </Button>
+                  </div>
                 ) : (
                   <Button 
                     size="sm" 
@@ -2632,6 +2706,88 @@ interface EditableSection {
            </div>
          }
        >
+         {/* Domain Connection Panel (expandable) */}
+         {showDomainConnect && isPublished && (
+           <div className="border-b border-border bg-muted/30 p-4 shrink-0">
+             <div className="max-w-xl mx-auto space-y-4">
+               <div className="flex items-center justify-between">
+                 <div className="flex items-center gap-2">
+                   <Globe className="w-5 h-5 text-primary" />
+                   <h4 className="font-semibold text-sm">Connect Custom Domain</h4>
+                 </div>
+                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowDomainConnect(false)}>
+                   <X className="w-3.5 h-3.5" />
+                 </Button>
+               </div>
+               
+               <div className="p-3 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
+                 <p className="text-xs font-medium text-green-700 dark:text-green-300 mb-1">🌐 Your page is live at:</p>
+                 <code className="text-sm font-mono text-green-600 dark:text-green-400">
+                   https://{businessName.toLowerCase().replace(/\s/g, '')}.lovable.app/{selectedTemplate}
+                 </code>
+               </div>
+               
+               <div className="space-y-2">
+                 <label className="text-xs font-medium text-muted-foreground">Enter your custom domain:</label>
+                 <div className="flex gap-2">
+                   <Input 
+                     value={domainInput}
+                     onChange={(e) => setDomainInput(e.target.value)}
+                     placeholder="moves.yourcompany.com"
+                     className="h-9"
+                   />
+                   <Button 
+                     onClick={handleVerifyDomain}
+                     disabled={!domainInput || isVerifyingDomain}
+                     className="h-9 gap-1.5"
+                   >
+                     {isVerifyingDomain ? (
+                       <>
+                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                         Verifying...
+                       </>
+                     ) : (
+                       <>
+                         <CheckCircle2 className="w-3.5 h-3.5" />
+                         Verify DNS
+                       </>
+                     )}
+                   </Button>
+                 </div>
+               </div>
+               
+               <div className="p-3 rounded-lg bg-muted border border-border">
+                 <p className="text-xs font-medium text-foreground mb-2">DNS Configuration Required:</p>
+                 <div className="font-mono text-xs text-muted-foreground space-y-1">
+                   <p><span className="text-foreground font-medium">Type:</span> A Record</p>
+                   <p><span className="text-foreground font-medium">Name:</span> @ (or subdomain)</p>
+                   <p><span className="text-foreground font-medium">Value:</span> 185.158.133.1</p>
+                 </div>
+               </div>
+               
+               <div className="flex items-center justify-between">
+                 <a 
+                   href="https://docs.lovable.dev/features/custom-domain"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="text-xs text-primary hover:underline flex items-center gap-1"
+                 >
+                   📚 Full setup guide <ExternalLink className="w-3 h-3" />
+                 </a>
+                 <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" asChild>
+                   <a href="https://www.godaddy.com/domains" target="_blank" rel="noopener noreferrer">
+                     Get a Domain <ExternalLink className="w-3 h-3" />
+                   </a>
+                 </Button>
+               </div>
+               
+               <p className="text-[10px] text-muted-foreground text-center">
+                 ⏳ DNS propagation can take up to 72 hours
+               </p>
+             </div>
+           </div>
+         )}
+         
          {/* Browser Chrome */}
          <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 border-b border-border shrink-0">
            <div className="flex gap-1.5">
@@ -2884,6 +3040,8 @@ interface EditableSection {
         <LandingPageBoard 
           onCreateNew={() => setMainView('create')} 
           onEditPage={handleEditPage}
+          pages={managedPages}
+          onPagesChange={setManagedPages}
         />
       )}
 

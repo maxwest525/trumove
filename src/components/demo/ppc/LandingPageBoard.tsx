@@ -8,7 +8,7 @@
  import {
    Play, Pause, Trash2, Edit3, Eye, TrendingUp, TrendingDown,
    DollarSign, Users, Target, MoreVertical, Plus, ExternalLink,
-   AlertTriangle, CheckCircle2, XCircle
+  AlertTriangle, CheckCircle2, XCircle, Globe
  } from "lucide-react";
  import {
    DropdownMenu,
@@ -17,24 +17,9 @@
    DropdownMenuTrigger,
  } from "@/components/ui/dropdown-menu";
  import { toast } from "sonner";
+import { LandingPage } from "./types";
  
- interface LandingPage {
-   id: string;
-   name: string;
-   template: string;
-   status: 'active' | 'paused' | 'draft';
-   dailyBudget: number;
-   totalSpend: number;
-   conversions: number;
-   conversionRate: number;
-   cpa: number;
-   trend: 'up' | 'down' | 'stable';
-   url: string;
-   createdAt: string;
-   performance: 'excellent' | 'good' | 'poor' | 'new';
- }
- 
- const MOCK_PAGES: LandingPage[] = [
+export const INITIAL_MOCK_PAGES: LandingPage[] = [
    {
      id: '1',
      name: 'AI Moving Quote - California',
@@ -48,7 +33,9 @@
      trend: 'up',
      url: 'trumove.com/quote-ca',
      createdAt: '2025-01-15',
-     performance: 'excellent'
+    performance: 'excellent',
+    customDomain: 'moves.trumove.com',
+    domainStatus: 'active'
    },
    {
      id: '2',
@@ -63,7 +50,9 @@
      trend: 'stable',
      url: 'trumove.com/calc-tx',
      createdAt: '2025-01-20',
-     performance: 'good'
+    performance: 'good',
+    customDomain: null,
+    domainStatus: null
    },
    {
      id: '3',
@@ -78,7 +67,9 @@
      trend: 'down',
      url: 'trumove.com/compare',
      createdAt: '2025-01-10',
-     performance: 'poor'
+    performance: 'poor',
+    customDomain: null,
+    domainStatus: null
    },
    {
      id: '4',
@@ -93,17 +84,20 @@
      trend: 'up',
      url: 'trumove.com/reviews-fl',
      createdAt: '2025-01-28',
-     performance: 'new'
+    performance: 'new',
+    customDomain: null,
+    domainStatus: null
    },
  ];
  
  interface LandingPageBoardProps {
    onCreateNew: () => void;
    onEditPage: (pageId: string) => void;
+  pages: LandingPage[];
+  onPagesChange: (pages: LandingPage[]) => void;
  }
  
- export function LandingPageBoard({ onCreateNew, onEditPage }: LandingPageBoardProps) {
-   const [pages, setPages] = useState<LandingPage[]>(MOCK_PAGES);
+export function LandingPageBoard({ onCreateNew, onEditPage, pages, onPagesChange }: LandingPageBoardProps) {
    const [budgetInputs, setBudgetInputs] = useState<Record<string, string>>({});
  
    const totalSpend = pages.reduce((sum, p) => sum + p.totalSpend, 0);
@@ -112,26 +106,27 @@
    const avgCPA = totalSpend / totalConversions;
  
    const toggleStatus = (id: string) => {
-     setPages(prev => prev.map(p => {
+    const updatedPages = pages.map(p => {
        if (p.id === id) {
-         const newStatus = p.status === 'active' ? 'paused' : 'active';
+        const newStatus: 'active' | 'paused' = p.status === 'active' ? 'paused' : 'active';
          toast.success(`Page ${newStatus === 'active' ? 'activated' : 'paused'}`, {
            description: p.name
          });
          return { ...p, status: newStatus };
        }
        return p;
-     }));
+    });
+    onPagesChange(updatedPages);
    };
  
    const deletePage = (id: string) => {
      const page = pages.find(p => p.id === id);
-     setPages(prev => prev.filter(p => p.id !== id));
+    onPagesChange(pages.filter(p => p.id !== id));
      toast.success('Page deleted', { description: page?.name });
    };
  
    const updateBudget = (id: string, newBudget: number) => {
-     setPages(prev => prev.map(p => 
+    onPagesChange(pages.map(p => 
        p.id === id ? { ...p, dailyBudget: newBudget } : p
      ));
      toast.success('Budget updated');
@@ -245,6 +240,18 @@
                          {page.url} <ExternalLink className="w-3 h-3" />
                        </a>
                      </div>
+                    {page.customDomain && (
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <Globe className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">{page.customDomain}</span>
+                        <Badge 
+                          variant="secondary" 
+                          className={`text-[9px] ${page.domainStatus === 'active' ? 'bg-green-500/10 text-green-600' : page.domainStatus === 'pending' ? 'bg-yellow-500/10 text-yellow-600' : 'bg-red-500/10 text-red-600'}`}
+                        >
+                          {page.domainStatus}
+                        </Badge>
+                      </div>
+                    )}
                    </div>
  
                    <DropdownMenu>
