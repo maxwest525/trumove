@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import DraggableModal from "@/components/ui/DraggableModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -595,130 +595,135 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
     : "Unified communications for moving companies";
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto p-0 gap-0">
-        {/* Branded Header */}
-        <DialogHeader 
-          className="px-6 pt-6 pb-4"
-          style={{ 
-            background: isGranot 
-              ? "linear-gradient(135deg, #1B365D 0%, #2E4A7D 100%)" 
-              : "linear-gradient(90deg, #FF6A00 0%, #FF8533 100%)"
-          }}
-        >
-          <DialogTitle className="flex items-center gap-3 text-xl">
-            {isGranot ? (
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#4CAF50" }}>
-                <BarChart3 className="w-5 h-5 text-white" />
-              </div>
-            ) : (
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "white" }}>
-                <Phone className="w-5 h-5" style={{ color: "#FF6A00" }} />
-              </div>
-            )}
-            <div>
-              <span className="block text-white">{title}</span>
-              <span className="text-sm font-normal text-white/80">{subtitle}</span>
+    <DraggableModal
+      isOpen={open}
+      onClose={() => onOpenChange(false)}
+      storageKey={`tm_modal_${integration}`}
+      defaultWidth={800}
+      defaultHeight={650}
+      minWidth={500}
+      minHeight={400}
+      maxWidth={1000}
+      maxHeight={850}
+      headerStyle={{ 
+        background: isGranot 
+          ? "linear-gradient(135deg, #1B365D 0%, #2E4A7D 100%)" 
+          : "linear-gradient(90deg, #FF6A00 0%, #FF8533 100%)"
+      }}
+      title={
+        <div className="flex items-center gap-3">
+          {isGranot ? (
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "#4CAF50" }}>
+              <BarChart3 className="w-5 h-5 text-white" />
             </div>
-          </DialogTitle>
-        </DialogHeader>
-
-        <div className="p-6">
-          <Tabs defaultValue="demo">
-            <TabsList className="grid w-full grid-cols-3 bg-muted/50">
-              <TabsTrigger value="demo">Live Demo</TabsTrigger>
-              <TabsTrigger value="features">Features</TabsTrigger>
-              <TabsTrigger value="pricing">Pricing</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="demo" className="mt-4">
-              {isGranot ? <GranotDemoVisual /> : <RingCentralDemoVisual />}
-            </TabsContent>
-
-            <TabsContent value="features" className="mt-4">
-              <div className="grid grid-cols-2 gap-3">
-                {features.map((feature) => (
-                  <div 
-                    key={feature.title}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
-                  >
-                    <div 
-                      className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
-                      style={{ background: isGranot ? "#1B365D20" : "#FF6A0020" }}
-                    >
-                      <feature.icon className="w-4 h-4" style={{ color: isGranot ? "#1B365D" : "#FF6A00" }} />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm text-foreground">{feature.title}</div>
-                      <div className="text-xs text-muted-foreground">{feature.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="pricing" className="mt-4">
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg border border-border bg-muted/20">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold">Starter</span>
-                    <Badge variant="secondary">$49/mo</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {isGranot 
-                      ? "Up to 500 contacts, 2 users, basic reporting"
-                      : "5 users, 1000 minutes, video meetings"}
-                  </p>
-                </div>
-                <div 
-                  className="p-4 rounded-lg border-2"
-                  style={{ 
-                    borderColor: isGranot ? "#4CAF50" : "#FF6A00",
-                    background: isGranot ? "#4CAF5010" : "#FF6A0010"
-                  }}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold">Professional</span>
-                    <Badge style={{ background: isGranot ? "#4CAF50" : "#FF6A00", color: "white" }}>$99/mo</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {isGranot 
-                      ? "Unlimited contacts, 10 users, advanced analytics"
-                      : "25 users, unlimited minutes, contact center"}
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg border border-border bg-muted/20">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold">Enterprise</span>
-                    <Badge variant="secondary">Custom</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {isGranot 
-                      ? "White-label, API access, dedicated support"
-                      : "Unlimited users, SLA, dedicated account manager"}
-                  </p>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
-            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
-              <ExternalLink className="w-4 h-4" />
-              Visit Website
-            </Button>
-            <Button 
-              size="sm" 
-              className="gap-2 text-white"
-              style={{ background: isGranot ? "#4CAF50" : "#FF6A00" }}
-            >
-              Connect {title}
-              <ArrowRight className="w-4 h-4" />
-            </Button>
+          ) : (
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "white" }}>
+              <Phone className="w-5 h-5" style={{ color: "#FF6A00" }} />
+            </div>
+          )}
+          <div>
+            <span className="block text-white font-semibold">{title}</span>
+            <span className="text-sm font-normal text-white/80">{subtitle}</span>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      }
+      footer={
+        <div className="flex items-center justify-between p-4 border-t border-border">
+          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
+            <ExternalLink className="w-4 h-4" />
+            Visit Website
+          </Button>
+          <Button 
+            size="sm" 
+            className="gap-2 text-white"
+            style={{ background: isGranot ? "#4CAF50" : "#FF6A00" }}
+          >
+            Connect {title}
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
+      }
+    >
+      <div className="p-6 flex-1 overflow-y-auto">
+        <Tabs defaultValue="demo">
+          <TabsList className="grid w-full grid-cols-3 bg-muted/50">
+            <TabsTrigger value="demo">Live Demo</TabsTrigger>
+            <TabsTrigger value="features">Features</TabsTrigger>
+            <TabsTrigger value="pricing">Pricing</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="demo" className="mt-4">
+            {isGranot ? <GranotDemoVisual /> : <RingCentralDemoVisual />}
+          </TabsContent>
+
+          <TabsContent value="features" className="mt-4">
+            <div className="grid grid-cols-2 gap-3">
+              {features.map((feature) => (
+                <div 
+                  key={feature.title}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                >
+                  <div 
+                    className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
+                    style={{ background: isGranot ? "#1B365D20" : "#FF6A0020" }}
+                  >
+                    <feature.icon className="w-4 h-4" style={{ color: isGranot ? "#1B365D" : "#FF6A00" }} />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm text-foreground">{feature.title}</div>
+                    <div className="text-xs text-muted-foreground">{feature.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="pricing" className="mt-4">
+            <div className="space-y-4">
+              <div className="p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold">Starter</span>
+                  <Badge variant="secondary">$49/mo</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {isGranot 
+                    ? "Up to 500 contacts, 2 users, basic reporting"
+                    : "5 users, 1000 minutes, video meetings"}
+                </p>
+              </div>
+              <div 
+                className="p-4 rounded-lg border-2"
+                style={{ 
+                  borderColor: isGranot ? "#4CAF50" : "#FF6A00",
+                  background: isGranot ? "#4CAF5010" : "#FF6A0010"
+                }}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold">Professional</span>
+                  <Badge style={{ background: isGranot ? "#4CAF50" : "#FF6A00", color: "white" }}>$99/mo</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {isGranot 
+                    ? "Unlimited contacts, 10 users, advanced analytics"
+                    : "25 users, unlimited minutes, contact center"}
+                </p>
+              </div>
+              <div className="p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold">Enterprise</span>
+                  <Badge variant="secondary">Custom</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {isGranot 
+                    ? "White-label, API access, dedicated support"
+                    : "Unlimited users, SLA, dedicated account manager"}
+                </p>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </DraggableModal>
   );
 }
 

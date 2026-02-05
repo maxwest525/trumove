@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import DraggableModal from "@/components/ui/DraggableModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -262,35 +262,55 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[950px] max-h-[90vh] overflow-hidden p-0 gap-0">
-        {/* Header */}
-        <DialogHeader 
-          className="px-6 pt-6 pb-4"
-          style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%)" }}
-        >
-          <DialogTitle className="flex items-center gap-3 text-xl">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20 backdrop-blur-sm">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex-1">
-              <span className="block text-white font-bold">AI Marketing Suite</span>
-              <span className="text-sm font-normal text-white/80">PPC • SEO • A/B Testing • Conversion Tracking</span>
-            </div>
-            {/* Live Mode Toggle */}
-            <button
-              onClick={() => setLiveMode(!liveMode)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                liveMode 
-                  ? "bg-white text-purple-600" 
-                  : "bg-white/20 text-white hover:bg-white/30"
-              }`}
-            >
-              <Radio className={`w-3 h-3 ${liveMode ? "animate-pulse text-red-500" : ""}`} />
-              {liveMode ? "Live" : "Static"}
-            </button>
-          </DialogTitle>
-        </DialogHeader>
+    <DraggableModal
+      isOpen={open}
+      onClose={() => onOpenChange(false)}
+      storageKey="tm_modal_ppc"
+      defaultWidth={950}
+      defaultHeight={700}
+      minWidth={600}
+      minHeight={400}
+      maxWidth={1200}
+      maxHeight={900}
+      headerStyle={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%)" }}
+      title={
+        <div className="flex items-center gap-3 flex-1">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-white/20 backdrop-blur-sm">
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1">
+            <span className="block text-white font-bold">AI Marketing Suite</span>
+            <span className="text-sm font-normal text-white/80">PPC • SEO • A/B Testing • Conversion Tracking</span>
+          </div>
+          {/* Live Mode Toggle */}
+          <button
+            onClick={(e) => { e.stopPropagation(); setLiveMode(!liveMode); }}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              liveMode 
+                ? "bg-white text-purple-600" 
+                : "bg-white/20 text-white hover:bg-white/30"
+            }`}
+          >
+            <Radio className={`w-3 h-3 ${liveMode ? "animate-pulse text-red-500" : ""}`} />
+            {liveMode ? "Live" : "Static"}
+          </button>
+        </div>
+      }
+      footer={
+        <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/30">
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${liveMode ? "bg-red-500 animate-pulse" : ""}`} style={{ background: liveMode ? undefined : "#7C3AED" }} />
+            <span className="text-xs text-muted-foreground">
+              {liveMode ? "Live Demo Mode - Data updates in real-time" : "Demo Mode - No real campaigns affected"}
+            </span>
+          </div>
+          <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground">
+            <ExternalLink className="w-3 h-3" />
+            Learn More
+          </Button>
+        </div>
+      }
+    >
 
         {/* Navigation */}
         <div className="flex gap-1 px-4 py-2 overflow-x-auto" style={{ background: "#F8FAFC", borderBottom: "1px solid #E2E8F0" }}>
@@ -649,21 +669,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             )}
           </div>
         </ScrollArea>
-
-        {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/30">
-          <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${liveMode ? "bg-red-500 animate-pulse" : ""}`} style={{ background: liveMode ? undefined : "#7C3AED" }} />
-            <span className="text-xs text-muted-foreground">
-              {liveMode ? "Live Demo Mode - Data updates in real-time" : "Demo Mode - No real campaigns affected"}
-            </span>
-          </div>
-          <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground">
-            <ExternalLink className="w-3 h-3" />
-            Learn More
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+    </DraggableModal>
   );
 }
