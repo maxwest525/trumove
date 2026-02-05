@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
-import { Map, Maximize2 } from "lucide-react";
+import { Map, Maximize2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MiniRouteOverviewProps {
@@ -21,9 +21,14 @@ export function MiniRouteOverview({
   onExpand
 }: MiniRouteOverviewProps) {
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     if (!originCoords || !destCoords) return;
+
+    setIsLoading(true);
+    setHasError(false);
 
     // Build static map URL with route and markers
     const originMarker = `pin-s-a+22c55e(${originCoords[0]},${originCoords[1]})`;
@@ -68,11 +73,33 @@ export function MiniRouteOverview({
             <img 
               src={imageUrl} 
               alt="Route Overview" 
-              className="w-full h-full object-cover"
+              className={cn(
+                "w-full h-full object-cover transition-opacity duration-300",
+                isLoading ? "opacity-0" : "opacity-100"
+              )}
+              onLoad={() => setIsLoading(false)}
+              onError={() => {
+                setIsLoading(false);
+                setHasError(true);
+              }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <Map className="w-6 h-6 text-white/40" />
+            </div>
+          )}
+
+          {/* Loading overlay */}
+          {imageUrl && isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+              <Loader2 className="w-5 h-5 text-primary animate-spin" />
+            </div>
+          )}
+
+          {/* Error fallback */}
+          {hasError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+              <Map className="w-5 h-5 text-white/40" />
             </div>
           )}
           

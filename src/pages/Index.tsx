@@ -645,6 +645,38 @@ function TruckViewPanel() {
 
 // Shipment Tracker Section - 3-column layout: Route Overview | Truck View (centered) | Description
 function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void }) {
+  // Street View Thumbnail component - tiny corner preview
+  const StreetViewThumbnail = () => {
+    const [loaded, setLoaded] = useState(false);
+    const [error, setError] = useState(false);
+    
+    // Kansas City position (middle of cross-country route)
+    const position = { lat: 39.0997, lng: -94.5786 };
+    
+    // Use edge function for Street View to avoid API key exposure
+    const streetViewUrl = `${SUPABASE_URL}/functions/v1/google-street-view?lat=${position.lat}&lng=${position.lng}&size=120x80&heading=90&pitch=0&fov=100`;
+    
+    if (error) return null;
+    
+    return (
+      <div className="tru-streetview-thumbnail">
+        {!loaded && (
+          <div className="tru-streetview-loading">
+            <Globe className="w-3 h-3 animate-pulse" />
+          </div>
+        )}
+        <img 
+          src={streetViewUrl}
+          alt="Street View"
+          onLoad={() => setLoaded(true)}
+          onError={() => setError(true)}
+          className={loaded ? 'opacity-100' : 'opacity-0'}
+        />
+        <span className="tru-streetview-label">Street View</span>
+      </div>
+    );
+  };
+
   return (
     <section className="tru-tracker-section">
       <div className="tru-tracker-inner">
@@ -652,6 +684,7 @@ function ShipmentTrackerSection({ navigate }: { navigate: (path: string) => void
           {/* Route Overview - LEFT */}
           <div className="tru-tracker-satellite-left">
             <RouteOverviewPanel />
+            <StreetViewThumbnail />
           </div>
           
           {/* Truck View - CENTER (aligned with AI demo above) */}
@@ -1387,7 +1420,7 @@ export default function Index() {
                 The Smarter Way To <span className="tru-hero-accent">Move</span>
               </h1>
               <p className="tru-hero-feature-line">
-                AI-powered estimates · FMCSA-vetted carriers · No van line middlemen · Live video consults · Real-time tracking
+                AI-powered inventory · FMCSA-vetted carriers that care · Live video consults · Shipment Tracking
               </p>
             </div>
 

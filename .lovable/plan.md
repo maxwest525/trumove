@@ -226,3 +226,26 @@ All phases implemented:
 3. ✅ Changed default map center from Orlando to Kansas (center of US)
 4. ✅ Changed default zoom from 6 to 4 for continental US view
 5. ✅ Replaced complex truck SVG with green circular icon matching original style
+
+---
+
+## Latest Update (Feb 5, 2026)
+
+### Additional Fixes Completed:
+
+1. **Hero micro feature text updated** ✅
+   - New text: "AI-powered inventory · FMCSA-vetted carriers that care · Live video consults · Shipment Tracking"
+
+2. **Street View thumbnail added to homepage route map** ✅
+   - Tiny 80x54px preview in bottom-right corner of Route Overview panel
+   - Uses edge function to avoid API key exposure
+   - Shows Kansas City midpoint of NY→LA route
+
+3. **Navbar consistency fixed** ✅
+   - Added `white-space: nowrap` to header-nav-link to prevent text wrapping
+   - All nav items now have consistent sizing
+
+4. **Mini Route Overview loading states improved** ✅
+   - Added loading spinner while image loads
+   - Added error fallback with map icon
+   - Smooth opacity transitions on image load
