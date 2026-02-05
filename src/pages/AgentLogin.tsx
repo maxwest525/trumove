@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { FileText, Briefcase, BarChart3, ArrowLeft, Phone, Sparkles, Headphones } from "lucide-react";
+import { FileText, Briefcase, BarChart3, ArrowLeft, Phone, Sparkles, Headphones, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
- import { ESignHub } from "@/components/agent/ESignHub";
+import { ESignHub } from "@/components/agent/ESignHub";
 import { IntegrationModal } from "@/components/integrations/IntegrationModals";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
+import { CoachingSummaryModal } from "@/components/coaching/CoachingSummaryModal";
 
-type ActiveTool = null | "esign" | "operations" | "granot" | "ringcentral" | "ppc" | "crm-dialer";
+type ActiveTool = null | "esign" | "operations" | "granot" | "ringcentral" | "ppc" | "crm-dialer" | "coaching-summary";
 
 const AGENT_TOOLS = [
   {
@@ -24,6 +25,13 @@ const AGENT_TOOLS = [
     title: "Operations Center",
     description: "Carriers, customers & messaging",
     icon: Briefcase,
+    external: false,
+  },
+  {
+    id: "coaching-summary" as const,
+    title: "Team Performance",
+    description: "Coaching metrics, QA scores & leaderboards",
+    icon: Trophy,
     external: false,
   },
   {
@@ -67,6 +75,7 @@ export default function AgentLogin() {
   const [ringcentralOpen, setRingcentralOpen] = useState(false);
   const [ppcOpen, setPpcOpen] = useState(false);
   const [operationsOpen, setOperationsOpen] = useState(false);
+  const [coachingSummaryOpen, setCoachingSummaryOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -87,6 +96,8 @@ export default function AgentLogin() {
       setRingcentralOpen(true);
     } else if (toolId === "operations") {
       setOperationsOpen(true);
+    } else if (toolId === "coaching-summary") {
+      setCoachingSummaryOpen(true);
     } else {
       setActiveTool(toolId);
     }
@@ -126,6 +137,10 @@ export default function AgentLogin() {
       <OperationsCenterModal
         open={operationsOpen}
         onOpenChange={setOperationsOpen}
+      />
+      <CoachingSummaryModal
+        open={coachingSummaryOpen}
+        onOpenChange={setCoachingSummaryOpen}
       />
       <div className="agent-dashboard-page">
         {activeTool ? (

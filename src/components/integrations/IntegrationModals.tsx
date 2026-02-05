@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-
+import { AgentCoachingWidget } from "@/components/coaching/AgentCoachingWidget";
 interface IntegrationModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -120,6 +120,7 @@ function GranotDemoVisual() {
   const [liveStats, setLiveStats] = useState(GRANOT_DEMO_STATS);
   const [liveActivity, setLiveActivity] = useState(GRANOT_RECENT_ACTIVITY);
   const [liveJobCounts, setLiveJobCounts] = useState(GRANOT_PIPELINE_STAGES);
+  const [showCoachingWidget, setShowCoachingWidget] = useState(false);
 
   // Animated data updates similar to Marketing Suite
   useEffect(() => {
@@ -172,7 +173,7 @@ function GranotDemoVisual() {
   }, [isLiveMode]);
 
   return (
-    <div className="rounded-xl overflow-hidden" style={{ border: "2px solid #1B365D", background: "#FFFFFF" }}>
+    <div className="rounded-xl overflow-hidden relative" style={{ border: "2px solid #1B365D", background: "#FFFFFF" }}>
       {/* Granot Header - Navy/Green branding */}
       <div className="px-4 py-3 flex items-center justify-between" style={{ background: "linear-gradient(90deg, #1B365D 0%, #2E4A7D 100%)" }}>
         <div className="flex items-center gap-3">
@@ -183,6 +184,17 @@ function GranotDemoVisual() {
           <Badge className="text-[10px]" style={{ background: "#4CAF50", color: "white" }}>CRM</Badge>
         </div>
         <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setShowCoachingWidget(!showCoachingWidget)}
+            className={cn(
+              "p-1.5 rounded-lg transition-colors relative",
+              showCoachingWidget ? "bg-white/30" : "hover:bg-white/10"
+            )}
+            title="Call Coach"
+          >
+            <Headphones className="w-4 h-4 text-white/80" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          </button>
           <button className="p-1.5 rounded-lg hover:bg-white/10 transition-colors relative">
             <Bell className="w-4 h-4 text-white/80" />
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: "#4CAF50" }} />
@@ -506,6 +518,18 @@ function GranotDemoVisual() {
           isLiveMode ? "text-green-600 font-medium" : "text-gray-500"
         )}>{isLiveMode ? "Live Data Simulation" : "Demo Mode"}</span>
       </div>
+
+      {/* Coaching Widget Overlay */}
+      {showCoachingWidget && (
+        <div className="absolute bottom-16 right-4 z-50 shadow-2xl">
+          <AgentCoachingWidget 
+            customerName="Sarah Johnson"
+            moveRoute="NYC → Miami"
+            callDuration="4:32"
+            onMinimize={() => setShowCoachingWidget(false)}
+          />
+        </div>
+      )}
     </div>
   );
 }
