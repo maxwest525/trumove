@@ -1868,34 +1868,34 @@ export default function Index() {
           <ShipmentTrackerSection navigate={navigate} />
 
           {/* BOTTOM TRUST STRIP - Above Footer */}
-          <section className="tru-bottom-trust-strip">
-            <div className="tru-bottom-trust-inner">
-              <div className="tru-bottom-trust-item">
-                <Sparkles className="w-5 h-5 text-primary" />
+          <div className="feature-trust-strip" style={{ marginTop: '2rem', marginBottom: 0 }}>
+            <div className="feature-trust-strip-inner">
+              <div className="feature-trust-item">
+                <Sparkles className="w-4 h-4" />
                 <span>AI-Powered Estimates</span>
+                <span className="feature-trust-dot">•</span>
               </div>
-              <span className="tru-bottom-trust-dot">•</span>
-              <div className="tru-bottom-trust-item">
-                <ShieldCheck className="w-5 h-5 text-primary" />
+              <div className="feature-trust-item">
+                <ShieldCheck className="w-4 h-4" />
                 <span>FMCSA Verified Carriers</span>
+                <span className="feature-trust-dot">•</span>
               </div>
-              <span className="tru-bottom-trust-dot">•</span>
-              <div className="tru-bottom-trust-item">
-                <Truck className="w-5 h-5 text-primary" />
+              <div className="feature-trust-item">
+                <Truck className="w-4 h-4" />
                 <span>Live GPS Tracking</span>
+                <span className="feature-trust-dot">•</span>
               </div>
-              <span className="tru-bottom-trust-dot">•</span>
-              <div className="tru-bottom-trust-item">
-                <Video className="w-5 h-5 text-primary" />
+              <div className="feature-trust-item">
+                <Video className="w-4 h-4" />
                 <span>Video Consultations</span>
+                <span className="feature-trust-dot">•</span>
               </div>
-              <span className="tru-bottom-trust-dot">•</span>
-              <div className="tru-bottom-trust-item">
-                <Shield className="w-5 h-5 text-primary" />
+              <div className="feature-trust-item">
+                <Shield className="w-4 h-4" />
                 <span>Zero Hidden Fees</span>
               </div>
             </div>
-          </section>
+          </div>
 
         </div>
       </div>
