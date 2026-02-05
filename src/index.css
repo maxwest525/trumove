@@ -3106,9 +3106,10 @@
 
 .tru-ai-live-scanner {
   position: relative;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  height: 340px;
+  height: clamp(24rem, 38vh, 30rem);
+  min-height: 24rem;
   width: 420px;
   border: 2px solid hsl(0 0% 0%);
   box-shadow:
@@ -3269,12 +3270,13 @@
 .tru-ai-live-inventory {
   background: hsl(var(--card));
   border: 2px solid hsl(0 0% 0%);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 12px;
   display: flex;
   flex-direction: column;
-  width: 350px;
-  height: 340px;
+  width: 420px;
+  height: clamp(24rem, 38vh, 30rem);
+  min-height: 24rem;
   box-shadow:
     0 4px 20px hsl(0 0% 0% / 0.5),
     0 8px 40px hsl(0 0% 0% / 0.3),
@@ -4298,14 +4300,14 @@
 }
 
 .tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: 340px;
+  height: clamp(24rem, 38vh, 30rem);
   flex: none;
 }
 
 .tru-ai-preview-vertical .tru-ai-live-inventory {
-  height: 340px;
+  height: clamp(24rem, 38vh, 30rem);
   flex: none;
-  max-height: 340px;
+  max-height: none;
 }
 
 /* Step with preview thumbnail - row layout for vertical steps */
@@ -4407,7 +4409,7 @@
 }
 
 .tru-ai-right-column .tru-ai-live-inventory {
-  height: 340px;
+  height: clamp(24rem, 38vh, 30rem);
   flex: none;
   min-height: 0;
 }
