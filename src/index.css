@@ -39,6 +39,47 @@
 }
 
 /* =============================================
+   UNIFIED CARD FRAME - Black stroke + green underglow
+   Apply to any card, box, or panel for consistent styling
+   ============================================= */
+.tru-card-frame {
+  border: 2px solid hsl(var(--tm-ink)) !important;
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tru-card-frame:hover {
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.15),
+    0 8px 32px hsl(var(--tm-ink) / 0.10),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 12px 32px -4px hsl(var(--primary) / 0.25) !important;
+}
+
+.dark .tru-card-frame {
+  border-color: hsl(0 0% 100% / 0.15) !important;
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2) !important;
+}
+
+.dark .tru-card-frame:hover {
+  border-color: hsl(0 0% 100% / 0.25) !important;
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.4),
+    0 8px 32px hsl(0 0% 0% / 0.25),
+    0 0 0 1px hsl(var(--primary) / 0.2),
+    0 12px 32px -4px hsl(var(--primary) / 0.3) !important;
+}
+
+/* =============================================
    UNIFIED PAGE HERO SPACING
    Standard spacing for all page hero sections
    ============================================= */
@@ -1695,17 +1736,39 @@
    ============================================= */
 .tru-company-card {
   background: hsl(var(--card));
-  border: 2px solid hsl(var(--border));
+  border: 2px solid hsl(var(--tm-ink));
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15);
 }
 
 .tru-company-card:hover {
-  border-color: hsl(var(--tm-ink));
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.15),
+    0 8px 32px hsl(var(--tm-ink) / 0.10),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 12px 32px -4px hsl(var(--primary) / 0.25);
+}
+
+.dark .tru-company-card {
+  border-color: hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2);
+}
+
+.dark .tru-company-card:hover {
+  border-color: hsl(0 0% 100% / 0.25);
 }
 
 .tru-company-title {
@@ -1744,17 +1807,39 @@
    ============================================= */
 .tru-features-card {
   background: hsl(var(--card));
-  border: 2px solid hsl(var(--border));
+  border: 2px solid hsl(var(--tm-ink));
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15);
 }
 
 .tru-features-card:hover {
-  border-color: hsl(var(--tm-ink));
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.15),
+    0 8px 32px hsl(var(--tm-ink) / 0.10),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 12px 32px -4px hsl(var(--primary) / 0.25);
+}
+
+.dark .tru-features-card {
+  border-color: hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2);
+}
+
+.dark .tru-features-card:hover {
+  border-color: hsl(0 0% 100% / 0.25);
 }
 
 .tru-features-header {
@@ -6043,9 +6128,13 @@
   height: auto;
   min-height: 480px;
   background: hsl(var(--background));
-  border: 1px solid hsl(var(--tm-ink) / 0.15);
+  border: 2px solid hsl(var(--tm-ink));
   border-radius: 24px;
-  box-shadow: 0 2px 8px hsl(var(--tm-ink) / 0.04), 0 8px 24px hsl(var(--tm-ink) / 0.03);
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15);
   overflow: hidden;
   transition: height 0.3s ease, border-color 0.2s ease;
   position: relative;
@@ -6053,7 +6142,29 @@
 }
 
 .tru-floating-form-card:hover {
-  border-color: hsl(var(--tm-ink));
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.15),
+    0 8px 32px hsl(var(--tm-ink) / 0.10),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 12px 32px -4px hsl(var(--primary) / 0.25);
+}
+
+.dark .tru-floating-form-card {
+  border-color: hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2);
+}
+
+.dark .tru-floating-form-card:hover {
+  border-color: hsl(0 0% 100% / 0.25);
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.4),
+    0 8px 32px hsl(0 0% 0% / 0.25),
+    0 0 0 1px hsl(var(--primary) / 0.2),
+    0 12px 32px -4px hsl(var(--primary) / 0.3);
 }
 
 /* Compact form variant - auto-height, tighter spacing */
@@ -21412,15 +21523,23 @@
 
 .tru-move-summary-card {
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--border) / 0.6);
+  border: 2px solid hsl(var(--tm-ink));
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 20px hsl(var(--tm-ink) / 0.08);
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15);
   transition: all 0.3s ease;
 }
 
 .tru-move-summary-card.is-expanded {
-  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.12);
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.15),
+    0 8px 32px hsl(var(--tm-ink) / 0.10),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 12px 32px -4px hsl(var(--primary) / 0.25);
 }
 
 /* Summary-specific header adjustments */
@@ -21462,7 +21581,12 @@
 /* Dark mode adjustments */
 .dark .tru-move-summary-card {
   background: hsl(var(--card));
-  border-color: hsl(var(--border) / 0.4);
+  border-color: hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2);
 }
 
 .dark .tru-qb-form-header-summary {
@@ -27146,33 +27270,58 @@
 .fmcsa-feature-card {
   padding: 20px 24px;
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--border) / 0.5);
-  border-radius: 12px;
+  border: 2px solid hsl(var(--tm-ink));
+  border-radius: 16px;
   transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15);
 }
 
 .fmcsa-feature-card:hover {
-  border-color: hsl(var(--primary) / 0.3);
-  box-shadow: 0 8px 24px hsl(var(--primary) / 0.08);
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.15),
+    0 8px 32px hsl(var(--tm-ink) / 0.10),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 12px 32px -4px hsl(var(--primary) / 0.25);
   transform: translateY(-2px);
 }
 
 .dark .fmcsa-feature-card {
   background: hsl(222 40% 8%);
-  border-color: hsl(220 20% 18%);
+  border-color: hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2);
 }
 
 /* Carrier Snapshot Card - Light Mode */
 .carrier-snapshot-card {
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
+  border: 2px solid hsl(var(--tm-ink));
   color: hsl(var(--foreground));
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .dark .carrier-snapshot-card {
   background: linear-gradient(135deg, hsl(222 47% 10%) 0%, hsl(222 50% 8%) 100%);
-  border: 1px solid hsl(220 20% 18%);
+  border: 2px solid hsl(0 0% 100% / 0.15);
   color: white;
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2);
 }
 
 .carrier-snapshot-card .text-foreground {
@@ -28910,15 +29059,20 @@
 /* Glass Card Style - Themed */
 .tracking-info-card {
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--border) / 0.6);
-  border-radius: 10px;
+  border: 2px solid hsl(var(--tm-ink));
+  border-radius: 16px;
   padding: 14px;
   backdrop-filter: blur(12px);
-  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.03);
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15);
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .tracking-info-card h3,
@@ -28967,8 +29121,13 @@
 }
 
 .dark .tracking-info-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: hsl(220 15% 8%);
+  border-color: hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2);
 }
 
 /* Input Styling - Themed, lighter */
@@ -33276,10 +33435,25 @@ html.dark .tru-summary-header-large,
   min-height: 400px;
   max-height: 550px;
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 12px;
+  border: 2px solid hsl(var(--tm-ink));
+  border-radius: 16px;
   overflow: hidden;
   position: relative;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dark .video-consult-chat-panel {
+  border-color: hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2);
 }
 
 /* Resizable chat panel when on call */
@@ -33499,4 +33673,79 @@ gmp-map-3d-element .gmnoprint {
 .mapboxgl-canvas-container .mapboxgl-ctrl-attrib-inner,
 .mapboxgl-canvas-container .mapboxgl-ctrl-attrib {
   display: none !important;
+}
+
+/* =============================================
+   UNIFIED BLACK STROKE + GREEN UNDERGLOW
+   Applied globally to key interactive card elements
+   ============================================= */
+
+/* Tracking Sidebar - all cards */
+.tracking-sidebar .tracking-info-card,
+.tracking-sidebar > div[class*="rounded"],
+.tracking-sidebar > div[class*="border"] {
+  border: 2px solid hsl(var(--tm-ink)) !important;
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15) !important;
+}
+
+.dark .tracking-sidebar .tracking-info-card,
+.dark .tracking-sidebar > div[class*="rounded"],
+.dark .tracking-sidebar > div[class*="border"] {
+  border-color: hsl(0 0% 100% / 0.15) !important;
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2) !important;
+}
+
+/* Carrier Vetting Page - all Card components and feature cards */
+.carrier-vetting-page .rounded-xl,
+.carrier-vetting-page .rounded-2xl,
+.carrier-vetting-page [class*="Card"],
+.carrier-vetting-page .border.rounded-lg {
+  border: 2px solid hsl(var(--tm-ink)) !important;
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15) !important;
+}
+
+.dark .carrier-vetting-page .rounded-xl,
+.dark .carrier-vetting-page .rounded-2xl,
+.dark .carrier-vetting-page [class*="Card"],
+.dark .carrier-vetting-page .border.rounded-lg {
+  border-color: hsl(0 0% 100% / 0.15) !important;
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2) !important;
+}
+
+/* Video Consult Page - main panels */
+.video-consult-page .rounded-xl,
+.video-consult-page .rounded-2xl {
+  border: 2px solid hsl(var(--tm-ink));
+  box-shadow: 
+    0 4px 16px hsl(var(--tm-ink) / 0.12),
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 24px -4px hsl(var(--primary) / 0.15);
+}
+
+.dark .video-consult-page .rounded-xl,
+.dark .video-consult-page .rounded-2xl {
+  border-color: hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.3),
+    0 8px 32px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 24px -4px hsl(var(--primary) / 0.2);
 }

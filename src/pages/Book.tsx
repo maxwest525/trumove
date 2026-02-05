@@ -1881,7 +1881,7 @@ export default function Book() {
                     )}
                   </div>
                 </div>
-                <Card id="video-consult-container" className="overflow-hidden border-0 bg-transparent rounded-none">
+                <Card id="video-consult-container" className="overflow-hidden rounded-2xl border-2 border-foreground dark:border-white/15 shadow-[0_4px_16px_hsl(var(--tm-ink)/0.12),0_8px_32px_hsl(var(--tm-ink)/0.08),0_0_0_1px_hsl(var(--primary)/0.1),0_8px_24px_-4px_hsl(var(--primary)/0.15)]">
                   <CardContent className="p-0">
                     <div className="relative h-[520px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
                     {/* Top controls - Fullscreen and PiP */}
