@@ -24,6 +24,144 @@ import { toast } from "sonner";
  import jsPDF from "jspdf";
  import autoTable from "jspdf-autotable";
  import logoImg from "@/assets/logo.png";
+
+// Heatmap positions per template
+const TEMPLATE_HEATMAP_POSITIONS: Record<string, {
+  id: string;
+  element: string;
+  top: string;
+  left: string;
+  width: string;
+  height: string;
+  intensity: 'high' | 'medium' | 'low';
+}[]> = {
+  "quote-funnel": [
+    { id: "cta-primary", element: "Primary CTA Button", top: "55%", left: "50%", width: "200px", height: "50px", intensity: "high" },
+    { id: "quote-form", element: "Quote Form Fields", top: "45%", left: "50%", width: "280px", height: "100px", intensity: "high" },
+    { id: "trust-badges", element: "Trust Badges", top: "70%", left: "50%", width: "300px", height: "30px", intensity: "medium" },
+    { id: "testimonials", element: "Testimonials", top: "85%", left: "50%", width: "250px", height: "60px", intensity: "low" },
+  ],
+  "comparison": [
+    { id: "comparison-table", element: "Comparison Table", top: "45%", left: "50%", width: "400px", height: "180px", intensity: "high" },
+    { id: "cta-primary", element: "Primary CTA Button", top: "75%", left: "50%", width: "180px", height: "45px", intensity: "high" },
+    { id: "feature-row", element: "Feature Rows", top: "50%", left: "50%", width: "350px", height: "80px", intensity: "medium" },
+  ],
+  "calculator": [
+    { id: "calculator-form", element: "Calculator Form", top: "40%", left: "30%", width: "280px", height: "200px", intensity: "high" },
+    { id: "calculate-btn", element: "Calculate Button", top: "65%", left: "30%", width: "200px", height: "45px", intensity: "high" },
+    { id: "result-area", element: "Result Display", top: "45%", left: "70%", width: "200px", height: "150px", intensity: "medium" },
+  ],
+  "testimonial": [
+    { id: "video-testimonial", element: "Video Testimonials", top: "35%", left: "50%", width: "350px", height: "120px", intensity: "high" },
+    { id: "testimonial-cards", element: "Testimonial Cards", top: "55%", left: "50%", width: "400px", height: "150px", intensity: "medium" },
+    { id: "cta-primary", element: "Primary CTA Button", top: "85%", left: "50%", width: "200px", height: "45px", intensity: "high" },
+  ],
+  "local-seo": [
+    { id: "hero-cta", element: "Hero CTA Form", top: "50%", left: "50%", width: "300px", height: "180px", intensity: "high" },
+    { id: "local-badges", element: "Local Trust Badges", top: "25%", left: "50%", width: "280px", height: "40px", intensity: "medium" },
+    { id: "location-info", element: "Location Info", top: "15%", left: "50%", width: "150px", height: "30px", intensity: "low" },
+  ],
+  "long-form": [
+    { id: "sticky-cta", element: "Sticky CTA Footer", top: "95%", left: "50%", width: "350px", height: "50px", intensity: "high" },
+    { id: "content-sections", element: "Content Sections", top: "40%", left: "50%", width: "400px", height: "200px", intensity: "medium" },
+    { id: "toc-nav", element: "Table of Contents", top: "18%", left: "50%", width: "300px", height: "60px", intensity: "low" },
+  ],
+};
+
+// Helper to draw a simple pie chart in jsPDF
+function drawPieChart(
+  doc: jsPDF, 
+  centerX: number, 
+  centerY: number, 
+  radius: number, 
+  data: { value: number; color: [number, number, number]; label: string }[]
+) {
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+  let startAngle = -Math.PI / 2; // Start from top
+  
+  data.forEach((slice) => {
+    const sliceAngle = (slice.value / total) * 2 * Math.PI;
+    const endAngle = startAngle + sliceAngle;
+    
+    // Draw slice
+    doc.setFillColor(slice.color[0], slice.color[1], slice.color[2]);
+    
+    // Create path for pie slice
+    const steps = 30;
+    const points: [number, number][] = [[centerX, centerY]];
+    for (let i = 0; i <= steps; i++) {
+      const angle = startAngle + (sliceAngle * i) / steps;
+      points.push([
+        centerX + radius * Math.cos(angle),
+        centerY + radius * Math.sin(angle)
+      ]);
+    }
+    points.push([centerX, centerY]);
+    
+    // Draw filled polygon
+    doc.setDrawColor(255, 255, 255);
+    doc.setLineWidth(0.5);
+    const xCoords = points.map(p => p[0]);
+    const yCoords = points.map(p => p[1]);
+    
+    // Use triangle approach for each segment
+    for (let i = 1; i < points.length - 1; i++) {
+      doc.triangle(
+        points[0][0], points[0][1],
+        points[i][0], points[i][1],
+        points[i + 1][0], points[i + 1][1],
+        'F'
+      );
+    }
+    
+    startAngle = endAngle;
+  });
+  
+  // Draw white center for donut effect
+  doc.setFillColor(255, 255, 255);
+  const innerRadius = radius * 0.5;
+  doc.circle(centerX, centerY, innerRadius, 'F');
+}
+
+// Helper to draw a bar chart in jsPDF
+function drawBarChart(
+  doc: jsPDF,
+  startX: number,
+  startY: number,
+  width: number,
+  height: number,
+  data: { value: number; label: string; color: [number, number, number] }[]
+) {
+  const maxValue = Math.max(...data.map(d => d.value));
+  const barWidth = (width - (data.length - 1) * 4) / data.length;
+  const chartBottom = startY + height;
+  
+  // Draw axis
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.3);
+  doc.line(startX, chartBottom, startX + width, chartBottom);
+  
+  data.forEach((item, i) => {
+    const barHeight = (item.value / maxValue) * (height - 15);
+    const barX = startX + i * (barWidth + 4);
+    const barY = chartBottom - barHeight;
+    
+    // Draw bar
+    doc.setFillColor(item.color[0], item.color[1], item.color[2]);
+    doc.roundedRect(barX, barY, barWidth, barHeight, 1, 1, 'F');
+    
+    // Draw value on top
+    doc.setFontSize(7);
+    doc.setTextColor(60, 60, 60);
+    doc.text(item.value.toString(), barX + barWidth / 2, barY - 2, { align: 'center' });
+    
+    // Draw label below
+    doc.setFontSize(6);
+    doc.setTextColor(120, 120, 120);
+    const labelLines = doc.splitTextToSize(item.label, barWidth + 2);
+    doc.text(labelLines[0].substring(0, 10), barX + barWidth / 2, chartBottom + 5, { align: 'center' });
+  });
+}
  
  interface AILandingPageGeneratorProps {
    isGenerating: boolean;
@@ -280,6 +418,27 @@ interface EditableSection {
    
    // Heatmap overlay state
    const [showHeatmapOverlay, setShowHeatmapOverlay] = useState(false);
+   const [customHeatmapPositions, setCustomHeatmapPositions] = useState<typeof TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]>(
+     TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]
+   );
+   const [editingHeatmapId, setEditingHeatmapId] = useState<string | null>(null);
+
+   // Update heatmap positions when template changes
+   useEffect(() => {
+     setCustomHeatmapPositions(TEMPLATE_HEATMAP_POSITIONS[selectedTemplate] || TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]);
+   }, [selectedTemplate]);
+
+   // Get current heatmap positions
+   const getCurrentHeatmapPositions = () => {
+     return customHeatmapPositions;
+   };
+
+   // Update heatmap position
+   const updateHeatmapPosition = (id: string, field: string, value: string) => {
+     setCustomHeatmapPositions(prev => 
+       prev.map(pos => pos.id === id ? { ...pos, [field]: value } : pos)
+     );
+   };
   
   // Popout modal drag state
   const [popoutPosition, setPopoutPosition] = useState({ x: 0, y: 0 });
@@ -540,6 +699,84 @@ interface EditableSection {
      doc.setFontSize(9);
      doc.setTextColor(150);
      doc.text("Generated by TruMove AI Marketing Suite", pageWidth / 2, 285, { align: "center" });
+     
+     // Page 3: Visual Charts
+     doc.addPage();
+     doc.setFontSize(18);
+     doc.setTextColor(124, 58, 237);
+     doc.text("Visual Analytics", pageWidth / 2, 20, { align: "center" });
+     
+     // Click Distribution Pie Chart
+     doc.setFontSize(12);
+     doc.setTextColor(30);
+     doc.text("Click Distribution by Element", 40, 40);
+     
+     const pieData = importedData.clickBehavior.slice(0, 5).map((click, i) => ({
+       value: click.clicks,
+       color: [
+         [239, 68, 68],    // red
+         [249, 115, 22],   // orange
+         [234, 179, 8],    // yellow
+         [34, 197, 94],    // green
+         [59, 130, 246],   // blue
+       ][i] as [number, number, number],
+       label: click.element
+     }));
+     
+     drawPieChart(doc, 50, 85, 30, pieData);
+     
+     // Legend for pie chart
+     let legendY = 50;
+     pieData.forEach((item) => {
+       doc.setFillColor(item.color[0], item.color[1], item.color[2]);
+       doc.rect(90, legendY - 3, 6, 6, 'F');
+       doc.setFontSize(8);
+       doc.setTextColor(60);
+       doc.text(`${item.label} (${((item.value / importedData.totalClicks) * 100).toFixed(1)}%)`, 100, legendY);
+       legendY += 10;
+     });
+     
+     // Conversion by Demographic Bar Chart
+     doc.setFontSize(12);
+     doc.setTextColor(30);
+     doc.text("Conversions by Demographic", 40, 130);
+     
+     const demoBarData = importedData.demographic.map((demo, i) => ({
+       value: demo.conversions,
+       label: demo.segment.split(' ')[0],
+       color: [
+         [34, 197, 94],    // green
+         [59, 130, 246],   // blue
+         [139, 92, 246],   // purple
+         [245, 158, 11],   // amber
+         [236, 72, 153],   // pink
+       ][i] as [number, number, number]
+     }));
+     
+     drawBarChart(doc, 25, 140, pageWidth - 50, 50, demoBarData);
+     
+     // Geographic Performance Bar Chart
+     doc.setFontSize(12);
+     doc.setTextColor(30);
+     doc.text("Revenue by State", 40, 210);
+     
+     const geoBarData = importedData.geographic.slice(0, 5).map((geo, i) => ({
+       value: Math.round(geo.revenue / 1000),
+       label: geo.state,
+       color: [
+         [124, 58, 237],   // purple
+         [236, 72, 153],   // pink
+         [59, 130, 246],   // blue
+         [16, 185, 129],   // teal
+         [245, 158, 11],   // amber
+       ][i] as [number, number, number]
+     }));
+     
+     drawBarChart(doc, 25, 220, pageWidth - 50, 50, geoBarData);
+     
+     doc.setFontSize(8);
+     doc.setTextColor(100);
+     doc.text("Values in thousands ($K)", pageWidth / 2, 275, { align: "center" });
      
      doc.save(`landing-page-analytics-${new Date().toISOString().split('T')[0]}.pdf`);
      toast.success("Analytics PDF exported successfully!");
@@ -1457,56 +1694,37 @@ interface EditableSection {
              {/* Heatmap Overlay */}
              {showHeatmapOverlay && importedData && (
                <div className="absolute inset-0 pointer-events-none z-20">
-                 {/* CTA Button Hotspot */}
-                 <div 
-                   className="absolute left-1/2 -translate-x-1/2 top-[55%] w-48 h-12 rounded-lg animate-pulse"
-                   style={{ 
-                     background: "radial-gradient(ellipse, rgba(239, 68, 68, 0.6) 0%, rgba(239, 68, 68, 0.3) 40%, transparent 70%)",
-                     boxShadow: "0 0 40px 20px rgba(239, 68, 68, 0.4)"
-                   }}
-                 >
-                   <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
-                     🔥 35.9% clicks • Primary CTA
-                   </div>
-                 </div>
-                 
-                 {/* Quote Form Hotspot */}
-                 <div 
-                   className="absolute left-1/2 -translate-x-1/2 top-[45%] w-56 h-20 rounded-lg"
-                   style={{ 
-                     background: "radial-gradient(ellipse, rgba(249, 115, 22, 0.5) 0%, rgba(249, 115, 22, 0.2) 40%, transparent 70%)",
-                     boxShadow: "0 0 30px 15px rgba(249, 115, 22, 0.3)"
-                   }}
-                 >
-                   <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
-                     ⚡ 27.0% • Form Fields
-                   </div>
-                 </div>
-                 
-                 {/* Trust Badges Hotspot */}
-                 <div 
-                   className="absolute left-1/2 -translate-x-1/2 top-[68%] w-72 h-8 rounded-lg"
-                   style={{ 
-                     background: "radial-gradient(ellipse, rgba(234, 179, 8, 0.4) 0%, rgba(234, 179, 8, 0.15) 40%, transparent 70%)",
-                     boxShadow: "0 0 25px 10px rgba(234, 179, 8, 0.25)"
-                   }}
-                 >
-                   <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
-                     ⚡ 15.7% • Trust Badges
-                   </div>
-                 </div>
-                 
-                 {/* Navigation - Cool zone */}
-                 <div 
-                   className="absolute top-2 left-2 right-2 h-8 rounded-lg"
-                   style={{ 
-                     background: "radial-gradient(ellipse at top, rgba(59, 130, 246, 0.25) 0%, transparent 60%)"
-                   }}
-                 >
-                   <div className="absolute top-10 left-4 bg-blue-500 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
-                     ❄️ 3.6% • Nav Links (low)
-                   </div>
-                 </div>
+                  {getCurrentHeatmapPositions().map((pos, i) => {
+                    const clickData = importedData.clickBehavior.find(c => 
+                      c.element.toLowerCase().includes(pos.element.toLowerCase().split(' ')[0])
+                    );
+                    const intensity = pos.intensity;
+                    const colors = {
+                      high: { bg: "rgba(239, 68, 68, 0.6)", shadow: "0 0 40px 20px rgba(239, 68, 68, 0.4)", badge: "bg-red-600" },
+                      medium: { bg: "rgba(249, 115, 22, 0.5)", shadow: "0 0 30px 15px rgba(249, 115, 22, 0.3)", badge: "bg-orange-500" },
+                      low: { bg: "rgba(59, 130, 246, 0.4)", shadow: "0 0 25px 10px rgba(59, 130, 246, 0.25)", badge: "bg-blue-500" },
+                    };
+                    const color = colors[intensity];
+                    
+                    return (
+                      <div 
+                        key={pos.id}
+                        className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-lg ${intensity === 'high' ? 'animate-pulse' : ''}`}
+                        style={{ 
+                          top: pos.top,
+                          left: pos.left,
+                          width: pos.width,
+                          height: pos.height,
+                          background: `radial-gradient(ellipse, ${color.bg} 0%, ${color.bg.replace(/0\.[456]/g, '0.15')} 40%, transparent 70%)`,
+                          boxShadow: color.shadow
+                        }}
+                      >
+                        <div className={`absolute -top-6 left-1/2 -translate-x-1/2 ${color.badge} text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium`}>
+                          {intensity === 'high' ? '🔥' : intensity === 'medium' ? '⚡' : '❄️'} {clickData?.percentage || ((5 - i) * 8)}% • {pos.element}
+                        </div>
+                      </div>
+                    );
+                  })}
                  
                  {/* Legend */}
                  <div className="absolute bottom-4 right-4 p-2 rounded-lg bg-black/80 backdrop-blur-sm text-white text-[10px] space-y-1">
@@ -2163,23 +2381,35 @@ interface EditableSection {
                   {/* Heatmap Overlay in side-by-side */}
                   {showHeatmapOverlay && importedData && (
                     <div className="absolute inset-0 pointer-events-none z-20">
-                      <div 
-                        className="absolute left-1/2 -translate-x-1/2 top-[55%] w-48 h-12 rounded-lg animate-pulse"
-                        style={{ 
-                          background: "radial-gradient(ellipse, rgba(239, 68, 68, 0.6) 0%, rgba(239, 68, 68, 0.3) 40%, transparent 70%)",
-                          boxShadow: "0 0 40px 20px rgba(239, 68, 68, 0.4)"
-                        }}
-                      >
-                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
-                          🔥 35.9% clicks
-                        </div>
-                      </div>
-                      <div 
-                        className="absolute left-1/2 -translate-x-1/2 top-[45%] w-56 h-20 rounded-lg"
-                        style={{ 
-                          background: "radial-gradient(ellipse, rgba(249, 115, 22, 0.5) 0%, rgba(249, 115, 22, 0.2) 40%, transparent 70%)"
-                        }}
-                      />
+                      {getCurrentHeatmapPositions().map((pos, i) => {
+                        const clickData = importedData.clickBehavior.find(c => c.element.toLowerCase().includes(pos.element.toLowerCase().split(' ')[0]));
+                        const intensity = pos.intensity;
+                        const colors = {
+                          high: { bg: "rgba(239, 68, 68, 0.6)", shadow: "rgba(239, 68, 68, 0.4)", badge: "bg-red-600" },
+                          medium: { bg: "rgba(249, 115, 22, 0.5)", shadow: "rgba(249, 115, 22, 0.3)", badge: "bg-amber-600" },
+                          low: { bg: "rgba(59, 130, 246, 0.4)", shadow: "rgba(59, 130, 246, 0.2)", badge: "bg-blue-600" },
+                        };
+                        const color = colors[intensity];
+                        
+                        return (
+                          <div 
+                            key={pos.id}
+                            className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-lg ${intensity === 'high' ? 'animate-pulse' : ''}`}
+                            style={{ 
+                              top: pos.top,
+                              left: pos.left,
+                              width: pos.width,
+                              height: pos.height,
+                              background: `radial-gradient(ellipse, ${color.bg} 0%, ${color.bg.replace('0.6', '0.2').replace('0.5', '0.15').replace('0.4', '0.1')} 40%, transparent 70%)`,
+                              boxShadow: intensity === 'high' ? `0 0 40px 20px ${color.shadow}` : undefined
+                            }}
+                          >
+                            <div className={`absolute -top-6 left-1/2 -translate-x-1/2 ${color.badge} text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium`}>
+                              {intensity === 'high' ? '🔥' : intensity === 'medium' ? '⚡' : '❄️'} {clickData?.percentage || ((5 - i) * 8)}% clicks
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -2215,6 +2445,57 @@ interface EditableSection {
                         </Button>
                       </div>
                     </div>
+                    
+                    {/* Heatmap Customization */}
+                    {showHeatmapOverlay && (
+                      <div className="mt-2 p-2 rounded-lg bg-muted border border-border">
+                        <p className="text-[10px] text-muted-foreground mb-2">Customize heatmap positions for {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}:</p>
+                        <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                          {getCurrentHeatmapPositions().map((pos) => (
+                            <div key={pos.id} className="flex items-center gap-2 text-[10px]">
+                              <span 
+                                className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                  pos.intensity === 'high' ? 'bg-red-500' :
+                                  pos.intensity === 'medium' ? 'bg-amber-500' : 'bg-blue-500'
+                                }`}
+                              />
+                              <span className="flex-1 truncate text-foreground">{pos.element}</span>
+                              {editingHeatmapId === pos.id ? (
+                                <div className="flex items-center gap-1">
+                                  <input
+                                    type="text"
+                                    value={pos.top}
+                                    onChange={(e) => updateHeatmapPosition(pos.id, 'top', e.target.value)}
+                                    className="w-12 px-1 py-0.5 text-[9px] rounded border border-border bg-background"
+                                    placeholder="top"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={pos.left}
+                                    onChange={(e) => updateHeatmapPosition(pos.id, 'left', e.target.value)}
+                                    className="w-12 px-1 py-0.5 text-[9px] rounded border border-border bg-background"
+                                    placeholder="left"
+                                  />
+                                  <button 
+                                    onClick={() => setEditingHeatmapId(null)}
+                                    className="p-0.5 rounded hover:bg-muted-foreground/20"
+                                  >
+                                    <Check className="w-3 h-3 text-green-500" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button 
+                                  onClick={() => setEditingHeatmapId(pos.id)}
+                                  className="p-0.5 rounded hover:bg-muted-foreground/20"
+                                >
+                                  <Pencil className="w-3 h-3 text-muted-foreground" />
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   
                   <ScrollArea className="flex-1">
