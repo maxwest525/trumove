@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Loader2, Navigation2, Eye, Satellite } from "lucide-react";
+import { Loader2, Navigation2, Satellite } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { StreetViewInset } from "./StreetViewInset";
 
 interface Google2DTrackingMapProps {
   originCoords: [number, number] | null;
@@ -22,62 +21,39 @@ declare global {
   }
 }
 
-// Clean truck silhouette SVG - matches satellite route aesthetic
-const TRUCK_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="32" viewBox="0 0 48 32">
+// Green circular truck icon with pulsing animation - matches original style
+const TRUCK_ICON_GREEN_CIRCLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
   <defs>
-    <filter id="truckShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.6"/>
-    </filter>
-  </defs>
-  <!-- Truck body -->
-  <rect x="0" y="6" width="28" height="16" rx="2" fill="#1a1a1a" filter="url(#truckShadow)"/>
-  <!-- Cab section -->
-  <path d="M28 6 L28 22 L40 22 L40 12 L34 6 Z" fill="#1a1a1a" filter="url(#truckShadow)"/>
-  <!-- Windshield accent -->
-  <path d="M29 7 L33 7 L38 12 L38 14 L29 14 Z" fill="#00e5a0" opacity="0.9"/>
-  <!-- Cargo stripes -->
-  <rect x="4" y="10" width="20" height="2" fill="#00e5a0" opacity="0.6"/>
-  <rect x="4" y="14" width="20" height="2" fill="#00e5a0" opacity="0.4"/>
-  <!-- Wheels -->
-  <circle cx="10" cy="24" r="5" fill="#333"/>
-  <circle cx="10" cy="24" r="3" fill="#1a1a1a" stroke="#00e5a0" stroke-width="1.5"/>
-  <circle cx="34" cy="24" r="5" fill="#333"/>
-  <circle cx="34" cy="24" r="3" fill="#1a1a1a" stroke="#00e5a0" stroke-width="1.5"/>
-  <!-- Direction arrow -->
-  <path d="M42 10 L48 16 L42 22 L42 18 L46 16 L42 14 Z" fill="#00e5a0"/>
-</svg>`;
-
-// Truck SVG with animated pulse ring for active tracking
-const TRUCK_ICON_PULSING_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
-  <defs>
-    <filter id="truckGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.5"/>
+    <filter id="truckGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#00e5a0" flood-opacity="0.6" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
   </defs>
   <!-- Outer pulse ring -->
-  <circle cx="36" cy="36" r="32" fill="none" stroke="#00e5a0" stroke-width="2" opacity="0.5">
-    <animate attributeName="r" values="28;34;28" dur="1.5s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.5s" repeatCount="indefinite"/>
+  <circle cx="28" cy="28" r="26" fill="none" stroke="#00e5a0" stroke-width="2" opacity="0.4">
+    <animate attributeName="r" values="22;26;22" dur="1.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0.2;0.5" dur="1.5s" repeatCount="indefinite"/>
   </circle>
   <!-- Inner pulse ring -->
-  <circle cx="36" cy="36" r="26" fill="none" stroke="#00e5a0" stroke-width="1.5" opacity="0.3">
-    <animate attributeName="r" values="24;29;24" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
-    <animate attributeName="opacity" values="0.5;0.15;0.5" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
+  <circle cx="28" cy="28" r="20" fill="none" stroke="#00e5a0" stroke-width="1.5" opacity="0.3">
+    <animate attributeName="r" values="18;21;18" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
+    <animate attributeName="opacity" values="0.4;0.15;0.4" dur="1.5s" repeatCount="indefinite" begin="0.2s"/>
   </circle>
-  <!-- Truck body -->
-  <rect x="16" y="28" width="28" height="16" rx="2" fill="#1a1a1a" filter="url(#truckGlow)"/>
-  <!-- Cab section -->
-  <path d="M44 28 L44 44 L56 44 L56 34 L50 28 Z" fill="#1a1a1a" filter="url(#truckGlow)"/>
-  <!-- Windshield -->
-  <path d="M45 29 L49 29 L54 34 L54 36 L45 36 Z" fill="#00e5a0" opacity="0.9"/>
-  <!-- Cargo stripes -->
-  <rect x="20" y="32" width="20" height="2" fill="#00e5a0" opacity="0.5"/>
-  <rect x="20" y="36" width="20" height="2" fill="#00e5a0" opacity="0.3"/>
-  <!-- Wheels -->
-  <circle cx="26" cy="46" r="4" fill="#333"/>
-  <circle cx="26" cy="46" r="2.5" fill="#1a1a1a" stroke="#00e5a0" stroke-width="1"/>
-  <circle cx="50" cy="46" r="4" fill="#333"/>
-  <circle cx="50" cy="46" r="2.5" fill="#1a1a1a" stroke="#00e5a0" stroke-width="1"/>
+  <!-- Green circular background -->
+  <circle cx="28" cy="28" r="16" fill="#00e5a0" filter="url(#truckGlow)"/>
+  <!-- Truck icon (Lucide-style) -->
+  <g transform="translate(18, 18)" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 15V5a1.5 1.5 0 0 0-1.5-1.5h-6A1.5 1.5 0 0 0 3 5v9.25a0.75 0.75 0 0 0 0.75 0.75h1.5"/>
+    <path d="M12.75 15H8.25"/>
+    <path d="M15.75 15h1.5a0.75 0.75 0 0 0 0.75-0.75v-2.75a0.75 0.75 0 0 0-0.165-0.47l-2.61-3.26A0.75 0.75 0 0 0 14.64 7.5H12"/>
+    <circle cx="14.25" cy="15" r="1.5" fill="#1a1a1a"/>
+    <circle cx="6" cy="15" r="1.5" fill="#1a1a1a"/>
+  </g>
 </svg>`;
 
 /**
@@ -160,11 +136,11 @@ export function Google2DTrackingMap({
     try {
       const initialCenter = originCoords 
         ? { lat: originCoords[1], lng: originCoords[0] }
-        : { lat: 28.5383, lng: -81.3792 }; // Default: Orlando
+        : { lat: 39.8283, lng: -98.5795 }; // Default: Center of US (Kansas)
 
       const map = new window.google.maps.Map(containerRef.current, {
         center: initialCenter,
-        zoom: originCoords ? 12 : 6,
+        zoom: originCoords ? 12 : 4, // Start zoomed out for continental US view
         mapTypeId: mapType,
         mapTypeControl: false, // Disabled - using custom dropdown instead
         fullscreenControl: false,
@@ -438,9 +414,9 @@ export function Google2DTrackingMap({
               position: { lat: originCoords[1], lng: originCoords[0] },
               map: mapRef.current,
               icon: {
-                url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(TRUCK_ICON_PULSING_SVG)}`,
-                scaledSize: new window.google.maps.Size(72, 72),
-                anchor: new window.google.maps.Point(36, 46)
+                url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(TRUCK_ICON_GREEN_CIRCLE_SVG)}`,
+                scaledSize: new window.google.maps.Size(56, 56),
+                anchor: new window.google.maps.Point(28, 28)
               },
               zIndex: 100,
               animation: window.google.maps.Animation.DROP
@@ -689,13 +665,6 @@ export function Google2DTrackingMap({
       )}
 
       {/* Street View Inset - Bottom Right - Clickable to expand */}
-      {isTracking && currentTruckCoords && googleApiKey && (
-        <StreetViewInset 
-          coords={currentTruckCoords}
-          bearing={currentBearing}
-          googleApiKey={googleApiKey}
-        />
-      )}
 
       {/* Map container */}
       <div 
