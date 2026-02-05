@@ -1,5 +1,6 @@
- import { useState } from "react";
- import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  import { Button } from "@/components/ui/button";
  import { Input } from "@/components/ui/input";
  import { Label } from "@/components/ui/label";
@@ -112,49 +113,87 @@
      }));
    };
  
-   const handleSendDocument = async () => {
-     if (!newDoc.customerName) {
-       toast.error("Please enter customer name");
-       return;
-     }
-     if (newDoc.deliveryMethod === "email" && !newDoc.customerEmail) {
-       toast.error("Please enter customer email");
-       return;
-     }
-     if (newDoc.deliveryMethod === "sms" && !newDoc.customerPhone) {
-       toast.error("Please enter customer phone");
-       return;
-     }
- 
-     setIsSending(true);
-     await new Promise(resolve => setTimeout(resolve, 1500));
- 
-     const refPrefix = newDoc.type === "estimate" ? "EST" : newDoc.type === "ccach" ? "CC" : "BOL";
-     const newRecord: DocumentRecord = {
-       id: `doc-${Date.now()}`,
-       type: newDoc.type,
-       refNumber: `${refPrefix}-2026-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`,
-       customerName: newDoc.customerName,
-       customerEmail: newDoc.customerEmail,
-       customerPhone: newDoc.customerPhone,
-       status: "sent",
-       sentAt: new Date(),
-       deliveryMethod: newDoc.deliveryMethod,
-     };
- 
-     setDocuments(prev => [newRecord, ...prev]);
-     setIsSending(false);
-     toast.success(`${DOCUMENT_LABELS[newDoc.type]} sent via ${newDoc.deliveryMethod.toUpperCase()}`);
-     
-     // Reset form
-     setNewDoc({
-       type: "estimate",
-       customerName: "",
-       customerEmail: "",
-       customerPhone: "",
-       deliveryMethod: "email",
-     });
-   };
+  const handleSendDocument = async () => {
+    if (!newDoc.customerName) {
+      toast.error("Please enter customer name");
+      return;
+    }
+    if (newDoc.deliveryMethod === "email" && !newDoc.customerEmail) {
+      toast.error("Please enter customer email");
+      return;
+    }
+    if (newDoc.deliveryMethod === "sms" && !newDoc.customerPhone) {
+      toast.error("Please enter customer phone");
+      return;
+    }
+
+    setIsSending(true);
+
+    const refPrefix = newDoc.type === "estimate" ? "EST" : newDoc.type === "ccach" ? "CC" : "BOL";
+    const refNumber = `${refPrefix}-2026-${String(Math.floor(Math.random() * 9999)).padStart(4, "0")}`;
+    
+    // Generate a signing URL (in production, this would be a real e-sign provider URL)
+    const signingUrl = `${window.location.origin}/esign/${refNumber}`;
+
+    try {
+      // Call edge function to send email/SMS
+      const { data, error } = await supabase.functions.invoke('send-esign-document', {
+        body: {
+          documentType: newDoc.type,
+          customerName: newDoc.customerName,
+          customerEmail: newDoc.customerEmail,
+          customerPhone: newDoc.customerPhone,
+          refNumber,
+          deliveryMethod: newDoc.deliveryMethod,
+          signingUrl,
+        },
+      });
+
+      if (error) {
+        console.error("Error sending document:", error);
+        toast.error("Failed to send document", {
+          description: error.message || "Please try again",
+        });
+        setIsSending(false);
+        return;
+      }
+
+      const newRecord: DocumentRecord = {
+        id: `doc-${Date.now()}`,
+        type: newDoc.type,
+        refNumber,
+        customerName: newDoc.customerName,
+        customerEmail: newDoc.customerEmail,
+        customerPhone: newDoc.customerPhone,
+        status: "sent",
+        sentAt: new Date(),
+        deliveryMethod: newDoc.deliveryMethod,
+      };
+
+      setDocuments(prev => [newRecord, ...prev]);
+      
+      const methodLabel = newDoc.deliveryMethod === "email" ? "email" : "SMS";
+      toast.success(`${DOCUMENT_LABELS[newDoc.type]} sent via ${methodLabel}`, {
+        description: data?.method === "sms" 
+          ? "SMS delivery simulated for demo" 
+          : `Sent to ${newDoc.customerEmail}`,
+      });
+      
+      // Reset form
+      setNewDoc({
+        type: "estimate",
+        customerName: "",
+        customerEmail: "",
+        customerPhone: "",
+        deliveryMethod: "email",
+      });
+    } catch (err) {
+      console.error("Error sending document:", err);
+      toast.error("Failed to send document");
+    } finally {
+      setIsSending(false);
+    }
+  };
  
    const handleResend = async (doc: DocumentRecord) => {
      toast.success(`Resent ${DOCUMENT_LABELS[doc.type]} to ${doc.customerName}`);
