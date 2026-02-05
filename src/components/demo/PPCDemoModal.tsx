@@ -4,24 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { 
-  Sparkles, Search, Globe, TrendingUp, Target, 
+  Sparkles, Target, 
   BarChart3, DollarSign,
   Layout, RefreshCw, 
   ExternalLink,
-  Play, Pause, FlaskConical, LineChart,
+  Play, Pause, FlaskConical,
   Radio, Mail, Home, ArrowLeft
 } from "lucide-react";
 import { ABTest, ConversionEvent, FunnelStage, Stats, Ad } from "./ppc/types";
 import { ABTestManager } from "./ppc/ABTestManager";
-import { ConversionsPanel } from "./ppc/ConversionsPanel";
 import { AILandingPageGenerator } from "./ppc/AILandingPageGenerator";
 import { MarketingHubDashboard } from "./ppc/MarketingHubDashboard";
 import { UnifiedAnalyticsDashboard } from "./ppc/UnifiedAnalyticsDashboard";
-import { WelcomeFlow } from "./ppc/WelcomeFlow";
-import { QuickStartWizard } from "./ppc/QuickStartWizard";
+import { SimpleMarketingFlow } from "./ppc/SimpleMarketingFlow";
 
 interface PPCDemoModalProps {
   open: boolean;
@@ -157,11 +154,9 @@ const INITIAL_STATS: Stats = {
 
 export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [viewMode, setViewMode] = useState<'welcome' | 'hub' | 'wizard' | 'detail'>('hub');
-  const [isFirstVisit, setIsFirstVisit] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<'hub' | 'quickcreate' | 'detail'>('hub');
+  const [quickCreateType, setQuickCreateType] = useState<'ad' | 'landing' | 'campaign' | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedContent, setGeneratedContent] = useState<string | null>(null);
   
   // Live demo mode
   const [liveMode, setLiveMode] = useState(false);
@@ -178,15 +173,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
   const [exportType, setExportType] = useState<"abtest" | "conversions">("abtest");
   const [isExporting, setIsExporting] = useState(false);
 
-  // Check for first visit
-  useEffect(() => {
-    const visited = localStorage.getItem('tm_marketing_visited');
-    if (!visited) {
-      setIsFirstVisit(true);
-      setViewMode('welcome');
-    }
-  }, []);
- 
   // Live mode simulation
   useEffect(() => {
     if (!liveMode || !open) return;
@@ -248,7 +234,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
     setIsGenerating(true);
     setTimeout(() => {
       setIsGenerating(false);
-      setGeneratedContent("Get Your Free Moving Quote in 60 Seconds\n\nTrusted by 50,000+ families nationwide. Our AI-powered system gives you accurate, binding quotes without the runaround.\n\n✓ Compare verified movers instantly\n✓ Real-time shipment tracking\n✓ Price-match guarantee\n✓ $0 deposit to book");
     }, 2000);
   };
   
@@ -274,29 +259,25 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
     setShowEmailModal(true);
   };
 
-  const handleWelcomeComplete = (mode: 'quickstart' | 'explore') => {
-    localStorage.setItem('tm_marketing_visited', 'true');
-    setIsFirstVisit(false);
-    if (mode === 'quickstart') {
-      setViewMode('wizard');
-    } else {
-      setViewMode('hub');
-    }
+  // Handle quick create from hub
+  const handleQuickCreate = (type: 'ad' | 'landing' | 'campaign') => {
+    setQuickCreateType(type);
+    setViewMode('quickcreate');
   };
- 
-  const handleQuickCreate = (businessInfo: { name: string; location: string; service: string }) => {
-    localStorage.setItem('tm_marketing_visited', 'true');
-    setIsFirstVisit(false);
+
+  // Handle flow completion
+  const handleFlowComplete = (result: { type: string; data: any }) => {
     setViewMode('detail');
-    setActiveTab('landing');
-    toast.success('Landing page created!', {
-      description: `${businessInfo.name} - ${businessInfo.location}`
-    });
+    if (result.type === 'landing') {
+      setActiveTab('landing');
+    } else if (result.type === 'ad' || result.type === 'campaign') {
+      setActiveTab('ads');
+    }
   };
  
   const handleNavigate = (section: string) => {
     if (section === 'ai-create' || section === 'landing') {
-      setViewMode('wizard');
+      handleQuickCreate('landing');
     } else if (section === 'performance') {
       setViewMode('detail');
       setActiveTab('analytics');
@@ -316,14 +297,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
       setViewMode('detail');
       setActiveTab(section === 'dashboard' ? 'analytics' : section);
     }
-  };
- 
-  const handleWizardComplete = (pageData: any) => {
-    setViewMode('detail');
-    setActiveTab('landing');
-    toast.success('Landing page created!', {
-      description: `${pageData.businessName} - ${pageData.location}`
-    });
   };
  
   return (
@@ -348,7 +321,7 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             <span className="text-sm font-normal text-white/80">PPC • SEO • A/B Testing • Conversion Tracking</span>
           </div>
           {/* Home Button */}
-          {viewMode !== 'hub' && viewMode !== 'welcome' && (
+          {viewMode !== 'hub' && (
             <button
               onClick={(e) => { e.stopPropagation(); setViewMode('hub'); }}
               className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-white/20 text-white hover:bg-white/30"
@@ -459,21 +432,12 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
           </div>
         )}
 
-        {/* Welcome Flow */}
-        {viewMode === 'welcome' && (
-          <ScrollArea className="flex-1 max-h-[calc(90vh-140px)]">
-            <WelcomeFlow 
-              onComplete={handleWelcomeComplete}
-              onQuickCreate={handleQuickCreate}
-            />
-          </ScrollArea>
-        )}
- 
         {/* Hub View */}
         {viewMode === 'hub' && (
           <ScrollArea className="flex-1 max-h-[calc(90vh-140px)]">
             <MarketingHubDashboard 
               onNavigate={handleNavigate}
+              onQuickCreate={handleQuickCreate}
               stats={{
                 totalSpend: Math.round(stats.totalSpend),
                 conversions: stats.conversions,
@@ -484,11 +448,11 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
           </ScrollArea>
         )}
  
-        {/* Wizard View */}
-        {viewMode === 'wizard' && (
+        {/* Quick Create Flow */}
+        {viewMode === 'quickcreate' && (
           <ScrollArea className="flex-1 max-h-[calc(90vh-140px)]">
-            <QuickStartWizard 
-              onComplete={handleWizardComplete}
+            <SimpleMarketingFlow 
+              onComplete={handleFlowComplete}
               onCancel={() => setViewMode('hub')}
             />
           </ScrollArea>
