@@ -197,10 +197,10 @@ export function GuidedTour({ isOpen, onClose, onComplete, onNavigate }: GuidedTo
               Back
             </Button>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleSkipTour}
-              className="text-muted-foreground"
+              className="border-2 border-muted-foreground/50 text-foreground font-medium hover:bg-muted"
             >
               Skip Tour
             </Button>
