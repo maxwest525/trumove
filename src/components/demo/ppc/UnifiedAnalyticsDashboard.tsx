@@ -1,15 +1,51 @@
- import { useState } from "react";
- import { Badge } from "@/components/ui/badge";
- import { Button } from "@/components/ui/button";
- import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
- import { ScrollArea } from "@/components/ui/scroll-area";
- import { Progress } from "@/components/ui/progress";
- import {
-   TrendingUp, TrendingDown, DollarSign, Users, Globe, Target,
-   Smartphone, Monitor, MapPin, BarChart3, PieChart, Hash, Zap,
-   CheckCircle2, AlertTriangle, Star, Search, Layout, FlaskConical,
-   ArrowRight, MousePointer, Eye, Clock, Percent
- } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Progress } from "@/components/ui/progress";
+import {
+  TrendingUp, TrendingDown, DollarSign, Users, Globe, Target,
+  Smartphone, Monitor, MapPin, BarChart3, PieChart, Hash, Zap,
+  CheckCircle2, AlertTriangle, Star, Search, Layout, FlaskConical,
+  ArrowRight, MousePointer, Eye, Clock, Percent
+} from "lucide-react";
+
+// Animated number component for live mode
+function AnimatedNumber({ value, prefix = "", suffix = "", decimals = 0, liveMode = false }: {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  liveMode?: boolean;
+}) {
+  const [displayValue, setDisplayValue] = useState(value);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (!liveMode) {
+      setDisplayValue(value);
+      return;
+    }
+
+    // Random fluctuation every 2-4 seconds
+    const interval = setInterval(() => {
+      const fluctuation = (Math.random() - 0.5) * value * 0.05; // ±2.5%
+      const newValue = value + fluctuation;
+      setDisplayValue(newValue);
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 300);
+    }, 2000 + Math.random() * 2000);
+
+    return () => clearInterval(interval);
+  }, [value, liveMode]);
+
+  return (
+    <span className={`transition-all duration-300 ${isAnimating && liveMode ? 'text-primary scale-105' : ''}`}>
+      {prefix}{displayValue.toFixed(decimals)}{suffix}
+    </span>
+  );
+}
  
 export interface AnalyticsPrefillData {
   keywords: string[];
@@ -97,28 +133,62 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
     onCreateLandingPage(prefillData);
   };
  
-   return (
-     <ScrollArea className="h-full">
-       <div className="p-4 space-y-4">
-         {/* KPI Strip - 8 Key Metrics */}
-         <div className="grid grid-cols-8 gap-2">
-           {[
-             { label: "Spend", value: `$${(totalSpend / 1000).toFixed(1)}K`, icon: DollarSign, color: "#10B981" },
-             { label: "Clicks", value: totalClicks.toLocaleString(), icon: MousePointer, color: "#3B82F6" },
-             { label: "CTR", value: `${avgCTR.toFixed(1)}%`, icon: Percent, color: "#8B5CF6" },
-             { label: "Conversions", value: totalConversions.toLocaleString(), icon: Target, color: "#EC4899" },
-             { label: "CPA", value: `$${avgCPA.toFixed(0)}`, icon: DollarSign, color: "#F59E0B" },
-             { label: "ROAS", value: `${avgROAS.toFixed(1)}x`, icon: TrendingUp, color: "#10B981" },
-             { label: "SEO Score", value: "87", icon: Globe, color: "#3B82F6" },
-             { label: "A/B Lifts", value: "+27%", icon: FlaskConical, color: "#EC4899" },
-           ].map((stat) => (
-             <div key={stat.label} className="p-2 rounded-lg bg-muted/50 border border-border text-center">
-               <stat.icon className="w-4 h-4 mx-auto mb-1" style={{ color: stat.color }} />
-               <p className="text-sm font-bold text-foreground">{stat.value}</p>
-               <p className="text-[10px] text-muted-foreground">{stat.label}</p>
-             </div>
-           ))}
-         </div>
+  // Live mode animation states
+  const [liveClickCount, setLiveClickCount] = useState(0);
+
+  useEffect(() => {
+    if (!liveMode) return;
+    
+    const clickInterval = setInterval(() => {
+      setLiveClickCount(prev => prev + Math.floor(Math.random() * 3) + 1);
+    }, 1500);
+
+    return () => clearInterval(clickInterval);
+  }, [liveMode]);
+
+  return (
+    <ScrollArea className="h-full">
+      <div className="p-4 space-y-4">
+        {/* Live Mode Indicator */}
+        {liveMode && (
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/30 w-fit animate-pulse">
+            <span className="w-2 h-2 rounded-full bg-destructive animate-ping" />
+            <span className="text-xs font-medium text-destructive">LIVE DATA</span>
+            <span className="text-xs text-muted-foreground">+{liveClickCount} clicks this session</span>
+          </div>
+        )}
+
+        {/* KPI Strip - 8 Key Metrics */}
+        <div className="grid grid-cols-8 gap-2">
+          {[
+            { label: "Spend", value: totalSpend / 1000, prefix: "$", suffix: "K", decimals: 1, icon: DollarSign, color: "text-green-500" },
+            { label: "Clicks", value: totalClicks, icon: MousePointer, color: "text-blue-500" },
+            { label: "CTR", value: avgCTR, suffix: "%", decimals: 1, icon: Percent, color: "text-purple-500" },
+            { label: "Conversions", value: totalConversions, icon: Target, color: "text-pink-500" },
+            { label: "CPA", value: avgCPA, prefix: "$", decimals: 0, icon: DollarSign, color: "text-amber-500" },
+            { label: "ROAS", value: avgROAS, suffix: "x", decimals: 1, icon: TrendingUp, color: "text-green-500" },
+            { label: "SEO Score", value: 87, icon: Globe, color: "text-blue-500" },
+            { label: "A/B Lifts", value: 27, prefix: "+", suffix: "%", icon: FlaskConical, color: "text-pink-500" },
+          ].map((stat, idx) => (
+            <div 
+              key={stat.label} 
+              className={`p-2 rounded-lg bg-muted/50 border border-border text-center transition-all duration-300 ${liveMode ? 'hover:border-primary/50' : ''}`}
+              style={{ animationDelay: liveMode ? `${idx * 100}ms` : '0ms' }}
+            >
+              <stat.icon className={`w-4 h-4 mx-auto mb-1 ${stat.color} ${liveMode ? 'animate-pulse' : ''}`} />
+              <p className="text-sm font-bold text-foreground">
+                <AnimatedNumber 
+                  value={stat.value} 
+                  prefix={stat.prefix} 
+                  suffix={stat.suffix} 
+                  decimals={stat.decimals || 0}
+                  liveMode={liveMode}
+                />
+              </p>
+              <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+            </div>
+          ))}
+        </div>
  
          {/* Main Grid - 3 Columns */}
          <div className="grid grid-cols-3 gap-4">
@@ -133,22 +203,37 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                    {liveMode && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
                  </CardTitle>
                </CardHeader>
-               <CardContent className="px-3 pb-3 space-y-1.5">
-                 {KEYWORDS_DATA.slice(0, 5).map((kw, i) => (
-                   <div key={i} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
-                     <div className="flex items-center gap-2 min-w-0">
-                       <span className="text-[10px] text-muted-foreground w-3">{i + 1}.</span>
-                       <span className="text-xs font-medium truncate">{kw.keyword}</span>
-                       {kw.trend === 'up' && <TrendingUp className="w-3 h-3 text-green-500 shrink-0" />}
-                       {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-red-500 shrink-0" />}
-                     </div>
-                     <div className="flex items-center gap-2 shrink-0">
-                       <Badge variant="outline" className="text-[9px] h-4">{kw.ctr}% CTR</Badge>
-                       <Badge className="text-[9px] h-4 bg-green-500/10 text-green-600">${kw.cpa}</Badge>
-                     </div>
-                   </div>
-                 ))}
-               </CardContent>
+                <CardContent className="px-3 pb-3 space-y-1.5">
+                  {KEYWORDS_DATA.slice(0, 5).map((kw, i) => (
+                    <div 
+                      key={i} 
+                      className={`flex items-center justify-between py-1.5 border-b border-border last:border-0 transition-all duration-300 ${liveMode ? 'hover:bg-primary/5' : ''}`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[10px] text-muted-foreground w-3">{i + 1}.</span>
+                        <span className="text-xs font-medium truncate">{kw.keyword}</span>
+                        {kw.trend === 'up' && <TrendingUp className={`w-3 h-3 text-green-500 shrink-0 ${liveMode ? 'animate-pulse' : ''}`} />}
+                        {kw.trend === 'down' && <TrendingDown className="w-3 h-3 text-destructive shrink-0" />}
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Badge variant="outline" className="text-[9px] h-4">
+                          {liveMode ? (
+                            <AnimatedNumber value={kw.ctr} suffix="% CTR" decimals={2} liveMode={liveMode} />
+                          ) : (
+                            `${kw.ctr}% CTR`
+                          )}
+                        </Badge>
+                        <Badge className="text-[9px] h-4 bg-green-500/10 text-green-600">
+                          {liveMode ? (
+                            <AnimatedNumber value={kw.cpa} prefix="$" decimals={2} liveMode={liveMode} />
+                          ) : (
+                            `$${kw.cpa}`
+                          )}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
              </Card>
  
              {/* SEO Scores */}
@@ -212,22 +297,36 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                    {liveMode && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
                  </CardTitle>
                </CardHeader>
-               <CardContent className="px-3 pb-3 space-y-2">
-                 {PLATFORM_DATA.map((p) => (
-                   <div key={p.platform} className="flex items-center justify-between py-1.5 border-b border-border last:border-0">
-                     <div className="flex items-center gap-2">
-                       <span className="text-xs font-medium">{p.platform}</span>
-                       {p.trending === 'up' && <TrendingUp className="w-3 h-3 text-green-500" />}
-                     </div>
-                     <div className="flex items-center gap-2">
-                       <span className="text-[10px] text-muted-foreground">${(p.spend / 1000).toFixed(1)}K</span>
-                       <Badge variant={p.roas >= 3.5 ? 'default' : p.roas >= 2.5 ? 'secondary' : 'destructive'} className="text-[9px] h-4">
-                         {p.roas}x
-                       </Badge>
-                     </div>
-                   </div>
-                 ))}
-               </CardContent>
+                <CardContent className="px-3 pb-3 space-y-2">
+                  {PLATFORM_DATA.map((p, idx) => (
+                    <div 
+                      key={p.platform} 
+                      className={`flex items-center justify-between py-1.5 border-b border-border last:border-0 transition-all duration-300 ${liveMode ? 'hover:bg-muted/50' : ''}`}
+                      style={{ animationDelay: liveMode ? `${idx * 150}ms` : '0ms' }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium">{p.platform}</span>
+                        {p.trending === 'up' && <TrendingUp className={`w-3 h-3 text-green-500 ${liveMode ? 'animate-bounce' : ''}`} />}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-muted-foreground">
+                          {liveMode ? (
+                            <AnimatedNumber value={p.spend / 1000} prefix="$" suffix="K" decimals={1} liveMode={liveMode} />
+                          ) : (
+                            `$${(p.spend / 1000).toFixed(1)}K`
+                          )}
+                        </span>
+                        <Badge variant={p.roas >= 3.5 ? 'default' : p.roas >= 2.5 ? 'secondary' : 'destructive'} className="text-[9px] h-4">
+                          {liveMode ? (
+                            <AnimatedNumber value={p.roas} suffix="x" decimals={1} liveMode={liveMode} />
+                          ) : (
+                            `${p.roas}x`
+                          )}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
              </Card>
  
              {/* A/B Tests */}
@@ -266,27 +365,42 @@ export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: Uni
                    Conversion Funnel
                  </CardTitle>
                </CardHeader>
-               <CardContent className="px-3 pb-3 space-y-2">
-                 {FUNNEL_DATA.map((stage, i) => (
-                   <div key={stage.stage} className="space-y-1">
-                     <div className="flex justify-between text-xs">
-                       <span className="text-muted-foreground">{stage.stage}</span>
-                       <span className="font-medium">{stage.count.toLocaleString()}</span>
-                     </div>
-                     <div className="h-3 bg-muted rounded-full overflow-hidden">
-                       <div 
-                         className="h-full rounded-full transition-all"
-                         style={{ 
-                           width: `${stage.rate}%`,
-                           background: `linear-gradient(90deg, #10B981 0%, #3B82F6 100%)`,
-                           opacity: 1 - (i * 0.15)
-                         }}
-                       />
-                     </div>
-                     <span className="text-[9px] text-muted-foreground">{stage.rate}%</span>
-                   </div>
-                 ))}
-               </CardContent>
+                <CardContent className="px-3 pb-3 space-y-2">
+                  {FUNNEL_DATA.map((stage, i) => (
+                    <div key={stage.stage} className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted-foreground">{stage.stage}</span>
+                        <span className="font-medium">
+                          {liveMode ? (
+                            <AnimatedNumber value={stage.count} liveMode={liveMode} />
+                          ) : (
+                            stage.count.toLocaleString()
+                          )}
+                        </span>
+                      </div>
+                      <div className="h-3 bg-muted rounded-full overflow-hidden relative">
+                        <div 
+                          className={`h-full rounded-full transition-all duration-500 ${liveMode ? 'animate-pulse' : ''}`}
+                          style={{ 
+                            width: `${stage.rate}%`,
+                            background: `linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)`,
+                            opacity: 1 - (i * 0.15)
+                          }}
+                        />
+                        {liveMode && i === 0 && (
+                          <div 
+                            className="absolute top-0 left-0 h-full w-1 bg-white/50 animate-[shimmer_2s_infinite]"
+                            style={{ 
+                              animation: 'shimmer 2s infinite',
+                              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)'
+                            }}
+                          />
+                        )}
+                      </div>
+                      <span className="text-[9px] text-muted-foreground">{stage.rate}%</span>
+                    </div>
+                  ))}
+                </CardContent>
              </Card>
            </div>
  
