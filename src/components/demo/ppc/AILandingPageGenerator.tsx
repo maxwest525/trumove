@@ -2820,51 +2820,55 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
            {/* Actual Landing Page Content */}
            <div className="relative">
              <ScrollArea className="h-[450px]">
-              {renderSelectedTemplate()}
+               <div className="relative min-h-[800px]">
+                 {renderSelectedTemplate()}
+                 
+                 {/* Heatmap Overlay - Inside ScrollArea to scroll with content */}
+                 {showHeatmapOverlay && importedData && (
+                   <div className="absolute inset-0 pointer-events-none z-20">
+                      {getCurrentHeatmapPositions().map((pos, i) => {
+                        const clickData = importedData.clickBehavior.find(c => 
+                          c.element.toLowerCase().includes(pos.element.toLowerCase().split(' ')[0])
+                        );
+                        const intensity = pos.intensity;
+                        const colors = {
+                          high: { bg: "rgba(239, 68, 68, 0.6)", shadow: "0 0 40px 20px rgba(239, 68, 68, 0.4)", badge: "bg-red-600" },
+                          medium: { bg: "rgba(249, 115, 22, 0.5)", shadow: "0 0 30px 15px rgba(249, 115, 22, 0.3)", badge: "bg-orange-500" },
+                          low: { bg: "rgba(59, 130, 246, 0.4)", shadow: "0 0 25px 10px rgba(59, 130, 246, 0.25)", badge: "bg-blue-500" },
+                        };
+                        const color = colors[intensity];
+                        
+                        return (
+                          <div 
+                            key={pos.id}
+                            className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-lg ${intensity === 'high' ? 'animate-pulse' : ''}`}
+                            style={{ 
+                              top: pos.top,
+                              left: pos.left,
+                              width: pos.width,
+                              height: pos.height,
+                              background: `radial-gradient(ellipse, ${color.bg} 0%, ${color.bg.replace(/0\.[456]/g, '0.15')} 40%, transparent 70%)`,
+                              boxShadow: color.shadow
+                            }}
+                          >
+                            <div className={`absolute -top-6 left-1/2 -translate-x-1/2 ${color.badge} text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium`}>
+                              {intensity === 'high' ? '🔥' : intensity === 'medium' ? '⚡' : '❄️'} {clickData?.percentage || ((5 - i) * 8)}% • {pos.element}
+                            </div>
+                          </div>
+                        );
+                      })}
+                   </div>
+                 )}
+               </div>
              </ScrollArea>
              
-             {/* Heatmap Overlay */}
+             {/* Heatmap Legend - Fixed position outside ScrollArea */}
              {showHeatmapOverlay && importedData && (
-               <div className="absolute inset-0 pointer-events-none z-20">
-                  {getCurrentHeatmapPositions().map((pos, i) => {
-                    const clickData = importedData.clickBehavior.find(c => 
-                      c.element.toLowerCase().includes(pos.element.toLowerCase().split(' ')[0])
-                    );
-                    const intensity = pos.intensity;
-                    const colors = {
-                      high: { bg: "rgba(239, 68, 68, 0.6)", shadow: "0 0 40px 20px rgba(239, 68, 68, 0.4)", badge: "bg-red-600" },
-                      medium: { bg: "rgba(249, 115, 22, 0.5)", shadow: "0 0 30px 15px rgba(249, 115, 22, 0.3)", badge: "bg-orange-500" },
-                      low: { bg: "rgba(59, 130, 246, 0.4)", shadow: "0 0 25px 10px rgba(59, 130, 246, 0.25)", badge: "bg-blue-500" },
-                    };
-                    const color = colors[intensity];
-                    
-                    return (
-                      <div 
-                        key={pos.id}
-                        className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-lg ${intensity === 'high' ? 'animate-pulse' : ''}`}
-                        style={{ 
-                          top: pos.top,
-                          left: pos.left,
-                          width: pos.width,
-                          height: pos.height,
-                          background: `radial-gradient(ellipse, ${color.bg} 0%, ${color.bg.replace(/0\.[456]/g, '0.15')} 40%, transparent 70%)`,
-                          boxShadow: color.shadow
-                        }}
-                      >
-                        <div className={`absolute -top-6 left-1/2 -translate-x-1/2 ${color.badge} text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium`}>
-                          {intensity === 'high' ? '🔥' : intensity === 'medium' ? '⚡' : '❄️'} {clickData?.percentage || ((5 - i) * 8)}% • {pos.element}
-                        </div>
-                      </div>
-                    );
-                  })}
-                 
-                 {/* Legend */}
-                 <div className="absolute bottom-4 right-4 p-2 rounded-lg bg-black/80 backdrop-blur-sm text-white text-[10px] space-y-1">
-                   <div className="font-semibold mb-1">Click Heatmap</div>
-                   <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500"></span> Hot (25%+)</div>
-                   <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-orange-500"></span> Warm (10-25%)</div>
-                   <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-500"></span> Cool (&lt;10%)</div>
-                 </div>
+               <div className="absolute bottom-4 right-4 p-2 rounded-lg bg-black/80 backdrop-blur-sm text-white text-[10px] space-y-1 z-30">
+                 <div className="font-semibold mb-1">Click Heatmap</div>
+                 <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500"></span> Hot (25%+)</div>
+                 <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-orange-500"></span> Warm (10-25%)</div>
+                 <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-500"></span> Cool (&lt;10%)</div>
                </div>
              )}
            </div>
