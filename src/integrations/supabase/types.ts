@@ -14,6 +14,161 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_coaching_stats: {
+        Row: {
+          agent_id: string
+          avg_call_duration: number | null
+          avg_sentiment_score: number | null
+          coaching_score: number | null
+          conversion_rate: number | null
+          created_at: string
+          id: string
+          keywords_handled: number | null
+          period_end: string
+          period_start: string
+          talk_tracks_used: number | null
+          total_calls: number | null
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          avg_call_duration?: number | null
+          avg_sentiment_score?: number | null
+          coaching_score?: number | null
+          conversion_rate?: number | null
+          created_at?: string
+          id?: string
+          keywords_handled?: number | null
+          period_end: string
+          period_start: string
+          talk_tracks_used?: number | null
+          total_calls?: number | null
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          avg_call_duration?: number | null
+          avg_sentiment_score?: number | null
+          coaching_score?: number | null
+          conversion_rate?: number | null
+          created_at?: string
+          id?: string
+          keywords_handled?: number | null
+          period_end?: string
+          period_start?: string
+          talk_tracks_used?: number | null
+          total_calls?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      call_coaching_events: {
+        Row: {
+          agent_action: string | null
+          call_id: string
+          created_at: string
+          event_type: string
+          id: string
+          keyword_detected: string | null
+          prompt_shown: string | null
+          talk_track_id: string | null
+          timestamp: string | null
+        }
+        Insert: {
+          agent_action?: string | null
+          call_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          keyword_detected?: string | null
+          prompt_shown?: string | null
+          talk_track_id?: string | null
+          timestamp?: string | null
+        }
+        Update: {
+          agent_action?: string | null
+          call_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          keyword_detected?: string | null
+          prompt_shown?: string | null
+          talk_track_id?: string | null
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_coaching_events_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "calls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calls: {
+        Row: {
+          agent_id: string | null
+          call_type: string | null
+          coaching_prompts_shown: string[] | null
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          detected_keywords: string[] | null
+          duration_seconds: number | null
+          ended_at: string | null
+          id: string
+          notes: string | null
+          outcome: Database["public"]["Enums"]["call_outcome"] | null
+          sentiment_score: number | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["call_status"] | null
+          talk_tracks_used: string[] | null
+          transcript: string | null
+          updated_at: string
+        }
+        Insert: {
+          agent_id?: string | null
+          call_type?: string | null
+          coaching_prompts_shown?: string[] | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          detected_keywords?: string[] | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          notes?: string | null
+          outcome?: Database["public"]["Enums"]["call_outcome"] | null
+          sentiment_score?: number | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["call_status"] | null
+          talk_tracks_used?: string[] | null
+          transcript?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string | null
+          call_type?: string | null
+          coaching_prompts_shown?: string[] | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          detected_keywords?: string[] | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          notes?: string | null
+          outcome?: Database["public"]["Enums"]["call_outcome"] | null
+          sentiment_score?: number | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["call_status"] | null
+          talk_tracks_used?: string[] | null
+          transcript?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       conversation_memberships: {
         Row: {
           conversation_id: string
@@ -179,7 +334,13 @@ export type Database = {
       is_conversation_member: { Args: { conv_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      call_outcome:
+        | "booked"
+        | "follow_up"
+        | "lost"
+        | "no_answer"
+        | "callback_scheduled"
+      call_status: "active" | "completed" | "missed" | "transferred"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -306,6 +467,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      call_outcome: [
+        "booked",
+        "follow_up",
+        "lost",
+        "no_answer",
+        "callback_scheduled",
+      ],
+      call_status: ["active", "completed", "missed", "transferred"],
+    },
   },
 } as const
