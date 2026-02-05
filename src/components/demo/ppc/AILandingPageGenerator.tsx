@@ -610,7 +610,6 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
        }, (index + 1) * 600);
      });
    };
-   };
  
    // Simulate data import
    const handleImportData = () => {
@@ -4304,6 +4303,6 @@ export function AILandingPageGenerator({ isGenerating, onGenerate, prefillData }
        )}
       </>
       )}
-     </div>
-   );
- }
+    </div>
+  );
+}
