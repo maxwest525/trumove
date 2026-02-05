@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DraggableModal from "@/components/ui/DraggableModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -11,13 +11,18 @@ import {
   PhoneIncoming, PhoneOutgoing, Voicemail,
   UserPlus, DollarSign, Truck, MapPin, Bell,
   Filter, MoreHorizontal, Plus,
-  Activity, Target, RefreshCw
+  Activity, Target, RefreshCw, Sparkles, CalendarDays, X
 } from "lucide-react";
  import { 
    Clipboard, FileSpreadsheet, Package, Calculator, 
    Shield, Zap, Globe, Settings, Mic, Monitor, 
    Share2, Briefcase, Building2, Send
  } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 interface IntegrationModalProps {
   open: boolean;
@@ -69,6 +74,16 @@ const GRANOT_RECENT_ACTIVITY = [
    { type: "claim", text: "Claim filed: Job #4498", time: "3 hrs ago", icon: Shield },
 ];
 
+// Animated activity items for live mode
+const GRANOT_LIVE_ACTIVITY = [
+  { type: "booking", text: "New booking: Marcus Lee - Chicago → Miami", time: "Just now", icon: DollarSign },
+  { type: "job", text: "Job #4587 status: Loaded", time: "Just now", icon: Truck },
+  { type: "estimate", text: "Quote request: Jessica Wang", time: "Just now", icon: FileText },
+  { type: "dispatch", text: "Crew Beta assigned to Job #4590", time: "Just now", icon: MapPin },
+  { type: "payment", text: "Payment received: $3,200", time: "Just now", icon: DollarSign },
+  { type: "lead", text: "New lead from website form", time: "Just now", icon: Users },
+];
+
 const GRANOT_UPCOMING_MOVES = [
    { customer: "Robert Taylor", from: "Phoenix, AZ", to: "Portland, OR", date: "Feb 10", crew: "Driver: Mike S.", status: "Packed", weight: "8,500 lbs" },
    { customer: "Lisa Wang", from: "Denver, CO", to: "San Diego, CA", date: "Feb 11", crew: "Driver: James L.", status: "In Transit", weight: "12,200 lbs" },
@@ -101,6 +116,60 @@ const RINGCENTRAL_DEMO_STATS = [
 function GranotDemoVisual() {
   const [activeView, setActiveView] = useState<"dashboard" | "pipeline" | "calendar" | "activity">("dashboard");
   const [selectedLead, setSelectedLead] = useState<number | null>(null);
+  const [isLiveMode, setIsLiveMode] = useState(false);
+  const [liveStats, setLiveStats] = useState(GRANOT_DEMO_STATS);
+  const [liveActivity, setLiveActivity] = useState(GRANOT_RECENT_ACTIVITY);
+  const [liveJobCounts, setLiveJobCounts] = useState(GRANOT_PIPELINE_STAGES);
+
+  // Animated data updates similar to Marketing Suite
+  useEffect(() => {
+    if (!isLiveMode) return;
+
+    const statsInterval = setInterval(() => {
+      setLiveStats(prev => prev.map(stat => {
+        const delta = Math.random() > 0.5 ? 1 : -1;
+        let newValue = stat.value;
+        let newChange = stat.change;
+        
+        if (stat.label === "Open Jobs") {
+          const val = parseInt(stat.value) + delta;
+          newValue = String(Math.max(40, val));
+          newChange = delta > 0 ? `+${Math.abs(delta)}` : `${delta}`;
+        } else if (stat.label === "In Transit") {
+          const val = parseInt(stat.value) + (Math.random() > 0.7 ? delta : 0);
+          newValue = String(Math.max(8, val));
+        } else if (stat.label === "Pending A/R") {
+          const val = parseInt(stat.value.replace(/\D/g, '')) + (delta * Math.floor(Math.random() * 5));
+          newValue = `$${val}K`;
+        } else if (stat.label === "This Month") {
+          const val = parseInt(stat.value.replace(/\D/g, '')) + (delta * Math.floor(Math.random() * 3));
+          newValue = `$${Math.max(80, val)}K`;
+        }
+        
+        return { ...stat, value: newValue, change: newChange };
+      }));
+    }, 3000);
+
+    const activityInterval = setInterval(() => {
+      const newItem = GRANOT_LIVE_ACTIVITY[Math.floor(Math.random() * GRANOT_LIVE_ACTIVITY.length)];
+      setLiveActivity(prev => [newItem, ...prev.slice(0, 4)]);
+    }, 5000);
+
+    const pipelineInterval = setInterval(() => {
+      setLiveJobCounts(prev => prev.map(stage => {
+        const delta = Math.random() > 0.6 ? (Math.random() > 0.5 ? 1 : -1) : 0;
+        const newCount = Math.max(3, stage.count + delta);
+        const newValue = `$${Math.round(newCount * 3.2)}K`;
+        return { ...stage, count: newCount, value: newValue };
+      }));
+    }, 4000);
+
+    return () => {
+      clearInterval(statsInterval);
+      clearInterval(activityInterval);
+      clearInterval(pipelineInterval);
+    };
+  }, [isLiveMode]);
 
   return (
     <div className="rounded-xl overflow-hidden" style={{ border: "2px solid #1B365D", background: "#FFFFFF" }}>
@@ -117,6 +186,16 @@ function GranotDemoVisual() {
           <button className="p-1.5 rounded-lg hover:bg-white/10 transition-colors relative">
             <Bell className="w-4 h-4 text-white/80" />
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full" style={{ background: "#4CAF50" }} />
+          </button>
+          <button 
+            onClick={() => setIsLiveMode(!isLiveMode)}
+            className={cn(
+              "px-2 py-1 rounded-lg text-[10px] font-medium transition-all flex items-center gap-1",
+              isLiveMode ? "bg-green-500 text-white" : "bg-white/20 text-white/80 hover:bg-white/30"
+            )}
+          >
+            <Sparkles className="w-3 h-3" />
+            {isLiveMode ? "Live" : "Demo"}
           </button>
           <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium" style={{ background: "#4CAF50", color: "white" }}>JD</div>
         </div>
@@ -152,13 +231,22 @@ function GranotDemoVisual() {
           <div className="space-y-3">
             {/* Stats Row */}
             <div className="grid grid-cols-4 gap-2">
-              {GRANOT_DEMO_STATS.map((stat) => (
-                <div key={stat.label} className="p-3 rounded-lg hover:shadow-md transition-all cursor-pointer" style={{ background: "#F8FAFC", border: "1px solid #E2E8F0" }}>
+              {(isLiveMode ? liveStats : GRANOT_DEMO_STATS).map((stat) => (
+                <div key={stat.label} className={cn(
+                  "p-3 rounded-lg hover:shadow-md transition-all cursor-pointer",
+                  isLiveMode && "animate-pulse"
+                )} style={{ background: "#F8FAFC", border: "1px solid #E2E8F0" }}>
                   <div className="flex items-center justify-between mb-1">
                     <stat.icon className="w-4 h-4" style={{ color: "#1B365D" }} />
-                    <span className="text-[10px] font-medium" style={{ color: "#4CAF50" }}>{stat.change}</span>
+                    <span className={cn(
+                      "text-[10px] font-medium transition-all",
+                      isLiveMode && "animate-bounce"
+                    )} style={{ color: "#4CAF50" }}>{stat.change}</span>
                   </div>
-                  <div className="text-xl font-bold" style={{ color: "#1B365D" }}>{stat.value}</div>
+                  <div className={cn(
+                    "text-xl font-bold transition-all",
+                    isLiveMode && "text-shadow-sm"
+                  )} style={{ color: "#1B365D" }}>{stat.value}</div>
                   <div className="text-[10px] text-gray-500 uppercase tracking-wide">{stat.label}</div>
                 </div>
               ))}
@@ -225,13 +313,22 @@ function GranotDemoVisual() {
 
               {/* Recent Activity */}
               <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
-                <div className="px-3 py-2 flex items-center justify-between" style={{ background: "#1B365D" }}>
+                <div className="px-3 py-2 flex items-center justify-between relative" style={{ background: "#1B365D" }}>
                   <span className="text-xs font-semibold text-white">Recent Activity</span>
-                  <RefreshCw className="w-3 h-3 text-white/70" />
+                  <RefreshCw className={cn(
+                    "w-3 h-3 text-white/70",
+                    isLiveMode && "animate-spin"
+                  )} />
+                  {isLiveMode && (
+                    <span className="absolute top-1 right-8 w-2 h-2 rounded-full bg-green-400 animate-ping" />
+                  )}
                 </div>
                 <div className="divide-y" style={{ borderColor: "#E2E8F0" }}>
-                  {GRANOT_RECENT_ACTIVITY.slice(0, 4).map((item, i) => (
-                    <div key={i} className="px-3 py-2 flex items-center gap-2 hover:bg-gray-50 transition-colors">
+                  {(isLiveMode ? liveActivity : GRANOT_RECENT_ACTIVITY).slice(0, 4).map((item, i) => (
+                    <div key={`${item.text}-${i}`} className={cn(
+                      "px-3 py-2 flex items-center gap-2 hover:bg-gray-50 transition-all",
+                      isLiveMode && i === 0 && "bg-green-50 animate-fade-in"
+                    )}>
                       <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ 
                         background: item.type === "booking" ? "#E8F5E9" : item.type === "lead" ? "#E3F2FD" : "#F5F5F5"
                       }}>
@@ -280,12 +377,15 @@ function GranotDemoVisual() {
                  <span className="text-xs font-semibold text-white">Job Pipeline</span>
               </div>
               <div className="p-3 space-y-2">
-                {GRANOT_PIPELINE_STAGES.map((stage, i) => (
+                {(isLiveMode ? liveJobCounts : GRANOT_PIPELINE_STAGES).map((stage, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <div className="w-20 text-xs text-gray-600 truncate">{stage.stage}</div>
-                    <div className="flex-1 h-6 rounded-full overflow-hidden relative" style={{ background: "#F1F5F9" }}>
+                    <div className={cn(
+                      "flex-1 h-6 rounded-full overflow-hidden relative transition-all",
+                      isLiveMode && "shadow-sm"
+                    )} style={{ background: "#F1F5F9" }}>
                       <div 
-                        className="h-full transition-all"
+                        className="h-full transition-all duration-500"
                         style={{ width: `${(stage.count / 23) * 100}%`, background: stage.color }}
                       />
                       <div className="absolute inset-0 flex items-center justify-between px-2">
@@ -298,10 +398,16 @@ function GranotDemoVisual() {
               </div>
             </div>
             <div className="grid grid-cols-5 gap-2">
-              {GRANOT_PIPELINE_STAGES.map((stage, i) => (
-                <div key={i} className="rounded-lg p-2 text-center" style={{ border: "1px solid #E2E8F0" }}>
+              {(isLiveMode ? liveJobCounts : GRANOT_PIPELINE_STAGES).map((stage, i) => (
+                <div key={i} className={cn(
+                  "rounded-lg p-2 text-center transition-all",
+                  isLiveMode && "hover:shadow-md"
+                )} style={{ border: "1px solid #E2E8F0" }}>
                   <div className="w-2 h-2 rounded-full mx-auto mb-1" style={{ background: stage.color }} />
-                  <div className="text-lg font-bold" style={{ color: "#1B365D" }}>{stage.count}</div>
+                  <div className={cn(
+                    "text-lg font-bold transition-all",
+                    isLiveMode && "animate-pulse"
+                  )} style={{ color: "#1B365D" }}>{stage.count}</div>
                   <div className="text-[9px] text-gray-500 truncate">{stage.stage}</div>
                 </div>
               ))}
@@ -391,8 +497,14 @@ function GranotDemoVisual() {
 
       {/* Live Demo Badge */}
       <div className="flex items-center justify-center gap-2 py-2" style={{ background: "#F8FAFC", borderTop: "1px solid #E2E8F0" }}>
-        <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#4CAF50" }} />
-        <span className="text-[10px] text-gray-500 uppercase tracking-wide">Live Demo Mode</span>
+        <div className={cn(
+          "w-2 h-2 rounded-full",
+          isLiveMode ? "animate-ping bg-green-500" : "animate-pulse"
+        )} style={{ background: isLiveMode ? undefined : "#4CAF50" }} />
+        <span className={cn(
+          "text-[10px] uppercase tracking-wide",
+          isLiveMode ? "text-green-600 font-medium" : "text-gray-500"
+        )}>{isLiveMode ? "Live Data Simulation" : "Demo Mode"}</span>
       </div>
     </div>
   );
@@ -401,6 +513,55 @@ function GranotDemoVisual() {
 // ============ RINGCENTRAL DEMO ============
 function RingCentralDemoVisual() {
   const [activeTab, setActiveTab] = useState<"calls" | "messages" | "video">("calls");
+  const [isLiveMode, setIsLiveMode] = useState(false);
+  const [liveStats, setLiveStats] = useState(RINGCENTRAL_DEMO_STATS);
+  const [liveCalls, setLiveCalls] = useState(RINGCENTRAL_DEMO_CALLS);
+
+  useEffect(() => {
+    if (!isLiveMode) return;
+
+    const statsInterval = setInterval(() => {
+      setLiveStats(prev => prev.map(stat => {
+        if (stat.label === "Total Calls") {
+          const val = parseInt(stat.value) + Math.floor(Math.random() * 3);
+          return { ...stat, value: String(val) };
+        } else if (stat.label === "Active Users") {
+          const delta = Math.random() > 0.5 ? 1 : -1;
+          const val = Math.max(20, parseInt(stat.value) + delta);
+          return { ...stat, value: String(val) };
+        } else if (stat.label === "Avg Handle") {
+          const mins = 3 + Math.floor(Math.random() * 3);
+          const secs = Math.floor(Math.random() * 60);
+          return { ...stat, value: `${mins}:${secs.toString().padStart(2, '0')}` };
+        } else if (stat.label === "SLA Met") {
+          const val = 92 + Math.random() * 6;
+          return { ...stat, value: `${val.toFixed(1)}%` };
+        }
+        return stat;
+      }));
+    }, 2500);
+
+    const callsInterval = setInterval(() => {
+      const types = ["incoming", "outgoing", "missed", "voicemail"] as const;
+      const names = ["Sarah Johnson", "Michael Chen", "Emily Rodriguez", "David Kim", "Unknown", "Support Line"];
+      const statuses = ["answered", "completed", "missed", "voicemail"] as const;
+      
+      const newCall = {
+        type: types[Math.floor(Math.random() * types.length)],
+        name: names[Math.floor(Math.random() * names.length)],
+        duration: `${Math.floor(Math.random() * 10)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+        time: "Just now",
+        status: statuses[Math.floor(Math.random() * statuses.length)],
+      };
+      
+      setLiveCalls(prev => [newCall, ...prev.slice(0, 3)]);
+    }, 6000);
+
+    return () => {
+      clearInterval(statsInterval);
+      clearInterval(callsInterval);
+    };
+  }, [isLiveMode]);
 
   const RC_MESSAGES = [
      { from: "Sales Team", preview: "New lead from website form...", time: "11:30 AM", unread: true, participants: 8 },
@@ -427,6 +588,16 @@ function RingCentralDemoVisual() {
         </div>
         <div className="flex items-center gap-2">
           <Badge className="text-[10px]" style={{ background: "white", color: "#FF6A00" }}>MVP</Badge>
+          <button 
+            onClick={() => setIsLiveMode(!isLiveMode)}
+            className={cn(
+              "px-2 py-1 rounded-lg text-[10px] font-medium transition-all flex items-center gap-1",
+              isLiveMode ? "bg-green-500 text-white" : "bg-white/20 text-white/80 hover:bg-white/30"
+            )}
+          >
+            <Sparkles className="w-3 h-3" />
+            {isLiveMode ? "Live" : "Demo"}
+          </button>
           <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-xs font-medium text-white">AG</div>
         </div>
       </div>
@@ -459,9 +630,15 @@ function RingCentralDemoVisual() {
           <div>
             {/* Stats Row */}
             <div className="grid grid-cols-4 gap-px" style={{ background: "#E5E7EB" }}>
-              {RINGCENTRAL_DEMO_STATS.map((stat) => (
-                <div key={stat.label} className="p-3 text-center" style={{ background: "#F8FAFC" }}>
-                  <div className="text-lg font-bold" style={{ color: "#0684BC" }}>{stat.value}</div>
+              {(isLiveMode ? liveStats : RINGCENTRAL_DEMO_STATS).map((stat) => (
+                <div key={stat.label} className={cn(
+                  "p-3 text-center transition-all",
+                  isLiveMode && "animate-pulse"
+                )} style={{ background: "#F8FAFC" }}>
+                  <div className={cn(
+                    "text-lg font-bold transition-all",
+                    isLiveMode && stat.label === "Total Calls" && "text-green-600"
+                  )} style={{ color: isLiveMode && stat.label === "Total Calls" ? undefined : "#0684BC" }}>{stat.value}</div>
                    <div className="text-[10px] font-medium text-gray-600">{stat.label}</div>
                    <div className="text-[9px] text-gray-400">{stat.sub}</div>
                 </div>
@@ -470,12 +647,15 @@ function RingCentralDemoVisual() {
 
             {/* Call Log */}
             <div className="divide-y" style={{ borderColor: "#E5E7EB" }}>
-              {RINGCENTRAL_DEMO_CALLS.map((call, i) => {
+              {(isLiveMode ? liveCalls : RINGCENTRAL_DEMO_CALLS).map((call, i) => {
                 const Icon = call.type === "incoming" ? PhoneIncoming : 
                              call.type === "outgoing" ? PhoneOutgoing :
                              call.type === "voicemail" ? Voicemail : Phone;
                 return (
-                  <div key={i} className="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div key={`${call.name}-${i}`} className={cn(
+                    "px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-all cursor-pointer",
+                    isLiveMode && i === 0 && "bg-orange-50 animate-fade-in"
+                  )}>
                     <div 
                       className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
                       style={{ 
@@ -629,12 +809,15 @@ function RingCentralDemoVisual() {
       {/* Active Call Widget */}
       <div className="p-3 flex items-center justify-between" style={{ background: "#10B981" }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center animate-pulse">
+          <div className={cn(
+            "w-8 h-8 rounded-full bg-white/20 flex items-center justify-center",
+            isLiveMode ? "animate-ping" : "animate-pulse"
+          )}>
             <Phone className="w-4 h-4 text-white" />
           </div>
           <div>
             <div className="text-sm font-medium text-white">Active Call</div>
-            <div className="text-xs text-white/80">John Smith • 02:34</div>
+            <div className="text-xs text-white/80">John Smith • {isLiveMode ? "03:12" : "02:34"}</div>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -650,8 +833,179 @@ function RingCentralDemoVisual() {
   );
 }
 
+// ============ DEMO SCHEDULING DIALOG ============
+interface DemoScheduleDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  integration: "granot" | "ringcentral";
+}
+
+function DemoScheduleDialog({ open, onOpenChange, integration }: DemoScheduleDialogProps) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [company, setCompany] = useState("");
+  const [preferredTime, setPreferredTime] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const isGranot = integration === "granot";
+  const brandColor = isGranot ? "#4CAF50" : "#FF6A00";
+  const brandName = isGranot ? "Granot CRM" : "RingCentral";
+
+  const handleSubmit = () => {
+    if (!name.trim() || !email.trim()) {
+      toast.error("Please fill in required fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSuccess(true);
+      toast.success(`Demo request submitted! A ${brandName} specialist will contact you within 24 hours.`);
+      
+      setTimeout(() => {
+        onOpenChange(false);
+        setIsSuccess(false);
+        setName("");
+        setEmail("");
+        setPhone("");
+        setCompany("");
+        setPreferredTime("");
+      }, 2000);
+    }, 1500);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <CalendarDays className="w-5 h-5" style={{ color: brandColor }} />
+            Schedule a Demo
+          </DialogTitle>
+          <DialogDescription>
+            Book a personalized demo with a {brandName} specialist to see how it can transform your business.
+          </DialogDescription>
+        </DialogHeader>
+
+        {isSuccess ? (
+          <div className="py-8 text-center">
+            <div 
+              className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
+              style={{ background: `${brandColor}20` }}
+            >
+              <CheckCircle2 className="w-8 h-8" style={{ color: brandColor }} />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">Demo Scheduled!</h3>
+            <p className="text-sm text-muted-foreground">
+              We'll send a confirmation email with calendar invite shortly.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="demo-name" className="text-xs">Name <span className="text-destructive">*</span></Label>
+                <Input
+                  id="demo-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  className="h-9"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="demo-company" className="text-xs">Company</Label>
+                <Input
+                  id="demo-company"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder="Company name"
+                  className="h-9"
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="demo-email" className="text-xs">Email <span className="text-destructive">*</span></Label>
+              <Input
+                id="demo-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                className="h-9"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="demo-phone" className="text-xs">Phone</Label>
+                <Input
+                  id="demo-phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="(555) 123-4567"
+                  className="h-9"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="demo-time" className="text-xs">Preferred Time</Label>
+                <Input
+                  id="demo-time"
+                  value={preferredTime}
+                  onChange={(e) => setPreferredTime(e.target.value)}
+                  placeholder="e.g., Mornings EST"
+                  className="h-9"
+                />
+              </div>
+            </div>
+
+            <div className="rounded-lg p-3" style={{ background: `${brandColor}10`, border: `1px solid ${brandColor}30` }}>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: brandColor }} />
+                <div className="text-xs text-muted-foreground">
+                  <p className="font-medium text-foreground mb-1">What to expect:</p>
+                  <ul className="space-y-0.5">
+                    <li>• 30-minute personalized product walkthrough</li>
+                    <li>• Q&A with a {isGranot ? "moving industry" : "communications"} specialist</li>
+                    <li>• Custom pricing based on your needs</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="w-full gap-2 text-white"
+              style={{ background: brandColor }}
+            >
+              {isSubmitting ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Scheduling...
+                </>
+              ) : (
+                <>
+                  <CalendarDays className="w-4 h-4" />
+                  Request Demo
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // ============ INTEGRATION MODAL ============
 export function IntegrationModal({ open, onOpenChange, integration }: IntegrationModalProps) {
+  const [showDemoSchedule, setShowDemoSchedule] = useState(false);
   const isGranot = integration === "granot";
   const features = isGranot ? GRANOT_FEATURES : RINGCENTRAL_FEATURES;
   const title = isGranot ? "Granot CRM" : "RingCentral";
@@ -660,6 +1014,12 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
      : "Business communications platform - MVP, Video, Contact Center";
 
   return (
+    <>
+    <DemoScheduleDialog 
+      open={showDemoSchedule} 
+      onOpenChange={setShowDemoSchedule} 
+      integration={integration} 
+    />
     <DraggableModal
       isOpen={open}
       onClose={() => onOpenChange(false)}
@@ -694,18 +1054,42 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
       }
       footer={
         <div className="flex items-center justify-between p-4 border-t border-border">
-          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
-            <ExternalLink className="w-4 h-4" />
-            Visit Website
-          </Button>
-          <Button 
-            size="sm" 
-            className="gap-2 text-white"
-            style={{ background: isGranot ? "#4CAF50" : "#FF6A00" }}
-          >
-            Connect {title}
-            <ArrowRight className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
+              <ExternalLink className="w-4 h-4" />
+              Visit Website
+            </Button>
+            <Button 
+              variant="outline"
+              size="sm" 
+              className="gap-2"
+              onClick={() => setShowDemoSchedule(true)}
+            >
+              <CalendarDays className="w-4 h-4" />
+              Request Demo
+            </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="secondary"
+              size="sm" 
+              className="gap-2"
+              onClick={() => {
+                setShowDemoSchedule(true);
+              }}
+            >
+              <Phone className="w-4 h-4" />
+              Book a Call
+            </Button>
+            <Button 
+              size="sm" 
+              className="gap-2 text-white"
+              style={{ background: isGranot ? "#4CAF50" : "#FF6A00" }}
+            >
+              Connect {title}
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       }
     >
@@ -792,6 +1176,7 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
         </Tabs>
       </div>
     </DraggableModal>
+    </>
   );
 }
 
