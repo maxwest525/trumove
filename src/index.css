@@ -3317,7 +3317,7 @@
   gap: 4px;
   overflow-y: auto;
   padding-right: 4px;
-  max-height: 12rem; /* ~192px - allows scrolling if needed */
+  min-height: 0; /* Allow flex shrinking */
 }
 
 /* Custom scrollbar for items list */
