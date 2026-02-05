@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Eye, X, Maximize2, Move, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ZoomIn, ZoomOut } from "lucide-react";
+import { Eye, X, Maximize2, Move, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ZoomIn, ZoomOut, Expand } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
@@ -53,42 +53,49 @@ export function StreetViewInset({ coords, bearing, googleApiKey }: StreetViewIns
     <>
       {/* Inset preview - clickable to expand */}
       <div className="absolute bottom-4 right-4 z-30">
-        <button
-          onClick={() => setIsExpanded(true)}
-          className="group relative w-[200px] h-[140px] rounded-lg overflow-hidden border-2 border-white/20 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 cursor-pointer transition-all hover:border-primary/50 hover:scale-[1.02]"
-          aria-label="Expand Street View"
-        >
-          <img
-            src={`https://maps.googleapis.com/maps/api/streetview?size=400x280&location=${coords[1]},${coords[0]}&fov=100&heading=${bearing}&pitch=5&key=${googleApiKey}`}
-            alt="Street View at truck location"
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.currentTarget.src = `https://maps.googleapis.com/maps/api/staticmap?center=${coords[1]},${coords[0]}&zoom=17&size=400x280&maptype=hybrid&key=${googleApiKey}`;
-            }}
-          />
-          
-          {/* Label overlay */}
-          <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 to-transparent">
-            <div className="flex items-center gap-1.5">
-              <Eye className="w-3 h-3 text-primary" />
-              <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">Street View</span>
+        <div className="group relative">
+          <button
+            onClick={() => setIsExpanded(true)}
+            className="relative w-[260px] h-[180px] rounded-lg overflow-hidden border-2 border-white/20 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900 cursor-pointer transition-all hover:border-primary/50 hover:scale-[1.02]"
+            aria-label="Expand Street View"
+          >
+            {/* Image container with overflow hidden to crop watermark */}
+            <div className="absolute inset-0 overflow-hidden">
+              <img
+                src={`https://maps.googleapis.com/maps/api/streetview?size=520x360&location=${coords[1]},${coords[0]}&fov=100&heading=${bearing}&pitch=5&key=${googleApiKey}`}
+                alt="Street View at truck location"
+                className="w-full h-[calc(100%+24px)] object-cover object-top"
+                onError={(e) => {
+                  e.currentTarget.src = `https://maps.googleapis.com/maps/api/staticmap?center=${coords[1]},${coords[0]}&zoom=17&size=520x360&maptype=hybrid&key=${googleApiKey}`;
+                }}
+              />
             </div>
-          </div>
-          
-          {/* Live indicator */}
-          <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <span className="text-[8px] font-bold text-white/80 tracking-wider">LIVE</span>
-          </div>
+            
+            {/* Label overlay */}
+            <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 to-transparent z-10">
+              <div className="flex items-center gap-1.5">
+                <Eye className="w-3 h-3 text-primary" />
+                <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">Street View</span>
+              </div>
+            </div>
+            
+            {/* Live indicator */}
+            <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm z-10">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-[8px] font-bold text-white/80 tracking-wider">LIVE</span>
+            </div>
+          </button>
 
-          {/* Expand hint on hover */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 px-2 py-1 rounded bg-black/70 backdrop-blur-sm">
-              <Maximize2 className="w-3 h-3 text-primary" />
-              <span className="text-[10px] font-semibold text-white">Click to expand</span>
-            </div>
-          </div>
-        </button>
+          {/* Expand button - always visible */}
+          <button
+            onClick={() => setIsExpanded(true)}
+            className="absolute top-2 right-2 z-20 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/70 hover:bg-black border border-white/20 hover:border-primary/50 transition-all backdrop-blur-sm"
+            aria-label="Expand to fullscreen"
+          >
+            <Expand className="w-3.5 h-3.5 text-white" />
+            <span className="text-[10px] font-semibold text-white">Expand</span>
+          </button>
+        </div>
       </div>
 
       {/* Fullscreen Street View Dialog */}
@@ -113,15 +120,18 @@ export function StreetViewInset({ coords, bearing, googleApiKey }: StreetViewIns
 
           {/* Street View Image */}
           <div className="relative w-full h-full">
-            <img
-              src={imageFailed ? fallbackUrl : streetViewUrl}
-              alt="Interactive Street View"
-              className="w-full h-full object-cover"
-              onError={() => setImageFailed(true)}
-            />
+            {/* Image container with overflow hidden to crop watermark */}
+            <div className="absolute inset-0 overflow-hidden">
+              <img
+                src={imageFailed ? fallbackUrl : streetViewUrl}
+                alt="Interactive Street View"
+                className="w-full h-[calc(100%+30px)] object-cover object-top"
+                onError={() => setImageFailed(true)}
+              />
+            </div>
 
             {/* Pan controls */}
-            <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 pointer-events-none z-10">
               {/* Left arrow */}
               <button
                 onClick={() => handleRotate('left')}
@@ -186,18 +196,15 @@ export function StreetViewInset({ coords, bearing, googleApiKey }: StreetViewIns
             </div>
 
             {/* View info badge */}
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-black/70 backdrop-blur-sm border border-white/10">
+            <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 px-3 py-2 rounded-lg bg-black/70 backdrop-blur-sm border border-white/10">
               <Eye className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold text-white uppercase tracking-wider">
                 {imageFailed ? "Satellite View" : "Street View"}
               </span>
-              <span className="text-xs text-white/60">
-                {coords[1].toFixed(4)}, {coords[0].toFixed(4)}
-              </span>
             </div>
 
             {/* Heading & Zoom indicator */}
-            <div className="absolute bottom-4 right-4 flex items-center gap-3 px-3 py-2 rounded-lg bg-black/70 backdrop-blur-sm border border-white/10">
+            <div className="absolute bottom-4 right-4 z-20 flex items-center gap-3 px-3 py-2 rounded-lg bg-black/70 backdrop-blur-sm border border-white/10">
               <div className="flex items-center gap-1.5">
                 <span className="text-xs text-white/60">Heading:</span>
                 <span className="text-sm font-medium text-white">{Math.round(currentHeading)}°</span>
