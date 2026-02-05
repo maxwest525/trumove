@@ -3459,11 +3459,12 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;  /* equal thirds */
   align-items: center;
+  justify-items: center;
   width: 100%;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  gap: 64px;
-  padding: 0 32px;
+  gap: 0;
+  padding: 0 48px;
   height: var(--demo-section-height);
   min-height: var(--demo-section-height);
   max-height: var(--demo-section-height);
@@ -3619,7 +3620,10 @@
   min-height: var(--demo-panel-height);
   max-height: var(--demo-panel-height);
   border: 2px solid hsl(0 0% 100% / 0.15);
-  box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.1);
+  box-shadow: 
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 16px 48px hsl(var(--tm-ink) / 0.04),
+    0 24px 64px hsl(var(--tm-ink) / 0.02);
 }
 
 .dark .tru-tracker-road-map {
@@ -4036,6 +4040,10 @@
   min-height: var(--demo-panel-height);
   max-height: var(--demo-panel-height);
   border: 2px solid hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 8px 32px hsl(var(--tm-ink) / 0.08),
+    0 16px 48px hsl(var(--tm-ink) / 0.04),
+    0 24px 64px hsl(var(--tm-ink) / 0.02);
 }
 
 .dark .tru-tracker-satellite-enlarged {
