@@ -1572,311 +1572,1100 @@ interface EditableSection {
   );
 
   const renderComparisonPage = () => (
-    <div className="bg-white dark:bg-slate-900">
-      {/* Clean white hero */}
-      <div className="px-8 py-12 text-center bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
-        <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>Compare & Save</Badge>
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-3">
-          How We Stack Up Against the Competition
-        </h1>
-        <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          See why 50,000+ families chose {businessName} over traditional moving brokers
-        </p>
+    <div className="min-h-screen bg-white dark:bg-slate-900">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
+        <div className="flex items-center justify-between px-6 py-3">
+          <img src={logoImg} alt={businessName} className="h-8" />
+          <div className="flex items-center gap-4">
+            <a href="tel:1-800-TRUMOVE" className="flex items-center gap-2 text-slate-700 hover:text-green-600 transition-colors">
+              <Phone className="w-4 h-4" />
+              <span className="font-semibold">1-800-TRUMOVE</span>
+            </a>
+            <Button size="sm" className="text-white" style={{ background: theme.primary }}>Get a Quote</Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Urgency Banner */}
+      <div className="bg-gradient-to-r from-red-600 to-orange-500 text-white py-2 px-4 text-center">
+        <span className="flex items-center justify-center gap-2 text-sm font-medium">
+          <Zap className="w-4 h-4 animate-pulse" />
+          See Why 50,000+ Families Chose {businessName} Over the Competition
+          <Zap className="w-4 h-4 animate-pulse" />
+        </span>
       </div>
 
-      {/* Comparison Table */}
-      <div className="px-8 py-8">
-        <div className="max-w-3xl mx-auto rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <div className="grid grid-cols-4 bg-slate-100 dark:bg-slate-800 text-sm font-semibold">
-            <div className="p-4">Feature</div>
-            <div className="p-4 text-center text-white" style={{ background: theme.primary }}>{businessName}</div>
-            <div className="p-4 text-center">Competitor A</div>
-            <div className="p-4 text-center">Competitor B</div>
+      {/* Social Proof Ticker */}
+      <SocialProofTicker />
+
+      {/* Dark Hero */}
+      <div className="px-8 py-20 text-center" style={{ background: `linear-gradient(135deg, ${theme.secondary} 0%, ${theme.primaryDark} 100%)` }}>
+        <Badge className="mb-4 bg-white/10 text-white border border-white/30">
+          <Award className="w-3 h-3 mr-1" /> #1 Rated Moving Company
+        </Badge>
+        <h1 className="text-5xl font-bold text-white mb-4">
+          We Win on <span style={{ color: theme.primary }}>Every Metric</span>
+        </h1>
+        <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
+          Stop guessing. See the facts. Compare {businessName}'s technology, pricing, and service guarantees against traditional movers.
+        </p>
+        <div className="flex justify-center gap-4">
+          <Button className="py-5 px-8 text-lg font-bold gap-2 text-white" style={{ background: theme.primary }}>
+            Get My Free Quote <ArrowRight className="w-5 h-5" />
+          </Button>
+          <Button variant="outline" className="py-5 px-8 text-lg font-bold gap-2 border-white/30 text-white bg-white/10 hover:bg-white/20">
+            <Phone className="w-5 h-5" /> Call Now
+          </Button>
+        </div>
+      </div>
+
+      {/* Trust Badge Strip */}
+      <TrustBadgeStrip theme="light" />
+
+      {/* Animated Comparison Table Section */}
+      <div className="py-16 px-8 bg-white dark:bg-slate-900">
+        <div className="text-center mb-10">
+          <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>
+            <CheckCircle2 className="w-3 h-3 mr-1" /> Side-by-Side Comparison
+          </Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+            The {businessName} Advantage
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            See exactly how we stack up against traditional moving companies
+          </p>
+        </div>
+
+        <div className="max-w-4xl mx-auto rounded-2xl border-2 border-slate-200 dark:border-slate-700 overflow-hidden shadow-xl">
+          <div className="grid grid-cols-4 text-sm font-semibold">
+            <div className="p-5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Feature</div>
+            <div className="p-5 text-center text-white flex flex-col items-center gap-1" style={{ background: theme.primary }}>
+              <img src={logoImg} alt={businessName} className="h-6 brightness-0 invert mb-1" />
+              <span className="text-xs opacity-80">AI-Powered</span>
+            </div>
+            <div className="p-5 text-center bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+              Traditional<br/><span className="text-xs opacity-70">Movers</span>
+            </div>
+            <div className="p-5 text-center bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+              DIY<br/><span className="text-xs opacity-70">Moving</span>
+            </div>
           </div>
           {[
-            { feature: "AI Inventory Scanning", us: true, a: false, b: false },
-            { feature: "Instant Online Quotes", us: true, a: true, b: false },
-            { feature: "FMCSA Verification", us: true, a: false, b: true },
-            { feature: "Price Lock Guarantee", us: true, a: false, b: false },
-            { feature: "Real-Time Tracking", us: true, a: true, b: true },
-            { feature: "24/7 Support", us: true, a: false, b: true },
+            { feature: "AI Inventory Scanning", us: true, a: false, b: false, exclusive: true },
+            { feature: "Real-Time GPS Tracking", us: true, a: false, b: false, exclusive: true },
+            { feature: "Guaranteed Price Lock", us: true, a: false, b: false, exclusive: true },
+            { feature: "Instant Online Quotes", us: true, a: false, b: true },
+            { feature: "FMCSA Verified Carriers", us: true, a: true, b: false },
+            { feature: "Full Insurance Coverage", us: true, a: true, b: false },
+            { feature: "24/7 Live Support", us: true, a: false, b: false },
+            { feature: "Flexible Scheduling", us: true, a: true, b: true },
           ].map((row, i) => (
-            <div key={i} className="grid grid-cols-4 border-t border-slate-200 dark:border-slate-700 text-sm">
-              <div className="p-4 text-slate-700 dark:text-slate-300">{row.feature}</div>
-              <div className="p-4 text-center" style={{ background: `${theme.primary}10` }}>
-                {row.us ? <CheckCircle2 className="w-5 h-5 mx-auto" style={{ color: theme.primary }} /> : <X className="w-5 h-5 text-slate-300 mx-auto" />}
+            <div key={i} className={`grid grid-cols-4 border-t border-slate-200 dark:border-slate-700 text-sm ${i % 2 === 0 ? 'bg-slate-50 dark:bg-slate-800/50' : 'bg-white dark:bg-slate-900'}`}>
+              <div className="p-4 text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                {row.feature}
+                {row.exclusive && (
+                  <Badge className="text-[10px] px-1.5 py-0 border-0" style={{ background: `${theme.primary}20`, color: theme.primary }}>
+                    Exclusive
+                  </Badge>
+                )}
+              </div>
+              <div className="p-4 text-center" style={{ background: `${theme.primary}08` }}>
+                {row.us ? (
+                  <div className="flex justify-center">
+                    <CheckCircle2 className="w-6 h-6 animate-pulse" style={{ color: theme.primary }} />
+                  </div>
+                ) : <X className="w-5 h-5 text-slate-300 mx-auto" />}
               </div>
               <div className="p-4 text-center">
-                {row.a ? <CheckCircle2 className="w-5 h-5 text-slate-400 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />}
+                {row.a ? <CheckCircle2 className="w-5 h-5 text-slate-400 mx-auto" /> : <span className="text-slate-300">—</span>}
               </div>
               <div className="p-4 text-center">
-                {row.b ? <CheckCircle2 className="w-5 h-5 text-slate-400 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />}
+                {row.b ? <CheckCircle2 className="w-5 h-5 text-slate-400 mx-auto" /> : <span className="text-slate-300">—</span>}
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* CTA */}
-      <div className="px-8 py-8 text-center">
-        <Button className="py-6 px-10 text-lg font-bold gap-2 text-white" style={{ background: theme.primary }}>
-          Get Your Free Quote <ArrowRight className="w-5 h-5" />
-        </Button>
+      {/* Competitor Pricing Breakdown */}
+      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
+        <div className="text-center mb-10">
+          <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">
+            <DollarSign className="w-3 h-3 mr-1" /> Price Comparison
+          </Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+            Average Savings: $847
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            Real pricing data from verified customer moves
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700">
+            <div className="text-center mb-4">
+              <p className="text-sm text-slate-500 mb-1">Traditional Movers</p>
+              <p className="text-4xl font-bold text-slate-400">$4,247</p>
+              <p className="text-xs text-red-500">+ hidden fees</p>
+            </div>
+            <ul className="space-y-2 text-sm text-slate-500">
+              <li className="flex items-center gap-2"><X className="w-4 h-4 text-red-400" /> Price changes on moving day</li>
+              <li className="flex items-center gap-2"><X className="w-4 h-4 text-red-400" /> No real-time tracking</li>
+              <li className="flex items-center gap-2"><X className="w-4 h-4 text-red-400" /> Limited support hours</li>
+            </ul>
+          </div>
+
+          <div className="p-6 rounded-2xl border-4 shadow-xl relative" style={{ borderColor: theme.primary, background: `linear-gradient(135deg, ${theme.primary}10, white)` }}>
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <Badge className="text-white shadow-lg" style={{ background: theme.primary }}>
+                <Star className="w-3 h-3 mr-1" /> Best Value
+              </Badge>
+            </div>
+            <div className="text-center mb-4 pt-2">
+              <img src={logoImg} alt={businessName} className="h-6 mx-auto mb-2" />
+              <p className="text-4xl font-bold" style={{ color: theme.primary }}>$3,400</p>
+              <p className="text-xs text-green-600 font-medium">Guaranteed price</p>
+            </div>
+            <ul className="space-y-2 text-sm text-slate-700">
+              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" style={{ color: theme.primary }} /> Locked-in pricing</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" style={{ color: theme.primary }} /> Live GPS tracking</li>
+              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4" style={{ color: theme.primary }} /> 24/7 support</li>
+            </ul>
+            <Button className="w-full mt-4 py-5 font-bold text-white" style={{ background: theme.primary }}>
+              Get This Price <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700">
+            <div className="text-center mb-4">
+              <p className="text-sm text-slate-500 mb-1">DIY Rental Truck</p>
+              <p className="text-4xl font-bold text-slate-400">$2,100</p>
+              <p className="text-xs text-amber-500">+ your time & labor</p>
+            </div>
+            <ul className="space-y-2 text-sm text-slate-500">
+              <li className="flex items-center gap-2"><X className="w-4 h-4 text-amber-400" /> 20+ hours of work</li>
+              <li className="flex items-center gap-2"><X className="w-4 h-4 text-amber-400" /> Risk of damage</li>
+              <li className="flex items-center gap-2"><X className="w-4 h-4 text-amber-400" /> Physical strain</li>
+            </ul>
+          </div>
+        </div>
       </div>
+
+      {/* Video Testimonials from Comparison Shoppers */}
+      <VideoTestimonialGrid />
+
+      {/* 3-Step Process */}
+      <ThreeStepProcess theme="light" />
+
+      {/* Triple Guarantee */}
+      <TripleGuaranteeSection />
+
+      {/* FAQ Section */}
+      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
+        <div className="text-center mb-12">
+          <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">Frequently Asked Questions</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400">Everything you need to know about comparing movers</p>
+        </div>
+        <div className="max-w-3xl mx-auto space-y-3">
+          {[
+            { q: "How is TruMove different from brokers?", a: "Unlike brokers who sell your info to multiple carriers, TruMove connects you directly with verified movers. One quote, one company, zero surprises." },
+            { q: "Why are your prices lower?", a: "Our AI technology eliminates costly in-home estimates and optimizes truck routes. We pass these savings directly to you." },
+            { q: "What if I find a lower price elsewhere?", a: "We'll match it! Plus, we guarantee our quoted price won't change on moving day." },
+          ].map((faq, i) => (
+            <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+              <p className="font-semibold text-slate-900 dark:text-white mb-2">{faq.q}</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Final CTA */}
+      <FinalCTASection theme={theme} />
+
+      {/* Footer */}
+      <TruMoveFooter />
     </div>
   );
 
   const renderCalculatorPage = () => (
-    <div className="bg-slate-50 dark:bg-slate-900">
-      {/* Minimal header */}
-      <div className="px-8 py-8 flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
-        <img src={logoImg} alt="TruMove" className="h-8" />
-        <Badge style={{ background: `${theme.accent}20`, color: theme.accent }}>
-          <Calculator className="w-3 h-3 mr-1" /> Free Calculator
-        </Badge>
+    <div className="min-h-screen bg-white dark:bg-slate-900">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
+        <div className="flex items-center justify-between px-6 py-3">
+          <img src={logoImg} alt={businessName} className="h-8" />
+          <div className="flex items-center gap-4">
+            <Badge style={{ background: `${theme.accent}20`, color: theme.accent }}>
+              <Calculator className="w-3 h-3 mr-1" /> Free Calculator
+            </Badge>
+            <a href="tel:1-800-TRUMOVE" className="flex items-center gap-2 text-slate-700 hover:text-green-600 transition-colors">
+              <Phone className="w-4 h-4" />
+              <span className="font-semibold">1-800-TRUMOVE</span>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Urgency Banner */}
+      <div className="bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2 px-4 text-center">
+        <span className="flex items-center justify-center gap-2 text-sm font-medium">
+          <Sparkles className="w-4 h-4 animate-pulse" />
+          Calculate & Save Up to $847 on Your Move
+          <Sparkles className="w-4 h-4 animate-pulse" />
+        </span>
       </div>
 
-      {/* Tool-first layout */}
-      <div className="px-8 py-12 grid grid-cols-2 gap-8">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
-            Moving Cost Calculator
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400 mb-6">
-            Get an instant estimate based on your move details. No email required.
+      {/* Hero with Calculator */}
+      <div className="px-8 py-16" style={{ background: `linear-gradient(135deg, ${theme.secondary} 0%, ${theme.primaryDark} 100%)` }}>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          <div className="text-center md:text-left">
+            <Badge className="mb-4 bg-white/10 text-white border border-white/30">
+              <Calculator className="w-3 h-3 mr-1" /> AI-Powered Pricing
+            </Badge>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Know Your <span style={{ color: theme.primary }}>Moving Cost</span> in Seconds
+            </h1>
+            <p className="text-xl text-white/80 mb-6">
+              Our AI analyzes thousands of moves to give you the most accurate estimate — no email or phone call required.
+            </p>
+            <div className="flex items-center gap-6 text-white/70 text-sm justify-center md:justify-start">
+              <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4 text-green-400" /> Instant results</span>
+              <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4 text-green-400" /> No spam</span>
+              <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4 text-green-400" /> 100% free</span>
+            </div>
+          </div>
+
+          {/* Calculator Form */}
+          <div className="bg-white rounded-2xl p-8 shadow-2xl border-2" style={{ borderColor: theme.primary }}>
+            <h3 className="text-xl font-bold text-slate-900 mb-6 text-center">Moving Cost Calculator</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-slate-700 mb-1 block">Moving From</label>
+                <Input placeholder="Enter city or ZIP code" className="bg-slate-50 py-5" />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-700 mb-1 block">Moving To</label>
+                <Input placeholder="Enter city or ZIP code" className="bg-slate-50 py-5" />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-700 mb-1 block">Home Size</label>
+                <select className="w-full p-4 rounded-lg border border-slate-200 bg-slate-50 text-slate-900">
+                  <option>Studio / 1 Bedroom</option>
+                  <option>2 Bedroom</option>
+                  <option>3 Bedroom</option>
+                  <option>4+ Bedroom</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-700 mb-1 block">Moving Date</label>
+                <Input type="date" className="bg-slate-50 py-5" />
+              </div>
+              <Button className="w-full py-6 text-lg font-bold gap-2 text-white" style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}>
+                <Calculator className="w-5 h-5" /> Calculate My Cost
+              </Button>
+              <p className="text-xs text-slate-500 text-center">🔒 Your information is secure and never shared</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Trust Badge Strip */}
+      <TrustBadgeStrip theme="light" />
+
+      {/* Similar Moves Social Proof */}
+      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
+        <div className="text-center mb-10">
+          <Badge className="mb-4 bg-green-500/10 text-green-600 border border-green-500/30">
+            <Users className="w-3 h-3 mr-1" /> Recent Moves
+          </Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+            Similar Moves Near You
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            See what others paid for moves like yours
           </p>
-          
-          <div className="space-y-4 p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg">
-            <div>
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block">From</label>
-              <Input placeholder="Origin city or ZIP" className="bg-slate-50 dark:bg-slate-900" />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block">To</label>
-              <Input placeholder="Destination city or ZIP" className="bg-slate-50 dark:bg-slate-900" />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block">Home Size</label>
-              <select className="w-full p-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white">
-                <option>Studio / 1 Bedroom</option>
-                <option>2 Bedroom</option>
-                <option>3 Bedroom</option>
-                <option>4+ Bedroom</option>
-              </select>
-            </div>
-            <Button className="w-full py-5 font-bold text-white" style={{ background: `linear-gradient(135deg, ${theme.accent} 0%, ${theme.accentLight} 100%)` }}>
-              <Calculator className="w-4 h-4 mr-2" /> Calculate My Cost
-            </Button>
-          </div>
         </div>
-        
-        <div className="flex items-center justify-center">
-          <div className="text-center p-8 rounded-2xl bg-white dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-600">
-            <DollarSign className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-500">Your estimate will appear here</p>
-            <p className="text-xs text-slate-400 mt-2">Enter your details to get started</p>
+
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {[
+            { from: "Los Angeles, CA", to: "Austin, TX", size: "3 Bedroom", cost: "$3,247", saved: "$892" },
+            { from: "New York, NY", to: "Miami, FL", size: "2 Bedroom", cost: "$2,890", saved: "$654" },
+            { from: "Chicago, IL", to: "Denver, CO", size: "4 Bedroom", cost: "$4,120", saved: "$1,104" },
+          ].map((move, i) => (
+            <div key={i} className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <MapPin className="w-4 h-4" style={{ color: theme.primary }} />
+                <span className="text-sm text-slate-600">{move.from}</span>
+                <ArrowRight className="w-3 h-3 text-slate-400" />
+                <span className="text-sm text-slate-600">{move.to}</span>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-slate-500">{move.size}</span>
+                <Badge className="bg-green-100 text-green-700 text-xs">Saved {move.saved}</Badge>
+              </div>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{move.cost}</p>
+              <div className="flex items-center gap-1 mt-2">
+                {[1,2,3,4,5].map(j => <Star key={j} className="w-3 h-3" style={{ fill: theme.primary, color: theme.primary }} />)}
+                <span className="text-xs text-slate-500 ml-1">Verified move</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* What Happens Next */}
+      <ThreeStepProcess theme="light" />
+
+      {/* Savings Breakdown Visualization */}
+      <div className="py-16 px-8 bg-white dark:bg-slate-900">
+        <div className="text-center mb-10">
+          <Badge className="mb-4 bg-purple-500/10 text-purple-600 border border-purple-500/30">
+            <DollarSign className="w-3 h-3 mr-1" /> Cost Breakdown
+          </Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+            Where Your Money Goes
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            Transparent pricing with no hidden fees
+          </p>
+        </div>
+
+        <div className="max-w-2xl mx-auto">
+          <div className="space-y-4">
+            {[
+              { label: "Transportation", percentage: 45, color: theme.primary },
+              { label: "Labor", percentage: 30, color: theme.accent },
+              { label: "Insurance & Fees", percentage: 15, color: theme.primaryDark },
+              { label: "Packing Materials", percentage: 10, color: theme.accentLight },
+            ].map((item, i) => (
+              <div key={i}>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-slate-700 dark:text-slate-300 font-medium">{item.label}</span>
+                  <span className="text-slate-500">{item.percentage}%</span>
+                </div>
+                <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full rounded-full transition-all duration-1000"
+                    style={{ width: `${item.percentage}%`, background: item.color }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="px-8 py-6 border-t border-slate-200 dark:border-slate-700 flex justify-center gap-6 text-sm text-slate-500">
-        <span className="flex items-center gap-1"><Shield className="w-4 h-4" /> Secure</span>
-        <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> Instant Results</span>
-        <span className="flex items-center gap-1"><Users className="w-4 h-4" /> 50,000+ Quotes</span>
+      {/* Triple Guarantee */}
+      <TripleGuaranteeSection />
+
+      {/* FAQ */}
+      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
+        <div className="text-center mb-12">
+          <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">Calculator FAQ</h2>
+        </div>
+        <div className="max-w-3xl mx-auto space-y-3">
+          {[
+            { q: "How accurate is this calculator?", a: "Our AI has analyzed over 100,000 moves to provide estimates within 5-10% of final costs. Get an in-home estimate for exact pricing." },
+            { q: "Is my information secure?", a: "Absolutely. We use 256-bit encryption and never share your data with third parties." },
+            { q: "Will I get spam calls?", a: "Never. We only contact you if you request a detailed quote." },
+          ].map((faq, i) => (
+            <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+              <p className="font-semibold text-slate-900 dark:text-white mb-2">{faq.q}</p>
+              <p className="text-slate-600 dark:text-slate-400 text-sm">{faq.a}</p>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Final CTA */}
+      <FinalCTASection theme={theme} />
+
+      {/* Footer */}
+      <TruMoveFooter />
     </div>
   );
 
   const renderTestimonialPage = () => (
-    <div style={{ background: `linear-gradient(to bottom, ${theme.primary}10, white)` }}>
-      {/* Warm header */}
-      <div className="px-8 py-12 text-center">
-        <div className="flex justify-center mb-4">
-          {[1,2,3,4,5].map(i => <Star key={i} className="w-8 h-8" style={{ fill: theme.primary, color: theme.primary }} />)}
+    <div className="min-h-screen bg-white dark:bg-slate-900">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
+        <div className="flex items-center justify-between px-6 py-3">
+          <img src={logoImg} alt={businessName} className="h-8" />
+          <div className="flex items-center gap-4">
+            <a href="tel:1-800-TRUMOVE" className="flex items-center gap-2 text-slate-700 hover:text-green-600 transition-colors">
+              <Phone className="w-4 h-4" />
+              <span className="font-semibold">1-800-TRUMOVE</span>
+            </a>
+            <Button size="sm" className="text-white" style={{ background: theme.primary }}>Get a Quote</Button>
+          </div>
         </div>
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-3">
-          Real Families. Real Stories.
+      </header>
+
+      {/* Hero with Massive Rating */}
+      <div className="px-8 py-20 text-center" style={{ background: `linear-gradient(135deg, ${theme.secondary} 0%, ${theme.primaryDark} 100%)` }}>
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 border border-white/20">
+            {[1,2,3,4,5].map(i => <Star key={i} className="w-10 h-10 animate-pulse" style={{ fill: "#FBBF24", color: "#FBBF24", animationDelay: `${i * 0.1}s` }} />)}
+          </div>
+        </div>
+        <div className="mb-4">
+          <span className="text-7xl font-bold text-white">4.9</span>
+          <span className="text-3xl text-white/70">/5</span>
+        </div>
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          Real Families. <span style={{ color: theme.primary }}>Real Stories.</span>
         </h1>
-        <p className="text-lg text-slate-600 dark:text-slate-400">
-          See why we're rated 4.9/5 by over 50,000 customers
+        <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
+          Over 50,000 families have trusted us with their most precious belongings. Here's what they have to say.
         </p>
+        <div className="flex justify-center gap-6 flex-wrap">
+          <Badge className="py-2 px-4 bg-white/10 text-white border border-white/20">
+            <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4 mr-2" /> 4.9 on Google
+          </Badge>
+          <Badge className="py-2 px-4 bg-white/10 text-white border border-white/20">
+            <Star className="w-4 h-4 mr-2" style={{ fill: "#FF1A1A", color: "#FF1A1A" }} /> 4.8 on Yelp
+          </Badge>
+          <Badge className="py-2 px-4 bg-white/10 text-white border border-white/20">
+            <Award className="w-4 h-4 mr-2" /> BBB A+ Rated
+          </Badge>
+        </div>
       </div>
 
-      {/* Video Testimonial Grid */}
-      <div className="px-8 py-8 grid grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {[
-          { name: "Sarah M.", location: "Austin, TX", quote: "Saved $847 on my cross-country move!" },
-          { name: "Michael C.", location: "Denver, CO", quote: "The AI scanner was incredibly accurate." },
-          { name: "Emily R.", location: "Seattle, WA", quote: "Best moving experience ever. Period." },
-          { name: "David K.", location: "Miami, FL", quote: "24/7 support made all the difference." },
-        ].map((t, i) => (
-          <div key={i} className="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.accent})` }}>
-                {t.name[0]}
-              </div>
-              <div>
-                <div className="font-semibold text-slate-900 dark:text-white">{t.name}</div>
-                <div className="text-sm text-slate-500">{t.location}</div>
-              </div>
-              <div className="ml-auto flex">
-                {[1,2,3,4,5].map(j => <Star key={j} className="w-3 h-3" style={{ fill: theme.primary, color: theme.primary }} />)}
-              </div>
+      {/* Trust Metrics Strip */}
+      <div className="py-6 px-8 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700">
+        <div className="flex justify-center items-center gap-10">
+          {[
+            { value: "50,000+", label: "Happy Customers" },
+            { value: "99%", label: "Would Recommend" },
+            { value: "$847", label: "Avg. Savings" },
+            { value: "4.9/5", label: "Average Rating" },
+          ].map((stat, i) => (
+            <div key={i} className="text-center">
+              <p className="text-2xl font-bold" style={{ color: theme.primary }}>{stat.value}</p>
+              <p className="text-xs text-slate-500">{stat.label}</p>
             </div>
-            <p className="text-slate-700 dark:text-slate-300 italic">"{t.quote}"</p>
-            <button className="mt-4 flex items-center gap-2 text-sm font-medium" style={{ color: theme.primary }}>
-              <Play className="w-4 h-4" /> Watch Video
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {/* CTA */}
-      <div className="px-8 py-10 text-center">
-        <Button className="py-6 px-10 text-lg font-bold gap-2 text-white" style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}>
-          Join 50,000+ Happy Families <ArrowRight className="w-5 h-5" />
-        </Button>
-      </div>
-    </div>
-  );
-
-  const renderLocalSeoPage = () => (
-    <div className="bg-white dark:bg-slate-900">
-      {/* Location-specific hero */}
-      <div className="px-8 py-16 text-center" style={{ background: `linear-gradient(135deg, ${theme.primaryDark} 0%, ${theme.primary} 100%)` }}>
-        <Badge className="mb-4 bg-white/20 text-white border border-white/30">
-          <MapPin className="w-3 h-3 mr-1" /> {targetLocation || "California"} Movers
-        </Badge>
-        <h1 className="text-4xl font-bold text-white mb-4">
-          #1 Rated Moving Company in {targetLocation || "California"}
-        </h1>
-        <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
-          Trusted by local families for over 10 years. Licensed, insured, and ready to make your move stress-free.
-        </p>
-        
-        <div className="max-w-md mx-auto bg-white rounded-2xl p-6 shadow-xl">
-          <h3 className="font-bold text-slate-900 mb-4">Get a Free Local Quote</h3>
-          <div className="space-y-3 mb-4">
-            <Input placeholder="Your ZIP code" className="text-center" />
-            <Input placeholder="Phone number" className="text-center" />
-          </div>
-          <Button className="w-full py-5 font-bold text-white" style={{ background: theme.primary }}>
-            Get My Quote <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-          <p className="text-xs text-slate-500 mt-3">Serving all of {targetLocation || "California"}</p>
-        </div>
-      </div>
-
-      {/* Local trust signals */}
-      <div className="py-8 px-8 grid grid-cols-4 gap-4 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700">
-        {[
-          { icon: Building, label: "Local Office", value: "Downtown LA" },
-          { icon: Users, label: "Moves Completed", value: "12,847" },
-          { icon: Clock, label: "Avg Response", value: "< 2 hours" },
-          { icon: Star, label: "Rating", value: "4.9/5" },
-        ].map((item, i) => (
-          <div key={i} className="text-center">
-            <item.icon className="w-6 h-6 mx-auto mb-2" style={{ color: theme.primary }} />
-            <div className="text-xl font-bold text-slate-900 dark:text-white">{item.value}</div>
-            <div className="text-xs text-slate-500">{item.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Service areas */}
-      <div className="py-10 px-8 text-center">
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Areas We Serve</h2>
-        <div className="flex flex-wrap justify-center gap-2">
-          {["Los Angeles", "San Diego", "San Francisco", "Sacramento", "San Jose", "Oakland", "Fresno", "Long Beach"].map(city => (
-            <Badge key={city} variant="secondary" className="text-sm py-1 px-3">{city}</Badge>
           ))}
         </div>
       </div>
-    </div>
-  );
 
-  const renderLongFormPage = () => (
-    <div className="bg-white dark:bg-slate-900">
-      {/* Editorial-style header */}
-      <div className="px-8 py-16 max-w-3xl mx-auto text-center">
-        <p className="text-sm text-slate-500 uppercase tracking-wider mb-4">The Complete Guide</p>
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-6 leading-tight">
-          Everything You Need to Know Before Hiring a Moving Company in 2025
-        </h1>
-        <p className="text-lg text-slate-600 dark:text-slate-400">
-          A comprehensive guide to saving money, avoiding scams, and finding the perfect mover for your needs.
-        </p>
-        <div className="flex items-center justify-center gap-4 mt-6 text-sm text-slate-500">
-          <span>15 min read</span>
-          <span>•</span>
-          <span>Updated Feb 2025</span>
+      {/* Video Testimonial Carousel */}
+      <div className="py-16 px-8">
+        <div className="text-center mb-10">
+          <Badge className="mb-4 bg-red-500/10 text-red-600 border border-red-500/30">
+            <Play className="w-3 h-3 mr-1" /> Video Stories
+          </Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+            Watch Their Stories
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            Real customers share their TruMove experience
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {[
+            { name: "The Johnson Family", location: "LA → Austin", thumbnail: "👨‍👩‍👧‍👦", duration: "2:34" },
+            { name: "Sarah Mitchell", location: "NYC → Miami", thumbnail: "👩‍💼", duration: "1:58" },
+            { name: "David & Lisa Chen", location: "Chicago → Denver", thumbnail: "👫", duration: "3:12" },
+          ].map((video, i) => (
+            <div key={i} className="group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl transition-shadow border border-slate-200 dark:border-slate-700">
+              <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center text-6xl relative">
+                {video.thumbnail}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg" style={{ background: theme.primary }}>
+                    <Play className="w-7 h-7 text-white ml-1" />
+                  </div>
+                </div>
+                <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                  {video.duration}
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="flex items-center gap-1 mb-2">
+                  {[1,2,3,4,5].map(j => <Star key={j} className="w-3 h-3" style={{ fill: "#FBBF24", color: "#FBBF24" }} />)}
+                </div>
+                <p className="font-bold text-slate-900 dark:text-white">{video.name}</p>
+                <p className="text-sm text-slate-500">{video.location}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* TOC */}
-      <div className="px-8 py-6 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700">
-        <div className="max-w-3xl mx-auto">
-          <h3 className="font-semibold text-sm text-slate-700 dark:text-slate-300 mb-3">In This Guide:</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
+      {/* Written Testimonials Masonry Grid */}
+      <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
+        <div className="text-center mb-10">
+          <Badge className="mb-4 bg-blue-500/10 text-blue-600 border border-blue-500/30">
+            <Quote className="w-3 h-3 mr-1" /> Written Reviews
+          </Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+            What Our Customers Say
+          </h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {[
+            { name: "Sarah M.", location: "Austin, TX", quote: "I was quoted $4,200 by another company. TruMove got me the same service for $3,350. The AI inventory scanner was scary accurate!", stars: 5 },
+            { name: "Michael C.", location: "Denver, CO", quote: "The real-time tracking was a game changer. I knew exactly where my stuff was the entire time. No anxiety!", stars: 5 },
+            { name: "Emily R.", location: "Seattle, WA", quote: "Best moving experience ever. Period. The team was professional, quick, and nothing was damaged.", stars: 5 },
+            { name: "David K.", location: "Miami, FL", quote: "24/7 support made all the difference. Had a question at 11pm and got an answer in minutes.", stars: 5 },
+            { name: "Jennifer L.", location: "Phoenix, AZ", quote: "Saved us so much stress! The quote we got was exactly what we paid. No surprise fees.", stars: 5 },
+            { name: "Robert T.", location: "Portland, OR", quote: "Third time using TruMove and they never disappoint. Highly recommend to anyone planning a move.", stars: 5 },
+          ].map((t, i) => (
+            <div key={i} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg" style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.accent})` }}>
+                  {t.name[0]}
+                </div>
+                <div>
+                  <div className="font-semibold text-slate-900 dark:text-white">{t.name}</div>
+                  <div className="text-sm text-slate-500">{t.location}</div>
+                </div>
+                <div className="ml-auto flex">
+                  {Array(t.stars).fill(0).map((_, j) => <Star key={j} className="w-4 h-4" style={{ fill: "#FBBF24", color: "#FBBF24" }} />)}
+                </div>
+              </div>
+              <p className="text-slate-700 dark:text-slate-300 italic leading-relaxed">"{t.quote}"</p>
+              <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
+                <CheckCircle2 className="w-3 h-3" style={{ color: theme.primary }} />
+                Verified Customer
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Before & After Story Highlights */}
+      <div className="py-16 px-8 bg-white dark:bg-slate-900">
+        <div className="text-center mb-10">
+          <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>
+            <ThumbsUp className="w-3 h-3 mr-1" /> Success Stories
+          </Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+            Moving Nightmares We Solved
+          </h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {[
+            { 
+              before: "Quoted $5,500 by traditional movers with hidden fees", 
+              after: "Paid $3,890 with TruMove - all inclusive",
+              customer: "The Martinez Family",
+              saved: "$1,610"
+            },
+            { 
+              before: "Previous mover 'lost' 3 boxes of irreplaceable items", 
+              after: "Every single item accounted for with GPS tracking",
+              customer: "Lisa & Tom Henderson",
+              saved: "Peace of mind"
+            },
+          ].map((story, i) => (
+            <div key={i} className="p-6 rounded-2xl border-2 border-slate-200 dark:border-slate-700">
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/30">
+                  <p className="text-xs font-semibold text-red-600 mb-1">BEFORE</p>
+                  <p className="text-sm text-red-700 dark:text-red-300">{story.before}</p>
+                </div>
+                <div className="p-4 rounded-xl bg-green-50 dark:bg-green-950/30">
+                  <p className="text-xs font-semibold text-green-600 mb-1">AFTER</p>
+                  <p className="text-sm text-green-700 dark:text-green-300">{story.after}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-400">{story.customer}</span>
+                <Badge className="bg-green-100 text-green-700">Saved: {story.saved}</Badge>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Share Your Story CTA */}
+      <div className="py-16 px-8" style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}>
+        <div className="text-center max-w-2xl mx-auto">
+          <Heart className="w-12 h-12 text-white mx-auto mb-4" />
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Have a TruMove Story?
+          </h2>
+          <p className="text-lg text-white/80 mb-6">
+            Share your experience and get $100 off your next move!
+          </p>
+          <Button className="py-5 px-8 text-lg font-bold gap-2 bg-white hover:bg-slate-100" style={{ color: theme.primary }}>
+            Share Your Story <ArrowRight className="w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Triple Guarantee */}
+      <TripleGuaranteeSection />
+
+      {/* Final CTA */}
+      <FinalCTASection theme={theme} />
+
+      {/* Footer */}
+      <TruMoveFooter />
+    </div>
+  );
+
+  const renderLocalSeoPage = () => {
+    const location = targetLocation || "California";
+    const cities = location === "California" 
+      ? ["Los Angeles", "San Diego", "San Francisco", "Sacramento", "San Jose", "Oakland", "Fresno", "Long Beach"]
+      : location === "Texas"
+      ? ["Houston", "Dallas", "Austin", "San Antonio", "Fort Worth", "El Paso", "Arlington", "Plano"]
+      : ["Miami", "Tampa", "Orlando", "Jacksonville", "Fort Lauderdale", "St. Petersburg", "Hialeah", "Tallahassee"];
+
+    return (
+      <div className="min-h-screen bg-white dark:bg-slate-900">
+        {/* Sticky Header with Local Phone */}
+        <header className="sticky top-0 z-50 bg-white border-b-2 shadow-sm" style={{ borderColor: theme.primary }}>
+          <div className="flex items-center justify-between px-6 py-3">
+            <div className="flex items-center gap-3">
+              <img src={logoImg} alt={businessName} className="h-8" />
+              <Badge className="text-xs" style={{ background: `${theme.primary}20`, color: theme.primary }}>
+                <MapPin className="w-3 h-3 mr-1" /> {location}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-4">
+              <a href="tel:1-800-TRUMOVE" className="flex items-center gap-2 text-slate-700 hover:text-green-600 transition-colors">
+                <Phone className="w-4 h-4" />
+                <span className="font-semibold">1-800-TRUMOVE</span>
+              </a>
+              <Button size="sm" className="text-white" style={{ background: theme.primary }}>Free Local Quote</Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Urgency Banner */}
+        <div className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-2 px-4 text-center">
+          <span className="flex items-center justify-center gap-2 text-sm font-medium">
+            <Award className="w-4 h-4 animate-pulse" />
+            #1 Rated Moving Company in {location} for 10+ Years
+            <Award className="w-4 h-4 animate-pulse" />
+          </span>
+        </div>
+
+        {/* Location-Specific Hero with Map Style */}
+        <div className="relative">
+          {/* Simulated Map Background */}
+          <div className="absolute inset-0 opacity-10" style={{ 
+            background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M0 0h100v100H0z' fill='none' stroke='%23999' stroke-width='0.5'/%3E%3Cpath d='M0 50h100M50 0v100' stroke='%23999' stroke-width='0.25'/%3E%3C/svg%3E")` 
+          }} />
+          
+          <div className="relative px-8 py-20" style={{ background: `linear-gradient(135deg, ${theme.secondary}ee 0%, ${theme.primaryDark}ee 100%)` }}>
+            <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+              <div className="text-center md:text-left">
+                <Badge className="mb-4 bg-white/10 text-white border border-white/30">
+                  <MapPin className="w-3 h-3 mr-1" /> Serving All of {location}
+                </Badge>
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                  {location}'s Most <span style={{ color: theme.primary }}>Trusted Movers</span>
+                </h1>
+                <p className="text-xl text-white/80 mb-6">
+                  Local experts who know every neighborhood, every route, and every way to save you money on your move.
+                </p>
+                <div className="flex items-center gap-6 text-white/70 text-sm justify-center md:justify-start flex-wrap">
+                  <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4 text-green-400" /> Licensed & Insured</span>
+                  <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4 text-green-400" /> Local Crews</span>
+                  <span className="flex items-center gap-1"><CheckCircle2 className="w-4 h-4 text-green-400" /> Same-Day Quotes</span>
+                </div>
+              </div>
+
+              {/* Local Quote Form */}
+              <div className="bg-white rounded-2xl p-8 shadow-2xl border-2" style={{ borderColor: theme.primary }}>
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold text-slate-900">Get a Free Local Quote</h3>
+                  <p className="text-sm text-slate-500">Serving all of {location} • Response in &lt;2 hours</p>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">Your ZIP Code</label>
+                    <Input placeholder="Enter your ZIP" className="bg-slate-50 py-5 text-center text-lg" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">Phone Number</label>
+                    <Input placeholder="(555) 123-4567" type="tel" className="bg-slate-50 py-5 text-center text-lg" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">Moving Date</label>
+                    <Input type="date" className="bg-slate-50 py-5" />
+                  </div>
+                  <Button className="w-full py-6 text-lg font-bold gap-2 text-white" style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}>
+                    Get My Free Quote <ArrowRight className="w-5 h-5" />
+                  </Button>
+                  <p className="text-xs text-slate-500 text-center">🔒 No spam • No obligation</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Local Trust Signals */}
+        <div className="py-8 px-8 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             {[
-              "1. Understanding Moving Costs",
-              "2. Red Flags to Watch For",
-              "3. How to Compare Quotes",
-              "4. The AI Advantage",
-              "5. Packing Tips & Tricks",
-              "6. Your Moving Day Checklist",
+              { icon: Building, label: "Local Office", value: location === "California" ? "Downtown LA" : location === "Texas" ? "Houston Office" : "Miami HQ" },
+              { icon: Users, label: "Local Moves", value: "12,847" },
+              { icon: Clock, label: "Avg Response", value: "< 2 hours" },
+              { icon: Star, label: "Local Rating", value: "4.9/5" },
             ].map((item, i) => (
-              <div key={i} className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer">{item}</div>
+              <div key={i} className="text-center">
+                <item.icon className="w-8 h-8 mx-auto mb-2" style={{ color: theme.primary }} />
+                <div className="text-2xl font-bold text-slate-900 dark:text-white">{item.value}</div>
+                <div className="text-xs text-slate-500">{item.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Service Area Map */}
+        <div className="py-16 px-8 bg-white dark:bg-slate-900">
+          <div className="text-center mb-10">
+            <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>
+              <MapPin className="w-3 h-3 mr-1" /> Service Areas
+            </Badge>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+              We Serve All of {location}
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400">
+              Local experts in every major city and neighborhood
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {cities.map((city, i) => (
+                <div 
+                  key={city} 
+                  className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center hover:border-green-400 transition-colors cursor-pointer"
+                >
+                  <MapPin className="w-5 h-5 mx-auto mb-2" style={{ color: theme.primary }} />
+                  <p className="font-medium text-slate-900 dark:text-white">{city}</p>
+                  <p className="text-xs text-slate-500">+{Math.floor(Math.random() * 500 + 500)} moves</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-center text-sm text-slate-500 mt-6">
+              + 200 more cities and neighborhoods across {location}
+            </p>
+          </div>
+        </div>
+
+        {/* Local Testimonials */}
+        <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
+          <div className="text-center mb-10">
+            <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">
+              <Star className="w-3 h-3 mr-1" /> Local Reviews
+            </Badge>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+              What {location} Families Say
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              { name: "Maria G.", city: cities[0], quote: `Best movers in ${cities[0]}! On time, professional, and affordable.` },
+              { name: "James R.", city: cities[1], quote: `Moved our office in ${cities[1]} with zero downtime. Incredible service!` },
+              { name: "Lisa T.", city: cities[2], quote: `Third time using them for moves in ${location}. Always exceed expectations.` },
+            ].map((t, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center gap-1 mb-3">
+                  {[1,2,3,4,5].map(j => <Star key={j} className="w-4 h-4" style={{ fill: "#FBBF24", color: "#FBBF24" }} />)}
+                </div>
+                <p className="text-slate-700 dark:text-slate-300 italic mb-4">"{t.quote}"</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ background: theme.primary }}>
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 dark:text-white">{t.name}</p>
+                    <p className="text-xs text-slate-500">{t.city}, {location}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Local Partnership Badges */}
+        <div className="py-10 px-8 bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-700">
+          <div className="flex justify-center items-center gap-8 flex-wrap">
+            <Badge className="py-2 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              {location} Chamber of Commerce
+            </Badge>
+            <Badge className="py-2 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              BBB A+ Accredited
+            </Badge>
+            <Badge className="py-2 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              FMCSA Licensed
+            </Badge>
+            <Badge className="py-2 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              {location} Moving Association
+            </Badge>
+          </div>
+        </div>
+
+        {/* Local FAQ */}
+        <div className="py-16 px-8 bg-slate-50 dark:bg-slate-800">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-amber-500/10 text-amber-600 border border-amber-500/30">Questions?</Badge>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">{location} Moving FAQ</h2>
+          </div>
+          <div className="max-w-3xl mx-auto space-y-3">
+            {[
+              { q: `How much does a local move in ${location} cost?`, a: `Local moves in ${location} typically range from $500-$2,500 depending on home size and distance. Get an exact quote in minutes!` },
+              { q: `Do you service all of ${location}?`, a: `Yes! We have local crews throughout ${location}, including ${cities.slice(0, 4).join(", ")}, and many more cities.` },
+              { q: `How far in advance should I book?`, a: `We recommend 2-4 weeks for local moves, though we can often accommodate same-week requests.` },
+            ].map((faq, i) => (
+              <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+                <p className="font-semibold text-slate-900 dark:text-white mb-2">{faq.q}</p>
+                <p className="text-slate-600 dark:text-slate-400 text-sm">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Triple Guarantee */}
+        <TripleGuaranteeSection />
+
+        {/* Final CTA */}
+        <FinalCTASection theme={theme} />
+
+        {/* Footer */}
+        <TruMoveFooter />
+      </div>
+    );
+  };
+
+  const renderLongFormPage = () => (
+    <div className="min-h-screen bg-white dark:bg-slate-900">
+      {/* Minimal Sticky Header */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
+        <div className="flex items-center justify-between px-6 py-3 max-w-4xl mx-auto">
+          <img src={logoImg} alt={businessName} className="h-7" />
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-slate-500">15 min read</span>
+            <Button size="sm" className="text-white" style={{ background: theme.primary }}>Get a Quote</Button>
+          </div>
+        </div>
+        {/* Reading Progress Bar */}
+        <div className="h-1 bg-slate-100 dark:bg-slate-800">
+          <div className="h-full w-1/3 transition-all duration-300" style={{ background: theme.primary }} />
+        </div>
+      </header>
+
+      {/* Editorial Hero */}
+      <div className="px-8 py-20 max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <Badge className="mb-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+            The Complete Guide • Updated Feb 2025
+          </Badge>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6 leading-tight">
+            Everything You Need to Know Before Hiring a Moving Company in 2025
+          </h1>
+          <p className="text-xl text-slate-600 dark:text-slate-400 mb-8">
+            A comprehensive guide to saving money, avoiding scams, and finding the perfect mover for your needs.
+          </p>
+          
+          {/* Author/Authority Section */}
+          <div className="flex items-center justify-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white" style={{ background: theme.primary }}>
+              T
+            </div>
+            <div className="text-left">
+              <p className="font-semibold text-slate-900 dark:text-white">Written by the TruMove Research Team</p>
+              <p className="text-sm text-slate-500">Based on 50,000+ customer moves and industry data</p>
+              <div className="flex items-center gap-2 mt-1">
+                <CheckCircle2 className="w-3 h-3" style={{ color: theme.primary }} />
+                <span className="text-xs text-slate-500">Verified industry experts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-12">
+          {[
+            { value: "$847", label: "Avg. Savings" },
+            { value: "50K+", label: "Moves Analyzed" },
+            { value: "99%", label: "Accuracy Rate" },
+          ].map((stat, i) => (
+            <div key={i} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 text-center">
+              <p className="text-2xl font-bold" style={{ color: theme.primary }}>{stat.value}</p>
+              <p className="text-xs text-slate-500">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Expandable TOC */}
+      <div className="px-8 py-8 bg-slate-50 dark:bg-slate-800 border-y border-slate-200 dark:border-slate-700">
+        <div className="max-w-3xl mx-auto">
+          <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <FileText className="w-5 h-5" style={{ color: theme.primary }} />
+            What You'll Learn
+          </h3>
+          <div className="grid md:grid-cols-2 gap-3">
+            {[
+              { num: 1, title: "Understanding Moving Costs", time: "3 min" },
+              { num: 2, title: "Red Flags to Watch For", time: "2 min" },
+              { num: 3, title: "How to Compare Quotes", time: "3 min" },
+              { num: 4, title: "The AI Advantage", time: "2 min" },
+              { num: 5, title: "Packing Tips & Tricks", time: "3 min" },
+              { num: 6, title: "Your Moving Day Checklist", time: "2 min" },
+            ].map((item) => (
+              <div key={item.num} className="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-green-400 transition-colors cursor-pointer">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ background: theme.primary }}>
+                  {item.num}
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-slate-900 dark:text-white text-sm">{item.title}</p>
+                </div>
+                <span className="text-xs text-slate-400">{item.time}</span>
+              </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Content sections */}
-      <div className="px-8 py-12 max-w-3xl mx-auto space-y-12">
+      {/* Content Sections */}
+      <div className="px-8 py-16 max-w-3xl mx-auto space-y-16">
+        {/* Section 1 */}
         <section>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">1. Understanding Moving Costs</h2>
-          <p className="text-slate-600 dark:text-slate-400 mb-4">
-            The average cost of a long-distance move ranges from $2,000 to $5,000, depending on distance, 
-            weight, and time of year. Here's how to budget effectively...
+          <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>Section 1</Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Understanding Moving Costs</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+            The average cost of a long-distance move ranges from <strong>$2,000 to $5,000</strong>, depending on distance, 
+            weight, and time of year. Understanding these factors is crucial for budgeting effectively.
           </p>
-          <div className="p-4 rounded-xl bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800">
-            <p className="text-sm text-green-800 dark:text-green-300">
-              <strong>💡 Pro Tip:</strong> Get quotes at least 4-6 weeks before your move date for the best rates.
+          
+          {/* Pull Quote */}
+          <div className="my-8 p-6 border-l-4 bg-slate-50 dark:bg-slate-800" style={{ borderColor: theme.primary }}>
+            <p className="text-xl italic text-slate-700 dark:text-slate-300">
+              "The #1 mistake people make is getting quotes too late. Booking 4-6 weeks out can save you 15-20%."
             </p>
+            <p className="text-sm text-slate-500 mt-2">— TruMove Moving Experts</p>
           </div>
-        </section>
 
-        <section>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">2. Red Flags to Watch For</h2>
-          <ul className="space-y-3">
+          <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+            Key factors that affect your moving cost include:
+          </p>
+          
+          <ul className="space-y-3 mb-6">
             {[
-              "Large deposits required upfront",
-              "No physical address or office",
-              "Quotes given over the phone without inspection",
-              "No FMCSA registration number",
+              "Distance: Long-distance moves are priced per mile",
+              "Weight/Volume: More stuff = higher costs",
+              "Time of Year: Summer and month-ends are peak seasons",
+              "Special Items: Pianos, antiques, and fragile items cost extra",
             ].map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-slate-600 dark:text-slate-400">
-                <X className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <li key={i} className="flex items-start gap-3 text-slate-600 dark:text-slate-400">
+                <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: theme.primary }} />
                 {item}
               </li>
             ))}
           </ul>
-        </section>
-      </div>
 
-      {/* Sticky CTA */}
-      <div className="sticky bottom-0 px-8 py-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-lg">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div>
-            <p className="font-semibold text-slate-900 dark:text-white">Ready to get started?</p>
-            <p className="text-sm text-slate-500">Get your free AI-powered quote in 60 seconds</p>
+          {/* Callout Box */}
+          <div className="p-5 rounded-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
+            <p className="text-sm text-green-800 dark:text-green-300 flex items-start gap-2">
+              <Sparkles className="w-5 h-5 flex-shrink-0" />
+              <span><strong>💡 Pro Tip:</strong> Use an AI-powered inventory scanner to get the most accurate quote. TruMove's scanner is accurate within 5% of final costs.</span>
+            </p>
           </div>
-          <Button className="py-5 px-8 font-bold gap-2 text-white" style={{ background: theme.primary }}>
-            Get My Quote <ArrowRight className="w-4 h-4" />
+        </section>
+
+        {/* Inline CTA */}
+        <div className="p-6 rounded-2xl text-center" style={{ background: `linear-gradient(135deg, ${theme.primary}15 0%, ${theme.accent}15 100%)` }}>
+          <p className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Want to know your exact cost?</p>
+          <p className="text-slate-600 dark:text-slate-400 mb-4">Get an AI-powered quote in 60 seconds</p>
+          <Button className="py-4 px-6 font-bold gap-2 text-white" style={{ background: theme.primary }}>
+            Get My Free Quote <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
+
+        {/* Section 2 */}
+        <section>
+          <Badge className="mb-4 bg-red-100 dark:bg-red-950/30 text-red-600 border border-red-200 dark:border-red-800">Section 2</Badge>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Red Flags to Watch For</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+            Moving scams cost Americans over $100 million annually. Here's how to protect yourself:
+          </p>
+          
+          <div className="space-y-4">
+            {[
+              { flag: "Large deposits required upfront", why: "Legitimate movers charge on delivery, not before" },
+              { flag: "No physical address or office", why: "Fly-by-night operations disappear with your stuff" },
+              { flag: "Quotes given over the phone without inspection", why: "Accurate quotes require seeing your inventory" },
+              { flag: "No FMCSA registration number", why: "Federal law requires all interstate movers to be registered" },
+              { flag: "Pressure to sign immediately", why: "Legitimate companies give you time to compare" },
+            ].map((item, i) => (
+              <div key={i} className="p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900">
+                <div className="flex items-start gap-3">
+                  <X className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-red-800 dark:text-red-300">{item.flag}</p>
+                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">{item.why}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Video Break Section */}
+        <div className="p-8 rounded-2xl bg-slate-900 text-center">
+          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: theme.primary }}>
+            <Play className="w-10 h-10 text-white ml-1" />
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">Watch: How to Spot a Moving Scam</h3>
+          <p className="text-slate-400 mb-4">3-minute video with our expert tips</p>
+          <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
+            <Video className="w-4 h-4 mr-2" /> Watch Now
+          </Button>
+        </div>
+
+        {/* TL;DR Summary Section */}
+        <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            ⚡ TL;DR Summary
+          </h3>
+          <ul className="space-y-2">
+            {[
+              "Get quotes 4-6 weeks early to save 15-20%",
+              "Always verify FMCSA registration",
+              "Never pay large deposits upfront",
+              "Use AI tools for accurate inventory",
+              "Compare at least 3 quotes",
+              "Read reviews on multiple platforms",
+            ].map((item, i) => (
+              <li key={i} className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                <CheckCircle2 className="w-4 h-4" style={{ color: theme.primary }} />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
+
+      {/* Triple Guarantee */}
+      <TripleGuaranteeSection />
+
+      {/* Final CTA */}
+      <FinalCTASection theme={theme} />
+
+      {/* Sticky Bottom CTA Bar (Mobile-First) */}
+      <div className="sticky bottom-0 px-4 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-lg md:hidden">
+        <Button className="w-full py-4 font-bold gap-2 text-white" style={{ background: theme.primary }}>
+          Get My Free Quote <ArrowRight className="w-4 h-4" />
+        </Button>
+      </div>
+
+      {/* Footer */}
+      <TruMoveFooter />
     </div>
   );
 
