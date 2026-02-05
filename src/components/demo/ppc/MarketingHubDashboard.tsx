@@ -1,13 +1,15 @@
- import { Button } from "@/components/ui/button";
- import { Card, CardContent } from "@/components/ui/card";
- import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
  import {
   Layout, TrendingUp, Zap, Search, Globe, FlaskConical,
-  ArrowRight, Target, Users, DollarSign, BarChart3,
-  Play, Sparkles, MessageSquare, Bot, ChevronRight
+ ArrowRight, Target, DollarSign, BarChart3,
+ Bot, ChevronRight, HelpCircle
  } from "lucide-react";
 import { TrudyMarketingChat } from "./TrudyMarketingChat";
-import { useState } from "react";
+import { AIPromptInput } from "./AIPromptInput";
+import { PlatformConnectCards } from "./PlatformConnectCards";
+import { GuidedTour } from "./GuidedTour";
  
  interface FeatureCard {
    id: string;
@@ -88,23 +90,48 @@ import { useState } from "react";
  
 export function MarketingHubDashboard({ onNavigate, stats }: MarketingHubDashboardProps) {
   const [showTrudyPanel, setShowTrudyPanel] = useState(true);
+  const [showTour, setShowTour] = useState(false);
+  const [isAIProcessing, setIsAIProcessing] = useState(false);
+
+  const handleAIPrompt = async (prompt: string, action: string) => {
+    setIsAIProcessing(true);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setIsAIProcessing(false);
+    onNavigate(action);
+  };
 
    return (
-    <div className="flex h-full">
+    <div className="flex h-full relative">
+      {/* Guided Tour */}
+      <GuidedTour
+        isOpen={showTour}
+        onClose={() => setShowTour(false)}
+        onComplete={() => setShowTour(false)}
+        onNavigate={onNavigate}
+      />
+
       {/* Main Content */}
       <div className={`flex-1 space-y-6 p-4 overflow-y-auto transition-all ${showTrudyPanel ? 'pr-2' : ''}`}>
-       {/* Welcome Header */}
-       <div className="text-center space-y-2 py-4">
-         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium">
-           <Sparkles className="w-4 h-4" />
-           Your Marketing Hub
+       {/* AI Prompt Input - Hero */}
+       <div className="space-y-2">
+         <div className="flex items-center justify-between">
+           <h2 className="text-lg font-bold text-foreground">What do you want to create?</h2>
+           <Button
+             variant="ghost"
+             size="sm"
+             className="gap-1 text-xs text-muted-foreground"
+             onClick={() => setShowTour(true)}
+           >
+             <HelpCircle className="w-3 h-3" />
+             Take Tour
+           </Button>
          </div>
-         <h2 className="text-2xl font-bold text-foreground">What do you want to do?</h2>
-         <p className="text-muted-foreground max-w-md mx-auto">
-           Choose an action below to get started. AI will guide you through each step.
-         </p>
+         <AIPromptInput onSubmit={handleAIPrompt} isProcessing={isAIProcessing} />
        </div>
  
+       {/* Platform Connect Cards */}
+       <PlatformConnectCards compact />
+
        {/* Quick Stats Bar */}
        <div className="grid grid-cols-4 gap-3">
          {[
@@ -124,87 +151,44 @@ export function MarketingHubDashboard({ onNavigate, stats }: MarketingHubDashboa
                <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
              </div>
              <div>
-               <p className="text-lg font-bold text-foreground">{stat.value}</p>
-               <p className="text-xs text-muted-foreground">{stat.label}</p>
+              <p className="text-sm font-bold text-foreground">{stat.value}</p>
+              <p className="text-[10px] text-muted-foreground">{stat.label}</p>
              </div>
            </div>
          ))}
        </div>
  
        {/* Feature Cards Grid */}
-       <div className="grid grid-cols-3 gap-4">
+       <div className="grid grid-cols-3 gap-3">
          {FEATURE_CARDS.map((card) => (
            <Card 
              key={card.id}
-             className={`group cursor-pointer border-2 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 bg-gradient-to-br ${card.gradient}`}
+             className={`group cursor-pointer border transition-all duration-300 hover:border-primary/50 hover:shadow-md bg-gradient-to-br ${card.gradient}`}
              onClick={() => onNavigate(card.id)}
            >
-             <CardContent className="p-5 space-y-4">
+             <CardContent className="p-4 space-y-3">
                <div className="flex items-start justify-between">
                  <div 
-                   className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
+                   className="w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
                    style={{ background: `${card.color}20` }}
                  >
-                   <card.icon className="w-6 h-6" style={{ color: card.color }} />
+                   <card.icon className="w-5 h-5" style={{ color: card.color }} />
                  </div>
-                 <Badge variant="secondary" className="text-xs">
-                   {card.stats.label}: {card.stats.value}
-                 </Badge>
+                 <span className="text-[10px] text-muted-foreground">{card.stats.value}</span>
                </div>
                
                <div>
-                 <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                 <h3 className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">
                    {card.title}
                  </h3>
-                 <p className="text-sm text-muted-foreground mt-1">
+                 <p className="text-xs text-muted-foreground mt-0.5">
                    {card.description}
                  </p>
                </div>
- 
-               <Button 
-                 variant="ghost" 
-                 size="sm" 
-                 className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
-               >
-                 Get Started
-                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-               </Button>
              </CardContent>
            </Card>
          ))}
        </div>
- 
-       {/* Quick Create CTA */}
-      <Card 
-        className="border-2 border-dashed border-primary/30 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 cursor-pointer hover:border-primary/50 transition-colors"
-        onClick={() => setShowTrudyPanel(true)}
-      >
-         <CardContent className="p-6 flex items-center justify-between">
-           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-              <Bot className="w-7 h-7 text-primary" />
-             </div>
-             <div>
-              <h3 className="font-semibold text-lg text-foreground">Ask Trudy</h3>
-               <p className="text-muted-foreground">
-                "Create an ad with a llama" — Trudy designs & launches it for you
-               </p>
-             </div>
-           </div>
-           <Button 
-             size="lg" 
-             className="gap-2"
-             style={{ background: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)' }}
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowTrudyPanel(true);
-            }}
-           >
-            <MessageSquare className="w-4 h-4" />
-            Chat with Trudy
-           </Button>
-         </CardContent>
-       </Card>
       </div>
 
       {/* Trudy Chat Panel */}
