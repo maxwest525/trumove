@@ -2,6 +2,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Loader2, Navigation2, Satellite } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Supported map view types
+export type MapViewType = 'roadmap' | 'satellite' | 'hybrid' | 'terrain' | 'truckview';
+
 interface Google2DTrackingMapProps {
   originCoords: [number, number] | null;
   destCoords: [number, number] | null;
@@ -10,7 +13,7 @@ interface Google2DTrackingMapProps {
   onRouteCalculated?: (route: { coordinates: [number, number][]; distance: number; duration: number }) => void;
   followMode?: boolean;
   onFollowModeChange?: (enabled: boolean) => void;
-  mapType?: 'roadmap' | 'satellite' | 'hybrid' | 'terrain';
+  mapType?: MapViewType;
   googleApiKey: string;
 }
 
@@ -138,10 +141,14 @@ export function Google2DTrackingMap({
         ? { lat: originCoords[1], lng: originCoords[0] }
         : { lat: 39.8283, lng: -98.5795 }; // Default: Center of US (Kansas)
 
+      // Determine Google mapTypeId - truckview uses satellite as base
+      const googleMapTypeId = mapType === 'truckview' ? 'satellite' : mapType;
+      const isTruckView = mapType === 'truckview';
+
       const map = new window.google.maps.Map(containerRef.current, {
         center: initialCenter,
-        zoom: originCoords ? 12 : 4, // Start zoomed out for continental US view
-        mapTypeId: mapType,
+        zoom: isTruckView ? 18 : (originCoords ? 12 : 4), // Street level for truck view
+        mapTypeId: googleMapTypeId,
         mapTypeControl: false, // Disabled - using custom dropdown instead
         fullscreenControl: false,
         streetViewControl: false,
@@ -149,7 +156,8 @@ export function Google2DTrackingMap({
         zoomControlOptions: {
           position: window.google.maps.ControlPosition.RIGHT_CENTER
         },
-        tilt: 0, // 2D view
+        tilt: isTruckView ? 45 : 0, // Tilted for truck view, flat for others
+        heading: 0,
         styles: mapType === 'roadmap' ? [
           { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
           { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
@@ -199,11 +207,34 @@ export function Google2DTrackingMap({
   useEffect(() => {
     if (!mapRef.current) return;
     
-    mapRef.current.setMapTypeId(mapType);
+    const isTruckView = mapType === 'truckview';
+    const googleMapTypeId = isTruckView ? 'satellite' : mapType;
     
-    // Apply dark styles for roadmap, clear for satellite/hybrid
-    if (mapType === 'roadmap') {
+    mapRef.current.setMapTypeId(googleMapTypeId);
+    
+    // Apply view-specific settings
+    if (isTruckView) {
+      // Truck view: tilted, street-level, following truck
       mapRef.current.setOptions({
+        styles: undefined,
+        tilt: 45,
+        zoom: 18
+      });
+      // Pan to truck position if available
+      if (truckMarkerRef.current) {
+        const truckPos = truckMarkerRef.current.getPosition();
+        if (truckPos) {
+          mapRef.current.setCenter(truckPos);
+          mapRef.current.setHeading(currentBearing);
+        }
+      }
+      // Enable follow mode in truck view
+      setInternalFollowMode(true);
+      onFollowModeChange?.(true);
+    } else if (mapType === 'roadmap') {
+      mapRef.current.setOptions({
+        tilt: 0,
+        heading: 0,
         styles: [
           { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
           { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
@@ -214,9 +245,13 @@ export function Google2DTrackingMap({
         ]
       });
     } else {
-      mapRef.current.setOptions({ styles: undefined });
+      mapRef.current.setOptions({ 
+        tilt: 0,
+        heading: 0,
+        styles: undefined 
+      });
     }
-  }, [mapType]);
+  }, [mapType, currentBearing, onFollowModeChange]);
 
   // Calculate route when origin/destination change
   useEffect(() => {
@@ -567,12 +602,26 @@ export function Google2DTrackingMap({
 
     // Follow mode: pan map to follow truck
     if (internalFollowMode && mapRef.current && isTracking) {
-      mapRef.current.panTo(newPosition);
-      if (mapRef.current.getZoom() < 13) {
-        mapRef.current.setZoom(14);
+      const isTruckView = mapType === 'truckview';
+      
+      if (isTruckView) {
+        // Truck view: street-level, tilted, heading aligned with direction
+        mapRef.current.setCenter(newPosition);
+        mapRef.current.setZoom(18);
+        mapRef.current.setTilt(45);
+        // Set heading to match truck direction
+        if (currentBearing !== undefined) {
+          mapRef.current.setHeading(currentBearing);
+        }
+      } else {
+        // Standard follow mode
+        mapRef.current.panTo(newPosition);
+        if (mapRef.current.getZoom() < 13) {
+          mapRef.current.setZoom(14);
+        }
       }
     }
-  }, [progress, internalFollowMode, isTracking]);
+  }, [progress, internalFollowMode, isTracking, mapType, currentBearing]);
 
   // Toggle follow mode
   const toggleFollowMode = useCallback(() => {
