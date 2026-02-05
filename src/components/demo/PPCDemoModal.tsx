@@ -438,6 +438,7 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
             <MarketingHubDashboard 
               onNavigate={handleNavigate}
               onQuickCreate={handleQuickCreate}
+              liveMode={liveMode}
               stats={{
                 totalSpend: Math.round(stats.totalSpend),
                 conversions: stats.conversions,
