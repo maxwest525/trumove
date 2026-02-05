@@ -87,6 +87,7 @@ export function Google2DTrackingMap({
   const trailPolylineRef = useRef<any>(null);
   const trailGlowOuterRef = useRef<any>(null);
   const trailGlowInnerRef = useRef<any>(null);
+  const mountIdRef = useRef<number>(Date.now()); // Unique ID per mount to force route recalculation
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -95,6 +96,7 @@ export function Google2DTrackingMap({
   const [currentSpeed, setCurrentSpeed] = useState<number>(0);
   const [currentTruckCoords, setCurrentTruckCoords] = useState<[number, number] | null>(null);
   const [currentBearing, setCurrentBearing] = useState<number>(0);
+  const [routeKey, setRouteKey] = useState<number>(0); // State to force route recalculation
   const lastPositionRef = useRef<{ lat: number; lng: number; time: number } | null>(null);
 
   // Sync follow mode with prop
@@ -253,7 +255,15 @@ export function Google2DTrackingMap({
     }
   }, [mapType, currentBearing, onFollowModeChange]);
 
-  // Calculate route when origin/destination change
+  // Force route recalculation when component remounts (view toggle scenario)
+  useEffect(() => {
+    if (!mapRef.current || !originCoords || !destCoords) return;
+    
+    // Trigger a route key update to force the route calculation effect to re-run
+    setRouteKey(prev => prev + 1);
+  }, [isScriptLoaded, originCoords, destCoords]);
+
+  // Calculate route when origin/destination change or when remounting
   useEffect(() => {
     if (!mapRef.current || !originCoords || !destCoords || !directionsRendererRef.current) return;
 
@@ -473,7 +483,7 @@ export function Google2DTrackingMap({
         }
       }
     );
-  }, [originCoords, destCoords, onRouteCalculated]);
+  }, [originCoords, destCoords, onRouteCalculated, routeKey]);
 
   // Update truck position based on progress
   useEffect(() => {

@@ -764,6 +764,7 @@ export default function LiveTracking() {
                 interactive={false}
                 originCoords={originCoords}
                 destCoords={destCoords}
+                onRouteCalculated={handleRouteCalculated}
               />
             ) : (
               <Google2DTrackingMap
