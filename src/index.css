@@ -2605,7 +2605,7 @@
   display: flex;
   align-items: center;
   position: relative;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 0;
   height: var(--demo-section-height);
   min-height: var(--demo-section-height);
   max-height: var(--demo-section-height);
@@ -3443,13 +3443,14 @@
   max-width: none;
   padding: 0 48px 0 24px;
   position: relative;
+  height: 100%;
 }
 
 .tru-tracker-header-row {
   display: flex;
   align-items: center;
   position: relative;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 0;
   height: var(--demo-section-height);
   min-height: var(--demo-section-height);
   max-height: var(--demo-section-height);
@@ -4161,10 +4162,8 @@
 .tru-ai-steps-inner {
   max-width: none;
   padding: 0 48px 0 24px;
-  text-align: center;
+  position: relative;
   height: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
 .tru-ai-steps-title {
