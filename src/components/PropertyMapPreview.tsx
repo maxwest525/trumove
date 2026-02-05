@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Layers } from 'lucide-react';
-import { addTerrain, add3DBuildings, setFogPreset, on3DReady } from '@/lib/mapbox3DConfig';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF4d2VzdDUyNSIsImEiOiJjbWtldWRqOXgwYzQ1M2Vvam51OGJrcGFiIn0.tN-ZMle93ctK7PIt9kU7JA';
 
@@ -71,10 +70,8 @@ export default function PropertyMapPreview({
       style: styleUrl,
       center: coordinates || [-98.5, 39.8],
       zoom: coordinates ? 15 : 3,
-      pitch: 50, // Enhanced tilt for 3D building visibility
-      bearing: -15,
+      pitch: 45,
       interactive: true,
-      antialias: true
     });
 
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -82,23 +79,22 @@ export default function PropertyMapPreview({
     map.current.on('load', () => {
       setIsMapLoaded(true);
       
-      // Apply 3D scene using centralized config
-      on3DReady(map.current!, () => {
-        if (!map.current) return;
-        
-        // Add terrain with noticeable exaggeration for property context
-        addTerrain(map.current, 1.5);
-        
-        // Add appropriate fog based on style
-        setFogPreset(map.current, mapStyle === 'satellite' ? 'satellite' : 'day');
-        
-        // Add 3D buildings for neighborhood context
-        add3DBuildings(map.current, {
-          color: mapStyle === 'satellite' ? '#444444' : '#cccccc',
-          opacity: 0.8,
-          minZoom: 14,
-          lightPreset: 'day'
-        });
+      // Add terrain
+      map.current?.addSource('mapbox-dem', {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        tileSize: 512,
+        maxzoom: 14
+      });
+      map.current?.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
+      
+      // Add fog
+      map.current?.setFog({
+        color: 'rgb(255, 255, 255)',
+        'high-color': 'rgb(200, 210, 230)',
+        'horizon-blend': 0.1,
+        'star-intensity': 0.0,
+        'space-color': 'rgb(200, 210, 230)'
       });
     });
 
@@ -151,12 +147,11 @@ export default function PropertyMapPreview({
       .addTo(map.current);
     markersRef.current.push(propMarker);
 
-    // Fly to property location with cinematic camera
+    // Fly to property location
     map.current.flyTo({
       center: coordinates,
-      zoom: 17,
-      pitch: 55,
-      bearing: -20,
+      zoom: 16,
+      pitch: 50,
       duration: 2000
     });
 

@@ -23,14 +23,6 @@ export interface OptimizationResult {
     distance: number;
     duration: number;
   }>;
-  geometry?: string; // Encoded polyline from Mapbox for precise route display
-}
-
-type OptimizationProvider = 'mapbox' | 'google';
-
-interface UseRouteOptimizationOptions {
-  provider?: OptimizationProvider;
-  profile?: 'driving' | 'driving-traffic' | 'walking' | 'cycling';
 }
 
 interface UseRouteOptimizationResult {
@@ -48,12 +40,7 @@ function getCacheKey(waypoints: Waypoint[]): string {
   return waypoints.map(w => `${w.lat.toFixed(5)},${w.lng.toFixed(5)}`).join('|');
 }
 
-export function useRouteOptimization(
-  options: UseRouteOptimizationOptions = {}
-): UseRouteOptimizationResult {
-  // Use Mapbox Directions-based optimization by default for traffic-aware routing
-  const { provider = 'mapbox', profile = 'driving-traffic' } = options;
-  
+export function useRouteOptimization(): UseRouteOptimizationResult {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [result, setResult] = useState<OptimizationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -65,14 +52,13 @@ export function useRouteOptimization(
       return null;
     }
 
-    const maxWaypoints = provider === 'mapbox' ? 12 : 10;
-    if (waypoints.length > maxWaypoints) {
-      setError(`Maximum ${maxWaypoints} waypoints supported for optimization`);
+    if (waypoints.length > 10) {
+      setError("Maximum 10 waypoints supported for optimization");
       return null;
     }
 
     // Check cache first
-    const cacheKey = getCacheKey(waypoints) + `_${provider}_${profile}`;
+    const cacheKey = getCacheKey(waypoints);
     const cached = optimizationCache.get(cacheKey);
     if (cached) {
       setResult(cached);
@@ -90,50 +76,18 @@ export function useRouteOptimization(
     setError(null);
 
     try {
-      // Use Mapbox Directions-based optimization for traffic-aware results with public token
-      const functionName = provider === 'mapbox' ? 'mapbox-directions-optimize' : 'google-route-optimization';
-      
-      const { data, error: funcError } = await supabase.functions.invoke(functionName, {
+      const { data, error: funcError } = await supabase.functions.invoke('google-route-optimization', {
         body: {
           waypoints: waypoints.map(w => ({
             lat: w.lat,
             lng: w.lng,
             label: w.label || w.address,
           })),
-          profile, // driving-traffic for real-time traffic
         },
       });
 
       if (funcError) {
         console.error('Route optimization error:', funcError);
-        
-        // Fallback to Google if Mapbox fails
-        if (provider === 'mapbox') {
-          console.log('Mapbox optimization failed, falling back to Google...');
-          const { data: googleData, error: googleError } = await supabase.functions.invoke('google-route-optimization', {
-            body: {
-              waypoints: waypoints.map(w => ({
-                lat: w.lat,
-                lng: w.lng,
-                label: w.label || w.address,
-              })),
-            },
-          });
-          
-          if (!googleError && googleData && !googleData.error) {
-            const fallbackResult: OptimizationResult = {
-              optimizedOrder: googleData.optimizedOrder,
-              totalDistance: googleData.totalDistance,
-              totalDuration: googleData.totalDuration,
-              savings: googleData.savings,
-              legs: googleData.legs,
-            };
-            optimizationCache.set(cacheKey, fallbackResult);
-            setResult(fallbackResult);
-            return fallbackResult;
-          }
-        }
-        
         setError("Failed to optimize route. Please try again.");
         return null;
       }
@@ -141,10 +95,14 @@ export function useRouteOptimization(
       if (data?.error) {
         console.error('Route optimization API error:', data.error);
         
-        if (data.code === 'TOO_MANY_WAYPOINTS') {
-          setError(`Too many stops. Maximum ${maxWaypoints} waypoints supported.`);
+        // Handle specific error cases
+        if (data.code === 'API_NOT_CONFIGURED') {
+          setError("Route optimization is not configured. Please contact support.");
+        } else if (data.code === 'TOO_MANY_WAYPOINTS') {
+          setError("Too many stops. Maximum 10 waypoints supported.");
         } else if (data.fallback) {
-          setError("Route optimization service temporarily unavailable.");
+          // API not enabled - provide helpful message
+          setError("Route optimization requires Google Directions API. Please enable it in Google Cloud Console.");
         } else {
           setError(data.error);
         }
@@ -157,7 +115,6 @@ export function useRouteOptimization(
         totalDuration: data.totalDuration,
         savings: data.savings,
         legs: data.legs,
-        geometry: data.geometry, // Mapbox provides the optimized route geometry
       };
 
       // Cache the result
@@ -172,7 +129,7 @@ export function useRouteOptimization(
     } finally {
       setIsOptimizing(false);
     }
-  }, [provider, profile]);
+  }, []);
 
   const clearResult = useCallback(() => {
     setResult(null);

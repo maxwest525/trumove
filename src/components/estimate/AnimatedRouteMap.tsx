@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { MAPBOX_TOKEN } from '@/lib/mapboxToken';
-import { addTerrain, setFogPreset, on3DReady } from '@/lib/mapbox3DConfig';
 
 interface AnimatedRouteMapProps {
   fromCoords: [number, number]; // [lng, lat]
@@ -102,30 +101,15 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      style: 'mapbox://styles/mapbox/satellite-v9',
       bounds: bounds,
       fitBoundsOptions: { padding: 50, maxZoom: 10 },
       interactive: false,
-      attributionControl: false,
-      pitch: 35, // Tilted view for depth
-      bearing: -10,
-      antialias: true
+      attributionControl: false
     });
 
     map.current.on('load', () => {
       if (!map.current) return;
-
-      // Apply 3D terrain and atmospheric effects
-      on3DReady(map.current, () => {
-        if (!map.current) return;
-        
-        // Add terrain with moderate exaggeration for route visualization
-        addTerrain(map.current, 1.3);
-        
-        // Apply satellite-appropriate fog
-        setFogPreset(map.current, 'satellite');
-      });
-
 
       // Add shadow source for contrast on satellite
       map.current.addSource('route-shadow', {
@@ -292,21 +276,17 @@ const AnimatedRouteMap: React.FC<AnimatedRouteMapProps> = ({
         .setLngLat(toCoords)
         .addTo(map.current);
 
-      // Create truck marker element - Homepage style with dual glow
+      // Create truck marker element
       const truckEl = document.createElement('div');
       truckEl.className = 'animated-route-truck-marker';
       truckEl.innerHTML = `
-        <div class="animated-route-truck-glow"></div>
-        <div class="animated-route-truck-glow animated-route-truck-glow-2"></div>
-        <div class="animated-route-truck-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
-            <path d="M15 18H9"/>
-            <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
-            <circle cx="17" cy="18" r="2"/>
-            <circle cx="7" cy="18" r="2"/>
-          </svg>
-        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+          <path d="M15 18H9"/>
+          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
+          <circle cx="17" cy="18" r="2"/>
+          <circle cx="7" cy="18" r="2"/>
+        </svg>
       `;
 
       truckMarker.current = new mapboxgl.Marker({ element: truckEl })

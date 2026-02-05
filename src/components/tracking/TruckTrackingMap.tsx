@@ -1,15 +1,13 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { MAPBOX_TOKEN, MAPBOX_STYLES, applyStandardStyleConfig, type LightPreset } from "@/lib/mapboxToken";
-import { Loader2, Navigation, Box, Eye, Globe, Sun, Moon, Sunrise, Play, Pause } from "lucide-react";
+import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+import { Loader2, Navigation, Box, Eye, Globe } from "lucide-react";
 import { TruckLocationPopup } from "./TruckLocationPopup";
 import { TrafficLegend } from "./TrafficLegend";
 import { MiniRouteOverview } from "./MiniRouteOverview";
 import { findWeighStationsOnRoute, type WeighStation } from "@/data/weighStations";
 import { cn } from "@/lib/utils";
-import { cinematicFlyTo } from "@/lib/mapbox3DConfig";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface RouteData {
   coordinates: [number, number][];
@@ -137,32 +135,7 @@ export function TruckTrackingMap({
   const [routeWaypoints, setRouteWaypoints] = useState<{ station: WeighStation; routeIndex: number }[]>([]);
   const [internalFollowMode, setInternalFollowMode] = useState(followMode);
   const [currentBearing, setCurrentBearing] = useState(0);
-  const [lightingPreset, setLightingPreset] = useState<'day' | 'dusk' | 'night'>('night');
   const userInteractingRef = useRef(false);
-  const introPlayedRef = useRef(false); // Track if intro animation has played
-
-  // Apply lighting preset changes using Standard style's native lightPreset
-  const applyLightingPreset = useCallback((preset: 'day' | 'dusk' | 'night') => {
-    if (!map.current) return;
-    
-    // Map our presets to Standard style's lightPreset values
-    const lightPresetMap: Record<string, LightPreset> = {
-      day: 'day',
-      dusk: 'dusk', 
-      night: 'night'
-    };
-    
-    // Use Standard style's built-in light preset API
-    map.current.setConfigProperty('basemap', 'lightPreset', lightPresetMap[preset]);
-  }, []);
-
-  // Handle lighting change
-  const handleLightingChange = useCallback((value: string) => {
-    if (value && (value === 'day' || value === 'dusk' || value === 'night')) {
-      setLightingPreset(value);
-      applyLightingPreset(value);
-    }
-  }, [applyLightingPreset]);
 
   // Sync internal follow mode with prop
   useEffect(() => {
@@ -237,16 +210,14 @@ export function TruckTrackingMap({
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
     try {
-      // Use Mapbox Standard style with built-in 3D buildings, terrain, and lighting
+      // Simplified initialization - let Mapbox handle WebGL internally
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: MAPBOX_STYLES.standard,
+        style: "mapbox://styles/mapbox/dark-v11",
         center: [-98.5, 39.8],
         zoom: 4,
-        pitch: 30, // Start with slight tilt for depth
-        bearing: -10,
-        interactive: true,
-        antialias: true // Smoother 3D rendering
+        pitch: 0,
+        interactive: true
       });
 
       map.current.addControl(new mapboxgl.NavigationControl({ showCompass: true }), "top-right");
@@ -259,8 +230,7 @@ export function TruckTrackingMap({
         }
       });
 
-      // Detect user interaction to disable follow mode temporarily
-      // User can pause by interacting, but will auto-resume after 5 seconds
+      // Detect user interaction to disable follow mode
       map.current.on('dragstart', () => {
         userInteractingRef.current = true;
         if (internalFollowMode) {
@@ -277,45 +247,15 @@ export function TruckTrackingMap({
       });
 
       map.current.on('dragend', () => {
-        userInteractingRef.current = false;
-        // Auto-resume follow mode after 5 seconds of inactivity
-        if (isTracking) {
-          setTimeout(() => {
-            if (!userInteractingRef.current) {
-              setInternalFollowMode(true);
-              onFollowModeChange?.(true);
-            }
-          }, 5000);
-        }
+        setTimeout(() => { userInteractingRef.current = false; }, 500);
       });
 
       map.current.on('zoomend', () => {
-        userInteractingRef.current = false;
-        // Auto-resume follow mode after 5 seconds of inactivity
-        if (isTracking) {
-          setTimeout(() => {
-            if (!userInteractingRef.current) {
-              setInternalFollowMode(true);
-              onFollowModeChange?.(true);
-            }
-          }, 5000);
-        }
+        setTimeout(() => { userInteractingRef.current = false; }, 500);
       });
 
       map.current.on("load", () => {
         setIsLoaded(true);
-
-        // Apply Standard style configuration with night preset for dramatic effect
-        if (map.current) {
-          applyStandardStyleConfig(map.current, {
-            lightPreset: 'night',
-            show3dObjects: true,
-            showPlaceLabels: true,
-            showRoadLabels: true,
-            showPointOfInterestLabels: false,
-            theme: 'default'
-          });
-        }
 
         // Add route source (empty initially)
         map.current?.addSource("route", {
@@ -412,33 +352,6 @@ export function TruckTrackingMap({
     };
   }, []);
 
-  // Cinematic intro fly-through animation
-  const triggerIntroAnimation = useCallback(() => {
-    if (!map.current || !originCoords || introPlayedRef.current) return;
-    
-    introPlayedRef.current = true;
-    
-    // Start from continental overview
-    map.current.jumpTo({
-      center: [-98, 39], // Center of US
-      zoom: 4,
-      pitch: 0,
-      bearing: 0
-    });
-    
-    // Cinematic fly-in to origin after brief pause
-    setTimeout(() => {
-      if (!map.current) return;
-      cinematicFlyTo(map.current, originCoords, {
-        zoom: 15,
-        pitch: 55,
-        bearing: -20,
-        duration: 3500,
-        curve: 1.8
-      });
-    }, 500);
-  }, [originCoords]);
-
   // Add route and markers when coordinates change
   useEffect(() => {
     if (!map.current || !isLoaded || !originCoords || !destCoords) return;
@@ -446,9 +359,6 @@ export function TruckTrackingMap({
     const setupRoute = async () => {
       const result = await fetchRoute(originCoords, destCoords);
       if (!result || !map.current) return;
-      
-      // Trigger intro animation on first route setup
-      triggerIntroAnimation();
 
       const { coords, congestion } = result;
 
@@ -579,14 +489,13 @@ export function TruckTrackingMap({
         .setLngLat(destCoords)
         .addTo(map.current);
 
-      // Add truck marker (clickable) - Homepage-style with dual glow
+      // Add truck marker (clickable)
       const truckEl = document.createElement("div");
       truckEl.className = "tracking-truck-marker cursor-pointer";
       truckEl.innerHTML = `
         <div class="tracking-truck-glow"></div>
-        <div class="tracking-truck-glow tracking-truck-glow-2"></div>
         <div class="tracking-truck-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
             <path d="M15 18H9"/>
             <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
@@ -655,14 +564,14 @@ export function TruckTrackingMap({
       setCurrentBearing(bearing);
     }
 
-    // Follow mode: Cinematic 3D camera following truck
+    // Follow mode: Smooth camera transition to truck position
     if (internalFollowMode && isTracking && !userInteractingRef.current) {
       map.current.easeTo({
         center: currentPos,
         bearing: bearing,
-        zoom: 16, // Closer zoom for 3D building visibility
-        pitch: 60, // Dramatic tilt for cinematic 3D view
-        duration: 600,
+        zoom: 14,
+        pitch: 45, // Tilted view for 3D feel
+        duration: 500,
         easing: (t) => t * (2 - t) // Ease out quad
       });
     }
@@ -724,61 +633,21 @@ export function TruckTrackingMap({
         </div>
       )}
 
-      {/* Follow Mode Toggle Button - Original style */}
+      {/* Follow Mode Toggle Button */}
       <button
-        id="tracking-map-go-btn"
         onClick={toggleFollowMode}
         className={cn(
-          "absolute top-4 right-16 z-20 flex items-center gap-2 px-4 py-2.5 rounded-lg border font-semibold text-sm transition-all duration-200",
+          "absolute top-4 right-16 z-20 flex items-center gap-2 px-3 py-2 rounded-lg backdrop-blur-md border transition-all duration-300",
           internalFollowMode
-            ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/25"
-            : "bg-background/80 hover:bg-muted border-border text-foreground"
+            ? "bg-black/60 border-primary text-primary shadow-lg shadow-primary/30"
+            : "bg-black/60 border-white/20 text-white/80 hover:bg-black/80"
         )}
       >
-        {internalFollowMode ? (
-          <>
-            <Pause className="w-4 h-4" />
-            <span>Pause</span>
-          </>
-        ) : (
-          <>
-            <Play className="w-4 h-4" />
-            <span>Follow Truck</span>
-          </>
-        )}
+        <Navigation className={cn("w-4 h-4", internalFollowMode && "animate-pulse")} />
+        <span className="text-xs font-semibold uppercase tracking-wider">
+          {internalFollowMode ? "Following" : "Follow"}
+        </span>
       </button>
-
-      {/* Lighting Preset Toggle */}
-      <div className="absolute bottom-20 right-4 z-20">
-        <ToggleGroup 
-          type="single" 
-          value={lightingPreset} 
-          onValueChange={handleLightingChange}
-          className="bg-black/70 backdrop-blur-md rounded-lg border border-white/20 p-1"
-        >
-          <ToggleGroupItem 
-            value="day" 
-            aria-label="Day mode"
-            className="data-[state=on]:bg-amber-500/30 data-[state=on]:text-amber-300 text-white/70 hover:text-white px-2.5 py-1.5"
-          >
-            <Sun className="w-4 h-4" />
-          </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="dusk" 
-            aria-label="Dusk mode"
-            className="data-[state=on]:bg-orange-500/30 data-[state=on]:text-orange-300 text-white/70 hover:text-white px-2.5 py-1.5"
-          >
-            <Sunrise className="w-4 h-4" />
-          </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="night" 
-            aria-label="Night mode"
-            className="data-[state=on]:bg-indigo-500/30 data-[state=on]:text-indigo-300 text-white/70 hover:text-white px-2.5 py-1.5"
-          >
-            <Moon className="w-4 h-4" />
-          </ToggleGroupItem>
-        </ToggleGroup>
-      </div>
 
       {/* Traffic Legend */}
       <TrafficLegend isVisible={isTracking} />
@@ -830,7 +699,39 @@ export function TruckTrackingMap({
         }}
       />
 
-      {/* Street View inset removed - cleaner map focus */}
+      {/* Street View Inset - Bottom Right */}
+      {isTracking && currentTruckPosition && googleApiKey && (
+        <div className="absolute bottom-4 right-4 z-30">
+          <div className="w-[200px] h-[140px] rounded-lg overflow-hidden border-2 border-white/20 shadow-xl bg-gradient-to-br from-slate-800 to-slate-900">
+            <div className="relative w-full h-full">
+              <img
+                src={`https://maps.googleapis.com/maps/api/streetview?size=400x280&location=${currentTruckPosition[1]},${currentTruckPosition[0]}&fov=100&heading=${currentBearing}&pitch=5&key=${googleApiKey}`}
+                alt="Street View at truck location"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to satellite view if street view fails
+                  e.currentTarget.src = `https://maps.googleapis.com/maps/api/staticmap?center=${currentTruckPosition[1]},${currentTruckPosition[0]}&zoom=17&size=400x280&maptype=hybrid&key=${googleApiKey}`;
+                }}
+              />
+              {/* Label overlay */}
+              <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 to-transparent">
+                <div className="flex items-center gap-1.5">
+                  <Eye className="w-3 h-3 text-primary" />
+                  <span className="text-[10px] font-semibold text-white/90 uppercase tracking-wider">Street View</span>
+                </div>
+                {currentLocationName && (
+                  <p className="text-[9px] text-white/60 truncate mt-0.5">{currentLocationName}</p>
+                )}
+              </div>
+              {/* Live indicator */}
+              <div className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-[8px] font-bold text-white/80 tracking-wider">LIVE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div ref={mapContainer} className="w-full h-full" />
     </div>

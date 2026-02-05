@@ -439,54 +439,13 @@ const ROUTE_WAYPOINTS = [
 // Note: useTruckAnimation hook preserved for use on other pages (e.g., live tracking)
 // Homepage now uses static demo preview - no animation needed
 
-// Route Overview Panel - Live Mapbox GL with 3D terrain
-import { addTerrain, setFogPreset } from '@/lib/mapbox3DConfig';
-
-// Generate an animated dot pattern image for the route line
-function createDotPatternImageData(offset: number = 0): { width: number; height: number; data: Uint8Array } {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d')!;
-  
-  // Pattern dimensions - wider for smoother animation
-  const width = 32;
-  const height = 8;
-  canvas.width = width;
-  canvas.height = height;
-  
-  // Clear with transparent background
-  ctx.clearRect(0, 0, width, height);
-  
-  // Draw dots with offset for animation
-  ctx.fillStyle = '#ffffff';
-  const dotRadius = 2;
-  const spacing = 12;
-  const centerY = height / 2;
-  
-  // Draw multiple dots across the pattern with animated offset
-  for (let x = (offset % spacing) - spacing; x < width + spacing; x += spacing) {
-    ctx.beginPath();
-    ctx.arc(x, centerY, dotRadius, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  
-  // Convert to format Mapbox expects
-  const imageData = ctx.getImageData(0, 0, width, height);
-  return {
-    width,
-    height,
-    data: new Uint8Array(imageData.data.buffer)
-  };
-}
-
+// Route Overview Panel - Mapbox dark road style (matches Truck View aesthetic)
 function RouteOverviewPanel() {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<mapboxgl.Map | null>(null);
-  const orbitAnimationRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number>(Date.now());
-  const patternOffsetRef = useRef<number>(0);
+  const laCoords = [-118.24, 34.05]; // [lng, lat] for Mapbox
+  const nyCoords = [-74.00, 40.71];
   
   // Realistic I-10/I-40/I-70 highway corridor waypoints [lng, lat]
-  const waypoints: [number, number][] = useMemo(() => [
+  const waypoints: [number, number][] = [
     [-118.24, 34.05],   // Los Angeles
     [-114.29, 34.14],   // Needles, CA
     [-111.65, 35.19],   // Flagstaff, AZ
@@ -500,178 +459,37 @@ function RouteOverviewPanel() {
     [-82.98, 40.00],    // Columbus, OH
     [-79.99, 40.44],    // Pittsburgh, PA
     [-74.00, 40.71],    // New York, NY
-  ], []);
+  ];
   
-  useEffect(() => {
-    if (!mapContainer.current || mapInstance.current) return;
-    
-    mapboxgl.accessToken = MAPBOX_TOKEN;
-    
-    // Reset start time for orbit animation
-    startTimeRef.current = Date.now();
-    
-    mapInstance.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      center: [-98, 38], // Center of US
-      zoom: 3.2,
-      pitch: 35,
-      bearing: -15,
-      interactive: false,
-      attributionControl: false
-    });
-    
-    mapInstance.current.on('load', () => {
-      if (!mapInstance.current) return;
-      
-      // Add dramatic 3D terrain
-      addTerrain(mapInstance.current, 2.5);
-      
-      // Add atmospheric fog for depth
-      setFogPreset(mapInstance.current, 'satellite');
-      
-      // Add initial pattern image
-      const initialPattern = createDotPatternImageData(0);
-      mapInstance.current.addImage('dot-pattern', initialPattern);
-      
-      // Add route source with lineMetrics enabled
-      mapInstance.current.addSource('route', {
-        type: 'geojson',
-        lineMetrics: true,
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: { type: 'LineString', coordinates: waypoints }
-        }
-      });
-      
-      // Black shadow layer for terrain visibility
-      mapInstance.current.addLayer({
-        id: 'route-shadow',
-        type: 'line',
-        source: 'route',
-        paint: {
-          'line-color': '#000000',
-          'line-width': 12,
-          'line-opacity': 0.6,
-          'line-blur': 5
-        }
-      });
-      
-      // Outer glow - cyan (wider, more diffuse)
-      mapInstance.current.addLayer({
-        id: 'route-glow-outer',
-        type: 'line',
-        source: 'route',
-        paint: {
-          'line-color': '#00e5a0',
-          'line-width': 14,
-          'line-opacity': 0.15,
-          'line-blur': 10
-        }
-      });
-      
-      // Inner glow - brighter cyan
-      mapInstance.current.addLayer({
-        id: 'route-glow',
-        type: 'line',
-        source: 'route',
-        paint: {
-          'line-color': '#00e5a0',
-          'line-width': 8,
-          'line-opacity': 0.35,
-          'line-blur': 5
-        }
-      });
-      
-      // Base solid route line - bright cyan
-      mapInstance.current.addLayer({
-        id: 'route-line-base',
-        type: 'line',
-        source: 'route',
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-        },
-        paint: {
-          'line-color': '#00e5a0',
-          'line-width': 4,
-          'line-opacity': 0.9
-        }
-      });
-      
-      // Animated pattern overlay using line-pattern
-      mapInstance.current.addLayer({
-        id: 'route-line-animated',
-        type: 'line',
-        source: 'route',
-        layout: {
-          'line-join': 'none', // Required for smooth pattern rendering
-          'line-cap': 'butt'
-        },
-        paint: {
-          'line-pattern': 'dot-pattern',
-          'line-width': 8
-        }
-      });
-      
-      // Origin marker (LA)
-      const originEl = document.createElement('div');
-      originEl.className = 'route-overview-marker origin';
-      originEl.innerHTML = '<div class="marker-dot"></div><span>LA</span>';
-      new mapboxgl.Marker({ element: originEl })
-        .setLngLat(waypoints[0])
-        .addTo(mapInstance.current!);
-      
-      // Destination marker (NY)
-      const destEl = document.createElement('div');
-      destEl.className = 'route-overview-marker destination';
-      destEl.innerHTML = '<div class="marker-dot"></div><span>NY</span>';
-      new mapboxgl.Marker({ element: destEl })
-        .setLngLat(waypoints[waypoints.length - 1])
-        .addTo(mapInstance.current!);
-      
-      // Combined animation: slow orbit + flowing pattern
-      const animateScene = () => {
-        if (!mapInstance.current) return;
-        
-        // Calculate elapsed time for smooth continuous rotation
-        const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
-        
-        // Very slow orbit: complete one rotation every ~120 seconds (2 minutes)
-        const orbitBearing = -15 + (elapsedSeconds * 0.5) % 360;
-        mapInstance.current.setBearing(orbitBearing);
-        
-        // Animate pattern offset (smooth flowing dots)
-        patternOffsetRef.current = (patternOffsetRef.current + 0.15) % 12;
-        
-        // Update the pattern image with new offset
-        if (mapInstance.current.hasImage('dot-pattern')) {
-          mapInstance.current.removeImage('dot-pattern');
-        }
-        const newPattern = createDotPatternImageData(patternOffsetRef.current);
-        mapInstance.current.addImage('dot-pattern', newPattern);
-        
-        orbitAnimationRef.current = requestAnimationFrame(animateScene);
-      };
-      
-      orbitAnimationRef.current = requestAnimationFrame(animateScene);
-    });
-    
-    return () => {
-      if (orbitAnimationRef.current) {
-        cancelAnimationFrame(orbitAnimationRef.current);
-      }
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
-      }
-    };
-  }, [waypoints]);
+  // Build GeoJSON LineString for the route with styling
+  const routeGeoJSON = {
+    type: "Feature",
+    properties: {
+      stroke: "#4285F4",
+      "stroke-width": 4,
+      "stroke-opacity": 0.9
+    },
+    geometry: {
+      type: "LineString",
+      coordinates: waypoints
+    }
+  };
+  
+  // URI encode the GeoJSON
+  const geoJsonEncoded = encodeURIComponent(JSON.stringify(routeGeoJSON));
+  const geoJsonOverlay = `geojson(${geoJsonEncoded})`;
+  
+  // Markers
+  const originMarker = `pin-s+22c55e(${laCoords[0]},${laCoords[1]})`;
+  const destMarker = `pin-s+ef4444(${nyCoords[0]},${nyCoords[1]})`;
+  
+  // Use 'auto' to fit all overlays (route + markers) in view
+  // navigation-night-v1 for dark theme matching Truck View
+  const staticMapUrl = `https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/static/${geoJsonOverlay},${originMarker},${destMarker}/auto/420x480@2x?padding=40&access_token=${MAPBOX_TOKEN}`;
   
   return (
     <div className="tru-tracker-satellite-panel tru-tracker-satellite-enlarged tru-map-window-frame">
-      <div ref={mapContainer} className="w-full h-full" />
+      <img src={staticMapUrl} alt="Route Overview" className="w-full h-full object-cover" />
     </div>
   );
 }
@@ -684,7 +502,6 @@ function TruckViewPanel() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const animationRef = useRef<number>();
-  const startTimeRef = useRef<number>(Date.now()); // Track animation start time
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   
   // Fetch actual road geometry from Mapbox Directions API - city streets loop
@@ -767,9 +584,6 @@ function TruckViewPanel() {
     
     mapboxgl.accessToken = MAPBOX_TOKEN;
     
-    // Reset start time when animation begins
-    startTimeRef.current = Date.now();
-    
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/navigation-night-v1',
@@ -786,29 +600,20 @@ function TruckViewPanel() {
     const animate = () => {
       if (!map.current) return;
       
-      // Continuous driving - never stop
       progress += 0.00003; // Very slow for realistic city driving speed
       if (progress > 1) progress = 0;
       
       const position = getPointAlongRoute(progress);
-      const drivingBearing = getBearing(progress);
-      
-      // FIXED: Calculate elapsed time from animation start (not absolute Date.now())
-      // This creates a smooth continuous oscillation that never resets or jumps
-      const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
-      
-      // Smooth sine wave oscillation: ±35° sway over ~25 second full cycle
-      // elapsedSeconds * 0.25 means one full sine period = 2π / 0.25 ≈ 25 seconds
-      const orbitOffset = Math.sin(elapsedSeconds * 0.25) * 35;
+      const bearing = getBearing(progress);
       
       map.current.setCenter(position);
-      map.current.setBearing(drivingBearing + orbitOffset);
+      map.current.setBearing(bearing);
       
       animationRef.current = requestAnimationFrame(animate);
     };
     
     map.current.on('load', () => {
-      animationRef.current = requestAnimationFrame(animate);
+      animate();
     });
     
     return () => {
