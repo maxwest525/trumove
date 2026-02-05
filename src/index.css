@@ -3462,7 +3462,8 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  gap: 80px;
+  gap: 48px;
+  padding: 0 24px;
   height: var(--demo-section-height);
   min-height: var(--demo-section-height);
   max-height: var(--demo-section-height);
