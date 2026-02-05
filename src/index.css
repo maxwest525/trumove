@@ -2614,9 +2614,7 @@
   margin: 0 auto;
   gap: 0;
   padding: 32px 48px;
-  height: var(--demo-section-height);
-  min-height: var(--demo-section-height);
-  max-height: var(--demo-section-height);
+  /* Total height = panel (424px) + padding (64px) = 488px */
 }
 
 /* Steps left container - center-relative positioning for consistent gap */
@@ -3459,9 +3457,7 @@
   margin: 0 auto;
   gap: 0;
   padding: 32px 48px;
-  height: var(--demo-section-height);
-  min-height: var(--demo-section-height);
-  max-height: var(--demo-section-height);
+  /* Total height = panel (424px) + padding (64px) = 488px */
 }
 
 .tru-tracker-satellite-left,
