@@ -278,16 +278,6 @@ export default function EstimateWizard({ onComplete, initialDetails }: EstimateW
                 />
               </div>
 
-              {/* Multi-Stop Toggle */}
-              <button
-                type="button"
-                onClick={() => setShowMultiStopWizard(true)}
-                className="w-full py-2.5 mt-2 text-sm text-muted-foreground hover:text-primary border border-dashed border-border/50 hover:border-primary/50 rounded-lg transition-colors flex items-center justify-center gap-2"
-              >
-                <Route className="w-4 h-4" />
-                <span>Multiple pickup or drop-off locations?</span>
-              </button>
-
               <p className="tru-qb-section-label">Property Type</p>
               <div className="tru-qb-toggles">
                 <button
