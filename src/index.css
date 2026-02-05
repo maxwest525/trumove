@@ -33784,3 +33784,79 @@ gmp-map-3d-element .gmnoprint {
     0 0 0 1px hsl(var(--primary) / 0.15),
     0 8px 24px -4px hsl(var(--primary) / 0.2);
 }
+
+/* =============================================
+   TRUCK VIEW - Centered Marker & Map Styles
+   ============================================= */
+
+/* Truck View map container */
+.truck-view-map-container {
+  background: hsl(220 15% 8%);
+}
+
+/* Centered truck marker - fixed position overlay */
+.tracking-truck-view-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* Truck icon container */
+.tracking-truck-view-marker .truck-icon {
+  width: 56px;
+  height: 56px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 0 20px hsl(var(--primary) / 0.5),
+    0 0 40px hsl(var(--primary) / 0.3),
+    0 4px 12px hsl(0 0% 0% / 0.4);
+  position: relative;
+  z-index: 2;
+}
+
+/* Pulsing glow effect */
+.tracking-truck-view-marker .truck-glow {
+  position: absolute;
+  inset: -12px;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: truckViewPulse 1.5s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes truckViewPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.3;
+  }
+}
+
+/* Directional indicator ring */
+.tracking-truck-view-marker::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid hsl(var(--primary) / 0.6);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Hide Mapbox watermarks in truck view */
+.truck-view-map-container .mapboxgl-ctrl-attrib,
+.truck-view-map-container .mapboxgl-ctrl-logo,
+.truck-view-map-container .mapboxgl-ctrl-bottom-left,
+.truck-view-map-container .mapboxgl-ctrl-bottom-right,
+.truck-view-map-container .mapboxgl-ctrl {
+  display: none !important;
+}

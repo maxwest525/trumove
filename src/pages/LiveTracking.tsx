@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
 import { Google2DTrackingMap, type MapViewType } from "@/components/tracking/Google2DTrackingMap";
-
+import TruckViewPanel from "@/components/tracking/TruckViewPanel";
 import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
 import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
@@ -755,6 +755,15 @@ export default function LiveTracking() {
                 truckPosition={currentTruckPosition}
                 originName={originName}
                 destName={destName}
+              />
+            ) : mapViewType === 'truckview' ? (
+              <TruckViewPanel
+                routeCoordinates={routeCoordinates}
+                progress={progress}
+                isTracking={isTracking}
+                interactive={false}
+                originCoords={originCoords}
+                destCoords={destCoords}
               />
             ) : (
               <Google2DTrackingMap
