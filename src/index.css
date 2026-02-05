@@ -30,6 +30,9 @@
   --consult-section-padding: 2rem 1.5rem;
   --ai-preview-width: clamp(17.5rem, 25vw, 26.25rem);
   --ai-preview-height: clamp(18.75rem, 30vh, 27.5rem);
+ 
+   /* Unified section height for demo panels */
+   --demo-section-height: 423px;
 }
 
 /* =============================================
@@ -2592,8 +2595,8 @@
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
-  height: auto;
-  min-height: auto;
+   height: var(--demo-section-height);
+   min-height: var(--demo-section-height);
   overflow: hidden;
 }
 
@@ -3430,8 +3433,8 @@
   background: hsl(var(--background));
   position: relative;
   z-index: 5;
-  height: auto;
-  min-height: auto;
+   height: var(--demo-section-height);
+   min-height: var(--demo-section-height);
   overflow: hidden;
 }
 
