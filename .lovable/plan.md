@@ -1,125 +1,89 @@
 
-# Plan: Fix Truck View Road-Following and View Toggle Issues
 
-## Problems Identified
+# Plan: Fix Truck View Road-Following Using Mapbox Directions API
 
-1. **Straight line navigation**: The TruckViewPanel uses `routeCoordinates` from parent state, but this is only populated when Google2DTrackingMap calculates the route. If TruckView is selected before the route is ready, it shows a straight line between origin and destination.
+## Root Cause Analysis
 
-2. **Truck disappears when toggling back**: When switching from TruckView to Satellite/Roadmap, the Google2DTrackingMap remounts but doesn't recreate the truck marker because the route calculation useEffect doesn't re-run (coordinates haven't changed).
+The tracking page's `TruckViewPanel` fails because:
+
+1. **Google Script Loading Race Condition**: It tries to use Google Directions API, but the script may not be loaded when TruckViewPanel mounts (Google2DTrackingMap was unmounted)
+2. **Parent Data Timing**: It relies on `routeCoordinates` from parent state, which is only populated when Google2DTrackingMap calculates the route
+3. **Reference Lock**: The `routeFetchedRef` prevents re-fetching when switching back and forth between views
+
+**The homepage works** because it uses **Mapbox Directions API** which is simpler (just a fetch call - no script loading required) and fetches its own route data independently.
 
 ---
 
-## Solution Overview
+## Solution: Port Homepage Pattern
 
-### Fix 1: TruckViewPanel Needs Its Own Route Data
-Add route fetching logic to TruckViewPanel when `routeCoordinates` is insufficient (less than 10 points indicates likely straight-line fallback):
-- Call Google Directions API to get road-snapped polyline
-- Store locally and use for animation
-- Fall back to provided coordinates if API fails
+Replace Google Directions API with Mapbox Directions API in `TruckViewPanel.tsx`, matching the proven homepage implementation:
 
-### Fix 2: Persist Route Across View Switches
-Ensure the Google2DTrackingMap properly restores the truck marker when remounting with existing route data:
-- Add a useEffect that checks for existing route coordinates on mount
-- If coordinates exist, recreate markers and polyline without re-calling Directions API
+| Current (Broken) | Fix (Matches Homepage) |
+|------------------|------------------------|
+| Google Directions API (needs script) | Mapbox Directions API (simple fetch) |
+| Depends on parent `routeCoordinates` | Self-contained route fetching |
+| Uses `loadGoogleMapsScript()` promise | Direct HTTP fetch call |
 
 ---
 
 ## Implementation Steps
 
-### Step 1: Enhance TruckViewPanel Route Fetching
+### Step 1: Replace Route Fetching Logic
 
-Modify `TruckViewPanel.tsx` to:
-1. Accept the Google API key as a prop
-2. Check if provided `routeCoordinates` are detailed (>10 points = road-snapped)
-3. If not, fetch route from Google Directions API
-4. Store the detailed route locally for animation
+Remove Google-based `fetchRoadSnappedRoute` function and replace with Mapbox-based fetch (matching homepage lines 509-541):
 
 ```text
-// New state
-const [detailedRoute, setDetailedRoute] = useState<[number, number][]>([]);
-
-// useEffect to fetch route if needed
-useEffect(() => {
-  if (routeCoordinates.length > 10) {
-    // Already have detailed route
-    setDetailedRoute(routeCoordinates);
-    return;
+// Fetch road-snapped route from Mapbox Directions API
+async function fetchRoadSnappedRoute(
+  origin: [number, number],
+  dest: [number, number]
+): Promise<{ coordinates: [number, number][]; distance: number; duration: number } | null> {
+  try {
+    const response = await fetch(
+      `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
+    );
+    const data = await response.json();
+    
+    if (data.routes && data.routes[0]) {
+      const route = data.routes[0];
+      return {
+        coordinates: route.geometry.coordinates as [number, number][],
+        distance: route.distance / 1609.34, // meters to miles
+        duration: route.duration, // seconds
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Mapbox Directions failed:', error);
+    return null;
   }
-  
-  if (!originCoords || !destCoords) return;
-  
-  // Fetch from Google Directions
-  fetchDirections(originCoords, destCoords).then(coords => {
-    setDetailedRoute(coords);
-    // Also notify parent to update routeCoordinates
-  });
-}, [routeCoordinates, originCoords, destCoords]);
-```
-
-### Step 2: Add Route Callback to TruckViewPanel
-
-Add `onRouteCalculated` prop to TruckViewPanel so it can share the road-snapped route with the parent:
-
-```text
-interface TruckViewPanelProps {
-  // ... existing props
-  onRouteCalculated?: (route: { coordinates: [number, number][]; distance: number; duration: number }) => void;
 }
 ```
 
-### Step 3: Update LiveTracking to Share Route Callback
+### Step 2: Fix Route Fetching Trigger
 
-In `LiveTracking.tsx`, pass the same `handleRouteCalculated` callback to both Google2DTrackingMap and TruckViewPanel:
-
-```text
-<TruckViewPanel
-  routeCoordinates={routeCoordinates}
-  progress={progress}
-  isTracking={isTracking}
-  originCoords={originCoords}
-  destCoords={destCoords}
-  onRouteCalculated={handleRouteCalculated}  // Add this
-/>
-```
-
-### Step 4: Fix Google2DTrackingMap Remount Issue
-
-Add a new useEffect in `Google2DTrackingMap.tsx` that recreates the truck marker when the component mounts with existing route data:
+Reset `routeFetchedRef` when origin/destination changes so route is re-fetched when switching views:
 
 ```text
-// Handle remount with existing progress (view toggle scenario)
+// Reset fetch flag when coordinates change
 useEffect(() => {
-  if (!mapRef.current || !isScriptLoaded || !originCoords || !destCoords) return;
-  
-  // If we have a route but no truck marker, recreate it
-  if (routePathRef.current.length > 0 && !truckMarkerRef.current) {
-    const path = routePathRef.current;
-    // Calculate current position from progress
-    const totalPoints = path.length;
-    const exactIndex = (progress / 100) * (totalPoints - 1);
-    // ... create truck marker at interpolated position
-  }
-}, [isScriptLoaded, progress, originCoords, destCoords]);
+  routeFetchedRef.current = false;
+  setDetailedRoute([]);
+}, [originCoords, destCoords]);
 ```
 
-### Step 5: Ensure Route Recalculation on Remount
+### Step 3: Improve Loading State
 
-Modify the route calculation useEffect in `Google2DTrackingMap.tsx` to track if it has run:
+Add better UX during route calculation:
+- Show "Calculating route..." while fetching
+- Clear loading when route is ready
 
-```text
-const routeCalculatedRef = useRef(false);
+### Step 4: Clean Up Unused Code
 
-// Calculate route - force recalculation on remount if markers are missing
-useEffect(() => {
-  if (!mapRef.current || !originCoords || !destCoords || !directionsRendererRef.current) return;
-  
-  // Always recalculate if truck marker is missing (remount scenario)
-  if (truckMarkerRef.current && routeCalculatedRef.current) return;
-  
-  // ... existing route calculation logic
-  routeCalculatedRef.current = true;
-}, [originCoords, destCoords, onRouteCalculated, mapRef.current]);
-```
+Remove:
+- `loadGoogleMapsScript()` function
+- `GOOGLE_MAPS_API_KEY` constant
+- Google-specific error handling
 
 ---
 
@@ -127,35 +91,23 @@ useEffect(() => {
 
 | File | Changes |
 |------|---------|
-| `src/components/tracking/TruckViewPanel.tsx` | Add Google Directions route fetching, onRouteCalculated callback, use detailed route for animation |
-| `src/pages/LiveTracking.tsx` | Pass onRouteCalculated to TruckViewPanel |
-| `src/components/tracking/Google2DTrackingMap.tsx` | Fix truck marker recreation on remount |
+| `src/components/tracking/TruckViewPanel.tsx` | Replace Google Directions with Mapbox Directions API, fix route fetching trigger |
 
 ---
 
-## Technical Details
+## Technical Benefits
 
-### Route Detection Logic
-- **Detailed route**: More than 10 coordinate points (Google Directions returns hundreds for any real route)
-- **Straight line fallback**: Only 2-3 points (origin, maybe midpoint, destination)
-
-### API Call in TruckViewPanel
-Use the same Google Directions API pattern from Google2DTrackingMap:
-- Load Google Maps script if not already loaded
-- Call DirectionsService with driving mode
-- Extract overview_path as coordinate array
-
-### Marker Recreation Logic
-When Google2DTrackingMap remounts:
-1. Check if `routePathRef.current` has data from previous mount → use it
-2. If not, recalculate route
-3. Always recreate markers if they don't exist
+1. **Simpler**: No script loading, just fetch call
+2. **Faster**: Mapbox request starts immediately on mount
+3. **Consistent**: Uses same API as homepage demo
+4. **Reliable**: No race conditions with script loading
 
 ---
 
 ## Expected Outcome
 
-After implementation:
-1. **TruckView follows roads**: Camera follows the actual road-snapped route from Google Directions, not a straight line
-2. **Seamless view switching**: Truck marker and route trail persist correctly when toggling between Satellite, Roadmap, and Truck View
-3. **Consistent speed**: Animation speed stays synchronized across all views since they share the same route coordinates
+After this fix:
+1. **TruckView follows roads**: Camera follows actual road-snapped route from Mapbox Directions
+2. **Works on first load**: No dependency on Google2DTrackingMap being mounted first
+3. **Reliable view switching**: Route is fetched fresh when needed, persists across view toggles
+
