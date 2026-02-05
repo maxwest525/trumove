@@ -13,6 +13,11 @@ import {
   Filter, MoreHorizontal, Plus,
   Activity, Target, RefreshCw
 } from "lucide-react";
+ import { 
+   Clipboard, FileSpreadsheet, Package, Calculator, 
+   Shield, Zap, Globe, Settings, Mic, Monitor, 
+   Share2, Briefcase, Building2, Send
+ } from "lucide-react";
 
 interface IntegrationModalProps {
   open: boolean;
@@ -21,21 +26,25 @@ interface IntegrationModalProps {
 }
 
 const GRANOT_FEATURES = [
-  { icon: Users, title: "Contact Management", desc: "Full customer profiles with move history" },
-  { icon: Calendar, title: "Move Scheduling", desc: "Drag-and-drop calendar with crew assignments" },
-  { icon: FileText, title: "Quote Generation", desc: "Automated estimates from inventory data" },
-  { icon: BarChart3, title: "Pipeline Analytics", desc: "Track leads from inquiry to booking" },
-  { icon: Mail, title: "Email Campaigns", desc: "Automated follow-ups and promotions" },
-  { icon: CheckCircle2, title: "Task Automation", desc: "Workflow triggers and reminders" },
+   { icon: Clipboard, title: "Job Management", desc: "Complete job lifecycle from estimate to delivery" },
+   { icon: FileSpreadsheet, title: "Tariff & Pricing", desc: "Rate tables, accessorials, and auto-calculations" },
+   { icon: Users, title: "Customer Database", desc: "Full shipper profiles with move history" },
+   { icon: Calendar, title: "Dispatch Board", desc: "Visual crew scheduling and resource allocation" },
+   { icon: Calculator, title: "Estimating Tools", desc: "Cubic feet calculator and inventory sheets" },
+   { icon: FileText, title: "Document Generation", desc: "BOL, estimates, invoices, and contracts" },
+   { icon: Truck, title: "Fleet Management", desc: "Vehicle tracking, maintenance, and DOT compliance" },
+   { icon: BarChart3, title: "Claims & Receivables", desc: "A/R aging, claims processing, and collections" },
 ];
 
 const RINGCENTRAL_FEATURES = [
-  { icon: Phone, title: "Cloud Phone System", desc: "VoIP calling with call recording" },
-  { icon: Video, title: "Video Meetings", desc: "HD video consults with screen share" },
-  { icon: MessageSquare, title: "Team Messaging", desc: "Real-time chat with file sharing" },
-  { icon: Headphones, title: "Contact Center", desc: "IVR, queues, and call routing" },
-  { icon: Clock, title: "Call Analytics", desc: "Track response times and volumes" },
-  { icon: CheckCircle2, title: "CRM Integration", desc: "Sync calls with Granot CRM" },
+   { icon: Phone, title: "RingCentral MVP", desc: "Business phone with SMS, fax, and voicemail" },
+   { icon: Video, title: "RingCentral Video", desc: "HD video meetings with 200+ participants" },
+   { icon: MessageSquare, title: "Team Messaging", desc: "Persistent chat, file sharing, and tasks" },
+   { icon: Headphones, title: "Contact Center", desc: "Omnichannel routing, IVR, and queues" },
+   { icon: Globe, title: "Global Office", desc: "Local numbers in 100+ countries" },
+   { icon: Share2, title: "App Integrations", desc: "300+ integrations including Salesforce, Teams" },
+   { icon: Shield, title: "Security & Compliance", desc: "HIPAA, SOC 2, encrypted communications" },
+   { icon: Zap, title: "AI Capabilities", desc: "Transcription, sentiment analysis, coaching" },
 ];
 
 const GRANOT_DEMO_LEADS = [
@@ -46,32 +55,32 @@ const GRANOT_DEMO_LEADS = [
 ];
 
 const GRANOT_DEMO_STATS = [
-  { label: "Active Leads", value: "47", change: "+12%", icon: Users },
-  { label: "Booked This Month", value: "23", change: "+8%", icon: CheckCircle2 },
-  { label: "Revenue Pipeline", value: "$142K", change: "+18%", icon: DollarSign },
-  { label: "Conversion Rate", value: "34%", change: "+5%", icon: Target },
+   { label: "Open Jobs", value: "47", change: "+12%", icon: Package },
+   { label: "In Transit", value: "12", change: "+3", icon: Truck },
+   { label: "Pending A/R", value: "$142K", change: "-8%", icon: DollarSign },
+   { label: "This Month", value: "$89K", change: "+18%", icon: TrendingUp },
 ];
 
 const GRANOT_RECENT_ACTIVITY = [
-  { type: "call", text: "Called Sarah Johnson", time: "2 min ago", icon: Phone },
-  { type: "email", text: "Sent estimate to Michael Chen", time: "15 min ago", icon: Mail },
-  { type: "booking", text: "New booking: David Kim", time: "1 hr ago", icon: CheckCircle2 },
-  { type: "lead", text: "New lead: Emily Rodriguez", time: "2 hrs ago", icon: UserPlus },
-  { type: "task", text: "Follow-up reminder: James Wilson", time: "3 hrs ago", icon: Bell },
+   { type: "job", text: "Job #4521 moved to In Transit", time: "2 min ago", icon: Truck },
+   { type: "estimate", text: "Estimate sent: Sarah Johnson", time: "15 min ago", icon: FileText },
+   { type: "booking", text: "Deposit received: David Kim", time: "1 hr ago", icon: DollarSign },
+   { type: "dispatch", text: "Crew Alpha dispatched", time: "2 hrs ago", icon: MapPin },
+   { type: "claim", text: "Claim filed: Job #4498", time: "3 hrs ago", icon: Shield },
 ];
 
 const GRANOT_UPCOMING_MOVES = [
-  { customer: "Robert Taylor", from: "Phoenix, AZ", to: "Portland, OR", date: "Feb 10", crew: "Team Alpha", status: "Confirmed" },
-  { customer: "Lisa Wang", from: "Denver, CO", to: "San Diego, CA", date: "Feb 11", crew: "Team Beta", status: "In Progress" },
-  { customer: "David Kim", from: "Boston, MA", to: "Austin, TX", date: "Feb 12", crew: "Team Gamma", status: "Pending" },
+   { customer: "Robert Taylor", from: "Phoenix, AZ", to: "Portland, OR", date: "Feb 10", crew: "Driver: Mike S.", status: "Packed", weight: "8,500 lbs" },
+   { customer: "Lisa Wang", from: "Denver, CO", to: "San Diego, CA", date: "Feb 11", crew: "Driver: James L.", status: "In Transit", weight: "12,200 lbs" },
+   { customer: "David Kim", from: "Boston, MA", to: "Austin, TX", date: "Feb 12", crew: "Driver: Tony R.", status: "Estimated", weight: "6,800 lbs" },
 ];
 
 const GRANOT_PIPELINE_STAGES = [
-  { stage: "New Leads", count: 12, value: "$38K", color: "#3B82F6" },
-  { stage: "Contacted", count: 18, value: "$52K", color: "#FBBF24" },
-  { stage: "Quoted", count: 9, value: "$31K", color: "#F97316" },
-  { stage: "Negotiating", count: 5, value: "$16K", color: "#8B5CF6" },
-  { stage: "Won", count: 23, value: "$89K", color: "#4CAF50" },
+   { stage: "Estimate", count: 12, value: "$38K", color: "#3B82F6" },
+   { stage: "Booked", count: 18, value: "$52K", color: "#FBBF24" },
+   { stage: "Packed", count: 9, value: "$31K", color: "#F97316" },
+   { stage: "In Transit", count: 5, value: "$16K", color: "#8B5CF6" },
+   { stage: "Delivered", count: 23, value: "$89K", color: "#4CAF50" },
 ];
 
 const RINGCENTRAL_DEMO_CALLS = [
@@ -82,10 +91,10 @@ const RINGCENTRAL_DEMO_CALLS = [
 ];
 
 const RINGCENTRAL_DEMO_STATS = [
-  { label: "Calls Today", value: "34" },
-  { label: "Avg Duration", value: "3:42" },
-  { label: "Answer Rate", value: "92%" },
-  { label: "Queue Wait", value: "0:18" },
+   { label: "Total Calls", value: "847", sub: "This week" },
+   { label: "Active Users", value: "24", sub: "Online now" },
+   { label: "Avg Handle", value: "4:12", sub: "Per call" },
+   { label: "SLA Met", value: "94.2%", sub: "Target: 90%" },
 ];
 
 // ============ GRANOT CRM DEMO ============
@@ -116,10 +125,10 @@ function GranotDemoVisual() {
       {/* Navigation Tabs */}
       <div className="flex gap-1 px-3 py-2" style={{ background: "#F8FAFC", borderBottom: "1px solid #E2E8F0" }}>
         {[
-          { id: "dashboard", label: "Dashboard", icon: BarChart3 },
-          { id: "pipeline", label: "Pipeline", icon: Target },
-          { id: "calendar", label: "Schedule", icon: Calendar },
-          { id: "activity", label: "Activity", icon: Activity },
+           { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+           { id: "pipeline", label: "Jobs", icon: Package },
+           { id: "calendar", label: "Dispatch", icon: Truck },
+           { id: "activity", label: "Activity", icon: Activity },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -158,9 +167,9 @@ function GranotDemoVisual() {
             {/* Two Column Layout */}
             <div className="grid grid-cols-2 gap-3">
               {/* Hot Leads */}
-              <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
-                <div className="px-3 py-2 flex items-center justify-between" style={{ background: "#1B365D" }}>
-                  <span className="text-xs font-semibold text-white">Hot Leads</span>
+               <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
+                 <div className="px-3 py-2 flex items-center justify-between" style={{ background: "#1B365D" }}>
+                   <span className="text-xs font-semibold text-white">Active Jobs</span>
                   <Plus className="w-3 h-3 text-white/70" />
                 </div>
                 <div className="divide-y" style={{ borderColor: "#E2E8F0" }}>
@@ -268,7 +277,7 @@ function GranotDemoVisual() {
           <div className="space-y-3">
             <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
               <div className="px-3 py-2" style={{ background: "#1B365D" }}>
-                <span className="text-xs font-semibold text-white">Sales Funnel</span>
+                 <span className="text-xs font-semibold text-white">Job Pipeline</span>
               </div>
               <div className="p-3 space-y-2">
                 {GRANOT_PIPELINE_STAGES.map((stage, i) => (
@@ -305,7 +314,7 @@ function GranotDemoVisual() {
           <div className="space-y-3">
             <div className="rounded-lg overflow-hidden" style={{ border: "1px solid #E2E8F0" }}>
               <div className="px-3 py-2" style={{ background: "#1B365D" }}>
-                <span className="text-xs font-semibold text-white">Upcoming Moves</span>
+                 <span className="text-xs font-semibold text-white">Dispatch Board</span>
               </div>
               <div className="divide-y" style={{ borderColor: "#E2E8F0" }}>
                 {GRANOT_UPCOMING_MOVES.map((move, i) => (
@@ -323,20 +332,23 @@ function GranotDemoVisual() {
                       <Badge 
                         className="text-[9px]"
                         style={{ 
-                          background: move.status === "Confirmed" ? "#E8F5E9" : move.status === "In Progress" ? "#FFF8E1" : "#F5F5F5",
-                          color: move.status === "Confirmed" ? "#4CAF50" : move.status === "In Progress" ? "#F59E0B" : "#757575"
+                             background: move.status === "In Transit" ? "#E8F5E9" : move.status === "Packed" ? "#FFF8E1" : "#E3F2FD",
+                             color: move.status === "In Transit" ? "#4CAF50" : move.status === "Packed" ? "#F59E0B" : "#2196F3"
                         }}
                       >
                         {move.status}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                       <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
                       <MapPin className="w-3 h-3" />
                       <span>{move.from}</span>
                       <ArrowRight className="w-3 h-3" />
                       <span>{move.to}</span>
-                      <span className="ml-auto font-medium" style={{ color: "#1B365D" }}>{move.date}</span>
                     </div>
+                       <div className="flex items-center justify-between text-[10px]">
+                         <span className="text-gray-400">{move.crew}</span>
+                         <span className="font-medium" style={{ color: "#1B365D" }}>{move.weight} • {move.date}</span>
+                       </div>
                   </div>
                 ))}
               </div>
@@ -391,10 +403,17 @@ function RingCentralDemoVisual() {
   const [activeTab, setActiveTab] = useState<"calls" | "messages" | "video">("calls");
 
   const RC_MESSAGES = [
-    { from: "Marketing Team", preview: "Q1 campaign results are in...", time: "11:30 AM", unread: true },
-    { from: "John Smith", preview: "Thanks for the follow-up call!", time: "10:20 AM", unread: true },
-    { from: "Support Queue", preview: "New ticket assigned to you", time: "9:15 AM", unread: false },
+     { from: "Sales Team", preview: "New lead from website form...", time: "11:30 AM", unread: true, participants: 8 },
+     { from: "Support Queue", preview: "Escalation: Customer callback needed", time: "10:20 AM", unread: true, participants: 4 },
+     { from: "John Smith", preview: "RE: Contract renewal discussion", time: "9:15 AM", unread: false, participants: 2 },
+     { from: "IT Department", preview: "Phone system update scheduled", time: "Yesterday", unread: false, participants: 12 },
   ];
+   
+   const RC_MEETINGS = [
+     { title: "Weekly Sales Standup", time: "2:00 PM", duration: "30 min", participants: 8, status: "upcoming" },
+     { title: "Client Demo: Acme Corp", time: "3:30 PM", duration: "1 hr", participants: 4, status: "upcoming" },
+     { title: "Q1 Planning Session", time: "Tomorrow 10 AM", duration: "2 hrs", participants: 15, status: "scheduled" },
+   ];
 
   return (
     <div className="rounded-xl overflow-hidden" style={{ border: "2px solid #0684BC", background: "#FFFFFF" }}>
@@ -443,7 +462,8 @@ function RingCentralDemoVisual() {
               {RINGCENTRAL_DEMO_STATS.map((stat) => (
                 <div key={stat.label} className="p-3 text-center" style={{ background: "#F8FAFC" }}>
                   <div className="text-lg font-bold" style={{ color: "#0684BC" }}>{stat.value}</div>
-                  <div className="text-[10px] text-gray-500">{stat.label}</div>
+                   <div className="text-[10px] font-medium text-gray-600">{stat.label}</div>
+                   <div className="text-[9px] text-gray-400">{stat.sub}</div>
                 </div>
               ))}
             </div>
@@ -510,6 +530,7 @@ function RingCentralDemoVisual() {
                     {msg.unread && <span className="w-2 h-2 rounded-full" style={{ background: "#FF6A00" }} />}
                   </div>
                   <div className="text-sm text-gray-500 truncate">{msg.preview}</div>
+                   <div className="text-[10px] text-gray-400 mt-0.5">{msg.participants} participants</div>
                 </div>
                 <div className="text-xs text-gray-400">{msg.time}</div>
               </div>
@@ -519,7 +540,7 @@ function RingCentralDemoVisual() {
                 className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white"
                 style={{ background: "#0684BC" }}
               >
-                <Mail className="w-4 h-4" />
+                 <Send className="w-4 h-4" />
                 New Message
               </button>
             </div>
@@ -528,35 +549,79 @@ function RingCentralDemoVisual() {
 
         {activeTab === "video" && (
           <div className="p-4 space-y-4">
-            <div className="rounded-xl p-4" style={{ background: "#FFF7ED", border: "1px solid #FDBA74" }}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium" style={{ color: "#C2410C" }}>Next Meeting</span>
-                <Badge style={{ background: "#FF6A00", color: "white" }}>In 30 min</Badge>
-              </div>
-              <div className="font-semibold text-lg text-gray-900 mb-1">Weekly Team Sync</div>
-              <div className="text-sm text-gray-600 mb-3">2:00 PM - 3:00 PM • 6 participants</div>
-              <button 
-                className="w-full py-2 rounded-lg text-white font-medium flex items-center justify-center gap-2"
-                style={{ background: "#0684BC" }}
-              >
-                <Video className="w-4 h-4" />
-                Join Meeting
-              </button>
+             {/* Upcoming Meetings */}
+             <div className="space-y-2">
+               {RC_MEETINGS.map((meeting, i) => (
+                 <div 
+                   key={i}
+                   className="rounded-xl p-3 hover:shadow-md transition-all cursor-pointer" 
+                   style={{ 
+                     background: i === 0 ? "#FFF7ED" : "#F8FAFC", 
+                     border: i === 0 ? "1px solid #FDBA74" : "1px solid #E5E7EB" 
+                   }}
+                 >
+                   <div className="flex items-center justify-between mb-1">
+                     <span className="font-medium text-sm text-gray-900">{meeting.title}</span>
+                     {i === 0 && <Badge style={{ background: "#FF6A00", color: "white" }} className="text-[10px]">Next</Badge>}
+                   </div>
+                   <div className="flex items-center gap-3 text-xs text-gray-500">
+                     <span className="flex items-center gap-1">
+                       <Clock className="w-3 h-3" />
+                       {meeting.time}
+                     </span>
+                     <span>{meeting.duration}</span>
+                     <span className="flex items-center gap-1">
+                       <Users className="w-3 h-3" />
+                       {meeting.participants}
+                     </span>
+                   </div>
+                   {i === 0 && (
+                     <button 
+                       className="w-full mt-3 py-2 rounded-lg text-white font-medium flex items-center justify-center gap-2"
+                       style={{ background: "#0684BC" }}
+                     >
+                       <Video className="w-4 h-4" />
+                       Join Now
+                     </button>
+                   )}
+                 </div>
+               ))}
             </div>
+             
             <div className="grid grid-cols-2 gap-3">
               <button className="p-4 rounded-xl text-center hover:bg-gray-50 transition-colors" style={{ border: "1px solid #E5E7EB" }}>
                 <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ background: "#E0F7FA" }}>
                   <Video className="w-5 h-5" style={{ color: "#0684BC" }} />
                 </div>
-                <div className="text-sm font-medium text-gray-900">Start Meeting</div>
+                 <div className="text-sm font-medium text-gray-900">Instant Meeting</div>
+                 <div className="text-[10px] text-gray-500">Start now, invite later</div>
               </button>
               <button className="p-4 rounded-xl text-center hover:bg-gray-50 transition-colors" style={{ border: "1px solid #E5E7EB" }}>
                 <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ background: "#FFF7ED" }}>
                   <Calendar className="w-5 h-5" style={{ color: "#FF6A00" }} />
                 </div>
-                <div className="text-sm font-medium text-gray-900">Schedule</div>
+                 <div className="text-sm font-medium text-gray-900">Schedule Meeting</div>
+                 <div className="text-[10px] text-gray-500">Plan ahead with calendar</div>
               </button>
             </div>
+             
+             {/* RingCentral Video Features */}
+             <div className="rounded-xl p-3" style={{ background: "#F8FAFC", border: "1px solid #E5E7EB" }}>
+               <div className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-2">RingCentral Video Features</div>
+               <div className="grid grid-cols-4 gap-2">
+                 {[
+                   { icon: Monitor, label: "Screen Share" },
+                   { icon: Mic, label: "AI Transcription" },
+                   { icon: FileText, label: "Meeting Notes" },
+                   { icon: Shield, label: "E2E Encrypted" },
+                 ].map((feat) => (
+                   <div key={feat.label} className="text-center">
+                     <feat.icon className="w-4 h-4 mx-auto mb-1" style={{ color: "#0684BC" }} />
+                     <div className="text-[9px] text-gray-600">{feat.label}</div>
+                   </div>
+                 ))}
+               </div>
+             </div>
           </div>
         )}
       </div>
@@ -591,8 +656,8 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
   const features = isGranot ? GRANOT_FEATURES : RINGCENTRAL_FEATURES;
   const title = isGranot ? "Granot CRM" : "RingCentral";
   const subtitle = isGranot 
-    ? "Moving industry CRM built for brokers and carriers"
-    : "Unified communications for moving companies";
+     ? "Complete moving & storage management software"
+     : "Business communications platform - MVP, Video, Contact Center";
 
   return (
     <DraggableModal
@@ -682,13 +747,13 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
             <div className="space-y-4">
               <div className="p-4 rounded-lg border border-border bg-muted/20">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold">Starter</span>
-                  <Badge variant="secondary">$49/mo</Badge>
+                   <span className="font-semibold">{isGranot ? "Essential" : "Core"}</span>
+                   <Badge variant="secondary">{isGranot ? "$199/mo" : "$30/user/mo"}</Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {isGranot 
-                    ? "Up to 500 contacts, 2 users, basic reporting"
-                    : "5 users, 1000 minutes, video meetings"}
+                     ? "Up to 3 users, job management, basic reporting, customer database"
+                     : "Message, video, phone for small teams. 100 toll-free minutes."}
                 </p>
               </div>
               <div 
@@ -699,24 +764,27 @@ export function IntegrationModal({ open, onOpenChange, integration }: Integratio
                 }}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold">Professional</span>
-                  <Badge style={{ background: isGranot ? "#4CAF50" : "#FF6A00", color: "white" }}>$99/mo</Badge>
+                   <div className="flex items-center gap-2">
+                     <span className="font-semibold">{isGranot ? "Professional" : "Advanced"}</span>
+                     <Badge className="text-[9px]" style={{ background: isGranot ? "#1B365D" : "#0684BC", color: "white" }}>Popular</Badge>
+                   </div>
+                   <Badge style={{ background: isGranot ? "#4CAF50" : "#FF6A00", color: "white" }}>{isGranot ? "$399/mo" : "$35/user/mo"}</Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {isGranot 
-                    ? "Unlimited contacts, 10 users, advanced analytics"
-                    : "25 users, unlimited minutes, contact center"}
+                     ? "Up to 10 users, dispatch board, claims, fleet tracking, integrations"
+                     : "Advanced call handling, CRM integrations, 1000 toll-free minutes."}
                 </p>
               </div>
               <div className="p-4 rounded-lg border border-border bg-muted/20">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold">Enterprise</span>
+                   <span className="font-semibold">{isGranot ? "Enterprise" : "Ultra"}</span>
                   <Badge variant="secondary">Custom</Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {isGranot 
-                    ? "White-label, API access, dedicated support"
-                    : "Unlimited users, SLA, dedicated account manager"}
+                     ? "Unlimited users, multi-location, API access, dedicated support"
+                     : "Unlimited storage, device analytics, custom integrations, SLA."}
                 </p>
               </div>
             </div>
