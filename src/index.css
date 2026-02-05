@@ -31,8 +31,11 @@
   --ai-preview-width: clamp(17.5rem, 25vw, 26.25rem);
   --ai-preview-height: clamp(18.75rem, 30vh, 27.5rem);
  
-   /* Unified section height for demo panels */
-   --demo-section-height: 425px;
+  /* Unified section height for demo panels */
+  --demo-section-height: 425px;
+  
+  /* Fixed panel height for demo sections - rem-based for zoom consistency */
+  --demo-panel-height: 26.5rem; /* ~424px at default 16px root */
 }
 
 /* =============================================
@@ -2968,8 +2971,9 @@
 .tru-ai-header-previews .tru-ai-live-scanner,
 .tru-ai-header-previews .tru-ai-live-inventory {
   width: var(--ai-preview-width);
-  height: clamp(24rem, 38vh, 30rem); /* Match section height */
-  min-height: 24rem;
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
 }
 
 /* Steps content container */
@@ -3112,8 +3116,9 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
   width: 420px;
   border: 2px solid hsl(0 0% 0%);
   box-shadow:
@@ -3279,8 +3284,9 @@
   display: flex;
   flex-direction: column;
   width: 420px;
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
   box-shadow:
     0 4px 20px hsl(0 0% 0% / 0.5),
     0 8px 40px hsl(0 0% 0% / 0.3),
@@ -3597,8 +3603,9 @@
   border-radius: 12px;
   overflow: hidden;
   width: 420px;
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
   border: 2px solid hsl(0 0% 100% / 0.15);
   box-shadow: 0 8px 32px hsl(var(--tm-ink) / 0.1);
 }
@@ -4013,8 +4020,9 @@
 /* Enlarged satellite panel to match road map */
 .tru-tracker-satellite-enlarged {
   width: 420px;
-  height: clamp(24rem, 38vh, 30rem);
-  min-height: 24rem;
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
   border: 2px solid hsl(0 0% 100% / 0.15);
 }
 
@@ -4305,14 +4313,17 @@
 }
 
 .tru-ai-preview-vertical .tru-ai-live-scanner {
-  height: clamp(24rem, 38vh, 30rem);
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
   flex: none;
 }
 
 .tru-ai-preview-vertical .tru-ai-live-inventory {
-  height: clamp(24rem, 38vh, 30rem);
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
   flex: none;
-  max-height: none;
 }
 
 /* Step with preview thumbnail - row layout for vertical steps */
@@ -4414,9 +4425,10 @@
 }
 
 .tru-ai-right-column .tru-ai-live-inventory {
-  height: clamp(24rem, 38vh, 30rem);
+  height: var(--demo-panel-height);
+  min-height: var(--demo-panel-height);
+  max-height: var(--demo-panel-height);
   flex: none;
-  min-height: 0;
 }
 
 /* Legacy grid (keeping for reference) */
