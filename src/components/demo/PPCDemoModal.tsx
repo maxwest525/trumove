@@ -8,10 +8,9 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { 
   Sparkles, Search, Globe, TrendingUp, Target, 
-  BarChart3, DollarSign, MousePointer,
+  BarChart3, DollarSign,
   Layout, RefreshCw, 
-  CheckCircle2, AlertTriangle, ArrowUp, ArrowDown,
-  Copy, ExternalLink, Lightbulb,
+  ExternalLink,
   Play, Pause, FlaskConical, LineChart,
   Radio, Mail, Home, ArrowLeft
 } from "lucide-react";
@@ -20,6 +19,7 @@ import { ABTestManager } from "./ppc/ABTestManager";
 import { ConversionsPanel } from "./ppc/ConversionsPanel";
 import { AILandingPageGenerator } from "./ppc/AILandingPageGenerator";
 import { MarketingHubDashboard } from "./ppc/MarketingHubDashboard";
+import { UnifiedAnalyticsDashboard } from "./ppc/UnifiedAnalyticsDashboard";
 import { WelcomeFlow } from "./ppc/WelcomeFlow";
 import { QuickStartWizard } from "./ppc/QuickStartWizard";
 
@@ -299,22 +299,22 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
       setViewMode('wizard');
     } else if (section === 'performance') {
       setViewMode('detail');
-      setActiveTab('dashboard');
+      setActiveTab('analytics');
     } else if (section === 'abtest') {
       setViewMode('detail');
       setActiveTab('abtest');
     } else if (section === 'keywords') {
       setViewMode('detail');
-      setActiveTab('keywords');
+      setActiveTab('analytics');
     } else if (section === 'seo') {
       setViewMode('detail');
-      setActiveTab('seo');
+      setActiveTab('analytics');
     } else if (section === 'campaigns') {
       setViewMode('detail');
       setActiveTab('ads');
     } else {
       setViewMode('detail');
-      setActiveTab(section);
+      setActiveTab(section === 'dashboard' ? 'analytics' : section);
     }
   };
  
@@ -402,13 +402,10 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
         {viewMode === 'detail' && (
           <div className="flex gap-1 px-4 py-2 overflow-x-auto" style={{ background: "#F8FAFC", borderBottom: "1px solid #E2E8F0" }}>
             {[
-              { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+              { id: "analytics", label: "All Analytics", icon: BarChart3 },
               { id: "ads", label: "Google Ads", icon: Target },
-              { id: "keywords", label: "Keywords", icon: Search },
-              { id: "seo", label: "SEO Audit", icon: Globe },
               { id: "landing", label: "Landing Pages", icon: Layout },
               { id: "abtest", label: "A/B Tests", icon: FlaskConical },
-              { id: "conversions", label: "Conversions", icon: LineChart },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -501,85 +498,12 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
         {viewMode === 'detail' && (
           <ScrollArea className="flex-1 max-h-[calc(90vh-180px)]">
           <div className="p-4">
-            {/* Dashboard */}
-            {activeTab === "dashboard" && (
-              <div className="space-y-4">
-                {/* Stats Row */}
-                <div className="grid grid-cols-4 gap-3">
-                  {[
-                    { label: "Total Spend", value: `$${stats.totalSpend.toFixed(0)}`, change: "+12%", icon: DollarSign, color: "#7C3AED" },
-                    { label: "Clicks", value: stats.clicks.toLocaleString(), change: "+18%", icon: MousePointer, color: "#EC4899" },
-                    { label: "Conversions", value: stats.conversions.toString(), change: "+24%", icon: Target, color: "#10B981" },
-                    { label: "Cost/Conv.", value: `$${stats.costPerConv.toFixed(2)}`, change: "-8%", icon: TrendingUp, color: "#F59E0B" },
-                  ].map((stat) => (
-                    <div key={stat.label} className={`p-4 rounded-xl border border-border bg-card ${liveMode ? "transition-all duration-500" : ""}`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${stat.color}20` }}>
-                          <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
-                        </div>
-                        <span className="text-xs font-medium text-green-600">
-                          {stat.change}
-                        </span>
-                      </div>
-                      <div className={`text-2xl font-bold text-foreground ${liveMode ? "transition-all duration-300" : ""}`}>{stat.value}</div>
-                      <div className="text-xs text-muted-foreground">{stat.label}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Performance Chart */}
-                <div className="rounded-xl border border-border bg-card p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-foreground">Campaign Performance</h3>
-                    <div className="flex gap-2 items-center">
-                      {liveMode && (
-                        <Badge className="gap-1 text-[10px]" style={{ background: "#EF444420", color: "#EF4444" }}>
-                          <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                          Live
-                        </Badge>
-                      )}
-                      <Badge variant="secondary">Last 7 days</Badge>
-                    </div>
-                  </div>
-                  <div className="h-40 flex items-end gap-1">
-                    {chartData.map((h, i) => (
-                      <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                        <div 
-                          className={`w-full rounded-t ${liveMode ? "transition-all duration-500" : ""}`}
-                          style={{ 
-                            height: `${h}%`, 
-                            background: i === chartData.length - 1 ? "linear-gradient(180deg, #7C3AED 0%, #A855F7 100%)" : "#E2E8F0"
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="grid grid-cols-4 gap-3">
-                  <button onClick={() => setActiveTab("ads")} className="p-4 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors text-left">
-                    <Sparkles className="w-5 h-5 mb-2" style={{ color: "#7C3AED" }} />
-                    <div className="font-medium text-sm text-foreground">Generate Ad Copy</div>
-                    <div className="text-xs text-muted-foreground">AI-powered headlines</div>
-                  </button>
-                  <button onClick={() => setActiveTab("keywords")} className="p-4 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors text-left">
-                    <Search className="w-5 h-5 mb-2" style={{ color: "#EC4899" }} />
-                    <div className="font-medium text-sm text-foreground">Keyword Research</div>
-                    <div className="text-xs text-muted-foreground">Find opportunities</div>
-                  </button>
-                  <button onClick={() => setActiveTab("abtest")} className="p-4 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors text-left">
-                    <FlaskConical className="w-5 h-5 mb-2" style={{ color: "#10B981" }} />
-                    <div className="font-medium text-sm text-foreground">New A/B Test</div>
-                    <div className="text-xs text-muted-foreground">Optimize conversions</div>
-                  </button>
-                  <button onClick={() => setActiveTab("conversions")} className="p-4 rounded-xl border border-border bg-card hover:bg-muted/50 transition-colors text-left">
-                    <LineChart className="w-5 h-5 mb-2" style={{ color: "#F59E0B" }} />
-                    <div className="font-medium text-sm text-foreground">View Funnel</div>
-                    <div className="text-xs text-muted-foreground">Track drop-offs</div>
-                  </button>
-                </div>
-              </div>
+            {/* Unified Analytics Dashboard */}
+            {activeTab === "analytics" && (
+              <UnifiedAnalyticsDashboard 
+                onCreateLandingPage={() => setActiveTab("landing")}
+                liveMode={liveMode}
+              />
             )}
 
             {/* Google Ads */}
@@ -644,126 +568,6 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
               </div>
             )}
 
-            {/* Keywords */}
-            {activeTab === "keywords" && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input placeholder="Enter seed keyword to discover opportunities..." className="pl-9" />
-                  </div>
-                  <Button style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Analyze
-                  </Button>
-                </div>
-
-                <div className="rounded-xl border border-border overflow-hidden">
-                  <div className="px-4 py-3 flex items-center justify-between" style={{ background: "#F8FAFC" }}>
-                    <span className="font-semibold text-sm text-foreground">Keyword Opportunities</span>
-                    <Badge variant="secondary">{INITIAL_KEYWORDS.length} keywords</Badge>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {INITIAL_KEYWORDS.map((kw, i) => (
-                      <div key={i} className="px-4 py-3 flex items-center gap-4 hover:bg-muted/30 transition-colors">
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm text-foreground">{kw.keyword}</div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-muted-foreground">{kw.volume.toLocaleString()} monthly</span>
-                            <span className="text-xs text-muted-foreground">•</span>
-                            <span className="text-xs font-medium" style={{ color: "#7C3AED" }}>{kw.cpc}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {kw.trend === "up" && <ArrowUp className="w-3 h-3 text-green-500" />}
-                          {kw.trend === "down" && <ArrowDown className="w-3 h-3 text-red-500" />}
-                        </div>
-                        <Badge 
-                          className="text-[10px]"
-                          style={{ 
-                            background: kw.competition === "High" ? "#EF444420" : kw.competition === "Medium" ? "#F59E0B20" : "#10B98120",
-                            color: kw.competition === "High" ? "#EF4444" : kw.competition === "Medium" ? "#F59E0B" : "#10B981"
-                          }}
-                        >
-                          {kw.competition}
-                        </Badge>
-                        <div className="w-16">
-                          <div className="flex items-center justify-between text-[10px] mb-1">
-                            <span className="text-muted-foreground">Score</span>
-                            <span className="font-medium" style={{ color: "#7C3AED" }}>{kw.score}</span>
-                          </div>
-                          <Progress value={kw.score} className="h-1.5" />
-                        </div>
-                        <Button variant="ghost" size="sm">
-                          <Copy className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* SEO Audit */}
-            {activeTab === "seo" && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="p-4 rounded-xl border border-border bg-card text-center">
-                    <div className="text-3xl font-bold mb-1" style={{ color: "#10B981" }}>87</div>
-                    <div className="text-xs text-muted-foreground">SEO Score</div>
-                    <Progress value={87} className="h-1.5 mt-2" />
-                  </div>
-                  <div className="p-4 rounded-xl border border-border bg-card text-center">
-                    <div className="text-3xl font-bold mb-1" style={{ color: "#7C3AED" }}>92</div>
-                    <div className="text-xs text-muted-foreground">Performance</div>
-                    <Progress value={92} className="h-1.5 mt-2" />
-                  </div>
-                  <div className="p-4 rounded-xl border border-border bg-card text-center">
-                    <div className="text-3xl font-bold mb-1" style={{ color: "#EC4899" }}>78</div>
-                    <div className="text-xs text-muted-foreground">Accessibility</div>
-                    <Progress value={78} className="h-1.5 mt-2" />
-                  </div>
-                </div>
-
-                <div className="rounded-xl border border-border overflow-hidden">
-                  <div className="px-4 py-3 flex items-center justify-between" style={{ background: "#F8FAFC" }}>
-                    <span className="font-semibold text-sm text-foreground">Audit Results</span>
-                    <Button variant="ghost" size="sm" className="gap-1">
-                      <RefreshCw className="w-3 h-3" />
-                      Re-scan
-                    </Button>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {SEO_ISSUES.map((issue, i) => (
-                      <div key={i} className="px-4 py-3 flex items-center gap-3">
-                        {issue.type === "error" && <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />}
-                        {issue.type === "warning" && <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />}
-                        {issue.type === "success" && <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />}
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm text-foreground">{issue.message}</div>
-                        </div>
-                        <Badge 
-                          className="text-[10px]"
-                          style={{ 
-                            background: issue.impact === "High" ? "#EF444420" : issue.impact === "Medium" ? "#F59E0B20" : "#10B98120",
-                            color: issue.impact === "High" ? "#EF4444" : issue.impact === "Medium" ? "#F59E0B" : "#10B981"
-                          }}
-                        >
-                          {issue.impact}
-                        </Badge>
-                        {issue.type !== "success" && (
-                          <Button variant="ghost" size="sm" className="gap-1 text-xs" style={{ color: "#7C3AED" }}>
-                            <Sparkles className="w-3 h-3" />
-                            Fix with AI
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Landing Pages */}
             {activeTab === "landing" && (
               <AILandingPageGenerator 
@@ -782,15 +586,7 @@ export default function PPCDemoModal({ open, onOpenChange }: PPCDemoModalProps) 
               />
             )}
 
-            {/* Conversions - Using new component */}
-            {activeTab === "conversions" && (
-              <ConversionsPanel
-                events={conversionEvents}
-                funnel={funnelStages}
-                liveMode={liveMode}
-                onEmailExport={() => openEmailModal("conversions")}
-              />
-            )}
+
           </div>
         </ScrollArea>
         )}
