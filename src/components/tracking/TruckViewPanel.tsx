@@ -10,6 +10,7 @@ interface TruckViewPanelProps {
   interactive?: boolean;
   originCoords?: [number, number] | null;
   destCoords?: [number, number] | null;
+  onRouteCalculated?: (route: { coordinates: [number, number][]; distance: number; duration: number }) => void;
 }
 
 // Get interpolated position along route at given progress
@@ -96,6 +97,81 @@ function getPartialRoute(coords: [number, number][], progress: number): [number,
   return partialCoords;
 }
 
+// Google Maps API key from environment
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyD8aMj_HlkLUWuYbZRU7I6oFGTavx2zKOc";
+
+// Load Google Maps script for Directions API
+function loadGoogleMapsScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if ((window as any).google?.maps) {
+      resolve();
+      return;
+    }
+    
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]');
+    if (existingScript) {
+      existingScript.addEventListener('load', () => resolve());
+      if ((window as any).google?.maps) {
+        resolve();
+      }
+      return;
+    }
+    
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places,geometry`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Google Maps'));
+    document.head.appendChild(script);
+  });
+}
+
+// Fetch road-snapped route from Google Directions API
+async function fetchRoadSnappedRoute(
+  origin: [number, number],
+  dest: [number, number]
+): Promise<{ coordinates: [number, number][]; distance: number; duration: number } | null> {
+  try {
+    await loadGoogleMapsScript();
+    
+    const directionsService = new (window as any).google.maps.DirectionsService();
+    
+    return new Promise((resolve) => {
+      directionsService.route(
+        {
+          origin: { lat: origin[1], lng: origin[0] },
+          destination: { lat: dest[1], lng: dest[0] },
+          travelMode: (window as any).google.maps.TravelMode.DRIVING,
+        },
+        (result: any, status: any) => {
+          if (status === 'OK' && result?.routes?.[0]) {
+            const route = result.routes[0];
+            const path = route.overview_path;
+            const coordinates: [number, number][] = path.map((p: any) => [p.lng(), p.lat()]);
+            
+            const leg = route.legs[0];
+            const distanceInMiles = leg.distance.value / 1609.34;
+            const durationInSeconds = leg.duration.value;
+            
+            resolve({
+              coordinates,
+              distance: distanceInMiles,
+              duration: durationInSeconds,
+            });
+          } else {
+            console.error('Google Directions failed:', status);
+            resolve(null);
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error('Failed to fetch road-snapped route:', error);
+    return null;
+  }
+}
+
 const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
   routeCoordinates,
   progress,
@@ -103,12 +179,53 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
   interactive = false,
   originCoords,
   destCoords,
+  onRouteCalculated,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
   const lastBearing = useRef<number>(0);
+  
+  // Local detailed route state - fetched if parent doesn't provide road-snapped data
+  const [detailedRoute, setDetailedRoute] = useState<[number, number][]>([]);
+  const [isLoadingRoute, setIsLoadingRoute] = useState(false);
+  const routeFetchedRef = useRef(false);
+  
+  // Use detailed route if available, otherwise fall back to parent route
+  const activeRoute = detailedRoute.length > 10 ? detailedRoute : routeCoordinates;
+
+  // Fetch road-snapped route if parent data is insufficient
+  useEffect(() => {
+    // Already have detailed route from parent (>10 points = road-snapped)
+    if (routeCoordinates.length > 10) {
+      setDetailedRoute(routeCoordinates);
+      routeFetchedRef.current = true;
+      return;
+    }
+    
+    // Need to fetch road-snapped route ourselves
+    if (!originCoords || !destCoords) return;
+    
+    // Prevent duplicate fetches
+    if (routeFetchedRef.current) return;
+    
+    setIsLoadingRoute(true);
+    routeFetchedRef.current = true;
+    
+    fetchRoadSnappedRoute(originCoords, destCoords).then((result) => {
+      setIsLoadingRoute(false);
+      
+      if (result) {
+        setDetailedRoute(result.coordinates);
+        // Notify parent so other components can use the route too
+        onRouteCalculated?.(result);
+      } else {
+        // Fallback: use straight line between points
+        setDetailedRoute([originCoords, destCoords]);
+      }
+    });
+  }, [routeCoordinates, originCoords, destCoords, onRouteCalculated]);
 
   // Initialize Mapbox map
   useEffect(() => {
@@ -249,7 +366,7 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
 
   // Update full route when coordinates change
   useEffect(() => {
-    if (!isReady || !map.current || routeCoordinates.length < 2) return;
+    if (!isReady || !map.current || activeRoute.length < 2) return;
 
     const source = map.current.getSource('route-full') as mapboxgl.GeoJSONSource;
     if (source) {
@@ -258,19 +375,19 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
         properties: {},
         geometry: {
           type: 'LineString',
-          coordinates: routeCoordinates
+          coordinates: activeRoute
         }
       });
     }
-  }, [routeCoordinates, isReady]);
+  }, [activeRoute, isReady]);
 
   // Synchronized camera update - position + bearing in same frame
   const updateCamera = useCallback(() => {
-    if (!map.current || !isReady || routeCoordinates.length < 2) return;
+    if (!map.current || !isReady || activeRoute.length < 2) return;
 
-    const position = getPointAlongRoute(routeCoordinates, progress);
-    const bearing = getBearingAtProgress(routeCoordinates, progress);
-    const partialRoute = getPartialRoute(routeCoordinates, progress);
+    const position = getPointAlongRoute(activeRoute, progress);
+    const bearing = getBearingAtProgress(activeRoute, progress);
+    const partialRoute = getPartialRoute(activeRoute, progress);
 
     // Smooth bearing transition to avoid jerky rotation
     const bearingDiff = bearing - lastBearing.current;
@@ -306,7 +423,7 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
     map.current.setCenter(position);
     map.current.setBearing(smoothBearing);
 
-  }, [routeCoordinates, progress, isReady]);
+  }, [activeRoute, progress, isReady]);
 
   // Run camera update on progress change
   useEffect(() => {
@@ -315,10 +432,10 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
 
   // Initial camera position when route loads
   useEffect(() => {
-    if (!isReady || !map.current || routeCoordinates.length < 2) return;
+    if (!isReady || !map.current || activeRoute.length < 2) return;
 
-    const position = getPointAlongRoute(routeCoordinates, progress);
-    const bearing = getBearingAtProgress(routeCoordinates, progress);
+    const position = getPointAlongRoute(activeRoute, progress);
+    const bearing = getBearingAtProgress(activeRoute, progress);
     
     lastBearing.current = bearing;
 
@@ -330,7 +447,7 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
       duration: 1500,
       essential: true
     });
-  }, [routeCoordinates.length, isReady]);
+  }, [activeRoute.length, isReady]);
 
   // Error fallback
   if (mapError) {
@@ -370,14 +487,24 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
         </div>
       )}
 
-      {/* No route warning */}
-      {isReady && routeCoordinates.length < 2 && (
+      {/* No route warning - show when loading or no route */}
+      {isReady && activeRoute.length < 2 && !isLoadingRoute && (
         <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-20">
           <div className="flex flex-col items-center gap-2 text-center px-6">
             <Truck className="w-8 h-8 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
               Set origin and destination to enable Truck View
             </span>
+          </div>
+        </div>
+      )}
+      
+      {/* Route loading state */}
+      {isReady && isLoadingRoute && (
+        <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-20">
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm text-foreground">Calculating road route...</span>
           </div>
         </div>
       )}
