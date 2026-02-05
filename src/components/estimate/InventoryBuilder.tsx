@@ -35,10 +35,8 @@ import {
   List,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   Scale,
   Sparkles,
-  Zap,
   Camera,
   Wand2,
   Car,
@@ -73,11 +71,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 
 interface InventoryBuilderProps {
   onAddItem: (item: Omit<InventoryItem, 'id'>) => void;
@@ -303,7 +296,6 @@ export default function InventoryBuilder({
   const [searchOpen, setSearchOpen] = useState(false);
   const [presetDialogOpen, setPresetDialogOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
-  const [quickToolsOpen, setQuickToolsOpen] = useState(false);
   const prevTotalRef = useRef(0);
 
   // Get all items for search with room info
@@ -894,80 +886,32 @@ export default function InventoryBuilder({
                   </div>
                 )}
 
-                {/* Quick Tools Collapsible - Relocated Quick Add & Presets */}
-                <Collapsible open={quickToolsOpen} onOpenChange={setQuickToolsOpen} className="mt-4">
-                  <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-muted/40 hover:bg-muted/60 transition-all">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-3.5 h-3.5 text-muted-foreground" />
-                      <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Quick Tools</span>
-                    </div>
-                    <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", quickToolsOpen && "rotate-180")} />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-3 space-y-3">
-                    {/* Quick Add Section - Popular Items */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Zap className="w-3.5 h-3.5 text-primary" />
-                        <span className="text-[10px] font-black tracking-[0.15em] uppercase text-muted-foreground">
-                          Quick Add
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {POPULAR_ITEMS.slice(0, 8).map((popItem) => {
-                          const qty = getItemQuantity(popItem.name, popItem.room);
-                          return (
-                            <button
-                              key={`${popItem.room}-${popItem.name}`}
-                              type="button"
-                              onClick={() => handleQuickAdd(popItem.name, popItem.room)}
-                              className={cn(
-                                "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all",
-                                qty > 0
-                                  ? "bg-muted text-foreground border border-foreground/20"
-                                  : "bg-muted/50 text-foreground/80 border border-border/40 hover:bg-muted hover:border-foreground/20"
-                              )}
-                            >
-                              <Plus className="w-3 h-3" />
-                              <span className="truncate max-w-[100px]">{popItem.name.split(',')[0]}</span>
-                              {qty > 0 && (
-                                <span className="bg-foreground text-background text-[10px] font-bold px-1.5 rounded-full">
-                                  {qty}
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Room Presets */}
-                    <div className="flex items-center flex-wrap gap-2">
-                      <span className="text-[10px] font-black tracking-[0.15em] uppercase text-muted-foreground">
-                        Presets
-                      </span>
-                      <div className="flex gap-1.5">
-                        {[
-                          { id: 'studio', label: 'Studio' },
-                          { id: '1br', label: '1 BR' },
-                          { id: '2br', label: '2 BR' },
-                          { id: '3br', label: '3+ BR' },
-                        ].map((preset) => (
-                          <button
-                            key={preset.id}
-                            type="button"
-                            onClick={() => {
-                              setSelectedPreset(preset.id);
-                              setPresetDialogOpen(true);
-                            }}
-                            className="px-2.5 py-1 rounded-md text-[10px] font-semibold bg-muted text-muted-foreground border border-border/40 hover:bg-muted/80 hover:text-foreground transition-all"
-                          >
-                            {preset.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+                {/* Room Presets - Inline */}
+                <div className="flex items-center flex-wrap gap-2 mt-3 pt-3 border-t border-border/40">
+                  <span className="text-[10px] font-black tracking-[0.15em] uppercase text-muted-foreground">
+                    Presets
+                  </span>
+                  <div className="flex gap-1.5">
+                    {[
+                      { id: 'studio', label: 'Studio' },
+                      { id: '1br', label: '1 BR' },
+                      { id: '2br', label: '2 BR' },
+                      { id: '3br', label: '3+ BR' },
+                    ].map((preset) => (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedPreset(preset.id);
+                          setPresetDialogOpen(true);
+                        }}
+                        className="px-2.5 py-1 rounded-md text-[10px] font-semibold bg-muted text-muted-foreground border border-border/40 hover:bg-muted/80 hover:text-foreground transition-all"
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
