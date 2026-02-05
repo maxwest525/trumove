@@ -11,10 +11,19 @@
    ArrowRight, MousePointer, Eye, Clock, Percent
  } from "lucide-react";
  
- interface UnifiedAnalyticsDashboardProps {
-   onCreateLandingPage: () => void;
-   liveMode?: boolean;
- }
+export interface AnalyticsPrefillData {
+  keywords: string[];
+  locations: string[];
+  audience: string;
+  topKeyword: string;
+  avgCPA: number;
+  topLocation: string;
+}
+
+interface UnifiedAnalyticsDashboardProps {
+  onCreateLandingPage: (prefillData: AnalyticsPrefillData) => void;
+  liveMode?: boolean;
+}
  
  // Consolidated data
  const KEYWORDS_DATA = [
@@ -66,14 +75,27 @@
    { stage: "Booking Made", count: 847, rate: 3.0 },
  ];
  
- export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: UnifiedAnalyticsDashboardProps) {
-   // Totals
-   const totalSpend = PLATFORM_DATA.reduce((sum, p) => sum + p.spend, 0);
-   const totalConversions = PLATFORM_DATA.reduce((sum, p) => sum + p.conversions, 0);
-   const avgCPA = totalSpend / totalConversions;
-   const avgROAS = PLATFORM_DATA.reduce((sum, p) => sum + p.roas, 0) / PLATFORM_DATA.length;
-   const totalClicks = KEYWORDS_DATA.reduce((sum, k) => sum + k.clicks, 0);
-   const avgCTR = KEYWORDS_DATA.reduce((sum, k) => sum + k.ctr, 0) / KEYWORDS_DATA.length;
+export function UnifiedAnalyticsDashboard({ onCreateLandingPage, liveMode }: UnifiedAnalyticsDashboardProps) {
+  // Totals
+  const totalSpend = PLATFORM_DATA.reduce((sum, p) => sum + p.spend, 0);
+  const totalConversions = PLATFORM_DATA.reduce((sum, p) => sum + p.conversions, 0);
+  const avgCPA = totalSpend / totalConversions;
+  const avgROAS = PLATFORM_DATA.reduce((sum, p) => sum + p.roas, 0) / PLATFORM_DATA.length;
+  const totalClicks = KEYWORDS_DATA.reduce((sum, k) => sum + k.clicks, 0);
+  const avgCTR = KEYWORDS_DATA.reduce((sum, k) => sum + k.ctr, 0) / KEYWORDS_DATA.length;
+
+  // Build prefill data from analytics
+  const handleCreateLandingPage = () => {
+    const prefillData: AnalyticsPrefillData = {
+      keywords: KEYWORDS_DATA.map(k => k.keyword),
+      locations: GEO_DATA.map(g => `${g.city}, ${g.state}`),
+      audience: DEMO_DATA.sort((a, b) => b.conversions - a.conversions)[0]?.segment || "Homeowners",
+      topKeyword: KEYWORDS_DATA.sort((a, b) => b.conversions - a.conversions)[0]?.keyword || "",
+      avgCPA: avgCPA,
+      topLocation: `${GEO_DATA[0]?.city}, ${GEO_DATA[0]?.state}`,
+    };
+    onCreateLandingPage(prefillData);
+  };
  
    return (
      <ScrollArea className="h-full">
@@ -354,11 +376,11 @@
                  <p className="text-xs text-muted-foreground">Create an AI-powered landing page based on these insights</p>
                </div>
              </div>
-             <Button onClick={onCreateLandingPage} className="gap-2" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
-               <Layout className="w-4 h-4" />
-               Create Landing Page
-               <ArrowRight className="w-4 h-4" />
-             </Button>
+            <Button onClick={handleCreateLandingPage} className="gap-2" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
+              <Layout className="w-4 h-4" />
+              Create Landing Page Based on This Data
+              <ArrowRight className="w-4 h-4" />
+            </Button>
            </CardContent>
          </Card>
        </div>
