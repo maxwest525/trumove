@@ -18,7 +18,7 @@ import { toast } from "sonner";
   ChevronDown, Quote, Award, Truck, Pencil, X, Check,
   MapPin, Search, Target, Globe, BarChart3, Hash, DollarSign,
   Calculator, Video, ThumbsUp, Building, Home, Package, ArrowDown,
-  Download, Palette, Copy
+   Download, Palette, Copy, Maximize2, Minimize2
  } from "lucide-react";
  import { Upload, FileUp, MousePointerClick, PieChart, UserCheck, Map, Filter, TrendingDown } from "lucide-react";
  import logoImg from "@/assets/logo.png";
@@ -270,6 +270,7 @@ interface EditableSection {
    const [showDataImport, setShowDataImport] = useState(false);
    const [importedData, setImportedData] = useState<ImportedDataset | null>(null);
    const [activeDataTab, setActiveDataTab] = useState<'keywords' | 'geographic' | 'demographic' | 'clicks'>('keywords');
+   const [isPopoutOpen, setIsPopoutOpen] = useState(false);
  
    const handleGenerateLandingPage = () => {
      setGenerationStep(1);
@@ -1109,7 +1110,8 @@ interface EditableSection {
 
    if (showLandingPage) {
      return (
-       <div className="space-y-4">
+       <>
+         <div className="space-y-4">
          {/* Control Bar */}
          <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
            <div className="flex items-center gap-3">
@@ -1164,6 +1166,15 @@ interface EditableSection {
                 <Upload className="w-3 h-3 mr-1" />
                 {importedData ? "Data Imported" : "Import Data"}
               </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsPopoutOpen(true)}
+                className="border-purple-300 text-purple-600 hover:bg-purple-50"
+              >
+                <Maximize2 className="w-3 h-3 mr-1" />
+                Pop Out
+              </Button>
              <Button size="sm" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
                Publish Page
              </Button>
@@ -1171,7 +1182,15 @@ interface EditableSection {
          </div>
  
          {/* Generated Landing Page Preview */}
-         <div className="rounded-xl border-2 border-purple-300 overflow-hidden shadow-lg">
+          <div className="rounded-xl border-2 border-purple-300 overflow-hidden shadow-lg relative group">
+            {/* Quick Pop Out Button on Preview */}
+            <button
+              onClick={() => setIsPopoutOpen(true)}
+              className="absolute top-12 right-3 z-10 p-2 rounded-lg bg-white/90 dark:bg-slate-800/90 shadow-md border border-border opacity-0 group-hover:opacity-100 transition-opacity hover:bg-purple-50 dark:hover:bg-purple-900/50"
+              title="Pop out to larger view"
+            >
+              <Maximize2 className="w-4 h-4 text-purple-600" />
+            </button>
            {/* Browser Chrome */}
            <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 border-b border-border">
              <div className="flex gap-1.5">
@@ -1635,11 +1654,112 @@ interface EditableSection {
             </div>
           </div>
          </div>
-       </div>
-     );
-   }
- 
-   return (
+         </div>
+      
+       {/* Popout Modal for Larger View */}
+       {isPopoutOpen && (
+         <div className="fixed inset-0 z-[200] flex items-center justify-center">
+           {/* Backdrop */}
+           <div 
+             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+             onClick={() => setIsPopoutOpen(false)}
+           />
+           
+           {/* Wide Modal */}
+           <div 
+             className="relative bg-background rounded-2xl shadow-2xl border border-border overflow-hidden"
+             style={{ width: "90vw", maxWidth: "1400px", height: "85vh" }}
+           >
+             {/* Modal Header */}
+             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-purple-600 to-purple-500">
+               <div className="flex items-center gap-3">
+                 <Sparkles className="w-5 h-5 text-white" />
+                 <span className="font-semibold text-white">Landing Page Preview</span>
+                 <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                   {LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
+                 </Badge>
+               </div>
+               <div className="flex items-center gap-2">
+                 {/* Theme Selector in Popout */}
+                 <Select value={selectedTheme} onValueChange={setSelectedTheme}>
+                   <SelectTrigger className="w-[140px] h-8 bg-white/10 border-white/20 text-white text-xs">
+                     <Palette className="w-3 h-3 mr-1.5" />
+                     <SelectValue placeholder="Theme" />
+                   </SelectTrigger>
+                   <SelectContent>
+                     {COLOR_THEMES.map((colorTheme) => (
+                       <SelectItem key={colorTheme.id} value={colorTheme.id}>
+                         <div className="flex items-center gap-2">
+                           <div 
+                             className="w-4 h-4 rounded-full border border-border"
+                             style={{ background: `linear-gradient(135deg, ${colorTheme.primary}, ${colorTheme.accent})` }}
+                           />
+                           {colorTheme.name}
+                         </div>
+                       </SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+                 <Button 
+                   variant="ghost" 
+                   size="sm" 
+                   onClick={exportAsHtml}
+                   className="text-white hover:bg-white/20 h-8"
+                 >
+                   <Download className="w-3.5 h-3.5 mr-1.5" />
+                   Export
+                 </Button>
+                 <Button 
+                   variant="ghost" 
+                   size="sm" 
+                   onClick={copyHtmlToClipboard}
+                   className="text-white hover:bg-white/20 h-8"
+                 >
+                   <Copy className="w-3.5 h-3.5 mr-1.5" />
+                   Copy
+                 </Button>
+                 <button
+                   onClick={() => setIsPopoutOpen(false)}
+                   className="p-1.5 rounded-md hover:bg-white/20 transition-colors text-white"
+                   title="Close"
+                 >
+                   <X className="w-5 h-5" />
+                 </button>
+               </div>
+             </div>
+             
+             {/* Browser Chrome */}
+             <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border-b border-border">
+               <div className="flex gap-1.5">
+                 <div className="w-3 h-3 rounded-full bg-red-400" />
+                 <div className="w-3 h-3 rounded-full bg-amber-400" />
+                 <div className="w-3 h-3 rounded-full bg-green-400" />
+               </div>
+               <div className="flex-1 mx-4">
+                 <div className="bg-white dark:bg-slate-700 rounded-md px-3 py-1.5 text-sm text-muted-foreground font-mono">
+                   https://{businessName.toLowerCase().replace(/\s/g, '')}.com/{selectedTemplate}
+                 </div>
+               </div>
+               <button
+                 onClick={() => setIsPopoutOpen(false)}
+                 className="p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-muted-foreground"
+                 title="Minimize back to panel"
+               >
+                 <Minimize2 className="w-4 h-4" />
+               </button>
+             </div>
+             
+             {/* Landing Page Content - Full Height */}
+             <ScrollArea className="h-[calc(85vh-110px)]">
+               {renderSelectedTemplate()}
+             </ScrollArea>
+           </div>
+         </div>
+       )}
+     </>
+   );
+ }
+  return (
      <div className="space-y-4">
        {/* Intro Card */}
        <div className="p-6 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50/50 dark:bg-purple-950/20 dark:border-purple-700">
