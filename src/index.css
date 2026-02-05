@@ -3001,8 +3001,12 @@
   background: hsl(var(--foreground));
   color: hsl(var(--background));
   transform: scale(1.05);
-  border: 1px solid hsl(var(--primary) / 0.3);
+  border: 1px solid hsl(var(--primary) / 0.2);
   box-shadow: 0 4px 12px hsl(var(--tm-ink) / 0.3);
+}
+
+.tru-ai-scanner-start-btn svg {
+  color: currentColor;
 }
 
 /* AI Demo Info Callout */
@@ -6357,9 +6361,9 @@
   font-family: 'Inter', system-ui, sans-serif;
   letter-spacing: 0.02em;
   margin-top: 40px;
-  border: 1px solid hsl(var(--primary) / 0.2);
+  border: 1px solid hsl(var(--primary) / 0.1);
   box-shadow: 
-    0 0 8px hsl(var(--primary) / 0.06),
+    0 0 4px hsl(var(--primary) / 0.03),
     0 4px 16px hsl(var(--tm-ink) / 0.25);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -6368,9 +6372,9 @@
 
 .tru-qb-continue.tru-engine-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  border-color: hsl(var(--primary) / 0.35);
+  border-color: hsl(var(--primary) / 0.2);
   box-shadow: 
-    0 0 10px hsl(var(--primary) / 0.1),
+    0 0 6px hsl(var(--primary) / 0.05),
     0 6px 20px hsl(var(--tm-ink) / 0.35);
 }
 
@@ -6380,7 +6384,7 @@
   position: absolute;
   inset: -2px;
   border-radius: 12px;
-  background: linear-gradient(135deg, hsl(var(--primary) / 0.08), transparent, hsl(var(--primary) / 0.05));
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.04), transparent, hsl(var(--primary) / 0.02));
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -6392,19 +6396,19 @@
 }
 
 @keyframes engine-glow-pulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.01); }
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(1.005); }
 }
 
 /* Green accent on icons - reduced glow */
 .tru-qb-continue.tru-engine-btn .tru-btn-scan {
   color: hsl(var(--primary));
-  filter: drop-shadow(0 0 2px hsl(var(--primary) / 0.4));
+  filter: drop-shadow(0 0 1px hsl(var(--primary) / 0.2));
 }
 
 .tru-qb-continue.tru-engine-btn .tru-btn-arrow {
   color: hsl(var(--primary));
-  filter: drop-shadow(0 0 2px hsl(var(--primary) / 0.4));
+  filter: drop-shadow(0 0 1px hsl(var(--primary) / 0.2));
   transition: transform 0.2s ease;
 }
 
@@ -28482,7 +28486,7 @@
   gap: 8px !important;
   border-radius: 10px !important;
   border: 1px solid hsl(0 0% 100% / 0.1) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   transition: all 0.2s ease;
 }
 
@@ -28493,9 +28497,9 @@
 .tracking-map-go-btn:hover:not(:disabled) {
   background: hsl(220 15% 12%) !important;
   box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.2),
-    0 0 6px hsl(var(--primary) / 0.08);
-  border-color: hsl(var(--primary) / 0.2) !important;
+    0 4px 12px rgba(0, 0, 0, 0.18),
+    0 0 4px hsl(var(--primary) / 0.04);
+  border-color: hsl(var(--primary) / 0.15) !important;
   transform: translateY(-1px);
 }
 
