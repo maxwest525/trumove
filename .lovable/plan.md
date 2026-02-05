@@ -1,212 +1,168 @@
 
+# Secondary Button Styling Fix Plan
 
 ## Summary
-Enhance the homepage Shipment Tracker section with:
-1. **Animated truck movement** in the Road View panel (close-up) - truck drives around streets at real-time speed
-2. **Remove label pills** from both map panels (LIVE GPS badge and Route Overview label)
-3. **Window-frame borders** on both panels for a more realistic/professional look
+This plan addresses the remaining secondary button styling issues, particularly reducing the green glow on the "Analyze Route" button and ensuring all secondary buttons have consistent hover states without green text/icon transformation.
 
 ---
 
-## Implementation
+## Current Status
 
-### 1. Animated Truck Movement (TruckViewPanel)
+### Completed
+- **Modal secondary buttons** (`tru-modal-secondary-btn`) - properly styled with transparent bg, subtle border, white icons
+- **Secondary action buttons** (`tru-secondary-action-btn`) - correctly implemented
+- **Dark action buttons** (`tru-dark-action-btn`) - added to Book.tsx with subtle green underglow
+- **Navbar styling** - consistent across all pages via `tru-static-nav-menu`
 
-Replace the static Mapbox image with a **live Mapbox GL JS map** that animates the camera along a street-level route:
-
-```tsx
-function TruckViewPanel() {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const animationRef = useRef<number>();
-  
-  // Create a small looping street route (city block circuit)
-  const streetRoute: [number, number][] = [
-    [-97.520, 35.470],   // Start
-    [-97.518, 35.472],   // Turn 1
-    [-97.515, 35.471],   // Turn 2
-    [-97.517, 35.468],   // Turn 3
-    [-97.520, 35.470],   // Back to start (loop)
-  ];
-  
-  useEffect(() => {
-    // Initialize interactive Mapbox GL map
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/navigation-night-v1',
-      center: streetRoute[0],
-      zoom: 17,
-      pitch: 60,
-      bearing: 45,
-      interactive: false,
-    });
-    
-    // Animate camera along route in real-time
-    let progress = 0;
-    const animate = () => {
-      progress += 0.0001; // Very slow for "real-time" feel
-      if (progress > 1) progress = 0;
-      
-      // Interpolate position along route
-      const position = getPointAlongRoute(streetRoute, progress);
-      const bearing = getBearing(progress);
-      
-      map.current.setCenter(position);
-      map.current.setBearing(bearing);
-      
-      animationRef.current = requestAnimationFrame(animate);
-    };
-    
-    map.current.on('load', animate);
-    
-    return () => {
-      cancelAnimationFrame(animationRef.current);
-      map.current?.remove();
-    };
-  }, []);
-  
-  return (
-    <div className="tru-tracker-road-map tru-map-window-frame">
-      <div ref={mapContainer} className="w-full h-full" />
-      
-      {/* Truck marker - centered, fixed position */}
-      <div className="tru-homepage-truck-marker">
-        <div className="tru-homepage-truck-glow" />
-        <div className="tru-homepage-truck-glow tru-homepage-truck-glow-2" />
-        <div className="tru-homepage-truck-icon">
-          <Truck className="w-6 h-6" />
-        </div>
-      </div>
-      
-      {/* REMOVED: LIVE GPS badge */}
-    </div>
-  );
-}
-```
-
-**Key points:**
-- Uses Mapbox GL JS (already installed) for smooth animation
-- Camera follows a looping street-level route at "real-time" speed
-- Truck icon stays centered; the map moves under it
-- Heading/bearing updates to match direction of travel
+### Needs Fixing
+1. **Analyze Route button glow** - still too intense despite previous reductions
+2. **Scanner badge/start buttons** - may still show green text on hover
+3. **Homepage hero buttons** - need verification of hover states
 
 ---
 
-### 2. Remove Label Pills
+## Implementation Plan
 
-**TruckViewPanel:**
-```tsx
-// REMOVE this block entirely:
-<div className="tru-tracker-live-badge">
-  <span className="tru-tracker-live-dot" />
-  <span>LIVE GPS</span>
-</div>
-```
+### Phase 1: Reduce Analyze Route Button Glow
 
-**RouteOverviewPanel:**
-```tsx
-// REMOVE this block entirely:
-<div className="tru-tracker-satellite-label">
-  <Radar className="w-3 h-3" />
-  <span>Route Overview</span>
-</div>
-```
+**File: `src/index.css`**
 
----
+Update `.tru-qb-continue.tru-engine-btn` styling:
 
-### 3. Window Frame Border Styling
+| Property | Current Value | New Value |
+|----------|---------------|-----------|
+| Default box-shadow glow | `0 0 8px hsl(var(--primary) / 0.06)` | `0 0 4px hsl(var(--primary) / 0.03)` |
+| Hover box-shadow glow | `0 0 10px hsl(var(--primary) / 0.1)` | `0 0 6px hsl(var(--primary) / 0.05)` |
+| Hover border opacity | `hsl(var(--primary) / 0.35)` | `hsl(var(--primary) / 0.2)` |
+| Icon drop-shadow | `0 0 2px hsl(var(--primary) / 0.4)` | `0 0 1px hsl(var(--primary) / 0.2)` |
+| Pulse animation opacity | `0.4 → 0.7` | `0.2 → 0.35` |
 
-Add CSS for a realistic window/display frame effect:
+### Phase 2: Fix Scanner Buttons
 
-```css
-/* Window frame effect for map panels */
-.tru-map-window-frame {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow:
-    /* Inner shadow for depth */
-    inset 0 2px 4px hsl(0 0% 0% / 0.3),
-    inset 0 -1px 2px hsl(0 0% 100% / 0.1),
-    /* Outer glow */
-    0 0 0 1px hsl(0 0% 100% / 0.1),
-    0 4px 24px hsl(0 0% 0% / 0.4);
-  border: 3px solid hsl(220 10% 20%);
-}
+**File: `src/index.css`**
 
-.tru-map-window-frame::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 5px;
-  border: 1px solid hsl(0 0% 100% / 0.15);
-  pointer-events: none;
-  z-index: 20;
-}
+Update `.tru-ai-scanner-badge` and `.tru-ai-scanner-start-btn`:
+- Remove any green text color on hover
+- Ensure `color: currentColor` on SVGs
+- Keep the button itself dark themed
 
-/* Subtle bezel effect */
-.tru-map-window-frame::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 11px;
-  background: linear-gradient(
-    145deg,
-    hsl(220 10% 25%) 0%,
-    hsl(220 10% 15%) 50%,
-    hsl(220 10% 12%) 100%
-  );
-  z-index: -1;
-}
-```
+### Phase 3: Audit All Secondary Buttons
 
-This creates:
-- Subtle inner shadow for depth
-- Thin highlight border for glass effect
-- Dark metallic bezel border
-- Slight gradient on outer frame
+Target classes to verify and fix:
+- `.tru-hero-call-btn` - verify no green text on hover
+- `.tru-ai-cta-btn` - verify icons stay white
+- `.tru-hero-btn-secondary` - if exists, verify styling
+- `.tracking-map-go-btn` - reduce glow further if needed
 
----
+### Phase 4: Consistent Icon Treatment
 
-## Visual Result
+Add global rule to enforce icon color inheritance:
 
 ```text
-┌──────────────────────────────────────────────────────────────────┐
-│                      SHIPMENT TRACKER                            │
-├────────────────────┬────────────────────┬───────────────────────┤
-│ ╔════════════════╗ │ ╔════════════════╗ │                       │
-│ ║                ║ │ ║                ║ │   Real-Time Tracking  │
-│ ║  Route Map     ║ │ ║  Street View   ║ │                       │
-│ ║  (LA → NY)     ║ │ ║  (animated     ║ │   Track. Monitor.     │
-│ ║                ║ │ ║   driving)     ║ │   Arrive.             │
-│ ║   🟢━━━━━🔴    ║ │ ║      🚛        ║ │                       │
-│ ║                ║ │ ║   [streets     ║ │   GPS tracking, live  │
-│ ║                ║ │ ║    scroll by]  ║ │   ETAs, and instant   │
-│ ╠════════════════╣ │ ╠════════════════╣ │   updates...          │
-│ ╚════════════════╝ │ ╚════════════════╝ │                       │
-│   (no label)       │   (no label)       │                       │
-└────────────────────┴────────────────────┴───────────────────────┘
-         ↑                    ↑
-    Window frame         Window frame
-    border effect        border effect
+/* Example pattern */
+.tru-secondary-* svg,
+.tru-modal-secondary-* svg,
+.tru-hero-* svg {
+  color: currentColor !important;
+}
 ```
 
 ---
 
-## Files to Modify
+## Technical Details
 
-| File | Changes |
-|------|---------|
-| `src/pages/Index.tsx` | Replace static TruckViewPanel with animated Mapbox GL map, remove badge/label elements |
-| `src/index.css` | Add `.tru-map-window-frame` class with bezel/frame styling |
+### Files to Modify
+
+1. **`src/index.css`** - Primary file containing all button styles
+   - Lines ~2800-3100: AI CTA and scanner buttons
+   - Lines ~6350-6430: Engine button (Analyze Route)
+   - Lines ~28475-28500: Tracking map go button
+
+### Specific CSS Changes
+
+**Engine Button (Analyze Route) - Minimal Glow**
+```text
+.tru-qb-continue.tru-engine-btn {
+  box-shadow: 
+    0 0 4px hsl(var(--primary) / 0.03),    /* Reduced from 0.06 */
+    0 4px 16px hsl(var(--tm-ink) / 0.25);
+}
+
+.tru-qb-continue.tru-engine-btn:hover:not(:disabled) {
+  border-color: hsl(var(--primary) / 0.2); /* Reduced from 0.35 */
+  box-shadow: 
+    0 0 6px hsl(var(--primary) / 0.05),    /* Reduced from 0.1 */
+    0 6px 20px hsl(var(--tm-ink) / 0.35);
+}
+
+/* Reduce icon glow */
+.tru-qb-continue.tru-engine-btn .tru-btn-scan,
+.tru-qb-continue.tru-engine-btn .tru-btn-arrow {
+  filter: drop-shadow(0 0 1px hsl(var(--primary) / 0.2));
+}
+
+/* Softer pulse animation */
+@keyframes engine-glow-pulse {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(1.005); }
+}
+```
+
+**Scanner Buttons - No Green Text on Hover**
+```text
+.tru-ai-scanner-badge:hover,
+.tru-ai-scanner-start-btn:hover {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background)); /* Stays black/white, not green */
+}
+
+.tru-ai-scanner-badge svg,
+.tru-ai-scanner-start-btn svg {
+  color: currentColor; /* Matches button text color */
+}
+```
+
+**Tracking Map Go Button - Further Reduction**
+```text
+.tracking-map-go-btn:hover:not(:disabled) {
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 0 4px hsl(var(--primary) / 0.05); /* Reduced from 0.08 */
+}
+```
 
 ---
 
-## Technical Notes
+## Verification Checklist
 
-1. **Animation speed**: `0.0001` progress per frame = ~15 seconds per loop at 60fps, simulating realistic driving pace
-2. **Route**: Small city block loop in Oklahoma City area (same location as current static view)
-3. **Mapbox GL JS**: Already installed (`mapbox-gl` package) and imported in project
-4. **No external API calls**: Uses local animation loop, no rate limiting concerns
-5. **Performance**: Single `requestAnimationFrame` loop, efficient GPU rendering via WebGL
+After implementation, verify these elements:
 
+1. **Homepage**
+   - [ ] "Analyze Route" button has minimal green glow
+   - [ ] Scanner badge/start buttons stay white text on hover
+   - [ ] Hero CTA buttons maintain white icons
+
+2. **Modals**
+   - [ ] ScanIntroModal secondary buttons (Phone/Video) have white icons
+   - [ ] InventoryIntroModal secondary buttons match
+   - [ ] Hover shows subtle green border, no text color change
+
+3. **Book Page**
+   - [ ] "Schedule a Call" button has subtle green underglow on hover
+   - [ ] "Whiteboard" and "Share Screen" buttons match
+   - [ ] All icons stay white
+
+4. **Live Tracking**
+   - [ ] "Analyze Route" / "View Route" buttons have reduced glow
+   - [ ] Green icons are acceptable, but glow is subtle
+
+5. **Dark Mode**
+   - [ ] All buttons maintain proper contrast
+   - [ ] Glow effects remain subtle and not overpowering
+
+---
+
+## Estimated Impact
+- **Files changed**: 1 (src/index.css)
+- **Lines modified**: ~30-40 lines
+- **Risk**: Low - CSS-only changes with no logic modifications
