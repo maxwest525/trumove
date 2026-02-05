@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { FileText, Briefcase, BarChart3, ArrowLeft, Phone, Sparkles, Headphones, Trophy, Key, MessageSquare } from "lucide-react";
+import { FileText, Briefcase, BarChart3, ArrowLeft, Phone, Sparkles, Headphones, Trophy, Key, MessageSquare, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
 import { ESignHub } from "@/components/agent/ESignHub";
@@ -10,8 +10,9 @@ import PPCDemoModal from "@/components/demo/PPCDemoModal";
 import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
 import { CoachingSummaryModal } from "@/components/coaching/CoachingSummaryModal";
 import { InternalMessagingModal } from "@/components/messaging/InternalMessagingModal";
+import { CombinedWorkspaceModal } from "@/components/agent/CombinedWorkspaceModal";
 
-type ActiveTool = null | "esign" | "operations" | "granot" | "ringcentral" | "ppc" | "crm-dialer" | "coaching-summary" | "messaging";
+type ActiveTool = null | "esign" | "operations" | "granot" | "ringcentral" | "ppc" | "crm-dialer" | "coaching-summary" | "messaging" | "workspace";
 
 const AGENT_TOOLS = [
   {
@@ -43,6 +44,13 @@ const AGENT_TOOLS = [
     external: false,
   },
   {
+    id: "workspace" as const,
+    title: "CRM + Dialer Workspace",
+    description: "Split-panel view with CRM & phone side-by-side",
+    icon: LayoutGrid,
+    external: false,
+  },
+  {
     id: "ppc" as const,
     title: "AI Marketing Suite",
     description: "PPC, SEO, A/B testing & conversions",
@@ -52,8 +60,8 @@ const AGENT_TOOLS = [
   },
   {
     id: "crm-dialer" as const,
-    title: "CRM / Dialer",
-    description: "Open CRM & phone system together",
+    title: "CRM / Dialer (Separate)",
+    description: "Open CRM & phone in separate windows",
     icon: Headphones,
     external: false,
     isIntegration: true,
@@ -85,6 +93,7 @@ export default function AgentLogin() {
   const [operationsOpen, setOperationsOpen] = useState(false);
   const [coachingSummaryOpen, setCoachingSummaryOpen] = useState(false);
   const [messagingOpen, setMessagingOpen] = useState(false);
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -109,6 +118,8 @@ export default function AgentLogin() {
       setCoachingSummaryOpen(true);
     } else if (toolId === "messaging") {
       setMessagingOpen(true);
+    } else if (toolId === "workspace") {
+      setWorkspaceOpen(true);
     } else {
       setActiveTool(toolId);
     }
@@ -156,6 +167,10 @@ export default function AgentLogin() {
       <InternalMessagingModal
         open={messagingOpen}
         onOpenChange={setMessagingOpen}
+      />
+      <CombinedWorkspaceModal
+        open={workspaceOpen}
+        onOpenChange={setWorkspaceOpen}
       />
       <div className="agent-dashboard-page">
         {activeTool ? (
