@@ -1,114 +1,182 @@
 
-# Plan: Add Truck View Panel to Shipment Tracking Page
+
+# Plan: Enhance Truck View with Road-Following Camera Behavior
 
 ## Overview
-Add a second map view ("Truck View") to the shipment tracking page that displays a street-level, truck-centric perspective alongside the existing route overview map. Both panels will share identical sizing and proportions, creating a split-view experience similar to the homepage demo.
+Upgrade the "Truck View" mode on the shipment tracking page to mimic the immersive, road-following experience from the homepage demo. The truck camera will smoothly navigate actual roads with synchronized position and bearing updates.
 
-## Current Layout Analysis
-- **Map area**: 850px wide, 550px tall
-- **Dashboard**: 380px wide, 612px tall (contains stats + street view card)
-- Total width used: ~1246px
+---
 
-## Proposed Layout
+## Current vs Target Behavior
 
-```text
-+-------------------+-------------------+----------------+
-|   Route Overview  |    Truck View     |   Dashboard    |
-|   (current map)   |   (new panel)     |   (stats +     |
-|    ~425x550       |    ~425x550       |  street view)  |
-+-------------------+-------------------+----------------+
-```
-
-Each map panel will be exactly half the current map width (425px) to maintain total layout width.
+| Aspect | Current Truck View | Target Behavior |
+|--------|-------------------|-----------------|
+| Camera sync | Position and heading updated separately | Position + bearing updated together in same frame |
+| Camera transition | Discrete setCenter/setHeading calls | Smooth animated transition with momentum |
+| Visual style | Google satellite with tilt | Dark navigation style matching homepage |
+| Speed feel | Real-time (hours for cross-country) | Real-time but with demo mode option for faster preview |
+| Road adherence | Uses Google Directions polyline | Same - already road-snapped from Directions API |
 
 ---
 
 ## Implementation Steps
 
-### Step 1: Create TruckViewMap Component
-Create a new component `src/components/tracking/TruckViewMap.tsx` that:
-- Accepts the route coordinates and current progress
-- Uses Mapbox GL JS with `navigation-night-v1` style (matching homepage)
-- Centers on the truck's current position along the route
-- Applies tilted perspective (pitch: 60°, bearing follows road direction)
-- Displays the green circular truck marker (matching existing style)
-- Animates camera to follow truck movement
+### Step 1: Add Mapbox-Based Truck View Mode
+Create a dedicated **TruckViewPanel component** specifically for the tracking page that uses Mapbox GL JS (matching the homepage implementation):
 
-### Step 2: Update CSS Layout
-Modify tracking layout CSS in `src/index.css`:
-- Change `.tracking-map-area` to use flex layout with two equal panels
-- Create `.tracking-map-split` class for the dual-panel container
-- Each panel: 425px × 550px (exactly half current width)
-- Maintain control strip spanning full width below both panels
+**New file: `src/components/tracking/TruckViewPanel.tsx`**
+- Uses Mapbox GL JS with `navigation-night-v1` style
+- Accepts `routeCoordinates` (already road-snapped from Google Directions)
+- Implements synchronized `setCenter()` + `setBearing()` in same animation frame
+- Centers a fixed truck marker CSS overlay (not a map marker)
+- Uses `pitch: 60` and `zoom: 17` for street-level immersion
+- Supports `interactive: false` for focused viewing OR `interactive: true` for user control
 
-```text
-.tracking-map-split {
-  display: flex;
-  gap: 0;
-  width: 850px;
-}
+```
+Props Interface:
+- routeCoordinates: [number, number][]
+- progress: number (0-100)
+- isTracking: boolean
+- interactive?: boolean (default false in truck view)
+```
 
-.tracking-map-panel {
-  width: 425px;
-  height: 550px;
-  flex-shrink: 0;
+### Step 2: Update LiveTracking.tsx Layout
+When "Truck View" is selected:
+- **Replace** the Google2DTrackingMap with TruckViewPanel
+- Pass existing `routeCoordinates` state (already populated from Google Directions)
+- Pass current `progress` value for position interpolation
+- Maintain sidebar dashboard unchanged
+
+```
+Layout Logic:
+if (mapViewType === 'truckview') {
+  render <TruckViewPanel ... />
+} else {
+  render <Google2DTrackingMap ... />
 }
 ```
 
-### Step 3: Update LiveTracking.tsx
-Modify the map area section:
-- Wrap the existing `Google2DTrackingMap` in a left panel
-- Add the new `TruckViewMap` as the right panel
-- Pass shared state (routeCoordinates, progress, isTracking) to both
-- Add subtle labels ("Route Overview" / "Truck View") to each panel
+### Step 3: Smooth Camera Animation Logic
+Port the homepage's animation approach:
 
-### Step 4: Style Polish
-- Left panel (Route Overview): rounded corners top-left only
-- Right panel (Truck View): rounded corners top-right only
-- Thin vertical separator between panels (1px border)
-- Panel labels as small overlays in top corners
+```
+// Position interpolation along route
+const getPointAlongRoute = (progress: number): [number, number] => {
+  const numSegments = routeCoordinates.length - 1;
+  const segmentProgress = progress * numSegments / 100;
+  const segmentIndex = Math.floor(segmentProgress);
+  const t = segmentProgress - segmentIndex;
+  
+  const start = routeCoordinates[segmentIndex];
+  const end = routeCoordinates[segmentIndex + 1];
+  
+  return [
+    start[0] + (end[0] - start[0]) * t,
+    start[1] + (end[1] - start[1]) * t
+  ];
+};
+
+// Bearing calculation from route segment
+const getBearing = (progress: number): number => {
+  // ... calculate from adjacent points
+  return Math.atan2(dLng, dLat) * (180 / Math.PI);
+};
+
+// Synchronized update
+useEffect(() => {
+  if (!map || !isTracking) return;
+  
+  const position = getPointAlongRoute(progress);
+  const bearing = getBearing(progress);
+  
+  map.setCenter(position);  // These happen
+  map.setBearing(bearing);  // in the same frame
+}, [progress, isTracking]);
+```
+
+### Step 4: Add Demo Speed Toggle (Optional Enhancement)
+Add a speed multiplier for the tracking page to preview long routes quickly:
+
+- **Real-time**: Route duration matches actual travel time (default)
+- **Demo 10x**: 10x faster for quick previews
+- **Demo 100x**: 100x faster for instant route visualization
+
+Small toggle button near the Play/Pause controls.
+
+### Step 5: Add CSS for Centered Truck Marker
+Add to `src/index.css`:
+
+```css
+/* Truck View centered marker - matches homepage */
+.tracking-truck-view-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  pointer-events: none;
+}
+
+.tracking-truck-view-marker .truck-icon {
+  width: 56px;
+  height: 56px;
+  background: #00e5a0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0, 229, 160, 0.5);
+}
+
+.tracking-truck-view-marker .truck-glow {
+  position: absolute;
+  inset: -8px;
+  background: radial-gradient(circle, rgba(0,229,160,0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+```
 
 ---
 
 ## Technical Details
 
-### TruckViewMap Component Props
-```typescript
-interface TruckViewMapProps {
-  routeCoordinates: [number, number][];
-  progress: number;
-  isTracking: boolean;
-  originCoords: [number, number] | null;
-  destCoords: [number, number] | null;
-}
-```
+### Route Data Flow
+1. User enters origin/destination
+2. Google Directions API returns road-snapped polyline (already happening)
+3. Coordinates stored in `routeCoordinates` state
+4. TruckViewPanel receives these coordinates
+5. Animation interpolates position along this path
+6. Camera follows with synchronized center + bearing
 
-### Camera Behavior
-- Calculates current position by interpolating along route based on progress
-- Calculates bearing from current segment direction
-- Uses `map.flyTo()` for smooth transitions as truck moves
-- Default zoom: 17 (street level)
-- Pitch: 60° for 3D-like tilted view
+### Why Mapbox for Truck View?
+- `navigation-night-v1` style provides superior dark road visualization
+- Smoother camera transitions with native `setCenter`/`setBearing` sync
+- Consistent visual language with homepage demo
+- Google Maps' tilt/heading combination has known issues with smooth rotation
 
-### Responsive Considerations
-- On screens < 1400px: Stack panels vertically (each full width at 425px)
-- On screens < 900px: Hide Truck View, show only Route Overview (current mobile behavior)
-
----
-
-## Visual Outcome
-Users will see:
-1. **Left panel**: Bird's-eye route overview (satellite/roadmap) with full route visible
-2. **Right panel**: Street-level truck view following the truck in real-time
-3. **Dashboard**: Unchanged stats and street view card on the far right
-
-This provides both strategic context (where the truck is on the route) and immersive detail (what the truck's perspective looks like).
+### Fallback Behavior
+- If Mapbox fails to load, gracefully fall back to Google2DTrackingMap with existing truck view behavior
+- Show loading state during Mapbox initialization
 
 ---
 
 ## Files to Modify
+
 | File | Changes |
 |------|---------|
-| `src/components/tracking/TruckViewMap.tsx` | **New file** - Street-level animated map component |
-| `src/pages/LiveTracking.tsx` | Add TruckViewMap alongside existing map |
-| `src/index.css` | Add split-panel CSS for dual map layout |
+| `src/components/tracking/TruckViewPanel.tsx` | **New file** - Mapbox-based immersive truck camera view |
+| `src/pages/LiveTracking.tsx` | Conditional render TruckViewPanel when `mapViewType === 'truckview'` |
+| `src/index.css` | Add centered truck marker styles for tracking page |
+
+---
+
+## Visual Outcome
+When users select "Truck View" on the shipment tracking page:
+1. Map transitions to dark navigation style
+2. Camera centers on truck's current position at street level
+3. Camera heading aligns with road direction
+4. Truck icon stays fixed in center while world moves around it
+5. Smooth, cinematic experience matching the homepage demo
+6. Real-time speed matches actual route duration
+
