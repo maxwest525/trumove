@@ -4,37 +4,21 @@ import SiteShell from "@/components/layout/SiteShell";
 import { FileText, Receipt, CreditCard, Truck, Users, BarChart3, Mail, ArrowLeft, Phone, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
-import { CCACHAuthorizationForm } from "@/components/agent/CCACHAuthorizationForm";
-import { BillOfLadingForm } from "@/components/agent/BillOfLadingForm";
+ import { ESignHub } from "@/components/agent/ESignHub";
 import { CustomerLookup } from "@/components/agent/CustomerLookup";
 import { CarrierDashboard } from "@/components/agent/CarrierDashboard";
 import { ClientMessaging } from "@/components/agent/ClientMessaging";
 import { IntegrationModal } from "@/components/integrations/IntegrationModals";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
 
-type ActiveTool = null | "estimate" | "bol" | "ccach" | "carrier" | "customer" | "messaging" | "granot" | "ringcentral" | "ppc";
+type ActiveTool = null | "esign" | "carrier" | "customer" | "messaging" | "granot" | "ringcentral" | "ppc";
 
 const AGENT_TOOLS = [
   {
-    id: "estimate" as const,
-    title: "Estimate Authorization",
-    description: "Sign and authorize customer estimates",
+    id: "esign" as const,
+    title: "E-Sign Hub",
+    description: "Send, track & assist with document signing",
     icon: FileText,
-    href: "/auth",
-    external: true,
-  },
-  {
-    id: "bol" as const,
-    title: "Bill of Lading",
-    description: "Generate and manage shipping documents",
-    icon: Receipt,
-    external: false,
-  },
-  {
-    id: "ccach" as const,
-    title: "CC/ACH Authorization",
-    description: "Payment authorization forms",
-    icon: CreditCard,
     external: false,
   },
   {
@@ -111,10 +95,8 @@ export default function AgentLogin() {
   };
   const renderActiveTool = () => {
     switch (activeTool) {
-      case "bol":
-        return <BillOfLadingForm />;
-      case "ccach":
-        return <CCACHAuthorizationForm />;
+      case "esign":
+        return <ESignHub />;
       case "carrier":
         return <CarrierDashboard />;
       case "customer":
@@ -199,7 +181,7 @@ export default function AgentLogin() {
                   );
                 }
 
-                if (tool.external && tool.href) {
+                if (tool.external && 'href' in tool && tool.href) {
                   return (
                     <Link
                       key={tool.id}
