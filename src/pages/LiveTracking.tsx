@@ -3,7 +3,7 @@ import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, Alert
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
-import { Google2DTrackingMap } from "@/components/tracking/Google2DTrackingMap";
+import { Google2DTrackingMap, type MapViewType } from "@/components/tracking/Google2DTrackingMap";
 
 import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
 import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
@@ -143,8 +143,8 @@ export default function LiveTracking() {
   // 3D view mode toggle - default to false (2D satellite is primary, 3D is unreliable)
   const [show3DView, setShow3DView] = useState(false);
   
-  // Map view type for 2D maps (satellite, hybrid, roadmap)
-  const [mapViewType, setMapViewType] = useState<'satellite' | 'hybrid' | 'roadmap'>('satellite');
+  // Map view type for 2D maps (satellite, hybrid, roadmap, truckview)
+  const [mapViewType, setMapViewType] = useState<MapViewType>('satellite');
   
   // WebGL diagnostics and fallback state
   const [webglDiagnostics, setWebglDiagnostics] = useState<WebGLDiagnostics | null>(null);
@@ -683,7 +683,7 @@ export default function LiveTracking() {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
+                    "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
                     mapViewType === 'roadmap' 
                       ? "bg-foreground text-background font-bold" 
                       : "hover:bg-muted"
@@ -691,6 +691,20 @@ export default function LiveTracking() {
                 >
                   <Map className="w-3.5 h-3.5" />
                   Roadmap
+                </Button>
+                <Button
+                  onClick={() => setMapViewType('truckview')}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
+                    mapViewType === 'truckview' 
+                      ? "bg-foreground text-background font-bold" 
+                      : "hover:bg-muted"
+                  )}
+                >
+                  <Truck className="w-3.5 h-3.5" />
+                  Truck View
                 </Button>
               </div>
               
