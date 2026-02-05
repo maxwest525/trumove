@@ -19,7 +19,7 @@ import { toast } from "sonner";
   MapPin, Search, Target, Globe, BarChart3, Hash, DollarSign,
   Calculator, Video, ThumbsUp, Building, Home, Package, ArrowDown,
    Download, Palette, Copy, Maximize2, Minimize2, FileText, Eye, EyeOff, Filter as FilterIcon,
-   FileUp, Database
+   FileUp, Database, Rocket, ChevronLeft, ChevronRight, Loader2, ExternalLink
  } from "lucide-react";
 import { Upload, MousePointerClick, PieChart, UserCheck, Map, TrendingDown, Lock, Timer, ArrowUp, Heart } from "lucide-react";
  import jsPDF from "jspdf";
@@ -444,11 +444,48 @@ interface EditableSection {
    );
    const [editingHeatmapId, setEditingHeatmapId] = useState<string | null>(null);
   const [mainView, setMainView] = useState<'analytics' | 'create' | 'manage'>('analytics');
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
 
    // Update heatmap positions when template changes
    useEffect(() => {
      setCustomHeatmapPositions(TEMPLATE_HEATMAP_POSITIONS[selectedTemplate] || TEMPLATE_HEATMAP_POSITIONS["quote-funnel"]);
    }, [selectedTemplate]);
+
+  // Get current template index for navigation
+  const currentTemplateIndex = LANDING_PAGE_TEMPLATES.findIndex(t => t.id === selectedTemplate);
+  
+  const goToPrevTemplate = () => {
+    const prevIndex = currentTemplateIndex > 0 ? currentTemplateIndex - 1 : LANDING_PAGE_TEMPLATES.length - 1;
+    setSelectedTemplate(LANDING_PAGE_TEMPLATES[prevIndex].id);
+    setIsPublished(false);
+  };
+  
+  const goToNextTemplate = () => {
+    const nextIndex = currentTemplateIndex < LANDING_PAGE_TEMPLATES.length - 1 ? currentTemplateIndex + 1 : 0;
+    setSelectedTemplate(LANDING_PAGE_TEMPLATES[nextIndex].id);
+    setIsPublished(false);
+  };
+  
+  const handlePublish = async () => {
+    setIsPublishing(true);
+    await new Promise(r => setTimeout(r, 800));
+    toast.success("Connecting to hosting...");
+    await new Promise(r => setTimeout(r, 1000));
+    toast.success("Optimizing assets...");
+    await new Promise(r => setTimeout(r, 800));
+    toast.success("Deploying to CDN...");
+    await new Promise(r => setTimeout(r, 600));
+    setIsPublishing(false);
+    setIsPublished(true);
+    toast.success("🎉 Landing page published!", {
+      description: `Live at ${businessName.toLowerCase().replace(/\s/g, '')}.com/${selectedTemplate}`,
+      action: {
+        label: "View Live",
+        onClick: () => window.open("#", "_blank")
+      }
+    });
+  };
 
    // Get current heatmap positions
    const getCurrentHeatmapPositions = () => {
@@ -2475,23 +2512,60 @@ interface EditableSection {
          maxHeight={1000}
          headerClassName="bg-gradient-to-r from-purple-600 to-purple-500"
          footer={
-           <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-muted/30">
-             <div className="flex items-center gap-2">
-               <Button 
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/30">
+              {/* Left: Template Switcher */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 bg-background rounded-lg border border-border p-1">
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={goToPrevTemplate}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <Select value={selectedTemplate} onValueChange={(v) => { setSelectedTemplate(v); setIsPublished(false); }}>
+                    <SelectTrigger className="w-[140px] h-7 text-xs border-0 bg-transparent">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-[200]">
+                      {LANDING_PAGE_TEMPLATES.map((template) => (
+                        <SelectItem key={template.id} value={template.id}>
+                          <div className="flex items-center justify-between gap-2 w-full">
+                            <span>{template.name}</span>
+                            <Badge variant="secondary" className="text-[9px] ml-1">{template.conversion}</Badge>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={goToNextTemplate}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="h-6 w-px bg-border" />
+                
+                <Button 
                  variant="ghost" 
                  size="sm" 
                  onClick={() => setIsSideBySide(!isSideBySide)}
-                 className={`h-8 ${isSideBySide ? 'bg-purple-100 dark:bg-purple-900/50' : ''}`}
+                  className={`h-7 text-xs ${isSideBySide ? 'bg-purple-100 dark:bg-purple-900/50' : ''}`}
                >
-                 <BarChart3 className="w-3.5 h-3.5 mr-1.5" />
+                  <BarChart3 className="w-3 h-3 mr-1" />
                  {isSideBySide ? 'Preview Only' : 'Side-by-Side'}
                </Button>
-               <Select value={selectedTheme} onValueChange={setSelectedTheme}>
-                 <SelectTrigger className="w-[140px] h-8 text-xs">
-                   <Palette className="w-3 h-3 mr-1.5" />
+                <Select value={selectedTheme} onValueChange={(v) => { setSelectedTheme(v); setIsPublished(false); }}>
+                  <SelectTrigger className="w-[120px] h-7 text-xs">
+                    <Palette className="w-3 h-3 mr-1" />
                    <SelectValue placeholder="Theme" />
                  </SelectTrigger>
-                 <SelectContent>
+                  <SelectContent className="bg-popover z-[200]">
                    {COLOR_THEMES.map((colorTheme) => (
                      <SelectItem key={colorTheme.id} value={colorTheme.id}>
                        <div className="flex items-center gap-2">
@@ -2506,18 +2580,54 @@ interface EditableSection {
                  </SelectContent>
                </Select>
              </div>
+              
+              {/* Right: Export + Publish */}
              <div className="flex items-center gap-2">
-               <Button variant="outline" size="sm" onClick={exportAsHtml} className="h-8 gap-1">
-                 <Download className="w-3.5 h-3.5" /> Export HTML
+                <Button variant="outline" size="sm" onClick={exportAsHtml} className="h-7 gap-1 text-xs">
+                  <Download className="w-3 h-3" /> HTML
                </Button>
-               <Button variant="outline" size="sm" onClick={copyHtmlToClipboard} className="h-8 gap-1">
-                 <Copy className="w-3.5 h-3.5" /> Copy
+                <Button variant="outline" size="sm" onClick={copyHtmlToClipboard} className="h-7 gap-1 text-xs">
+                  <Copy className="w-3 h-3" /> Copy
                </Button>
                {importedData && (
-                 <Button variant="outline" size="sm" onClick={exportAnalyticsPdf} className="h-8 gap-1">
-                   <FileText className="w-3.5 h-3.5" /> PDF Report
+                  <Button variant="outline" size="sm" onClick={exportAnalyticsPdf} className="h-7 gap-1 text-xs">
+                    <FileText className="w-3 h-3" /> PDF
                  </Button>
                )}
+                
+                <div className="h-6 w-px bg-border" />
+                
+                {isPublished ? (
+                  <Button 
+                    size="sm" 
+                    className="h-8 gap-1.5 bg-green-600 hover:bg-green-700 text-white"
+                    onClick={() => window.open("#", "_blank")}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    Published
+                    <ExternalLink className="w-3 h-3 ml-1" />
+                  </Button>
+                ) : (
+                  <Button 
+                    size="sm" 
+                    className="h-8 gap-1.5"
+                    style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}
+                    onClick={handlePublish}
+                    disabled={isPublishing}
+                  >
+                    {isPublishing ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Publishing...
+                      </>
+                    ) : (
+                      <>
+                        <Rocket className="w-3.5 h-3.5" />
+                        Publish
+                      </>
+                    )}
+                  </Button>
+                )}
              </div>
            </div>
          }
