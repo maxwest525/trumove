@@ -119,7 +119,7 @@ const saveState = (
    useEffect(() => {
      if (isOpen && !hasInitialized) {
        const stored = getStoredState(storageKey);
-       if (stored) {
+     if (stored?.size && stored?.position) {
          // Validate stored position is still within viewport
          const maxX = window.innerWidth - stored.size.width;
          const maxY = window.innerHeight - 50;
