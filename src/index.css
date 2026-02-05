@@ -3454,10 +3454,13 @@
 }
 
 .tru-tracker-header-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;  /* equal thirds */
   align-items: center;
-  position: relative;
-  margin-bottom: 0;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 40px;
   height: var(--demo-section-height);
   min-height: var(--demo-section-height);
   max-height: var(--demo-section-height);
