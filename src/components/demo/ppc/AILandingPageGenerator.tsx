@@ -45,6 +45,7 @@ import {
 import { MarketingAnalyticsDashboard } from "./MarketingAnalyticsDashboard";
 import { LandingPageBoard, INITIAL_MOCK_PAGES } from "./LandingPageBoard";
 import { LandingPage } from "./types";
+import { AIEditRecommendations } from "./AIEditRecommendations";
 
 // Heatmap positions per template
 const TEMPLATE_HEATMAP_POSITIONS: Record<string, {
@@ -1217,39 +1218,52 @@ interface EditableSection {
   const EditableText = ({ sectionId, className, as: Component = 'span' }: { sectionId: string; className?: string; as?: 'span' | 'p' | 'h1' | 'h2' }) => {
     const isEditing = editingSection === sectionId;
     const content = getSection(sectionId);
+    const section = sections.find(s => s.id === sectionId);
+    const sectionType = section?.type || 'body';
     
     if (isEditing) {
       return (
-        <div className="relative inline-flex items-center gap-2 w-full">
-          {Component === 'p' || Component === 'span' ? (
-            <Textarea
-              value={tempEditValue}
-              onChange={(e) => setTempEditValue(e.target.value)}
-              className="text-sm bg-white text-slate-900 border-2 border-purple-500 rounded-lg p-2 min-h-[60px] w-full"
-              autoFocus
-            />
-          ) : (
-            <Input
-              value={tempEditValue}
-              onChange={(e) => setTempEditValue(e.target.value)}
-              className="text-lg font-bold bg-white text-slate-900 border-2 border-purple-500 rounded-lg p-2 w-full"
-              autoFocus
-            />
-          )}
-          <div className="flex gap-1">
-            <button 
-              onClick={saveEdit}
-              className="p-1.5 rounded-lg bg-green-500 text-white hover:bg-green-600"
-            >
-              <Check className="w-4 h-4" />
-            </button>
-            <button 
-              onClick={cancelEdit}
-              className="p-1.5 rounded-lg bg-slate-500 text-white hover:bg-slate-600"
-            >
-              <X className="w-4 h-4" />
-            </button>
+        <div className="w-full">
+          <div className="relative inline-flex items-center gap-2 w-full">
+            {Component === 'p' || Component === 'span' ? (
+              <Textarea
+                value={tempEditValue}
+                onChange={(e) => setTempEditValue(e.target.value)}
+                className="text-sm bg-white text-slate-900 border-2 border-purple-500 rounded-lg p-2 min-h-[60px] w-full"
+                autoFocus
+              />
+            ) : (
+              <Input
+                value={tempEditValue}
+                onChange={(e) => setTempEditValue(e.target.value)}
+                className="text-lg font-bold bg-white text-slate-900 border-2 border-purple-500 rounded-lg p-2 w-full"
+                autoFocus
+              />
+            )}
+            <div className="flex gap-1">
+              <button 
+                onClick={saveEdit}
+                className="p-1.5 rounded-lg bg-green-500 text-white hover:bg-green-600"
+              >
+                <Check className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={cancelEdit}
+                className="p-1.5 rounded-lg bg-slate-500 text-white hover:bg-slate-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
+          
+          {/* AI Recommendations Panel */}
+          <AIEditRecommendations
+            sectionType={sectionType}
+            currentContent={tempEditValue}
+            targetAudience={targetAudience}
+            targetLocation={targetLocation}
+            onApplySuggestion={(newText) => setTempEditValue(newText)}
+          />
         </div>
       );
     }
