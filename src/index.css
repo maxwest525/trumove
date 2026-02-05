@@ -21138,12 +21138,22 @@
   align-items: center;
   padding: 32px 24px;
   background: hsl(var(--background));
-  border: 2px solid hsl(var(--foreground) / 0.15);
+  border: 2px solid hsl(var(--tm-ink));
   border-radius: 16px;
   text-align: center;
   transition: all 0.25s ease;
   position: relative;
   text-decoration: none;
+  box-shadow: 
+    0 4px 12px hsl(var(--tm-ink) / 0.08),
+    0 2px 6px hsl(var(--tm-ink) / 0.06);
+}
+
+.dark .agent-tool-card {
+  border-color: hsl(0 0% 100% / 0.15);
+  box-shadow: 
+    0 4px 12px hsl(0 0% 0% / 0.2),
+    0 2px 6px hsl(0 0% 0% / 0.15);
 }
 
 .agent-tool-card-active {
@@ -21151,9 +21161,22 @@
 }
 
 .agent-tool-card-active:hover {
-  border-color: hsl(var(--foreground));
-  box-shadow: 0 8px 30px hsl(var(--foreground) / 0.15);
+  border-color: hsl(var(--tm-ink));
+  box-shadow: 
+    0 8px 24px hsl(var(--tm-ink) / 0.12),
+    0 4px 12px hsl(var(--tm-ink) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.15),
+    0 8px 20px -4px hsl(var(--primary) / 0.2);
   transform: translateY(-4px);
+}
+
+.dark .agent-tool-card-active:hover {
+  border-color: hsl(0 0% 100% / 0.25);
+  box-shadow: 
+    0 8px 24px hsl(0 0% 0% / 0.3),
+    0 4px 12px hsl(0 0% 0% / 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.2),
+    0 8px 20px -4px hsl(var(--primary) / 0.25);
 }
 
 .agent-tool-card-active:hover .agent-tool-title {
