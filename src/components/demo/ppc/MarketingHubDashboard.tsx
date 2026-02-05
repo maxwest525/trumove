@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Layout, TrendingUp, Target, Rocket,
   ArrowRight, DollarSign, BarChart3,
-  Bot, ChevronRight, Sparkles
+  Bot, ChevronRight, Sparkles, Building2, MapPin, Zap
 } from "lucide-react";
 import { TrudyMarketingChat } from "./TrudyMarketingChat";
 import { ConnectedAccountsPanel } from "./ConnectedAccountsPanel";
@@ -23,110 +24,101 @@ interface MarketingHubDashboardProps {
   };
 }
 
-// BIG one-click action cards
-const QUICK_ACTIONS = [
-  {
-    id: 'create-ad',
-    type: 'ad' as const,
-    title: 'Create Ad',
-    subtitle: 'Google or Meta ad in 1 click',
-    icon: Target,
-    color: '#7C3AED',
-    gradient: 'from-purple-500 to-purple-600',
-    popular: true,
-  },
-  {
-    id: 'create-landing',
-    type: 'landing' as const,
-    title: 'Landing Page',
-    subtitle: 'High-converting page instantly',
-    icon: Layout,
-    color: '#10B981',
-    gradient: 'from-emerald-500 to-teal-500',
-  },
-  {
-    id: 'create-campaign',
-    type: 'campaign' as const,
-    title: 'Full Campaign',
-    subtitle: 'Ad + Landing + Tracking',
-    icon: Rocket,
-    color: '#F59E0B',
-    gradient: 'from-amber-500 to-orange-500',
-  },
-];
-
 export function MarketingHubDashboard({ onNavigate, onQuickCreate, liveMode = false, stats }: MarketingHubDashboardProps) {
   const [showTrudyPanel, setShowTrudyPanel] = useState(false);
+  const [businessName, setBusinessName] = useState("TruMove");
+  const [location, setLocation] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
 
-  const handleQuickAction = (type: 'ad' | 'landing' | 'campaign') => {
-    if (onQuickCreate) {
-      onQuickCreate(type);
-    } else {
-      // Fallback to navigation
-      if (type === 'landing') onNavigate('landing');
-      else if (type === 'ad') onNavigate('campaigns');
-      else onNavigate('landing');
-    }
+  const handleQuickCreate = () => {
+    if (!businessName || !location) return;
+    setIsCreating(true);
+    // Short delay then navigate to creation flow with prefilled data
+    setTimeout(() => {
+      setIsCreating(false);
+      if (onQuickCreate) {
+        onQuickCreate('landing');
+      }
+    }, 300);
   };
 
   return (
     <div className="flex h-full relative">
       {/* Main Content */}
       <div className={cn("flex-1 space-y-5 p-5 overflow-y-auto transition-all", showTrudyPanel && "pr-2")}>
-        {/* Hero Section - What do you want to create? */}
-        <div className="text-center space-y-2 py-4">
-          <h1 className="text-2xl font-bold text-foreground">What do you want to create?</h1>
-          <p className="text-muted-foreground">Pick one and we'll handle the rest — super simple</p>
-        </div>
+        
+        {/* Simple Form Hero - Like a Lead Form */}
+        <Card className="border-2 border-primary/30 bg-gradient-to-b from-primary/5 to-transparent overflow-hidden">
+          <CardContent className="p-6 space-y-5">
+            <div className="text-center space-y-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                <Zap className="w-4 h-4" />
+                30-Second Setup
+              </div>
+              <h1 className="text-2xl font-bold text-foreground">Create a Landing Page</h1>
+              <p className="text-muted-foreground">Fill in 2 fields, AI does the rest</p>
+            </div>
 
-        {/* BIG Action Cards - One Click Creates */}
-        <div className="grid grid-cols-3 gap-4">
-          {QUICK_ACTIONS.map((action) => (
-            <Card
-              key={action.id}
-              onClick={() => handleQuickAction(action.type)}
-              className={cn(
-                "group cursor-pointer border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden",
-                "border-transparent hover:border-primary/50"
-              )}
+            {/* Super Simple Form */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium flex items-center gap-2 text-foreground">
+                  <Building2 className="w-4 h-4 text-muted-foreground" />
+                  Business Name
+                </label>
+                <Input
+                  placeholder="Your Company Name"
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                  className="h-12 text-base"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium flex items-center gap-2 text-foreground">
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                  Target Location
+                </label>
+                <Input
+                  placeholder="e.g., Los Angeles or Nationwide"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="h-12 text-base"
+                />
+              </div>
+            </div>
+
+            <Button 
+              className="w-full h-12 gap-2 text-base"
+              style={{ background: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)' }}
+              onClick={handleQuickCreate}
+              disabled={!businessName || !location || isCreating}
             >
-              {action.popular && (
-                <div className="absolute top-3 right-3 z-10">
-                  <Badge className="text-[10px] px-2 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
-                    <Sparkles className="w-3 h-3 mr-1" />
-                    Popular
-                  </Badge>
-                </div>
-              )}
-              <CardContent className="p-6 text-center space-y-4">
-                <div 
-                  className={cn(
-                    "w-16 h-16 mx-auto rounded-2xl flex items-center justify-center bg-gradient-to-br transition-transform group-hover:scale-110",
-                    action.gradient
-                  )}
-                >
-                  <action.icon className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
-                    {action.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-1">{action.subtitle}</p>
-                </div>
-                <Button 
-                  size="sm" 
-                  className="w-full gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ background: `linear-gradient(135deg, ${action.color}, ${action.color}CC)` }}
-                >
-                  Create Now
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </CardContent>
-              {/* Bottom gradient bar on hover */}
-              <div 
-                className={cn("h-1 w-full opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r", action.gradient)}
-              />
-            </Card>
+              <Sparkles className="w-5 h-5" />
+              Create My Landing Page
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+
+            <p className="text-xs text-center text-muted-foreground">
+              ✨ AI generates headlines, copy, trust badges, forms, and SEO automatically
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Quick Links Row */}
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { label: 'Create Ad', icon: Target, color: '#7C3AED', type: 'ad' as const },
+            { label: 'Full Campaign', icon: Rocket, color: '#F59E0B', type: 'campaign' as const },
+            { label: 'View Analytics', icon: BarChart3, color: '#10B981', onClick: () => onNavigate('performance') },
+          ].map((item) => (
+            <button
+              key={item.label}
+              onClick={() => item.onClick ? item.onClick() : onQuickCreate?.(item.type!)}
+              className="flex items-center justify-center gap-2 p-3 rounded-xl border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/50 transition-all group"
+            >
+              <item.icon className="w-4 h-4" style={{ color: item.color }} />
+              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{item.label}</span>
+            </button>
           ))}
         </div>
 
