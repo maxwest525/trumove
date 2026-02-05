@@ -161,6 +161,10 @@ export default function LiveTracking() {
   // Route setup modal state
   const [showRouteModal, setShowRouteModal] = useState(true);
   
+  // Map view transition state
+  const [isViewTransitioning, setIsViewTransitioning] = useState(false);
+  const prevMapViewType = useRef<MapViewType>(mapViewType);
+  
   // Checkpoint notifications tracking
   const passedCheckpoints = useRef<Set<number>>(new Set());
 
@@ -231,6 +235,18 @@ export default function LiveTracking() {
       console.log('WebGL diagnostics: 2D satellite view enabled by default', diagnostics);
     }
   }, []);
+
+  // Map view transition effect
+  useEffect(() => {
+    if (prevMapViewType.current !== mapViewType) {
+      setIsViewTransitioning(true);
+      const timer = setTimeout(() => {
+        setIsViewTransitioning(false);
+        prevMapViewType.current = mapViewType;
+      }, 400); // Match CSS transition duration
+      return () => clearTimeout(timer);
+    }
+  }, [mapViewType]);
 
   // Check for saved booking on mount
   useEffect(() => {
@@ -753,6 +769,26 @@ export default function LiveTracking() {
                 googleApiKey={GOOGLE_MAPS_API_KEY}
               />
             )}
+            
+            {/* Map View Transition Overlay */}
+            <div 
+              className={cn(
+                "absolute inset-0 bg-background/80 backdrop-blur-sm pointer-events-none z-40 transition-opacity duration-300",
+                isViewTransitioning ? "opacity-100" : "opacity-0"
+              )}
+            >
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-lg bg-background border border-border shadow-lg transition-all duration-300",
+                  isViewTransitioning ? "opacity-100 scale-100" : "opacity-0 scale-95"
+                )}>
+                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <span className="text-sm font-medium text-foreground">
+                    Switching to {mapViewType === 'truckview' ? 'Truck View' : mapViewType === 'roadmap' ? 'Roadmap' : 'Satellite'}...
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Map Controls Strip - Go/Pause/Reset + Route Info Dropdowns */}
