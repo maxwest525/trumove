@@ -28681,7 +28681,7 @@
   min-width: 220px;
 }
 
-/* Map Area - Contains map split + controls */
+/* Map Area - Contains map + below-map panel */
 .tracking-map-area {
   display: flex;
   flex-direction: column;
@@ -28689,42 +28689,7 @@
   width: 850px;
 }
 
-/* Split container for dual map panels */
-.tracking-map-split {
-  display: flex;
-  gap: 0;
-  width: 850px;
-}
-
-/* Individual map panels - exactly half width each */
-.tracking-map-panel {
-  width: 425px;
-  height: 550px;
-  min-height: 550px;
-  max-height: 550px;
-  flex: none;
-  overflow: hidden;
-  position: relative;
-  border: 2px solid hsl(var(--border));
-  box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.1);
-}
-
-.tracking-map-panel-left {
-  border-radius: 10px 0 0 0;
-  border-right: 1px solid hsl(var(--border));
-}
-
-.tracking-map-panel-right {
-  border-radius: 0 10px 0 0;
-  border-left: 1px solid hsl(var(--border));
-}
-
-.dark .tracking-map-panel {
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
-/* Map Container - Legacy full-width fallback */
+/* Map Container - Fixed size 850x550 */
 .tracking-map-container {
   width: 850px;
   height: 550px;
@@ -28742,58 +28707,6 @@
 .dark .tracking-map-container {
   border-color: rgba(255, 255, 255, 0.15);
   box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-}
-
-/* Responsive: Stack panels vertically on smaller screens */
-@media (max-width: 1400px) {
-  .tracking-map-split {
-    flex-direction: column;
-    width: 425px;
-  }
-  
-  .tracking-map-panel-left {
-    border-radius: 10px 10px 0 0;
-    border-right: none;
-    border-bottom: 1px solid hsl(var(--border));
-  }
-  
-  .tracking-map-panel-right {
-    border-radius: 0;
-    border-left: none;
-    border-top: 1px solid hsl(var(--border));
-  }
-  
-  .tracking-map-area {
-    width: 425px;
-  }
-  
-  .tracking-map-controls {
-    width: 425px;
-  }
-}
-
-/* Hide Truck View on mobile */
-@media (max-width: 900px) {
-  .tracking-map-split {
-    width: 100%;
-  }
-  
-  .tracking-map-panel-left {
-    width: 100%;
-    border-radius: 10px 10px 0 0;
-  }
-  
-  .tracking-map-panel-right {
-    display: none;
-  }
-  
-  .tracking-map-area {
-    width: 100%;
-  }
-  
-  .tracking-map-controls {
-    width: 100%;
-  }
 }
 
 /* Below Map Panel positions directly under map */
