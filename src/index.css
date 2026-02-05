@@ -3340,9 +3340,9 @@
   padding: 8px;
   background: hsl(var(--muted) / 0.5);
   border-radius: 8px;
-  animation: slideInItem 0.4s ease-out forwards;
-  opacity: 0;
   transform: translateX(-10px);
+  opacity: 0;
+  animation: slideInItem 0.4s ease-out forwards;
 }
 
 @keyframes slideInItem {
@@ -3394,8 +3394,9 @@
 }
 
 .tru-ai-live-item.is-sample {
-  animation: none !important;
-  opacity: 0.75;
+  animation: none !important; 
+  opacity: 1 !important;
+  transform: translateX(0) !important;
 }
 
 .tru-ai-live-item.is-sample:hover {
