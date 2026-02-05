@@ -165,7 +165,7 @@
      <>
        {/* Semi-transparent backdrop */}
        <div 
-         className="fixed inset-0 bg-black/30 z-[60]"
+          className="fixed inset-0 bg-black/30 z-[100]"
          onClick={onClose}
        />
        
@@ -173,7 +173,7 @@
        <div
          ref={modalRef}
          className={cn(
-           "fixed z-[70] bg-background border border-border rounded-xl shadow-2xl flex flex-col overflow-hidden",
+            "fixed z-[110] bg-background border border-border rounded-xl shadow-2xl flex flex-col overflow-hidden",
            isDragging && "cursor-grabbing",
            isResizing && "cursor-se-resize"
          )}

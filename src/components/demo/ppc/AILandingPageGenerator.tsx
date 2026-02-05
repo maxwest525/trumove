@@ -18,7 +18,7 @@ import { toast } from "sonner";
   ChevronDown, Quote, Award, Truck, Pencil, X, Check,
   MapPin, Search, Target, Globe, BarChart3, Hash, DollarSign,
   Calculator, Video, ThumbsUp, Building, Home, Package, ArrowDown,
-  Download, Palette
+  Download, Palette, Copy
  } from "lucide-react";
  import logoImg from "@/assets/logo.png";
  
@@ -226,19 +226,13 @@ interface EditableSection {
 
   const theme = getThemeColors();
 
-  // Export landing page as HTML
-  const exportAsHtml = () => {
+  // Generate template-specific HTML content
+  const generateHtmlContent = () => {
     const templateName = LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name || "Landing Page";
     const themeName = COLOR_THEMES.find(t => t.id === selectedTheme)?.name || "Default";
     
-    const htmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${businessName} - ${templateName}</title>
-  <meta name="description" content="${mainOffer}">
-  <style>
+    // Common CSS styles
+    const commonStyles = `
     :root {
       --primary: ${theme.primary};
       --primary-dark: ${theme.primaryDark};
@@ -248,104 +242,277 @@ interface EditableSection {
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    .hero { background: linear-gradient(135deg, var(--secondary) 0%, #1E293B 50%, var(--secondary) 100%); padding: 4rem 2rem; text-align: center; color: white; }
-    .hero h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem; }
-    .hero .highlight { background: linear-gradient(90deg, var(--primary), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero p { font-size: 1.125rem; color: #CBD5E1; margin-bottom: 2rem; max-width: 42rem; margin-left: auto; margin-right: auto; }
-    .form-container { max-width: 28rem; margin: 0 auto; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border-radius: 1rem; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.2); }
-    .input { width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; border: none; margin-bottom: 0.75rem; font-size: 1rem; }
-    .btn-primary { width: 100%; padding: 1rem; font-size: 1.125rem; font-weight: 700; color: white; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border: none; border-radius: 0.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .btn-primary { padding: 1rem 2rem; font-size: 1.125rem; font-weight: 700; color: white; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border: none; border-radius: 0.5rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; }
     .btn-primary:hover { opacity: 0.9; }
-    .trust-strip { display: flex; justify-content: center; gap: 2rem; padding: 1rem; color: #94A3B8; font-size: 0.875rem; }
-    .trust-item { display: flex; align-items: center; gap: 0.25rem; }
-    .social-proof { background: #F8FAFC; padding: 1rem 2rem; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; }
-    .social-proof-inner { display: flex; align-items: center; justify-content: center; gap: 2rem; font-size: 0.875rem; }
-    .featured-in { color: #64748B; }
-    .brand { font-weight: 700; color: #94A3B8; }
-    .steps { padding: 3rem 2rem; }
-    .steps h2 { text-align: center; font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; }
-    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 48rem; margin: 0 auto; }
-    .step { text-align: center; }
-    .step-number { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; }
-    .step h3 { font-weight: 600; margin-bottom: 0.25rem; }
-    .step p { font-size: 0.875rem; color: #64748B; }
+    .input { width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid #E2E8F0; margin-bottom: 0.75rem; font-size: 1rem; }
     .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
-    .badge-success { background: rgba(34, 197, 94, 0.2); color: #22C55E; border: 1px solid rgba(34, 197, 94, 0.3); }
-    .badge-warning { background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3); }
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 1.75rem; }
-      .steps-grid { grid-template-columns: 1fr; }
-      .trust-strip { flex-wrap: wrap; gap: 1rem; }
-    }
-  </style>
+    .badge-primary { background: rgba(124, 58, 237, 0.1); color: var(--primary); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    @media (max-width: 768px) { .container { padding: 0 1rem; } }`;
+
+    // Template-specific body content
+    const getTemplateBody = () => {
+      switch (selectedTemplate) {
+        case "quote-funnel":
+          return `
+    <section style="background: linear-gradient(135deg, ${theme.secondary} 0%, #1E293B 50%, ${theme.secondary} 100%); padding: 4rem 2rem; text-align: center; color: white; position: relative;">
+      <div style="position: absolute; top: 1rem; left: 1rem;">
+        <span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #22C55E; border: 1px solid rgba(34, 197, 94, 0.3);">✓ FMCSA Licensed</span>
+      </div>
+      <div style="position: absolute; top: 1rem; right: 1rem;">
+        <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3);">⭐ 4.9/5 Rating</span>
+      </div>
+      <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">
+        ${getSection('main-headline')}<br>
+        <span style="background: linear-gradient(90deg, ${theme.primary}, ${theme.accentLight}); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${getSection('sub-headline')}</span>
+      </h1>
+      <p style="font-size: 1.125rem; color: #CBD5E1; margin-bottom: 2rem; max-width: 42rem; margin-left: auto; margin-right: auto;">${getSection('hero-body')}</p>
+      <div style="max-width: 28rem; margin: 0 auto; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border-radius: 1rem; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.2);">
+        <input type="text" class="input" placeholder="Moving from (ZIP code)" style="background: rgba(255,255,255,0.9); border: none; color: #1E293B;">
+        <input type="text" class="input" placeholder="Moving to (ZIP code)" style="background: rgba(255,255,255,0.9); border: none; color: #1E293B;">
+        <button class="btn-primary" style="width: 100%;">${getSection('cta-primary')} →</button>
+        <p style="font-size: 0.75rem; color: #94A3B8; margin-top: 0.75rem; text-align: center;">🔒 No credit card required • Instant results</p>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; color: #94A3B8; font-size: 0.875rem; flex-wrap: wrap;">
+        <span>🛡️ Price Lock Guarantee</span>
+        <span>⏱️ 60-Second Quotes</span>
+        <span>👥 50,000+ Moves</span>
+      </div>
+    </section>
+    <section style="padding: 3rem 2rem;">
+      <h2 style="text-align: center; font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem;">Get Your Quote in 3 Simple Steps</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; max-width: 48rem; margin: 0 auto;">
+        <div style="text-align: center;">
+          <div style="width: 3.5rem; height: 3.5rem; border-radius: 50%; background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%); color: white; font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">1</div>
+          <h3 style="font-weight: 600; margin-bottom: 0.25rem;">Enter Your Route</h3>
+          <p style="font-size: 0.875rem; color: #64748B;">Tell us where you're moving</p>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 3.5rem; height: 3.5rem; border-radius: 50%; background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%); color: white; font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">2</div>
+          <h3 style="font-weight: 600; margin-bottom: 0.25rem;">AI Scans Your Home</h3>
+          <p style="font-size: 0.875rem; color: #64748B;">Instant inventory estimate</p>
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 3.5rem; height: 3.5rem; border-radius: 50%; background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%); color: white; font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">3</div>
+          <h3 style="font-weight: 600; margin-bottom: 0.25rem;">Compare & Book</h3>
+          <p style="font-size: 0.875rem; color: #64748B;">Choose verified carriers</p>
+        </div>
+      </div>
+    </section>`;
+
+        case "comparison":
+          return `
+    <section style="padding: 3rem 2rem; text-align: center; background: linear-gradient(to bottom, #F8FAFC, white);">
+      <span class="badge badge-primary" style="margin-bottom: 1rem;">Compare & Save</span>
+      <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;">How We Stack Up Against the Competition</h1>
+      <p style="font-size: 1.125rem; color: #64748B; max-width: 42rem; margin: 0 auto 2rem;">See why 50,000+ families chose ${businessName} over traditional moving brokers</p>
+    </section>
+    <section style="padding: 2rem;">
+      <table style="width: 100%; max-width: 48rem; margin: 0 auto; border-collapse: collapse; border: 1px solid #E2E8F0; border-radius: 0.75rem; overflow: hidden;">
+        <thead>
+          <tr style="background: #F1F5F9;">
+            <th style="padding: 1rem; text-align: left;">Feature</th>
+            <th style="padding: 1rem; text-align: center; background: ${theme.primary}; color: white;">${businessName}</th>
+            <th style="padding: 1rem; text-align: center;">Competitor A</th>
+            <th style="padding: 1rem; text-align: center;">Competitor B</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top: 1px solid #E2E8F0;">
+            <td style="padding: 1rem;">AI Inventory Scanning</td>
+            <td style="padding: 1rem; text-align: center; background: ${theme.primary}10;">✅</td>
+            <td style="padding: 1rem; text-align: center;">❌</td>
+            <td style="padding: 1rem; text-align: center;">❌</td>
+          </tr>
+          <tr style="border-top: 1px solid #E2E8F0;">
+            <td style="padding: 1rem;">Price Lock Guarantee</td>
+            <td style="padding: 1rem; text-align: center; background: ${theme.primary}10;">✅</td>
+            <td style="padding: 1rem; text-align: center;">❌</td>
+            <td style="padding: 1rem; text-align: center;">❌</td>
+          </tr>
+          <tr style="border-top: 1px solid #E2E8F0;">
+            <td style="padding: 1rem;">Real-Time Tracking</td>
+            <td style="padding: 1rem; text-align: center; background: ${theme.primary}10;">✅</td>
+            <td style="padding: 1rem; text-align: center;">✅</td>
+            <td style="padding: 1rem; text-align: center;">✅</td>
+          </tr>
+          <tr style="border-top: 1px solid #E2E8F0;">
+            <td style="padding: 1rem;">24/7 Support</td>
+            <td style="padding: 1rem; text-align: center; background: ${theme.primary}10;">✅</td>
+            <td style="padding: 1rem; text-align: center;">❌</td>
+            <td style="padding: 1rem; text-align: center;">✅</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="#" class="btn-primary">${getSection('cta-primary')} →</a>
+      </div>
+    </section>`;
+
+        case "calculator":
+          return `
+    <header style="padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0;">
+      <h1 style="font-size: 1.5rem; font-weight: 700;">${businessName}</h1>
+      <span class="badge badge-primary">🧮 Free Calculator</span>
+    </header>
+    <section style="padding: 3rem 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 900px; margin: 0 auto;">
+      <div>
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 1rem;">Moving Cost Calculator</h2>
+        <p style="color: #64748B; margin-bottom: 1.5rem;">Get an instant estimate based on your move details. No email required.</p>
+        <div style="background: white; padding: 1.5rem; border-radius: 1rem; border: 1px solid #E2E8F0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+          <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">From</label>
+          <input type="text" class="input" placeholder="Origin city or ZIP">
+          <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">To</label>
+          <input type="text" class="input" placeholder="Destination city or ZIP">
+          <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Home Size</label>
+          <select class="input" style="width: 100%;">
+            <option>Studio / 1 Bedroom</option>
+            <option>2 Bedroom</option>
+            <option>3 Bedroom</option>
+            <option>4+ Bedroom</option>
+          </select>
+          <button class="btn-primary" style="width: 100%; margin-top: 0.5rem; background: linear-gradient(135deg, ${theme.accent} 0%, ${theme.accentLight} 100%);">🧮 Calculate My Cost</button>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center; padding: 3rem; border: 2px dashed #E2E8F0; border-radius: 1rem;">
+          <div style="font-size: 4rem; margin-bottom: 1rem;">💰</div>
+          <p style="color: #94A3B8;">Your estimate will appear here</p>
+          <p style="font-size: 0.75rem; color: #CBD5E1; margin-top: 0.5rem;">Enter your details to get started</p>
+        </div>
+      </div>
+    </section>`;
+
+        case "testimonial":
+          return `
+    <section style="padding: 3rem 2rem; text-align: center; background: linear-gradient(to bottom, ${theme.primary}10, white);">
+      <div style="display: flex; justify-content: center; gap: 0.25rem; margin-bottom: 1rem;">
+        ${[1,2,3,4,5].map(() => `<span style="color: ${theme.primary}; font-size: 2rem;">★</span>`).join('')}
+      </div>
+      <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.75rem;">Real Families. Real Stories.</h1>
+      <p style="font-size: 1.125rem; color: #64748B;">See why we're rated 4.9/5 by over 50,000 customers</p>
+    </section>
+    <section style="padding: 2rem; max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      ${[
+        { name: "Sarah M.", location: "Austin, TX", quote: "Saved $847 on my cross-country move!" },
+        { name: "Michael C.", location: "Denver, CO", quote: "The AI scanner was incredibly accurate." },
+        { name: "Emily R.", location: "Seattle, WA", quote: "Best moving experience ever. Period." },
+        { name: "David K.", location: "Miami, FL", quote: "24/7 support made all the difference." },
+      ].map(t => `
+        <div style="padding: 1.5rem; border-radius: 1rem; background: white; border: 1px solid #E2E8F0;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <div style="width: 3rem; height: 3rem; border-radius: 50%; background: linear-gradient(135deg, ${theme.primary}, ${theme.accent}); color: white; font-weight: 700; display: flex; align-items: center; justify-content: center;">${t.name[0]}</div>
+            <div>
+              <div style="font-weight: 600;">${t.name}</div>
+              <div style="font-size: 0.875rem; color: #64748B;">${t.location}</div>
+            </div>
+          </div>
+          <p style="color: #475569; font-style: italic;">"${t.quote}"</p>
+        </div>
+      `).join('')}
+    </section>
+    <div style="text-align: center; padding: 2rem;">
+      <a href="#" class="btn-primary">Join 50,000+ Happy Families →</a>
+    </div>`;
+
+        case "local-seo":
+          return `
+    <section style="padding: 4rem 2rem; text-align: center; background: linear-gradient(135deg, ${theme.primaryDark} 0%, ${theme.primary} 100%); color: white;">
+      <span class="badge" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); margin-bottom: 1rem;">📍 ${targetLocation || "California"} Movers</span>
+      <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;">#1 Rated Moving Company in ${targetLocation || "California"}</h1>
+      <p style="font-size: 1.125rem; opacity: 0.9; max-width: 42rem; margin: 0 auto 2rem;">Trusted by local families for over 10 years. Licensed, insured, and ready to make your move stress-free.</p>
+      <div style="max-width: 28rem; margin: 0 auto; background: white; border-radius: 1rem; padding: 1.5rem; color: #1E293B;">
+        <h3 style="font-weight: 600; margin-bottom: 1rem;">Get a Free Local Quote</h3>
+        <input type="text" class="input" placeholder="Your ZIP code" style="text-align: center;">
+        <input type="text" class="input" placeholder="Phone number" style="text-align: center;">
+        <button class="btn-primary" style="width: 100%;">Get My Quote →</button>
+        <p style="font-size: 0.75rem; color: #64748B; margin-top: 0.75rem;">Serving all of ${targetLocation || "California"}</p>
+      </div>
+    </section>
+    <section style="padding: 2rem; background: #F8FAFC; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; text-align: center;">
+      <div><div style="font-size: 1.5rem; font-weight: 700;">🏢</div><div style="font-size: 1.25rem; font-weight: 700;">Downtown LA</div><div style="font-size: 0.75rem; color: #64748B;">Local Office</div></div>
+      <div><div style="font-size: 1.5rem; font-weight: 700;">📦</div><div style="font-size: 1.25rem; font-weight: 700;">12,847</div><div style="font-size: 0.75rem; color: #64748B;">Moves Completed</div></div>
+      <div><div style="font-size: 1.5rem; font-weight: 700;">⏱️</div><div style="font-size: 1.25rem; font-weight: 700;">< 2 hours</div><div style="font-size: 0.75rem; color: #64748B;">Avg Response</div></div>
+      <div><div style="font-size: 1.5rem; font-weight: 700;">⭐</div><div style="font-size: 1.25rem; font-weight: 700;">4.9/5</div><div style="font-size: 0.75rem; color: #64748B;">Rating</div></div>
+    </section>
+    <section style="padding: 2rem; text-align: center;">
+      <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Areas We Serve</h2>
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem;">
+        ${["Los Angeles", "San Diego", "San Francisco", "Sacramento", "San Jose", "Oakland", "Fresno", "Long Beach"].map(city => `<span class="badge" style="background: #F1F5F9; color: #475569; padding: 0.5rem 1rem;">${city}</span>`).join('')}
+      </div>
+    </section>`;
+
+        case "long-form":
+          return `
+    <article style="max-width: 48rem; margin: 0 auto; padding: 3rem 2rem;">
+      <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #64748B; margin-bottom: 1rem;">The Complete Guide</p>
+      <h1 style="font-size: 2.5rem; font-weight: 700; line-height: 1.2; margin-bottom: 1.5rem;">Everything You Need to Know Before Hiring a Moving Company in 2025</h1>
+      <p style="font-size: 1.125rem; color: #64748B; margin-bottom: 1rem;">A comprehensive guide to saving money, avoiding scams, and finding the perfect mover for your needs.</p>
+      <p style="font-size: 0.875rem; color: #94A3B8;">15 min read • Updated Feb 2025</p>
+    </article>
+    <nav style="padding: 1.5rem 2rem; background: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0;">
+      <div style="max-width: 48rem; margin: 0 auto;">
+        <h3 style="font-weight: 600; font-size: 0.875rem; margin-bottom: 0.75rem;">In This Guide:</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.875rem;">
+          <a href="#" style="color: ${theme.primary}; text-decoration: none;">1. Understanding Moving Costs</a>
+          <a href="#" style="color: ${theme.primary}; text-decoration: none;">2. Red Flags to Watch For</a>
+          <a href="#" style="color: ${theme.primary}; text-decoration: none;">3. How to Compare Quotes</a>
+          <a href="#" style="color: ${theme.primary}; text-decoration: none;">4. The AI Advantage</a>
+        </div>
+      </div>
+    </nav>
+    <article style="max-width: 48rem; margin: 0 auto; padding: 2rem;">
+      <section style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">1. Understanding Moving Costs</h2>
+        <p style="color: #475569; margin-bottom: 1rem;">The average cost of a long-distance move ranges from $2,000 to $5,000, depending on distance, weight, and time of year. Here's how to budget effectively...</p>
+        <div style="padding: 1rem; border-radius: 0.75rem; background: ${theme.primary}10; border: 1px solid ${theme.primary}30;">
+          <p style="font-size: 0.875rem; color: ${theme.primaryDark};">💡 <strong>Pro Tip:</strong> Get quotes at least 4-6 weeks before your move date for the best rates.</p>
+        </div>
+      </section>
+      <section>
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">2. Red Flags to Watch For</h2>
+        <ul style="list-style: none; padding: 0;">
+          <li style="display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.75rem; color: #475569;"><span style="color: #EF4444;">✗</span> Large deposits required upfront</li>
+          <li style="display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.75rem; color: #475569;"><span style="color: #EF4444;">✗</span> No physical address or office</li>
+          <li style="display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.75rem; color: #475569;"><span style="color: #EF4444;">✗</span> Quotes given over the phone without inspection</li>
+          <li style="display: flex; align-items: flex-start; gap: 0.5rem; color: #475569;"><span style="color: #EF4444;">✗</span> No FMCSA registration number</li>
+        </ul>
+      </section>
+    </article>
+    <footer style="position: sticky; bottom: 0; padding: 1rem 2rem; background: white; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; max-width: 48rem; margin: 0 auto;">
+      <div>
+        <p style="font-weight: 600;">Ready to get started?</p>
+        <p style="font-size: 0.875rem; color: #64748B;">Get your free AI-powered quote in 60 seconds</p>
+      </div>
+      <a href="#" class="btn-primary">${getSection('cta-primary')} →</a>
+    </footer>`;
+
+        default:
+          return `<section style="padding: 4rem 2rem; text-align: center;"><h1 style="font-size: 2rem; font-weight: 700;">${businessName}</h1><p style="color: #64748B; margin: 1rem 0;">${mainOffer}</p><a href="#" class="btn-primary">${getSection('cta-primary')} →</a></section>`;
+      }
+    };
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${businessName} - ${templateName}</title>
+  <meta name="description" content="${mainOffer}">
+  <style>${commonStyles}</style>
 </head>
 <body>
-  <section class="hero">
-    <div style="position: absolute; top: 1rem; left: 1rem;">
-      <span class="badge badge-success">✓ FMCSA Licensed</span>
-    </div>
-    <div style="position: absolute; top: 1rem; right: 1rem;">
-      <span class="badge badge-warning">⭐ 4.9/5 Rating</span>
-    </div>
-    
-    <h1>
-      ${getSection('main-headline')}<br>
-      <span class="highlight">${getSection('sub-headline')}</span>
-    </h1>
-    
-    <p>${getSection('hero-body')}</p>
-    
-    <div class="form-container">
-      <input type="text" class="input" placeholder="Moving from (ZIP code)">
-      <input type="text" class="input" placeholder="Moving to (ZIP code)">
-      <button class="btn-primary">
-        ${getSection('cta-primary')} →
-      </button>
-      <p style="font-size: 0.75rem; color: #94A3B8; margin-top: 0.75rem; text-align: center;">🔒 No credit card required • Instant results</p>
-    </div>
-    
-    <div class="trust-strip" style="margin-top: 2rem;">
-      <span class="trust-item">🛡️ Price Lock Guarantee</span>
-      <span class="trust-item">⏱️ 60-Second Quotes</span>
-      <span class="trust-item">👥 50,000+ Moves</span>
-    </div>
-  </section>
-  
-  <div class="social-proof">
-    <div class="social-proof-inner">
-      <span class="featured-in">As featured in:</span>
-      <span class="brand">Forbes</span>
-      <span class="brand">Inc.</span>
-      <span class="brand">TechCrunch</span>
-    </div>
-  </div>
-  
-  <section class="steps">
-    <h2>Get Your Quote in 3 Simple Steps</h2>
-    <div class="steps-grid">
-      <div class="step">
-        <div class="step-number">1</div>
-        <h3>Enter Your Route</h3>
-        <p>Tell us where you're moving</p>
-      </div>
-      <div class="step">
-        <div class="step-number">2</div>
-        <h3>AI Scans Your Home</h3>
-        <p>Instant inventory estimate</p>
-      </div>
-      <div class="step">
-        <div class="step-number">3</div>
-        <h3>Compare & Book</h3>
-        <p>Choose verified carriers</p>
-      </div>
-    </div>
-  </section>
-  
+  ${getTemplateBody()}
   <!-- Generated by ${businessName} AI Landing Page Generator -->
   <!-- Template: ${templateName} | Theme: ${themeName} -->
 </body>
 </html>`;
+  };
 
+  // Export landing page as HTML file download
+  const exportAsHtml = () => {
+    const htmlContent = generateHtmlContent();
+    
     // Create and download the file
     const blob = new Blob([htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
@@ -360,6 +527,22 @@ interface EditableSection {
     toast.success("Landing page exported!", {
       description: "HTML file downloaded successfully"
     });
+  };
+
+  // Copy HTML to clipboard
+  const copyHtmlToClipboard = async () => {
+    const htmlContent = generateHtmlContent();
+    
+    try {
+      await navigator.clipboard.writeText(htmlContent);
+      toast.success("HTML copied to clipboard!", {
+        description: "Paste it anywhere to use"
+      });
+    } catch (err) {
+      toast.error("Failed to copy", {
+        description: "Please try the download option instead"
+      });
+    }
   };
 
   const EditableText = ({ sectionId, className, as: Component = 'span' }: { sectionId: string; className?: string; as?: 'span' | 'p' | 'h1' | 'h2' }) => {
@@ -860,6 +1043,10 @@ interface EditableSection {
              <Button variant="outline" size="sm" onClick={exportAsHtml}>
                <Download className="w-3 h-3 mr-1" />
                Export HTML
+             </Button>
+             <Button variant="outline" size="sm" onClick={copyHtmlToClipboard}>
+               <Copy className="w-3 h-3 mr-1" />
+               Copy HTML
              </Button>
              <Button size="sm" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
                Publish Page
