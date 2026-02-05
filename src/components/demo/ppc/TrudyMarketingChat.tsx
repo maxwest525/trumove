@@ -1,5 +1,5 @@
  import { useState, useRef, useEffect, useCallback } from "react";
- import { Bot, Send, Sparkles, Image, Loader2, Download, Copy, ExternalLink, Check, Layout, TrendingUp, Search, Target } from "lucide-react";
+import { Bot, Send, Sparkles, Image, Loader2, Download, Copy, ExternalLink, Check, Layout, TrendingUp, Search, Target, Trash2 } from "lucide-react";
  import { Button } from "@/components/ui/button";
  import { ScrollArea } from "@/components/ui/scroll-area";
  import { Badge } from "@/components/ui/badge";
@@ -37,15 +37,43 @@
  
  const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/marketing-ai-assistant`;
  
+const STORAGE_KEY = "trudy_marketing_chat_history";
+const WELCOME_MESSAGE: Message = {
+  id: "welcome",
+  role: "assistant",
+  content: "Hi! I'm Trudy, your AI marketing assistant. 🎨\n\nI can help you:\n- **Create ads** with custom images\n- **Build landing pages**\n- **Find keywords** for your campaigns\n- **Launch on Google, Meta, or TikTok**\n\nWhat would you like to create today?",
+  timestamp: new Date(),
+};
+
+// Helper to load messages from storage
+const loadMessagesFromStorage = (): Message[] => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // Restore Date objects
+      return parsed.map((msg: Message) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp),
+      }));
+    }
+  } catch (e) {
+    console.warn("Failed to load chat history:", e);
+  }
+  return [WELCOME_MESSAGE];
+};
+
+// Helper to save messages to storage
+const saveMessagesToStorage = (messages: Message[]) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  } catch (e) {
+    console.warn("Failed to save chat history:", e);
+  }
+};
+
  export function TrudyMarketingChat({ onNavigate, onCreateLandingPage }: TrudyMarketingChatProps) {
-   const [messages, setMessages] = useState<Message[]>([
-     {
-       id: "welcome",
-       role: "assistant",
-       content: "Hi! I'm Trudy, your AI marketing assistant. 🎨\n\nI can help you:\n- **Create ads** with custom images\n- **Build landing pages**\n- **Find keywords** for your campaigns\n- **Launch on Google, Meta, or TikTok**\n\nWhat would you like to create today?",
-       timestamp: new Date(),
-     }
-   ]);
+  const [messages, setMessages] = useState<Message[]>(loadMessagesFromStorage);
    const [input, setInput] = useState("");
    const [isLoading, setIsLoading] = useState(false);
    const [isGeneratingImage, setIsGeneratingImage] = useState(false);
@@ -62,6 +90,14 @@
      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
    }, [messages]);
  
+  // Persist messages to localStorage whenever they change
+  useEffect(() => {
+    // Don't save if only welcome message exists
+    if (messages.length > 1 || messages[0]?.id !== "welcome") {
+      saveMessagesToStorage(messages);
+    }
+  }, [messages]);
+
    // Detect if user is asking for an image
    const detectImageRequest = (text: string): string | null => {
      const lowerText = text.toLowerCase();
@@ -312,6 +348,12 @@
      inputRef.current?.focus();
    };
  
+  const handleClearHistory = () => {
+    setMessages([WELCOME_MESSAGE]);
+    localStorage.removeItem(STORAGE_KEY);
+    toast.success("Chat history cleared");
+  };
+
    const handleCopy = async (text: string, label: string) => {
      await navigator.clipboard.writeText(text);
      setCopiedText(label);
@@ -348,10 +390,28 @@
            <div className="flex items-center gap-2">
              <span className="font-semibold text-foreground">Trudy</span>
              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">AI Marketing</Badge>
+              {messages.length > 1 && (
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-muted-foreground">
+                  {messages.length - 1} messages
+                </Badge>
+              )}
            </div>
            <span className="text-xs text-muted-foreground">Create ads, landing pages & more</span>
          </div>
-         <Sparkles className="w-5 h-5 text-purple-500" />
+          <div className="flex items-center gap-1">
+            {messages.length > 1 && (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                onClick={handleClearHistory}
+                title="Clear chat history"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
+            <Sparkles className="w-5 h-5 text-purple-500" />
+          </div>
        </div>
  
        {/* Messages */}
