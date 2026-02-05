@@ -4,12 +4,21 @@
  import { Textarea } from "@/components/ui/textarea";
  import { Badge } from "@/components/ui/badge";
  import { ScrollArea } from "@/components/ui/scroll-area";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
  import { 
    Sparkles, RefreshCw, ArrowRight, CheckCircle2, Star, 
    Shield, Clock, Phone, Zap, Users, TrendingUp, Play,
   ChevronDown, Quote, Award, Truck, Pencil, X, Check,
   MapPin, Search, Target, Globe, BarChart3, Hash, DollarSign,
-  Calculator, Video, ThumbsUp, Building, Home, Package, ArrowDown
+  Calculator, Video, ThumbsUp, Building, Home, Package, ArrowDown,
+  Download, Palette
  } from "lucide-react";
  import logoImg from "@/assets/logo.png";
  
@@ -63,6 +72,82 @@ const LANDING_PAGE_TEMPLATES = [
   },
 ];
 
+// Color theme definitions
+const COLOR_THEMES = [
+  {
+    id: "default",
+    name: "Default",
+    primary: "#22C55E",
+    primaryDark: "#16A34A",
+    secondary: "#0F172A",
+    accent: "#7C3AED",
+    accentLight: "#A855F7",
+  },
+  {
+    id: "ocean",
+    name: "Ocean Blue",
+    primary: "#3B82F6",
+    primaryDark: "#1D4ED8",
+    secondary: "#0C4A6E",
+    accent: "#06B6D4",
+    accentLight: "#22D3EE",
+  },
+  {
+    id: "sunset",
+    name: "Sunset Orange",
+    primary: "#F97316",
+    primaryDark: "#EA580C",
+    secondary: "#7C2D12",
+    accent: "#FBBF24",
+    accentLight: "#FCD34D",
+  },
+  {
+    id: "forest",
+    name: "Forest Green",
+    primary: "#059669",
+    primaryDark: "#047857",
+    secondary: "#064E3B",
+    accent: "#34D399",
+    accentLight: "#6EE7B7",
+  },
+  {
+    id: "royal",
+    name: "Royal Purple",
+    primary: "#8B5CF6",
+    primaryDark: "#7C3AED",
+    secondary: "#1E1B4B",
+    accent: "#EC4899",
+    accentLight: "#F472B6",
+  },
+  {
+    id: "crimson",
+    name: "Crimson Red",
+    primary: "#EF4444",
+    primaryDark: "#DC2626",
+    secondary: "#450A0A",
+    accent: "#F59E0B",
+    accentLight: "#FBBF24",
+  },
+  {
+    id: "midnight",
+    name: "Midnight Black",
+    primary: "#6366F1",
+    primaryDark: "#4F46E5",
+    secondary: "#020617",
+    accent: "#A5F3FC",
+    accentLight: "#CFFAFE",
+  },
+  {
+    id: "coral",
+    name: "Coral Pink",
+    primary: "#F43F5E",
+    primaryDark: "#E11D48",
+    secondary: "#881337",
+    accent: "#FB7185",
+    accentLight: "#FDA4AF",
+  },
+];
+
 interface EditableSection {
   id: string;
   type: 'headline' | 'subheadline' | 'body' | 'cta' | 'testimonial';
@@ -77,6 +162,7 @@ interface EditableSection {
   const [targetLocation, setTargetLocation] = useState("California, Texas, Florida");
    const [generationStep, setGenerationStep] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState("quote-funnel");
+  const [selectedTheme, setSelectedTheme] = useState("default");
   
   // Editable sections
   const [editingSection, setEditingSection] = useState<string | null>(null);
@@ -132,6 +218,149 @@ interface EditableSection {
   };
 
   const getSection = (id: string) => sections.find(s => s.id === id)?.content || "";
+
+  // Get current theme colors
+  const getThemeColors = () => {
+    return COLOR_THEMES.find(t => t.id === selectedTheme) || COLOR_THEMES[0];
+  };
+
+  const theme = getThemeColors();
+
+  // Export landing page as HTML
+  const exportAsHtml = () => {
+    const templateName = LANDING_PAGE_TEMPLATES.find(t => t.id === selectedTemplate)?.name || "Landing Page";
+    const themeName = COLOR_THEMES.find(t => t.id === selectedTheme)?.name || "Default";
+    
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${businessName} - ${templateName}</title>
+  <meta name="description" content="${mainOffer}">
+  <style>
+    :root {
+      --primary: ${theme.primary};
+      --primary-dark: ${theme.primaryDark};
+      --secondary: ${theme.secondary};
+      --accent: ${theme.accent};
+      --accent-light: ${theme.accentLight};
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .hero { background: linear-gradient(135deg, var(--secondary) 0%, #1E293B 50%, var(--secondary) 100%); padding: 4rem 2rem; text-align: center; color: white; }
+    .hero h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem; }
+    .hero .highlight { background: linear-gradient(90deg, var(--primary), var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.125rem; color: #CBD5E1; margin-bottom: 2rem; max-width: 42rem; margin-left: auto; margin-right: auto; }
+    .form-container { max-width: 28rem; margin: 0 auto; background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border-radius: 1rem; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.2); }
+    .input { width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; border: none; margin-bottom: 0.75rem; font-size: 1rem; }
+    .btn-primary { width: 100%; padding: 1rem; font-size: 1.125rem; font-weight: 700; color: white; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border: none; border-radius: 0.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .btn-primary:hover { opacity: 0.9; }
+    .trust-strip { display: flex; justify-content: center; gap: 2rem; padding: 1rem; color: #94A3B8; font-size: 0.875rem; }
+    .trust-item { display: flex; align-items: center; gap: 0.25rem; }
+    .social-proof { background: #F8FAFC; padding: 1rem 2rem; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; }
+    .social-proof-inner { display: flex; align-items: center; justify-content: center; gap: 2rem; font-size: 0.875rem; }
+    .featured-in { color: #64748B; }
+    .brand { font-weight: 700; color: #94A3B8; }
+    .steps { padding: 3rem 2rem; }
+    .steps h2 { text-align: center; font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; }
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 48rem; margin: 0 auto; }
+    .step { text-align: center; }
+    .step-number { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; }
+    .step h3 { font-weight: 600; margin-bottom: 0.25rem; }
+    .step p { font-size: 0.875rem; color: #64748B; }
+    .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+    .badge-success { background: rgba(34, 197, 94, 0.2); color: #22C55E; border: 1px solid rgba(34, 197, 94, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.3); }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 1.75rem; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .trust-strip { flex-wrap: wrap; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div style="position: absolute; top: 1rem; left: 1rem;">
+      <span class="badge badge-success">✓ FMCSA Licensed</span>
+    </div>
+    <div style="position: absolute; top: 1rem; right: 1rem;">
+      <span class="badge badge-warning">⭐ 4.9/5 Rating</span>
+    </div>
+    
+    <h1>
+      ${getSection('main-headline')}<br>
+      <span class="highlight">${getSection('sub-headline')}</span>
+    </h1>
+    
+    <p>${getSection('hero-body')}</p>
+    
+    <div class="form-container">
+      <input type="text" class="input" placeholder="Moving from (ZIP code)">
+      <input type="text" class="input" placeholder="Moving to (ZIP code)">
+      <button class="btn-primary">
+        ${getSection('cta-primary')} →
+      </button>
+      <p style="font-size: 0.75rem; color: #94A3B8; margin-top: 0.75rem; text-align: center;">🔒 No credit card required • Instant results</p>
+    </div>
+    
+    <div class="trust-strip" style="margin-top: 2rem;">
+      <span class="trust-item">🛡️ Price Lock Guarantee</span>
+      <span class="trust-item">⏱️ 60-Second Quotes</span>
+      <span class="trust-item">👥 50,000+ Moves</span>
+    </div>
+  </section>
+  
+  <div class="social-proof">
+    <div class="social-proof-inner">
+      <span class="featured-in">As featured in:</span>
+      <span class="brand">Forbes</span>
+      <span class="brand">Inc.</span>
+      <span class="brand">TechCrunch</span>
+    </div>
+  </div>
+  
+  <section class="steps">
+    <h2>Get Your Quote in 3 Simple Steps</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Enter Your Route</h3>
+        <p>Tell us where you're moving</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>AI Scans Your Home</h3>
+        <p>Instant inventory estimate</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Compare & Book</h3>
+        <p>Choose verified carriers</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Generated by ${businessName} AI Landing Page Generator -->
+  <!-- Template: ${templateName} | Theme: ${themeName} -->
+</body>
+</html>`;
+
+    // Create and download the file
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${businessName.toLowerCase().replace(/\s/g, '-')}-${selectedTemplate}-landing-page.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast.success("Landing page exported!", {
+      description: "HTML file downloaded successfully"
+    });
+  };
 
   const EditableText = ({ sectionId, className, as: Component = 'span' }: { sectionId: string; className?: string; as?: 'span' | 'p' | 'h1' | 'h2' }) => {
     const isEditing = editingSection === sectionId;
@@ -190,7 +419,7 @@ interface EditableSection {
       {/* Hero Section - Dark with green CTAs */}
       <div 
         className="relative px-8 py-16 text-center"
-        style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)" }}
+        style={{ background: `linear-gradient(135deg, ${theme.secondary} 0%, #1E293B 50%, ${theme.secondary} 100%)` }}
       >
         <div className="absolute top-4 left-4 flex gap-2">
           <Badge className="bg-green-500/20 text-green-400 border border-green-500/30">
@@ -208,7 +437,7 @@ interface EditableSection {
         
         <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
           <EditableText sectionId="main-headline" as="span" className="block" /><br />
-          <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #22C55E, #4ADE80)" }}>
+          <span className="text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(90deg, ${theme.primary}, ${theme.accentLight})` }}>
             <EditableText sectionId="sub-headline" as="span" />
           </span>
         </h1>
@@ -222,7 +451,7 @@ interface EditableSection {
             <Input placeholder="Moving from (ZIP code)" className="bg-white/90 border-0 text-slate-900" />
             <Input placeholder="Moving to (ZIP code)" className="bg-white/90 border-0 text-slate-900" />
           </div>
-          <Button className="w-full py-6 text-lg font-bold gap-2" style={{ background: "linear-gradient(135deg, #22C55E 0%, #16A34A 100%)" }}>
+          <Button className="w-full py-6 text-lg font-bold gap-2" style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}>
             <EditableText sectionId="cta-primary" as="span" /> <ArrowRight className="w-5 h-5" />
           </Button>
           <p className="text-xs text-slate-400 mt-3">🔒 No credit card required • Instant results</p>
@@ -255,7 +484,7 @@ interface EditableSection {
             { step: "3", title: "Compare & Book", desc: "Choose verified carriers", icon: CheckCircle2 },
           ].map((item) => (
             <div key={item.step} className="text-center">
-              <div className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-xl" style={{ background: "linear-gradient(135deg, #22C55E 0%, #16A34A 100%)" }}>
+              <div className="w-14 h-14 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-xl" style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}>
                 {item.step}
               </div>
               <h3 className="font-semibold text-slate-900 dark:text-white mb-1">{item.title}</h3>
@@ -271,7 +500,7 @@ interface EditableSection {
     <div className="bg-white dark:bg-slate-900">
       {/* Clean white hero */}
       <div className="px-8 py-12 text-center bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
-        <Badge className="mb-4 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">Compare & Save</Badge>
+        <Badge className="mb-4" style={{ background: `${theme.primary}20`, color: theme.primary }}>Compare & Save</Badge>
         <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-3">
           How We Stack Up Against the Competition
         </h1>
@@ -285,7 +514,7 @@ interface EditableSection {
         <div className="max-w-3xl mx-auto rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
           <div className="grid grid-cols-4 bg-slate-100 dark:bg-slate-800 text-sm font-semibold">
             <div className="p-4">Feature</div>
-            <div className="p-4 text-center bg-green-500 text-white">{businessName}</div>
+            <div className="p-4 text-center text-white" style={{ background: theme.primary }}>{businessName}</div>
             <div className="p-4 text-center">Competitor A</div>
             <div className="p-4 text-center">Competitor B</div>
           </div>
@@ -299,8 +528,8 @@ interface EditableSection {
           ].map((row, i) => (
             <div key={i} className="grid grid-cols-4 border-t border-slate-200 dark:border-slate-700 text-sm">
               <div className="p-4 text-slate-700 dark:text-slate-300">{row.feature}</div>
-              <div className="p-4 text-center bg-green-50 dark:bg-green-950">
-                {row.us ? <CheckCircle2 className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />}
+              <div className="p-4 text-center" style={{ background: `${theme.primary}10` }}>
+                {row.us ? <CheckCircle2 className="w-5 h-5 mx-auto" style={{ color: theme.primary }} /> : <X className="w-5 h-5 text-slate-300 mx-auto" />}
               </div>
               <div className="p-4 text-center">
                 {row.a ? <CheckCircle2 className="w-5 h-5 text-slate-400 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />}
@@ -315,7 +544,7 @@ interface EditableSection {
 
       {/* CTA */}
       <div className="px-8 py-8 text-center">
-        <Button className="py-6 px-10 text-lg font-bold gap-2 bg-green-500 hover:bg-green-600">
+        <Button className="py-6 px-10 text-lg font-bold gap-2 text-white" style={{ background: theme.primary }}>
           Get Your Free Quote <ArrowRight className="w-5 h-5" />
         </Button>
       </div>
@@ -327,7 +556,7 @@ interface EditableSection {
       {/* Minimal header */}
       <div className="px-8 py-8 flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
         <img src={logoImg} alt="TruMove" className="h-8" />
-        <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+        <Badge style={{ background: `${theme.accent}20`, color: theme.accent }}>
           <Calculator className="w-3 h-3 mr-1" /> Free Calculator
         </Badge>
       </div>
@@ -360,7 +589,7 @@ interface EditableSection {
                 <option>4+ Bedroom</option>
               </select>
             </div>
-            <Button className="w-full py-5 font-bold" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
+            <Button className="w-full py-5 font-bold text-white" style={{ background: `linear-gradient(135deg, ${theme.accent} 0%, ${theme.accentLight} 100%)` }}>
               <Calculator className="w-4 h-4 mr-2" /> Calculate My Cost
             </Button>
           </div>
@@ -384,11 +613,11 @@ interface EditableSection {
   );
 
   const renderTestimonialPage = () => (
-    <div className="bg-gradient-to-b from-amber-50 to-white dark:from-slate-900 dark:to-slate-800">
+    <div style={{ background: `linear-gradient(to bottom, ${theme.primary}10, white)` }}>
       {/* Warm header */}
       <div className="px-8 py-12 text-center">
         <div className="flex justify-center mb-4">
-          {[1,2,3,4,5].map(i => <Star key={i} className="w-8 h-8 fill-amber-400 text-amber-400" />)}
+          {[1,2,3,4,5].map(i => <Star key={i} className="w-8 h-8" style={{ fill: theme.primary, color: theme.primary }} />)}
         </div>
         <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-3">
           Real Families. Real Stories.
@@ -408,7 +637,7 @@ interface EditableSection {
         ].map((t, i) => (
           <div key={i} className="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.accent})` }}>
                 {t.name[0]}
               </div>
               <div>
@@ -416,11 +645,11 @@ interface EditableSection {
                 <div className="text-sm text-slate-500">{t.location}</div>
               </div>
               <div className="ml-auto flex">
-                {[1,2,3,4,5].map(j => <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
+                {[1,2,3,4,5].map(j => <Star key={j} className="w-3 h-3" style={{ fill: theme.primary, color: theme.primary }} />)}
               </div>
             </div>
             <p className="text-slate-700 dark:text-slate-300 italic">"{t.quote}"</p>
-            <button className="mt-4 flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 font-medium">
+            <button className="mt-4 flex items-center gap-2 text-sm font-medium" style={{ color: theme.primary }}>
               <Play className="w-4 h-4" /> Watch Video
             </button>
           </div>
@@ -429,7 +658,7 @@ interface EditableSection {
 
       {/* CTA */}
       <div className="px-8 py-10 text-center">
-        <Button className="py-6 px-10 text-lg font-bold gap-2" style={{ background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)" }}>
+        <Button className="py-6 px-10 text-lg font-bold gap-2 text-white" style={{ background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)` }}>
           Join 50,000+ Happy Families <ArrowRight className="w-5 h-5" />
         </Button>
       </div>
@@ -439,7 +668,7 @@ interface EditableSection {
   const renderLocalSeoPage = () => (
     <div className="bg-white dark:bg-slate-900">
       {/* Location-specific hero */}
-      <div className="px-8 py-16 text-center" style={{ background: "linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%)" }}>
+      <div className="px-8 py-16 text-center" style={{ background: `linear-gradient(135deg, ${theme.primaryDark} 0%, ${theme.primary} 100%)` }}>
         <Badge className="mb-4 bg-white/20 text-white border border-white/30">
           <MapPin className="w-3 h-3 mr-1" /> {targetLocation || "California"} Movers
         </Badge>
@@ -456,7 +685,7 @@ interface EditableSection {
             <Input placeholder="Your ZIP code" className="text-center" />
             <Input placeholder="Phone number" className="text-center" />
           </div>
-          <Button className="w-full py-5 font-bold bg-blue-600 hover:bg-blue-700">
+          <Button className="w-full py-5 font-bold text-white" style={{ background: theme.primary }}>
             Get My Quote <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
           <p className="text-xs text-slate-500 mt-3">Serving all of {targetLocation || "California"}</p>
@@ -472,7 +701,7 @@ interface EditableSection {
           { icon: Star, label: "Rating", value: "4.9/5" },
         ].map((item, i) => (
           <div key={i} className="text-center">
-            <item.icon className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+            <item.icon className="w-6 h-6 mx-auto mb-2" style={{ color: theme.primary }} />
             <div className="text-xl font-bold text-slate-900 dark:text-white">{item.value}</div>
             <div className="text-xs text-slate-500">{item.label}</div>
           </div>
@@ -568,7 +797,7 @@ interface EditableSection {
             <p className="font-semibold text-slate-900 dark:text-white">Ready to get started?</p>
             <p className="text-sm text-slate-500">Get your free AI-powered quote in 60 seconds</p>
           </div>
-          <Button className="py-5 px-8 font-bold gap-2 bg-green-500 hover:bg-green-600">
+          <Button className="py-5 px-8 font-bold gap-2 text-white" style={{ background: theme.primary }}>
             Get My Quote <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
@@ -603,9 +832,34 @@ interface EditableSection {
             </span>
            </div>
            <div className="flex gap-2">
+             {/* Color Theme Selector */}
+             <Select value={selectedTheme} onValueChange={setSelectedTheme}>
+               <SelectTrigger className="w-[160px] h-9">
+                 <Palette className="w-3.5 h-3.5 mr-2" />
+                 <SelectValue placeholder="Theme" />
+               </SelectTrigger>
+               <SelectContent>
+                 {COLOR_THEMES.map((colorTheme) => (
+                   <SelectItem key={colorTheme.id} value={colorTheme.id}>
+                     <div className="flex items-center gap-2">
+                       <div 
+                         className="w-4 h-4 rounded-full border border-border"
+                         style={{ background: `linear-gradient(135deg, ${colorTheme.primary}, ${colorTheme.accent})` }}
+                       />
+                       {colorTheme.name}
+                     </div>
+                   </SelectItem>
+                 ))}
+               </SelectContent>
+             </Select>
+
              <Button variant="outline" size="sm" onClick={() => setShowLandingPage(false)}>
                <RefreshCw className="w-3 h-3 mr-1" />
                Regenerate
+             </Button>
+             <Button variant="outline" size="sm" onClick={exportAsHtml}>
+               <Download className="w-3 h-3 mr-1" />
+               Export HTML
              </Button>
              <Button size="sm" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)" }}>
                Publish Page
