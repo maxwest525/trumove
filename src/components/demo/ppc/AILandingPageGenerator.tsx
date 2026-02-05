@@ -18,9 +18,11 @@ import { toast } from "sonner";
   ChevronDown, Quote, Award, Truck, Pencil, X, Check,
   MapPin, Search, Target, Globe, BarChart3, Hash, DollarSign,
   Calculator, Video, ThumbsUp, Building, Home, Package, ArrowDown,
-   Download, Palette, Copy, Maximize2, Minimize2
+   Download, Palette, Copy, Maximize2, Minimize2, FileText, Eye, EyeOff, Filter as FilterIcon
  } from "lucide-react";
- import { Upload, FileUp, MousePointerClick, PieChart, UserCheck, Map, Filter, TrendingDown } from "lucide-react";
+ import { Upload, FileUp, MousePointerClick, PieChart, UserCheck, Map, TrendingDown } from "lucide-react";
+ import jsPDF from "jspdf";
+ import autoTable from "jspdf-autotable";
  import logoImg from "@/assets/logo.png";
  
  interface AILandingPageGeneratorProps {
@@ -271,6 +273,13 @@ interface EditableSection {
    const [importedData, setImportedData] = useState<ImportedDataset | null>(null);
    const [activeDataTab, setActiveDataTab] = useState<'keywords' | 'geographic' | 'demographic' | 'clicks'>('keywords');
    const [isPopoutOpen, setIsPopoutOpen] = useState(false);
+   
+   // Keyword filter state
+   const [keywordTrendFilter, setKeywordTrendFilter] = useState<'all' | 'up' | 'down' | 'stable'>('all');
+   const [keywordConversionFilter, setKeywordConversionFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+   
+   // Heatmap overlay state
+   const [showHeatmapOverlay, setShowHeatmapOverlay] = useState(false);
  
    const handleGenerateLandingPage = () => {
      setGenerationStep(1);
@@ -300,6 +309,192 @@ interface EditableSection {
        setImportedData(MOCK_IMPORTED_DATA);
        setShowDataImport(false);
      }, 1500);
+   };
+ 
+   // Filter keywords based on current filters
+   const getFilteredKeywords = () => {
+     if (!importedData) return [];
+     return importedData.keywords.filter(kw => {
+       // Trend filter
+       if (keywordTrendFilter !== 'all' && kw.trend !== keywordTrendFilter) return false;
+       
+       // Conversion rate filter
+       const convRate = (kw.conversions / kw.clicks) * 100;
+       if (keywordConversionFilter === 'high' && convRate < 8) return false;
+       if (keywordConversionFilter === 'medium' && (convRate < 5 || convRate >= 8)) return false;
+       if (keywordConversionFilter === 'low' && convRate >= 5) return false;
+       
+       return true;
+     });
+   };
+ 
+   // Export analytics as PDF
+   const exportAnalyticsPdf = () => {
+     if (!importedData) {
+       toast.error("No data to export. Import analytics data first.");
+       return;
+     }
+     
+     const doc = new jsPDF();
+     const pageWidth = doc.internal.pageSize.getWidth();
+     
+     // Title
+     doc.setFontSize(22);
+     doc.setTextColor(124, 58, 237);
+     doc.text("Landing Page Analytics Report", pageWidth / 2, 20, { align: "center" });
+     
+     doc.setFontSize(10);
+     doc.setTextColor(100);
+     doc.text(`Generated: ${new Date().toLocaleDateString()} • Data Range: ${importedData.dateRange}`, pageWidth / 2, 28, { align: "center" });
+     
+     // Overview Stats
+     doc.setFontSize(14);
+     doc.setTextColor(30);
+     doc.text("Performance Overview", 14, 42);
+     
+     doc.setFontSize(11);
+     doc.setTextColor(60);
+     doc.text(`Total Clicks: ${importedData.totalClicks.toLocaleString()}`, 14, 52);
+     doc.text(`Total Conversions: ${importedData.totalConversions.toLocaleString()}`, 80, 52);
+     doc.text(`Total Revenue: $${importedData.totalRevenue.toLocaleString()}`, 150, 52);
+     doc.text(`Conversion Rate: ${((importedData.totalConversions / importedData.totalClicks) * 100).toFixed(2)}%`, 14, 60);
+     
+     // Keywords Table
+     doc.setFontSize(14);
+     doc.setTextColor(30);
+     doc.text("Top Performing Keywords", 14, 75);
+     
+     autoTable(doc, {
+       startY: 80,
+       head: [['Keyword', 'Clicks', 'Conv.', 'CTR', 'Trend', 'Why It Wins']],
+       body: importedData.keywords.map(kw => [
+         kw.keyword,
+         kw.clicks.toLocaleString(),
+         kw.conversions.toString(),
+         `${kw.ctr.toFixed(2)}%`,
+         kw.trend === 'up' ? '↑' : kw.trend === 'down' ? '↓' : '→',
+         kw.winningReason.substring(0, 50) + '...'
+       ]),
+       styles: { fontSize: 8 },
+       headStyles: { fillColor: [124, 58, 237] },
+       columnStyles: { 5: { cellWidth: 50 } }
+     });
+     
+     // Geographic Performance
+     const geoY = (doc as any).lastAutoTable.finalY + 15;
+     doc.setFontSize(14);
+     doc.setTextColor(30);
+     doc.text("Geographic Performance", 14, geoY);
+     
+     autoTable(doc, {
+       startY: geoY + 5,
+       head: [['State', 'Region', 'Clicks', 'Conversions', 'Conv Rate', 'Revenue', 'Top City']],
+       body: importedData.geographic.map(geo => [
+         geo.state,
+         geo.region,
+         geo.clicks.toLocaleString(),
+         geo.conversions.toString(),
+         `${geo.convRate.toFixed(2)}%`,
+         `$${geo.revenue.toLocaleString()}`,
+         geo.topCity
+       ]),
+       styles: { fontSize: 8 },
+       headStyles: { fillColor: [236, 72, 153] }
+     });
+     
+     // Demographics
+     const demoY = (doc as any).lastAutoTable.finalY + 15;
+     doc.setFontSize(14);
+     doc.setTextColor(30);
+     doc.text("Demographic Insights", 14, demoY);
+     
+     autoTable(doc, {
+       startY: demoY + 5,
+       head: [['Segment', 'Share', 'Clicks', 'Conversions', 'Avg Order', 'Device']],
+       body: importedData.demographic.map(demo => [
+         demo.segment,
+         `${demo.percentage}%`,
+         demo.clicks.toLocaleString(),
+         demo.conversions.toString(),
+         `$${demo.avgOrderValue.toLocaleString()}`,
+         demo.device
+       ]),
+       styles: { fontSize: 8 },
+       headStyles: { fillColor: [59, 130, 246] }
+     });
+     
+     // Click Behavior
+     const clickY = (doc as any).lastAutoTable.finalY + 15;
+     doc.setFontSize(14);
+     doc.setTextColor(30);
+     doc.text("Click Behavior & Heatmap Analysis", 14, clickY);
+     
+     autoTable(doc, {
+       startY: clickY + 5,
+       head: [['Element', 'Clicks', 'Share', 'Intensity', 'Impact']],
+       body: importedData.clickBehavior.map(click => [
+         click.element,
+         click.clicks.toLocaleString(),
+         `${click.percentage}%`,
+         click.heatmapIntensity === 'high' ? '🔥 Hot' : click.heatmapIntensity === 'medium' ? '⚡ Warm' : '❄️ Cool',
+         click.conversionImpact
+       ]),
+       styles: { fontSize: 8 },
+       headStyles: { fillColor: [239, 68, 68] }
+     });
+     
+     // AI Recommendations
+     doc.addPage();
+     doc.setFontSize(18);
+     doc.setTextColor(124, 58, 237);
+     doc.text("AI-Powered Recommendations", pageWidth / 2, 20, { align: "center" });
+     
+     const recommendations = [
+       {
+         title: "1. Double Down on Emerging Keywords",
+         desc: `The keyword "ai moving estimate" shows 340% YoY growth with the lowest CPA ($8.09). Increase budget allocation by 40% and create dedicated landing page variants.`
+       },
+       {
+         title: "2. Optimize for Mobile Young Professionals",
+         desc: `25-34 age segment converts at high rate on mobile (71% mobile usage). Ensure mobile page speed <2s and implement one-tap calling CTAs.`
+       },
+       {
+         title: "3. Geo-Target High-Value Markets",
+         desc: `New York shows highest conversion rate (8.10%) despite lower volume. Consider increasing regional bids and adding city-specific landing pages.`
+       },
+       {
+         title: "4. Leverage Trust Badge Interaction",
+         desc: `Users who click trust badges convert 2.3x more. Make badges more prominent above the fold and add interactive tooltip explanations.`
+       },
+       {
+         title: "5. Reduce Navigation Friction",
+         desc: `Navigation links show low engagement (3.6%) and often lead to exit. Consider removing or minimizing navigation on focused landing pages.`
+       },
+       {
+         title: "6. Target Corporate Relocation Segment",
+         desc: `Corporate relocations show $8,900 avg order value (highest). Create B2B focused landing page variant with case studies and volume pricing.`
+       }
+     ];
+     
+     let recY = 35;
+     recommendations.forEach(rec => {
+       doc.setFontSize(12);
+       doc.setTextColor(30);
+       doc.text(rec.title, 14, recY);
+       doc.setFontSize(10);
+       doc.setTextColor(80);
+       const lines = doc.splitTextToSize(rec.desc, pageWidth - 28);
+       doc.text(lines, 14, recY + 7);
+       recY += 25 + (lines.length * 4);
+     });
+     
+     // Footer
+     doc.setFontSize(9);
+     doc.setTextColor(150);
+     doc.text("Generated by TruMove AI Marketing Suite", pageWidth / 2, 285, { align: "center" });
+     
+     doc.save(`landing-page-analytics-${new Date().toISOString().split('T')[0]}.pdf`);
+     toast.success("Analytics PDF exported successfully!");
    };
  
   const startEditing = (sectionId: string) => {
@@ -1206,9 +1401,75 @@ interface EditableSection {
            </div>
  
            {/* Actual Landing Page Content */}
-          <ScrollArea className="h-[450px]">
+           <div className="relative">
+             <ScrollArea className="h-[450px]">
               {renderSelectedTemplate()}
-           </ScrollArea>
+             </ScrollArea>
+             
+             {/* Heatmap Overlay */}
+             {showHeatmapOverlay && importedData && (
+               <div className="absolute inset-0 pointer-events-none z-20">
+                 {/* CTA Button Hotspot */}
+                 <div 
+                   className="absolute left-1/2 -translate-x-1/2 top-[55%] w-48 h-12 rounded-lg animate-pulse"
+                   style={{ 
+                     background: "radial-gradient(ellipse, rgba(239, 68, 68, 0.6) 0%, rgba(239, 68, 68, 0.3) 40%, transparent 70%)",
+                     boxShadow: "0 0 40px 20px rgba(239, 68, 68, 0.4)"
+                   }}
+                 >
+                   <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
+                     🔥 35.9% clicks • Primary CTA
+                   </div>
+                 </div>
+                 
+                 {/* Quote Form Hotspot */}
+                 <div 
+                   className="absolute left-1/2 -translate-x-1/2 top-[45%] w-56 h-20 rounded-lg"
+                   style={{ 
+                     background: "radial-gradient(ellipse, rgba(249, 115, 22, 0.5) 0%, rgba(249, 115, 22, 0.2) 40%, transparent 70%)",
+                     boxShadow: "0 0 30px 15px rgba(249, 115, 22, 0.3)"
+                   }}
+                 >
+                   <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
+                     ⚡ 27.0% • Form Fields
+                   </div>
+                 </div>
+                 
+                 {/* Trust Badges Hotspot */}
+                 <div 
+                   className="absolute left-1/2 -translate-x-1/2 top-[68%] w-72 h-8 rounded-lg"
+                   style={{ 
+                     background: "radial-gradient(ellipse, rgba(234, 179, 8, 0.4) 0%, rgba(234, 179, 8, 0.15) 40%, transparent 70%)",
+                     boxShadow: "0 0 25px 10px rgba(234, 179, 8, 0.25)"
+                   }}
+                 >
+                   <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
+                     ⚡ 15.7% • Trust Badges
+                   </div>
+                 </div>
+                 
+                 {/* Navigation - Cool zone */}
+                 <div 
+                   className="absolute top-2 left-2 right-2 h-8 rounded-lg"
+                   style={{ 
+                     background: "radial-gradient(ellipse at top, rgba(59, 130, 246, 0.25) 0%, transparent 60%)"
+                   }}
+                 >
+                   <div className="absolute top-10 left-4 bg-blue-500 text-white text-[9px] px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
+                     ❄️ 3.6% • Nav Links (low)
+                   </div>
+                 </div>
+                 
+                 {/* Legend */}
+                 <div className="absolute bottom-4 right-4 p-2 rounded-lg bg-black/80 backdrop-blur-sm text-white text-[10px] space-y-1">
+                   <div className="font-semibold mb-1">Click Heatmap</div>
+                   <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500"></span> Hot (25%+)</div>
+                   <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-orange-500"></span> Warm (10-25%)</div>
+                   <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-500"></span> Cool (&lt;10%)</div>
+                 </div>
+               </div>
+             )}
+           </div>
          </div>
  
         {/* SEO & Keyword Analysis */}
@@ -1343,9 +1604,29 @@ interface EditableSection {
                      <p className="text-xs text-muted-foreground">{importedData.dateRange}</p>
                    </div>
                  </div>
-                 <Button variant="ghost" size="sm" onClick={() => setImportedData(null)}>
-                   <X className="w-4 h-4" />
-                 </Button>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setShowHeatmapOverlay(!showHeatmapOverlay)}
+                      className={showHeatmapOverlay ? "border-red-400 bg-red-50 text-red-600 dark:bg-red-950/30" : ""}
+                    >
+                      {showHeatmapOverlay ? <EyeOff className="w-3.5 h-3.5 mr-1" /> : <Eye className="w-3.5 h-3.5 mr-1" />}
+                      {showHeatmapOverlay ? "Hide" : "Show"} Heatmap
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={exportAnalyticsPdf}
+                      className="gap-1"
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      Export PDF
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setImportedData(null)}>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
                </div>
                <div className="grid grid-cols-3 gap-4">
                  <div className="text-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50">
@@ -1392,12 +1673,52 @@ interface EditableSection {
                  <div className="space-y-3">
                    <div className="flex items-center justify-between mb-2">
                      <h5 className="font-medium text-sm text-foreground">Keyword Performance & Why They're Winning</h5>
-                     <Badge variant="secondary" className="text-xs">
-                       <Filter className="w-3 h-3 mr-1" />
-                       Sorted by Conversions
-                     </Badge>
+                      <div className="flex items-center gap-2">
+                        {/* Trend Filter */}
+                        <Select value={keywordTrendFilter} onValueChange={(v: 'all' | 'up' | 'down' | 'stable') => setKeywordTrendFilter(v)}>
+                          <SelectTrigger className="h-7 w-[100px] text-xs">
+                            <TrendingUp className="w-3 h-3 mr-1" />
+                            <SelectValue placeholder="Trend" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Trends</SelectItem>
+                            <SelectItem value="up">↑ Trending Up</SelectItem>
+                            <SelectItem value="down">↓ Trending Down</SelectItem>
+                            <SelectItem value="stable">→ Stable</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        
+                        {/* Conversion Filter */}
+                        <Select value={keywordConversionFilter} onValueChange={(v: 'all' | 'high' | 'medium' | 'low') => setKeywordConversionFilter(v)}>
+                          <SelectTrigger className="h-7 w-[110px] text-xs">
+                            <FilterIcon className="w-3 h-3 mr-1" />
+                            <SelectValue placeholder="Conv Rate" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Rates</SelectItem>
+                            <SelectItem value="high">High (&gt;8%)</SelectItem>
+                            <SelectItem value="medium">Medium (5-8%)</SelectItem>
+                            <SelectItem value="low">Low (&lt;5%)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        
+                        <Badge variant="secondary" className="text-[10px]">
+                          {getFilteredKeywords().length} of {importedData.keywords.length}
+                        </Badge>
+                      </div>
                    </div>
-                   {importedData.keywords.map((kw, i) => (
+                    {getFilteredKeywords().length === 0 ? (
+                      <div className="p-6 text-center text-muted-foreground">
+                        <FilterIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No keywords match your filters</p>
+                        <button 
+                          onClick={() => { setKeywordTrendFilter('all'); setKeywordConversionFilter('all'); }}
+                          className="text-xs text-primary hover:underline mt-1"
+                        >
+                          Clear filters
+                        </button>
+                      </div>
+                    ) : getFilteredKeywords().map((kw, i) => (
                      <div key={i} className="p-3 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors">
                        <div className="flex items-start justify-between mb-2">
                          <div className="flex items-center gap-2">
