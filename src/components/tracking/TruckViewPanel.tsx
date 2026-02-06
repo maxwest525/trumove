@@ -140,38 +140,46 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
   
   // Local detailed route state - fetched if parent doesn't provide road-snapped data
   const [detailedRoute, setDetailedRoute] = useState<[number, number][]>([]);
-  const [isLoadingRoute, setIsLoadingRoute] = useState(false);
-  const routeFetchedRef = useRef(false);
+  const [fetchStatus, setFetchStatus] = useState<'idle' | 'fetching' | 'done'>('idle');
   
   // Use detailed route if available, otherwise fall back to parent route
   const activeRoute = detailedRoute.length > 10 ? detailedRoute : routeCoordinates;
 
-  // Reset route when coordinates change
-  useEffect(() => {
-    routeFetchedRef.current = false;
-    setDetailedRoute([]);
-  }, [originCoords?.[0], originCoords?.[1], destCoords?.[0], destCoords?.[1]]);
+  // Track coordinate changes to reset state
+  const coordKey = `${originCoords?.[0]},${originCoords?.[1]}-${destCoords?.[0]},${destCoords?.[1]}`;
 
-  // Fetch road-snapped route from Mapbox (self-contained, no parent dependency)
+  // Reset state when coordinates change
+  useEffect(() => {
+    setFetchStatus('idle');
+    setDetailedRoute([]);
+    
+    // Destroy existing map so it reinitializes with new route
+    if (map.current) {
+      map.current.remove();
+      map.current = null;
+    }
+    setIsReady(false);
+  }, [coordKey]);
+
+  // Fetch road-snapped route from Mapbox (self-contained, matches homepage)
   useEffect(() => {
     // Already have detailed route from parent (>10 points = road-snapped)
     if (routeCoordinates.length > 10) {
       setDetailedRoute(routeCoordinates);
-      routeFetchedRef.current = true;
+      setFetchStatus('done');
       return;
     }
     
-    // Need to fetch road-snapped route ourselves
+    // Need coordinates to fetch
     if (!originCoords || !destCoords) return;
     
-    // Prevent duplicate fetches
-    if (routeFetchedRef.current) return;
+    // Already fetching or done
+    if (fetchStatus !== 'idle') return;
     
-    setIsLoadingRoute(true);
-    routeFetchedRef.current = true;
+    setFetchStatus('fetching');
     
     fetchRoadSnappedRoute(originCoords, destCoords).then((result) => {
-      setIsLoadingRoute(false);
+      setFetchStatus('done');
       
       if (result) {
         setDetailedRoute(result.coordinates);
@@ -182,17 +190,20 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
         setDetailedRoute([originCoords, destCoords]);
       }
     });
-  }, [routeCoordinates, originCoords, destCoords, onRouteCalculated]);
+  }, [routeCoordinates.length, originCoords, destCoords, fetchStatus, onRouteCalculated]);
 
-  // Initialize Mapbox map
+  // Initialize Mapbox map - ONLY when route is ready (matches homepage pattern)
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
+    // KEY FIX: Wait for route data before initializing map
+    if (activeRoute.length < 2) return;
 
     try {
       mapboxgl.accessToken = MAPBOX_TOKEN;
 
-      // Default center - use origin or US center
-      const initialCenter: [number, number] = originCoords || [-98.5795, 39.8283];
+      // Use first point of route as initial center
+      const initialCenter: [number, number] = activeRoute[0];
+      const initialBearing = getBearingAtProgress(activeRoute, 0);
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
@@ -200,7 +211,7 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
         center: initialCenter,
         zoom: 17,
         pitch: 60,
-        bearing: 0,
+        bearing: initialBearing,
         interactive: interactive,
         attributionControl: false,
       });
@@ -216,7 +227,7 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
             properties: {},
             geometry: {
               type: 'LineString',
-              coordinates: routeCoordinates.length > 0 ? routeCoordinates : [[0, 0]]
+              coordinates: activeRoute
             }
           }
         });
@@ -245,7 +256,7 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
             properties: {},
             geometry: {
               type: 'LineString',
-              coordinates: [[0, 0]]
+              coordinates: [activeRoute[0], activeRoute[0]]
             }
           }
         });
@@ -300,6 +311,9 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
           }
         });
 
+        // Store initial bearing
+        lastBearing.current = initialBearing;
+        
         setIsReady(true);
       });
 
@@ -319,9 +333,9 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
         map.current = null;
       }
     };
-  }, [interactive, originCoords]);
+  }, [interactive, activeRoute.length >= 2 ? activeRoute : null]);
 
-  // Update full route when coordinates change
+  // Update full route source when coordinates change
   useEffect(() => {
     if (!isReady || !map.current || activeRoute.length < 2) return;
 
@@ -387,25 +401,6 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
     updateCamera();
   }, [progress, updateCamera]);
 
-  // Initial camera position when route loads
-  useEffect(() => {
-    if (!isReady || !map.current || activeRoute.length < 2) return;
-
-    const position = getPointAlongRoute(activeRoute, progress);
-    const bearing = getBearingAtProgress(activeRoute, progress);
-    
-    lastBearing.current = bearing;
-
-    map.current.flyTo({
-      center: position,
-      bearing: bearing,
-      pitch: 60,
-      zoom: 17,
-      duration: 1500,
-      essential: true
-    });
-  }, [activeRoute.length, isReady]);
-
   // Error fallback
   if (mapError) {
     return (
@@ -434,34 +429,26 @@ const TruckViewPanel: React.FC<TruckViewPanelProps> = ({
         </div>
       </div>
 
-      {/* Loading state */}
-      {!isReady && (
+      {/* Loading state - show while fetching route OR initializing map */}
+      {(fetchStatus === 'fetching' || (!isReady && activeRoute.length >= 2)) && (
         <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-20">
           <div className="flex items-center gap-3">
             <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-foreground">Loading Truck View...</span>
+            <span className="text-sm text-foreground">
+              {fetchStatus === 'fetching' ? 'Calculating route...' : 'Loading Truck View...'}
+            </span>
           </div>
         </div>
       )}
 
-      {/* No route warning - show when loading or no route */}
-      {isReady && activeRoute.length < 2 && !isLoadingRoute && (
+      {/* No route warning - show when waiting for coordinates */}
+      {fetchStatus !== 'fetching' && activeRoute.length < 2 && (
         <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-20">
           <div className="flex flex-col items-center gap-2 text-center px-6">
             <Truck className="w-8 h-8 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
               Set origin and destination to enable Truck View
             </span>
-          </div>
-        </div>
-      )}
-      
-      {/* Route loading state */}
-      {isReady && isLoadingRoute && (
-        <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-20">
-          <div className="flex items-center gap-3">
-            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-foreground">Calculating road route...</span>
           </div>
         </div>
       )}
