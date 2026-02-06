@@ -1,89 +1,132 @@
 
 
-# Plan: Fix Truck View Road-Following Using Mapbox Directions API
+# Plan: Fix TruckViewPanel to Match Homepage Architecture
 
-## Root Cause Analysis
+## Root Cause
 
-The tracking page's `TruckViewPanel` fails because:
+The tracking page's `TruckViewPanel` has a **timing and architecture problem**:
 
-1. **Google Script Loading Race Condition**: It tries to use Google Directions API, but the script may not be loaded when TruckViewPanel mounts (Google2DTrackingMap was unmounted)
-2. **Parent Data Timing**: It relies on `routeCoordinates` from parent state, which is only populated when Google2DTrackingMap calculates the route
-3. **Reference Lock**: The `routeFetchedRef` prevents re-fetching when switching back and forth between views
+1. **Map initializes too early**: The map is created before route data exists, centering on Kansas
+2. **Route never fetches**: The Mapbox Directions API call is never made (verified by empty network log for "directions")
+3. **Complex effect dependencies**: Multiple `useEffect` hooks with racing conditions between reset and fetch logic
 
-**The homepage works** because it uses **Mapbox Directions API** which is simpler (just a fetch call - no script loading required) and fetches its own route data independently.
+The homepage version works because:
+- It has **hardcoded coordinates** that are available immediately
+- The map only initializes **after** route data is ready (`if (routeCoords.length < 2) return`)
+- It's completely self-contained with no external props
 
 ---
 
-## Solution: Port Homepage Pattern
+## Solution: Match Homepage Pattern Exactly
 
-Replace Google Directions API with Mapbox Directions API in `TruckViewPanel.tsx`, matching the proven homepage implementation:
+Restructure `TruckViewPanel` to mirror the proven homepage architecture:
 
-| Current (Broken) | Fix (Matches Homepage) |
-|------------------|------------------------|
-| Google Directions API (needs script) | Mapbox Directions API (simple fetch) |
-| Depends on parent `routeCoordinates` | Self-contained route fetching |
-| Uses `loadGoogleMapsScript()` promise | Direct HTTP fetch call |
+### Key Changes
+
+| Broken Pattern | Fixed Pattern (Matches Homepage) |
+|----------------|----------------------------------|
+| Map initializes before route | Map only initializes when `activeRoute.length >= 2` |
+| Multiple racing useEffects | Single fetch effect, waits for route before map init |
+| Complex prop dependencies | Simpler flow: fetch → set route → init map |
+| `routeFetchedRef` logic can fail | Use route length as the guard |
 
 ---
 
 ## Implementation Steps
 
-### Step 1: Replace Route Fetching Logic
+### Step 1: Delay Map Initialization Until Route Ready
 
-Remove Google-based `fetchRoadSnappedRoute` function and replace with Mapbox-based fetch (matching homepage lines 509-541):
-
-```text
-// Fetch road-snapped route from Mapbox Directions API
-async function fetchRoadSnappedRoute(
-  origin: [number, number],
-  dest: [number, number]
-): Promise<{ coordinates: [number, number][]; distance: number; duration: number } | null> {
-  try {
-    const response = await fetch(
-      `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${dest[0]},${dest[1]}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
-    );
-    const data = await response.json();
-    
-    if (data.routes && data.routes[0]) {
-      const route = data.routes[0];
-      return {
-        coordinates: route.geometry.coordinates as [number, number][],
-        distance: route.distance / 1609.34, // meters to miles
-        duration: route.duration, // seconds
-      };
-    }
-    return null;
-  } catch (error) {
-    console.error('Mapbox Directions failed:', error);
-    return null;
-  }
-}
-```
-
-### Step 2: Fix Route Fetching Trigger
-
-Reset `routeFetchedRef` when origin/destination changes so route is re-fetched when switching views:
+Change the map initialization useEffect to wait for valid route data:
 
 ```text
-// Reset fetch flag when coordinates change
+// Initialize Mapbox map - ONLY when route is ready
 useEffect(() => {
-  routeFetchedRef.current = false;
-  setDetailedRoute([]);
-}, [originCoords, destCoords]);
+  if (!mapContainer.current || map.current) return;
+  if (activeRoute.length < 2) return;  // ADD THIS CHECK
+  
+  // ... rest of map initialization
+}, [interactive, activeRoute.length]);  // Add activeRoute.length to deps
 ```
 
-### Step 3: Improve Loading State
+### Step 2: Simplify Route Fetching Logic
 
-Add better UX during route calculation:
-- Show "Calculating route..." while fetching
-- Clear loading when route is ready
+Remove the complex `routeFetchedRef` logic and use a simpler state-based approach:
 
-### Step 4: Clean Up Unused Code
+```text
+// State for tracking fetch status
+const [fetchStatus, setFetchStatus] = useState<'idle' | 'fetching' | 'done'>('idle');
 
-Remove:
-- `loadGoogleMapsScript()` function
-- `GOOGLE_MAPS_API_KEY` constant
-- Google-specific error handling
+// Fetch route when coordinates are available
+useEffect(() => {
+  // Already have road-snapped route from parent
+  if (routeCoordinates.length > 10) {
+    setDetailedRoute(routeCoordinates);
+    setFetchStatus('done');
+    return;
+  }
+  
+  // Need coordinates to fetch
+  if (!originCoords || !destCoords) return;
+  
+  // Already fetching or done
+  if (fetchStatus !== 'idle') return;
+  
+  setFetchStatus('fetching');
+  setIsLoadingRoute(true);
+  
+  fetchRoadSnappedRoute(originCoords, destCoords).then((result) => {
+    setIsLoadingRoute(false);
+    setFetchStatus('done');
+    
+    if (result) {
+      setDetailedRoute(result.coordinates);
+      onRouteCalculated?.(result);
+    } else {
+      // Fallback to straight line
+      setDetailedRoute([originCoords, destCoords]);
+    }
+  });
+}, [originCoords, destCoords, routeCoordinates, fetchStatus, onRouteCalculated]);
+```
+
+### Step 3: Reset State on Coordinate Change
+
+When origin/destination changes, reset to idle state:
+
+```text
+// Reset when coordinates change
+useEffect(() => {
+  setFetchStatus('idle');
+  setDetailedRoute([]);
+  
+  // Also destroy existing map so it reinitializes with new route
+  if (map.current) {
+    map.current.remove();
+    map.current = null;
+  }
+  setIsReady(false);
+}, [originCoords?.[0], originCoords?.[1], destCoords?.[0], destCoords?.[1]]);
+```
+
+### Step 4: Update Loading/Error States
+
+Show appropriate UI during the fetch-then-init sequence:
+
+```text
+{/* Loading state - show while fetching route OR initializing map */}
+{(!isReady || isLoadingRoute) && activeRoute.length >= 2 && (
+  <div className="loading-overlay">
+    <span>Loading Truck View...</span>
+  </div>
+)}
+
+{/* No route - show when waiting for coordinates */}
+{fetchStatus === 'idle' && !originCoords && !destCoords && (
+  <div className="no-route-overlay">
+    <span>Set origin and destination to enable Truck View</span>
+  </div>
+)}
+```
 
 ---
 
@@ -91,23 +134,36 @@ Remove:
 
 | File | Changes |
 |------|---------|
-| `src/components/tracking/TruckViewPanel.tsx` | Replace Google Directions with Mapbox Directions API, fix route fetching trigger |
+| `src/components/tracking/TruckViewPanel.tsx` | Delay map init until route ready, simplify fetch logic, fix reset behavior |
 
 ---
 
-## Technical Benefits
+## Technical Details
 
-1. **Simpler**: No script loading, just fetch call
-2. **Faster**: Mapbox request starts immediately on mount
-3. **Consistent**: Uses same API as homepage demo
-4. **Reliable**: No race conditions with script loading
+### Why This Fixes the Problem
+
+1. **Map waits for route**: By checking `activeRoute.length < 2` before initializing, the map is only created once we have actual road-snapped coordinates
+2. **No racing conditions**: Single `fetchStatus` state machine prevents multiple fetches and makes the flow deterministic
+3. **Clean reset**: Destroying the map on coordinate change ensures fresh initialization with correct center/bearing
+4. **Matches homepage**: This pattern directly mirrors lines 582-584 of Index.tsx where the map init returns early if `routeCoords.length < 2`
+
+### Expected Flow
+
+1. Component mounts with `originCoords`/`destCoords` from parent
+2. First render shows "Loading" state
+3. Fetch effect triggers Mapbox Directions API call
+4. Route coordinates arrive (hundreds of points)
+5. `activeRoute.length >= 2` becomes true
+6. Map initialization effect runs, creating map at correct center
+7. Camera starts following road-snapped route with correct bearing
 
 ---
 
 ## Expected Outcome
 
-After this fix:
-1. **TruckView follows roads**: Camera follows actual road-snapped route from Mapbox Directions
-2. **Works on first load**: No dependency on Google2DTrackingMap being mounted first
-3. **Reliable view switching**: Route is fetched fresh when needed, persists across view toggles
+After implementation:
+1. **Truck follows roads**: Camera follows actual road-snapped route from Mapbox Directions
+2. **No straight line**: Never shows straight-line path because map only init after road data
+3. **Reliable switching**: Toggling views triggers clean reset and re-fetch
+4. **Consistent with homepage**: Same proven pattern that works in the demo
 
