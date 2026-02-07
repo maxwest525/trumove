@@ -35301,6 +35301,29 @@ gmp-map-3d-element .gmnoprint {
   background: hsl(0 70% 45% / 0.1) !important;
 }
 
+/* Override green primary color to HVL red in autocomplete */
+.hvl-page .text-primary {
+  color: hsl(0 70% 45%) !important;
+}
+
+/* Location autocomplete dropdown icon */
+.hvl-page [class*="LocationAutocomplete"] .text-primary,
+.hvl-page .hvl-wizard-card .text-primary {
+  color: hsl(0 70% 45%) !important;
+}
+
+/* Calendar today indicator */
+.hvl-page .rdp-day_today:not(.rdp-day_selected) {
+  border-color: hsl(0 70% 45%) !important;
+  color: hsl(0 70% 45%) !important;
+}
+
+/* Checkbox and radio when checked */
+.hvl-page [data-state="checked"] {
+  background-color: hsl(0 70% 45%) !important;
+  border-color: hsl(0 70% 45%) !important;
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    SCROLL ANIMATIONS
    ═══════════════════════════════════════════════════════════════════ */
