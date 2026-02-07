@@ -33876,8 +33876,11 @@ gmp-map-3d-element .gmnoprint {
 /* Header Bar */
 .hvl-header {
   background: hsl(0 0% 100%);
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.5rem;
   border-bottom: 1px solid hsl(220 10% 90%);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .hvl-header-inner {
@@ -33886,22 +33889,85 @@ gmp-map-3d-element .gmnoprint {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 2rem;
 }
 
 .hvl-logo {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .hvl-logo-img {
-  height: 100px;
+  height: 72px;
   width: auto;
+}
+
+/* Nav Links */
+.hvl-nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.hvl-nav-link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: hsl(220 15% 35%);
+  text-decoration: none;
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+
+.hvl-nav-link:hover {
+  color: hsl(0 70% 45%);
+}
+
+/* Phone CTA */
+.hvl-header-phone {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: hsl(0 70% 45%);
+  color: hsl(0 0% 100%);
+  padding: 0.625rem 1.25rem;
+  border-radius: 100px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.hvl-header-phone:hover {
+  background: hsl(0 70% 40%);
+  transform: translateY(-1px);
 }
 
 .hvl-header-contact {
   font-size: 0.9375rem;
   font-weight: 600;
   color: hsl(0 70% 45%);
+}
+
+/* Mobile nav responsive */
+@media (max-width: 768px) {
+  .hvl-nav {
+    display: none;
+  }
+  
+  .hvl-logo-img {
+    height: 56px;
+  }
+  
+  .hvl-header-phone span {
+    display: none;
+  }
+  
+  .hvl-header-phone {
+    padding: 0.625rem;
+    border-radius: 50%;
+  }
 }
 
 /* Hero Section */

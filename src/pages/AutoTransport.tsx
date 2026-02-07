@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ChevronRight, ChevronLeft, Shield, Star, CheckCircle, Truck, Car, Calendar } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ChevronRight, ChevronLeft, Shield, Star, CheckCircle, Truck, Car, Calendar, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +21,6 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import HankChatButton from "@/components/hvl/HankChatButton";
-import SiteShell from "@/components/layout/SiteShell";
 import heroImage from "@/assets/hvl-hero-dynamic.jpg";
 import hvlLogo from "@/assets/hvl-logo.png";
 
@@ -146,10 +146,26 @@ export default function AutoTransport() {
   };
 
   return (
-    <SiteShell hideTrustStrip>
     <div className="hvl-page">
+      {/* HVL HEADER */}
+      <header className="hvl-header">
+        <div className="hvl-header-inner">
+          <Link to="/auto-transport" className="hvl-logo">
+            <img src={hvlLogo} alt="Howard's Van Line" className="hvl-logo-img" />
+          </Link>
+          <nav className="hvl-nav">
+            <Link to="/" className="hvl-nav-link">Home</Link>
+            <Link to="/online-estimate" className="hvl-nav-link">Get Estimate</Link>
+            <Link to="/track" className="hvl-nav-link">Track Shipment</Link>
+            <Link to="/book" className="hvl-nav-link">Contact Us</Link>
+          </nav>
+          <a href="tel:+18005551234" className="hvl-header-phone">
+            <Phone className="w-4 h-4" />
+            <span>1-800-555-MOVE</span>
+          </a>
+        </div>
+      </header>
 
-      {/* HERO SECTION - Full width dramatic hero */}
       <section className="hvl-hero-dramatic">
         <div className="hvl-hero-bg" style={{ backgroundImage: `url(${heroImage})` }}>
           <div className="hvl-hero-overlay" />
@@ -637,6 +653,5 @@ export default function AutoTransport() {
       {/* Hank Chat Assistant */}
       <HankChatButton />
     </div>
-    </SiteShell>
   );
 }
