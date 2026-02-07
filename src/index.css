@@ -34051,9 +34051,15 @@ gmp-map-3d-element .gmnoprint {
 }
 
 .hvl-select:focus,
-.hvl-input:focus {
+.hvl-input:focus,
+.hvl-page input:focus,
+.hvl-page select:focus,
+.hvl-page textarea:focus,
+.hvl-page button:focus {
   outline: none;
-  border-color: hsl(0 70% 45%);
+  border-color: hsl(0 70% 45%) !important;
+  box-shadow: 0 0 0 3px hsl(0 70% 45% / 0.15) !important;
+  --tw-ring-color: hsl(0 70% 45% / 0.2) !important;
 }
 
 .hvl-select.hvl-error,
@@ -35133,4 +35139,30 @@ gmp-map-3d-element .gmnoprint {
     min-height: auto;
     padding: 2.5rem 1rem;
   }
+}
+
+/* HVL Override for shadcn focus rings - use HVL red instead of primary green */
+.hvl-page [data-radix-focus-guard],
+.hvl-page [data-state="open"],
+.hvl-page .focus-visible,
+.hvl-page *:focus-visible {
+  --ring: 0 70% 45%;
+}
+
+.hvl-page [role="combobox"]:focus,
+.hvl-page [role="listbox"]:focus,
+.hvl-page button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(0 0% 100%), 0 0 0 4px hsl(0 70% 45% / 0.4) !important;
+}
+
+/* Calendar day selection in HVL */
+.hvl-page .rdp-day_selected,
+.hvl-page .rdp-day_selected:hover {
+  background: hsl(0 70% 45%) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+.hvl-page .rdp-day:hover:not(.rdp-day_selected) {
+  background: hsl(0 70% 45% / 0.1) !important;
 }
