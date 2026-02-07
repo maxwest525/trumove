@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, ChangeEvent } from "react";
 import { 
   Car, Truck, Shield, Clock, MapPin, CheckCircle2, 
   ChevronRight, ChevronLeft, Phone, Calendar,
   Package, Eye, FileText, Navigation, Sparkles,
   AlertCircle, Plus, X, BadgeCheck, Camera, Radio, ChevronDown,
-  Star, Building2, Hash, CalendarCheck, ExternalLink
+  Star, Building2, Hash, CalendarCheck, ExternalLink, Upload, ImageIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -224,6 +224,15 @@ interface ConditionNote {
   note: string;
 }
 
+interface PhotoUpload {
+  id: string;
+  zone: string;
+  preview: string;
+  note: string;
+}
+
+const PHOTO_ZONES = ["Front", "Rear", "Left Side", "Right Side"];
+
 function ConditionReport() {
   const [overallCondition, setOverallCondition] = useState("Good");
   const [scratches, setScratches] = useState(false);
@@ -234,6 +243,10 @@ function ConditionReport() {
   const [selectedZone, setSelectedZone] = useState("");
   const [noteText, setNoteText] = useState("");
   const [notes, setNotes] = useState<ConditionNote[]>([]);
+  
+  // Photo uploads state
+  const [photos, setPhotos] = useState<PhotoUpload[]>([]);
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   
   const addNote = () => {
     if (!selectedZone || !noteText.trim()) return;
@@ -249,6 +262,38 @@ function ConditionReport() {
   const removeNote = (id: string) => {
     setNotes(prev => prev.filter(n => n.id !== id));
   };
+  
+  const handlePhotoUpload = (zone: string, e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const preview = event.target?.result as string;
+      setPhotos(prev => {
+        // Replace existing photo for this zone or add new
+        const existing = prev.find(p => p.zone === zone);
+        if (existing) {
+          return prev.map(p => p.zone === zone ? { ...p, preview } : p);
+        }
+        return [...prev, { id: Date.now().toString(), zone, preview, note: "" }];
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  const updatePhotoNote = (zone: string, note: string) => {
+    setPhotos(prev => prev.map(p => p.zone === zone ? { ...p, note } : p));
+  };
+  
+  const removePhoto = (zone: string) => {
+    setPhotos(prev => prev.filter(p => p.zone !== zone));
+    if (fileInputRefs.current[zone]) {
+      fileInputRefs.current[zone]!.value = "";
+    }
+  };
+  
+  const getPhotoForZone = (zone: string) => photos.find(p => p.zone === zone);
   
   return (
     <div className="at-condition-inner">
@@ -288,6 +333,59 @@ function ConditionReport() {
             <span>Wheel curb rash</span>
           </label>
         </div>
+      </div>
+      
+      {/* Photo Uploads */}
+      <div className="at-condition-photos">
+        <label className="at-form-label">Photo Documentation (Demo)</label>
+        <div className="at-photo-grid">
+          {PHOTO_ZONES.map(zone => {
+            const photo = getPhotoForZone(zone);
+            return (
+              <div key={zone} className="at-photo-card">
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={(el) => { fileInputRefs.current[zone] = el; }}
+                  onChange={(e) => handlePhotoUpload(zone, e)}
+                  className="at-photo-input"
+                  id={`photo-${zone}`}
+                />
+                
+                {photo ? (
+                  <div className="at-photo-preview">
+                    <img src={photo.preview} alt={zone} />
+                    <button 
+                      className="at-photo-remove" 
+                      onClick={() => removePhoto(zone)}
+                      type="button"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                    <div className="at-photo-zone-badge">{zone}</div>
+                  </div>
+                ) : (
+                  <label htmlFor={`photo-${zone}`} className="at-photo-placeholder">
+                    <Camera className="w-5 h-5" />
+                    <span className="at-photo-zone-label">{zone}</span>
+                    <span className="at-photo-upload-hint">Click to upload</span>
+                  </label>
+                )}
+                
+                {photo && (
+                  <input
+                    type="text"
+                    placeholder="Add note..."
+                    value={photo.note}
+                    onChange={(e) => updatePhotoNote(zone, e.target.value)}
+                    className="at-photo-note-input"
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <p className="at-photo-disclaimer">Demo only. Photos stored locally for preview.</p>
       </div>
       
       {/* Zone notes */}
