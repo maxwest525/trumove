@@ -33950,6 +33950,22 @@ gmp-map-3d-element .gmnoprint {
   color: hsl(0 70% 45%);
 }
 
+/* Red accent bar under header */
+.hvl-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    hsl(0 70% 45%) 0%, 
+    hsl(0 70% 55%) 50%, 
+    hsl(0 70% 45%) 100%
+  );
+  box-shadow: 0 2px 8px hsl(0 70% 45% / 0.3);
+}
+
 /* Mobile nav responsive */
 @media (max-width: 768px) {
   .hvl-nav {

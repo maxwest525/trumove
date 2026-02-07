@@ -11,6 +11,9 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [showButton] = useState(true);
+
+  // Hide on AutoTransport page (HVL has its own Hank chat)
+  const isAutoTransportPage = location.pathname === '/auto-transport';
   
   // Manual minimized state with localStorage persistence
   const [isMinimized, setIsMinimized] = useState(() => {
@@ -63,6 +66,11 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
     setIsScrollMinimized(false); // Also clear scroll-triggered state
     localStorage.removeItem('tm_ai_helper_minimized');
   };
+
+  // Hide completely on AutoTransport page (HVL has Hank)
+  if (isAutoTransportPage) {
+    return null;
+  }
 
   // When minimized - show a vertical strip on the right edge
   if (isCurrentlyMinimized) {
