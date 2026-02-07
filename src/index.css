@@ -34858,6 +34858,415 @@ gmp-map-3d-element .gmnoprint {
 }
 
 /* ─────────────────────────────────────────────
+   VEHICLE VIEWER 3D
+   ───────────────────────────────────────────── */
+.at-viewer-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.at-viewer-canvas {
+  height: 320px;
+  background: linear-gradient(180deg, hsl(0 0% 8%) 0%, hsl(0 0% 5%) 100%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.at-viewer-specs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  background: hsl(0 0% 6%);
+  border: 1px solid hsl(0 0% 12%);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.at-viewer-spec {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.at-viewer-spec-label {
+  font-size: 0.625rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 45%);
+}
+
+.at-viewer-spec-value {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: hsl(0 0% 90%);
+}
+
+.at-viewer-spec-divider {
+  width: 1px;
+  height: 28px;
+  background: hsl(0 0% 15%);
+}
+
+@media (max-width: 640px) {
+  .at-viewer-specs {
+    gap: 1rem;
+  }
+  .at-viewer-spec-divider {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   CONDITION REPORT FORM
+   ───────────────────────────────────────────── */
+.at-condition-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.at-condition-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.at-select-trigger-sm {
+  height: 38px;
+}
+
+.at-condition-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.at-condition-check-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.625rem;
+}
+
+@media (max-width: 480px) {
+  .at-condition-check-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.at-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: hsl(0 0% 75%);
+  cursor: pointer;
+}
+
+.at-checkbox {
+  border-color: hsl(0 0% 25%) !important;
+  background: hsl(0 0% 10%) !important;
+}
+
+.at-checkbox[data-state="checked"] {
+  background: hsl(var(--primary) / 0.2) !important;
+  border-color: hsl(var(--primary) / 0.5) !important;
+}
+
+.at-condition-notes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.at-condition-note-input {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .at-condition-note-input {
+    grid-template-columns: 1fr;
+  }
+}
+
+.at-textarea {
+  background: hsl(0 0% 10%) !important;
+  border: 1px solid hsl(0 0% 18%) !important;
+  color: hsl(0 0% 90%) !important;
+  font-size: 0.8125rem;
+  resize: none;
+}
+
+.at-textarea:focus {
+  border-color: hsl(var(--primary) / 0.5) !important;
+}
+
+.at-textarea::placeholder {
+  color: hsl(0 0% 40%);
+}
+
+.at-btn-add-note {
+  background: hsl(0 0% 15%) !important;
+  border: 1px solid hsl(0 0% 22%) !important;
+  color: hsl(0 0% 80%) !important;
+  height: 38px;
+  padding: 0 0.75rem;
+}
+
+.at-btn-add-note:hover:not(:disabled) {
+  background: hsl(0 0% 20%) !important;
+}
+
+.at-btn-add-note:disabled {
+  opacity: 0.4;
+}
+
+.at-condition-notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.at-condition-note-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  background: hsl(0 0% 8%);
+  border: 1px solid hsl(0 0% 14%);
+  border-radius: 6px;
+}
+
+.at-condition-note-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.at-condition-note-zone {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--primary) / 0.7);
+}
+
+.at-condition-note-text {
+  font-size: 0.8125rem;
+  color: hsl(0 0% 75%);
+}
+
+.at-condition-note-remove {
+  background: none;
+  border: none;
+  color: hsl(0 0% 40%);
+  padding: 0.25rem;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.at-condition-note-remove:hover {
+  color: hsl(0 80% 60%);
+}
+
+/* ─────────────────────────────────────────────
+   SHIPMENT TRACKER - FULL LAYOUT
+   ───────────────────────────────────────────── */
+.at-tracker-layout-full {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.5rem;
+  min-height: 400px;
+}
+
+@media (max-width: 900px) {
+  .at-tracker-layout-full {
+    grid-template-columns: 1fr;
+  }
+}
+
+.at-tracker-map-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.at-tracker-map-container {
+  position: relative;
+  height: 360px;
+  background: hsl(0 0% 6%);
+  border: 1px solid hsl(0 0% 12%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.at-tracker-map-inner {
+  width: 100%;
+  height: 100%;
+}
+
+.at-tracker-map-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: hsl(0 0% 40%);
+  background: hsl(0 0% 6%);
+}
+
+.at-tracker-map-placeholder svg {
+  opacity: 0.4;
+}
+
+.at-tracker-map-placeholder p {
+  font-size: 0.875rem;
+}
+
+.at-btn-start-tracking {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: hsl(0 0% 12%) !important;
+  border: 1px solid hsl(0 0% 20%) !important;
+  color: hsl(0 0% 100%) !important;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.at-btn-start-tracking:hover {
+  background: hsl(0 0% 18%) !important;
+}
+
+.at-tracker-info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.at-tracker-eta-panel {
+  background: hsl(0 0% 8%);
+  border: 1px solid hsl(0 0% 14%);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.at-tracker-eta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.at-tracker-eta-label {
+  font-size: 0.75rem;
+  color: hsl(0 0% 50%);
+}
+
+.at-tracker-eta-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(0 0% 90%);
+}
+
+.at-tracker-status-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.at-tracker-status-title,
+.at-tracker-updates-title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 50%);
+}
+
+.at-tracker-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.at-tracker-updates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.at-tracker-updates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.at-tracker-update {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.625rem 0.75rem;
+  background: hsl(0 0% 8%);
+  border: 1px solid hsl(0 0% 12%);
+  border-radius: 6px;
+}
+
+.at-tracker-update.complete {
+  border-left: 2px solid hsl(var(--primary) / 0.5);
+}
+
+.at-tracker-update.active {
+  border-left: 2px solid hsl(var(--primary));
+  background: hsl(var(--primary) / 0.05);
+}
+
+.at-tracker-update-time {
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: hsl(0 0% 45%);
+}
+
+.at-tracker-update-event {
+  font-size: 0.8125rem;
+  color: hsl(0 0% 80%);
+}
+
+.at-tracker-updates-empty {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: hsl(0 0% 6%);
+  border: 1px dashed hsl(0 0% 15%);
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  color: hsl(0 0% 40%);
+}
+
+.at-tracker-updates-empty svg {
+  opacity: 0.5;
+}
+
+/* ─────────────────────────────────────────────
    FOOTER OVERRIDE FOR AUTO TRANSPORT
    ───────────────────────────────────────────── */
 .auto-transport-page footer {
