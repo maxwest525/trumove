@@ -1158,6 +1158,96 @@ export default function AutoTransport() {
         </Card>
       </section>
 
+      {/* OPEN VS ENCLOSED COMPARISON */}
+      <section className="at-section">
+        <div className="at-section-header">
+          <span className="at-section-label">Transport Options</span>
+          <h2 className="at-section-title">Open vs Enclosed</h2>
+          <p className="at-section-subtitle">Choose the right protection level for your vehicle.</p>
+        </div>
+
+        <div className="at-comparison-grid">
+          {/* Open Transport */}
+          <Card className={`at-comparison-card ${transportType === 'Open' ? 'is-selected' : ''}`}>
+            <CardContent className="at-comparison-content">
+              <div className="at-comparison-header">
+                <Truck className="w-6 h-6" />
+                <span className="at-comparison-title">Open Transport</span>
+              </div>
+              <ul className="at-comparison-list">
+                <li>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Most affordable option</span>
+                </li>
+                <li>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Faster carrier availability</span>
+                </li>
+                <li>
+                  <AlertCircle className="w-4 h-4" />
+                  <span>Exposed to road conditions</span>
+                </li>
+              </ul>
+              <div className="at-comparison-footer">
+                <span className="at-comparison-best">Best for: Standard vehicles</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Enclosed Transport */}
+          <Card className={`at-comparison-card ${transportType === 'Enclosed' ? 'is-selected' : ''}`}>
+            <CardContent className="at-comparison-content">
+              <div className="at-comparison-header">
+                <Shield className="w-6 h-6" />
+                <span className="at-comparison-title">Enclosed Transport</span>
+              </div>
+              <ul className="at-comparison-list">
+                <li>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Premium protection</span>
+                </li>
+                <li>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Ideal for luxury/classic vehicles</span>
+                </li>
+                <li>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>White-glove handling</span>
+                </li>
+              </ul>
+              <div className="at-comparison-footer">
+                <span className="at-comparison-best">Best for: High-value vehicles</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="at-comparison-action">
+          <Button 
+            className="at-btn-secondary"
+            onClick={() => {
+              // Demo recommendation logic
+              const premiumMakes = ['BMW', 'Mercedes-Benz', 'Tesla', 'Porsche', 'Audi', 'Lexus'];
+              const premiumTypes = ['Truck', 'Classic', 'Exotic'];
+              const shouldEnclose = premiumMakes.includes(make) || premiumTypes.includes(vehicleType);
+              
+              const recommended = shouldEnclose ? 'Enclosed' : 'Open';
+              setTransportType(recommended);
+              
+              toast({
+                title: `Recommended: ${recommended} Transport`,
+                description: shouldEnclose 
+                  ? `Your ${make} ${model} qualifies for premium enclosed protection.`
+                  : `Open transport is ideal for your ${make} ${model}.`,
+              });
+            }}
+          >
+            <Sparkles className="w-4 h-4" />
+            Recommend for my vehicle (Demo)
+          </Button>
+        </div>
+      </section>
+
       {/* CONDITION REPORT */}
       <section className="at-section">
         <div className="at-section-header">
