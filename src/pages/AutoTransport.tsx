@@ -1,18 +1,10 @@
-import { useState, useRef, useEffect, useCallback, ChangeEvent } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { 
-  Car, Truck, Shield, Clock, MapPin, CheckCircle2, 
-  ChevronRight, ChevronLeft, Phone, Calendar,
-  Package, Eye, FileText, Navigation, Sparkles,
-  AlertCircle, Plus, X, BadgeCheck, Camera, Radio, ChevronDown,
-  Star, Building2, Hash, CalendarCheck, ExternalLink, Upload, ImageIcon,
-  User, MessageCircle, PhoneCall, Zap, Lock, ClipboardCheck,
-  Download, ShieldCheck, FileCheck, CalendarClock
+  Car, Truck, ChevronRight, ChevronLeft, Phone, Clock, MapPin,
+  CheckCircle2, Sparkles, ChevronDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -26,46 +18,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import Footer from "@/components/layout/Footer";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
 
-// Model Viewer types
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
-        src?: string;
-        alt?: string;
-        'auto-rotate'?: boolean;
-        'camera-controls'?: boolean;
-        'disable-zoom'?: boolean;
-        'rotation-per-second'?: string;
-        'interaction-prompt'?: string;
-        'shadow-intensity'?: string;
-        'environment-image'?: string;
-        exposure?: string;
-        poster?: string;
-      }, HTMLElement>;
-    }
-  }
-}
-
 // ═══════════════════════════════════════════════════════════════════
-// DATA & PRICING LOGIC
+// DATA & PRICING
 // ═══════════════════════════════════════════════════════════════════
 
 const YEARS = ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018"];
 const MAKES = ["BMW", "Chevrolet", "Ford", "Honda", "Tesla", "Toyota"];
-
 const MODELS: Record<string, string[]> = {
   BMW: ["3 Series", "5 Series", "X3", "X5", "X7"],
   Chevrolet: ["Camaro", "Corvette", "Equinox", "Silverado", "Tahoe"],
@@ -74,24 +38,9 @@ const MODELS: Record<string, string[]> = {
   Tesla: ["Model 3", "Model S", "Model X", "Model Y", "Cybertruck"],
   Toyota: ["Camry", "Corolla", "Highlander", "RAV4", "Tacoma"],
 };
-
-const VEHICLE_TYPES = ["Sedan", "SUV", "Truck", "Van"];
-const RUNS_OPTIONS = ["Runs", "Does not run"];
-const SIZE_OPTIONS = ["Standard", "Oversize"];
-
-const CITIES = [
-  "Miami, FL",
-  "Orlando, FL", 
-  "Atlanta, GA",
-  "Dallas, TX",
-  "Los Angeles, CA",
-  "New York, NY",
-];
-
-const TIMEFRAMES = ["ASAP", "1–3 days", "4–7 days", "Scheduled date"];
+const CITIES = ["Miami, FL", "Orlando, FL", "Atlanta, GA", "Dallas, TX", "Los Angeles, CA", "New York, NY"];
 const TRANSPORT_TYPES = ["Open", "Enclosed"];
 
-// Base route prices
 const ROUTE_PRICES: Record<string, Record<string, number>> = {
   "Miami, FL": { "Orlando, FL": 350, "Atlanta, GA": 550, "Dallas, TX": 1100, "Los Angeles, CA": 1450, "New York, NY": 1250 },
   "Orlando, FL": { "Miami, FL": 350, "Atlanta, GA": 450, "Dallas, TX": 950, "Los Angeles, CA": 1400, "New York, NY": 1150 },
@@ -101,534 +50,120 @@ const ROUTE_PRICES: Record<string, Record<string, number>> = {
   "New York, NY": { "Miami, FL": 1250, "Orlando, FL": 1150, "Atlanta, GA": 850, "Dallas, TX": 1400, "Los Angeles, CA": 1650 },
 };
 
-const TRANSIT_TIMES: Record<string, string> = { short: "2–3 days", medium: "4–6 days", long: "7–10 days" };
-
-function getTransitTime(from: string, to: string): string {
-  const price = ROUTE_PRICES[from]?.[to] || 800;
-  if (price < 500) return TRANSIT_TIMES.short;
-  if (price < 1000) return TRANSIT_TIMES.medium;
-  return TRANSIT_TIMES.long;
-}
-
-function calculateDemoPrice(from: string, to: string, vehicleType: string, transportType: string, runs: string, size: string) {
+function calculatePrice(from: string, to: string, transportType: string) {
   let base = ROUTE_PRICES[from]?.[to] || 800;
   if (transportType === "Enclosed") base *= 1.35;
-  if (runs === "Does not run") base *= 1.20;
-  if (size === "Oversize") base *= 1.20;
-  if (vehicleType === "Truck") base *= 1.10;
-  else if (vehicleType === "SUV") base *= 1.05;
   base = Math.round(base / 25) * 25;
   const low = Math.round((base * 0.92) / 25) * 25;
   const high = Math.round((base * 1.08) / 25) * 25;
-  return { low, high, base };
+  return { low, high };
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// STATIC DATA
-// ═══════════════════════════════════════════════════════════════════
-
-const TRUST_ITEMS = [
-  { icon: Shield, label: "Fully Insured" },
-  { icon: Clock, label: "On-Time Delivery" },
-  { icon: CheckCircle2, label: "Door-to-Door" },
-];
-
-const HOW_IT_WORKS = [
-  { step: 1, title: "Get a Quote", description: "Enter your vehicle and route details for an instant estimate." },
-  { step: 2, title: "Book & Schedule", description: "Choose your pickup date and confirm your transport." },
-  { step: 3, title: "Vehicle Pickup", description: "We collect your vehicle with a detailed condition report." },
-  { step: 4, title: "Track & Receive", description: "Monitor your shipment and receive your vehicle safely." },
-];
+function getTransitDays(from: string, to: string): string {
+  const price = ROUTE_PRICES[from]?.[to] || 800;
+  if (price < 500) return "2–3";
+  if (price < 1000) return "4–6";
+  return "7–10";
+}
 
 const FAQ_ITEMS = [
-  { question: "How long does auto transport take?", answer: "Transit times vary based on distance. Cross-country shipments typically take 7-10 days, while regional moves are often completed in 3-5 days." },
-  { question: "Is my vehicle insured during transport?", answer: "Yes, all vehicles are covered by carrier insurance during transport. We also offer supplemental coverage options for additional peace of mind." },
-  { question: "Can I ship a non-running vehicle?", answer: "Absolutely. We transport non-running, inoperable, and project vehicles. Additional equipment fees may apply." },
-  { question: "What's the difference between open and enclosed transport?", answer: "Open transport is cost-effective and suitable for most vehicles. Enclosed transport provides weather and debris protection, ideal for luxury, classic, or high-value vehicles." },
+  { q: "How long does transport take?", a: "Transit times vary by distance. Cross-country is typically 7-10 days, regional moves 3-5 days." },
+  { q: "Is my vehicle insured?", a: "Yes, all vehicles are covered by carrier insurance during transport." },
+  { q: "Can you ship non-running vehicles?", a: "Absolutely. Additional equipment fees may apply for inoperable vehicles." },
+  { q: "Open vs enclosed transport?", a: "Open is cost-effective for most vehicles. Enclosed provides weather protection for luxury or classic cars." },
 ];
 
-// Demo tracking updates
-const DEMO_UPDATES = [
-  { time: "Feb 7, 2:15 PM", event: "Shipment booked and confirmed", status: "complete" },
-  { time: "Feb 8, 9:30 AM", event: "Carrier assigned: Elite Auto Transport", status: "complete" },
-  { time: "Feb 9, 11:00 AM", event: "Pickup completed in Miami, FL", status: "complete" },
-  { time: "Feb 10, 3:45 PM", event: "In transit – Passing through Georgia", status: "active" },
-];
-
-// Condition zones
-const CONDITION_ZONES = ["Front", "Left Side", "Right Side", "Rear", "Roof"];
-const CONDITION_GRADES = ["Excellent", "Good", "Fair"];
-
 // ═══════════════════════════════════════════════════════════════════
-// VEHICLE VIEWER COMPONENT
+// TRACKER MAP
 // ═══════════════════════════════════════════════════════════════════
 
-interface VehicleViewerProps {
-  year: string;
-  make: string;
-  model: string;
-  vehicleType: string;
-  transportType: string;
-  runs: string;
-}
-
-function VehicleViewer({ year, make, model, vehicleType, transportType, runs }: VehicleViewerProps) {
-  // Free 3D car model from Google's model-viewer examples
-  const modelUrl = "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+function TrackerMap({ active }: { active: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const animRef = useRef<number>();
+  const [coords, setCoords] = useState<[number, number][]>([]);
   
-  // Alternative free car model
-  const carModelUrl = "https://raw.githubusercontent.com/ArturoMauricioDev/car-demo/main/public/porsche.glb";
+  const miami: [number, number] = [-80.1918, 25.7617];
+  const ny: [number, number] = [-74.006, 40.7128];
   
-  return (
-    <div className="at-viewer-inner">
-      <div className="at-viewer-canvas">
-        <model-viewer
-          src={carModelUrl}
-          alt={`${year} ${make} ${model}`}
-          auto-rotate
-          camera-controls
-          disable-zoom
-          rotation-per-second="20deg"
-          interaction-prompt="none"
-          shadow-intensity="0.5"
-          exposure="1"
-          style={{ width: '100%', height: '100%', background: 'transparent' }}
-        />
-      </div>
-      
-      {/* Spec row */}
-      <div className="at-viewer-specs">
-        <div className="at-viewer-spec">
-          <span className="at-viewer-spec-label">Vehicle</span>
-          <span className="at-viewer-spec-value">{year} {make} {model}</span>
-        </div>
-        <div className="at-viewer-spec-divider" />
-        <div className="at-viewer-spec">
-          <span className="at-viewer-spec-label">Transport</span>
-          <span className="at-viewer-spec-value">{transportType}</span>
-        </div>
-        <div className="at-viewer-spec-divider" />
-        <div className="at-viewer-spec">
-          <span className="at-viewer-spec-label">Condition</span>
-          <span className="at-viewer-spec-value">{runs}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// CONDITION REPORT COMPONENT
-// ═══════════════════════════════════════════════════════════════════
-
-interface ConditionNote {
-  id: string;
-  zone: string;
-  note: string;
-}
-
-interface PhotoUpload {
-  id: string;
-  zone: string;
-  preview: string;
-  note: string;
-}
-
-const PHOTO_ZONES = ["Front", "Rear", "Left Side", "Right Side"];
-
-function ConditionReport() {
-  const [overallCondition, setOverallCondition] = useState("Good");
-  const [scratches, setScratches] = useState(false);
-  const [dents, setDents] = useState(false);
-  const [windshield, setWindshield] = useState(false);
-  const [curb, setCurb] = useState(false);
-  
-  const [selectedZone, setSelectedZone] = useState("");
-  const [noteText, setNoteText] = useState("");
-  const [notes, setNotes] = useState<ConditionNote[]>([]);
-  
-  // Photo uploads state
-  const [photos, setPhotos] = useState<PhotoUpload[]>([]);
-  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  
-  const addNote = () => {
-    if (!selectedZone || !noteText.trim()) return;
-    setNotes(prev => [...prev, {
-      id: Date.now().toString(),
-      zone: selectedZone,
-      note: noteText.trim()
-    }]);
-    setNoteText("");
-    setSelectedZone("");
-  };
-  
-  const removeNote = (id: string) => {
-    setNotes(prev => prev.filter(n => n.id !== id));
-  };
-  
-  const handlePhotoUpload = (zone: string, e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const preview = event.target?.result as string;
-      setPhotos(prev => {
-        // Replace existing photo for this zone or add new
-        const existing = prev.find(p => p.zone === zone);
-        if (existing) {
-          return prev.map(p => p.zone === zone ? { ...p, preview } : p);
-        }
-        return [...prev, { id: Date.now().toString(), zone, preview, note: "" }];
-      });
-    };
-    reader.readAsDataURL(file);
-  };
-  
-  const updatePhotoNote = (zone: string, note: string) => {
-    setPhotos(prev => prev.map(p => p.zone === zone ? { ...p, note } : p));
-  };
-  
-  const removePhoto = (zone: string) => {
-    setPhotos(prev => prev.filter(p => p.zone !== zone));
-    if (fileInputRefs.current[zone]) {
-      fileInputRefs.current[zone]!.value = "";
-    }
-  };
-  
-  const getPhotoForZone = (zone: string) => photos.find(p => p.zone === zone);
-  
-  return (
-    <div className="at-condition-inner">
-      {/* Overall condition */}
-      <div className="at-condition-row">
-        <label className="at-form-label">Overall Condition</label>
-        <Select value={overallCondition} onValueChange={setOverallCondition}>
-          <SelectTrigger className="at-select-trigger at-select-trigger-sm">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className="at-select-content">
-            {CONDITION_GRADES.map(g => (
-              <SelectItem key={g} value={g}>{g}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      
-      {/* Checkboxes */}
-      <div className="at-condition-checks">
-        <label className="at-form-label">Existing Damage</label>
-        <div className="at-condition-check-grid">
-          <label className="at-checkbox-label">
-            <Checkbox checked={scratches} onCheckedChange={(c) => setScratches(!!c)} className="at-checkbox" />
-            <span>Existing scratches</span>
-          </label>
-          <label className="at-checkbox-label">
-            <Checkbox checked={dents} onCheckedChange={(c) => setDents(!!c)} className="at-checkbox" />
-            <span>Minor dents</span>
-          </label>
-          <label className="at-checkbox-label">
-            <Checkbox checked={windshield} onCheckedChange={(c) => setWindshield(!!c)} className="at-checkbox" />
-            <span>Windshield chips</span>
-          </label>
-          <label className="at-checkbox-label">
-            <Checkbox checked={curb} onCheckedChange={(c) => setCurb(!!c)} className="at-checkbox" />
-            <span>Wheel curb rash</span>
-          </label>
-        </div>
-      </div>
-      
-      {/* Photo Uploads */}
-      <div className="at-condition-photos">
-        <label className="at-form-label">Photo Documentation (Demo)</label>
-        <div className="at-photo-grid">
-          {PHOTO_ZONES.map(zone => {
-            const photo = getPhotoForZone(zone);
-            return (
-              <div key={zone} className="at-photo-card">
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={(el) => { fileInputRefs.current[zone] = el; }}
-                  onChange={(e) => handlePhotoUpload(zone, e)}
-                  className="at-photo-input"
-                  id={`photo-${zone}`}
-                />
-                
-                {photo ? (
-                  <div className="at-photo-preview">
-                    <img src={photo.preview} alt={zone} />
-                    <button 
-                      className="at-photo-remove" 
-                      onClick={() => removePhoto(zone)}
-                      type="button"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                    <div className="at-photo-zone-badge">{zone}</div>
-                  </div>
-                ) : (
-                  <label htmlFor={`photo-${zone}`} className="at-photo-placeholder">
-                    <Camera className="w-5 h-5" />
-                    <span className="at-photo-zone-label">{zone}</span>
-                    <span className="at-photo-upload-hint">Click to upload</span>
-                  </label>
-                )}
-                
-                {photo && (
-                  <input
-                    type="text"
-                    placeholder="Add note..."
-                    value={photo.note}
-                    onChange={(e) => updatePhotoNote(zone, e.target.value)}
-                    className="at-photo-note-input"
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <p className="at-photo-disclaimer">Demo only. Photos stored locally for preview.</p>
-      </div>
-      
-      {/* Zone notes */}
-      <div className="at-condition-notes-section">
-        <label className="at-form-label">Add Zone Note</label>
-        <div className="at-condition-note-input">
-          <Select value={selectedZone} onValueChange={setSelectedZone}>
-            <SelectTrigger className="at-select-trigger at-select-trigger-sm">
-              <SelectValue placeholder="Select zone" />
-            </SelectTrigger>
-            <SelectContent className="at-select-content">
-              {CONDITION_ZONES.map(z => (
-                <SelectItem key={z} value={z}>{z}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Textarea 
-            value={noteText}
-            onChange={(e) => setNoteText(e.target.value)}
-            placeholder="Describe damage or note..."
-            className="at-textarea"
-            rows={2}
-          />
-          <Button 
-            className="at-btn-add-note"
-            onClick={addNote}
-            disabled={!selectedZone || !noteText.trim()}
-          >
-            <Plus className="w-4 h-4" />
-            Add
-          </Button>
-        </div>
-        
-        {/* Saved notes */}
-        {notes.length > 0 && (
-          <div className="at-condition-notes-list">
-            {notes.map(note => (
-              <div key={note.id} className="at-condition-note-item">
-                <div className="at-condition-note-content">
-                  <span className="at-condition-note-zone">{note.zone}</span>
-                  <span className="at-condition-note-text">{note.note}</span>
-                </div>
-                <button onClick={() => removeNote(note.id)} className="at-condition-note-remove">
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// SHIPMENT TRACKER MAP COMPONENT
-// ═══════════════════════════════════════════════════════════════════
-
-function ShipmentTrackerMap({ isTracking }: { isTracking: boolean }) {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const animationRef = useRef<number>();
-  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
-  
-  // Miami to New York route
-  const miamiCoords: [number, number] = [-80.1918, 25.7617];
-  const nyCoords: [number, number] = [-74.006, 40.7128];
-  
-  // Fetch road-snapped route
   useEffect(() => {
-    if (!isTracking) return;
-    
+    if (!active) return;
     const fetchRoute = async () => {
-      const waypoints = [
-        miamiCoords,
-        [-81.3792, 28.5383], // Orlando
-        [-84.388, 33.749],   // Atlanta
-        [-77.0369, 38.9072], // Washington DC
-        nyCoords
-      ];
-      
-      const coordsString = waypoints.map(p => `${p[0]},${p[1]}`).join(';');
-      
+      const waypoints = [miami, [-81.3792, 28.5383], [-84.388, 33.749], [-77.0369, 38.9072], ny];
+      const str = waypoints.map(p => `${p[0]},${p[1]}`).join(';');
       try {
-        const response = await fetch(
-          `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsString}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`
-        );
-        const data = await response.json();
-        
-        if (data.routes?.[0]) {
-          setRouteCoords(data.routes[0].geometry.coordinates as [number, number][]);
-        }
-      } catch (error) {
-        console.error('Failed to fetch route:', error);
-        setRouteCoords([miamiCoords, nyCoords]);
-      }
+        const res = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${str}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`);
+        const data = await res.json();
+        if (data.routes?.[0]) setCoords(data.routes[0].geometry.coordinates);
+      } catch { setCoords([miami, ny]); }
     };
-    
     fetchRoute();
-  }, [isTracking]);
+  }, [active]);
   
-  // Interpolation helpers
-  const getPointAlongRoute = useCallback((progress: number): [number, number] => {
-    if (routeCoords.length < 2) return routeCoords[0] || miamiCoords;
-    const numSegments = routeCoords.length - 1;
-    const segmentProgress = progress * numSegments;
-    const segmentIndex = Math.min(Math.floor(segmentProgress), numSegments - 1);
-    const t = segmentProgress - segmentIndex;
-    const start = routeCoords[segmentIndex];
-    const end = routeCoords[Math.min(segmentIndex + 1, routeCoords.length - 1)];
-    return [start[0] + (end[0] - start[0]) * t, start[1] + (end[1] - start[1]) * t];
-  }, [routeCoords]);
+  const getPoint = useCallback((p: number): [number, number] => {
+    if (coords.length < 2) return coords[0] || miami;
+    const n = coords.length - 1;
+    const sp = p * n;
+    const i = Math.min(Math.floor(sp), n - 1);
+    const t = sp - i;
+    const s = coords[i], e = coords[Math.min(i + 1, coords.length - 1)];
+    return [s[0] + (e[0] - s[0]) * t, s[1] + (e[1] - s[1]) * t];
+  }, [coords]);
   
-  // Initialize map
   useEffect(() => {
-    if (!mapContainer.current || map.current || routeCoords.length < 2 || !isTracking) return;
-    
+    if (!containerRef.current || mapRef.current || coords.length < 2 || !active) return;
     mapboxgl.accessToken = MAPBOX_TOKEN;
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/navigation-night-v1',
-      center: [-84.388, 33.749], // Atlanta center
-      zoom: 5,
-      pitch: 0,
+    mapRef.current = new mapboxgl.Map({
+      container: containerRef.current,
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [-84.388, 33.749],
+      zoom: 4.5,
       interactive: true,
       attributionControl: false
     });
     
-    map.current.on('load', () => {
-      if (!map.current) return;
+    mapRef.current.on('load', () => {
+      if (!mapRef.current) return;
+      mapRef.current.addSource('route', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: coords } } });
+      mapRef.current.addLayer({ id: 'route-line', type: 'line', source: 'route', paint: { 'line-color': '#1a1a1a', 'line-width': 2, 'line-opacity': 0.6 } });
       
-      // Add route line
-      map.current.addSource('route', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: { type: 'LineString', coordinates: routeCoords }
-        }
-      });
-      
-      map.current.addLayer({
-        id: 'route-line',
-        type: 'line',
-        source: 'route',
-        layout: { 'line-join': 'round', 'line-cap': 'round' },
-        paint: { 'line-color': '#00e5a0', 'line-width': 3, 'line-opacity': 0.8 }
-      });
-      
-      // Fit to route
       const bounds = new mapboxgl.LngLatBounds();
-      routeCoords.forEach(coord => bounds.extend(coord));
-      map.current.fitBounds(bounds, { padding: 50 });
+      coords.forEach(c => bounds.extend(c));
+      mapRef.current.fitBounds(bounds, { padding: 40 });
       
-      // Start animation
-      let progress = 0.45; // Start ~45% along route (Georgia area)
-      
+      let progress = 0.45;
       const animate = () => {
-        if (!map.current) return;
+        if (!mapRef.current) return;
         progress += 0.0001;
         if (progress > 1) progress = 0;
-        
-        const position = getPointAlongRoute(progress);
-        
-        // Update truck marker position
-        const truckSource = map.current.getSource('truck') as mapboxgl.GeoJSONSource;
-        if (truckSource) {
-          truckSource.setData({
-            type: 'Feature',
-            properties: {},
-            geometry: { type: 'Point', coordinates: position }
-          });
-        }
-        
-        animationRef.current = requestAnimationFrame(animate);
+        const pos = getPoint(progress);
+        const src = mapRef.current.getSource('truck') as mapboxgl.GeoJSONSource;
+        if (src) src.setData({ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: pos } });
+        animRef.current = requestAnimationFrame(animate);
       };
       
-      // Add truck marker source
-      map.current.addSource('truck', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: { type: 'Point', coordinates: getPointAlongRoute(0.45) }
-        }
-      });
-      
-      map.current.addLayer({
-        id: 'truck-marker',
-        type: 'circle',
-        source: 'truck',
-        paint: {
-          'circle-radius': 8,
-          'circle-color': '#00e5a0',
-          'circle-stroke-width': 3,
-          'circle-stroke-color': '#0d0d0d'
-        }
-      });
-      
-      // Origin marker
-      map.current.addSource('origin', {
-        type: 'geojson',
-        data: { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: miamiCoords } }
-      });
-      map.current.addLayer({
-        id: 'origin-marker',
-        type: 'circle',
-        source: 'origin',
-        paint: { 'circle-radius': 6, 'circle-color': '#22c55e', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' }
-      });
-      
-      // Destination marker
-      map.current.addSource('destination', {
-        type: 'geojson',
-        data: { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: nyCoords } }
-      });
-      map.current.addLayer({
-        id: 'dest-marker',
-        type: 'circle',
-        source: 'destination',
-        paint: { 'circle-radius': 6, 'circle-color': '#ef4444', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' }
-      });
-      
+      mapRef.current.addSource('truck', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: getPoint(0.45) } } });
+      mapRef.current.addLayer({ id: 'truck-marker', type: 'circle', source: 'truck', paint: { 'circle-radius': 6, 'circle-color': '#1a1a1a', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' } });
+      mapRef.current.addSource('origin', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: miami } } });
+      mapRef.current.addLayer({ id: 'origin', type: 'circle', source: 'origin', paint: { 'circle-radius': 5, 'circle-color': '#16a34a', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' } });
+      mapRef.current.addSource('dest', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: ny } } });
+      mapRef.current.addLayer({ id: 'dest', type: 'circle', source: 'dest', paint: { 'circle-radius': 5, 'circle-color': '#dc2626', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' } });
       animate();
     });
     
     return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      if (map.current) { map.current.remove(); map.current = null; }
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
     };
-  }, [routeCoords, isTracking, getPointAlongRoute]);
+  }, [coords, active, getPoint]);
   
   return (
-    <div className="at-tracker-map-container">
-      <div ref={mapContainer} className="at-tracker-map-inner" />
-      {!isTracking && (
-        <div className="at-tracker-map-placeholder">
-          <Navigation className="w-10 h-10" />
-          <p>Click "Start Demo Tracking" to activate</p>
+    <div className="at-map-wrap">
+      <div ref={containerRef} className="at-map" />
+      {!active && (
+        <div className="at-map-placeholder">
+          <Truck className="w-8 h-8 text-neutral-300" />
+          <span>Demo tracking will appear here</span>
         </div>
       )}
     </div>
@@ -636,1175 +171,243 @@ function ShipmentTrackerMap({ isTracking }: { isTracking: boolean }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// MAIN COMPONENT
+// MAIN PAGE
 // ═══════════════════════════════════════════════════════════════════
 
 export default function AutoTransport() {
   const { toast } = useToast();
-  const trackerRef = useRef<HTMLDivElement>(null);
   
-  // Wizard state
-  const [activeStep, setActiveStep] = useState(1);
-  const [showTracker, setShowTracker] = useState(false);
-  const [isTracking, setIsTracking] = useState(false);
-  const [showCarrierMatch, setShowCarrierMatch] = useState(false);
-  const [showCarrierPacket, setShowCarrierPacket] = useState(false);
-  const [showDriverContact, setShowDriverContact] = useState(false);
-  
-  // Add-ons state
-  const [addons, setAddons] = useState({
-    priorityPickup: false,
-    enclosedUpgrade: false,
-    extraDocumentation: false,
-  });
-  
-  const addonPrices = {
-    priorityPickup: 150,
-    enclosedUpgrade: 350,
-    extraDocumentation: 75,
-  };
-  
-  const toggleAddon = (key: keyof typeof addons) => {
-    setAddons(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-  
-  const totalAddonCost = Object.entries(addons).reduce((sum, [key, enabled]) => 
-    enabled ? sum + addonPrices[key as keyof typeof addonPrices] : sum, 0
-  );
-  
-  // Dashboard modals
-  const [showBOLModal, setShowBOLModal] = useState(false);
-  const [showInsuranceModal, setShowInsuranceModal] = useState(false);
-  
-  // Step 1: Vehicle
-  const [year, setYear] = useState("2022");
-  const [make, setMake] = useState("BMW");
-  const [model, setModel] = useState("X5");
-  const [vehicleType, setVehicleType] = useState("SUV");
-  const [runs, setRuns] = useState("Runs");
-  const [size, setSize] = useState("Standard");
-  
-  // Step 2: Route
+  // Wizard
+  const [step, setStep] = useState(1);
+  const [year, setYear] = useState("2024");
+  const [make, setMake] = useState("Tesla");
+  const [model, setModel] = useState("Model Y");
   const [fromCity, setFromCity] = useState("Miami, FL");
   const [toCity, setToCity] = useState("New York, NY");
-  const [timeframe, setTimeframe] = useState("ASAP");
-  const [transportType, setTransportType] = useState("Enclosed");
+  const [transport, setTransport] = useState("Open");
   
-  // Pricing
-  const pricing = calculateDemoPrice(fromCity, toCity, vehicleType, transportType, runs, size);
-  const transitTime = getTransitTime(fromCity, toCity);
-  const availableModels = MODELS[make] || [];
+  // Tracking demo
+  const [booked, setBooked] = useState(false);
+  const [tracking, setTracking] = useState(false);
   
-  const handleMakeChange = (newMake: string) => {
-    setMake(newMake);
-    setModel(MODELS[newMake]?.[0] || "");
+  const models = MODELS[make] || [];
+  const pricing = calculatePrice(fromCity, toCity, transport);
+  const days = getTransitDays(fromCity, toCity);
+  
+  const handleMake = (m: string) => { setMake(m); setModel(MODELS[m]?.[0] || ""); };
+  
+  const canNext1 = year && make && model;
+  const canNext2 = fromCity && toCity && fromCity !== toCity;
+  
+  const reserve = () => {
+    setBooked(true);
+    toast({ title: "Shipment Reserved", description: `${year} ${make} ${model} transport confirmed.` });
   };
   
-  const handleReserve = () => {
-    setShowCarrierMatch(true);
-    setShowTracker(true);
-    toast({
-      title: "Demo Shipment Reserved!",
-      description: `Your ${year} ${make} ${model} transport has been scheduled.`,
-    });
-    // Scroll to carrier match after a brief delay
-    setTimeout(() => {
-      document.getElementById('carrier-match-section')?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 300);
+  const startTracking = () => {
+    setTracking(true);
+    toast({ title: "Tracking Started", description: "Watch the demo truck move along the route." });
   };
-  
-  const startDemoTracking = () => {
-    setIsTracking(true);
-    toast({ title: "Demo Tracking Started", description: "Watch the truck move along the route." });
-  };
-  
-  const canProceedStep1 = year && make && model && vehicleType && runs && size;
-  const canProceedStep2 = fromCity && toCity && fromCity !== toCity && timeframe && transportType;
-
-  // Load model-viewer script
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js';
-    document.head.appendChild(script);
-    return () => { document.head.removeChild(script); };
-  }, []);
 
   return (
-    <div className="auto-transport-page">
-      {/* Carrier Packet Modal */}
-      <Dialog open={showCarrierPacket} onOpenChange={setShowCarrierPacket}>
-        <DialogContent className="at-packet-modal">
-          <DialogHeader>
-            <DialogTitle className="at-packet-title">
-              <FileText className="w-5 h-5" />
-              Carrier Packet (Demo)
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="at-packet-content">
-            <div className="at-packet-section">
-              <h4 className="at-packet-section-title">Carrier Information</h4>
-              <div className="at-packet-grid">
-                <div className="at-packet-item"><span>Legal Name</span><span>Atlas Transport Group LLC</span></div>
-                <div className="at-packet-item"><span>DBA</span><span>Atlas Auto Carriers</span></div>
-                <div className="at-packet-item"><span>MC Number</span><span>MC-847293</span></div>
-                <div className="at-packet-item"><span>DOT Number</span><span>3284756</span></div>
-                <div className="at-packet-item"><span>Operating Authority</span><span>Active - Authorized</span></div>
-                <div className="at-packet-item"><span>Fleet Size</span><span>42 Power Units</span></div>
-              </div>
-            </div>
-            
-            <div className="at-packet-section">
-              <h4 className="at-packet-section-title">Insurance Coverage</h4>
-              <div className="at-packet-grid">
-                <div className="at-packet-item"><span>Cargo Insurance</span><span>$250,000</span></div>
-                <div className="at-packet-item"><span>Liability</span><span>$1,000,000</span></div>
-                <div className="at-packet-item"><span>Policy Expiration</span><span>Dec 31, 2026</span></div>
-                <div className="at-packet-item"><span>Insurer</span><span>Progressive Commercial</span></div>
-              </div>
-            </div>
-            
-            <div className="at-packet-section">
-              <h4 className="at-packet-section-title">Safety Record</h4>
-              <div className="at-packet-grid">
-                <div className="at-packet-item"><span>SAFER Rating</span><span>Satisfactory</span></div>
-                <div className="at-packet-item"><span>Inspections (24mo)</span><span>18</span></div>
-                <div className="at-packet-item"><span>Crashes (24mo)</span><span>0</span></div>
-                <div className="at-packet-item"><span>Driver Rating</span><span>4.9 / 5.0</span></div>
-              </div>
-            </div>
-            
-            <div className="at-packet-section">
-              <h4 className="at-packet-section-title">Equipment</h4>
-              <div className="at-packet-grid">
-                <div className="at-packet-item"><span>Trailer Types</span><span>Open & Enclosed</span></div>
-                <div className="at-packet-item"><span>Capacity</span><span>Up to 10 vehicles</span></div>
-                <div className="at-packet-item"><span>GPS Tracking</span><span>Yes - Real-time</span></div>
-                <div className="at-packet-item"><span>Hydraulic Lift</span><span>Available</span></div>
-              </div>
-            </div>
-            
-            <p className="at-packet-disclaimer">
-              Demo data for illustration purposes. Actual carrier credentials verified during booking.
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Driver Contact Modal */}
-      <Dialog open={showDriverContact} onOpenChange={setShowDriverContact}>
-        <DialogContent className="at-driver-modal">
-          <DialogHeader>
-            <DialogTitle className="at-packet-title">
-              <PhoneCall className="w-5 h-5" />
-              Contact Driver (Demo)
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="at-driver-modal-content">
-            <div className="at-driver-modal-profile">
-              <div className="at-driver-modal-avatar">
-                <User className="w-10 h-10" />
-              </div>
-              <div className="at-driver-modal-info">
-                <span className="at-driver-modal-name">Marcus Thompson</span>
-                <span className="at-driver-modal-carrier">Atlas Transport Group</span>
-                <div className="at-driver-modal-rating">
-                  <Star className="w-3.5 h-3.5" />
-                  <Star className="w-3.5 h-3.5" />
-                  <Star className="w-3.5 h-3.5" />
-                  <Star className="w-3.5 h-3.5" />
-                  <Star className="w-3.5 h-3.5" />
-                  <span>4.9</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="at-driver-modal-actions">
-              <Button 
-                className="at-btn-primary at-btn-full"
-                onClick={() => {
-                  toast({ title: "Demo Mode", description: "Call feature not available in demo." });
-                  setShowDriverContact(false);
-                }}
-              >
-                <Phone className="w-4 h-4" />
-                Call Driver
-              </Button>
-              <Button 
-                className="at-btn-secondary at-btn-full"
-                onClick={() => {
-                  toast({ title: "Demo Mode", description: "Message feature not available in demo." });
-                  setShowDriverContact(false);
-                }}
-              >
-                <MessageCircle className="w-4 h-4" />
-                Send Message
-              </Button>
-            </div>
-            
-            <div className="at-driver-modal-note">
-              <AlertCircle className="w-4 h-4" />
-              <span>For urgent issues, contact dispatch at 1-800-TRUMOVE</span>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      
+    <div className="at-page">
       {/* HERO */}
       <section className="at-hero">
-        <div className="at-hero-content">
-          <h1 className="at-hero-headline">
-            Vehicle Transport,<br />
-            <span className="at-hero-headline-accent">Simplified.</span>
-          </h1>
-          <p className="at-hero-subheadline">
-            Coast-to-coast auto shipping with real-time tracking, transparent pricing, and white-glove service.
-          </p>
-          <div className="at-hero-ctas">
-            <Button className="at-btn-primary" size="lg">Get Instant Quote<ChevronRight className="w-4 h-4" /></Button>
-            <Button variant="outline" className="at-btn-secondary" size="lg"><Phone className="w-4 h-4" />Speak to an Expert</Button>
-          </div>
-          <div className="at-trust-strip">
-            {TRUST_ITEMS.map((item, idx) => (
-              <div key={item.label} className="at-trust-item">
-                <item.icon className="w-4 h-4" /><span>{item.label}</span>
-                {idx < TRUST_ITEMS.length - 1 && <span className="at-trust-dot">•</span>}
-              </div>
-            ))}
+        <div className="at-hero-inner">
+          <h1 className="at-hero-title">Ship Your Vehicle</h1>
+          <p className="at-hero-sub">Transparent pricing. Real-time tracking. Nationwide coverage.</p>
+          <div className="at-hero-actions">
+            <Button className="at-btn" size="lg">Get Quote <ChevronRight className="w-4 h-4" /></Button>
+            <Button variant="outline" className="at-btn-outline" size="lg"><Phone className="w-4 h-4" /> Call Us</Button>
           </div>
         </div>
       </section>
 
-      {/* TRUST & COMPLIANCE BAND */}
-      <section className="at-trust-band">
-        <div className="at-trust-band-inner">
-          <div className="at-trust-band-grid">
-            <div className="at-compliance-card">
-              <div className="at-compliance-icon">
-                <Shield className="w-5 h-5" />
-              </div>
-              <div className="at-compliance-text">
-                <span className="at-compliance-title">DOT & FMCSA Compliant</span>
-                <span className="at-compliance-subtitle">Carrier Network</span>
-              </div>
-            </div>
-            
-            <div className="at-compliance-card">
-              <div className="at-compliance-icon">
-                <BadgeCheck className="w-5 h-5" />
-              </div>
-              <div className="at-compliance-text">
-                <span className="at-compliance-title">Cargo Insurance Verified</span>
-                <span className="at-compliance-subtitle">Demo</span>
-              </div>
-            </div>
-            
-            <div className="at-compliance-card">
-              <div className="at-compliance-icon">
-                <Radio className="w-5 h-5" />
-              </div>
-              <div className="at-compliance-text">
-                <span className="at-compliance-title">Live Driver Status</span>
-                <span className="at-compliance-subtitle">Demo</span>
-              </div>
-            </div>
-            
-            <div className="at-compliance-card">
-              <div className="at-compliance-icon">
-                <Camera className="w-5 h-5" />
-              </div>
-              <div className="at-compliance-text">
-                <span className="at-compliance-title">Condition Report & Photo</span>
-                <span className="at-compliance-subtitle">Demo</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* QUOTE WIZARD */}
+      {/* WIZARD */}
       <section className="at-section">
-        <div className="at-section-header">
-          <span className="at-section-label">Instant Pricing</span>
-          <h2 className="at-section-title">Get Your Quote</h2>
-          <p className="at-section-subtitle">Enter your details for a transparent, all-inclusive estimate.</p>
-        </div>
-
-        <Card className="at-wizard-card">
-          <CardContent className="at-wizard-content">
-            <div className="at-wizard-progress"><div className="at-wizard-progress-bar" style={{ width: `${(activeStep / 3) * 100}%` }} /></div>
-            
-            <div className="at-wizard-steps">
-              {[{ num: 1, label: "Vehicle" }, { num: 2, label: "Route" }, { num: 3, label: "Review" }].map((step) => (
+        <Card className="at-card">
+          <CardContent className="at-card-inner">
+            {/* Steps */}
+            <div className="at-steps">
+              {["Vehicle", "Route", "Review"].map((label, i) => (
                 <button
-                  key={step.num}
-                  className={`at-wizard-step ${activeStep >= step.num ? 'is-active' : ''} ${activeStep === step.num ? 'is-current' : ''}`}
-                  onClick={() => step.num < activeStep && setActiveStep(step.num)}
-                  disabled={step.num > activeStep}
+                  key={label}
+                  className={`at-step ${step > i ? 'done' : ''} ${step === i + 1 ? 'active' : ''}`}
+                  onClick={() => i + 1 < step && setStep(i + 1)}
+                  disabled={i + 1 > step}
                 >
-                  <span className="at-wizard-step-num">{step.num}</span>
-                  <span className="at-wizard-step-label">{step.label}</span>
+                  <span className="at-step-num">{i + 1}</span>
+                  <span className="at-step-label">{label}</span>
                 </button>
               ))}
             </div>
 
             {/* Step 1 */}
-            {activeStep === 1 && (
-              <div className="at-wizard-body">
-                <div className="at-wizard-form">
-                  <h3 className="at-wizard-form-title">Vehicle Details</h3>
-                  <div className="at-form-grid">
-                    <div className="at-form-field"><label className="at-form-label">Year</label><Select value={year} onValueChange={setYear}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{YEARS.map((y) => (<SelectItem key={y} value={y}>{y}</SelectItem>))}</SelectContent></Select></div>
-                    <div className="at-form-field"><label className="at-form-label">Make</label><Select value={make} onValueChange={handleMakeChange}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{MAKES.map((m) => (<SelectItem key={m} value={m}>{m}</SelectItem>))}</SelectContent></Select></div>
-                    <div className="at-form-field"><label className="at-form-label">Model</label><Select value={model} onValueChange={setModel}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{availableModels.map((m) => (<SelectItem key={m} value={m}>{m}</SelectItem>))}</SelectContent></Select></div>
-                    <div className="at-form-field"><label className="at-form-label">Vehicle Type</label><Select value={vehicleType} onValueChange={setVehicleType}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{VEHICLE_TYPES.map((t) => (<SelectItem key={t} value={t}>{t}</SelectItem>))}</SelectContent></Select></div>
-                    <div className="at-form-field"><label className="at-form-label">Condition</label><Select value={runs} onValueChange={setRuns}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{RUNS_OPTIONS.map((r) => (<SelectItem key={r} value={r}>{r}</SelectItem>))}</SelectContent></Select></div>
-                    <div className="at-form-field"><label className="at-form-label">Size</label><Select value={size} onValueChange={setSize}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{SIZE_OPTIONS.map((s) => (<SelectItem key={s} value={s}>{s}</SelectItem>))}</SelectContent></Select></div>
-                  </div>
+            {step === 1 && (
+              <div className="at-form">
+                <div className="at-form-row">
+                  <label>Year</label>
+                  <Select value={year} onValueChange={setYear}>
+                    <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
+                    <SelectContent>{YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="at-form-row">
+                  <label>Make</label>
+                  <Select value={make} onValueChange={handleMake}>
+                    <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
+                    <SelectContent>{MAKES.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="at-form-row">
+                  <label>Model</label>
+                  <Select value={model} onValueChange={setModel}>
+                    <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
+                    <SelectContent>{models.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+                  </Select>
                 </div>
               </div>
             )}
 
             {/* Step 2 */}
-            {activeStep === 2 && (
-              <div className="at-wizard-body">
-                <div className="at-wizard-form">
-                  <h3 className="at-wizard-form-title">Route & Options</h3>
-                  <div className="at-form-grid at-form-grid-2">
-                    <div className="at-form-field"><label className="at-form-label">Pickup Location</label><Select value={fromCity} onValueChange={setFromCity}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{CITIES.map((c) => (<SelectItem key={c} value={c} disabled={c === toCity}>{c}</SelectItem>))}</SelectContent></Select></div>
-                    <div className="at-form-field"><label className="at-form-label">Delivery Location</label><Select value={toCity} onValueChange={setToCity}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{CITIES.map((c) => (<SelectItem key={c} value={c} disabled={c === fromCity}>{c}</SelectItem>))}</SelectContent></Select></div>
-                    <div className="at-form-field"><label className="at-form-label">Pickup Timeframe</label><Select value={timeframe} onValueChange={setTimeframe}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{TIMEFRAMES.map((t) => (<SelectItem key={t} value={t}>{t}</SelectItem>))}</SelectContent></Select></div>
-                    <div className="at-form-field"><label className="at-form-label">Transport Type</label><Select value={transportType} onValueChange={setTransportType}><SelectTrigger className="at-select-trigger"><SelectValue /></SelectTrigger><SelectContent className="at-select-content">{TRANSPORT_TYPES.map((t) => (<SelectItem key={t} value={t}>{t} {t === "Enclosed" && <span className="at-select-badge">+35%</span>}</SelectItem>))}</SelectContent></Select></div>
-                  </div>
+            {step === 2 && (
+              <div className="at-form">
+                <div className="at-form-row">
+                  <label>Pickup</label>
+                  <Select value={fromCity} onValueChange={setFromCity}>
+                    <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
+                    <SelectContent>{CITIES.map(c => <SelectItem key={c} value={c} disabled={c === toCity}>{c}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="at-form-row">
+                  <label>Delivery</label>
+                  <Select value={toCity} onValueChange={setToCity}>
+                    <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
+                    <SelectContent>{CITIES.map(c => <SelectItem key={c} value={c} disabled={c === fromCity}>{c}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="at-form-row">
+                  <label>Transport</label>
+                  <Select value={transport} onValueChange={setTransport}>
+                    <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
+                    <SelectContent>{TRANSPORT_TYPES.map(t => <SelectItem key={t} value={t}>{t}{t === "Enclosed" && " (+35%)"}</SelectItem>)}</SelectContent>
+                  </Select>
                 </div>
               </div>
             )}
 
             {/* Step 3 */}
-            {activeStep === 3 && (
-              <div className="at-wizard-body">
-                <div className="at-review-layout">
-                  <div className="at-review-summary">
-                    <h3 className="at-wizard-form-title">Your Vehicle</h3>
-                    <div className="at-review-vehicle"><Car className="w-8 h-8" /><div><span className="at-review-vehicle-name">{year} {make} {model}</span><span className="at-review-vehicle-meta">{vehicleType} • {runs} • {size}</span></div></div>
-                    <div className="at-review-route">
-                      <div className="at-review-route-point"><span className="at-review-route-dot at-review-route-dot-origin" /><span>{fromCity}</span></div>
-                      <div className="at-review-route-line" />
-                      <div className="at-review-route-point"><span className="at-review-route-dot at-review-route-dot-dest" /><span>{toCity}</span></div>
-                    </div>
-                    <div className="at-review-details">
-                      <div className="at-review-detail"><span>Transport</span><span>{transportType}</span></div>
-                      <div className="at-review-detail"><span>Timeframe</span><span>{timeframe}</span></div>
-                    </div>
+            {step === 3 && (
+              <div className="at-review">
+                <div className="at-review-vehicle">
+                  <Car className="w-6 h-6" />
+                  <div>
+                    <span className="at-review-title">{year} {make} {model}</span>
+                    <span className="at-review-meta">{transport} Transport</span>
                   </div>
-                  
-                  <div className="at-estimate-card">
-                    <div className="at-estimate-header"><Sparkles className="w-5 h-5" /><span>Demo Estimate</span></div>
-                    <div className="at-estimate-price"><span className="at-estimate-price-label">Estimated Price</span><span className="at-estimate-price-value">${pricing.low.toLocaleString()} – ${pricing.high.toLocaleString()}</span></div>
-                    
-                    {/* Price Breakdown Dropdown */}
-                    <details className="at-breakdown-details">
-                      <summary className="at-breakdown-trigger">
-                        <span>Price Breakdown (Demo)</span>
-                        <ChevronDown className="at-breakdown-chevron" />
-                      </summary>
-                      <div className="at-breakdown-content">
-                        <div className="at-breakdown-lines">
-                          <div className="at-breakdown-line">
-                            <span>Base Route Rate</span>
-                            <span>${(ROUTE_PRICES[fromCity]?.[toCity] || 800).toLocaleString()}</span>
-                          </div>
-                          {vehicleType === "Truck" && (
-                            <div className="at-breakdown-line at-breakdown-line-adjust">
-                              <span>Vehicle Type (Truck)</span>
-                              <span>+10%</span>
-                            </div>
-                          )}
-                          {vehicleType === "SUV" && (
-                            <div className="at-breakdown-line at-breakdown-line-adjust">
-                              <span>Vehicle Type (SUV)</span>
-                              <span>+5%</span>
-                            </div>
-                          )}
-                          {vehicleType !== "Truck" && vehicleType !== "SUV" && (
-                            <div className="at-breakdown-line at-breakdown-line-neutral">
-                              <span>Vehicle Type ({vehicleType})</span>
-                              <span>—</span>
-                            </div>
-                          )}
-                          <div className={`at-breakdown-line ${transportType === "Enclosed" ? "at-breakdown-line-adjust" : "at-breakdown-line-neutral"}`}>
-                            <span>Transport Type ({transportType})</span>
-                            <span>{transportType === "Enclosed" ? "+35%" : "—"}</span>
-                          </div>
-                          <div className={`at-breakdown-line ${runs === "Does not run" ? "at-breakdown-line-adjust" : "at-breakdown-line-neutral"}`}>
-                            <span>Condition ({runs})</span>
-                            <span>{runs === "Does not run" ? "+20%" : "—"}</span>
-                          </div>
-                          <div className={`at-breakdown-line ${size === "Oversize" ? "at-breakdown-line-adjust" : "at-breakdown-line-neutral"}`}>
-                            <span>Size ({size})</span>
-                            <span>{size === "Oversize" ? "+20%" : "—"}</span>
-                          </div>
-                          <div className="at-breakdown-line at-breakdown-line-margin">
-                            <span>Est. Carrier Margin (Demo)</span>
-                            <span>±8%</span>
-                          </div>
-                        </div>
-                        <div className="at-breakdown-total">
-                          <span>Total Range</span>
-                          <span>${pricing.low.toLocaleString()} – ${pricing.high.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </details>
-                    
-                    <div className="at-estimate-meta">
-                      <div className="at-estimate-meta-item"><Clock className="w-4 h-4" /><div><span className="at-estimate-meta-label">Pickup Window</span><span className="at-estimate-meta-value">{timeframe === "ASAP" ? "1–2 days" : timeframe}</span></div></div>
-                      <div className="at-estimate-meta-item"><MapPin className="w-4 h-4" /><div><span className="at-estimate-meta-label">Transit Time</span><span className="at-estimate-meta-value">{transitTime}</span></div></div>
-                    </div>
-                    <div className="at-estimate-actions">
-                      <Button className="at-btn-primary at-btn-full" onClick={() => toast({ title: "Demo Estimate Generated", description: `Estimated cost: $${pricing.low.toLocaleString()} – $${pricing.high.toLocaleString()}` })}>Get Demo Estimate</Button>
-                      <Button className="at-btn-reserve at-btn-full" onClick={handleReserve}>Reserve Demo Shipment<ChevronRight className="w-4 h-4" /></Button>
-                    </div>
-                    <p className="at-estimate-disclaimer">Demo pricing only. Final confirmed after carrier match.</p>
-                  </div>
-                  
-                  {/* Carrier Match Preview - appears after reserve */}
-                  {showCarrierMatch && (
-                    <div id="carrier-match-section" className="at-carrier-match-card">
-                      <div className="at-carrier-match-header">
-                        <CheckCircle2 className="w-5 h-5" />
-                        <span>Carrier Match Preview (Demo)</span>
-                      </div>
-                      
-                      <div className="at-carrier-info">
-                        <div className="at-carrier-name-row">
-                          <Building2 className="w-5 h-5" />
-                          <div>
-                            <span className="at-carrier-name">Atlas Transport Group</span>
-                            <span className="at-carrier-verified"><BadgeCheck className="w-3.5 h-3.5" /> Insurance Verified</span>
-                          </div>
-                        </div>
-                        
-                        <div className="at-carrier-details-grid">
-                          <div className="at-carrier-detail">
-                            <span className="at-carrier-detail-label">MC Number</span>
-                            <span className="at-carrier-detail-value">MC-847293</span>
-                          </div>
-                          <div className="at-carrier-detail">
-                            <span className="at-carrier-detail-label">DOT Number</span>
-                            <span className="at-carrier-detail-value">3284756</span>
-                          </div>
-                          <div className="at-carrier-detail">
-                            <span className="at-carrier-detail-label">Driver Rating</span>
-                            <span className="at-carrier-detail-value at-carrier-stars">
-                              <Star className="w-3.5 h-3.5" />
-                              <Star className="w-3.5 h-3.5" />
-                              <Star className="w-3.5 h-3.5" />
-                              <Star className="w-3.5 h-3.5" />
-                              <Star className="w-3.5 h-3.5" />
-                              <span>4.9</span>
-                            </span>
-                          </div>
-                          <div className="at-carrier-detail">
-                            <span className="at-carrier-detail-label">Equipment</span>
-                            <span className="at-carrier-detail-value">{transportType} Trailer</span>
-                          </div>
-                          <div className="at-carrier-detail at-carrier-detail-wide">
-                            <span className="at-carrier-detail-label">Next Available Pickup</span>
-                            <span className="at-carrier-detail-value at-carrier-pickup">
-                              <CalendarCheck className="w-3.5 h-3.5" />
-                              Feb 10, 2026
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <Button 
-                        className="at-btn-secondary at-btn-full" 
-                        onClick={() => setShowCarrierPacket(true)}
-                      >
-                        <FileText className="w-4 h-4" />
-                        View Carrier Packet
-                      </Button>
-                    </div>
-                  )}
                 </div>
+                
+                <div className="at-review-route">
+                  <div className="at-review-point"><span className="at-dot origin" />{fromCity}</div>
+                  <div className="at-review-line" />
+                  <div className="at-review-point"><span className="at-dot dest" />{toCity}</div>
+                </div>
+                
+                <div className="at-estimate">
+                  <div className="at-estimate-header">
+                    <Sparkles className="w-4 h-4" />
+                    <span>Estimate</span>
+                  </div>
+                  <div className="at-estimate-price">${pricing.low.toLocaleString()} – ${pricing.high.toLocaleString()}</div>
+                  <div className="at-estimate-meta">
+                    <span><Clock className="w-3.5 h-3.5" /> {days} days transit</span>
+                    <span><MapPin className="w-3.5 h-3.5" /> Door-to-door</span>
+                  </div>
+                </div>
+                
+                <Button className="at-btn at-btn-full" onClick={reserve}>Reserve Shipment</Button>
               </div>
             )}
 
+            {/* Footer */}
             <div className="at-wizard-footer">
-              <Button variant="outline" className="at-btn-secondary" disabled={activeStep === 1} onClick={() => setActiveStep(Math.max(1, activeStep - 1))}><ChevronLeft className="w-4 h-4" />Back</Button>
-              {activeStep < 3 && (<Button className="at-btn-primary" disabled={activeStep === 1 ? !canProceedStep1 : !canProceedStep2} onClick={() => setActiveStep(Math.min(3, activeStep + 1))}>Continue<ChevronRight className="w-4 h-4" /></Button>)}
+              <Button variant="outline" className="at-btn-outline" disabled={step === 1} onClick={() => setStep(step - 1)}>
+                <ChevronLeft className="w-4 h-4" /> Back
+              </Button>
+              {step < 3 && (
+                <Button className="at-btn" disabled={step === 1 ? !canNext1 : !canNext2} onClick={() => setStep(step + 1)}>
+                  Continue <ChevronRight className="w-4 h-4" />
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
       </section>
 
-      {/* VEHICLE VIEWER */}
-      <section className="at-section at-section-alt">
-        <div className="at-section-header">
-          <span className="at-section-label">Interactive Preview</span>
-          <h2 className="at-section-title">Vehicle Profile (Demo)</h2>
-          <p className="at-section-subtitle">Inspect your vehicle from every angle.</p>
-        </div>
-
-        <Card className="at-viewer-card">
-          <CardContent className="at-viewer-content">
-            <VehicleViewer 
-              year={year} 
-              make={make} 
-              model={model} 
-              vehicleType={vehicleType}
-              transportType={transportType}
-              runs={runs}
-            />
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* OPEN VS ENCLOSED COMPARISON */}
-      <section className="at-section">
-        <div className="at-section-header">
-          <span className="at-section-label">Transport Options</span>
-          <h2 className="at-section-title">Open vs Enclosed</h2>
-          <p className="at-section-subtitle">Choose the right protection level for your vehicle.</p>
-        </div>
-
-        <div className="at-comparison-grid">
-          {/* Open Transport */}
-          <Card className={`at-comparison-card ${transportType === 'Open' ? 'is-selected' : ''}`}>
-            <CardContent className="at-comparison-content">
-              <div className="at-comparison-header">
-                <Truck className="w-6 h-6" />
-                <span className="at-comparison-title">Open Transport</span>
-              </div>
-              <ul className="at-comparison-list">
-                <li>
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Most affordable option</span>
-                </li>
-                <li>
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Faster carrier availability</span>
-                </li>
-                <li>
-                  <AlertCircle className="w-4 h-4" />
-                  <span>Exposed to road conditions</span>
-                </li>
-              </ul>
-              <div className="at-comparison-footer">
-                <span className="at-comparison-best">Best for: Standard vehicles</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Enclosed Transport */}
-          <Card className={`at-comparison-card ${transportType === 'Enclosed' ? 'is-selected' : ''}`}>
-            <CardContent className="at-comparison-content">
-              <div className="at-comparison-header">
-                <Shield className="w-6 h-6" />
-                <span className="at-comparison-title">Enclosed Transport</span>
-              </div>
-              <ul className="at-comparison-list">
-                <li>
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Premium protection</span>
-                </li>
-                <li>
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Ideal for luxury/classic vehicles</span>
-                </li>
-                <li>
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>White-glove handling</span>
-                </li>
-              </ul>
-              <div className="at-comparison-footer">
-                <span className="at-comparison-best">Best for: High-value vehicles</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="at-comparison-action">
-          <Button 
-            className="at-btn-secondary"
-            onClick={() => {
-              // Demo recommendation logic
-              const premiumMakes = ['BMW', 'Mercedes-Benz', 'Tesla', 'Porsche', 'Audi', 'Lexus'];
-              const premiumTypes = ['Truck', 'Classic', 'Exotic'];
-              const shouldEnclose = premiumMakes.includes(make) || premiumTypes.includes(vehicleType);
+      {/* TRACKER */}
+      {booked && (
+        <section className="at-section">
+          <div className="at-section-title">Track Shipment</div>
+          <Card className="at-card">
+            <CardContent className="at-card-inner at-tracker">
+              <TrackerMap active={tracking} />
               
-              const recommended = shouldEnclose ? 'Enclosed' : 'Open';
-              setTransportType(recommended);
-              
-              toast({
-                title: `Recommended: ${recommended} Transport`,
-                description: shouldEnclose 
-                  ? `Your ${make} ${model} qualifies for premium enclosed protection.`
-                  : `Open transport is ideal for your ${make} ${model}.`,
-              });
-            }}
-          >
-            <Sparkles className="w-4 h-4" />
-            Recommend for my vehicle (Demo)
-          </Button>
-        </div>
-      </section>
-
-      {/* CONDITION REPORT */}
-      <section className="at-section">
-        <div className="at-section-header">
-          <span className="at-section-label">Documentation</span>
-          <h2 className="at-section-title">Pre-Transport Condition (Demo)</h2>
-          <p className="at-section-subtitle">Record existing damage before pickup.</p>
-        </div>
-
-        <Card className="at-report-card">
-          <CardContent className="at-report-content">
-            <ConditionReport />
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* OPTIONAL PROTECTION ADD-ONS */}
-      <section className="at-section at-section-alt">
-        <div className="at-section-header">
-          <span className="at-section-label">Optional Upgrades</span>
-          <h2 className="at-section-title">Shipment Protection (Demo)</h2>
-          <p className="at-section-subtitle">Enhance your transport with premium add-ons.</p>
-        </div>
-
-        <div className="at-addons-grid">
-          {/* Priority Pickup */}
-          <Card className="at-addon-card">
-            <CardContent className="at-addon-content">
-              <div className="at-addon-header">
-                <div className="at-addon-icon">
-                  <Zap className="w-5 h-5" />
+              <div className="at-tracker-panel">
+                <div className="at-tracker-status">
+                  <div className="at-status-item done"><CheckCircle2 className="w-4 h-4" /> Booked</div>
+                  <div className="at-status-item done"><CheckCircle2 className="w-4 h-4" /> Carrier Assigned</div>
+                  <div className={`at-status-item ${tracking ? 'active' : ''}`}>
+                    <div className="at-status-dot" /> In Transit
+                  </div>
+                  <div className="at-status-item"><div className="at-status-dot" /> Delivered</div>
                 </div>
-                <Switch 
-                  checked={addons.priorityPickup} 
-                  onCheckedChange={() => toggleAddon('priorityPickup')}
-                />
-              </div>
-              <div className="at-addon-info">
-                <span className="at-addon-title">Priority Pickup Window</span>
-                <span className="at-addon-description">Guaranteed 24-48hr pickup slot with flexible scheduling</span>
-              </div>
-              <div className="at-addon-footer">
-                <span className="at-addon-price">+${addonPrices.priorityPickup}</span>
-                <span className="at-addon-tag">Demo</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Enclosed Upgrade */}
-          <Card className="at-addon-card">
-            <CardContent className="at-addon-content">
-              <div className="at-addon-header">
-                <div className="at-addon-icon">
-                  <Lock className="w-5 h-5" />
+                
+                <div className="at-tracker-info">
+                  <div className="at-info-row"><span>ETA</span><span>Feb 14–15, 2026</span></div>
+                  <div className="at-info-row"><span>Status</span><span>{tracking ? "In Transit" : "Awaiting Pickup"}</span></div>
                 </div>
-                <Switch 
-                  checked={addons.enclosedUpgrade} 
-                  onCheckedChange={() => toggleAddon('enclosedUpgrade')}
-                />
-              </div>
-              <div className="at-addon-info">
-                <span className="at-addon-title">Enclosed Upgrade</span>
-                <span className="at-addon-description">Full weather protection in a climate-controlled trailer</span>
-              </div>
-              <div className="at-addon-footer">
-                <span className="at-addon-price">+${addonPrices.enclosedUpgrade}</span>
-                <span className="at-addon-tag">Demo</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Extra Documentation */}
-          <Card className="at-addon-card">
-            <CardContent className="at-addon-content">
-              <div className="at-addon-header">
-                <div className="at-addon-icon">
-                  <ClipboardCheck className="w-5 h-5" />
-                </div>
-                <Switch 
-                  checked={addons.extraDocumentation} 
-                  onCheckedChange={() => toggleAddon('extraDocumentation')}
-                />
-              </div>
-              <div className="at-addon-info">
-                <span className="at-addon-title">Extra Condition Documentation</span>
-                <span className="at-addon-description">50+ photo inspection with video walkthrough at pickup & delivery</span>
-              </div>
-              <div className="at-addon-footer">
-                <span className="at-addon-price">+${addonPrices.extraDocumentation}</span>
-                <span className="at-addon-tag">Demo</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Updated Estimate */}
-        {totalAddonCost > 0 && (
-          <div className="at-addons-summary">
-            <div className="at-addons-summary-row">
-              <span className="at-addons-summary-label">Base Estimate</span>
-              <span className="at-addons-summary-value">${pricing.low.toLocaleString()} – ${pricing.high.toLocaleString()}</span>
-            </div>
-            <div className="at-addons-summary-row">
-              <span className="at-addons-summary-label">Add-ons</span>
-              <span className="at-addons-summary-value at-addons-plus">+${totalAddonCost}</span>
-            </div>
-            <div className="at-addons-summary-row at-addons-total">
-              <span className="at-addons-summary-label">Updated Estimate</span>
-              <span className="at-addons-summary-value">${(pricing.low + totalAddonCost).toLocaleString()} – ${(pricing.high + totalAddonCost).toLocaleString()}</span>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* SHIPMENT TRACKER */}
-      <section ref={trackerRef} className={`at-section at-section-alt at-tracker-section ${showTracker ? 'is-visible' : ''}`}>
-        <div className="at-section-header">
-          <span className="at-section-label">Real-Time Updates</span>
-          <h2 className="at-section-title">Shipment Tracker (Demo)</h2>
-          <p className="at-section-subtitle">Know exactly where your vehicle is at every step.</p>
-        </div>
-
-        <Card className="at-tracker-card">
-          <CardContent className="at-tracker-content">
-            <div className="at-tracker-layout-full">
-              {/* Map */}
-              <div className="at-tracker-map-panel">
-                <ShipmentTrackerMap isTracking={isTracking} />
-                {!isTracking && showTracker && (
-                  <Button className="at-btn-start-tracking" onClick={startDemoTracking}>
-                    <Navigation className="w-4 h-4" />
+                
+                {!tracking && (
+                  <Button className="at-btn at-btn-full" onClick={startTracking}>
                     Start Demo Tracking
                   </Button>
                 )}
               </div>
-
-              {/* Info Panel - Tesla Style */}
-              <div className="at-tracker-info-panel">
-                {/* Tesla-Style Timeline */}
-                <div className="at-tesla-timeline">
-                  <div className="at-tesla-timeline-header">
-                    <span className="at-tesla-timeline-label">Delivery Progress</span>
-                    {showTracker && isTracking && (
-                      <span className="at-tesla-timeline-active">
-                        <span className="at-tesla-pulse" />
-                        Live
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="at-tesla-steps">
-                    {[
-                      { step: "Booked", tag: "Confirmed", complete: true },
-                      { step: "Carrier Assigned", tag: "Confirmed", complete: true },
-                      { step: "Pickup Scheduled", tag: "Scheduled", complete: true },
-                      { step: "In Transit", tag: "In Progress", complete: false, active: true },
-                      { step: "Delivered", tag: "Pending", complete: false },
-                    ].map((item, idx, arr) => {
-                      const isComplete = showTracker && item.complete;
-                      const isActive = showTracker && isTracking && item.active;
-                      const progressWidth = showTracker ? (isComplete ? 100 : isActive ? 45 : 0) : 0;
-                      
-                      return (
-                        <div key={item.step} className="at-tesla-step-wrapper">
-                          <div className={`at-tesla-step ${isComplete ? 'is-complete' : ''} ${isActive ? 'is-active' : ''}`}>
-                            <div className="at-tesla-step-indicator">
-                              {isComplete ? (
-                                <CheckCircle2 className="w-4 h-4" />
-                              ) : (
-                                <div className="at-tesla-step-dot" />
-                              )}
-                            </div>
-                            <div className="at-tesla-step-content">
-                              <span className="at-tesla-step-name">{item.step}</span>
-                              <span className={`at-tesla-step-tag ${isActive ? 'is-active' : isComplete ? 'is-complete' : ''}`}>
-                                {item.tag}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          {idx < arr.length - 1 && (
-                            <div className="at-tesla-step-connector">
-                              <div 
-                                className="at-tesla-step-progress" 
-                                style={{ height: `${progressWidth}%` }} 
-                              />
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                
-                {/* Driver Info Card */}
-                {showTracker && (
-                  <div className="at-driver-card">
-                    <div className="at-driver-header">
-                      <User className="w-4 h-4" />
-                      <span>Driver Information (Demo)</span>
-                    </div>
-                    
-                    <div className="at-driver-info">
-                      <div className="at-driver-avatar">
-                        <div className="at-driver-avatar-placeholder">
-                          <User className="w-6 h-6" />
-                        </div>
-                      </div>
-                      <div className="at-driver-details">
-                        <span className="at-driver-name">Marcus Thompson</span>
-                        <span className="at-driver-id">Driver ID: ATG-2847</span>
-                      </div>
-                    </div>
-                    
-                    <div className="at-driver-stats">
-                      <div className="at-driver-stat">
-                        <span className="at-driver-stat-label">Current Location</span>
-                        <span className="at-driver-stat-value">
-                          <MapPin className="w-3.5 h-3.5" />
-                          {isTracking ? "Savannah, GA" : "—"}
-                        </span>
-                      </div>
-                      <div className="at-driver-stat">
-                        <span className="at-driver-stat-label">Next Checkpoint</span>
-                        <span className="at-driver-stat-value">
-                          <Clock className="w-3.5 h-3.5" />
-                          {isTracking ? "Richmond, VA • 6:30 PM" : "—"}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      className="at-btn-secondary at-btn-full at-driver-contact-btn" 
-                      onClick={() => setShowDriverContact(true)}
-                      disabled={!isTracking}
-                    >
-                      <PhoneCall className="w-4 h-4" />
-                      Contact Driver
-                    </Button>
-                  </div>
-                )}
-                
-                {/* ETA Summary */}
-                <div className="at-tracker-eta-panel">
-                  <div className="at-tracker-eta-row">
-                    <span className="at-tracker-eta-label">ETA Window</span>
-                    <span className="at-tracker-eta-value">{showTracker ? "Feb 14–15, 2026" : "—"}</span>
-                  </div>
-                  <div className="at-tracker-eta-row">
-                    <span className="at-tracker-eta-label">Last Update</span>
-                    <span className="at-tracker-eta-value">{isTracking ? "Feb 10, 3:45 PM" : "—"}</span>
-                  </div>
-                  
-                  {/* ETA Confidence */}
-                  {showTracker && (
-                    <div className="at-eta-confidence">
-                      <div className="at-eta-confidence-header">
-                        <span className="at-eta-confidence-label">ETA Confidence</span>
-                        <span className="at-eta-confidence-badge">High</span>
-                      </div>
-                      <div className="at-eta-confidence-bar">
-                        <div className="at-eta-confidence-fill" style={{ width: isTracking ? '87%' : '0%' }} />
-                      </div>
-                      <span className="at-eta-confidence-note">Based on route conditions (demo)</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* CUSTOMER DASHBOARD PREVIEW */}
-      {showTracker && (
-        <section className="at-section">
-          <div className="at-section-header">
-            <span className="at-section-label">Your Portal</span>
-            <h2 className="at-section-title">Customer Dashboard (Demo)</h2>
-            <p className="at-section-subtitle">Access your shipment details, documents, and carrier information.</p>
-          </div>
-
-          <div className="at-dashboard-grid">
-            {/* Shipment Status Tile */}
-            <div className="at-dashboard-tile">
-              <div className="at-dashboard-tile-header">
-                <div className="at-dashboard-tile-icon">
-                  <Package className="w-5 h-5" />
-                </div>
-                <span className="at-dashboard-tile-title">Shipment Status</span>
-              </div>
-              <div className="at-dashboard-tile-content">
-                <span className="at-dashboard-tile-value">{isTracking ? "In Transit" : "Scheduled"}</span>
-                <span className="at-dashboard-tile-meta">Order #TM-2026-847293</span>
-              </div>
-              <div className="at-dashboard-tile-footer">
-                <span className={`at-dashboard-status-badge ${isTracking ? 'is-active' : ''}`}>
-                  {isTracking ? "Live Tracking" : "Awaiting Pickup"}
-                </span>
-              </div>
-            </div>
-
-            {/* Pickup Window Tile */}
-            <div className="at-dashboard-tile">
-              <div className="at-dashboard-tile-header">
-                <div className="at-dashboard-tile-icon">
-                  <CalendarClock className="w-5 h-5" />
-                </div>
-                <span className="at-dashboard-tile-title">Pickup Window</span>
-              </div>
-              <div className="at-dashboard-tile-content">
-                <span className="at-dashboard-tile-value">Feb 10, 2026</span>
-                <span className="at-dashboard-tile-meta">8:00 AM – 12:00 PM EST</span>
-              </div>
-              <div className="at-dashboard-tile-footer">
-                <span className="at-dashboard-status-badge is-confirmed">Confirmed</span>
-              </div>
-            </div>
-
-            {/* Carrier Assigned Tile */}
-            <div className="at-dashboard-tile">
-              <div className="at-dashboard-tile-header">
-                <div className="at-dashboard-tile-icon">
-                  <Truck className="w-5 h-5" />
-                </div>
-                <span className="at-dashboard-tile-title">Carrier Assigned</span>
-              </div>
-              <div className="at-dashboard-tile-content">
-                <span className="at-dashboard-tile-value">Atlas Transport</span>
-                <span className="at-dashboard-tile-meta">MC-847293 • DOT 3284756</span>
-              </div>
-              <div className="at-dashboard-tile-footer">
-                <div className="at-dashboard-carrier-rating">
-                  <Star className="w-3 h-3" />
-                  <span>4.9</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Documents Tile */}
-            <div className="at-dashboard-tile">
-              <div className="at-dashboard-tile-header">
-                <div className="at-dashboard-tile-icon">
-                  <FileCheck className="w-5 h-5" />
-                </div>
-                <span className="at-dashboard-tile-title">Documents</span>
-              </div>
-              <div className="at-dashboard-tile-content">
-                <span className="at-dashboard-tile-value">3 Files Ready</span>
-                <span className="at-dashboard-tile-meta">BOL, Insurance, Inspection</span>
-              </div>
-              <div className="at-dashboard-tile-footer">
-                <span className="at-dashboard-status-badge">View All</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Document Actions */}
-          <div className="at-dashboard-actions">
-            <Button 
-              className="at-btn-secondary"
-              onClick={() => setShowBOLModal(true)}
-            >
-              <Download className="w-4 h-4" />
-              Download BOL (Demo)
-            </Button>
-            <Button 
-              className="at-btn-secondary"
-              onClick={() => setShowInsuranceModal(true)}
-            >
-              <ShieldCheck className="w-4 h-4" />
-              View Insurance (Demo)
-            </Button>
-          </div>
+            </CardContent>
+          </Card>
         </section>
       )}
 
-      {/* BOL Modal */}
-      <Dialog open={showBOLModal} onOpenChange={setShowBOLModal}>
-        <DialogContent className="at-document-modal">
-          <DialogHeader>
-            <DialogTitle className="at-document-modal-title">
-              <FileText className="w-5 h-5" />
-              Bill of Lading (Demo)
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="at-document-modal-content">
-            <div className="at-document-preview">
-              <div className="at-document-header-row">
-                <span className="at-document-label">Document #</span>
-                <span className="at-document-value">BOL-2026-847293</span>
-              </div>
-              <div className="at-document-header-row">
-                <span className="at-document-label">Issue Date</span>
-                <span className="at-document-value">Feb 10, 2026</span>
-              </div>
-              <div className="at-document-header-row">
-                <span className="at-document-label">Shipper</span>
-                <span className="at-document-value">TruMove Auto Transport</span>
-              </div>
-              
-              <div className="at-document-divider" />
-              
-              <div className="at-document-section">
-                <span className="at-document-section-title">Vehicle Information</span>
-                <div className="at-document-row">
-                  <span className="at-document-label">Vehicle</span>
-                  <span className="at-document-value">{year} {make} {model}</span>
-                </div>
-                <div className="at-document-row">
-                  <span className="at-document-label">VIN</span>
-                  <span className="at-document-value">WBAPH5C55BA******</span>
-                </div>
-                <div className="at-document-row">
-                  <span className="at-document-label">Transport Type</span>
-                  <span className="at-document-value">{transportType}</span>
-                </div>
-              </div>
-              
-              <div className="at-document-section">
-                <span className="at-document-section-title">Route</span>
-                <div className="at-document-row">
-                  <span className="at-document-label">Origin</span>
-                  <span className="at-document-value">{fromCity}</span>
-                </div>
-                <div className="at-document-row">
-                  <span className="at-document-label">Destination</span>
-                  <span className="at-document-value">{toCity}</span>
-                </div>
-              </div>
-            </div>
-            
-            <Button 
-              className="at-btn-primary at-btn-full"
-              onClick={() => {
-                toast({ title: "Demo Mode", description: "Download not available in demo." });
-                setShowBOLModal(false);
-              }}
-            >
-              <Download className="w-4 h-4" />
-              Download PDF
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Insurance Modal */}
-      <Dialog open={showInsuranceModal} onOpenChange={setShowInsuranceModal}>
-        <DialogContent className="at-document-modal">
-          <DialogHeader>
-            <DialogTitle className="at-document-modal-title">
-              <ShieldCheck className="w-5 h-5" />
-              Insurance Certificate (Demo)
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="at-document-modal-content">
-            <div className="at-document-preview">
-              <div className="at-insurance-badge">
-                <ShieldCheck className="w-8 h-8" />
-                <span>Fully Insured</span>
-              </div>
-              
-              <div className="at-document-section">
-                <span className="at-document-section-title">Coverage Details</span>
-                <div className="at-document-row">
-                  <span className="at-document-label">Carrier</span>
-                  <span className="at-document-value">Atlas Transport Group</span>
-                </div>
-                <div className="at-document-row">
-                  <span className="at-document-label">Policy #</span>
-                  <span className="at-document-value">ATG-INS-2026-4729</span>
-                </div>
-                <div className="at-document-row">
-                  <span className="at-document-label">Cargo Coverage</span>
-                  <span className="at-document-value">$250,000</span>
-                </div>
-                <div className="at-document-row">
-                  <span className="at-document-label">Liability Coverage</span>
-                  <span className="at-document-value">$1,000,000</span>
-                </div>
-                <div className="at-document-row">
-                  <span className="at-document-label">Valid Through</span>
-                  <span className="at-document-value">Dec 31, 2026</span>
-                </div>
-              </div>
-              
-              <div className="at-insurance-verified">
-                <BadgeCheck className="w-4 h-4" />
-                <span>Verified by FMCSA</span>
-              </div>
-            </div>
-            
-            <Button 
-              className="at-btn-primary at-btn-full"
-              onClick={() => {
-                toast({ title: "Demo Mode", description: "Download not available in demo." });
-                setShowInsuranceModal(false);
-              }}
-            >
-              <Download className="w-4 h-4" />
-              Download Certificate
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* HOW IT WORKS + FAQ */}
+      {/* HOW IT WORKS */}
       <section className="at-section">
-        <div className="at-dual-layout">
-          <div className="at-how-it-works">
-            <div className="at-section-header at-section-header-left">
-              <span className="at-section-label">Process</span>
-              <h2 className="at-section-title">How It Works</h2>
+        <div className="at-section-title">How It Works</div>
+        <div className="at-steps-grid">
+          {[
+            { n: 1, t: "Get a Quote", d: "Enter your vehicle and route for an instant estimate." },
+            { n: 2, t: "Book & Schedule", d: "Choose your pickup date and confirm transport." },
+            { n: 3, t: "Pickup", d: "We collect your vehicle with a condition report." },
+            { n: 4, t: "Track & Receive", d: "Monitor your shipment and receive your vehicle." },
+          ].map(s => (
+            <div key={s.n} className="at-step-card">
+              <span className="at-step-n">{s.n}</span>
+              <span className="at-step-t">{s.t}</span>
+              <span className="at-step-d">{s.d}</span>
             </div>
-            <div className="at-steps-list">
-              {HOW_IT_WORKS.map((item) => (
-                <div key={item.step} className="at-step-item">
-                  <div className="at-step-num">{item.step}</div>
-                  <div className="at-step-text"><h3>{item.title}</h3><p>{item.description}</p></div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="at-faq">
-            <div className="at-section-header at-section-header-left">
-              <span className="at-section-label">Questions</span>
-              <h2 className="at-section-title">FAQ</h2>
-            </div>
-            <Accordion type="single" collapsible className="at-faq-list">
-              {FAQ_ITEMS.map((item, idx) => (
-                <AccordionItem key={idx} value={`faq-${idx}`} className="at-faq-item">
-                  <AccordionTrigger className="at-faq-trigger">{item.question}</AccordionTrigger>
-                  <AccordionContent className="at-faq-content">{item.answer}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* BOTTOM CTA */}
-      <section className="at-cta-section">
-        <div className="at-cta-content">
-          <h2 className="at-cta-headline">Ready to Ship Your Vehicle?</h2>
-          <p className="at-cta-subheadline">Get a free quote in under 60 seconds. No obligation.</p>
-          <div className="at-cta-buttons">
-            <Button className="at-btn-primary" size="lg">Get Your Quote<ChevronRight className="w-4 h-4" /></Button>
-            <Button variant="outline" className="at-btn-secondary" size="lg"><Calendar className="w-4 h-4" />Schedule a Call</Button>
-          </div>
-        </div>
+      {/* FAQ */}
+      <section className="at-section">
+        <div className="at-section-title">FAQ</div>
+        <Accordion type="single" collapsible className="at-faq">
+          {FAQ_ITEMS.map((f, i) => (
+            <AccordionItem key={i} value={`faq-${i}`} className="at-faq-item">
+              <AccordionTrigger className="at-faq-q">{f.q}</AccordionTrigger>
+              <AccordionContent className="at-faq-a">{f.a}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </section>
 
       <Footer />
