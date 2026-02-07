@@ -20,7 +20,8 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import heroImage from "@/assets/hvl-hero-transport.jpg";
+import HankChatButton from "@/components/hvl/HankChatButton";
+import heroImage from "@/assets/hvl-hero-dynamic.jpg";
 import hvlLogo from "@/assets/hvl-logo.png";
 
 // ═══════════════════════════════════════════════════════════════════
@@ -160,18 +161,31 @@ export default function AutoTransport() {
         </div>
       </header>
 
-      {/* HERO SECTION */}
-      <section className="hvl-hero">
-        <div className="hvl-hero-inner">
-          {/* Left: Headline + Image */}
-          <div className="hvl-hero-text">
-            <h1>Reliable Auto Transport</h1>
+      {/* HERO SECTION - Full width dramatic hero */}
+      <section className="hvl-hero-dramatic">
+        <div className="hvl-hero-bg" style={{ backgroundImage: `url(${heroImage})` }}>
+          <div className="hvl-hero-overlay" />
+        </div>
+        <div className="hvl-hero-content">
+          <div className="hvl-hero-headline">
+            <h1>Ship Your Vehicle <span>Nationwide</span></h1>
             <p>
-              Trust Howard Van Lines for safe, insured vehicle shipping across the nation. 
-              Get your free quote in minutes.
+              Trusted by 50,000+ customers. Fully insured. Door-to-door delivery. 
+              Get your instant quote in 60 seconds.
             </p>
-            <div className="hvl-hero-image">
-              <img src={heroImage} alt="Auto transport truck carrying vehicles" />
+            <div className="hvl-hero-badges">
+              <div className="hvl-hero-badge">
+                <Shield className="w-4 h-4" />
+                <span>$1M Insurance</span>
+              </div>
+              <div className="hvl-hero-badge">
+                <Star className="w-4 h-4" />
+                <span>4.9/5 Rating</span>
+              </div>
+              <div className="hvl-hero-badge">
+                <Truck className="w-4 h-4" />
+                <span>48 States</span>
+              </div>
             </div>
           </div>
 
@@ -644,6 +658,9 @@ export default function AutoTransport() {
       <footer className="hvl-footer">
         <p>© 2025 Howard Van Lines. All rights reserved.</p>
       </footer>
+
+      {/* Hank Chat Assistant */}
+      <HankChatButton />
     </div>
   );
 }
