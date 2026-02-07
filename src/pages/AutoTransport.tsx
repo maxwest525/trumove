@@ -5,12 +5,13 @@ import {
   Package, Eye, FileText, Navigation, Sparkles,
   AlertCircle, Plus, X, BadgeCheck, Camera, Radio, ChevronDown,
   Star, Building2, Hash, CalendarCheck, ExternalLink, Upload, ImageIcon,
-  User, MessageCircle, PhoneCall
+  User, MessageCircle, PhoneCall, Zap, Lock, ClipboardCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -649,6 +650,27 @@ export default function AutoTransport() {
   const [showCarrierPacket, setShowCarrierPacket] = useState(false);
   const [showDriverContact, setShowDriverContact] = useState(false);
   
+  // Add-ons state
+  const [addons, setAddons] = useState({
+    priorityPickup: false,
+    enclosedUpgrade: false,
+    extraDocumentation: false,
+  });
+  
+  const addonPrices = {
+    priorityPickup: 150,
+    enclosedUpgrade: 350,
+    extraDocumentation: 75,
+  };
+  
+  const toggleAddon = (key: keyof typeof addons) => {
+    setAddons(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+  
+  const totalAddonCost = Object.entries(addons).reduce((sum, [key, enabled]) => 
+    enabled ? sum + addonPrices[key as keyof typeof addonPrices] : sum, 0
+  );
+  
   // Step 1: Vehicle
   const [year, setYear] = useState("2022");
   const [make, setMake] = useState("BMW");
@@ -1149,6 +1171,104 @@ export default function AutoTransport() {
             <ConditionReport />
           </CardContent>
         </Card>
+      </section>
+
+      {/* OPTIONAL PROTECTION ADD-ONS */}
+      <section className="at-section at-section-alt">
+        <div className="at-section-header">
+          <span className="at-section-label">Optional Upgrades</span>
+          <h2 className="at-section-title">Shipment Protection (Demo)</h2>
+          <p className="at-section-subtitle">Enhance your transport with premium add-ons.</p>
+        </div>
+
+        <div className="at-addons-grid">
+          {/* Priority Pickup */}
+          <Card className="at-addon-card">
+            <CardContent className="at-addon-content">
+              <div className="at-addon-header">
+                <div className="at-addon-icon">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <Switch 
+                  checked={addons.priorityPickup} 
+                  onCheckedChange={() => toggleAddon('priorityPickup')}
+                />
+              </div>
+              <div className="at-addon-info">
+                <span className="at-addon-title">Priority Pickup Window</span>
+                <span className="at-addon-description">Guaranteed 24-48hr pickup slot with flexible scheduling</span>
+              </div>
+              <div className="at-addon-footer">
+                <span className="at-addon-price">+${addonPrices.priorityPickup}</span>
+                <span className="at-addon-tag">Demo</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Enclosed Upgrade */}
+          <Card className="at-addon-card">
+            <CardContent className="at-addon-content">
+              <div className="at-addon-header">
+                <div className="at-addon-icon">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <Switch 
+                  checked={addons.enclosedUpgrade} 
+                  onCheckedChange={() => toggleAddon('enclosedUpgrade')}
+                />
+              </div>
+              <div className="at-addon-info">
+                <span className="at-addon-title">Enclosed Upgrade</span>
+                <span className="at-addon-description">Full weather protection in a climate-controlled trailer</span>
+              </div>
+              <div className="at-addon-footer">
+                <span className="at-addon-price">+${addonPrices.enclosedUpgrade}</span>
+                <span className="at-addon-tag">Demo</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Extra Documentation */}
+          <Card className="at-addon-card">
+            <CardContent className="at-addon-content">
+              <div className="at-addon-header">
+                <div className="at-addon-icon">
+                  <ClipboardCheck className="w-5 h-5" />
+                </div>
+                <Switch 
+                  checked={addons.extraDocumentation} 
+                  onCheckedChange={() => toggleAddon('extraDocumentation')}
+                />
+              </div>
+              <div className="at-addon-info">
+                <span className="at-addon-title">Extra Condition Documentation</span>
+                <span className="at-addon-description">50+ photo inspection with video walkthrough at pickup & delivery</span>
+              </div>
+              <div className="at-addon-footer">
+                <span className="at-addon-price">+${addonPrices.extraDocumentation}</span>
+                <span className="at-addon-tag">Demo</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Updated Estimate */}
+        {totalAddonCost > 0 && (
+          <div className="at-addons-summary">
+            <div className="at-addons-summary-row">
+              <span className="at-addons-summary-label">Base Estimate</span>
+              <span className="at-addons-summary-value">${pricing.low.toLocaleString()} – ${pricing.high.toLocaleString()}</span>
+            </div>
+            <div className="at-addons-summary-row">
+              <span className="at-addons-summary-label">Add-ons</span>
+              <span className="at-addons-summary-value at-addons-plus">+${totalAddonCost}</span>
+            </div>
+            <div className="at-addons-summary-row at-addons-total">
+              <span className="at-addons-summary-label">Updated Estimate</span>
+              <span className="at-addons-summary-value">${(pricing.low + totalAddonCost).toLocaleString()} – ${(pricing.high + totalAddonCost).toLocaleString()}</span>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* SHIPMENT TRACKER */}
