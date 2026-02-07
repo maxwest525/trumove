@@ -34469,6 +34469,395 @@ gmp-map-3d-element .gmnoprint {
 }
 
 /* ─────────────────────────────────────────────
+   WIZARD FORM STYLES
+   ───────────────────────────────────────────── */
+.at-wizard-progress {
+  height: 2px;
+  background: hsl(0 0% 15%);
+  border-radius: 2px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.at-wizard-progress-bar {
+  height: 100%;
+  background: hsl(var(--primary) / 0.6);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.at-wizard-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.at-wizard-form-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: hsl(0 0% 90%);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.at-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.at-form-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 640px) {
+  .at-form-grid,
+  .at-form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.at-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.at-form-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 50%);
+}
+
+/* Select Trigger - Dark theme */
+.at-select-trigger {
+  background: hsl(0 0% 10%) !important;
+  border: 1px solid hsl(0 0% 18%) !important;
+  color: hsl(0 0% 90%) !important;
+  height: 42px;
+  font-size: 0.875rem;
+}
+
+.at-select-trigger:hover {
+  border-color: hsl(0 0% 25%) !important;
+}
+
+.at-select-trigger:focus {
+  border-color: hsl(var(--primary) / 0.5) !important;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1) !important;
+}
+
+/* Select Content - Solid dark background */
+.at-select-content {
+  background: hsl(0 0% 10%) !important;
+  border: 1px solid hsl(0 0% 18%) !important;
+  z-index: 100;
+}
+
+.at-select-content [data-radix-select-viewport] {
+  background: hsl(0 0% 10%) !important;
+}
+
+.at-select-content [role="option"] {
+  color: hsl(0 0% 80%) !important;
+  font-size: 0.875rem;
+}
+
+.at-select-content [role="option"]:hover,
+.at-select-content [role="option"][data-highlighted] {
+  background: hsl(0 0% 15%) !important;
+  color: hsl(0 0% 100%) !important;
+}
+
+.at-select-content [role="option"][data-disabled] {
+  color: hsl(0 0% 35%) !important;
+  opacity: 0.5;
+}
+
+.at-select-badge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: hsl(var(--primary) / 0.8);
+  margin-left: 0.5rem;
+}
+
+/* ─────────────────────────────────────────────
+   REVIEW STEP STYLES
+   ───────────────────────────────────────────── */
+.at-review-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .at-review-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.at-review-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.at-review-vehicle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: hsl(0 0% 10%);
+  border: 1px solid hsl(0 0% 14%);
+  border-radius: 8px;
+}
+
+.at-review-vehicle svg {
+  color: hsl(var(--primary) / 0.7);
+  flex-shrink: 0;
+}
+
+.at-review-vehicle-name {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: hsl(0 0% 95%);
+}
+
+.at-review-vehicle-meta {
+  display: block;
+  font-size: 0.75rem;
+  color: hsl(0 0% 50%);
+  margin-top: 0.125rem;
+}
+
+.at-review-route {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: hsl(0 0% 8%);
+  border: 1px solid hsl(0 0% 12%);
+  border-radius: 8px;
+}
+
+.at-review-route-point {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  color: hsl(0 0% 80%);
+}
+
+.at-review-route-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.at-review-route-dot-origin {
+  background: hsl(var(--primary));
+}
+
+.at-review-route-dot-dest {
+  background: hsl(0 0% 40%);
+  border: 2px solid hsl(0 0% 50%);
+}
+
+.at-review-route-line {
+  width: 1px;
+  height: 20px;
+  background: hsl(0 0% 20%);
+  margin-left: 4px;
+}
+
+.at-review-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.at-review-detail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid hsl(0 0% 10%);
+}
+
+.at-review-detail span:first-child {
+  color: hsl(0 0% 50%);
+}
+
+.at-review-detail span:last-child {
+  color: hsl(0 0% 85%);
+  font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────
+   ESTIMATE CARD
+   ───────────────────────────────────────────── */
+.at-estimate-card {
+  background: hsl(0 0% 8%);
+  border: 1px solid hsl(0 0% 14%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.at-estimate-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--primary) / 0.8);
+}
+
+.at-estimate-header svg {
+  width: 16px;
+  height: 16px;
+}
+
+.at-estimate-price {
+  text-align: center;
+  padding: 1.25rem 0;
+  border-top: 1px solid hsl(0 0% 12%);
+  border-bottom: 1px solid hsl(0 0% 12%);
+}
+
+.at-estimate-price-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 50%);
+  margin-bottom: 0.5rem;
+}
+
+.at-estimate-price-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: hsl(0 0% 100%);
+}
+
+.at-estimate-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.at-estimate-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.at-estimate-meta-item svg {
+  color: hsl(0 0% 40%);
+  flex-shrink: 0;
+}
+
+.at-estimate-meta-label {
+  display: block;
+  font-size: 0.625rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(0 0% 45%);
+}
+
+.at-estimate-meta-value {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(0 0% 85%);
+}
+
+.at-estimate-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.at-btn-full {
+  width: 100%;
+  justify-content: center;
+}
+
+.at-btn-reserve {
+  background: hsl(var(--primary) / 0.15) !important;
+  color: hsl(var(--primary)) !important;
+  border: 1px solid hsl(var(--primary) / 0.3) !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.at-btn-reserve:hover {
+  background: hsl(var(--primary) / 0.25) !important;
+  border-color: hsl(var(--primary) / 0.5) !important;
+}
+
+.at-estimate-disclaimer {
+  font-size: 0.6875rem;
+  color: hsl(0 0% 40%);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────────
+   TRACKER SECTION VISIBILITY
+   ───────────────────────────────────────────── */
+.at-tracker-section {
+  opacity: 0.4;
+  filter: grayscale(0.5);
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+.at-tracker-section.is-visible {
+  opacity: 1;
+  filter: grayscale(0);
+}
+
+.at-tracker-active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  background: hsl(var(--primary) / 0.15);
+  border: 1px solid hsl(var(--primary) / 0.3);
+  border-radius: 20px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: hsl(var(--primary));
+}
+
+.at-tracker-active-dot {
+  width: 6px;
+  height: 6px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ─────────────────────────────────────────────
    FOOTER OVERRIDE FOR AUTO TRANSPORT
    ───────────────────────────────────────────── */
 .auto-transport-page footer {
