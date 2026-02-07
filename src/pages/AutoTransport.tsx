@@ -3,7 +3,7 @@ import {
   Car, Truck, Shield, Clock, MapPin, CheckCircle2, 
   ChevronRight, ChevronLeft, Phone, Calendar,
   Package, Eye, FileText, Navigation, Sparkles,
-  AlertCircle, Plus, X
+  AlertCircle, Plus, X, BadgeCheck, Camera, Radio
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -615,6 +615,53 @@ export default function AutoTransport() {
                 {idx < TRUST_ITEMS.length - 1 && <span className="at-trust-dot">•</span>}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST & COMPLIANCE BAND */}
+      <section className="at-trust-band">
+        <div className="at-trust-band-inner">
+          <div className="at-trust-band-grid">
+            <div className="at-compliance-card">
+              <div className="at-compliance-icon">
+                <Shield className="w-5 h-5" />
+              </div>
+              <div className="at-compliance-text">
+                <span className="at-compliance-title">DOT & FMCSA Compliant</span>
+                <span className="at-compliance-subtitle">Carrier Network</span>
+              </div>
+            </div>
+            
+            <div className="at-compliance-card">
+              <div className="at-compliance-icon">
+                <BadgeCheck className="w-5 h-5" />
+              </div>
+              <div className="at-compliance-text">
+                <span className="at-compliance-title">Cargo Insurance Verified</span>
+                <span className="at-compliance-subtitle">Demo</span>
+              </div>
+            </div>
+            
+            <div className="at-compliance-card">
+              <div className="at-compliance-icon">
+                <Radio className="w-5 h-5" />
+              </div>
+              <div className="at-compliance-text">
+                <span className="at-compliance-title">Live Driver Status</span>
+                <span className="at-compliance-subtitle">Demo</span>
+              </div>
+            </div>
+            
+            <div className="at-compliance-card">
+              <div className="at-compliance-icon">
+                <Camera className="w-5 h-5" />
+              </div>
+              <div className="at-compliance-text">
+                <span className="at-compliance-title">Condition Report & Photo</span>
+                <span className="at-compliance-subtitle">Demo</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
