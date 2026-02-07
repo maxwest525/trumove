@@ -3,7 +3,8 @@ import {
   Car, Truck, Shield, Clock, MapPin, CheckCircle2, 
   ChevronRight, ChevronLeft, Phone, Calendar,
   Package, Eye, FileText, Navigation, Sparkles,
-  AlertCircle, Plus, X, BadgeCheck, Camera, Radio, ChevronDown
+  AlertCircle, Plus, X, BadgeCheck, Camera, Radio, ChevronDown,
+  Star, Building2, Hash, CalendarCheck, ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,6 +23,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import Footer from "@/components/layout/Footer";
 import mapboxgl from 'mapbox-gl';
@@ -539,6 +546,8 @@ export default function AutoTransport() {
   const [activeStep, setActiveStep] = useState(1);
   const [showTracker, setShowTracker] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
+  const [showCarrierMatch, setShowCarrierMatch] = useState(false);
+  const [showCarrierPacket, setShowCarrierPacket] = useState(false);
   
   // Step 1: Vehicle
   const [year, setYear] = useState("2022");
@@ -565,13 +574,15 @@ export default function AutoTransport() {
   };
   
   const handleReserve = () => {
+    setShowCarrierMatch(true);
     setShowTracker(true);
     toast({
       title: "Demo Shipment Reserved!",
       description: `Your ${year} ${make} ${model} transport has been scheduled.`,
     });
+    // Scroll to carrier match after a brief delay
     setTimeout(() => {
-      trackerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById('carrier-match-section')?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 300);
   };
   
@@ -594,6 +605,65 @@ export default function AutoTransport() {
 
   return (
     <div className="auto-transport-page">
+      {/* Carrier Packet Modal */}
+      <Dialog open={showCarrierPacket} onOpenChange={setShowCarrierPacket}>
+        <DialogContent className="at-packet-modal">
+          <DialogHeader>
+            <DialogTitle className="at-packet-title">
+              <FileText className="w-5 h-5" />
+              Carrier Packet (Demo)
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="at-packet-content">
+            <div className="at-packet-section">
+              <h4 className="at-packet-section-title">Carrier Information</h4>
+              <div className="at-packet-grid">
+                <div className="at-packet-item"><span>Legal Name</span><span>Atlas Transport Group LLC</span></div>
+                <div className="at-packet-item"><span>DBA</span><span>Atlas Auto Carriers</span></div>
+                <div className="at-packet-item"><span>MC Number</span><span>MC-847293</span></div>
+                <div className="at-packet-item"><span>DOT Number</span><span>3284756</span></div>
+                <div className="at-packet-item"><span>Operating Authority</span><span>Active - Authorized</span></div>
+                <div className="at-packet-item"><span>Fleet Size</span><span>42 Power Units</span></div>
+              </div>
+            </div>
+            
+            <div className="at-packet-section">
+              <h4 className="at-packet-section-title">Insurance Coverage</h4>
+              <div className="at-packet-grid">
+                <div className="at-packet-item"><span>Cargo Insurance</span><span>$250,000</span></div>
+                <div className="at-packet-item"><span>Liability</span><span>$1,000,000</span></div>
+                <div className="at-packet-item"><span>Policy Expiration</span><span>Dec 31, 2026</span></div>
+                <div className="at-packet-item"><span>Insurer</span><span>Progressive Commercial</span></div>
+              </div>
+            </div>
+            
+            <div className="at-packet-section">
+              <h4 className="at-packet-section-title">Safety Record</h4>
+              <div className="at-packet-grid">
+                <div className="at-packet-item"><span>SAFER Rating</span><span>Satisfactory</span></div>
+                <div className="at-packet-item"><span>Inspections (24mo)</span><span>18</span></div>
+                <div className="at-packet-item"><span>Crashes (24mo)</span><span>0</span></div>
+                <div className="at-packet-item"><span>Driver Rating</span><span>4.9 / 5.0</span></div>
+              </div>
+            </div>
+            
+            <div className="at-packet-section">
+              <h4 className="at-packet-section-title">Equipment</h4>
+              <div className="at-packet-grid">
+                <div className="at-packet-item"><span>Trailer Types</span><span>Open & Enclosed</span></div>
+                <div className="at-packet-item"><span>Capacity</span><span>Up to 10 vehicles</span></div>
+                <div className="at-packet-item"><span>GPS Tracking</span><span>Yes - Real-time</span></div>
+                <div className="at-packet-item"><span>Hydraulic Lift</span><span>Available</span></div>
+              </div>
+            </div>
+            
+            <p className="at-packet-disclaimer">
+              Demo data for illustration purposes. Actual carrier credentials verified during booking.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* HERO */}
       <section className="at-hero">
         <div className="at-hero-content">
@@ -810,6 +880,67 @@ export default function AutoTransport() {
                     </div>
                     <p className="at-estimate-disclaimer">Demo pricing only. Final confirmed after carrier match.</p>
                   </div>
+                  
+                  {/* Carrier Match Preview - appears after reserve */}
+                  {showCarrierMatch && (
+                    <div id="carrier-match-section" className="at-carrier-match-card">
+                      <div className="at-carrier-match-header">
+                        <CheckCircle2 className="w-5 h-5" />
+                        <span>Carrier Match Preview (Demo)</span>
+                      </div>
+                      
+                      <div className="at-carrier-info">
+                        <div className="at-carrier-name-row">
+                          <Building2 className="w-5 h-5" />
+                          <div>
+                            <span className="at-carrier-name">Atlas Transport Group</span>
+                            <span className="at-carrier-verified"><BadgeCheck className="w-3.5 h-3.5" /> Insurance Verified</span>
+                          </div>
+                        </div>
+                        
+                        <div className="at-carrier-details-grid">
+                          <div className="at-carrier-detail">
+                            <span className="at-carrier-detail-label">MC Number</span>
+                            <span className="at-carrier-detail-value">MC-847293</span>
+                          </div>
+                          <div className="at-carrier-detail">
+                            <span className="at-carrier-detail-label">DOT Number</span>
+                            <span className="at-carrier-detail-value">3284756</span>
+                          </div>
+                          <div className="at-carrier-detail">
+                            <span className="at-carrier-detail-label">Driver Rating</span>
+                            <span className="at-carrier-detail-value at-carrier-stars">
+                              <Star className="w-3.5 h-3.5" />
+                              <Star className="w-3.5 h-3.5" />
+                              <Star className="w-3.5 h-3.5" />
+                              <Star className="w-3.5 h-3.5" />
+                              <Star className="w-3.5 h-3.5" />
+                              <span>4.9</span>
+                            </span>
+                          </div>
+                          <div className="at-carrier-detail">
+                            <span className="at-carrier-detail-label">Equipment</span>
+                            <span className="at-carrier-detail-value">{transportType} Trailer</span>
+                          </div>
+                          <div className="at-carrier-detail at-carrier-detail-wide">
+                            <span className="at-carrier-detail-label">Next Available Pickup</span>
+                            <span className="at-carrier-detail-value at-carrier-pickup">
+                              <CalendarCheck className="w-3.5 h-3.5" />
+                              Feb 10, 2026
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        className="at-btn-secondary at-btn-full" 
+                        onClick={() => setShowCarrierPacket(true)}
+                      >
+                        <FileText className="w-4 h-4" />
+                        View Carrier Packet
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

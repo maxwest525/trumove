@@ -34789,6 +34789,259 @@ gmp-map-3d-element .gmnoprint {
 }
 
 /* ─────────────────────────────────────────────
+   CARRIER MATCH PREVIEW CARD
+   ───────────────────────────────────────────── */
+.at-carrier-match-card {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: var(--at-bg-elevated);
+  border: 1px solid var(--at-border);
+  border-radius: var(--at-radius);
+  animation: at-fade-up 0.4s ease-out;
+}
+
+@keyframes at-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.at-carrier-match-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--at-accent);
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--at-border-subtle);
+}
+
+.at-carrier-match-header svg {
+  opacity: 0.7;
+}
+
+.at-carrier-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.at-carrier-name-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.at-carrier-name-row > svg {
+  color: var(--at-text-muted);
+  opacity: 0.5;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.at-carrier-name-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.at-carrier-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--at-text);
+  letter-spacing: -0.02em;
+}
+
+.at-carrier-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--at-accent);
+  opacity: 0.8;
+}
+
+.at-carrier-verified svg {
+  color: var(--at-accent);
+}
+
+.at-carrier-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .at-carrier-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.at-carrier-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: var(--at-bg-input);
+  border-radius: 8px;
+}
+
+.at-carrier-detail-wide {
+  grid-column: span 2;
+}
+
+@media (max-width: 480px) {
+  .at-carrier-detail-wide {
+    grid-column: span 1;
+  }
+}
+
+.at-carrier-detail-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--at-text-muted);
+}
+
+.at-carrier-detail-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--at-text);
+}
+
+.at-carrier-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.at-carrier-stars svg {
+  color: hsl(45 100% 50%);
+  fill: hsl(45 100% 50%);
+}
+
+.at-carrier-stars span {
+  margin-left: 0.375rem;
+  color: var(--at-text-secondary);
+}
+
+.at-carrier-pickup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.at-carrier-pickup svg {
+  color: var(--at-accent);
+  opacity: 0.6;
+}
+
+/* ─────────────────────────────────────────────
+   CARRIER PACKET MODAL
+   ───────────────────────────────────────────── */
+.at-packet-modal {
+  background: var(--at-bg-card) !important;
+  border: 1px solid var(--at-border) !important;
+  max-width: 560px !important;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.at-packet-modal [data-dialog-close] {
+  color: var(--at-text-muted);
+}
+
+.at-packet-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--at-text);
+}
+
+.at-packet-title svg {
+  color: var(--at-accent);
+  opacity: 0.6;
+}
+
+.at-packet-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 0.5rem;
+}
+
+.at-packet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.at-packet-section-title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--at-text-muted);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--at-border-subtle);
+}
+
+.at-packet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .at-packet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.at-packet-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  background: var(--at-bg-input);
+  border-radius: 6px;
+  font-size: 0.8125rem;
+}
+
+.at-packet-item span:first-child {
+  color: var(--at-text-muted);
+}
+
+.at-packet-item span:last-child {
+  font-weight: 600;
+  color: var(--at-text);
+}
+
+.at-packet-disclaimer {
+  font-size: 0.6875rem;
+  color: var(--at-text-muted);
+  text-align: center;
+  line-height: 1.5;
+  opacity: 0.7;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--at-border-subtle);
+}
+
+/* ─────────────────────────────────────────────
    VEHICLE VIEWER 3D
    ───────────────────────────────────────────── */
 .at-viewer-inner {
