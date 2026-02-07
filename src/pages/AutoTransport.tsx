@@ -1289,6 +1289,20 @@ export default function AutoTransport() {
                     <span className="at-tracker-eta-label">Last Update</span>
                     <span className="at-tracker-eta-value">{isTracking ? "Feb 10, 3:45 PM" : "—"}</span>
                   </div>
+                  
+                  {/* ETA Confidence */}
+                  {showTracker && (
+                    <div className="at-eta-confidence">
+                      <div className="at-eta-confidence-header">
+                        <span className="at-eta-confidence-label">ETA Confidence</span>
+                        <span className="at-eta-confidence-badge">High</span>
+                      </div>
+                      <div className="at-eta-confidence-bar">
+                        <div className="at-eta-confidence-fill" style={{ width: isTracking ? '87%' : '0%' }} />
+                      </div>
+                      <span className="at-eta-confidence-note">Based on route conditions (demo)</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
