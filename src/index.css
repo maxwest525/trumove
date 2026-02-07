@@ -33873,11 +33873,11 @@ gmp-map-3d-element .gmnoprint {
   color: hsl(220 20% 20%);
 }
 
-/* Red Header Bar */
+/* Header Bar */
 .hvl-header {
-  background: hsl(0 70% 45%);
-  color: hsl(0 0% 100%);
-  padding: 0.875rem 1.5rem;
+  background: hsl(0 0% 100%);
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid hsl(220 10% 90%);
 }
 
 .hvl-header-inner {
@@ -33891,15 +33891,17 @@ gmp-map-3d-element .gmnoprint {
 .hvl-logo {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+}
+
+.hvl-logo-img {
+  height: 56px;
+  width: auto;
 }
 
 .hvl-header-contact {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: hsl(0 70% 45%);
 }
 
 /* Hero Section */
