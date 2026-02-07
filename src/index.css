@@ -35579,6 +35579,126 @@ gmp-map-3d-element .gmnoprint {
   color: var(--at-accent);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   OPEN VS ENCLOSED COMPARISON
+   ═══════════════════════════════════════════════════════════════════ */
+.at-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .at-comparison-grid {
+    grid-template-columns: 1fr;
+    max-width: 340px;
+  }
+}
+
+.at-comparison-card {
+  background: var(--at-bg-card) !important;
+  border: 2px solid var(--at-border) !important;
+  border-radius: var(--at-radius-md) !important;
+  box-shadow: var(--at-shadow) !important;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.at-comparison-card.is-selected {
+  border-color: hsl(var(--primary) / 0.5) !important;
+  transform: translateY(-2px);
+}
+
+.at-comparison-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem !important;
+}
+
+.at-comparison-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--at-border-subtle);
+}
+
+.at-comparison-header svg {
+  color: var(--at-text);
+  opacity: 0.6;
+}
+
+.at-comparison-card.is-selected .at-comparison-header svg {
+  color: var(--at-accent);
+  opacity: 1;
+}
+
+.at-comparison-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--at-text);
+  letter-spacing: -0.01em;
+}
+
+.at-comparison-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.at-comparison-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  color: var(--at-text-secondary);
+}
+
+.at-comparison-list li svg {
+  flex-shrink: 0;
+  color: var(--at-accent);
+  opacity: 0.7;
+}
+
+.at-comparison-list li:has(.lucide-alert-circle) svg {
+  color: hsl(45 90% 50%);
+  opacity: 0.8;
+}
+
+.at-comparison-footer {
+  padding-top: 1rem;
+  border-top: 1px solid var(--at-border-subtle);
+}
+
+.at-comparison-best {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--at-text-muted);
+}
+
+.at-comparison-card.is-selected .at-comparison-best {
+  color: var(--at-accent);
+}
+
+.at-comparison-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.at-comparison-action .at-btn-secondary {
+  gap: 0.5rem;
+}
+
+.at-comparison-action .at-btn-secondary svg {
+  color: var(--at-accent);
+}
+
 .at-condition-notes-list {
   display: flex;
   flex-direction: column;
