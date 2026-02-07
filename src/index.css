@@ -35232,3 +35232,123 @@ gmp-map-3d-element .gmnoprint {
 .hvl-page .rdp-day:hover:not(.rdp-day_selected) {
   background: hsl(0 70% 45% / 0.1) !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCROLL ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════ */
+
+.hvl-animate-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.hvl-animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered children animations */
+.hvl-animate-on-scroll.is-visible .hvl-service-card,
+.hvl-animate-on-scroll.is-visible .hvl-why-item,
+.hvl-animate-on-scroll.is-visible .hvl-stat-item,
+.hvl-animate-on-scroll.is-visible .hvl-trust-item {
+  animation: hvl-fade-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.hvl-animate-on-scroll.is-visible .hvl-service-card:nth-child(1),
+.hvl-animate-on-scroll.is-visible .hvl-why-item:nth-child(1),
+.hvl-animate-on-scroll.is-visible .hvl-stat-item:nth-child(1),
+.hvl-animate-on-scroll.is-visible .hvl-trust-item:nth-child(1) { animation-delay: 0.1s; }
+
+.hvl-animate-on-scroll.is-visible .hvl-service-card:nth-child(2),
+.hvl-animate-on-scroll.is-visible .hvl-why-item:nth-child(2),
+.hvl-animate-on-scroll.is-visible .hvl-stat-item:nth-child(2),
+.hvl-animate-on-scroll.is-visible .hvl-trust-item:nth-child(2) { animation-delay: 0.2s; }
+
+.hvl-animate-on-scroll.is-visible .hvl-service-card:nth-child(3),
+.hvl-animate-on-scroll.is-visible .hvl-why-item:nth-child(3),
+.hvl-animate-on-scroll.is-visible .hvl-stat-item:nth-child(3),
+.hvl-animate-on-scroll.is-visible .hvl-trust-item:nth-child(3) { animation-delay: 0.3s; }
+
+.hvl-animate-on-scroll.is-visible .hvl-why-item:nth-child(4),
+.hvl-animate-on-scroll.is-visible .hvl-trust-item:nth-child(4) { animation-delay: 0.4s; }
+
+.hvl-animate-on-scroll.is-visible .hvl-trust-item:nth-child(5) { animation-delay: 0.5s; }
+.hvl-animate-on-scroll.is-visible .hvl-trust-item:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes hvl-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HANK VOICE BUTTON STYLES
+   ═══════════════════════════════════════════════════════════════════ */
+
+.hvl-hank-voice-btn {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: hsl(220 10% 96%);
+  border: 1px solid hsl(220 10% 85%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(220 15% 40%);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.hvl-hank-voice-btn:hover:not(:disabled) {
+  background: hsl(0 70% 45%);
+  border-color: hsl(0 70% 45%);
+  color: hsl(0 0% 100%);
+}
+
+.hvl-hank-voice-btn.is-active {
+  background: hsl(0 70% 45%);
+  border-color: hsl(0 70% 45%);
+  color: hsl(0 0% 100%);
+  animation: hvl-voice-pulse 1.5s infinite;
+}
+
+.hvl-hank-voice-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hvl-hank-voice-loading {
+  width: 16px;
+  height: 16px;
+  border: 2px solid hsl(220 10% 70%);
+  border-top-color: hsl(0 70% 45%);
+  border-radius: 50%;
+  animation: hvl-spin 0.8s linear infinite;
+}
+
+@keyframes hvl-voice-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(0 70% 45% / 0.4); }
+  50% { box-shadow: 0 0 0 8px hsl(0 70% 45% / 0); }
+}
+
+@keyframes hvl-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Speaking indicator */
+.hvl-hank-speaking {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: hsl(0 70% 45%);
+  font-size: 0.875rem;
+}
