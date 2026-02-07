@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { 
-  Car, Truck, ChevronRight, ChevronLeft, Phone, Clock, MapPin,
-  CheckCircle2, Sparkles, ChevronDown
+  Car, ChevronRight, Phone, Clock, MapPin, Plus, X,
+  CheckCircle2, AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -12,162 +13,129 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+
+// Model Viewer types
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
+        src?: string;
+        alt?: string;
+        'auto-rotate'?: boolean;
+        'camera-controls'?: boolean;
+        'disable-zoom'?: boolean;
+        'rotation-per-second'?: string;
+        'interaction-prompt'?: string;
+        'shadow-intensity'?: string;
+        'environment-image'?: string;
+        exposure?: string;
+        poster?: string;
+      }, HTMLElement>;
+    }
+  }
+}
 import { useToast } from "@/hooks/use-toast";
 import Footer from "@/components/layout/Footer";
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { MAPBOX_TOKEN } from "@/lib/mapboxToken";
+
+// Load model-viewer script on mount
+function useModelViewer() {
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !document.querySelector('script[src*="model-viewer"]')) {
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js';
+      document.head.appendChild(script);
+    }
+  }, []);
+}
 
 // ═══════════════════════════════════════════════════════════════════
-// DATA & PRICING
+// VEHICLE DATA
 // ═══════════════════════════════════════════════════════════════════
 
 const YEARS = ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018"];
-const MAKES = ["BMW", "Chevrolet", "Ford", "Honda", "Tesla", "Toyota"];
-const MODELS: Record<string, string[]> = {
-  BMW: ["3 Series", "5 Series", "X3", "X5", "X7"],
-  Chevrolet: ["Camaro", "Corvette", "Equinox", "Silverado", "Tahoe"],
-  Ford: ["Bronco", "F-150", "Mustang", "Explorer", "Escape"],
-  Honda: ["Accord", "Civic", "CR-V", "Pilot", "Odyssey"],
-  Tesla: ["Model 3", "Model S", "Model X", "Model Y", "Cybertruck"],
-  Toyota: ["Camry", "Corolla", "Highlander", "RAV4", "Tacoma"],
+
+const VEHICLE_DATA: Record<string, { models: Record<string, number> }> = {
+  "BMW": {
+    models: { "3 Series": 3580, "5 Series": 4100, "X3": 4400, "X5": 5260, "X7": 5900 }
+  },
+  "Chevrolet": {
+    models: { "Camaro": 3700, "Corvette": 3650, "Equinox": 3550, "Silverado": 5100, "Tahoe": 5600 }
+  },
+  "Ford": {
+    models: { "Bronco": 4500, "F-150": 4700, "Mustang": 3800, "Explorer": 4600, "Escape": 3550 }
+  },
+  "Honda": {
+    models: { "Accord": 3300, "Civic": 2900, "CR-V": 3500, "Pilot": 4300, "Odyssey": 4500 }
+  },
+  "Tesla": {
+    models: { "Model 3": 3860, "Model S": 4800, "Model X": 5400, "Model Y": 4400, "Cybertruck": 6600 }
+  },
+  "Toyota": {
+    models: { "Camry": 3350, "Corolla": 3000, "Highlander": 4500, "RAV4": 3700, "Tacoma": 4500 }
+  },
+  "Porsche": {
+    models: { "911": 3400, "Cayenne": 4800, "Macan": 4100, "Taycan": 5100, "Panamera": 4600 }
+  },
+  "Mercedes-Benz": {
+    models: { "C-Class": 3700, "E-Class": 4100, "GLE": 5200, "GLC": 4400, "S-Class": 4900 }
+  },
 };
-const CITIES = ["Miami, FL", "Orlando, FL", "Atlanta, GA", "Dallas, TX", "Los Angeles, CA", "New York, NY"];
+
+const MAKES = Object.keys(VEHICLE_DATA);
+
+const CITIES = ["Miami, FL", "Orlando, FL", "Atlanta, GA", "Dallas, TX", "Los Angeles, CA", "New York, NY", "Chicago, IL", "Seattle, WA"];
+
 const TRANSPORT_TYPES = ["Open", "Enclosed"];
 
+// Base prices by distance tier
 const ROUTE_PRICES: Record<string, Record<string, number>> = {
-  "Miami, FL": { "Orlando, FL": 350, "Atlanta, GA": 550, "Dallas, TX": 1100, "Los Angeles, CA": 1450, "New York, NY": 1250 },
-  "Orlando, FL": { "Miami, FL": 350, "Atlanta, GA": 450, "Dallas, TX": 950, "Los Angeles, CA": 1400, "New York, NY": 1150 },
-  "Atlanta, GA": { "Miami, FL": 550, "Orlando, FL": 450, "Dallas, TX": 750, "Los Angeles, CA": 1350, "New York, NY": 850 },
-  "Dallas, TX": { "Miami, FL": 1100, "Orlando, FL": 950, "Atlanta, GA": 750, "Los Angeles, CA": 950, "New York, NY": 1400 },
-  "Los Angeles, CA": { "Miami, FL": 1450, "Orlando, FL": 1400, "Atlanta, GA": 1350, "Dallas, TX": 950, "New York, NY": 1650 },
-  "New York, NY": { "Miami, FL": 1250, "Orlando, FL": 1150, "Atlanta, GA": 850, "Dallas, TX": 1400, "Los Angeles, CA": 1650 },
+  "Miami, FL": { "Orlando, FL": 280, "Atlanta, GA": 450, "Dallas, TX": 950, "Los Angeles, CA": 1350, "New York, NY": 1100, "Chicago, IL": 1200, "Seattle, WA": 1600 },
+  "New York, NY": { "Miami, FL": 1100, "Orlando, FL": 1000, "Atlanta, GA": 750, "Dallas, TX": 1300, "Los Angeles, CA": 1550, "Chicago, IL": 800, "Seattle, WA": 1500 },
+  "Los Angeles, CA": { "Miami, FL": 1350, "Orlando, FL": 1300, "Atlanta, GA": 1250, "Dallas, TX": 850, "New York, NY": 1550, "Chicago, IL": 1150, "Seattle, WA": 650 },
 };
 
-function calculatePrice(from: string, to: string, transportType: string) {
-  let base = ROUTE_PRICES[from]?.[to] || 800;
-  if (transportType === "Enclosed") base *= 1.35;
+function getBasePrice(from: string, to: string): number {
+  return ROUTE_PRICES[from]?.[to] || ROUTE_PRICES[to]?.[from] || 900;
+}
+
+function calculatePrice(from: string, to: string, weight: number, transport: string): { low: number; high: number } {
+  let base = getBasePrice(from, to);
+  
+  // Weight modifier (heavier = more expensive)
+  if (weight > 5000) base *= 1.15;
+  else if (weight > 4000) base *= 1.08;
+  
+  // Enclosed premium
+  if (transport === "Enclosed") base *= 1.40;
+  
   base = Math.round(base / 25) * 25;
-  const low = Math.round((base * 0.92) / 25) * 25;
-  const high = Math.round((base * 1.08) / 25) * 25;
-  return { low, high };
+  return { low: Math.round(base * 0.92 / 25) * 25, high: Math.round(base * 1.08 / 25) * 25 };
 }
 
-function getTransitDays(from: string, to: string): string {
-  const price = ROUTE_PRICES[from]?.[to] || 800;
-  if (price < 500) return "2–3";
-  if (price < 1000) return "4–6";
-  return "7–10";
-}
-
-const FAQ_ITEMS = [
-  { q: "How long does transport take?", a: "Transit times vary by distance. Cross-country is typically 7-10 days, regional moves 3-5 days." },
-  { q: "Is my vehicle insured?", a: "Yes, all vehicles are covered by carrier insurance during transport." },
-  { q: "Can you ship non-running vehicles?", a: "Absolutely. Additional equipment fees may apply for inoperable vehicles." },
-  { q: "Open vs enclosed transport?", a: "Open is cost-effective for most vehicles. Enclosed provides weather protection for luxury or classic cars." },
+// Condition zones for damage marking
+const CONDITION_ZONES = [
+  { id: "front-bumper", label: "Front Bumper" },
+  { id: "hood", label: "Hood" },
+  { id: "front-left", label: "Front Left Fender" },
+  { id: "front-right", label: "Front Right Fender" },
+  { id: "driver-door", label: "Driver Door" },
+  { id: "passenger-door", label: "Passenger Door" },
+  { id: "rear-left", label: "Rear Left Panel" },
+  { id: "rear-right", label: "Rear Right Panel" },
+  { id: "rear-bumper", label: "Rear Bumper" },
+  { id: "trunk", label: "Trunk/Tailgate" },
+  { id: "roof", label: "Roof" },
+  { id: "windshield", label: "Windshield" },
 ];
 
-// ═══════════════════════════════════════════════════════════════════
-// TRACKER MAP
-// ═══════════════════════════════════════════════════════════════════
+const DAMAGE_TYPES = ["Scratch", "Dent", "Chip", "Crack", "Rust", "Missing Part"];
 
-function TrackerMap({ active }: { active: boolean }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
-  const animRef = useRef<number>();
-  const [coords, setCoords] = useState<[number, number][]>([]);
-  
-  const miami: [number, number] = [-80.1918, 25.7617];
-  const ny: [number, number] = [-74.006, 40.7128];
-  
-  useEffect(() => {
-    if (!active) return;
-    const fetchRoute = async () => {
-      const waypoints = [miami, [-81.3792, 28.5383], [-84.388, 33.749], [-77.0369, 38.9072], ny];
-      const str = waypoints.map(p => `${p[0]},${p[1]}`).join(';');
-      try {
-        const res = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${str}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`);
-        const data = await res.json();
-        if (data.routes?.[0]) setCoords(data.routes[0].geometry.coordinates);
-      } catch { setCoords([miami, ny]); }
-    };
-    fetchRoute();
-  }, [active]);
-  
-  const getPoint = useCallback((p: number): [number, number] => {
-    if (coords.length < 2) return coords[0] || miami;
-    const n = coords.length - 1;
-    const sp = p * n;
-    const i = Math.min(Math.floor(sp), n - 1);
-    const t = sp - i;
-    const s = coords[i], e = coords[Math.min(i + 1, coords.length - 1)];
-    return [s[0] + (e[0] - s[0]) * t, s[1] + (e[1] - s[1]) * t];
-  }, [coords]);
-  
-  useEffect(() => {
-    if (!containerRef.current || mapRef.current || coords.length < 2 || !active) return;
-    mapboxgl.accessToken = MAPBOX_TOKEN;
-    mapRef.current = new mapboxgl.Map({
-      container: containerRef.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: [-84.388, 33.749],
-      zoom: 4.5,
-      interactive: true,
-      attributionControl: false
-    });
-    
-    mapRef.current.on('load', () => {
-      if (!mapRef.current) return;
-      mapRef.current.addSource('route', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: coords } } });
-      mapRef.current.addLayer({ id: 'route-line', type: 'line', source: 'route', paint: { 'line-color': '#1a1a1a', 'line-width': 2, 'line-opacity': 0.6 } });
-      
-      const bounds = new mapboxgl.LngLatBounds();
-      coords.forEach(c => bounds.extend(c));
-      mapRef.current.fitBounds(bounds, { padding: 40 });
-      
-      let progress = 0.45;
-      const animate = () => {
-        if (!mapRef.current) return;
-        progress += 0.0001;
-        if (progress > 1) progress = 0;
-        const pos = getPoint(progress);
-        const src = mapRef.current.getSource('truck') as mapboxgl.GeoJSONSource;
-        if (src) src.setData({ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: pos } });
-        animRef.current = requestAnimationFrame(animate);
-      };
-      
-      mapRef.current.addSource('truck', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: getPoint(0.45) } } });
-      mapRef.current.addLayer({ id: 'truck-marker', type: 'circle', source: 'truck', paint: { 'circle-radius': 6, 'circle-color': '#1a1a1a', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' } });
-      mapRef.current.addSource('origin', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: miami } } });
-      mapRef.current.addLayer({ id: 'origin', type: 'circle', source: 'origin', paint: { 'circle-radius': 5, 'circle-color': '#16a34a', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' } });
-      mapRef.current.addSource('dest', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: ny } } });
-      mapRef.current.addLayer({ id: 'dest', type: 'circle', source: 'dest', paint: { 'circle-radius': 5, 'circle-color': '#dc2626', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' } });
-      animate();
-    });
-    
-    return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
-    };
-  }, [coords, active, getPoint]);
-  
-  return (
-    <div className="at-map-wrap">
-      <div ref={containerRef} className="at-map" />
-      {!active && (
-        <div className="at-map-placeholder">
-          <Truck className="w-8 h-8 text-neutral-300" />
-          <span>Demo tracking will appear here</span>
-        </div>
-      )}
-    </div>
-  );
+interface DamageNote {
+  id: string;
+  zone: string;
+  type: string;
+  notes: string;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -175,242 +143,285 @@ function TrackerMap({ active }: { active: boolean }) {
 // ═══════════════════════════════════════════════════════════════════
 
 export default function AutoTransport() {
+  useModelViewer();
   const { toast } = useToast();
   
-  // Wizard
-  const [step, setStep] = useState(1);
+  // Vehicle selection
   const [year, setYear] = useState("2024");
-  const [make, setMake] = useState("Tesla");
-  const [model, setModel] = useState("Model Y");
+  const [make, setMake] = useState("Porsche");
+  const [model, setModel] = useState("911");
+  
+  // Route
   const [fromCity, setFromCity] = useState("Miami, FL");
   const [toCity, setToCity] = useState("New York, NY");
-  const [transport, setTransport] = useState("Open");
+  const [transport, setTransport] = useState("Enclosed");
   
-  // Tracking demo
-  const [booked, setBooked] = useState(false);
-  const [tracking, setTracking] = useState(false);
+  // Condition report
+  const [damages, setDamages] = useState<DamageNote[]>([]);
+  const [selectedZone, setSelectedZone] = useState("");
+  const [selectedDamageType, setSelectedDamageType] = useState("");
+  const [damageNotes, setDamageNotes] = useState("");
   
-  const models = MODELS[make] || [];
-  const pricing = calculatePrice(fromCity, toCity, transport);
-  const days = getTransitDays(fromCity, toCity);
+  // Common damage checkboxes
+  const [hasScratches, setHasScratches] = useState(false);
+  const [hasDents, setHasDents] = useState(false);
+  const [hasChips, setHasChips] = useState(false);
+  const [hasWheelDamage, setHasWheelDamage] = useState(false);
   
-  const handleMake = (m: string) => { setMake(m); setModel(MODELS[m]?.[0] || ""); };
+  // Derived data
+  const models = VEHICLE_DATA[make]?.models || {};
+  const modelNames = Object.keys(models);
+  const weight = models[model] || 3500;
+  const pricing = calculatePrice(fromCity, toCity, weight, transport);
   
-  const canNext1 = year && make && model;
-  const canNext2 = fromCity && toCity && fromCity !== toCity;
-  
-  const reserve = () => {
-    setBooked(true);
-    toast({ title: "Shipment Reserved", description: `${year} ${make} ${model} transport confirmed.` });
+  const handleMakeChange = (newMake: string) => {
+    setMake(newMake);
+    const firstModel = Object.keys(VEHICLE_DATA[newMake]?.models || {})[0] || "";
+    setModel(firstModel);
   };
   
-  const startTracking = () => {
-    setTracking(true);
-    toast({ title: "Tracking Started", description: "Watch the demo truck move along the route." });
+  const addDamage = () => {
+    if (!selectedZone || !selectedDamageType) return;
+    setDamages(prev => [...prev, {
+      id: Date.now().toString(),
+      zone: selectedZone,
+      type: selectedDamageType,
+      notes: damageNotes
+    }]);
+    setSelectedZone("");
+    setSelectedDamageType("");
+    setDamageNotes("");
+  };
+  
+  const removeDamage = (id: string) => {
+    setDamages(prev => prev.filter(d => d.id !== id));
+  };
+  
+  const handleGetQuote = () => {
+    toast({
+      title: "Quote Generated",
+      description: `${year} ${make} ${model}: $${pricing.low.toLocaleString()} – $${pricing.high.toLocaleString()}`
+    });
   };
 
   return (
     <div className="at-page">
-      {/* HERO */}
-      <section className="at-hero">
-        <div className="at-hero-inner">
-          <h1 className="at-hero-title">Ship Your Vehicle</h1>
-          <p className="at-hero-sub">Transparent pricing. Real-time tracking. Nationwide coverage.</p>
-          <div className="at-hero-actions">
-            <Button className="at-btn" size="lg">Get Quote <ChevronRight className="w-4 h-4" /></Button>
-            <Button variant="outline" className="at-btn-outline" size="lg"><Phone className="w-4 h-4" /> Call Us</Button>
-          </div>
+      {/* HEADER */}
+      <header className="at-header">
+        <div className="at-header-inner">
+          <h1>Auto Transport</h1>
+          <p>Select your vehicle, mark any existing damage, and get an instant quote.</p>
         </div>
-      </section>
+      </header>
 
-      {/* WIZARD */}
-      <section className="at-section">
-        <Card className="at-card">
-          <CardContent className="at-card-inner">
-            {/* Steps */}
-            <div className="at-steps">
-              {["Vehicle", "Route", "Review"].map((label, i) => (
-                <button
-                  key={label}
-                  className={`at-step ${step > i ? 'done' : ''} ${step === i + 1 ? 'active' : ''}`}
-                  onClick={() => i + 1 < step && setStep(i + 1)}
-                  disabled={i + 1 > step}
-                >
-                  <span className="at-step-num">{i + 1}</span>
-                  <span className="at-step-label">{label}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Step 1 */}
-            {step === 1 && (
-              <div className="at-form">
-                <div className="at-form-row">
+      {/* MAIN CONTENT - 2 Column */}
+      <main className="at-main">
+        {/* LEFT: Vehicle + 3D Viewer */}
+        <div className="at-col-left">
+          <Card className="at-card">
+            <CardContent className="at-card-body">
+              <div className="at-card-title">Vehicle Selection</div>
+              
+              {/* Vehicle Dropdowns */}
+              <div className="at-vehicle-grid">
+                <div className="at-field">
                   <label>Year</label>
                   <Select value={year} onValueChange={setYear}>
                     <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
-                    <SelectContent>{YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
+                    <SelectContent className="at-dropdown">{YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div className="at-form-row">
+                <div className="at-field">
                   <label>Make</label>
-                  <Select value={make} onValueChange={handleMake}>
+                  <Select value={make} onValueChange={handleMakeChange}>
                     <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
-                    <SelectContent>{MAKES.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+                    <SelectContent className="at-dropdown">{MAKES.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div className="at-form-row">
+                <div className="at-field">
                   <label>Model</label>
                   <Select value={model} onValueChange={setModel}>
                     <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
-                    <SelectContent>{models.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
+                    <SelectContent className="at-dropdown">{modelNames.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
               </div>
-            )}
-
-            {/* Step 2 */}
-            {step === 2 && (
-              <div className="at-form">
-                <div className="at-form-row">
+              
+              {/* Auto-populated specs */}
+              <div className="at-specs">
+                <div className="at-spec">
+                  <span className="at-spec-label">Curb Weight</span>
+                  <span className="at-spec-value">{weight.toLocaleString()} lbs</span>
+                </div>
+                <div className="at-spec">
+                  <span className="at-spec-label">Category</span>
+                  <span className="at-spec-value">{weight > 5000 ? "Heavy" : weight > 4000 ? "Standard" : "Light"}</span>
+                </div>
+              </div>
+              
+              {/* 3D Viewer */}
+              <div className="at-viewer">
+                <model-viewer
+                  src="https://raw.githubusercontent.com/ArturoMauricioDev/car-demo/main/public/porsche.glb"
+                  alt={`${year} ${make} ${model}`}
+                  auto-rotate
+                  camera-controls
+                  rotation-per-second="15deg"
+                  interaction-prompt="none"
+                  shadow-intensity="0.3"
+                  exposure="1.1"
+                  style={{ width: '100%', height: '100%', background: 'transparent' }}
+                />
+                <div className="at-viewer-hint">Drag to rotate • Scroll to zoom</div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Route + Price */}
+          <Card className="at-card">
+            <CardContent className="at-card-body">
+              <div className="at-card-title">Route & Quote</div>
+              
+              <div className="at-route-grid">
+                <div className="at-field">
                   <label>Pickup</label>
                   <Select value={fromCity} onValueChange={setFromCity}>
                     <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
-                    <SelectContent>{CITIES.map(c => <SelectItem key={c} value={c} disabled={c === toCity}>{c}</SelectItem>)}</SelectContent>
+                    <SelectContent className="at-dropdown">{CITIES.map(c => <SelectItem key={c} value={c} disabled={c === toCity}>{c}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div className="at-form-row">
+                <div className="at-field">
                   <label>Delivery</label>
                   <Select value={toCity} onValueChange={setToCity}>
                     <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
-                    <SelectContent>{CITIES.map(c => <SelectItem key={c} value={c} disabled={c === fromCity}>{c}</SelectItem>)}</SelectContent>
+                    <SelectContent className="at-dropdown">{CITIES.map(c => <SelectItem key={c} value={c} disabled={c === fromCity}>{c}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div className="at-form-row">
+                <div className="at-field">
                   <label>Transport</label>
                   <Select value={transport} onValueChange={setTransport}>
                     <SelectTrigger className="at-select"><SelectValue /></SelectTrigger>
-                    <SelectContent>{TRANSPORT_TYPES.map(t => <SelectItem key={t} value={t}>{t}{t === "Enclosed" && " (+35%)"}</SelectItem>)}</SelectContent>
+                    <SelectContent className="at-dropdown">{TRANSPORT_TYPES.map(t => <SelectItem key={t} value={t}>{t}{t === "Enclosed" && " (+40%)"}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
               </div>
-            )}
-
-            {/* Step 3 */}
-            {step === 3 && (
-              <div className="at-review">
-                <div className="at-review-vehicle">
-                  <Car className="w-6 h-6" />
-                  <div>
-                    <span className="at-review-title">{year} {make} {model}</span>
-                    <span className="at-review-meta">{transport} Transport</span>
-                  </div>
-                </div>
-                
-                <div className="at-review-route">
-                  <div className="at-review-point"><span className="at-dot origin" />{fromCity}</div>
-                  <div className="at-review-line" />
-                  <div className="at-review-point"><span className="at-dot dest" />{toCity}</div>
-                </div>
-                
-                <div className="at-estimate">
-                  <div className="at-estimate-header">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Estimate</span>
-                  </div>
-                  <div className="at-estimate-price">${pricing.low.toLocaleString()} – ${pricing.high.toLocaleString()}</div>
-                  <div className="at-estimate-meta">
-                    <span><Clock className="w-3.5 h-3.5" /> {days} days transit</span>
-                    <span><MapPin className="w-3.5 h-3.5" /> Door-to-door</span>
-                  </div>
-                </div>
-                
-                <Button className="at-btn at-btn-full" onClick={reserve}>Reserve Shipment</Button>
-              </div>
-            )}
-
-            {/* Footer */}
-            <div className="at-wizard-footer">
-              <Button variant="outline" className="at-btn-outline" disabled={step === 1} onClick={() => setStep(step - 1)}>
-                <ChevronLeft className="w-4 h-4" /> Back
-              </Button>
-              {step < 3 && (
-                <Button className="at-btn" disabled={step === 1 ? !canNext1 : !canNext2} onClick={() => setStep(step + 1)}>
-                  Continue <ChevronRight className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* TRACKER */}
-      {booked && (
-        <section className="at-section">
-          <div className="at-section-title">Track Shipment</div>
-          <Card className="at-card">
-            <CardContent className="at-card-inner at-tracker">
-              <TrackerMap active={tracking} />
               
-              <div className="at-tracker-panel">
-                <div className="at-tracker-status">
-                  <div className="at-status-item done"><CheckCircle2 className="w-4 h-4" /> Booked</div>
-                  <div className="at-status-item done"><CheckCircle2 className="w-4 h-4" /> Carrier Assigned</div>
-                  <div className={`at-status-item ${tracking ? 'active' : ''}`}>
-                    <div className="at-status-dot" /> In Transit
+              {/* Price Display */}
+              <div className="at-price-box">
+                <div className="at-price-label">Estimated Price</div>
+                <div className="at-price-value">${pricing.low.toLocaleString()} – ${pricing.high.toLocaleString()}</div>
+                <div className="at-price-meta">
+                  <span><Clock className="w-3.5 h-3.5" /> 5–7 days</span>
+                  <span><MapPin className="w-3.5 h-3.5" /> Door-to-door</span>
+                </div>
+              </div>
+              
+              <Button className="at-btn at-btn-full" onClick={handleGetQuote}>
+                Get Quote <ChevronRight className="w-4 h-4" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* RIGHT: Condition Report */}
+        <div className="at-col-right">
+          <Card className="at-card at-card-stretch">
+            <CardContent className="at-card-body">
+              <div className="at-card-title">Condition Report</div>
+              <p className="at-card-desc">Document any existing damage before transport.</p>
+              
+              {/* Quick checkboxes */}
+              <div className="at-damage-quick">
+                <label className="at-checkbox-row">
+                  <Checkbox checked={hasScratches} onCheckedChange={(c) => setHasScratches(!!c)} />
+                  <span>Existing scratches</span>
+                </label>
+                <label className="at-checkbox-row">
+                  <Checkbox checked={hasDents} onCheckedChange={(c) => setHasDents(!!c)} />
+                  <span>Minor dents</span>
+                </label>
+                <label className="at-checkbox-row">
+                  <Checkbox checked={hasChips} onCheckedChange={(c) => setHasChips(!!c)} />
+                  <span>Paint chips</span>
+                </label>
+                <label className="at-checkbox-row">
+                  <Checkbox checked={hasWheelDamage} onCheckedChange={(c) => setHasWheelDamage(!!c)} />
+                  <span>Wheel/curb damage</span>
+                </label>
+              </div>
+              
+              {/* Add specific damage */}
+              <div className="at-damage-form">
+                <div className="at-damage-form-title">Add Specific Damage</div>
+                <div className="at-damage-form-grid">
+                  <Select value={selectedZone} onValueChange={setSelectedZone}>
+                    <SelectTrigger className="at-select"><SelectValue placeholder="Select zone" /></SelectTrigger>
+                    <SelectContent className="at-dropdown">{CONDITION_ZONES.map(z => <SelectItem key={z.id} value={z.id}>{z.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                  <Select value={selectedDamageType} onValueChange={setSelectedDamageType}>
+                    <SelectTrigger className="at-select"><SelectValue placeholder="Damage type" /></SelectTrigger>
+                    <SelectContent className="at-dropdown">{DAMAGE_TYPES.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Additional notes (optional)"
+                  value={damageNotes}
+                  onChange={(e) => setDamageNotes(e.target.value)}
+                  className="at-input"
+                />
+                <Button 
+                  className="at-btn-secondary" 
+                  onClick={addDamage}
+                  disabled={!selectedZone || !selectedDamageType}
+                >
+                  <Plus className="w-4 h-4" /> Add Damage
+                </Button>
+              </div>
+              
+              {/* Damage list */}
+              {damages.length > 0 && (
+                <div className="at-damage-list">
+                  <div className="at-damage-list-title">Documented Damage ({damages.length})</div>
+                  {damages.map(d => {
+                    const zone = CONDITION_ZONES.find(z => z.id === d.zone);
+                    return (
+                      <div key={d.id} className="at-damage-item">
+                        <div className="at-damage-item-info">
+                          <span className="at-damage-zone">{zone?.label}</span>
+                          <span className="at-damage-type">{d.type}</span>
+                          {d.notes && <span className="at-damage-notes">{d.notes}</span>}
+                        </div>
+                        <button className="at-damage-remove" onClick={() => removeDamage(d.id)}>
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {/* Status summary */}
+              <div className="at-condition-summary">
+                {damages.length === 0 && !hasScratches && !hasDents && !hasChips && !hasWheelDamage ? (
+                  <div className="at-condition-clean">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>No damage documented</span>
                   </div>
-                  <div className="at-status-item"><div className="at-status-dot" /> Delivered</div>
-                </div>
-                
-                <div className="at-tracker-info">
-                  <div className="at-info-row"><span>ETA</span><span>Feb 14–15, 2026</span></div>
-                  <div className="at-info-row"><span>Status</span><span>{tracking ? "In Transit" : "Awaiting Pickup"}</span></div>
-                </div>
-                
-                {!tracking && (
-                  <Button className="at-btn at-btn-full" onClick={startTracking}>
-                    Start Demo Tracking
-                  </Button>
+                ) : (
+                  <div className="at-condition-noted">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>Pre-existing damage will be noted on the Bill of Lading</span>
+                  </div>
                 )}
               </div>
             </CardContent>
           </Card>
-        </section>
-      )}
-
-      {/* HOW IT WORKS */}
-      <section className="at-section">
-        <div className="at-section-title">How It Works</div>
-        <div className="at-steps-grid">
-          {[
-            { n: 1, t: "Get a Quote", d: "Enter your vehicle and route for an instant estimate." },
-            { n: 2, t: "Book & Schedule", d: "Choose your pickup date and confirm transport." },
-            { n: 3, t: "Pickup", d: "We collect your vehicle with a condition report." },
-            { n: 4, t: "Track & Receive", d: "Monitor your shipment and receive your vehicle." },
-          ].map(s => (
-            <div key={s.n} className="at-step-card">
-              <span className="at-step-n">{s.n}</span>
-              <span className="at-step-t">{s.t}</span>
-              <span className="at-step-d">{s.d}</span>
-            </div>
-          ))}
         </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="at-section">
-        <div className="at-section-title">FAQ</div>
-        <Accordion type="single" collapsible className="at-faq">
-          {FAQ_ITEMS.map((f, i) => (
-            <AccordionItem key={i} value={`faq-${i}`} className="at-faq-item">
-              <AccordionTrigger className="at-faq-q">{f.q}</AccordionTrigger>
-              <AccordionContent className="at-faq-a">{f.a}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </section>
+      </main>
 
       <Footer />
     </div>
   );
 }
+
