@@ -34542,6 +34542,75 @@ gmp-map-3d-element .gmnoprint {
   margin: 0;
 }
 
+/* The Howard Guarantee Section */
+.hvl-guarantee-section {
+  padding: 4rem 1.5rem;
+  background: linear-gradient(135deg, hsl(220 20% 15%) 0%, hsl(220 25% 12%) 100%);
+  text-align: center;
+}
+
+.hvl-guarantee-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hvl-guarantee-badge {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(45 90% 55%) 0%, hsl(40 85% 45%) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 4px 20px hsl(45 90% 50% / 0.3);
+}
+
+.hvl-guarantee-badge svg {
+  color: hsl(0 0% 100%);
+}
+
+.hvl-guarantee-section h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: hsl(0 0% 100%);
+  margin: 0 0 0.5rem;
+}
+
+.hvl-guarantee-headline {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: hsl(45 90% 55%);
+  margin: 0 0 1.5rem;
+}
+
+.hvl-guarantee-text {
+  font-size: 1rem;
+  color: hsl(220 15% 75%);
+  line-height: 1.7;
+  margin: 0 0 2rem;
+}
+
+.hvl-guarantee-points {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.hvl-guarantee-point {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: hsl(0 0% 100%);
+}
+
+.hvl-guarantee-point svg {
+  color: hsl(150 60% 50%);
+}
+
 /* Mobile Responsive */
 @media (max-width: 900px) {
   .hvl-hero-inner {
