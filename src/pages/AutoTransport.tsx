@@ -3,7 +3,6 @@ import { ChevronRight, ChevronLeft, Shield, Star, CheckCircle, Truck, Car, Calen
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -21,6 +20,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import HankChatButton from "@/components/hvl/HankChatButton";
+import SiteShell from "@/components/layout/SiteShell";
 import heroImage from "@/assets/hvl-hero-dynamic.jpg";
 import hvlLogo from "@/assets/hvl-logo.png";
 
@@ -62,7 +62,6 @@ export default function AutoTransport() {
   const [dropoffLocation, setDropoffLocation] = useState("");
   const [dropoffCity, setDropoffCity] = useState("");
   const [pickupDate, setPickupDate] = useState<Date | undefined>();
-  const [isAsap, setIsAsap] = useState(false);
 
   // Step 3: Contact
   const [name, setName] = useState("");
@@ -94,7 +93,7 @@ export default function AutoTransport() {
     } else if (step === 2) {
       if (!pickupLocation) newErrors.pickup = "Required";
       if (!dropoffLocation) newErrors.dropoff = "Required";
-      if (!isAsap && !pickupDate) newErrors.date = "Required";
+      if (!pickupDate) newErrors.date = "Required";
     } else if (step === 3) {
       if (!name.trim()) newErrors.name = "Required";
       if (!phone.trim()) newErrors.phone = "Required";
@@ -140,7 +139,6 @@ export default function AutoTransport() {
     setDropoffLocation("");
     setDropoffCity("");
     setPickupDate(undefined);
-    setIsAsap(false);
     setName("");
     setPhone("");
     setEmail("");
@@ -148,18 +146,8 @@ export default function AutoTransport() {
   };
 
   return (
+    <SiteShell hideTrustStrip>
     <div className="hvl-page">
-      {/* RED HEADER BAR */}
-      <header className="hvl-header">
-        <div className="hvl-header-inner">
-          <div className="hvl-logo">
-            <img src={hvlLogo} alt="Howard's Van Line" className="hvl-logo-img" />
-          </div>
-          <div className="hvl-header-contact">
-            <span>Call Us: 1-800-555-MOVE</span>
-          </div>
-        </div>
-      </header>
 
       {/* HERO SECTION - Full width dramatic hero */}
       <section className="hvl-hero-dramatic">
@@ -329,44 +317,31 @@ export default function AutoTransport() {
 
                   <div className="hvl-field">
                     <Label className="hvl-label">Pickup Date</Label>
-                    <div className="hvl-date-row">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            disabled={isAsap}
-                            className={cn(
-                              "hvl-date-btn",
-                              !pickupDate && !isAsap && "hvl-date-placeholder",
-                              errors.date && "hvl-error"
-                            )}
-                          >
-                            <Calendar className="w-4 h-4 mr-2" />
-                            {pickupDate ? format(pickupDate, "PPP") : "Select date"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <CalendarComponent
-                            mode="single"
-                            selected={pickupDate}
-                            onSelect={setPickupDate}
-                            disabled={(date) => date < new Date()}
-                            initialFocus
-                            className="pointer-events-auto"
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <label className="hvl-asap-toggle">
-                        <Checkbox
-                          checked={isAsap}
-                          onCheckedChange={(checked) => {
-                            setIsAsap(!!checked);
-                            if (checked) setPickupDate(undefined);
-                          }}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "hvl-date-btn w-full justify-start",
+                            !pickupDate && "hvl-date-placeholder",
+                            errors.date && "hvl-error"
+                          )}
+                        >
+                          <Calendar className="w-4 h-4 mr-2" />
+                          {pickupDate ? format(pickupDate, "PPP") : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={pickupDate}
+                          onSelect={setPickupDate}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                          className="pointer-events-auto"
                         />
-                        <span>ASAP</span>
-                      </label>
-                    </div>
+                      </PopoverContent>
+                    </Popover>
                     {errors.date && <span className="hvl-error-text">{errors.date}</span>}
                   </div>
                 </div>
@@ -662,5 +637,6 @@ export default function AutoTransport() {
       {/* Hank Chat Assistant */}
       <HankChatButton />
     </div>
+    </SiteShell>
   );
 }
