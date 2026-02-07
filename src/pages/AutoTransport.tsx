@@ -20,6 +20,7 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
+import heroImage from "@/assets/hvl-hero-transport.jpg";
 
 // ═══════════════════════════════════════════════════════════════════
 // VEHICLE DATA
@@ -144,226 +145,13 @@ export default function AutoTransport() {
     setErrors({});
   };
 
-  // Render step content
-  const renderStepContent = () => {
-    if (showConfirmation) {
-      return (
-        <div className="hvl-confirmation">
-          <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-          <h3>Thank You!</h3>
-          <p>We received your request for a {year} {make} {model} transport quote.</p>
-          <p className="hvl-confirmation-sub">A specialist will contact you shortly at {email}.</p>
-          <Button onClick={handleReset} className="hvl-btn-next mt-4">
-            Start New Quote
-          </Button>
-        </div>
-      );
-    }
-
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="hvl-step-content">
-            <div className="hvl-form-row">
-              <div className="hvl-field">
-                <Label className="hvl-label">Year</Label>
-                <Select value={year} onValueChange={setYear}>
-                  <SelectTrigger className={cn("hvl-select", errors.year && "hvl-error")}>
-                    <SelectValue placeholder="Select year" />
-                  </SelectTrigger>
-                  <SelectContent className="hvl-dropdown">
-                    {YEARS.map((y) => (
-                      <SelectItem key={y} value={y}>{y}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.year && <span className="hvl-error-text">{errors.year}</span>}
-              </div>
-
-              <div className="hvl-field">
-                <Label className="hvl-label">Make</Label>
-                <Select value={make} onValueChange={handleMakeChange}>
-                  <SelectTrigger className={cn("hvl-select", errors.make && "hvl-error")}>
-                    <SelectValue placeholder="Select make" />
-                  </SelectTrigger>
-                  <SelectContent className="hvl-dropdown">
-                    {MAKES.map((m) => (
-                      <SelectItem key={m} value={m}>{m}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.make && <span className="hvl-error-text">{errors.make}</span>}
-              </div>
-            </div>
-
-            <div className="hvl-field">
-              <Label className="hvl-label">Model</Label>
-              <Select value={model} onValueChange={setModel} disabled={!make}>
-                <SelectTrigger className={cn("hvl-select", errors.model && "hvl-error")}>
-                  <SelectValue placeholder={make ? "Select model" : "Select make first"} />
-                </SelectTrigger>
-                <SelectContent className="hvl-dropdown">
-                  {availableModels.map((m) => (
-                    <SelectItem key={m} value={m}>{m}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.model && <span className="hvl-error-text">{errors.model}</span>}
-            </div>
-
-            <div className="hvl-field">
-              <Label className="hvl-label">Transport Type</Label>
-              <div className="hvl-transport-options">
-                <button
-                  type="button"
-                  className={cn("hvl-transport-card", transportType === "open" && "selected")}
-                  onClick={() => setTransportType("open")}
-                >
-                  <Truck className="w-5 h-5" />
-                  <span>Open Carrier</span>
-                  <span className="hvl-transport-desc">Standard, cost-effective</span>
-                </button>
-                <button
-                  type="button"
-                  className={cn("hvl-transport-card", transportType === "enclosed" && "selected")}
-                  onClick={() => setTransportType("enclosed")}
-                >
-                  <Car className="w-5 h-5" />
-                  <span>Enclosed Carrier</span>
-                  <span className="hvl-transport-desc">Premium protection</span>
-                </button>
-              </div>
-              {errors.transportType && <span className="hvl-error-text">{errors.transportType}</span>}
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="hvl-step-content">
-            <div className="hvl-field">
-              <Label className="hvl-label">Pickup Location</Label>
-              <LocationAutocomplete
-                value={pickupLocation}
-                onValueChange={setPickupLocation}
-                onLocationSelect={(city, zip) => setPickupCity(city)}
-                placeholder="City, State or ZIP"
-                mode="city"
-                className={cn("hvl-input", errors.pickup && "hvl-error")}
-              />
-              {errors.pickup && <span className="hvl-error-text">{errors.pickup}</span>}
-            </div>
-
-            <div className="hvl-field">
-              <Label className="hvl-label">Dropoff Location</Label>
-              <LocationAutocomplete
-                value={dropoffLocation}
-                onValueChange={setDropoffLocation}
-                onLocationSelect={(city, zip) => setDropoffCity(city)}
-                placeholder="City, State or ZIP"
-                mode="city"
-                className={cn("hvl-input", errors.dropoff && "hvl-error")}
-              />
-              {errors.dropoff && <span className="hvl-error-text">{errors.dropoff}</span>}
-            </div>
-
-            <div className="hvl-field">
-              <Label className="hvl-label">Pickup Date</Label>
-              <div className="hvl-date-row">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      disabled={isAsap}
-                      className={cn(
-                        "hvl-date-btn",
-                        !pickupDate && !isAsap && "hvl-date-placeholder",
-                        errors.date && "hvl-error"
-                      )}
-                    >
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {pickupDate ? format(pickupDate, "PPP") : "Select date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarComponent
-                      mode="single"
-                      selected={pickupDate}
-                      onSelect={setPickupDate}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-                <label className="hvl-asap-toggle">
-                  <Checkbox
-                    checked={isAsap}
-                    onCheckedChange={(checked) => {
-                      setIsAsap(!!checked);
-                      if (checked) setPickupDate(undefined);
-                    }}
-                  />
-                  <span>ASAP</span>
-                </label>
-              </div>
-              {errors.date && <span className="hvl-error-text">{errors.date}</span>}
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="hvl-step-content">
-            <div className="hvl-field">
-              <Label className="hvl-label">Full Name</Label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                className={cn("hvl-input", errors.name && "hvl-error")}
-              />
-              {errors.name && <span className="hvl-error-text">{errors.name}</span>}
-            </div>
-
-            <div className="hvl-field">
-              <Label className="hvl-label">Phone Number</Label>
-              <Input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="(555) 555-5555"
-                className={cn("hvl-input", errors.phone && "hvl-error")}
-              />
-              {errors.phone && <span className="hvl-error-text">{errors.phone}</span>}
-            </div>
-
-            <div className="hvl-field">
-              <Label className="hvl-label">Email Address</Label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className={cn("hvl-input", errors.email && "hvl-error")}
-              />
-              {errors.email && <span className="hvl-error-text">{errors.email}</span>}
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="hvl-page">
       {/* RED HEADER BAR */}
       <header className="hvl-header">
         <div className="hvl-header-inner">
           <div className="hvl-logo">
-            <Truck className="w-8 h-8" />
+            <Truck className="w-7 h-7" />
             <span>Howard Van Lines</span>
           </div>
           <div className="hvl-header-contact">
@@ -375,13 +163,16 @@ export default function AutoTransport() {
       {/* HERO SECTION */}
       <section className="hvl-hero">
         <div className="hvl-hero-inner">
-          {/* Left: Headline */}
+          {/* Left: Headline + Image */}
           <div className="hvl-hero-text">
             <h1>Reliable Auto Transport</h1>
             <p>
               Trust Howard Van Lines for safe, insured vehicle shipping across the nation. 
               Get your free quote in minutes.
             </p>
+            <div className="hvl-hero-image">
+              <img src={heroImage} alt="Auto transport truck carrying vehicles" />
+            </div>
           </div>
 
           {/* Right: Wizard Card */}
@@ -410,7 +201,199 @@ export default function AutoTransport() {
 
             {/* Wizard Content */}
             <div className="hvl-wizard-content">
-              {renderStepContent()}
+              {showConfirmation ? (
+                <div className="hvl-confirmation">
+                  <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                  <h3>Thank You!</h3>
+                  <p>We received your request for a {year} {make} {model} transport quote.</p>
+                  <p className="hvl-confirmation-sub">A specialist will contact you shortly at {email}.</p>
+                  <Button onClick={handleReset} className="hvl-btn-next mt-4">
+                    Start New Quote
+                  </Button>
+                </div>
+              ) : currentStep === 1 ? (
+                <div className="hvl-step-content">
+                  <div className="hvl-form-row">
+                    <div className="hvl-field">
+                      <Label className="hvl-label">Year</Label>
+                      <Select value={year} onValueChange={setYear}>
+                        <SelectTrigger className={cn("hvl-select", errors.year && "hvl-error")}>
+                          <SelectValue placeholder="Select year" />
+                        </SelectTrigger>
+                        <SelectContent className="hvl-dropdown">
+                          {YEARS.map((y) => (
+                            <SelectItem key={y} value={y}>{y}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.year && <span className="hvl-error-text">{errors.year}</span>}
+                    </div>
+
+                    <div className="hvl-field">
+                      <Label className="hvl-label">Make</Label>
+                      <Select value={make} onValueChange={handleMakeChange}>
+                        <SelectTrigger className={cn("hvl-select", errors.make && "hvl-error")}>
+                          <SelectValue placeholder="Select make" />
+                        </SelectTrigger>
+                        <SelectContent className="hvl-dropdown">
+                          {MAKES.map((m) => (
+                            <SelectItem key={m} value={m}>{m}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.make && <span className="hvl-error-text">{errors.make}</span>}
+                    </div>
+                  </div>
+
+                  <div className="hvl-field">
+                    <Label className="hvl-label">Model</Label>
+                    <Select value={model} onValueChange={setModel} disabled={!make}>
+                      <SelectTrigger className={cn("hvl-select", errors.model && "hvl-error")}>
+                        <SelectValue placeholder={make ? "Select model" : "Select make first"} />
+                      </SelectTrigger>
+                      <SelectContent className="hvl-dropdown">
+                        {availableModels.map((m) => (
+                          <SelectItem key={m} value={m}>{m}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.model && <span className="hvl-error-text">{errors.model}</span>}
+                  </div>
+
+                  <div className="hvl-field">
+                    <Label className="hvl-label">Transport Type</Label>
+                    <div className="hvl-transport-options">
+                      <button
+                        type="button"
+                        className={cn("hvl-transport-card", transportType === "open" && "selected")}
+                        onClick={() => setTransportType("open")}
+                      >
+                        <Truck className="w-5 h-5" />
+                        <span>Open Carrier</span>
+                        <span className="hvl-transport-desc">Standard, cost-effective</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={cn("hvl-transport-card", transportType === "enclosed" && "selected")}
+                        onClick={() => setTransportType("enclosed")}
+                      >
+                        <Car className="w-5 h-5" />
+                        <span>Enclosed Carrier</span>
+                        <span className="hvl-transport-desc">Premium protection</span>
+                      </button>
+                    </div>
+                    {errors.transportType && <span className="hvl-error-text">{errors.transportType}</span>}
+                  </div>
+                </div>
+              ) : currentStep === 2 ? (
+                <div className="hvl-step-content">
+                  <div className="hvl-field">
+                    <Label className="hvl-label">Pickup Location</Label>
+                    <LocationAutocomplete
+                      value={pickupLocation}
+                      onValueChange={setPickupLocation}
+                      onLocationSelect={(city, zip) => setPickupCity(city)}
+                      placeholder="City, State or ZIP"
+                      mode="city"
+                      className={cn("hvl-input", errors.pickup && "hvl-error")}
+                    />
+                    {errors.pickup && <span className="hvl-error-text">{errors.pickup}</span>}
+                  </div>
+
+                  <div className="hvl-field">
+                    <Label className="hvl-label">Dropoff Location</Label>
+                    <LocationAutocomplete
+                      value={dropoffLocation}
+                      onValueChange={setDropoffLocation}
+                      onLocationSelect={(city, zip) => setDropoffCity(city)}
+                      placeholder="City, State or ZIP"
+                      mode="city"
+                      className={cn("hvl-input", errors.dropoff && "hvl-error")}
+                    />
+                    {errors.dropoff && <span className="hvl-error-text">{errors.dropoff}</span>}
+                  </div>
+
+                  <div className="hvl-field">
+                    <Label className="hvl-label">Pickup Date</Label>
+                    <div className="hvl-date-row">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            disabled={isAsap}
+                            className={cn(
+                              "hvl-date-btn",
+                              !pickupDate && !isAsap && "hvl-date-placeholder",
+                              errors.date && "hvl-error"
+                            )}
+                          >
+                            <Calendar className="w-4 h-4 mr-2" />
+                            {pickupDate ? format(pickupDate, "PPP") : "Select date"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <CalendarComponent
+                            mode="single"
+                            selected={pickupDate}
+                            onSelect={setPickupDate}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                            className="pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <label className="hvl-asap-toggle">
+                        <Checkbox
+                          checked={isAsap}
+                          onCheckedChange={(checked) => {
+                            setIsAsap(!!checked);
+                            if (checked) setPickupDate(undefined);
+                          }}
+                        />
+                        <span>ASAP</span>
+                      </label>
+                    </div>
+                    {errors.date && <span className="hvl-error-text">{errors.date}</span>}
+                  </div>
+                </div>
+              ) : currentStep === 3 ? (
+                <div className="hvl-step-content">
+                  <div className="hvl-field">
+                    <Label className="hvl-label">Full Name</Label>
+                    <Input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                      className={cn("hvl-input", errors.name && "hvl-error")}
+                    />
+                    {errors.name && <span className="hvl-error-text">{errors.name}</span>}
+                  </div>
+
+                  <div className="hvl-field">
+                    <Label className="hvl-label">Phone Number</Label>
+                    <Input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="(555) 555-5555"
+                      className={cn("hvl-input", errors.phone && "hvl-error")}
+                    />
+                    {errors.phone && <span className="hvl-error-text">{errors.phone}</span>}
+                  </div>
+
+                  <div className="hvl-field">
+                    <Label className="hvl-label">Email Address</Label>
+                    <Input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className={cn("hvl-input", errors.email && "hvl-error")}
+                    />
+                    {errors.email && <span className="hvl-error-text">{errors.email}</span>}
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             {/* Navigation Buttons */}
