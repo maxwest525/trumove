@@ -21,7 +21,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import heroImage from "@/assets/hvl-hero-transport.jpg";
-import hvlLogo from "@/assets/hvl-logo.webp";
+import hvlLogo from "@/assets/hvl-logo.png";
 
 // ═══════════════════════════════════════════════════════════════════
 // VEHICLE DATA
