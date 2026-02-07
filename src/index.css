@@ -34017,13 +34017,18 @@ gmp-map-3d-element .gmnoprint {
   display: block;
 }
 
-/* Wizard Card */
+/* Wizard Card - Glassmorphism */
 .hvl-wizard-card {
-  background: hsl(0 0% 100%);
-  border: 1px solid hsl(220 10% 88%);
-  border-radius: 10px;
+  background: hsl(0 0% 100% / 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid hsl(0 0% 100% / 0.6);
+  border-radius: 16px;
   padding: 1.75rem;
-  box-shadow: 0 4px 20px hsl(220 20% 10% / 0.06);
+  box-shadow: 
+    0 8px 32px hsl(220 20% 10% / 0.12),
+    0 2px 8px hsl(220 20% 10% / 0.06),
+    inset 0 1px 0 hsl(0 0% 100% / 0.5);
 }
 
 /* Step Indicator */
