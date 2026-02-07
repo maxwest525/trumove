@@ -33926,15 +33926,19 @@ gmp-map-3d-element .gmnoprint {
   background: hsl(0 0% 100%) !important;
   color: hsl(0 0% 0%) !important;
   border: none !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px hsl(0 0% 0% / 0.08);
 }
 
 .at-btn-primary:hover {
-  background: hsl(0 0% 90%) !important;
-  transform: translateY(-1px);
+  background: hsl(0 0% 95%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px hsl(0 0% 0% / 0.15);
 }
 
 .at-btn-primary:active {
   transform: translateY(0);
+  box-shadow: 0 1px 2px hsl(0 0% 0% / 0.08);
 }
 
 /* Secondary: Ghost outline */
@@ -33942,12 +33946,19 @@ gmp-map-3d-element .gmnoprint {
   background: transparent !important;
   color: var(--at-text-secondary) !important;
   border: 1px solid var(--at-border) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .at-btn-secondary:hover {
   background: var(--at-bg-elevated) !important;
   color: var(--at-text) !important;
   border-color: hsl(0 0% 22%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px hsl(0 0% 0% / 0.1);
+}
+
+.at-btn-secondary:active {
+  transform: translateY(0);
 }
 
 /* Reserve/Action: Subtle accent */
@@ -33955,11 +33966,18 @@ gmp-map-3d-element .gmnoprint {
   background: var(--at-accent-subtle) !important;
   color: var(--at-accent) !important;
   border: 1px solid hsl(var(--primary) / 0.2) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .at-btn-reserve:hover {
   background: hsl(var(--primary) / 0.18) !important;
   border-color: hsl(var(--primary) / 0.3) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.15);
+}
+
+.at-btn-reserve:active {
+  transform: translateY(0);
 }
 
 .at-btn-full {
@@ -34199,6 +34217,13 @@ gmp-map-3d-element .gmnoprint {
   border-radius: var(--at-radius);
   box-shadow: var(--at-shadow-card);
   overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.at-viewer-card:hover,
+.at-report-card:hover {
+  border-color: hsl(0 0% 20%);
+  box-shadow: var(--at-shadow-card), 0 8px 24px hsl(0 0% 0% / 0.12);
 }
 
 .at-wizard-content,
@@ -34295,12 +34320,25 @@ gmp-map-3d-element .gmnoprint {
   align-items: flex-start;
   justify-content: center;
   padding: 1rem 0 2rem;
+  position: relative;
 }
 
 .at-wizard-form {
   width: 100%;
   max-width: 560px;
   margin: 0 auto;
+  animation: at-wizard-fade-in 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes at-wizard-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .at-wizard-form-title {
@@ -35220,6 +35258,11 @@ gmp-map-3d-element .gmnoprint {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.at-photo-card:hover {
+  transform: translateY(-2px);
 }
 
 .at-photo-input {
@@ -35237,22 +35280,25 @@ gmp-map-3d-element .gmnoprint {
   border: 1px dashed var(--at-border);
   border-radius: var(--at-radius-xs);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .at-photo-placeholder:hover {
   border-color: var(--at-accent);
   background: var(--at-accent-subtle);
+  transform: scale(1.02);
 }
 
 .at-photo-placeholder svg {
   color: var(--at-text-muted);
   opacity: 0.5;
+  transition: all 0.25s ease;
 }
 
 .at-photo-placeholder:hover svg {
   color: var(--at-accent);
   opacity: 0.7;
+  transform: scale(1.1);
 }
 
 .at-photo-zone-label {
@@ -35431,12 +35477,19 @@ gmp-map-3d-element .gmnoprint {
   border: 2px solid var(--at-border) !important;
   border-radius: var(--at-radius-md) !important;
   box-shadow: var(--at-shadow) !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.at-addon-card:hover {
+  border-color: hsl(0 0% 25%) !important;
+  transform: translateY(-3px);
+  box-shadow: var(--at-shadow), 0 8px 20px hsl(0 0% 0% / 0.12) !important;
 }
 
 .at-addon-card:has([data-state="checked"]) {
   border-color: hsl(var(--primary) / 0.5) !important;
   box-shadow: var(--at-shadow), 0 0 0 1px hsl(var(--primary) / 0.15) !important;
+  transform: translateY(-2px);
 }
 
 .at-addon-content {
@@ -35602,12 +35655,20 @@ gmp-map-3d-element .gmnoprint {
   border: 2px solid var(--at-border) !important;
   border-radius: var(--at-radius-md) !important;
   box-shadow: var(--at-shadow) !important;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.at-comparison-card:hover {
+  border-color: hsl(0 0% 25%) !important;
+  transform: translateY(-3px);
+  box-shadow: var(--at-shadow), 0 8px 20px hsl(0 0% 0% / 0.12) !important;
 }
 
 .at-comparison-card.is-selected {
   border-color: hsl(var(--primary) / 0.5) !important;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: var(--at-shadow), 0 0 0 2px hsl(var(--primary) / 0.2) !important;
 }
 
 .at-comparison-content {
@@ -35826,11 +35887,18 @@ gmp-map-3d-element .gmnoprint {
   border: none !important;
   font-weight: 600;
   z-index: 10;
-  box-shadow: var(--at-shadow-soft);
+  box-shadow: 0 4px 16px hsl(0 0% 0% / 0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .at-btn-start-tracking:hover {
-  background: hsl(0 0% 90%) !important;
+  background: hsl(0 0% 95%) !important;
+  transform: translateX(-50%) translateY(-3px);
+  box-shadow: 0 8px 24px hsl(0 0% 0% / 0.25);
+}
+
+.at-btn-start-tracking:active {
+  transform: translateX(-50%) translateY(-1px);
 }
 
 .at-tracker-info-panel {
@@ -35898,6 +35966,7 @@ gmp-map-3d-element .gmnoprint {
   align-items: center;
   gap: 0.875rem;
   padding: 0.5rem 0;
+  transition: opacity 0.25s ease;
 }
 
 .at-tesla-step-indicator {
@@ -35907,11 +35976,18 @@ gmp-map-3d-element .gmnoprint {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.at-tesla-step.is-complete .at-tesla-step-indicator,
+.at-tesla-step.is-active .at-tesla-step-indicator {
+  transform: scale(1.1);
 }
 
 .at-tesla-step-indicator svg {
   color: var(--at-text-muted);
   opacity: 0.4;
+  transition: all 0.25s ease;
 }
 
 .at-tesla-step.is-complete .at-tesla-step-indicator svg {
@@ -35930,12 +36006,19 @@ gmp-map-3d-element .gmnoprint {
   border-radius: 50%;
   background: var(--at-bg-input);
   border: 2px solid var(--at-border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .at-tesla-step.is-active .at-tesla-step-dot {
   background: var(--at-bg);
   border-color: var(--at-accent);
   box-shadow: 0 0 0 3px var(--at-accent-subtle);
+  animation: at-dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes at-dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--at-accent-subtle); }
+  50% { box-shadow: 0 0 0 5px hsl(var(--primary) / 0.15); }
 }
 
 .at-tesla-step-content {
