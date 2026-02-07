@@ -21,6 +21,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import heroImage from "@/assets/hvl-hero-transport.jpg";
+import hvlLogo from "@/assets/hvl-logo.webp";
 
 // ═══════════════════════════════════════════════════════════════════
 // VEHICLE DATA
@@ -151,8 +152,7 @@ export default function AutoTransport() {
       <header className="hvl-header">
         <div className="hvl-header-inner">
           <div className="hvl-logo">
-            <Truck className="w-7 h-7" />
-            <span>Howard Van Lines</span>
+            <img src={hvlLogo} alt="Howard's Van Line" className="hvl-logo-img" />
           </div>
           <div className="hvl-header-contact">
             <span>Call Us: 1-800-555-MOVE</span>
