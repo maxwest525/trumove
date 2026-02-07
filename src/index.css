@@ -33994,23 +33994,200 @@ gmp-map-3d-element .gmnoprint {
 
 /* Wizard Content */
 .hvl-wizard-content {
-  min-height: 180px;
+  min-height: 280px;
+}
+
+.hvl-step-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Form Fields */
+.hvl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.hvl-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: hsl(220 15% 30%);
+}
+
+.hvl-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.hvl-select,
+.hvl-input {
+  height: 44px;
+  border: 1px solid hsl(220 10% 85%);
+  border-radius: 6px;
+  background: hsl(0 0% 100%);
+  font-size: 0.9375rem;
+  color: hsl(220 20% 20%);
+  transition: border-color 0.15s;
+}
+
+.hvl-select:focus,
+.hvl-input:focus {
+  outline: none;
+  border-color: hsl(0 70% 45%);
+}
+
+.hvl-select.hvl-error,
+.hvl-input.hvl-error,
+.hvl-date-btn.hvl-error {
+  border-color: hsl(0 70% 50%);
+}
+
+.hvl-error-text {
+  font-size: 0.75rem;
+  color: hsl(0 70% 50%);
+  margin-top: 0.125rem;
+}
+
+/* Dropdown Styling */
+.hvl-dropdown {
+  background: hsl(0 0% 100%) !important;
+  border: 1px solid hsl(220 10% 85%);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px hsl(220 20% 10% / 0.1);
+  z-index: 50;
+}
+
+.hvl-dropdown [data-radix-select-viewport] {
+  background: hsl(0 0% 100%);
+}
+
+.hvl-dropdown [role="option"] {
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
+  color: hsl(220 20% 20%);
+  cursor: pointer;
+}
+
+.hvl-dropdown [role="option"]:hover,
+.hvl-dropdown [role="option"][data-highlighted] {
+  background: hsl(220 10% 96%);
+}
+
+/* Transport Type Cards */
+.hvl-transport-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.hvl-transport-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 1rem;
+  border: 2px solid hsl(220 10% 88%);
+  border-radius: 8px;
+  background: hsl(0 0% 100%);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.hvl-transport-card:hover {
+  border-color: hsl(220 10% 75%);
+  background: hsl(220 10% 98%);
+}
+
+.hvl-transport-card.selected {
+  border-color: hsl(0 70% 45%);
+  background: hsl(0 70% 98%);
+}
+
+.hvl-transport-card svg {
+  color: hsl(220 15% 40%);
+}
+
+.hvl-transport-card.selected svg {
+  color: hsl(0 70% 45%);
+}
+
+.hvl-transport-card span:first-of-type {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(220 20% 20%);
+}
+
+.hvl-transport-desc {
+  font-size: 0.75rem;
+  color: hsl(220 10% 55%);
+  font-weight: 400 !important;
+}
+
+/* Date Picker */
+.hvl-date-row {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 1rem;
 }
 
-.hvl-wizard-placeholder {
-  text-align: center;
-  padding: 2rem;
-  border: 2px dashed hsl(220 10% 88%);
-  border-radius: 8px;
-  width: 100%;
-}
-
-.hvl-wizard-placeholder p {
-  margin: 0;
+.hvl-date-btn {
+  flex: 1;
+  height: 44px;
+  justify-content: flex-start;
+  border: 1px solid hsl(220 10% 85%) !important;
+  border-radius: 6px;
+  background: hsl(0 0% 100%) !important;
   font-size: 0.9375rem;
+  color: hsl(220 20% 20%) !important;
+  font-weight: 400;
+}
+
+.hvl-date-btn:hover:not(:disabled) {
+  background: hsl(220 10% 98%) !important;
+}
+
+.hvl-date-placeholder {
+  color: hsl(220 10% 55%) !important;
+}
+
+.hvl-asap-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(220 15% 35%);
+  white-space: nowrap;
+}
+
+/* Confirmation */
+.hvl-confirmation {
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+.hvl-confirmation h3 {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: hsl(220 20% 20%);
+  margin: 0 0 0.75rem;
+}
+
+.hvl-confirmation p {
+  font-size: 0.9375rem;
+  color: hsl(220 10% 40%);
+  margin: 0 0 0.5rem;
+  line-height: 1.5;
+}
+
+.hvl-confirmation-sub {
+  font-size: 0.8125rem;
   color: hsl(220 10% 55%);
 }
 
