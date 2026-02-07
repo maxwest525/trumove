@@ -471,6 +471,143 @@ export default function AutoTransport() {
         </div>
       </section>
 
+      {/* ABOUT SECTION */}
+      <section className="hvl-content-section">
+        <div className="hvl-content-inner">
+          <div className="hvl-about-grid">
+            <div className="hvl-about-text">
+              <h2>About Howard Van Lines</h2>
+              <p>
+                Since 1985, Howard Van Lines has been a trusted name in vehicle transportation. 
+                What started as a small family business has grown into one of the nation's most 
+                reliable auto transport companies, serving thousands of customers each year.
+              </p>
+              <p>
+                Our commitment to excellence, transparency, and customer satisfaction has earned 
+                us recognition from the Better Business Bureau and countless five-star reviews 
+                from satisfied customers nationwide.
+              </p>
+            </div>
+            <div className="hvl-about-stats">
+              <div className="hvl-stat-item">
+                <span className="hvl-stat-number">40+</span>
+                <span className="hvl-stat-label">Years in Business</span>
+              </div>
+              <div className="hvl-stat-item">
+                <span className="hvl-stat-number">50K+</span>
+                <span className="hvl-stat-label">Vehicles Shipped</span>
+              </div>
+              <div className="hvl-stat-item">
+                <span className="hvl-stat-number">48</span>
+                <span className="hvl-stat-label">States Served</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MISSION SECTION */}
+      <section className="hvl-mission-section">
+        <div className="hvl-content-inner">
+          <h2>Our Mission</h2>
+          <p className="hvl-mission-statement">
+            To provide safe, reliable, and affordable vehicle transportation services while 
+            treating every customer's vehicle as if it were our own. We believe in honest pricing, 
+            clear communication, and delivering your vehicle on time, every time.
+          </p>
+        </div>
+      </section>
+
+      {/* SERVICES SECTION */}
+      <section className="hvl-content-section">
+        <div className="hvl-content-inner">
+          <h2 className="hvl-section-title">Reliable & Secure Vehicle Shipping Services</h2>
+          <p className="hvl-section-subtitle">
+            Whether you're relocating, buying a car online, or shipping a classic vehicle, 
+            we have the right solution for you.
+          </p>
+          
+          <div className="hvl-services-grid">
+            <div className="hvl-service-card">
+              <div className="hvl-service-icon">
+                <Truck className="w-6 h-6" />
+              </div>
+              <h3>Open Carrier Transport</h3>
+              <p>
+                Our most popular and cost-effective option. Your vehicle is transported on an 
+                open trailer alongside other vehicles. Safe, efficient, and budget-friendly.
+              </p>
+              <ul className="hvl-service-features">
+                <li><CheckCircle className="w-4 h-4" /> Lowest cost option</li>
+                <li><CheckCircle className="w-4 h-4" /> Frequent departures</li>
+                <li><CheckCircle className="w-4 h-4" /> Full insurance coverage</li>
+              </ul>
+            </div>
+
+            <div className="hvl-service-card">
+              <div className="hvl-service-icon enclosed">
+                <Shield className="w-6 h-6" />
+              </div>
+              <h3>Enclosed Carrier Transport</h3>
+              <p>
+                Premium protection for luxury, classic, or high-value vehicles. Your car travels 
+                in a fully enclosed trailer, shielded from weather and road debris.
+              </p>
+              <ul className="hvl-service-features">
+                <li><CheckCircle className="w-4 h-4" /> Maximum protection</li>
+                <li><CheckCircle className="w-4 h-4" /> Climate controlled options</li>
+                <li><CheckCircle className="w-4 h-4" /> White glove service</li>
+              </ul>
+            </div>
+
+            <div className="hvl-service-card">
+              <div className="hvl-service-icon express">
+                <Calendar className="w-6 h-6" />
+              </div>
+              <h3>Expedited Shipping</h3>
+              <p>
+                Need your vehicle fast? Our expedited service guarantees priority pickup and 
+                delivery with dedicated carriers for time-sensitive shipments.
+              </p>
+              <ul className="hvl-service-features">
+                <li><CheckCircle className="w-4 h-4" /> Priority scheduling</li>
+                <li><CheckCircle className="w-4 h-4" /> Dedicated carrier</li>
+                <li><CheckCircle className="w-4 h-4" /> Real-time tracking</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHY CHOOSE US */}
+      <section className="hvl-why-section">
+        <div className="hvl-content-inner">
+          <h2>Why Choose Howard Van Lines?</h2>
+          <div className="hvl-why-grid">
+            <div className="hvl-why-item">
+              <Shield className="w-8 h-8" />
+              <h4>Fully Insured</h4>
+              <p>Every shipment is covered by comprehensive insurance for your peace of mind.</p>
+            </div>
+            <div className="hvl-why-item">
+              <Star className="w-8 h-8" />
+              <h4>Top Rated</h4>
+              <p>Consistently rated 4.9+ stars by thousands of satisfied customers.</p>
+            </div>
+            <div className="hvl-why-item">
+              <CheckCircle className="w-8 h-8" />
+              <h4>No Hidden Fees</h4>
+              <p>Transparent pricing with no surprises. The quote you get is the price you pay.</p>
+            </div>
+            <div className="hvl-why-item">
+              <Truck className="w-8 h-8" />
+              <h4>Nationwide Network</h4>
+              <p>Vetted carriers across all 48 continental states for reliable service.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Simple Footer */}
       <footer className="hvl-footer">
         <p>© 2025 Howard Van Lines. All rights reserved.</p>
