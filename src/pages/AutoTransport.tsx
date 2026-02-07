@@ -608,6 +608,38 @@ export default function AutoTransport() {
         </div>
       </section>
 
+      {/* THE HOWARD GUARANTEE */}
+      <section className="hvl-guarantee-section">
+        <div className="hvl-guarantee-inner">
+          <div className="hvl-guarantee-badge">
+            <Shield className="w-12 h-12" />
+          </div>
+          <h2>The Howard Guarantee</h2>
+          <p className="hvl-guarantee-headline">100% Risk-Free Money Back Guarantee</p>
+          <p className="hvl-guarantee-text">
+            At Howard Van Lines, we take pride in our auto transport services, and we're committed 
+            to delivering the best auto shipping experiences in America. Our promise to you is to 
+            ensure your vehicle is shipped safely with our 100% risk-free money back Howard Guarantee. 
+            You pay nothing until you select a carrier for your car shipping, and you can cancel 
+            anytime before we find you a carrier.
+          </p>
+          <div className="hvl-guarantee-points">
+            <div className="hvl-guarantee-point">
+              <CheckCircle className="w-5 h-5" />
+              <span>No upfront payment required</span>
+            </div>
+            <div className="hvl-guarantee-point">
+              <CheckCircle className="w-5 h-5" />
+              <span>Cancel anytime before carrier assignment</span>
+            </div>
+            <div className="hvl-guarantee-point">
+              <CheckCircle className="w-5 h-5" />
+              <span>Full refund if we don't deliver on our promise</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Simple Footer */}
       <footer className="hvl-footer">
         <p>© 2025 Howard Van Lines. All rights reserved.</p>
