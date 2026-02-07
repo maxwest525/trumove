@@ -5,7 +5,8 @@ import {
   Package, Eye, FileText, Navigation, Sparkles,
   AlertCircle, Plus, X, BadgeCheck, Camera, Radio, ChevronDown,
   Star, Building2, Hash, CalendarCheck, ExternalLink, Upload, ImageIcon,
-  User, MessageCircle, PhoneCall, Zap, Lock, ClipboardCheck
+  User, MessageCircle, PhoneCall, Zap, Lock, ClipboardCheck,
+  Download, ShieldCheck, FileCheck, CalendarClock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -670,6 +671,10 @@ export default function AutoTransport() {
   const totalAddonCost = Object.entries(addons).reduce((sum, [key, enabled]) => 
     enabled ? sum + addonPrices[key as keyof typeof addonPrices] : sum, 0
   );
+  
+  // Dashboard modals
+  const [showBOLModal, setShowBOLModal] = useState(false);
+  const [showInsuranceModal, setShowInsuranceModal] = useState(false);
   
   // Step 1: Vehicle
   const [year, setYear] = useState("2022");
@@ -1519,6 +1524,241 @@ export default function AutoTransport() {
           </CardContent>
         </Card>
       </section>
+
+      {/* CUSTOMER DASHBOARD PREVIEW */}
+      {showTracker && (
+        <section className="at-section">
+          <div className="at-section-header">
+            <span className="at-section-label">Your Portal</span>
+            <h2 className="at-section-title">Customer Dashboard (Demo)</h2>
+            <p className="at-section-subtitle">Access your shipment details, documents, and carrier information.</p>
+          </div>
+
+          <div className="at-dashboard-grid">
+            {/* Shipment Status Tile */}
+            <div className="at-dashboard-tile">
+              <div className="at-dashboard-tile-header">
+                <div className="at-dashboard-tile-icon">
+                  <Package className="w-5 h-5" />
+                </div>
+                <span className="at-dashboard-tile-title">Shipment Status</span>
+              </div>
+              <div className="at-dashboard-tile-content">
+                <span className="at-dashboard-tile-value">{isTracking ? "In Transit" : "Scheduled"}</span>
+                <span className="at-dashboard-tile-meta">Order #TM-2026-847293</span>
+              </div>
+              <div className="at-dashboard-tile-footer">
+                <span className={`at-dashboard-status-badge ${isTracking ? 'is-active' : ''}`}>
+                  {isTracking ? "Live Tracking" : "Awaiting Pickup"}
+                </span>
+              </div>
+            </div>
+
+            {/* Pickup Window Tile */}
+            <div className="at-dashboard-tile">
+              <div className="at-dashboard-tile-header">
+                <div className="at-dashboard-tile-icon">
+                  <CalendarClock className="w-5 h-5" />
+                </div>
+                <span className="at-dashboard-tile-title">Pickup Window</span>
+              </div>
+              <div className="at-dashboard-tile-content">
+                <span className="at-dashboard-tile-value">Feb 10, 2026</span>
+                <span className="at-dashboard-tile-meta">8:00 AM – 12:00 PM EST</span>
+              </div>
+              <div className="at-dashboard-tile-footer">
+                <span className="at-dashboard-status-badge is-confirmed">Confirmed</span>
+              </div>
+            </div>
+
+            {/* Carrier Assigned Tile */}
+            <div className="at-dashboard-tile">
+              <div className="at-dashboard-tile-header">
+                <div className="at-dashboard-tile-icon">
+                  <Truck className="w-5 h-5" />
+                </div>
+                <span className="at-dashboard-tile-title">Carrier Assigned</span>
+              </div>
+              <div className="at-dashboard-tile-content">
+                <span className="at-dashboard-tile-value">Atlas Transport</span>
+                <span className="at-dashboard-tile-meta">MC-847293 • DOT 3284756</span>
+              </div>
+              <div className="at-dashboard-tile-footer">
+                <div className="at-dashboard-carrier-rating">
+                  <Star className="w-3 h-3" />
+                  <span>4.9</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Documents Tile */}
+            <div className="at-dashboard-tile">
+              <div className="at-dashboard-tile-header">
+                <div className="at-dashboard-tile-icon">
+                  <FileCheck className="w-5 h-5" />
+                </div>
+                <span className="at-dashboard-tile-title">Documents</span>
+              </div>
+              <div className="at-dashboard-tile-content">
+                <span className="at-dashboard-tile-value">3 Files Ready</span>
+                <span className="at-dashboard-tile-meta">BOL, Insurance, Inspection</span>
+              </div>
+              <div className="at-dashboard-tile-footer">
+                <span className="at-dashboard-status-badge">View All</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Document Actions */}
+          <div className="at-dashboard-actions">
+            <Button 
+              className="at-btn-secondary"
+              onClick={() => setShowBOLModal(true)}
+            >
+              <Download className="w-4 h-4" />
+              Download BOL (Demo)
+            </Button>
+            <Button 
+              className="at-btn-secondary"
+              onClick={() => setShowInsuranceModal(true)}
+            >
+              <ShieldCheck className="w-4 h-4" />
+              View Insurance (Demo)
+            </Button>
+          </div>
+        </section>
+      )}
+
+      {/* BOL Modal */}
+      <Dialog open={showBOLModal} onOpenChange={setShowBOLModal}>
+        <DialogContent className="at-document-modal">
+          <DialogHeader>
+            <DialogTitle className="at-document-modal-title">
+              <FileText className="w-5 h-5" />
+              Bill of Lading (Demo)
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="at-document-modal-content">
+            <div className="at-document-preview">
+              <div className="at-document-header-row">
+                <span className="at-document-label">Document #</span>
+                <span className="at-document-value">BOL-2026-847293</span>
+              </div>
+              <div className="at-document-header-row">
+                <span className="at-document-label">Issue Date</span>
+                <span className="at-document-value">Feb 10, 2026</span>
+              </div>
+              <div className="at-document-header-row">
+                <span className="at-document-label">Shipper</span>
+                <span className="at-document-value">TruMove Auto Transport</span>
+              </div>
+              
+              <div className="at-document-divider" />
+              
+              <div className="at-document-section">
+                <span className="at-document-section-title">Vehicle Information</span>
+                <div className="at-document-row">
+                  <span className="at-document-label">Vehicle</span>
+                  <span className="at-document-value">{year} {make} {model}</span>
+                </div>
+                <div className="at-document-row">
+                  <span className="at-document-label">VIN</span>
+                  <span className="at-document-value">WBAPH5C55BA******</span>
+                </div>
+                <div className="at-document-row">
+                  <span className="at-document-label">Transport Type</span>
+                  <span className="at-document-value">{transportType}</span>
+                </div>
+              </div>
+              
+              <div className="at-document-section">
+                <span className="at-document-section-title">Route</span>
+                <div className="at-document-row">
+                  <span className="at-document-label">Origin</span>
+                  <span className="at-document-value">{fromCity}</span>
+                </div>
+                <div className="at-document-row">
+                  <span className="at-document-label">Destination</span>
+                  <span className="at-document-value">{toCity}</span>
+                </div>
+              </div>
+            </div>
+            
+            <Button 
+              className="at-btn-primary at-btn-full"
+              onClick={() => {
+                toast({ title: "Demo Mode", description: "Download not available in demo." });
+                setShowBOLModal(false);
+              }}
+            >
+              <Download className="w-4 h-4" />
+              Download PDF
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Insurance Modal */}
+      <Dialog open={showInsuranceModal} onOpenChange={setShowInsuranceModal}>
+        <DialogContent className="at-document-modal">
+          <DialogHeader>
+            <DialogTitle className="at-document-modal-title">
+              <ShieldCheck className="w-5 h-5" />
+              Insurance Certificate (Demo)
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="at-document-modal-content">
+            <div className="at-document-preview">
+              <div className="at-insurance-badge">
+                <ShieldCheck className="w-8 h-8" />
+                <span>Fully Insured</span>
+              </div>
+              
+              <div className="at-document-section">
+                <span className="at-document-section-title">Coverage Details</span>
+                <div className="at-document-row">
+                  <span className="at-document-label">Carrier</span>
+                  <span className="at-document-value">Atlas Transport Group</span>
+                </div>
+                <div className="at-document-row">
+                  <span className="at-document-label">Policy #</span>
+                  <span className="at-document-value">ATG-INS-2026-4729</span>
+                </div>
+                <div className="at-document-row">
+                  <span className="at-document-label">Cargo Coverage</span>
+                  <span className="at-document-value">$250,000</span>
+                </div>
+                <div className="at-document-row">
+                  <span className="at-document-label">Liability Coverage</span>
+                  <span className="at-document-value">$1,000,000</span>
+                </div>
+                <div className="at-document-row">
+                  <span className="at-document-label">Valid Through</span>
+                  <span className="at-document-value">Dec 31, 2026</span>
+                </div>
+              </div>
+              
+              <div className="at-insurance-verified">
+                <BadgeCheck className="w-4 h-4" />
+                <span>Verified by FMCSA</span>
+              </div>
+            </div>
+            
+            <Button 
+              className="at-btn-primary at-btn-full"
+              onClick={() => {
+                toast({ title: "Demo Mode", description: "Download not available in demo." });
+                setShowInsuranceModal(false);
+              }}
+            >
+              <Download className="w-4 h-4" />
+              Download Certificate
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* HOW IT WORKS + FAQ */}
       <section className="at-section">
