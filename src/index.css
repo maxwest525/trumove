@@ -34308,11 +34308,237 @@ gmp-map-3d-element .gmnoprint {
   background: hsl(220 20% 18%);
   color: hsl(220 10% 70%);
   text-align: center;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   font-size: 0.8125rem;
 }
 
 .hvl-footer p {
+  margin: 0;
+}
+
+/* Content Sections */
+.hvl-content-section {
+  padding: 4rem 1.5rem;
+  background: hsl(0 0% 100%);
+}
+
+.hvl-content-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hvl-section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: hsl(220 20% 20%);
+  text-align: center;
+  margin: 0 0 0.75rem;
+}
+
+.hvl-section-subtitle {
+  font-size: 1rem;
+  color: hsl(220 10% 50%);
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+/* About Grid */
+.hvl-about-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hvl-about-text h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: hsl(220 20% 20%);
+  margin: 0 0 1rem;
+}
+
+.hvl-about-text p {
+  font-size: 1rem;
+  color: hsl(220 10% 40%);
+  line-height: 1.7;
+  margin: 0 0 1rem;
+}
+
+.hvl-about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.hvl-stat-item {
+  background: hsl(220 15% 97%);
+  border-radius: 10px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  border: 1px solid hsl(220 10% 90%);
+}
+
+.hvl-stat-number {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: hsl(0 70% 45%);
+  margin-bottom: 0.25rem;
+}
+
+.hvl-stat-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(220 10% 50%);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Mission Section */
+.hvl-mission-section {
+  padding: 4rem 1.5rem;
+  background: hsl(0 70% 45%);
+  text-align: center;
+}
+
+.hvl-mission-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: hsl(0 0% 100%);
+  margin: 0 0 1.25rem;
+}
+
+.hvl-mission-statement {
+  font-size: 1.125rem;
+  color: hsl(0 0% 100% / 0.9);
+  line-height: 1.7;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Services Grid */
+.hvl-services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.hvl-service-card {
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(220 10% 88%);
+  border-radius: 12px;
+  padding: 1.75rem;
+  transition: all 0.2s ease;
+}
+
+.hvl-service-card:hover {
+  border-color: hsl(220 10% 80%);
+  box-shadow: 0 4px 20px hsl(220 20% 10% / 0.08);
+}
+
+.hvl-service-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: hsl(220 15% 96%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(220 15% 40%);
+  margin-bottom: 1rem;
+}
+
+.hvl-service-icon.enclosed {
+  background: hsl(0 70% 95%);
+  color: hsl(0 70% 45%);
+}
+
+.hvl-service-icon.express {
+  background: hsl(45 90% 95%);
+  color: hsl(45 80% 35%);
+}
+
+.hvl-service-card h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: hsl(220 20% 20%);
+  margin: 0 0 0.75rem;
+}
+
+.hvl-service-card > p {
+  font-size: 0.9375rem;
+  color: hsl(220 10% 45%);
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+
+.hvl-service-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hvl-service-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: hsl(220 15% 35%);
+}
+
+.hvl-service-features li svg {
+  color: hsl(150 50% 40%);
+  flex-shrink: 0;
+}
+
+/* Why Choose Us Section */
+.hvl-why-section {
+  padding: 4rem 1.5rem;
+  background: hsl(220 15% 97%);
+}
+
+.hvl-why-section h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: hsl(220 20% 20%);
+  text-align: center;
+  margin: 0 0 2.5rem;
+}
+
+.hvl-why-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hvl-why-item {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.hvl-why-item svg {
+  color: hsl(0 70% 45%);
+  margin-bottom: 1rem;
+}
+
+.hvl-why-item h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: hsl(220 20% 20%);
+  margin: 0 0 0.5rem;
+}
+
+.hvl-why-item p {
+  font-size: 0.875rem;
+  color: hsl(220 10% 45%);
+  line-height: 1.5;
   margin: 0;
 }
 
@@ -34335,9 +34561,33 @@ gmp-map-3d-element .gmnoprint {
     max-width: 100%;
   }
   
+  .hvl-hero-image {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
   .hvl-wizard-card {
     max-width: 480px;
     margin: 0 auto;
+  }
+  
+  .hvl-about-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .hvl-about-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .hvl-services-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .hvl-why-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 }
 
@@ -34364,5 +34614,30 @@ gmp-map-3d-element .gmnoprint {
   
   .hvl-trust-item {
     font-size: 0.75rem;
+  }
+  
+  .hvl-content-section,
+  .hvl-mission-section,
+  .hvl-why-section {
+    padding: 2.5rem 1rem;
+  }
+  
+  .hvl-about-stats {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .hvl-stat-item {
+    padding: 1rem;
+  }
+  
+  .hvl-why-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .hvl-section-title,
+  .hvl-about-text h2,
+  .hvl-why-section h2 {
+    font-size: 1.375rem;
   }
 }
