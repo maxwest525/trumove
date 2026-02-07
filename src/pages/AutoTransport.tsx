@@ -3,7 +3,7 @@ import {
   Car, Truck, Shield, Clock, MapPin, CheckCircle2, 
   ChevronRight, ChevronLeft, Phone, Calendar,
   Package, Eye, FileText, Navigation, Sparkles,
-  AlertCircle, Plus, X, BadgeCheck, Camera, Radio
+  AlertCircle, Plus, X, BadgeCheck, Camera, Radio, ChevronDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -745,6 +745,61 @@ export default function AutoTransport() {
                   <div className="at-estimate-card">
                     <div className="at-estimate-header"><Sparkles className="w-5 h-5" /><span>Demo Estimate</span></div>
                     <div className="at-estimate-price"><span className="at-estimate-price-label">Estimated Price</span><span className="at-estimate-price-value">${pricing.low.toLocaleString()} – ${pricing.high.toLocaleString()}</span></div>
+                    
+                    {/* Price Breakdown Dropdown */}
+                    <details className="at-breakdown-details">
+                      <summary className="at-breakdown-trigger">
+                        <span>Price Breakdown (Demo)</span>
+                        <ChevronDown className="at-breakdown-chevron" />
+                      </summary>
+                      <div className="at-breakdown-content">
+                        <div className="at-breakdown-lines">
+                          <div className="at-breakdown-line">
+                            <span>Base Route Rate</span>
+                            <span>${(ROUTE_PRICES[fromCity]?.[toCity] || 800).toLocaleString()}</span>
+                          </div>
+                          {vehicleType === "Truck" && (
+                            <div className="at-breakdown-line at-breakdown-line-adjust">
+                              <span>Vehicle Type (Truck)</span>
+                              <span>+10%</span>
+                            </div>
+                          )}
+                          {vehicleType === "SUV" && (
+                            <div className="at-breakdown-line at-breakdown-line-adjust">
+                              <span>Vehicle Type (SUV)</span>
+                              <span>+5%</span>
+                            </div>
+                          )}
+                          {vehicleType !== "Truck" && vehicleType !== "SUV" && (
+                            <div className="at-breakdown-line at-breakdown-line-neutral">
+                              <span>Vehicle Type ({vehicleType})</span>
+                              <span>—</span>
+                            </div>
+                          )}
+                          <div className={`at-breakdown-line ${transportType === "Enclosed" ? "at-breakdown-line-adjust" : "at-breakdown-line-neutral"}`}>
+                            <span>Transport Type ({transportType})</span>
+                            <span>{transportType === "Enclosed" ? "+35%" : "—"}</span>
+                          </div>
+                          <div className={`at-breakdown-line ${runs === "Does not run" ? "at-breakdown-line-adjust" : "at-breakdown-line-neutral"}`}>
+                            <span>Condition ({runs})</span>
+                            <span>{runs === "Does not run" ? "+20%" : "—"}</span>
+                          </div>
+                          <div className={`at-breakdown-line ${size === "Oversize" ? "at-breakdown-line-adjust" : "at-breakdown-line-neutral"}`}>
+                            <span>Size ({size})</span>
+                            <span>{size === "Oversize" ? "+20%" : "—"}</span>
+                          </div>
+                          <div className="at-breakdown-line at-breakdown-line-margin">
+                            <span>Est. Carrier Margin (Demo)</span>
+                            <span>±8%</span>
+                          </div>
+                        </div>
+                        <div className="at-breakdown-total">
+                          <span>Total Range</span>
+                          <span>${pricing.low.toLocaleString()} – ${pricing.high.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </details>
+                    
                     <div className="at-estimate-meta">
                       <div className="at-estimate-meta-item"><Clock className="w-4 h-4" /><div><span className="at-estimate-meta-label">Pickup Window</span><span className="at-estimate-meta-value">{timeframe === "ASAP" ? "1–2 days" : timeframe}</span></div></div>
                       <div className="at-estimate-meta-item"><MapPin className="w-4 h-4" /><div><span className="at-estimate-meta-label">Transit Time</span><span className="at-estimate-meta-value">{transitTime}</span></div></div>

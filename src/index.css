@@ -34665,6 +34665,130 @@ gmp-map-3d-element .gmnoprint {
 }
 
 /* ─────────────────────────────────────────────
+   PRICE BREAKDOWN DROPDOWN
+   ───────────────────────────────────────────── */
+.at-breakdown-details {
+  border-top: 1px solid var(--at-border-subtle);
+  border-bottom: 1px solid var(--at-border-subtle);
+}
+
+.at-breakdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.875rem 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--at-text-secondary);
+  cursor: pointer;
+  list-style: none;
+  transition: color 0.2s ease;
+}
+
+.at-breakdown-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.at-breakdown-trigger:hover {
+  color: var(--at-text);
+}
+
+.at-breakdown-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--at-text-muted);
+  transition: transform 0.25s ease;
+}
+
+.at-breakdown-details[open] .at-breakdown-chevron {
+  transform: rotate(180deg);
+}
+
+.at-breakdown-content {
+  padding-bottom: 1rem;
+}
+
+.at-breakdown-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.at-breakdown-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--at-bg-input);
+  border-radius: 6px;
+}
+
+.at-breakdown-line span:first-child {
+  color: var(--at-text-secondary);
+}
+
+.at-breakdown-line span:last-child {
+  font-weight: 600;
+  color: var(--at-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.at-breakdown-line-adjust span:last-child {
+  color: var(--at-accent);
+  opacity: 0.8;
+}
+
+.at-breakdown-line-neutral span:last-child {
+  color: var(--at-text-muted);
+  font-weight: 400;
+}
+
+.at-breakdown-line-margin {
+  background: transparent;
+  border-top: 1px dashed var(--at-border);
+  border-radius: 0;
+  margin-top: 0.25rem;
+  padding-top: 0.75rem;
+}
+
+.at-breakdown-line-margin span:first-child {
+  color: var(--at-text-muted);
+  font-style: italic;
+}
+
+.at-breakdown-line-margin span:last-child {
+  color: var(--at-text-muted);
+}
+
+.at-breakdown-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0.875rem 1rem;
+  background: var(--at-accent-subtle);
+  border: 1px solid hsl(var(--primary) / 0.15);
+  border-radius: var(--at-radius-xs);
+}
+
+.at-breakdown-total span:first-child {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--at-text-muted);
+}
+
+.at-breakdown-total span:last-child {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--at-text);
+  letter-spacing: -0.02em;
+}
+
+/* ─────────────────────────────────────────────
    VEHICLE VIEWER 3D
    ───────────────────────────────────────────── */
 .at-viewer-inner {
