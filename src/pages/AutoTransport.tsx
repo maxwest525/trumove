@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Shield, Star, CheckCircle, Truck, Car, Calendar, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -144,6 +144,25 @@ export default function AutoTransport() {
     setEmail("");
     setErrors({});
   };
+
+  // Scroll animation observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const elements = document.querySelectorAll(".hvl-animate-on-scroll");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="hvl-page">
@@ -431,7 +450,7 @@ export default function AutoTransport() {
       </section>
 
       {/* TRUST STRIP */}
-      <section className="hvl-trust-strip">
+      <section className="hvl-trust-strip hvl-animate-on-scroll">
         <p className="hvl-trust-tagline">Trust real voices, real moves, real reviews!</p>
         <div className="hvl-trust-inner">
           <div className="hvl-trust-item">
@@ -477,7 +496,7 @@ export default function AutoTransport() {
       </section>
 
       {/* ABOUT SECTION */}
-      <section className="hvl-content-section">
+      <section className="hvl-content-section hvl-animate-on-scroll">
         <div className="hvl-content-inner">
           <div className="hvl-about-grid">
             <div className="hvl-about-text">
@@ -512,7 +531,7 @@ export default function AutoTransport() {
       </section>
 
       {/* MISSION SECTION */}
-      <section className="hvl-mission-section">
+      <section className="hvl-mission-section hvl-animate-on-scroll">
         <div className="hvl-content-inner">
           <h2>Our Mission</h2>
           <p className="hvl-mission-statement">
@@ -524,7 +543,7 @@ export default function AutoTransport() {
       </section>
 
       {/* SERVICES SECTION */}
-      <section className="hvl-content-section">
+      <section className="hvl-content-section hvl-animate-on-scroll">
         <div className="hvl-content-inner">
           <h2 className="hvl-section-title">Reliable & Secure Vehicle Shipping Services</h2>
           <p className="hvl-section-subtitle">
@@ -585,7 +604,7 @@ export default function AutoTransport() {
       </section>
 
       {/* WHY CHOOSE US */}
-      <section className="hvl-why-section">
+      <section className="hvl-why-section hvl-animate-on-scroll">
         <div className="hvl-content-inner">
           <h2>Why Choose Howard Van Lines?</h2>
           <div className="hvl-why-grid">
@@ -614,7 +633,7 @@ export default function AutoTransport() {
       </section>
 
       {/* THE HOWARD GUARANTEE */}
-      <section className="hvl-guarantee-section">
+      <section className="hvl-guarantee-section hvl-animate-on-scroll">
         <div className="hvl-guarantee-inner">
           <div className="hvl-guarantee-badge">
             <Shield className="w-12 h-12" />
