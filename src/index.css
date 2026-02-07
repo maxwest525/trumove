@@ -34355,47 +34355,94 @@ gmp-map-3d-element .gmnoprint {
 
 /* Trust Strip */
 .hvl-trust-strip {
-  background: hsl(220 15% 97%);
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid hsl(220 10% 90%);
+  background: hsl(0 0% 100%);
+  padding: 1.5rem 1.5rem;
+  border-bottom: 1px solid hsl(220 10% 92%);
   text-align: center;
 }
 
 .hvl-trust-tagline {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: hsl(150 50% 40%);
-  margin: 0 0 1rem;
-  letter-spacing: 0.01em;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: hsl(220 15% 45%);
+  margin: 0 0 1.25rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .hvl-trust-inner {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: 2.5rem;
   flex-wrap: wrap;
 }
 
 .hvl-trust-item {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
-  font-size: 0.75rem;
+  gap: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.hvl-trust-item:hover {
+  background: hsl(220 15% 97%);
+  transform: translateY(-1px);
+}
+
+.hvl-trust-logo {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.hvl-trust-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.hvl-trust-rating {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: hsl(220 15% 20%);
+  line-height: 1.2;
+}
+
+.hvl-trust-label {
+  font-size: 0.6875rem;
   font-weight: 500;
-  color: hsl(220 15% 50%);
+  color: hsl(220 10% 55%);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.hvl-trust-icon {
-  width: 20px;
-  height: 20px;
-  color: hsl(220 10% 60%);
-}
+/* Brand-specific logo styling */
+.hvl-trust-google { filter: drop-shadow(0 1px 2px hsl(0 0% 0% / 0.1)); }
+.hvl-trust-bbb { filter: drop-shadow(0 1px 2px hsl(210 100% 30% / 0.2)); }
+.hvl-trust-trustpilot { filter: drop-shadow(0 1px 2px hsl(160 100% 30% / 0.2)); }
+.hvl-trust-dot { filter: drop-shadow(0 1px 2px hsl(220 100% 20% / 0.2)); }
+.hvl-trust-fmcsa { filter: drop-shadow(0 1px 2px hsl(210 50% 30% / 0.2)); }
+.hvl-trust-facebook { filter: drop-shadow(0 1px 2px hsl(220 90% 50% / 0.2)); }
 
-.hvl-trust-item span {
-  white-space: nowrap;
+@media (max-width: 768px) {
+  .hvl-trust-inner {
+    gap: 1.25rem;
+  }
+  
+  .hvl-trust-logo {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .hvl-trust-rating {
+    font-size: 0.8125rem;
+  }
 }
 
 /* Footer */
