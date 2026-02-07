@@ -35545,7 +35545,381 @@ gmp-map-3d-element .gmnoprint {
 .at-tracker-info-panel {
   display: flex;
   flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ─────────────────────────────────────────────
+   TESLA-STYLE TIMELINE
+   ───────────────────────────────────────────── */
+.at-tesla-timeline {
+  background: var(--at-bg-elevated);
+  border: 1px solid var(--at-border-subtle);
+  border-radius: var(--at-radius-sm);
+  padding: 1.25rem;
+}
+
+.at-tesla-timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--at-border-subtle);
+}
+
+.at-tesla-timeline-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--at-text-muted);
+}
+
+.at-tesla-timeline-active {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--at-accent);
+}
+
+.at-tesla-pulse {
+  width: 6px;
+  height: 6px;
+  background: var(--at-accent);
+  border-radius: 50%;
+  animation: at-pulse 2s ease-in-out infinite;
+}
+
+.at-tesla-steps {
+  display: flex;
+  flex-direction: column;
+}
+
+.at-tesla-step-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.at-tesla-step {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.5rem 0;
+}
+
+.at-tesla-step-indicator {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.at-tesla-step-indicator svg {
+  color: var(--at-text-muted);
+  opacity: 0.4;
+}
+
+.at-tesla-step.is-complete .at-tesla-step-indicator svg {
+  color: var(--at-accent);
+  opacity: 0.7;
+}
+
+.at-tesla-step.is-active .at-tesla-step-indicator svg {
+  color: var(--at-accent);
+  opacity: 1;
+}
+
+.at-tesla-step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--at-bg-input);
+  border: 2px solid var(--at-border);
+}
+
+.at-tesla-step.is-active .at-tesla-step-dot {
+  background: var(--at-bg);
+  border-color: var(--at-accent);
+  box-shadow: 0 0 0 3px var(--at-accent-subtle);
+}
+
+.at-tesla-step-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+}
+
+.at-tesla-step-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--at-text-muted);
+}
+
+.at-tesla-step.is-complete .at-tesla-step-name,
+.at-tesla-step.is-active .at-tesla-step-name {
+  color: var(--at-text);
+}
+
+.at-tesla-step-tag {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: var(--at-bg-input);
+  color: var(--at-text-muted);
+}
+
+.at-tesla-step-tag.is-complete {
+  background: var(--at-accent-subtle);
+  color: var(--at-accent);
+}
+
+.at-tesla-step-tag.is-active {
+  background: hsl(var(--primary) / 0.2);
+  color: var(--at-accent);
+  animation: at-pulse 2s ease-in-out infinite;
+}
+
+.at-tesla-step-connector {
+  width: 2px;
+  height: 20px;
+  margin-left: 11px;
+  background: var(--at-border);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.at-tesla-step-progress {
+  width: 100%;
+  background: var(--at-accent);
+  border-radius: 1px;
+  transition: height 0.6s ease-out;
+}
+
+/* ─────────────────────────────────────────────
+   DRIVER INFO CARD
+   ───────────────────────────────────────────── */
+.at-driver-card {
+  background: var(--at-bg-elevated);
+  border: 1px solid var(--at-border-subtle);
+  border-radius: var(--at-radius-sm);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: at-fade-up 0.4s ease-out;
+}
+
+.at-driver-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--at-text-muted);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--at-border-subtle);
+}
+
+.at-driver-header svg {
+  opacity: 0.5;
+}
+
+.at-driver-info {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.at-driver-avatar {
+  flex-shrink: 0;
+}
+
+.at-driver-avatar-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--at-bg-input);
+  border: 1px solid var(--at-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.at-driver-avatar-placeholder svg {
+  color: var(--at-text-muted);
+  opacity: 0.5;
+}
+
+.at-driver-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.at-driver-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--at-text);
+  letter-spacing: -0.01em;
+}
+
+.at-driver-id {
+  font-size: 0.6875rem;
+  color: var(--at-text-muted);
+}
+
+.at-driver-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.at-driver-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.625rem 0.75rem;
+  background: var(--at-bg-input);
+  border-radius: 6px;
+}
+
+.at-driver-stat-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--at-text-muted);
+}
+
+.at-driver-stat-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--at-text);
+}
+
+.at-driver-stat-value svg {
+  color: var(--at-accent);
+  opacity: 0.6;
+}
+
+.at-driver-contact-btn:disabled {
+  opacity: 0.4;
+}
+
+/* ─────────────────────────────────────────────
+   DRIVER CONTACT MODAL
+   ───────────────────────────────────────────── */
+.at-driver-modal {
+  background: var(--at-bg-card) !important;
+  border: 1px solid var(--at-border) !important;
+  max-width: 400px !important;
+}
+
+.at-driver-modal-content {
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
+  padding-top: 0.5rem;
+}
+
+.at-driver-modal-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--at-bg-elevated);
+  border: 1px solid var(--at-border-subtle);
+  border-radius: var(--at-radius-sm);
+}
+
+.at-driver-modal-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--at-bg-input);
+  border: 1px solid var(--at-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.at-driver-modal-avatar svg {
+  color: var(--at-text-muted);
+  opacity: 0.5;
+}
+
+.at-driver-modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.at-driver-modal-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--at-text);
+  letter-spacing: -0.01em;
+}
+
+.at-driver-modal-carrier {
+  font-size: 0.8125rem;
+  color: var(--at-text-muted);
+}
+
+.at-driver-modal-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  margin-top: 0.25rem;
+}
+
+.at-driver-modal-rating svg {
+  color: hsl(45 100% 50%);
+  fill: hsl(45 100% 50%);
+}
+
+.at-driver-modal-rating span {
+  margin-left: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--at-text-secondary);
+}
+
+.at-driver-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.at-driver-modal-note {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.875rem 1rem;
+  background: var(--at-bg-input);
+  border-radius: var(--at-radius-xs);
+  font-size: 0.75rem;
+  color: var(--at-text-muted);
+}
+
+.at-driver-modal-note svg {
+  flex-shrink: 0;
+  opacity: 0.5;
 }
 
 .at-tracker-eta-panel {

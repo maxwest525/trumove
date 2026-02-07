@@ -4,7 +4,8 @@ import {
   ChevronRight, ChevronLeft, Phone, Calendar,
   Package, Eye, FileText, Navigation, Sparkles,
   AlertCircle, Plus, X, BadgeCheck, Camera, Radio, ChevronDown,
-  Star, Building2, Hash, CalendarCheck, ExternalLink, Upload, ImageIcon
+  Star, Building2, Hash, CalendarCheck, ExternalLink, Upload, ImageIcon,
+  User, MessageCircle, PhoneCall
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -646,6 +647,7 @@ export default function AutoTransport() {
   const [isTracking, setIsTracking] = useState(false);
   const [showCarrierMatch, setShowCarrierMatch] = useState(false);
   const [showCarrierPacket, setShowCarrierPacket] = useState(false);
+  const [showDriverContact, setShowDriverContact] = useState(false);
   
   // Step 1: Vehicle
   const [year, setYear] = useState("2022");
@@ -762,6 +764,67 @@ export default function AutoTransport() {
           </div>
         </DialogContent>
       </Dialog>
+      
+      {/* Driver Contact Modal */}
+      <Dialog open={showDriverContact} onOpenChange={setShowDriverContact}>
+        <DialogContent className="at-driver-modal">
+          <DialogHeader>
+            <DialogTitle className="at-packet-title">
+              <PhoneCall className="w-5 h-5" />
+              Contact Driver (Demo)
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="at-driver-modal-content">
+            <div className="at-driver-modal-profile">
+              <div className="at-driver-modal-avatar">
+                <User className="w-10 h-10" />
+              </div>
+              <div className="at-driver-modal-info">
+                <span className="at-driver-modal-name">Marcus Thompson</span>
+                <span className="at-driver-modal-carrier">Atlas Transport Group</span>
+                <div className="at-driver-modal-rating">
+                  <Star className="w-3.5 h-3.5" />
+                  <Star className="w-3.5 h-3.5" />
+                  <Star className="w-3.5 h-3.5" />
+                  <Star className="w-3.5 h-3.5" />
+                  <Star className="w-3.5 h-3.5" />
+                  <span>4.9</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="at-driver-modal-actions">
+              <Button 
+                className="at-btn-primary at-btn-full"
+                onClick={() => {
+                  toast({ title: "Demo Mode", description: "Call feature not available in demo." });
+                  setShowDriverContact(false);
+                }}
+              >
+                <Phone className="w-4 h-4" />
+                Call Driver
+              </Button>
+              <Button 
+                className="at-btn-secondary at-btn-full"
+                onClick={() => {
+                  toast({ title: "Demo Mode", description: "Message feature not available in demo." });
+                  setShowDriverContact(false);
+                }}
+              >
+                <MessageCircle className="w-4 h-4" />
+                Send Message
+              </Button>
+            </div>
+            
+            <div className="at-driver-modal-note">
+              <AlertCircle className="w-4 h-4" />
+              <span>For urgent issues, contact dispatch at 1-800-TRUMOVE</span>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
       {/* HERO */}
       <section className="at-hero">
         <div className="at-hero-content">
@@ -1110,9 +1173,113 @@ export default function AutoTransport() {
                 )}
               </div>
 
-              {/* Info Panel */}
+              {/* Info Panel - Tesla Style */}
               <div className="at-tracker-info-panel">
-                {/* ETA */}
+                {/* Tesla-Style Timeline */}
+                <div className="at-tesla-timeline">
+                  <div className="at-tesla-timeline-header">
+                    <span className="at-tesla-timeline-label">Delivery Progress</span>
+                    {showTracker && isTracking && (
+                      <span className="at-tesla-timeline-active">
+                        <span className="at-tesla-pulse" />
+                        Live
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="at-tesla-steps">
+                    {[
+                      { step: "Booked", tag: "Confirmed", complete: true },
+                      { step: "Carrier Assigned", tag: "Confirmed", complete: true },
+                      { step: "Pickup Scheduled", tag: "Scheduled", complete: true },
+                      { step: "In Transit", tag: "In Progress", complete: false, active: true },
+                      { step: "Delivered", tag: "Pending", complete: false },
+                    ].map((item, idx, arr) => {
+                      const isComplete = showTracker && item.complete;
+                      const isActive = showTracker && isTracking && item.active;
+                      const progressWidth = showTracker ? (isComplete ? 100 : isActive ? 45 : 0) : 0;
+                      
+                      return (
+                        <div key={item.step} className="at-tesla-step-wrapper">
+                          <div className={`at-tesla-step ${isComplete ? 'is-complete' : ''} ${isActive ? 'is-active' : ''}`}>
+                            <div className="at-tesla-step-indicator">
+                              {isComplete ? (
+                                <CheckCircle2 className="w-4 h-4" />
+                              ) : (
+                                <div className="at-tesla-step-dot" />
+                              )}
+                            </div>
+                            <div className="at-tesla-step-content">
+                              <span className="at-tesla-step-name">{item.step}</span>
+                              <span className={`at-tesla-step-tag ${isActive ? 'is-active' : isComplete ? 'is-complete' : ''}`}>
+                                {item.tag}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {idx < arr.length - 1 && (
+                            <div className="at-tesla-step-connector">
+                              <div 
+                                className="at-tesla-step-progress" 
+                                style={{ height: `${progressWidth}%` }} 
+                              />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                
+                {/* Driver Info Card */}
+                {showTracker && (
+                  <div className="at-driver-card">
+                    <div className="at-driver-header">
+                      <User className="w-4 h-4" />
+                      <span>Driver Information (Demo)</span>
+                    </div>
+                    
+                    <div className="at-driver-info">
+                      <div className="at-driver-avatar">
+                        <div className="at-driver-avatar-placeholder">
+                          <User className="w-6 h-6" />
+                        </div>
+                      </div>
+                      <div className="at-driver-details">
+                        <span className="at-driver-name">Marcus Thompson</span>
+                        <span className="at-driver-id">Driver ID: ATG-2847</span>
+                      </div>
+                    </div>
+                    
+                    <div className="at-driver-stats">
+                      <div className="at-driver-stat">
+                        <span className="at-driver-stat-label">Current Location</span>
+                        <span className="at-driver-stat-value">
+                          <MapPin className="w-3.5 h-3.5" />
+                          {isTracking ? "Savannah, GA" : "—"}
+                        </span>
+                      </div>
+                      <div className="at-driver-stat">
+                        <span className="at-driver-stat-label">Next Checkpoint</span>
+                        <span className="at-driver-stat-value">
+                          <Clock className="w-3.5 h-3.5" />
+                          {isTracking ? "Richmond, VA • 6:30 PM" : "—"}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      className="at-btn-secondary at-btn-full at-driver-contact-btn" 
+                      onClick={() => setShowDriverContact(true)}
+                      disabled={!isTracking}
+                    >
+                      <PhoneCall className="w-4 h-4" />
+                      Contact Driver
+                    </Button>
+                  </div>
+                )}
+                
+                {/* ETA Summary */}
                 <div className="at-tracker-eta-panel">
                   <div className="at-tracker-eta-row">
                     <span className="at-tracker-eta-label">ETA Window</span>
@@ -1121,42 +1288,6 @@ export default function AutoTransport() {
                   <div className="at-tracker-eta-row">
                     <span className="at-tracker-eta-label">Last Update</span>
                     <span className="at-tracker-eta-value">{isTracking ? "Feb 10, 3:45 PM" : "—"}</span>
-                  </div>
-                </div>
-
-                {/* Status Steps */}
-                <div className="at-tracker-status-steps">
-                  <span className="at-tracker-status-title">Status</span>
-                  <div className="at-tracker-steps-list">
-                    {["Booked", "Carrier Assigned", "Pickup Scheduled", "In Transit", "Delivered"].map((step, idx) => {
-                      const isComplete = showTracker && idx < 3;
-                      const isActive = showTracker && idx === 3;
-                      return (
-                        <div key={step} className={`at-tracker-step ${isComplete ? 'is-complete' : ''} ${isActive ? 'is-active' : ''}`}>
-                          <div className="at-tracker-step-dot" />
-                          <span>{step}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Updates Feed */}
-                <div className="at-tracker-updates">
-                  <span className="at-tracker-updates-title">Updates</span>
-                  <div className="at-tracker-updates-list">
-                    {(showTracker ? DEMO_UPDATES : []).map((update, idx) => (
-                      <div key={idx} className={`at-tracker-update ${update.status}`}>
-                        <span className="at-tracker-update-time">{update.time}</span>
-                        <span className="at-tracker-update-event">{update.event}</span>
-                      </div>
-                    ))}
-                    {!showTracker && (
-                      <div className="at-tracker-updates-empty">
-                        <AlertCircle className="w-4 h-4" />
-                        <span>Reserve a shipment to see updates</span>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
