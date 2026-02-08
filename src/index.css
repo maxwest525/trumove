@@ -34033,71 +34033,253 @@ gmp-map-3d-element .gmnoprint {
   display: block;
 }
 
-/* Wizard Card - Glassmorphism */
+/* ═══════════════════════════════════════════════════════════════════
+   PREMIUM WIZARD CARD - Completely Redesigned
+   ═══════════════════════════════════════════════════════════════════ */
+
 .hvl-wizard-card {
-  background: hsl(0 0% 100% / 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid hsl(0 0% 100% / 0.6);
-  border-radius: 16px;
-  padding: 1.75rem;
+  background: hsl(0 0% 100% / 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid hsl(0 0% 100% / 0.8);
+  border-radius: 20px;
+  padding: 2rem;
   box-shadow: 
-    0 8px 32px hsl(220 20% 10% / 0.12),
-    0 2px 8px hsl(220 20% 10% / 0.06),
-    inset 0 1px 0 hsl(0 0% 100% / 0.5);
+    0 20px 60px hsl(0 70% 20% / 0.15),
+    0 8px 24px hsl(220 20% 10% / 0.1),
+    inset 0 1px 0 hsl(0 0% 100% / 0.6),
+    inset 0 -1px 0 hsl(0 0% 0% / 0.03);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Step Indicator */
-.hvl-step-indicator {
+/* Premium top accent bar */
+.hvl-wizard-premium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, hsl(0 70% 45%), hsl(0 70% 55%), hsl(0 70% 45%));
+  background-size: 200% 100%;
+  animation: hvl-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes hvl-shimmer {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: 0% 0; }
+}
+
+/* Logo Header */
+.hvl-wizard-logo-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.625rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid hsl(220 10% 92%);
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid hsl(0 70% 45% / 0.15);
 }
 
-.hvl-step-label {
-  font-size: 0.75rem;
+.hvl-wizard-logo {
+  height: 40px;
+  width: auto;
+}
+
+.hvl-wizard-tagline {
+  font-size: 0.875rem;
   font-weight: 600;
-  color: hsl(0 70% 45%);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  color: hsl(0 70% 40%);
+  letter-spacing: 0.02em;
 }
 
-.hvl-step-dots {
+/* Premium Step Indicator */
+.hvl-step-indicator-premium {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 1.25rem;
 }
 
-.hvl-step-dot {
-  width: 10px;
-  height: 10px;
+.hvl-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  z-index: 1;
+}
+
+.hvl-step-circle {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: hsl(220 10% 88%);
-  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border: 2px solid hsl(220 10% 85%);
+  background: hsl(0 0% 100%);
+  color: hsl(220 15% 50%);
+  transition: all 0.3s ease;
 }
 
-.hvl-step-dot.active {
+.hvl-step-item.active .hvl-step-circle {
+  border-color: hsl(0 70% 45%);
   background: hsl(0 70% 45%);
-  transform: scale(1.15);
+  color: hsl(0 0% 100%);
+  box-shadow: 0 0 0 4px hsl(0 70% 45% / 0.2);
+  transform: scale(1.1);
 }
 
-.hvl-step-dot.completed {
-  background: hsl(145 60% 42%);
+.hvl-step-item.completed .hvl-step-circle {
+  border-color: hsl(0 70% 45%);
+  background: hsl(0 70% 45%);
+  color: hsl(0 0% 100%);
 }
 
-.hvl-step-name {
-  font-size: 1rem;
+.hvl-step-item.completed .hvl-step-circle svg {
+  color: hsl(0 0% 100%);
+}
+
+.hvl-step-item-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: hsl(220 10% 55%);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hvl-step-item.active .hvl-step-item-label {
+  color: hsl(0 70% 45%);
   font-weight: 600;
-  color: hsl(220 20% 20%);
+}
+
+.hvl-step-item.completed .hvl-step-item-label {
+  color: hsl(0 70% 45%);
+}
+
+/* Progress Bar behind steps */
+.hvl-step-progress-bar {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: hsl(220 10% 88%);
+  border-radius: 2px;
+  z-index: 0;
+}
+
+.hvl-step-progress-fill {
+  height: 100%;
+  background: hsl(0 70% 45%);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* Vehicle Preview - Animated Car */
+.hvl-vehicle-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, hsl(0 70% 98%), hsl(0 70% 96%));
+  border: 1px solid hsl(0 70% 45% / 0.2);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  animation: hvl-slide-in 0.4s ease-out;
+}
+
+@keyframes hvl-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hvl-vehicle-spinner {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(0 0% 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px hsl(0 70% 45% / 0.15);
+  animation: hvl-spin-gentle 8s linear infinite;
+}
+
+@keyframes hvl-spin-gentle {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+
+.hvl-vehicle-image svg {
+  color: hsl(0 70% 45%);
+  filter: drop-shadow(0 2px 4px hsl(0 70% 45% / 0.2));
+}
+
+.hvl-vehicle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hvl-vehicle-ymm {
+  font-size: 1rem;
+  font-weight: 700;
+  color: hsl(220 20% 15%);
+}
+
+.hvl-vehicle-status {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(0 70% 45%);
+}
+
+.hvl-vehicle-status svg {
+  color: hsl(0 70% 45%);
+}
+
+/* Confirmation */
+.hvl-confirmation-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(0 70% 45%), hsl(0 70% 55%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  animation: hvl-pop-in 0.5s ease-out;
+}
+
+.hvl-confirmation-icon svg {
+  color: hsl(0 0% 100%);
+}
+
+@keyframes hvl-pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 /* Wizard Content */
 .hvl-wizard-content {
-  min-height: 280px;
+  min-height: 260px;
 }
 
 .hvl-step-content {
@@ -34105,36 +34287,55 @@ gmp-map-3d-element .gmnoprint {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  animation: hvl-fade-step 0.3s ease-out;
 }
 
-/* Form Fields */
+@keyframes hvl-fade-step {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Form Fields - Premium Style */
 .hvl-field {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.5rem;
 }
 
 .hvl-label {
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: 600;
   color: hsl(220 15% 30%);
+  letter-spacing: 0.01em;
 }
 
 .hvl-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  gap: 0.875rem;
 }
 
 .hvl-select,
 .hvl-input {
-  height: 44px;
-  border: 1px solid hsl(220 10% 85%);
-  border-radius: 6px;
+  height: 48px;
+  border: 2px solid hsl(220 10% 88%);
+  border-radius: 10px;
   background: hsl(0 0% 100%);
   font-size: 0.9375rem;
   color: hsl(220 20% 20%);
-  transition: border-color 0.15s;
+  transition: all 0.2s ease;
+  padding-left: 0.875rem;
+}
+
+.hvl-select:hover,
+.hvl-input:hover {
+  border-color: hsl(0 70% 45% / 0.3);
 }
 
 .hvl-select:focus,
@@ -34145,7 +34346,7 @@ gmp-map-3d-element .gmnoprint {
 .hvl-page button:focus {
   outline: none;
   border-color: hsl(0 70% 45%) !important;
-  box-shadow: 0 0 0 3px hsl(0 70% 45% / 0.15) !important;
+  box-shadow: 0 0 0 4px hsl(0 70% 45% / 0.12) !important;
   --tw-ring-color: hsl(0 70% 45% / 0.2) !important;
 }
 
@@ -34153,81 +34354,134 @@ gmp-map-3d-element .gmnoprint {
 .hvl-input.hvl-error,
 .hvl-date-btn.hvl-error {
   border-color: hsl(0 70% 50%);
+  animation: hvl-shake 0.3s ease;
+}
+
+@keyframes hvl-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
 .hvl-error-text {
   font-size: 0.75rem;
   color: hsl(0 70% 50%);
   margin-top: 0.125rem;
+  font-weight: 500;
 }
 
-/* Dropdown Styling */
+/* Dropdown Styling - Premium */
 .hvl-dropdown {
   background: hsl(0 0% 100%) !important;
-  border: 1px solid hsl(220 10% 85%);
-  border-radius: 6px;
-  box-shadow: 0 4px 16px hsl(220 20% 10% / 0.1);
+  border: 2px solid hsl(0 70% 45% / 0.2);
+  border-radius: 12px;
+  box-shadow: 
+    0 10px 40px hsl(220 20% 10% / 0.12),
+    0 4px 12px hsl(0 70% 45% / 0.08);
   z-index: 50;
+  overflow: hidden;
 }
 
 .hvl-dropdown [data-radix-select-viewport] {
   background: hsl(0 0% 100%);
+  padding: 0.5rem;
 }
 
 .hvl-dropdown [role="option"] {
-  padding: 0.625rem 0.875rem;
+  padding: 0.75rem 1rem;
   font-size: 0.9375rem;
   color: hsl(220 20% 20%);
   cursor: pointer;
+  border-radius: 8px;
+  margin: 2px 0;
+  transition: all 0.15s ease;
 }
 
 .hvl-dropdown [role="option"]:hover,
 .hvl-dropdown [role="option"][data-highlighted] {
-  background: hsl(220 10% 96%);
+  background: linear-gradient(135deg, hsl(0 70% 98%), hsl(0 70% 96%));
+  color: hsl(0 70% 35%);
 }
 
-/* Transport Type Cards */
+/* Transport Type Cards - Premium Style */
 .hvl-transport-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  gap: 0.875rem;
 }
 
 .hvl-transport-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.375rem;
-  padding: 1rem;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
   border: 2px solid hsl(220 10% 88%);
-  border-radius: 8px;
-  background: hsl(0 0% 100%);
+  border-radius: 12px;
+  background: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 10% 99%));
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.25s ease;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hvl-transport-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, hsl(0 70% 45% / 0.05), hsl(0 70% 45% / 0.1));
+  opacity: 0;
+  transition: opacity 0.25s ease;
 }
 
 .hvl-transport-card:hover {
-  border-color: hsl(220 10% 75%);
-  background: hsl(220 10% 98%);
+  border-color: hsl(0 70% 45% / 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px hsl(0 70% 45% / 0.1);
+}
+
+.hvl-transport-card:hover::before {
+  opacity: 1;
 }
 
 .hvl-transport-card.selected {
   border-color: hsl(0 70% 45%);
-  background: hsl(0 70% 98%);
+  background: linear-gradient(180deg, hsl(0 70% 99%), hsl(0 70% 96%));
+  box-shadow: 
+    0 0 0 3px hsl(0 70% 45% / 0.15),
+    0 8px 20px hsl(0 70% 45% / 0.15);
+}
+
+.hvl-transport-card.selected::before {
+  opacity: 1;
 }
 
 .hvl-transport-card svg {
-  color: hsl(220 15% 40%);
+  color: hsl(220 15% 50%);
+  transition: all 0.25s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.hvl-transport-card:hover svg {
+  color: hsl(0 70% 45%);
+  transform: scale(1.1);
 }
 
 .hvl-transport-card.selected svg {
   color: hsl(0 70% 45%);
+  transform: scale(1.15);
+}
+
+.hvl-transport-card span {
+  position: relative;
+  z-index: 1;
 }
 
 .hvl-transport-card span:first-of-type {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.9375rem;
+  font-weight: 700;
   color: hsl(220 20% 20%);
 }
 
@@ -34237,7 +34491,7 @@ gmp-map-3d-element .gmnoprint {
   font-weight: 400 !important;
 }
 
-/* Date Picker */
+/* Date Picker Button */
 .hvl-date-row {
   display: flex;
   align-items: center;
@@ -34246,18 +34500,20 @@ gmp-map-3d-element .gmnoprint {
 
 .hvl-date-btn {
   flex: 1;
-  height: 44px;
+  height: 48px;
   justify-content: flex-start;
-  border: 1px solid hsl(220 10% 85%) !important;
-  border-radius: 6px;
+  border: 2px solid hsl(220 10% 85%) !important;
+  border-radius: 10px;
   background: hsl(0 0% 100%) !important;
   font-size: 0.9375rem;
   color: hsl(220 20% 20%) !important;
-  font-weight: 400;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .hvl-date-btn:hover:not(:disabled) {
-  background: hsl(220 10% 98%) !important;
+  background: hsl(0 70% 99%) !important;
+  border-color: hsl(0 70% 45% / 0.3) !important;
 }
 
 .hvl-date-placeholder {
@@ -34282,49 +34538,50 @@ gmp-map-3d-element .gmnoprint {
 }
 
 .hvl-confirmation h3 {
-  font-size: 1.375rem;
-  font-weight: 700;
-  color: hsl(220 20% 20%);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: hsl(220 20% 15%);
   margin: 0 0 0.75rem;
 }
 
 .hvl-confirmation p {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   color: hsl(220 10% 40%);
   margin: 0 0 0.5rem;
   line-height: 1.5;
 }
 
 .hvl-confirmation-sub {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: hsl(220 10% 55%);
 }
 
-/* Wizard Navigation Buttons */
+/* Wizard Navigation Buttons - Premium */
 .hvl-wizard-buttons {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   margin-top: 1.5rem;
   padding-top: 1.25rem;
-  border-top: 1px solid hsl(220 10% 92%);
+  border-top: 1px solid hsl(0 70% 45% / 0.1);
 }
 
 .hvl-btn-back {
-  height: 44px;
-  padding: 0 1.25rem;
+  height: 48px;
+  padding: 0 1.5rem;
   font-size: 0.9375rem;
-  font-weight: 500;
-  border-radius: 6px;
-  border: 1px solid hsl(220 10% 82%) !important;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 2px solid hsl(220 10% 82%) !important;
   background: hsl(0 0% 100%) !important;
   color: hsl(220 15% 35%) !important;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
 }
 
 .hvl-btn-back:hover:not(:disabled) {
   background: hsl(220 10% 97%) !important;
-  border-color: hsl(220 10% 75%) !important;
+  border-color: hsl(0 70% 45% / 0.3) !important;
+  color: hsl(0 70% 45%) !important;
 }
 
 .hvl-btn-back:disabled {
@@ -34333,19 +34590,26 @@ gmp-map-3d-element .gmnoprint {
 }
 
 .hvl-btn-next {
-  height: 44px;
-  padding: 0 1.5rem;
+  height: 48px;
+  padding: 0 2rem;
   font-size: 0.9375rem;
-  font-weight: 600;
-  border-radius: 6px;
-  background: hsl(0 70% 45%) !important;
+  font-weight: 700;
+  border-radius: 10px;
+  background: linear-gradient(135deg, hsl(0 70% 45%), hsl(0 70% 40%)) !important;
   color: hsl(0 0% 100%) !important;
   border: none !important;
-  transition: all 0.15s;
+  box-shadow: 
+    0 4px 12px hsl(0 70% 45% / 0.3),
+    inset 0 1px 0 hsl(0 0% 100% / 0.15);
+  transition: all 0.2s ease;
 }
 
 .hvl-btn-next:hover:not(:disabled) {
-  background: hsl(0 70% 40%) !important;
+  background: linear-gradient(135deg, hsl(0 70% 40%), hsl(0 70% 35%)) !important;
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 16px hsl(0 70% 45% / 0.4),
+    inset 0 1px 0 hsl(0 0% 100% / 0.15);
 }
 
 .hvl-btn-next:disabled {

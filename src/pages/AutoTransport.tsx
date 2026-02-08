@@ -212,27 +212,57 @@ export default function AutoTransport() {
             </div>
           </div>
 
-          {/* Right: Wizard Card */}
-          <div className="hvl-wizard-card">
+          {/* Right: Premium Wizard Card */}
+          <div className="hvl-wizard-card hvl-wizard-premium">
+            {/* Logo Header */}
+            <div className="hvl-wizard-logo-header">
+              <img src={hvlLogo} alt="Howard Van Lines" className="hvl-wizard-logo" />
+              <span className="hvl-wizard-tagline">Get Your Instant Quote</span>
+            </div>
+
             {!showConfirmation && (
               <>
-                {/* Step Indicator */}
-                <div className="hvl-step-indicator">
-                  <span className="hvl-step-label">Step {currentStep} of {totalSteps}</span>
-                  <div className="hvl-step-dots">
-                    {[1, 2, 3].map((step) => (
-                      <div
-                        key={step}
-                        className={cn(
-                          "hvl-step-dot",
-                          step === currentStep && "active",
-                          step < currentStep && "completed"
-                        )}
-                      />
-                    ))}
+                {/* Premium Step Indicator */}
+                <div className="hvl-step-indicator-premium">
+                  {stepLabels.map((label, idx) => {
+                    const step = idx + 1;
+                    const isActive = step === currentStep;
+                    const isCompleted = step < currentStep;
+                    return (
+                      <div key={step} className={cn("hvl-step-item", isActive && "active", isCompleted && "completed")}>
+                        <div className="hvl-step-circle">
+                          {isCompleted ? (
+                            <CheckCircle className="w-4 h-4" />
+                          ) : (
+                            <span>{step}</span>
+                          )}
+                        </div>
+                        <span className="hvl-step-item-label">{label}</span>
+                      </div>
+                    );
+                  })}
+                  <div className="hvl-step-progress-bar">
+                    <div className="hvl-step-progress-fill" style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }} />
                   </div>
-                  <span className="hvl-step-name">{stepLabels[currentStep - 1]}</span>
                 </div>
+
+                {/* Vehicle Preview - Shows when year/make/model selected */}
+                {currentStep === 1 && year && make && model && (
+                  <div className="hvl-vehicle-preview">
+                    <div className="hvl-vehicle-spinner">
+                      <div className="hvl-vehicle-image">
+                        <Car className="w-16 h-16" />
+                      </div>
+                    </div>
+                    <div className="hvl-vehicle-info">
+                      <span className="hvl-vehicle-ymm">{year} {make} {model}</span>
+                      <span className="hvl-vehicle-status">
+                        <CheckCircle className="w-3 h-3" />
+                        Vehicle Selected
+                      </span>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
@@ -240,7 +270,9 @@ export default function AutoTransport() {
             <div className="hvl-wizard-content">
               {showConfirmation ? (
                 <div className="hvl-confirmation">
-                  <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                  <div className="hvl-confirmation-icon">
+                    <CheckCircle className="w-12 h-12" />
+                  </div>
                   <h3>Thank You!</h3>
                   <p>We received your request for a {year} {make} {model} transport quote.</p>
                   <p className="hvl-confirmation-sub">A specialist will contact you shortly at {email}.</p>
