@@ -214,15 +214,19 @@ export default function AutoTransport() {
               <div className="hvl-hero-badges">
                 <div className="hvl-hero-badge">
                   <Shield className="w-4 h-4" />
-                  <span>$1M Insurance</span>
+                  <span>Fully Insured</span>
                 </div>
                 <div className="hvl-hero-badge">
                   <Star className="w-4 h-4" />
-                  <span>4.9/5 Rating</span>
+                  <span>4.9★ Google</span>
                 </div>
                 <div className="hvl-hero-badge">
                   <Truck className="w-4 h-4" />
-                  <span>48 States</span>
+                  <span>Door-to-Door</span>
+                </div>
+                <div className="hvl-hero-badge">
+                  <CheckCircle className="w-4 h-4" />
+                  <span>No Hidden Fees</span>
                 </div>
               </div>
             </div>
