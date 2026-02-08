@@ -196,7 +196,7 @@ export default function AutoTransport() {
         <VehiclePreviewModal year={year} make={make} model={model} />
         
         <div className="hvl-hero-content">
-          <div className="hvl-hero-headline">
+          <div className="hvl-hero-headline" style={{ transform: 'translateX(-125px)' }}>
             <div className="hvl-hero-text-block">
               <h1>Howards Van Line – <span>Trusted National Auto Transport Who Treat You Like Family</span></h1>
               <p>
