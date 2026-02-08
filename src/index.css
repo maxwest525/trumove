@@ -35161,18 +35161,12 @@ gmp-map-3d-element .gmnoprint {
   align-items: center;
 }
 
-/* Brand name above headline */
-.hvl-hero-brand {
-  display: block;
-  font-size: 4.5rem;
-  font-weight: 800;
-  color: hsl(0 0% 100%);
-  letter-spacing: -0.03em;
-  line-height: 1;
-  margin-bottom: 0.5rem;
-  text-shadow: 
-    0 2px 8px hsl(0 0% 0% / 0.4),
-    0 4px 16px hsl(0 0% 0% / 0.3);
+/* Hero Logo above headline */
+.hvl-hero-logo {
+  height: 80px;
+  width: auto;
+  margin-bottom: 1.25rem;
+  filter: drop-shadow(0 4px 12px hsl(0 0% 0% / 0.4));
 }
 
 .hvl-hero-headline h1 {
