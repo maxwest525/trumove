@@ -34446,15 +34446,29 @@ gmp-map-3d-element .gmnoprint {
 
 .hvl-transport-btn {
   flex: 1;
-  padding: 0.625rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
   border: 2px solid hsl(220 10% 85%);
   border-radius: 8px;
   background: hsl(0 0% 100%);
   cursor: pointer;
   transition: all 0.2s ease;
+  text-align: center;
+}
+
+.hvl-transport-btn span:first-child {
   font-size: 0.875rem;
   font-weight: 600;
   color: hsl(220 20% 30%);
+}
+
+.hvl-transport-desc {
+  font-size: 0.6875rem;
+  color: hsl(220 10% 55%);
+  font-weight: 400;
 }
 
 .hvl-transport-btn:hover {
@@ -34465,6 +34479,9 @@ gmp-map-3d-element .gmnoprint {
 .hvl-transport-btn.selected {
   border-color: hsl(0 70% 45%);
   background: hsl(0 70% 45% / 0.1);
+}
+
+.hvl-transport-btn.selected span:first-child {
   color: hsl(0 70% 40%);
 }
 
