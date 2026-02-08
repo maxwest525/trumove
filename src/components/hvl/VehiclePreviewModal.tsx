@@ -41,7 +41,7 @@ function getVehicleImageUrl(make: string): string {
 }
 
 // Storage key - increment to force position reset
-const STORAGE_KEY = "hvl_transport_summary_pos_v7";
+const STORAGE_KEY = "hvl_transport_summary_pos_v8";
 
 export function VehiclePreviewModal({ 
   year, 
@@ -63,8 +63,8 @@ export function VehiclePreviewModal({
         return JSON.parse(stored);
       }
     } catch {}
-    // Position to the right but 70px gap from form (form is ~520px wide, centered right)
-    return { x: window.innerWidth - 520 - 340 - 70, y: 180 };
+    // Position to the right but 90px gap from form (form is ~520px wide, centered right)
+    return { x: window.innerWidth - 520 - 340 - 90, y: 180 };
   });
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
