@@ -245,7 +245,11 @@ export default function AutoTransport() {
                     return (
                       <div key={step} className={cn("hvl-step-item", isActive && "active", isCompleted && "completed")}>
                         <div className="hvl-step-circle">
-                          {isCompleted && <CheckCircle className="w-4 h-4" />}
+                          {isCompleted ? (
+                            <CheckCircle className="w-4 h-4" />
+                          ) : isActive ? (
+                            <Car className="w-4 h-4" />
+                          ) : null}
                         </div>
                         <span className="hvl-step-item-label">{label}</span>
                       </div>
@@ -253,17 +257,6 @@ export default function AutoTransport() {
                   })}
                   <div className="hvl-step-progress-bar">
                     <div className="hvl-step-progress-fill" style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }} />
-                    <div 
-                      className="hvl-step-car" 
-                      style={{ left: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
-                    >
-                      <div className="hvl-exhaust">
-                        <span className="hvl-smoke hvl-smoke-1" />
-                        <span className="hvl-smoke hvl-smoke-2" />
-                        <span className="hvl-smoke hvl-smoke-3" />
-                      </div>
-                      <Car className="w-5 h-5" />
-                    </div>
                   </div>
                 </div>
               </>
