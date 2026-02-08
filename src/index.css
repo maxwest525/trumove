@@ -34146,6 +34146,21 @@ gmp-map-3d-element .gmnoprint {
   transform: scale(1.1);
 }
 
+.hvl-step-item.active .hvl-step-circle svg {
+  color: hsl(0 0% 100%) !important;
+  stroke: hsl(0 0% 100%) !important;
+  animation: hvl-car-drive 0.8s ease-in-out infinite;
+}
+
+@keyframes hvl-car-drive {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(2px);
+  }
+}
+
 .hvl-step-item.completed .hvl-step-circle {
   border-color: hsl(0 70% 45%) !important;
   background: hsl(0 70% 45%) !important;
