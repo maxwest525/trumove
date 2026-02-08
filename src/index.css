@@ -35225,6 +35225,161 @@ gmp-map-3d-element .gmnoprint {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   WIZARD WRAPPER WITH PARTICLES
+   ═══════════════════════════════════════════════════════════════════ */
+
+.hvl-wizard-wrapper {
+  position: relative;
+}
+
+.hvl-hero-particles {
+  position: absolute;
+  inset: -40px;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FLOATING VEHICLE PREVIEW
+   ═══════════════════════════════════════════════════════════════════ */
+
+.hvl-vehicle-hero-preview {
+  position: absolute;
+  bottom: 80px;
+  left: 5%;
+  z-index: 20;
+  animation: hvl-float-in 0.6s ease-out;
+}
+
+@keyframes hvl-float-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hvl-vehicle-hero-card {
+  position: relative;
+  background: hsl(0 0% 100% / 0.95);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 
+    0 20px 60px hsl(0 0% 0% / 0.3),
+    0 8px 24px hsl(0 70% 45% / 0.15),
+    inset 0 1px 0 hsl(0 0% 100% / 0.5);
+  overflow: hidden;
+}
+
+.hvl-vehicle-hero-glow {
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, hsl(0 70% 50%), hsl(25 90% 55%), hsl(0 70% 50%));
+  background-size: 200% 200%;
+  animation: hvl-glow-rotate 3s linear infinite;
+  border-radius: 18px;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+@keyframes hvl-glow-rotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hvl-vehicle-hero-image-container {
+  position: relative;
+  width: 200px;
+  height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: hsl(220 10% 95%);
+}
+
+.hvl-vehicle-hero-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(0 70% 45%);
+}
+
+.hvl-vehicle-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.hvl-vehicle-hero-image.loaded {
+  opacity: 1;
+}
+
+.hvl-vehicle-hero-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    hsl(0 0% 100% / 0.3) 50%,
+    transparent 60%
+  );
+  animation: hvl-shine 3s ease-in-out infinite;
+}
+
+@keyframes hvl-shine {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+.hvl-vehicle-hero-info {
+  padding: 10px 4px 4px;
+  text-align: center;
+}
+
+.hvl-vehicle-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: hsl(0 70% 45% / 0.1);
+  color: hsl(0 70% 40%);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 100px;
+  margin-bottom: 6px;
+}
+
+.hvl-vehicle-hero-badge svg {
+  color: hsl(0 70% 45%);
+}
+
+.hvl-vehicle-hero-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: hsl(220 20% 15%);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.hvl-vehicle-hero-model {
+  font-size: 0.8125rem;
+  color: hsl(220 10% 45%);
+  margin: 2px 0 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    HANK CHAT ASSISTANT
    ═══════════════════════════════════════════════════════════════════ */
 
