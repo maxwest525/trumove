@@ -35161,12 +35161,29 @@ gmp-map-3d-element .gmnoprint {
   align-items: center;
 }
 
-/* Hero Logo above headline */
+/* Hero Title Row - logo + headline inline */
+.hvl-hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.hvl-hero-logo-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(0 0% 100%);
+  padding: 0.625rem 0.875rem;
+  border-radius: 12px;
+  box-shadow: 
+    0 4px 16px hsl(0 0% 0% / 0.25),
+    0 2px 4px hsl(0 0% 0% / 0.1);
+}
+
 .hvl-hero-logo {
-  height: 80px;
+  height: 48px;
   width: auto;
-  margin-bottom: 1.25rem;
-  filter: drop-shadow(0 4px 12px hsl(0 0% 0% / 0.4));
 }
 
 .hvl-hero-headline h1 {

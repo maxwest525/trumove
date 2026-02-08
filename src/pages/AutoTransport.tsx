@@ -197,7 +197,12 @@ export default function AutoTransport() {
         
         <div className="hvl-hero-content">
           <div className="hvl-hero-headline">
-            <h1>Ship Your Vehicle <span>Nationwide</span></h1>
+            <div className="hvl-hero-title-row">
+              <div className="hvl-hero-logo-badge">
+                <img src={hvlLogo} alt="Howard's Van Lines" className="hvl-hero-logo" />
+              </div>
+              <h1>Ship Your Vehicle <span>Nationwide</span></h1>
+            </div>
             <p>
               Trusted by 50,000+ customers. Fully insured. Door-to-door delivery. 
               Get your instant quote in 60 seconds.
