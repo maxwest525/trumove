@@ -35222,13 +35222,15 @@ gmp-map-3d-element .gmnoprint {
   grid-template-columns: 1fr 440px;
   gap: 3rem;
   align-items: center;
+  justify-items: start;
 }
 
-/* Hero headline layout - logo on left, text block centered */
+/* Hero headline layout */
 .hvl-hero-headline {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 1.5rem;
+  text-align: left;
 }
 
 .hvl-hero-logo-badge {
@@ -35257,12 +35259,12 @@ gmp-map-3d-element .gmnoprint {
 }
 
 .hvl-hero-text-block h1 {
-  font-size: 3.5rem;
-  font-weight: 800;
+  font-size: 2.25rem;
+  font-weight: 700;
   color: hsl(0 0% 100%);
-  line-height: 1.1;
-  margin: 0 0 0.75rem;
-  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin: 0 0 1rem;
+  letter-spacing: -0.01em;
 }
 
 .hvl-hero-text-block h1 span {
