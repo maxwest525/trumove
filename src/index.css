@@ -35329,7 +35329,7 @@ gmp-map-3d-element .gmnoprint {
 .hvl-vehicle-modal {
   position: fixed;
   z-index: 100;
-  width: 260px;
+  width: 280px;
   background: hsl(0 0% 100%);
   border-radius: 16px;
   box-shadow: 
@@ -35412,52 +35412,11 @@ gmp-map-3d-element .gmnoprint {
   background: hsl(0 0% 0% / 0.3);
 }
 
-/* Color Picker */
-.hvl-color-picker {
-  padding: 10px 12px;
-  background: hsl(220 10% 97%);
-  border-bottom: 1px solid hsl(220 10% 90%);
-}
-
-.hvl-color-picker-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: hsl(220 10% 45%);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 8px;
-}
-
-.hvl-color-swatches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.hvl-color-swatch {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all 0.15s;
-  box-shadow: 0 2px 4px hsl(0 0% 0% / 0.1);
-}
-
-.hvl-color-swatch:hover {
-  transform: scale(1.15);
-}
-
-.hvl-color-swatch-active {
-  border-color: hsl(0 70% 45%) !important;
-  box-shadow: 0 0 0 2px hsl(0 0% 100%), 0 0 0 4px hsl(0 70% 45% / 0.3);
-}
-
 /* Vehicle Image */
 .hvl-vehicle-modal-image-wrap {
   position: relative;
   width: 100%;
-  height: 140px;
+  height: 120px;
   background: hsl(220 10% 95%);
   overflow: hidden;
 }
@@ -35483,14 +35442,6 @@ gmp-map-3d-element .gmnoprint {
   opacity: 1;
 }
 
-.hvl-vehicle-color-overlay {
-  position: absolute;
-  inset: 0;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  transition: background 0.3s ease;
-}
-
 .hvl-vehicle-modal-shine {
   position: absolute;
   inset: 0;
@@ -35504,85 +35455,145 @@ gmp-map-3d-element .gmnoprint {
   pointer-events: none;
 }
 
-/* Vehicle Info */
-.hvl-vehicle-modal-info {
-  padding: 12px;
-  text-align: center;
+/* Transport Summary Overlay on Image */
+.hvl-summary-vehicle-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 12px;
+  background: linear-gradient(to top, hsl(0 0% 0% / 0.75), transparent);
+  color: hsl(0 0% 100%);
 }
 
-.hvl-vehicle-modal-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-.hvl-vehicle-modal-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: hsl(0 70% 45% / 0.1);
-  color: hsl(0 70% 40%);
-  font-size: 0.625rem;
+.hvl-summary-vehicle-overlay h4 {
+  font-size: 0.9375rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 3px 8px;
-  border-radius: 100px;
-}
-
-.hvl-vehicle-modal-badge svg {
-  color: hsl(0 70% 45%);
-}
-
-.hvl-vehicle-modal-type-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: hsl(220 15% 20% / 0.1);
-  color: hsl(220 15% 35%);
-  font-size: 0.625rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 3px 8px;
-  border-radius: 100px;
-}
-
-.hvl-vehicle-modal-type-badge svg {
-  color: hsl(220 15% 40%);
-}
-
-.hvl-vehicle-modal-title {
-  font-size: 1.125rem;
-  font-weight: 800;
-  color: hsl(220 20% 15%);
-  margin: 0;
+  margin: 0 0 4px;
   line-height: 1.2;
 }
 
-.hvl-vehicle-modal-model {
-  font-size: 0.875rem;
-  color: hsl(220 10% 45%);
-  margin: 2px 0 0;
+.hvl-summary-transport-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: hsl(0 0% 100% / 0.2);
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
 }
 
-.hvl-vehicle-modal-color {
+/* Summary Details Section */
+.hvl-summary-details {
+  padding: 12px;
+}
+
+.hvl-summary-route {
+  margin-bottom: 10px;
+}
+
+.hvl-summary-route-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hvl-summary-location {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.hvl-summary-location-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.hvl-summary-dot-from {
+  background: hsl(142 70% 45%);
+  box-shadow: 0 0 0 2px hsl(142 70% 45% / 0.2);
+}
+
+.hvl-summary-dot-to {
+  background: hsl(0 70% 45%);
+  box-shadow: 0 0 0 2px hsl(0 70% 45% / 0.2);
+}
+
+.hvl-summary-location-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.hvl-summary-label {
+  font-size: 0.5625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(220 10% 55%);
+  margin-bottom: 1px;
+}
+
+.hvl-summary-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: hsl(220 20% 20%);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Date Row */
+.hvl-summary-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: hsl(220 15% 96%);
+  border-radius: 8px;
+}
+
+.hvl-summary-date svg {
+  color: hsl(0 70% 45%);
+  flex-shrink: 0;
+}
+
+.hvl-summary-date-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.hvl-summary-date-text .hvl-summary-label {
+  margin-bottom: 0;
+}
+
+.hvl-summary-date-text .hvl-summary-value {
+  font-size: 0.8125rem;
+}
+
+/* Empty State */
+.hvl-summary-empty {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  padding: 12px;
+  color: hsl(220 10% 55%);
   font-size: 0.75rem;
-  color: hsl(220 10% 50%);
-  margin-top: 6px;
+  text-align: center;
 }
 
-.hvl-color-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 1px solid hsl(0 0% 0% / 0.1);
+.hvl-summary-empty svg {
+  flex-shrink: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
