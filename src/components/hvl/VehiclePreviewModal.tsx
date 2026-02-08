@@ -40,7 +40,7 @@ function getVehicleImageUrl(make: string): string {
   return VEHICLE_IMAGES[make] || DEFAULT_IMAGE;
 }
 
-const STORAGE_KEY = "hvl_vehicle_preview_position";
+const STORAGE_KEY = "hvl_transport_summary_pos_v2";
 
 export function VehiclePreviewModal({ 
   year, 
