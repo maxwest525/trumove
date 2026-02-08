@@ -35600,30 +35600,12 @@ gmp-map-3d-element .gmnoprint {
    HANK CHAT ASSISTANT - Howard Van Lines Red Theme
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════════════════════
-   HANK SUMMARY DOCK - Combined Hank + Transport Summary
-   Fixed 70px from form, vertical stack with connector
-   ═══════════════════════════════════════════════════════════════════ */
-
-.hvl-summary-dock {
+/* Hank Form Pill - Fixed bottom right */
+.hvl-hank-form-pill {
   position: fixed;
-  top: 50%;
-  right: calc(50% + 260px + 70px); /* Form half-width (260px) + 70px gap */
-  transform: translateY(-50%);
+  bottom: 24px;
+  right: 24px;
   z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-  pointer-events: none;
-}
-
-.hvl-summary-dock > * {
-  pointer-events: auto;
-}
-
-/* Hank Pill - Top of dock */
-.hvl-dock-hank-pill {
   display: flex;
   align-items: stretch;
   background: hsl(220 20% 10%);
@@ -35634,16 +35616,15 @@ gmp-map-3d-element .gmnoprint {
   transition: all 0.25s ease;
   overflow: hidden;
   height: 56px;
-  flex-shrink: 0;
 }
 
-.hvl-dock-hank-pill:hover {
+.hvl-hank-form-pill:hover {
   transform: scale(1.05);
   box-shadow: 0 12px 40px hsl(0 70% 45% / 0.3);
   border-color: hsl(0 70% 55%);
 }
 
-.hvl-dock-hank-arrow {
+.hvl-hank-form-pill-arrow {
   width: 28px;
   display: flex;
   align-items: center;
@@ -35653,85 +35634,20 @@ gmp-map-3d-element .gmnoprint {
   border-right: 1px solid hsl(0 0% 100% / 0.1);
 }
 
-.hvl-dock-hank-icon {
+.hvl-hank-form-pill-icon {
   width: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: hsl(0 70% 45%);
   color: hsl(0 0% 100%);
-  animation: hvl-hand-wave 2s ease-in-out infinite;
 }
 
-/* Connector Line - Howard Red gradient */
-.hvl-dock-connector {
-  width: 2px;
-  height: 20px;
-  background: linear-gradient(
-    to bottom,
-    hsl(0 70% 45% / 0.6),
-    hsl(0 70% 45% / 0.2)
-  );
-  border-radius: 1px;
-  transition: opacity 0.3s ease, height 0.3s ease;
-  flex-shrink: 0;
-}
-
-.hvl-dock-connector.is-hidden {
-  opacity: 0;
-  height: 8px;
-}
-
-/* Transport Summary - Below connector in dock */
-.hvl-summary-dock-summary {
-  width: 320px;
-  background: hsl(0 0% 100%);
-  border-radius: 12px;
-  border: 1px solid hsl(220 15% 88%);
-  box-shadow: 
-    0 4px 20px hsl(220 30% 10% / 0.12),
-    0 8px 40px hsl(0 70% 45% / 0.08);
-  overflow: hidden;
-  animation: hvl-modal-enter 0.3s ease;
-  flex-shrink: 0;
-}
-
-.hvl-summary-dock-summary.is-dragging {
-  opacity: 0.9;
-  cursor: grabbing;
-  box-shadow: 0 20px 60px hsl(0 0% 0% / 0.25);
-}
-
-.hvl-summary-dock-summary.is-detached {
-  z-index: 1001;
-}
-
-@keyframes hvl-hand-wave {
-  0%, 100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(15deg);
-  }
-  50% {
-    transform: rotate(-10deg);
-  }
-  75% {
-    transform: rotate(15deg);
-  }
-}
-
-/* Legacy pill - kept for backward compatibility but not used in dock */
-.hvl-hank-form-pill {
-  display: none;
-}
-
-/* Hank Modal - positioned 70px from form */
+/* Hank Modal - positioned bottom right above pill */
 .hvl-hank-modal {
   position: fixed;
-  top: 50%;
-  right: calc(50% + 260px + 70px); /* Form half-width + 70px gap */
-  transform: translateY(-50%);
+  bottom: 90px;
+  right: 24px;
   z-index: 1001;
   width: 380px;
   height: 520px;

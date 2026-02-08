@@ -20,8 +20,9 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
+import HankChatButton from "@/components/hvl/HankChatButton";
 import { HeroParticles } from "@/components/hvl/HeroParticles";
-import { HankSummaryDock } from "@/components/hvl/HankSummaryDock";
+import { VehiclePreviewModal } from "@/components/hvl/VehiclePreviewModal";
 import heroImage from "@/assets/hvl-hero-dynamic.jpg";
 import hvlLogo from "@/assets/hvl-logo.png";
 
@@ -191,8 +192,8 @@ export default function AutoTransport() {
           <div className="hvl-hero-overlay" />
         </div>
         
-        {/* Hank + Transport Summary Dock */}
-        <HankSummaryDock 
+        {/* Floating Transport Summary Modal - draggable */}
+        <VehiclePreviewModal 
           year={year} 
           make={make} 
           model={model} 
@@ -201,6 +202,9 @@ export default function AutoTransport() {
           dropoffLocation={dropoffLocation}
           pickupDate={pickupDate}
         />
+        
+        {/* Hank Chat Assistant */}
+        <HankChatButton />
         
         <div className="hvl-hero-content">
           <div className="hvl-hero-headline" style={{ transform: 'translateX(-125px)' }}>

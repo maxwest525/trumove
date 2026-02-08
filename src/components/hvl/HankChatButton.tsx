@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Send, Truck, Hand, ChevronRight } from "lucide-react";
+import { X, Send, Truck, MessageCircle, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -59,7 +59,7 @@ export default function HankChatButton() {
 
   return (
     <>
-      {/* Hank Form Border Pill - positioned on form edge */}
+      {/* Hank Pill - Simple chat trigger */}
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
@@ -72,7 +72,7 @@ export default function HankChatButton() {
           <ChevronRight className="w-4 h-4" />
         </div>
         <div className="hvl-hank-form-pill-icon">
-          <Hand className="w-5 h-5" />
+          <MessageCircle className="w-5 h-5" />
         </div>
       </button>
 
