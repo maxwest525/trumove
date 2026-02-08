@@ -35442,6 +35442,14 @@ gmp-map-3d-element .gmnoprint {
   text-align: center;
 }
 
+.hvl-vehicle-modal-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
 .hvl-vehicle-modal-badge {
   display: inline-flex;
   align-items: center;
@@ -35454,11 +35462,28 @@ gmp-map-3d-element .gmnoprint {
   letter-spacing: 0.05em;
   padding: 3px 8px;
   border-radius: 100px;
-  margin-bottom: 6px;
 }
 
 .hvl-vehicle-modal-badge svg {
   color: hsl(0 70% 45%);
+}
+
+.hvl-vehicle-modal-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: hsl(220 15% 20% / 0.1);
+  color: hsl(220 15% 35%);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+
+.hvl-vehicle-modal-type-badge svg {
+  color: hsl(220 15% 40%);
 }
 
 .hvl-vehicle-modal-title {
