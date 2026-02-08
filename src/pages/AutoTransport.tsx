@@ -245,11 +245,7 @@ export default function AutoTransport() {
                     return (
                       <div key={step} className={cn("hvl-step-item", isActive && "active", isCompleted && "completed")}>
                         <div className="hvl-step-circle">
-                          {isCompleted ? (
-                            <CheckCircle className="w-4 h-4" />
-                          ) : (
-                            <span>{step}</span>
-                          )}
+                          {isCompleted && <CheckCircle className="w-4 h-4" />}
                         </div>
                         <span className="hvl-step-item-label">{label}</span>
                       </div>
