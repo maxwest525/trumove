@@ -35176,12 +35176,12 @@ gmp-map-3d-element .gmnoprint {
 }
 
 .hvl-hero-headline h1 {
-  font-size: 2.5rem;
-  font-weight: 600;
-  color: hsl(0 0% 95%);
-  line-height: 1.2;
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: hsl(0 0% 100%);
+  line-height: 1.1;
   margin: 0 0 1.25rem;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .hvl-hero-headline h1 span {
