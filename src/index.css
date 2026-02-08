@@ -35600,145 +35600,64 @@ gmp-map-3d-element .gmnoprint {
    HANK CHAT ASSISTANT
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Hank Pill Button - Compact dark style */
-.hvl-hank-pill {
+/* Hank Form Border Pill - positioned on form left edge */
+.hvl-hank-form-pill {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  top: 50%;
+  right: calc(50% + 260px + 16px); /* Form is ~520px, so half + gap */
+  transform: translateY(-50%);
   z-index: 1000;
   display: flex;
-  align-items: center;
-  gap: 0;
-  background: hsl(220 20% 12%);
-  color: hsl(0 0% 100%);
-  padding: 0;
-  border-radius: 100px;
-  border: none;
+  align-items: stretch;
+  background: hsl(220 20% 10%);
+  border-radius: 14px;
+  border: 2px solid hsl(160 70% 35%);
   cursor: pointer;
   box-shadow: 0 8px 32px hsl(0 0% 0% / 0.4);
   transition: all 0.25s ease;
   overflow: hidden;
+  height: 56px;
 }
 
-.hvl-hank-pill:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px hsl(0 0% 0% / 0.5);
+.hvl-hank-form-pill:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 12px 40px hsl(160 70% 35% / 0.3);
+  border-color: hsl(160 70% 45%);
 }
 
-.hvl-hank-pill-icon {
-  width: 44px;
-  height: 44px;
-  background: hsl(160 70% 40%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 4px;
-  flex-shrink: 0;
-}
-
-.hvl-hank-pill-icon-only {
-  margin: 0;
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-}
-
-.hvl-hank-pill-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  padding: 8px 8px 8px 4px;
-}
-
-.hvl-hank-pill-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.hvl-hank-pill-subtitle {
-  font-size: 0.625rem;
-  font-weight: 500;
-  opacity: 0.7;
-}
-
-.hvl-hank-pill-collapse {
-  width: 24px;
-  height: 100%;
+.hvl-hank-form-pill-arrow {
+  width: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: hsl(0 0% 100% / 0.08);
-  border: none;
-  color: hsl(0 0% 100% / 0.5);
-  cursor: pointer;
-  transition: all 0.15s;
+  color: hsl(0 0% 100% / 0.6);
+  border-right: 1px solid hsl(0 0% 100% / 0.1);
 }
 
-.hvl-hank-pill-collapse:hover {
-  background: hsl(0 0% 100% / 0.12);
-  color: hsl(0 0% 100%);
-}
-
-/* Pulse animation for Hank icon */
-.hvl-hank-pulse {
-  animation: hvl-hank-pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes hvl-hank-pulse-ring {
-  0%, 100% {
-    box-shadow: 0 0 0 0 hsl(160 70% 40% / 0.5);
-  }
-  50% {
-    box-shadow: 0 0 0 8px hsl(160 70% 40% / 0);
-  }
-}
-
-/* Modal wrapper with hand accent */
-.hvl-hank-modal-wrapper {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 1000;
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-}
-
-/* Hand accent floating to the left of modal */
-.hvl-hank-hand-accent {
-  position: relative;
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, hsl(0 70% 45%), hsl(0 65% 40%));
-  border-radius: 50%;
+.hvl-hank-form-pill-icon {
+  width: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: hsl(160 70% 40%);
   color: hsl(0 0% 100%);
-  box-shadow: 0 8px 24px hsl(0 70% 30% / 0.4);
-  animation: hvl-hand-bounce 2s ease-in-out infinite;
-  margin-bottom: 8px;
+  animation: hvl-hand-wave 2s ease-in-out infinite;
 }
 
-@keyframes hvl-hand-bounce {
+@keyframes hvl-hand-wave {
   0%, 100% {
-    transform: translateY(0);
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(15deg);
   }
   50% {
-    transform: translateY(-6px);
+    transform: rotate(-10deg);
   }
-}
-
-.hvl-hank-hand-sparkle {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 18px !important;
-  height: 18px !important;
-  color: hsl(45 95% 55%);
+  75% {
+    transform: rotate(15deg);
+  }
 }
 
 /* Hank Modal */
