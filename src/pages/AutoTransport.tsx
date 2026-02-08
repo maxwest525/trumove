@@ -330,21 +330,17 @@ export default function AutoTransport() {
                     <div className="hvl-transport-options">
                       <button
                         type="button"
-                        className={cn("hvl-transport-card", transportType === "open" && "selected")}
+                        className={cn("hvl-transport-btn", transportType === "open" && "selected")}
                         onClick={() => setTransportType("open")}
                       >
-                        <Truck className="w-5 h-5" />
-                        <span>Open Carrier</span>
-                        <span className="hvl-transport-desc">Standard, cost-effective</span>
+                        Open Carrier
                       </button>
                       <button
                         type="button"
-                        className={cn("hvl-transport-card", transportType === "enclosed" && "selected")}
+                        className={cn("hvl-transport-btn", transportType === "enclosed" && "selected")}
                         onClick={() => setTransportType("enclosed")}
                       >
-                        <Car className="w-5 h-5" />
-                        <span>Enclosed Carrier</span>
-                        <span className="hvl-transport-desc">Premium protection</span>
+                        Enclosed Carrier
                       </button>
                     </div>
                     {errors.transportType && <span className="hvl-error-text">{errors.transportType}</span>}

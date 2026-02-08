@@ -34416,90 +34416,32 @@ gmp-map-3d-element .gmnoprint {
 
 /* Transport Type Cards - Premium Style */
 .hvl-transport-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.875rem;
-}
-
-.hvl-transport-card {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1.25rem 1rem;
-  border: 2px solid hsl(220 10% 88%);
-  border-radius: 12px;
-  background: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 10% 99%));
+  gap: 0.75rem;
+}
+
+.hvl-transport-btn {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  border: 2px solid hsl(220 10% 85%);
+  border-radius: 8px;
+  background: hsl(0 0% 100%);
   cursor: pointer;
-  transition: all 0.25s ease;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(220 20% 30%);
 }
 
-.hvl-transport-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, hsl(0 70% 45% / 0.05), hsl(0 70% 45% / 0.1));
-  opacity: 0;
-  transition: opacity 0.25s ease;
+.hvl-transport-btn:hover {
+  border-color: hsl(0 70% 45% / 0.4);
+  background: hsl(0 70% 45% / 0.05);
 }
 
-.hvl-transport-card:hover {
-  border-color: hsl(0 70% 45% / 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px hsl(0 70% 45% / 0.1);
-}
-
-.hvl-transport-card:hover::before {
-  opacity: 1;
-}
-
-.hvl-transport-card.selected {
+.hvl-transport-btn.selected {
   border-color: hsl(0 70% 45%);
-  background: linear-gradient(180deg, hsl(0 70% 99%), hsl(0 70% 96%));
-  box-shadow: 
-    0 0 0 3px hsl(0 70% 45% / 0.15),
-    0 8px 20px hsl(0 70% 45% / 0.15);
-}
-
-.hvl-transport-card.selected::before {
-  opacity: 1;
-}
-
-.hvl-transport-card svg {
-  color: hsl(220 15% 50%);
-  transition: all 0.25s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.hvl-transport-card:hover svg {
-  color: hsl(0 70% 45%);
-  transform: scale(1.1);
-}
-
-.hvl-transport-card.selected svg {
-  color: hsl(0 70% 45%);
-  transform: scale(1.15);
-}
-
-.hvl-transport-card span {
-  position: relative;
-  z-index: 1;
-}
-
-.hvl-transport-card span:first-of-type {
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: hsl(220 20% 20%);
-}
-
-.hvl-transport-desc {
-  font-size: 0.75rem;
-  color: hsl(220 10% 55%);
-  font-weight: 400 !important;
+  background: hsl(0 70% 45% / 0.1);
+  color: hsl(0 70% 40%);
 }
 
 /* Date Picker Button */
