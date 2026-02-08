@@ -197,28 +197,28 @@ export default function AutoTransport() {
         
         <div className="hvl-hero-content">
           <div className="hvl-hero-headline">
-            <div className="hvl-hero-title-row">
-              <div className="hvl-hero-logo-badge">
-                <img src={hvlLogo} alt="Howard's Van Lines" className="hvl-hero-logo" />
-              </div>
-              <h1>Ship Your Vehicle <span>Nationwide</span></h1>
+            <div className="hvl-hero-logo-badge">
+              <img src={hvlLogo} alt="Howard's Van Lines" className="hvl-hero-logo" />
             </div>
-            <p>
-              Trusted by 50,000+ customers. Fully insured. Door-to-door delivery. 
-              Get your instant quote in 60 seconds.
-            </p>
-            <div className="hvl-hero-badges">
-              <div className="hvl-hero-badge">
-                <Shield className="w-4 h-4" />
-                <span>$1M Insurance</span>
-              </div>
-              <div className="hvl-hero-badge">
-                <Star className="w-4 h-4" />
-                <span>4.9/5 Rating</span>
-              </div>
-              <div className="hvl-hero-badge">
-                <Truck className="w-4 h-4" />
-                <span>48 States</span>
+            <div className="hvl-hero-text-block">
+              <h1>Ship Your Vehicle <span>Nationwide</span></h1>
+              <p>
+                Trusted by 50,000+ customers. Fully insured. Door-to-door delivery. 
+                Get your instant quote in 60 seconds.
+              </p>
+              <div className="hvl-hero-badges">
+                <div className="hvl-hero-badge">
+                  <Shield className="w-4 h-4" />
+                  <span>$1M Insurance</span>
+                </div>
+                <div className="hvl-hero-badge">
+                  <Star className="w-4 h-4" />
+                  <span>4.9/5 Rating</span>
+                </div>
+                <div className="hvl-hero-badge">
+                  <Truck className="w-4 h-4" />
+                  <span>48 States</span>
+                </div>
               </div>
             </div>
           </div>
