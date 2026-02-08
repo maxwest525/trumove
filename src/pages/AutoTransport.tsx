@@ -198,10 +198,10 @@ export default function AutoTransport() {
         <div className="hvl-hero-content">
           <div className="hvl-hero-headline">
             <div className="hvl-hero-text-block">
-              <h1>Ship Your Vehicle <span>Nationwide</span></h1>
+              <h1>Howards Van Line – <span>Trusted National Auto Transport Who Treat You Like Family</span></h1>
               <p>
-                Trusted by 50,000+ customers. Fully insured. Door-to-door delivery. 
-                Get your instant quote in 60 seconds.
+                At Howards Van Line, we customize every move to your needs with precision, care, and transparency. 
+                We're proud to be one of the top-rated auto transport companies in New Jersey.
               </p>
               <div className="hvl-hero-badges">
                 <div className="hvl-hero-badge">
