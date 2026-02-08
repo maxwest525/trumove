@@ -20,9 +20,8 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import HankChatButton from "@/components/hvl/HankChatButton";
 import { HeroParticles } from "@/components/hvl/HeroParticles";
-import { VehiclePreviewModal } from "@/components/hvl/VehiclePreviewModal";
+import { HankSummaryDock } from "@/components/hvl/HankSummaryDock";
 import heroImage from "@/assets/hvl-hero-dynamic.jpg";
 import hvlLogo from "@/assets/hvl-logo.png";
 
@@ -192,8 +191,8 @@ export default function AutoTransport() {
           <div className="hvl-hero-overlay" />
         </div>
         
-        {/* Floating Transport Summary Modal - draggable */}
-        <VehiclePreviewModal 
+        {/* Hank + Transport Summary Dock */}
+        <HankSummaryDock 
           year={year} 
           make={make} 
           model={model} 
@@ -739,9 +738,6 @@ export default function AutoTransport() {
       <footer className="hvl-footer">
         <p>© 2025 Howard Van Lines. All rights reserved.</p>
       </footer>
-
-      {/* Hank Chat Assistant */}
-      <HankChatButton />
     </div>
   );
 }
