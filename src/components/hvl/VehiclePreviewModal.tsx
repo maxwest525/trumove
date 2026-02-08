@@ -8,14 +8,61 @@ interface VehiclePreviewModalProps {
   model: string;
 }
 
-// Vehicle image mapping - using placeholder images based on make
+// Vehicle image mapping - using Unsplash images based on make
 const VEHICLE_IMAGES: Record<string, string> = {
+  // Japanese Makes
   Toyota: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=250&fit=crop&auto=format",
   Honda: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400&h=250&fit=crop&auto=format",
+  Nissan: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&h=250&fit=crop&auto=format",
+  Mazda: "https://images.unsplash.com/photo-1612825173281-9a193378527e?w=400&h=250&fit=crop&auto=format",
+  Subaru: "https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?w=400&h=250&fit=crop&auto=format",
+  Lexus: "https://images.unsplash.com/photo-1622194993627-c3de0bcee890?w=400&h=250&fit=crop&auto=format",
+  Acura: "https://images.unsplash.com/photo-1611016186353-9af58c69a533?w=400&h=250&fit=crop&auto=format",
+  Infiniti: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=250&fit=crop&auto=format",
+  Mitsubishi: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=400&h=250&fit=crop&auto=format",
+  
+  // American Makes
   Ford: "https://images.unsplash.com/photo-1551830820-330a71b99659?w=400&h=250&fit=crop&auto=format",
   Chevrolet: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=250&fit=crop&auto=format",
-  BMW: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=250&fit=crop&auto=format",
+  GMC: "https://images.unsplash.com/photo-1612911912304-f9e5c0f49868?w=400&h=250&fit=crop&auto=format",
+  Dodge: "https://images.unsplash.com/photo-1612544448445-b8232cff3b6c?w=400&h=250&fit=crop&auto=format",
+  Jeep: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=400&h=250&fit=crop&auto=format",
+  Ram: "https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=400&h=250&fit=crop&auto=format",
+  Cadillac: "https://images.unsplash.com/photo-1616422285623-13ff0162193c?w=400&h=250&fit=crop&auto=format",
+  Lincoln: "https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=400&h=250&fit=crop&auto=format",
+  Buick: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=250&fit=crop&auto=format",
+  Chrysler: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&h=250&fit=crop&auto=format",
   Tesla: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=250&fit=crop&auto=format",
+  Rivian: "https://images.unsplash.com/photo-1617788138017-80ad40651399?w=400&h=250&fit=crop&auto=format",
+  
+  // German Makes
+  BMW: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=250&fit=crop&auto=format",
+  "Mercedes-Benz": "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=250&fit=crop&auto=format",
+  Audi: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400&h=250&fit=crop&auto=format",
+  Volkswagen: "https://images.unsplash.com/photo-1622194993627-c3de0bcee890?w=400&h=250&fit=crop&auto=format",
+  Porsche: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=250&fit=crop&auto=format",
+  
+  // Korean Makes
+  Hyundai: "https://images.unsplash.com/photo-1629897048514-3dd7414fe72a?w=400&h=250&fit=crop&auto=format",
+  Kia: "https://images.unsplash.com/photo-1619682817481-e994891cd1f5?w=400&h=250&fit=crop&auto=format",
+  Genesis: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=250&fit=crop&auto=format",
+  
+  // European Makes
+  Volvo: "https://images.unsplash.com/photo-1611016186353-9af58c69a533?w=400&h=250&fit=crop&auto=format",
+  "Land Rover": "https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=400&h=250&fit=crop&auto=format",
+  Jaguar: "https://images.unsplash.com/photo-1612825173281-9a193378527e?w=400&h=250&fit=crop&auto=format",
+  "Alfa Romeo": "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=400&h=250&fit=crop&auto=format",
+  Fiat: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&h=250&fit=crop&auto=format",
+  Mini: "https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=400&h=250&fit=crop&auto=format",
+  
+  // Luxury/Exotic
+  Ferrari: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=400&h=250&fit=crop&auto=format",
+  Lamborghini: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=400&h=250&fit=crop&auto=format",
+  Maserati: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=250&fit=crop&auto=format",
+  "Aston Martin": "https://images.unsplash.com/photo-1596905687424-dd0cb27aa2b4?w=400&h=250&fit=crop&auto=format",
+  Bentley: "https://images.unsplash.com/photo-1617654112368-307921291f42?w=400&h=250&fit=crop&auto=format",
+  "Rolls-Royce": "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=400&h=250&fit=crop&auto=format",
+  McLaren: "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=400&h=250&fit=crop&auto=format",
 };
 
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&h=250&fit=crop&auto=format";
