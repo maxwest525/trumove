@@ -197,9 +197,6 @@ export default function AutoTransport() {
         
         <div className="hvl-hero-content">
           <div className="hvl-hero-headline">
-            <div className="hvl-hero-logo-badge">
-              <img src={hvlLogo} alt="Howard's Van Lines" className="hvl-hero-logo" />
-            </div>
             <div className="hvl-hero-text-block">
               <h1>Ship Your Vehicle <span>Nationwide</span></h1>
               <p>
