@@ -35600,11 +35600,11 @@ gmp-map-3d-element .gmnoprint {
    HANK CHAT ASSISTANT - Howard Van Lines Red Theme
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Hank Form Border Pill - flush against form left edge */
+/* Hank Form Border Pill - 70px from form, below Transport Summary */
 .hvl-hank-form-pill {
   position: fixed;
-  top: 50%;
-  right: calc(50% + 260px); /* Form is ~520px wide, flush against left edge */
+  top: calc(50% + 200px); /* Below Transport Summary modal */
+  right: calc(50% + 260px + 70px); /* 70px from form, same as Transport Summary */
   transform: translateY(-50%);
   z-index: 1000;
   display: flex;
