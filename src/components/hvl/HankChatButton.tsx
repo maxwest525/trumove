@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Send, Truck, Mic, ChevronLeft } from "lucide-react";
+import { X, Send, Truck, Hand, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -17,7 +17,6 @@ const QUICK_REPLIES = [
 
 export default function HankChatButton() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -60,42 +59,23 @@ export default function HankChatButton() {
 
   return (
     <>
-      {/* Compact Pill Button */}
+      {/* Floating Button - Original Red Style with Hand */}
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "hvl-hank-pill",
+          "hvl-hank-button",
           isOpen && "hidden"
         )}
         aria-label="Chat with Hank"
       >
-        {isExpanded ? (
-          <>
-            <div className="hvl-hank-pill-icon">
-              <Mic className="w-5 h-5" />
-            </div>
-            <div className="hvl-hank-pill-text">
-              <span className="hvl-hank-pill-title">Questions?</span>
-              <span className="hvl-hank-pill-subtitle">Ask Hank</span>
-            </div>
-            <button 
-              className="hvl-hank-pill-collapse"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsExpanded(false);
-              }}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-          </>
-        ) : (
-          <div 
-            className="hvl-hank-pill-icon hvl-hank-pill-icon-only"
-            onClick={() => setIsExpanded(true)}
-          >
-            <Mic className="w-5 h-5" />
-          </div>
-        )}
+        <div className="hvl-hank-icon hvl-hank-pulse">
+          <Hand className="w-5 h-5" />
+          <Sparkles className="hvl-hank-sparkle" />
+        </div>
+        <div className="hvl-hank-text">
+          <span className="hvl-hank-title">Questions?</span>
+          <span className="hvl-hank-subtitle">Ask Hank</span>
+        </div>
       </button>
 
       {/* Chat Modal */}

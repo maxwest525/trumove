@@ -13368,7 +13368,7 @@
 }
 
 .header-logo img {
-  height: 52px;
+  height: 100px;
   width: auto;
 }
 
@@ -35600,95 +35600,80 @@ gmp-map-3d-element .gmnoprint {
    HANK CHAT ASSISTANT
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Hank Pill Button - Compact dark style */
-.hvl-hank-pill {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 0;
-  background: hsl(220 20% 12%);
-  color: hsl(0 0% 100%);
-  padding: 0;
-  border-radius: 100px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 8px 32px hsl(0 0% 0% / 0.4);
-  transition: all 0.25s ease;
-  overflow: hidden;
-}
-
-.hvl-hank-pill:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px hsl(0 0% 0% / 0.5);
-}
-
-.hvl-hank-pill-icon {
-  width: 44px;
-  height: 44px;
-  background: hsl(160 70% 40%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 4px;
-  flex-shrink: 0;
-}
-
-.hvl-hank-pill-icon-only {
-  margin: 0;
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-}
-
-.hvl-hank-pill-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  padding: 8px 8px 8px 4px;
-}
-
-.hvl-hank-pill-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.hvl-hank-pill-subtitle {
-  font-size: 0.625rem;
-  font-weight: 500;
-  opacity: 0.7;
-}
-
-.hvl-hank-pill-collapse {
-  width: 24px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: hsl(0 0% 100% / 0.08);
-  border: none;
-  color: hsl(0 0% 100% / 0.5);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.hvl-hank-pill-collapse:hover {
-  background: hsl(0 0% 100% / 0.12);
-  color: hsl(0 0% 100%);
-}
-
-/* Legacy button class */
 .hvl-hank-button {
   position: fixed;
   bottom: 24px;
   right: 24px;
   z-index: 1000;
-  display: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, hsl(0 70% 45%), hsl(0 65% 40%));
+  color: hsl(0 0% 100%);
+  padding: 0.875rem 1.25rem;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 32px hsl(0 70% 30% / 0.35);
+  transition: all 0.25s ease;
+}
+
+.hvl-hank-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 40px hsl(0 70% 30% / 0.45);
+}
+
+.hvl-hank-icon {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  background: hsl(0 0% 100% / 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Pulse animation for Hank icon */
+.hvl-hank-pulse {
+  animation: hvl-hank-pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes hvl-hank-pulse-ring {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(0 0% 100% / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px hsl(0 0% 100% / 0);
+  }
+}
+
+.hvl-hank-sparkle {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 14px !important;
+  height: 14px !important;
+  color: hsl(45 95% 55%);
+}
+
+.hvl-hank-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.hvl-hank-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.hvl-hank-subtitle {
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.85;
 }
 
 /* Hank Modal */
