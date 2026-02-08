@@ -34129,21 +34129,22 @@ gmp-map-3d-element .gmnoprint {
 }
 
 .hvl-step-item.active .hvl-step-circle {
-  border-color: hsl(0 70% 45%);
-  background: hsl(0 70% 45%);
-  color: hsl(0 0% 100%);
-  box-shadow: 0 0 0 4px hsl(0 70% 45% / 0.2);
+  border-color: hsl(0 70% 45%) !important;
+  background: hsl(0 70% 45%) !important;
+  color: hsl(0 0% 100%) !important;
+  box-shadow: 0 0 0 4px hsl(0 70% 45% / 0.2) !important;
   transform: scale(1.1);
 }
 
 .hvl-step-item.completed .hvl-step-circle {
-  border-color: hsl(0 70% 45%);
-  background: hsl(0 70% 45%);
-  color: hsl(0 0% 100%);
+  border-color: hsl(0 70% 45%) !important;
+  background: hsl(0 70% 45%) !important;
+  color: hsl(0 0% 100%) !important;
 }
 
 .hvl-step-item.completed .hvl-step-circle svg {
-  color: hsl(0 0% 100%);
+  color: hsl(0 0% 100%) !important;
+  stroke: hsl(0 0% 100%) !important;
 }
 
 .hvl-step-item-label {
