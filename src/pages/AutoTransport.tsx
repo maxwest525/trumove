@@ -191,6 +191,7 @@ export default function AutoTransport() {
         </div>
         <div className="hvl-hero-content">
           <div className="hvl-hero-headline">
+            <span className="hvl-hero-brand">Howard's Van Lines</span>
             <h1>Ship Your Vehicle <span>Nationwide</span></h1>
             <p>
               Trusted by 50,000+ customers. Fully insured. Door-to-door delivery. 
