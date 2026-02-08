@@ -257,6 +257,12 @@ export default function AutoTransport() {
                   })}
                   <div className="hvl-step-progress-bar">
                     <div className="hvl-step-progress-fill" style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }} />
+                    <div 
+                      className="hvl-step-car" 
+                      style={{ left: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
+                    >
+                      <Car className="w-5 h-5" />
+                    </div>
                   </div>
                 </div>
               </>

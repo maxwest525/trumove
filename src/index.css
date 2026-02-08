@@ -34181,17 +34181,41 @@ gmp-map-3d-element .gmnoprint {
   left: 50%;
   transform: translateX(-50%);
   width: 60%;
-  height: 2px;
+  height: 3px;
   background: hsl(220 10% 88%);
-  border-radius: 2px;
+  border-radius: 3px;
   z-index: 0;
 }
 
 .hvl-step-progress-fill {
   height: 100%;
-  background: hsl(0 70% 45%);
-  border-radius: 2px;
-  transition: width 0.4s ease;
+  background: linear-gradient(90deg, hsl(0 70% 45%), hsl(0 70% 55%));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* Animated Car on Progress Bar */
+.hvl-step-car {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: left 0.5s ease;
+  z-index: 2;
+}
+
+.hvl-step-car svg {
+  color: hsl(0 70% 45%);
+  filter: drop-shadow(0 2px 4px hsl(0 0% 0% / 0.2));
+  animation: hvl-car-bounce 0.6s ease-in-out infinite;
+}
+
+@keyframes hvl-car-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
 }
 
 /* Vehicle Preview - Animated Car */
