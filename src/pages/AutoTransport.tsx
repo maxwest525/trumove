@@ -192,8 +192,16 @@ export default function AutoTransport() {
           <div className="hvl-hero-overlay" />
         </div>
         
-        {/* Floating Vehicle Preview Modal - draggable */}
-        <VehiclePreviewModal year={year} make={make} model={model} />
+        {/* Floating Transport Summary Modal - draggable */}
+        <VehiclePreviewModal 
+          year={year} 
+          make={make} 
+          model={model} 
+          transportType={transportType}
+          pickupLocation={pickupLocation}
+          dropoffLocation={dropoffLocation}
+          pickupDate={pickupDate}
+        />
         
         <div className="hvl-hero-content">
           <div className="hvl-hero-headline" style={{ transform: 'translateX(-125px)' }}>
