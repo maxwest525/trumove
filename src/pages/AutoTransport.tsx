@@ -261,6 +261,11 @@ export default function AutoTransport() {
                       className="hvl-step-car" 
                       style={{ left: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
                     >
+                      <div className="hvl-exhaust">
+                        <span className="hvl-smoke hvl-smoke-1" />
+                        <span className="hvl-smoke hvl-smoke-2" />
+                        <span className="hvl-smoke hvl-smoke-3" />
+                      </div>
                       <Car className="w-5 h-5" />
                     </div>
                   </div>
