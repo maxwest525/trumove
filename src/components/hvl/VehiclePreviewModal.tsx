@@ -40,7 +40,8 @@ function getVehicleImageUrl(make: string): string {
   return VEHICLE_IMAGES[make] || DEFAULT_IMAGE;
 }
 
-const STORAGE_KEY = "hvl_transport_summary_pos_v6";
+// Storage key - increment to force position reset
+const STORAGE_KEY = "hvl_transport_summary_pos_v7";
 
 export function VehiclePreviewModal({ 
   year, 

@@ -35597,21 +35597,21 @@ gmp-map-3d-element .gmnoprint {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   HANK CHAT ASSISTANT
+   HANK CHAT ASSISTANT - Howard Van Lines Red Theme
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Hank Form Border Pill - positioned on form left edge */
+/* Hank Form Border Pill - flush against form left edge */
 .hvl-hank-form-pill {
   position: fixed;
   top: 50%;
-  right: calc(50% + 260px + 16px); /* Form is ~520px, so half + gap */
+  right: calc(50% + 260px); /* Form is ~520px wide, flush against left edge */
   transform: translateY(-50%);
   z-index: 1000;
   display: flex;
   align-items: stretch;
   background: hsl(220 20% 10%);
   border-radius: 14px;
-  border: 2px solid hsl(160 70% 35%);
+  border: 2px solid hsl(0 70% 45%);
   cursor: pointer;
   box-shadow: 0 8px 32px hsl(0 0% 0% / 0.4);
   transition: all 0.25s ease;
@@ -35621,8 +35621,8 @@ gmp-map-3d-element .gmnoprint {
 
 .hvl-hank-form-pill:hover {
   transform: translateY(-50%) scale(1.05);
-  box-shadow: 0 12px 40px hsl(160 70% 35% / 0.3);
-  border-color: hsl(160 70% 45%);
+  box-shadow: 0 12px 40px hsl(0 70% 45% / 0.3);
+  border-color: hsl(0 70% 55%);
 }
 
 .hvl-hank-form-pill-arrow {
@@ -35640,7 +35640,7 @@ gmp-map-3d-element .gmnoprint {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(160 70% 40%);
+  background: hsl(0 70% 45%);
   color: hsl(0 0% 100%);
   animation: hvl-hand-wave 2s ease-in-out infinite;
 }
@@ -35890,7 +35890,27 @@ gmp-map-3d-element .gmnoprint {
   cursor: not-allowed;
 }
 
-/* Mobile responsiveness for Hank */
+/* Mobile/tablet responsiveness for Hank */
+@media (max-width: 1200px) {
+  .hvl-hank-form-pill {
+    top: auto;
+    bottom: 24px;
+    right: 24px;
+    transform: none;
+  }
+  
+  .hvl-hank-form-pill:hover {
+    transform: scale(1.05);
+  }
+  
+  .hvl-hank-modal {
+    top: auto;
+    bottom: 90px;
+    right: 24px;
+    transform: none;
+  }
+}
+
 @media (max-width: 480px) {
   .hvl-hank-modal {
     left: 12px;
@@ -35901,7 +35921,7 @@ gmp-map-3d-element .gmnoprint {
     max-height: 600px;
   }
   
-  .hvl-hank-button {
+  .hvl-hank-form-pill {
     bottom: 16px;
     right: 16px;
   }
