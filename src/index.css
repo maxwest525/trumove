@@ -35236,68 +35236,146 @@ gmp-map-3d-element .gmnoprint {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   FLOATING VEHICLE PREVIEW
+   DRAGGABLE VEHICLE PREVIEW MODAL
    ═══════════════════════════════════════════════════════════════════ */
 
-.hvl-vehicle-hero-preview {
-  position: absolute;
-  bottom: 80px;
-  left: 5%;
-  z-index: 20;
-  animation: hvl-float-in 0.6s ease-out;
+.hvl-vehicle-modal {
+  position: fixed;
+  z-index: 100;
+  width: 260px;
+  background: hsl(0 0% 100%);
+  border-radius: 16px;
+  box-shadow: 
+    0 20px 50px hsl(0 0% 0% / 0.25),
+    0 8px 20px hsl(0 70% 45% / 0.15),
+    inset 0 1px 0 hsl(0 0% 100% / 0.5);
+  overflow: hidden;
+  animation: hvl-modal-enter 0.4s ease-out;
+  border: 1px solid hsl(0 70% 45% / 0.2);
 }
 
-@keyframes hvl-float-in {
+.hvl-vehicle-modal-dragging {
+  cursor: grabbing;
+  user-select: none;
+  box-shadow: 
+    0 30px 60px hsl(0 0% 0% / 0.35),
+    0 12px 24px hsl(0 70% 45% / 0.2);
+}
+
+@keyframes hvl-modal-enter {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.9);
+    transform: scale(0.9) translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: scale(1) translateY(0);
   }
 }
 
-.hvl-vehicle-hero-card {
+.hvl-vehicle-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, hsl(0 70% 45%), hsl(0 65% 40%));
+  cursor: grab;
+}
+
+.hvl-vehicle-modal-dragging .hvl-vehicle-modal-header {
+  cursor: grabbing;
+}
+
+.hvl-vehicle-modal-grip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: hsl(0 0% 100%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hvl-vehicle-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hvl-vehicle-modal-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: hsl(0 0% 100% / 0.15);
+  border: none;
+  color: hsl(0 0% 100%);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.hvl-vehicle-modal-btn:hover {
+  background: hsl(0 0% 100% / 0.25);
+}
+
+.hvl-vehicle-modal-close:hover {
+  background: hsl(0 0% 0% / 0.3);
+}
+
+/* Color Picker */
+.hvl-color-picker {
+  padding: 10px 12px;
+  background: hsl(220 10% 97%);
+  border-bottom: 1px solid hsl(220 10% 90%);
+}
+
+.hvl-color-picker-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: hsl(220 10% 45%);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.hvl-color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hvl-color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 2px 4px hsl(0 0% 0% / 0.1);
+}
+
+.hvl-color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.hvl-color-swatch-active {
+  border-color: hsl(0 70% 45%) !important;
+  box-shadow: 0 0 0 2px hsl(0 0% 100%), 0 0 0 4px hsl(0 70% 45% / 0.3);
+}
+
+/* Vehicle Image */
+.hvl-vehicle-modal-image-wrap {
   position: relative;
-  background: hsl(0 0% 100% / 0.95);
-  backdrop-filter: blur(16px);
-  border-radius: 16px;
-  padding: 12px;
-  box-shadow: 
-    0 20px 60px hsl(0 0% 0% / 0.3),
-    0 8px 24px hsl(0 70% 45% / 0.15),
-    inset 0 1px 0 hsl(0 0% 100% / 0.5);
-  overflow: hidden;
-}
-
-.hvl-vehicle-hero-glow {
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(135deg, hsl(0 70% 50%), hsl(25 90% 55%), hsl(0 70% 50%));
-  background-size: 200% 200%;
-  animation: hvl-glow-rotate 3s linear infinite;
-  border-radius: 18px;
-  z-index: -1;
-  opacity: 0.6;
-}
-
-@keyframes hvl-glow-rotate {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.hvl-vehicle-hero-image-container {
-  position: relative;
-  width: 200px;
-  height: 120px;
-  border-radius: 10px;
-  overflow: hidden;
+  width: 100%;
+  height: 140px;
   background: hsl(220 10% 95%);
+  overflow: hidden;
 }
 
-.hvl-vehicle-hero-placeholder {
+.hvl-vehicle-modal-placeholder {
   position: absolute;
   inset: 0;
   display: flex;
@@ -35306,7 +35384,7 @@ gmp-map-3d-element .gmnoprint {
   color: hsl(0 70% 45%);
 }
 
-.hvl-vehicle-hero-image {
+.hvl-vehicle-modal-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -35314,33 +35392,38 @@ gmp-map-3d-element .gmnoprint {
   transition: opacity 0.4s ease;
 }
 
-.hvl-vehicle-hero-image.loaded {
+.hvl-vehicle-modal-image.loaded {
   opacity: 1;
 }
 
-.hvl-vehicle-hero-shine {
+.hvl-vehicle-color-overlay {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transition: background 0.3s ease;
+}
+
+.hvl-vehicle-modal-shine {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     105deg,
     transparent 40%,
-    hsl(0 0% 100% / 0.3) 50%,
+    hsl(0 0% 100% / 0.25) 50%,
     transparent 60%
   );
-  animation: hvl-shine 3s ease-in-out infinite;
+  animation: hvl-shine 4s ease-in-out infinite;
+  pointer-events: none;
 }
 
-@keyframes hvl-shine {
-  0%, 100% { transform: translateX(-100%); }
-  50% { transform: translateX(100%); }
-}
-
-.hvl-vehicle-hero-info {
-  padding: 10px 4px 4px;
+/* Vehicle Info */
+.hvl-vehicle-modal-info {
+  padding: 12px;
   text-align: center;
 }
 
-.hvl-vehicle-hero-badge {
+.hvl-vehicle-modal-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -35355,22 +35438,39 @@ gmp-map-3d-element .gmnoprint {
   margin-bottom: 6px;
 }
 
-.hvl-vehicle-hero-badge svg {
+.hvl-vehicle-modal-badge svg {
   color: hsl(0 70% 45%);
 }
 
-.hvl-vehicle-hero-title {
-  font-size: 1rem;
+.hvl-vehicle-modal-title {
+  font-size: 1.125rem;
   font-weight: 800;
   color: hsl(220 20% 15%);
   margin: 0;
   line-height: 1.2;
 }
 
-.hvl-vehicle-hero-model {
-  font-size: 0.8125rem;
+.hvl-vehicle-modal-model {
+  font-size: 0.875rem;
   color: hsl(220 10% 45%);
   margin: 2px 0 0;
+}
+
+.hvl-vehicle-modal-color {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: hsl(220 10% 50%);
+  margin-top: 6px;
+}
+
+.hvl-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid hsl(0 0% 0% / 0.1);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
