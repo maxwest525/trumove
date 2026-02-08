@@ -34074,24 +34074,24 @@ gmp-map-3d-element .gmnoprint {
 /* Logo Header */
 .hvl-wizard-logo-header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   margin-bottom: 1.25rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid hsl(0 70% 45% / 0.15);
 }
 
 .hvl-wizard-logo {
-  height: 40px;
+  height: 36px;
   width: auto;
 }
 
 .hvl-wizard-tagline {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   color: hsl(0 70% 40%);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 /* Premium Step Indicator */
