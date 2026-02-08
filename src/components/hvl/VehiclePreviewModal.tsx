@@ -40,7 +40,7 @@ function getVehicleImageUrl(make: string): string {
   return VEHICLE_IMAGES[make] || DEFAULT_IMAGE;
 }
 
-const STORAGE_KEY = "hvl_transport_summary_pos_v2";
+const STORAGE_KEY = "hvl_transport_summary_pos_v3";
 
 export function VehiclePreviewModal({ 
   year, 
@@ -54,7 +54,7 @@ export function VehiclePreviewModal({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   
-  // Dragging state - position bottom left, out of form's way
+  // Dragging state - position far right, below the form
   const [position, setPosition] = useState(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -62,7 +62,7 @@ export function VehiclePreviewModal({
         return JSON.parse(stored);
       }
     } catch {}
-    return { x: 24, y: window.innerHeight - 420 };
+    return { x: window.innerWidth - 310, y: 520 };
   });
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
