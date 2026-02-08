@@ -34089,6 +34089,13 @@ gmp-map-3d-element .gmnoprint {
   flex-shrink: 0;
 }
 
+.hvl-wizard-divider {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, transparent, hsl(0 70% 45% / 0.4), transparent);
+  flex-shrink: 0;
+}
+
 .hvl-wizard-tagline {
   font-size: 1.5rem;
   font-weight: 700;

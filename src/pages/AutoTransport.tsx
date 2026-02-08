@@ -230,6 +230,7 @@ export default function AutoTransport() {
             {/* Logo Header */}
             <div className="hvl-wizard-logo-header">
               <img src={hvlLogo} alt="Howard Van Lines" className="hvl-wizard-logo" />
+              <div className="hvl-wizard-divider" />
               <span className="hvl-wizard-tagline">Get Your Instant Quote</span>
             </div>
 
