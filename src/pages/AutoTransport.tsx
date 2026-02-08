@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import HankChatButton from "@/components/hvl/HankChatButton";
 import { HeroParticles } from "@/components/hvl/HeroParticles";
-import { VehiclePreview } from "@/components/hvl/VehiclePreview";
+import { VehiclePreviewModal } from "@/components/hvl/VehiclePreviewModal";
 import heroImage from "@/assets/hvl-hero-dynamic.jpg";
 import hvlLogo from "@/assets/hvl-logo.png";
 
@@ -192,8 +192,8 @@ export default function AutoTransport() {
           <div className="hvl-hero-overlay" />
         </div>
         
-        {/* Floating Vehicle Preview - shows when vehicle selected */}
-        <VehiclePreview year={year} make={make} model={model} />
+        {/* Floating Vehicle Preview Modal - draggable */}
+        <VehiclePreviewModal year={year} make={make} model={model} />
         
         <div className="hvl-hero-content">
           <div className="hvl-hero-headline">
