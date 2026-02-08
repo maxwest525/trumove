@@ -54,7 +54,7 @@ export function VehiclePreviewModal({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   
-  // Dragging state - default to left side
+  // Dragging state - position bottom left, out of form's way
   const [position, setPosition] = useState(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -62,7 +62,7 @@ export function VehiclePreviewModal({
         return JSON.parse(stored);
       }
     } catch {}
-    return { x: 24, y: 180 };
+    return { x: 24, y: window.innerHeight - 420 };
   });
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
