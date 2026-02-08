@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Send, Truck, Hand, Sparkles } from "lucide-react";
+import { X, Send, Truck, Mic, ChevronLeft, Hand, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -17,6 +17,7 @@ const QUICK_REPLIES = [
 
 export default function HankChatButton() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -59,94 +60,122 @@ export default function HankChatButton() {
 
   return (
     <>
-      {/* Floating Button - Original Red Style with Hand */}
+      {/* Compact Pill Button - Dark style with mic */}
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "hvl-hank-button",
+          "hvl-hank-pill",
           isOpen && "hidden"
         )}
         aria-label="Chat with Hank"
       >
-        <div className="hvl-hank-icon hvl-hank-pulse">
-          <Hand className="w-5 h-5" />
-          <Sparkles className="hvl-hank-sparkle" />
-        </div>
-        <div className="hvl-hank-text">
-          <span className="hvl-hank-title">Questions?</span>
-          <span className="hvl-hank-subtitle">Ask Hank</span>
-        </div>
+        {isExpanded ? (
+          <>
+            <div className="hvl-hank-pill-icon hvl-hank-pulse">
+              <Mic className="w-5 h-5" />
+            </div>
+            <div className="hvl-hank-pill-text">
+              <span className="hvl-hank-pill-title">Questions?</span>
+              <span className="hvl-hank-pill-subtitle">Ask Hank</span>
+            </div>
+            <button 
+              className="hvl-hank-pill-collapse"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsExpanded(false);
+              }}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          </>
+        ) : (
+          <div 
+            className="hvl-hank-pill-icon hvl-hank-pill-icon-only hvl-hank-pulse"
+            onClick={() => setIsExpanded(true)}
+          >
+            <Mic className="w-5 h-5" />
+          </div>
+        )}
       </button>
 
-      {/* Chat Modal */}
+      {/* Chat Modal with Hand accent on left */}
       {isOpen && (
-        <div className="hvl-hank-modal">
-          {/* Header */}
-          <div className="hvl-hank-header">
-            <div className="hvl-hank-header-left">
-              <div className="hvl-hank-avatar">
-                <Truck className="w-5 h-5" />
+        <div className="hvl-hank-modal-wrapper">
+          {/* Hand accent to the left of modal */}
+          <div className="hvl-hank-hand-accent">
+            <Hand className="w-6 h-6" />
+            <Sparkles className="hvl-hank-hand-sparkle" />
+          </div>
+
+          {/* Chat Modal */}
+          <div className="hvl-hank-modal">
+            {/* Header */}
+            <div className="hvl-hank-header">
+              <div className="hvl-hank-header-left">
+                <div className="hvl-hank-avatar">
+                  <Truck className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="hvl-hank-name">Hank</span>
+                  <span className="hvl-hank-status">
+                    <span className="hvl-hank-status-dot" />
+                    Auto Transport Expert
+                  </span>
+                </div>
               </div>
-              <div>
-                <span className="hvl-hank-name">Hank</span>
-                <span className="hvl-hank-status">
-                  <span className="hvl-hank-status-dot" />
-                  Auto Transport Expert
-                </span>
-              </div>
+              <button onClick={() => setIsOpen(false)} className="hvl-hank-close">
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <button onClick={() => setIsOpen(false)} className="hvl-hank-close">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
 
-          {/* Messages */}
-          <div className="hvl-hank-messages">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={cn(
-                  "hvl-hank-message",
-                  msg.sender === "user" ? "is-user" : "is-bot"
-                )}
+            {/* Messages */}
+            <div className="hvl-hank-messages">
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={cn(
+                    "hvl-hank-message",
+                    msg.sender === "user" ? "is-user" : "is-bot"
+                  )}
+                >
+                  {msg.content}
+                </div>
+              ))}
+              
+              {/* Quick Replies */}
+              {messages.length === 1 && (
+                <div className="hvl-hank-quick-replies">
+                  {QUICK_REPLIES.map((reply) => (
+                    <button
+                      key={reply}
+                      onClick={() => handleSend(reply)}
+                      className="hvl-hank-quick-btn"
+                    >
+                      {reply}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Input */}
+            <div className="hvl-hank-input-area">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSend(inputValue)}
+                placeholder="Type your question..."
+                className="hvl-hank-input"
+              />
+              <button
+                onClick={() => handleSend(inputValue)}
+                disabled={!inputValue.trim()}
+                className="hvl-hank-send"
               >
-                {msg.content}
-              </div>
-            ))}
-            
-            {/* Quick Replies */}
-            {messages.length === 1 && (
-              <div className="hvl-hank-quick-replies">
-                {QUICK_REPLIES.map((reply) => (
-                  <button
-                    key={reply}
-                    onClick={() => handleSend(reply)}
-                    className="hvl-hank-quick-btn"
-                  >
-                    {reply}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Input */}
-          <div className="hvl-hank-input-area">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSend(inputValue)}
-              placeholder="Type your question..."
-              className="hvl-hank-input"
-            />
-            <button
-              onClick={() => handleSend(inputValue)}
-              disabled={!inputValue.trim()}
-              className="hvl-hank-send"
-            >
-              <Send className="w-4 h-4" />
-            </button>
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
