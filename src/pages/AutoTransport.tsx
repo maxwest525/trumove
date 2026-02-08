@@ -21,6 +21,8 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import HankChatButton from "@/components/hvl/HankChatButton";
+import { HeroParticles } from "@/components/hvl/HeroParticles";
+import { VehiclePreview } from "@/components/hvl/VehiclePreview";
 import heroImage from "@/assets/hvl-hero-dynamic.jpg";
 import hvlLogo from "@/assets/hvl-logo.png";
 
@@ -189,6 +191,10 @@ export default function AutoTransport() {
         <div className="hvl-hero-bg" style={{ backgroundImage: `url(${heroImage})` }}>
           <div className="hvl-hero-overlay" />
         </div>
+        
+        {/* Floating Vehicle Preview - shows when vehicle selected */}
+        <VehiclePreview year={year} make={make} model={model} />
+        
         <div className="hvl-hero-content">
           <div className="hvl-hero-headline">
             <span className="hvl-hero-brand">Howard's Van Lines</span>
@@ -213,8 +219,10 @@ export default function AutoTransport() {
             </div>
           </div>
 
-          {/* Right: Premium Wizard Card */}
-          <div className="hvl-wizard-card hvl-wizard-premium">
+          {/* Right: Premium Wizard Card with Particles */}
+          <div className="hvl-wizard-wrapper">
+            <HeroParticles />
+            <div className="hvl-wizard-card hvl-wizard-premium">
             {/* Logo Header */}
             <div className="hvl-wizard-logo-header">
               <img src={hvlLogo} alt="Howard Van Lines" className="hvl-wizard-logo" />
@@ -246,24 +254,6 @@ export default function AutoTransport() {
                     <div className="hvl-step-progress-fill" style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }} />
                   </div>
                 </div>
-
-                {/* Vehicle Preview - Shows when year/make/model selected */}
-                {currentStep === 1 && year && make && model && (
-                  <div className="hvl-vehicle-preview">
-                    <div className="hvl-vehicle-spinner">
-                      <div className="hvl-vehicle-image">
-                        <Car className="w-16 h-16" />
-                      </div>
-                    </div>
-                    <div className="hvl-vehicle-info">
-                      <span className="hvl-vehicle-ymm">{year} {make} {model}</span>
-                      <span className="hvl-vehicle-status">
-                        <CheckCircle className="w-3 h-3" />
-                        Vehicle Selected
-                      </span>
-                    </div>
-                  </div>
-                )}
               </>
             )}
 
@@ -478,6 +468,7 @@ export default function AutoTransport() {
                 )}
               </div>
             )}
+            </div>
           </div>
         </div>
       </section>
