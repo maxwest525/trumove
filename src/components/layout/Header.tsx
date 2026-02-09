@@ -136,7 +136,6 @@ interface SubNavItem {
 
 const NAV: NavItem[] = [
   { href: "/", label: "Home" },
-  { href: "/auto-transport", label: "Auto Transport" },
   { 
     href: "/book", 
     label: "Connect With Us",

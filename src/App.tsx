@@ -22,7 +22,6 @@ import AgentLogin from "./pages/AgentLogin";
 import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
-import AutoTransport from "./pages/AutoTransport";
 import FloatingTruckChat from "./components/FloatingTruckChat";
 
 const queryClient = new QueryClient();
@@ -36,7 +35,6 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/auto-transport" element={<AutoTransport />} />
             <Route path="/online-estimate" element={<OnlineEstimate />} />
             <Route path="/book" element={<Book />} />
             <Route path="/vetting" element={<CarrierVetting />} />
