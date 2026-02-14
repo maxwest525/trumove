@@ -48,7 +48,7 @@ export default function Vetting() {
     <SiteShell hideTrustStrip>
       <div className="tru-vetting-page">
         {/* Unified Command Center Header */}
-        <div className="sticky top-[102px] z-40">
+        <div className="sticky top-[102px] max-[768px]:top-[72px] z-40">
           <header className="tracking-header">
             {/* Left - Logo & Title */}
             <div className="flex items-center gap-3">

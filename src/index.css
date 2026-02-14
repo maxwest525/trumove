@@ -33860,3 +33860,241 @@ gmp-map-3d-element .gmnoprint {
 .truck-view-map-container .mapboxgl-ctrl {
   display: none !important;
 }
+
+/* =============================================
+   GLOBAL MOBILE OPTIMIZATIONS
+   ============================================= */
+@media (max-width: 768px) {
+  /* 1. Fix header logo clipping */
+  .header-logo {
+    margin-left: 0 !important;
+    margin-right: 12px;
+  }
+  
+  .header-inner {
+    padding: 0 16px;
+    height: 56px;
+  }
+  
+  .header-logo img {
+    height: 28px;
+  }
+  
+  /* 2. SaferTrustStrip - compact on mobile */
+  .safer-trust-strip {
+    padding: 6px 12px;
+    margin-top: 12px;
+  }
+  
+  .safer-trust-strip-inner {
+    gap: 12px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .safer-trust-strip-inner::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .safer-trust-item {
+    font-size: 10px;
+    gap: 4px;
+  }
+  
+  .safer-trust-item svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .safer-trust-dot {
+    margin: 0 4px;
+  }
+  
+  /* 3. SiteShell - reduce sticky header space */
+  .sticky.top-0 > div:first-child,
+  div.sticky.top-0 > .bg-background {
+    padding-top: 6px;
+    padding-bottom: 16px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  
+  /* 4. Command center strips - compact */
+  .tru-header-trust-strip {
+    padding: 4px 8px;
+    margin-top: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tru-header-trust-strip-inner {
+    gap: 4px 10px;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    min-width: max-content;
+  }
+  
+  /* 5. Floating chat button - smaller on mobile */
+  .tru-floating-quote {
+    bottom: 16px;
+    right: 12px;
+  }
+  
+  /* 6. Hero section - tighter spacing */
+  .tru-hero-top-section {
+    padding-bottom: 24px;
+  }
+  
+  .tru-hero-headline-main {
+    font-size: clamp(1.5rem, 7vw, 2.25rem);
+    white-space: normal !important;
+  }
+  
+  .tru-hero-header-stacked {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    padding: 0 16px;
+  }
+  
+  .tru-hero-logo-stacked {
+    height: 60px;
+  }
+  
+  /* 7. Move Summary modal - stack vertically */
+  .tru-move-summary-modal {
+    position: relative;
+    top: auto;
+    padding: 16px;
+    margin: 0 16px;
+  }
+  
+  .tru-move-summary-grid {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .tru-move-summary-map.tru-move-summary-map-lg {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .tru-move-summary-status {
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+  
+  /* 8. Form cards - full width, no overlap */
+  .tru-floating-form-card {
+    margin: 0 12px !important;
+    max-width: 100% !important;
+  }
+  
+  /* 9. Page hero sections - tighter */
+  .tru-page-hero-section {
+    padding: var(--spacing-lg) var(--spacing-sm) 0 var(--spacing-sm);
+    margin-bottom: 1rem;
+  }
+  
+  .tru-page-hero-section h1 {
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+  }
+  
+  /* 10. Feature trust strip - scrollable */
+  .feature-trust-strip {
+    padding: 8px 12px;
+    margin: 1rem 0;
+  }
+  
+  .feature-trust-strip-inner {
+    gap: 14px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .feature-trust-strip-inner::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* 11. Chat modal - full width on mobile */
+  .chat-modal-panel {
+    right: 8px;
+    left: 8px;
+    width: auto;
+    max-width: none;
+    bottom: 8px;
+    max-height: calc(100vh - 80px);
+    border-radius: 16px;
+  }
+  
+  /* 12. Demo section panels - auto height */
+  .tru-ai-live-scanner,
+  .tru-ai-live-inventory {
+    max-height: none;
+  }
+  
+  /* 13. Route analysis grid - single column */
+  .tru-route-analysis-grid {
+    flex-direction: column !important;
+    gap: 12px;
+  }
+  
+  /* 14. Command Center header - compact on mobile */
+  .tracking-header {
+    padding: 8px 12px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  
+  /* Hide trust indicators on mobile - too crowded */
+  .tracking-header-trust {
+    display: none !important;
+  }
+  
+  .tracking-header-controls {
+    position: relative !important;
+    left: auto !important;
+    transform: none !important;
+  }
+  
+  /* Also hide video consult header trust */
+  .video-consult-header-trust {
+    display: none !important;
+  }
+  
+  .tracking-header-trust-item {
+    font-size: 9px;
+    gap: 4px;
+  }
+  
+  .tracking-header-trust-item svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  /* 15. Sticky command center offset - reduced for smaller header */
+  .sticky[class*="top-[102px]"],
+  .sticky[class*="top-[6.375rem]"] {
+    top: 70px !important;
+  }
+  
+  .tracking-header.tracking-header-sticky {
+    top: 70px;
+  }
+  
+  /* 16. Stats strip - scrollable on mobile */
+  .tru-stats-strip {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tru-stats-strip-inner {
+    min-width: max-content;
+  }
+}
