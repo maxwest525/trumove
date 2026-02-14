@@ -70,7 +70,7 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
       <>
         <button
           onClick={handleReopen}
-          className="fixed bottom-24 right-0 z-50 
+          className="fixed bottom-6 right-0 z-50 
             px-2 py-4 
             bg-foreground text-background 
             rounded-l-xl
@@ -79,7 +79,8 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
             flex flex-col items-center gap-2
             transition-all duration-300 
             hover:px-3 hover:shadow-xl
-            group"
+            group
+            max-[768px]:bottom-4 max-[768px]:py-3"
           aria-label="Open AI Helper"
         >
           <div className="p-1 rounded-full border border-background/50">
@@ -110,20 +111,21 @@ export default function FloatingTruckChat({ className = '' }: FloatingTruckChatP
           hover:shadow-[0_12px_40px_-4px_hsl(var(--primary)/0.5),0_6px_20px_-2px_hsl(var(--tm-ink)/0.35)]
           hover:scale-[1.03] hover:-translate-y-1
           focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2
+          max-[768px]:bottom-4 max-[768px]:right-3 max-[768px]:px-3 max-[768px]:py-2.5 max-[768px]:gap-2
           ${!showButton ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'}
           ${className}
         `}
         aria-label="Trudy AI Moving Helper"
       >
         {/* Truck Icon Container */}
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-background/20 border border-background/30">
-          <Truck className="w-5 h-5 text-background animate-truck-bounce" />
+        <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-background/20 border border-background/30 max-[768px]:w-8 max-[768px]:h-8">
+          <Truck className="w-5 h-5 text-background animate-truck-bounce max-[768px]:w-4 max-[768px]:h-4" />
           {/* Sparkle indicator */}
           <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 text-background animate-pulse" />
         </div>
         
-        {/* Text Label */}
-        <div className="flex flex-col items-start">
+        {/* Text Label - hidden on mobile to reduce size */}
+        <div className="flex flex-col items-start max-[768px]:hidden">
           <span className="text-sm font-bold leading-tight text-background">Chat with Trudy</span>
           <span className="text-xs leading-tight text-primary font-semibold">Let's Plan Your Move</span>
         </div>
