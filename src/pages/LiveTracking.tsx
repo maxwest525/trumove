@@ -3,8 +3,8 @@ import { MapPin, Navigation, Play, Pause, RotateCcw, Truck, Calendar, Box, Alert
 import { format } from "date-fns";
 import { TruckTrackingMap } from "@/components/tracking/TruckTrackingMap";
 // Google3DTrackingView removed - unreliable
-import { Google2DTrackingMap, type MapViewType } from "@/components/tracking/Google2DTrackingMap";
-import TruckViewPanel from "@/components/tracking/TruckViewPanel";
+import { Google2DTrackingMap } from "@/components/tracking/Google2DTrackingMap";
+
 import { GoogleStaticRouteMap } from "@/components/tracking/GoogleStaticRouteMap";
 import { RouteComparisonPanel, type RouteOption } from "@/components/tracking/RouteComparisonPanel";
 import { UnifiedStatsCard } from "@/components/tracking/UnifiedStatsCard";
@@ -143,8 +143,8 @@ export default function LiveTracking() {
   // 3D view mode toggle - default to false (2D satellite is primary, 3D is unreliable)
   const [show3DView, setShow3DView] = useState(false);
   
-  // Map view type for 2D maps (satellite, hybrid, roadmap, truckview)
-  const [mapViewType, setMapViewType] = useState<MapViewType>('satellite');
+  // Map view type for 2D maps (satellite, hybrid, roadmap)
+  const [mapViewType, setMapViewType] = useState<'satellite' | 'hybrid' | 'roadmap'>('satellite');
   
   // WebGL diagnostics and fallback state
   const [webglDiagnostics, setWebglDiagnostics] = useState<WebGLDiagnostics | null>(null);
@@ -160,10 +160,6 @@ export default function LiveTracking() {
   
   // Route setup modal state
   const [showRouteModal, setShowRouteModal] = useState(true);
-  
-  // Map view transition state
-  const [isViewTransitioning, setIsViewTransitioning] = useState(false);
-  const prevMapViewType = useRef<MapViewType>(mapViewType);
   
   // Checkpoint notifications tracking
   const passedCheckpoints = useRef<Set<number>>(new Set());
@@ -235,18 +231,6 @@ export default function LiveTracking() {
       console.log('WebGL diagnostics: 2D satellite view enabled by default', diagnostics);
     }
   }, []);
-
-  // Map view transition effect
-  useEffect(() => {
-    if (prevMapViewType.current !== mapViewType) {
-      setIsViewTransitioning(true);
-      const timer = setTimeout(() => {
-        setIsViewTransitioning(false);
-        prevMapViewType.current = mapViewType;
-      }, 400); // Match CSS transition duration
-      return () => clearTimeout(timer);
-    }
-  }, [mapViewType]);
 
   // Check for saved booking on mount
   useEffect(() => {
@@ -600,7 +584,7 @@ export default function LiveTracking() {
       <Header />
       
       {/* Sticky Header Block - matches Connect With Us offset */}
-      <div className="sticky top-[102px] max-[768px]:top-[72px] z-40">
+      <div className="sticky top-[102px] z-40">
         <header className="tracking-header">
         {/* Left - Logo & Title */}
         <div className="flex items-center gap-3">
@@ -699,7 +683,7 @@ export default function LiveTracking() {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none border-r border-border transition-all",
+                    "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
                     mapViewType === 'roadmap' 
                       ? "bg-foreground text-background font-bold" 
                       : "hover:bg-muted"
@@ -707,20 +691,6 @@ export default function LiveTracking() {
                 >
                   <Map className="w-3.5 h-3.5" />
                   Roadmap
-                </Button>
-                <Button
-                  onClick={() => setMapViewType('truckview')}
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "h-9 px-3 gap-1.5 text-xs rounded-none transition-all",
-                    mapViewType === 'truckview' 
-                      ? "bg-foreground text-background font-bold" 
-                      : "hover:bg-muted"
-                  )}
-                >
-                  <Truck className="w-3.5 h-3.5" />
-                  Truck View
                 </Button>
               </div>
               
@@ -756,16 +726,6 @@ export default function LiveTracking() {
                 originName={originName}
                 destName={destName}
               />
-            ) : mapViewType === 'truckview' ? (
-              <TruckViewPanel
-                routeCoordinates={routeCoordinates}
-                progress={progress}
-                isTracking={isTracking}
-                interactive={false}
-                originCoords={originCoords}
-                destCoords={destCoords}
-                onRouteCalculated={handleRouteCalculated}
-              />
             ) : (
               <Google2DTrackingMap
                 originCoords={originCoords}
@@ -779,26 +739,6 @@ export default function LiveTracking() {
                 googleApiKey={GOOGLE_MAPS_API_KEY}
               />
             )}
-            
-            {/* Map View Transition Overlay */}
-            <div 
-              className={cn(
-                "absolute inset-0 bg-background/80 backdrop-blur-sm pointer-events-none z-40 transition-opacity duration-300",
-                isViewTransitioning ? "opacity-100" : "opacity-0"
-              )}
-            >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-lg bg-background border border-border shadow-lg transition-all duration-300",
-                  isViewTransitioning ? "opacity-100 scale-100" : "opacity-0 scale-95"
-                )}>
-                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  <span className="text-sm font-medium text-foreground">
-                    Switching to {mapViewType === 'truckview' ? 'Truck View' : mapViewType === 'roadmap' ? 'Roadmap' : 'Satellite'}...
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Map Controls Strip - Go/Pause/Reset + Route Info Dropdowns */}

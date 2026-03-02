@@ -1,49 +1,61 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteShell from "@/components/layout/SiteShell";
-import { Briefcase, Sparkles, Trophy, Key, MessageSquare, LayoutGrid, Medal } from "lucide-react";
+import { FileText, Receipt, CreditCard, Truck, Users, BarChart3, Mail, ArrowLeft, Phone, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { AgentLoginModal } from "@/components/agent/AgentLoginModal";
+import { CCACHAuthorizationForm } from "@/components/agent/CCACHAuthorizationForm";
+import { BillOfLadingForm } from "@/components/agent/BillOfLadingForm";
+import { CustomerLookup } from "@/components/agent/CustomerLookup";
+import { CarrierDashboard } from "@/components/agent/CarrierDashboard";
+import { ClientMessaging } from "@/components/agent/ClientMessaging";
+import { IntegrationModal } from "@/components/integrations/IntegrationModals";
 import PPCDemoModal from "@/components/demo/PPCDemoModal";
-import { OperationsCenterModal } from "@/components/agent/OperationsCenterModal";
-import { CoachingSummaryModal } from "@/components/coaching/CoachingSummaryModal";
-import { InternalMessagingModal } from "@/components/messaging/InternalMessagingModal";
-import { CombinedWorkspaceModal } from "@/components/agent/CombinedWorkspaceModal";
-import { AgentCommissionBoard } from "@/components/agent/AgentCommissionBoard";
+
+type ActiveTool = null | "estimate" | "bol" | "ccach" | "carrier" | "customer" | "messaging" | "granot" | "ringcentral" | "ppc";
 
 const AGENT_TOOLS = [
   {
-    id: "workspace" as const,
-    title: "Agent Workspace",
-    description: "CRM, Dialer & E-Sign in one split-panel view",
-    icon: LayoutGrid,
+    id: "estimate" as const,
+    title: "Estimate Authorization",
+    description: "Sign and authorize customer estimates",
+    icon: FileText,
+    href: "/auth",
+    external: true,
+  },
+  {
+    id: "bol" as const,
+    title: "Bill of Lading",
+    description: "Generate and manage shipping documents",
+    icon: Receipt,
     external: false,
   },
   {
-    id: "commission-board" as const,
-    title: "Commission Leaderboard",
-    description: "Agent rankings by deposits, jobs & premium",
-    icon: Medal,
+    id: "ccach" as const,
+    title: "CC/ACH Authorization",
+    description: "Payment authorization forms",
+    icon: CreditCard,
     external: false,
   },
   {
-    id: "operations" as const,
-    title: "Operations Center",
-    description: "Carriers, customers & messaging",
-    icon: Briefcase,
+    id: "carrier" as const,
+    title: "Carrier Dashboard",
+    description: "View scheduled jobs and follow-ups",
+    icon: Truck,
+    external: false,
+  },
+  {
+    id: "customer" as const,
+    title: "Customer Lookup",
+    description: "Search customer records and history",
+    icon: Users,
     external: false,
   },
   {
     id: "messaging" as const,
-    title: "Team Messaging",
-    description: "Chat with agents & managers",
-    icon: MessageSquare,
-    external: false,
-  },
-  {
-    id: "coaching-summary" as const,
-    title: "Team Performance",
-    description: "Coaching metrics, QA scores & leaderboards",
-    icon: Trophy,
+    title: "Client Messaging",
+    description: "Email & SMS templates for clients",
+    icon: Mail,
     external: false,
   },
   {
@@ -54,17 +66,30 @@ const AGENT_TOOLS = [
     external: false,
     isIntegration: true,
   },
+  {
+    id: "granot" as const,
+    title: "Granot CRM",
+    description: "Moving industry CRM for brokers",
+    icon: BarChart3,
+    external: false,
+    isIntegration: true,
+  },
+  {
+    id: "ringcentral" as const,
+    title: "RingCentral",
+    description: "Cloud phone & video communications",
+    icon: Phone,
+    external: false,
+    isIntegration: true,
+  },
 ];
-
 export default function AgentLogin() {
   const [showLoginModal, setShowLoginModal] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [activeTool, setActiveTool] = useState<ActiveTool>(null);
+  const [granotOpen, setGranotOpen] = useState(false);
+  const [ringcentralOpen, setRingcentralOpen] = useState(false);
   const [ppcOpen, setPpcOpen] = useState(false);
-  const [operationsOpen, setOperationsOpen] = useState(false);
-  const [coachingSummaryOpen, setCoachingSummaryOpen] = useState(false);
-  const [messagingOpen, setMessagingOpen] = useState(false);
-  const [workspaceOpen, setWorkspaceOpen] = useState(false);
-  const [commissionBoardOpen, setCommissionBoardOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -73,19 +98,31 @@ export default function AgentLogin() {
     setShowLoginModal(false);
   };
 
-  const handleToolClick = (toolId: typeof AGENT_TOOLS[number]['id']) => {
-    if (toolId === "ppc") {
+  const handleToolClick = (toolId: ActiveTool) => {
+    if (toolId === "granot") {
+      setGranotOpen(true);
+    } else if (toolId === "ringcentral") {
+      setRingcentralOpen(true);
+    } else if (toolId === "ppc") {
       setPpcOpen(true);
-    } else if (toolId === "operations") {
-      setOperationsOpen(true);
-    } else if (toolId === "coaching-summary") {
-      setCoachingSummaryOpen(true);
-    } else if (toolId === "messaging") {
-      setMessagingOpen(true);
-    } else if (toolId === "workspace") {
-      setWorkspaceOpen(true);
-    } else if (toolId === "commission-board") {
-      setCommissionBoardOpen(true);
+    } else {
+      setActiveTool(toolId);
+    }
+  };
+  const renderActiveTool = () => {
+    switch (activeTool) {
+      case "bol":
+        return <BillOfLadingForm />;
+      case "ccach":
+        return <CCACHAuthorizationForm />;
+      case "carrier":
+        return <CarrierDashboard />;
+      case "customer":
+        return <CustomerLookup />;
+      case "messaging":
+        return <ClientMessaging />;
+      default:
+        return null;
     }
   };
 
@@ -97,44 +134,38 @@ export default function AgentLogin() {
         onLogin={handleLogin}
       />
 
+      {/* Integration Modals */}
+      <IntegrationModal 
+        open={granotOpen} 
+        onOpenChange={setGranotOpen} 
+        integration="granot" 
+      />
+      <IntegrationModal 
+        open={ringcentralOpen} 
+        onOpenChange={setRingcentralOpen} 
+        integration="ringcentral" 
+      />
       <PPCDemoModal 
         open={ppcOpen} 
         onOpenChange={setPpcOpen} 
       />
-      <OperationsCenterModal
-        open={operationsOpen}
-        onOpenChange={setOperationsOpen}
-      />
-      <CoachingSummaryModal
-        open={coachingSummaryOpen}
-        onOpenChange={setCoachingSummaryOpen}
-      />
-      <InternalMessagingModal
-        open={messagingOpen}
-        onOpenChange={setMessagingOpen}
-      />
-      <CombinedWorkspaceModal
-        open={workspaceOpen}
-        onOpenChange={setWorkspaceOpen}
-      />
-      <AgentCommissionBoard
-        open={commissionBoardOpen}
-        onOpenChange={setCommissionBoardOpen}
-      />
       <div className="agent-dashboard-page">
+        {activeTool ? (
+          <div className="space-y-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => setActiveTool(null)}
+              className="gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Tools
+            </Button>
+            {renderActiveTool()}
+          </div>
+        ) : (
+          <>
             <div className="agent-dashboard-header">
-              <div className="flex items-center justify-between mb-2">
-                <h1 className="agent-dashboard-title">Agent Tools</h1>
-                {isLoggedIn && (
-                  <Link
-                    to="/admin/integrations"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-muted hover:bg-muted/80 text-foreground transition-colors"
-                  >
-                    <Key className="w-4 h-4" />
-                    Manage API Keys
-                  </Link>
-                )}
-              </div>
+              <h1 className="agent-dashboard-title">Agent Tools</h1>
               <p className="agent-dashboard-subtitle">
                 {isLoggedIn 
                   ? "Access your carrier management and authorization tools" 
@@ -168,7 +199,7 @@ export default function AgentLogin() {
                   );
                 }
 
-                if (tool.external && 'href' in tool && tool.href) {
+                if (tool.external && tool.href) {
                   return (
                     <Link
                       key={tool.id}
@@ -191,6 +222,8 @@ export default function AgentLogin() {
                 );
               })}
             </div>
+          </>
+        )}
       </div>
     </SiteShell>
   );

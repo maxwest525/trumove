@@ -2,9 +2,6 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Loader2, Navigation2, Satellite } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Supported map view types
-export type MapViewType = 'roadmap' | 'satellite' | 'hybrid' | 'terrain' | 'truckview';
-
 interface Google2DTrackingMapProps {
   originCoords: [number, number] | null;
   destCoords: [number, number] | null;
@@ -13,7 +10,7 @@ interface Google2DTrackingMapProps {
   onRouteCalculated?: (route: { coordinates: [number, number][]; distance: number; duration: number }) => void;
   followMode?: boolean;
   onFollowModeChange?: (enabled: boolean) => void;
-  mapType?: MapViewType;
+  mapType?: 'roadmap' | 'satellite' | 'hybrid' | 'terrain';
   googleApiKey: string;
 }
 
@@ -87,7 +84,6 @@ export function Google2DTrackingMap({
   const trailPolylineRef = useRef<any>(null);
   const trailGlowOuterRef = useRef<any>(null);
   const trailGlowInnerRef = useRef<any>(null);
-  const mountIdRef = useRef<number>(Date.now()); // Unique ID per mount to force route recalculation
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,7 +92,6 @@ export function Google2DTrackingMap({
   const [currentSpeed, setCurrentSpeed] = useState<number>(0);
   const [currentTruckCoords, setCurrentTruckCoords] = useState<[number, number] | null>(null);
   const [currentBearing, setCurrentBearing] = useState<number>(0);
-  const [routeKey, setRouteKey] = useState<number>(0); // State to force route recalculation
   const lastPositionRef = useRef<{ lat: number; lng: number; time: number } | null>(null);
 
   // Sync follow mode with prop
@@ -143,14 +138,10 @@ export function Google2DTrackingMap({
         ? { lat: originCoords[1], lng: originCoords[0] }
         : { lat: 39.8283, lng: -98.5795 }; // Default: Center of US (Kansas)
 
-      // Determine Google mapTypeId - truckview uses satellite as base
-      const googleMapTypeId = mapType === 'truckview' ? 'satellite' : mapType;
-      const isTruckView = mapType === 'truckview';
-
       const map = new window.google.maps.Map(containerRef.current, {
         center: initialCenter,
-        zoom: isTruckView ? 18 : (originCoords ? 12 : 4), // Street level for truck view
-        mapTypeId: googleMapTypeId,
+        zoom: originCoords ? 12 : 4, // Start zoomed out for continental US view
+        mapTypeId: mapType,
         mapTypeControl: false, // Disabled - using custom dropdown instead
         fullscreenControl: false,
         streetViewControl: false,
@@ -158,8 +149,7 @@ export function Google2DTrackingMap({
         zoomControlOptions: {
           position: window.google.maps.ControlPosition.RIGHT_CENTER
         },
-        tilt: isTruckView ? 45 : 0, // Tilted for truck view, flat for others
-        heading: 0,
+        tilt: 0, // 2D view
         styles: mapType === 'roadmap' ? [
           { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
           { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
@@ -209,34 +199,11 @@ export function Google2DTrackingMap({
   useEffect(() => {
     if (!mapRef.current) return;
     
-    const isTruckView = mapType === 'truckview';
-    const googleMapTypeId = isTruckView ? 'satellite' : mapType;
+    mapRef.current.setMapTypeId(mapType);
     
-    mapRef.current.setMapTypeId(googleMapTypeId);
-    
-    // Apply view-specific settings
-    if (isTruckView) {
-      // Truck view: tilted, street-level, following truck
+    // Apply dark styles for roadmap, clear for satellite/hybrid
+    if (mapType === 'roadmap') {
       mapRef.current.setOptions({
-        styles: undefined,
-        tilt: 45,
-        zoom: 18
-      });
-      // Pan to truck position if available
-      if (truckMarkerRef.current) {
-        const truckPos = truckMarkerRef.current.getPosition();
-        if (truckPos) {
-          mapRef.current.setCenter(truckPos);
-          mapRef.current.setHeading(currentBearing);
-        }
-      }
-      // Enable follow mode in truck view
-      setInternalFollowMode(true);
-      onFollowModeChange?.(true);
-    } else if (mapType === 'roadmap') {
-      mapRef.current.setOptions({
-        tilt: 0,
-        heading: 0,
         styles: [
           { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
           { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
@@ -247,23 +214,11 @@ export function Google2DTrackingMap({
         ]
       });
     } else {
-      mapRef.current.setOptions({ 
-        tilt: 0,
-        heading: 0,
-        styles: undefined 
-      });
+      mapRef.current.setOptions({ styles: undefined });
     }
-  }, [mapType, currentBearing, onFollowModeChange]);
+  }, [mapType]);
 
-  // Force route recalculation when component remounts (view toggle scenario)
-  useEffect(() => {
-    if (!mapRef.current || !originCoords || !destCoords) return;
-    
-    // Trigger a route key update to force the route calculation effect to re-run
-    setRouteKey(prev => prev + 1);
-  }, [isScriptLoaded, originCoords, destCoords]);
-
-  // Calculate route when origin/destination change or when remounting
+  // Calculate route when origin/destination change
   useEffect(() => {
     if (!mapRef.current || !originCoords || !destCoords || !directionsRendererRef.current) return;
 
@@ -483,7 +438,7 @@ export function Google2DTrackingMap({
         }
       }
     );
-  }, [originCoords, destCoords, onRouteCalculated, routeKey]);
+  }, [originCoords, destCoords, onRouteCalculated]);
 
   // Update truck position based on progress
   useEffect(() => {
@@ -612,26 +567,12 @@ export function Google2DTrackingMap({
 
     // Follow mode: pan map to follow truck
     if (internalFollowMode && mapRef.current && isTracking) {
-      const isTruckView = mapType === 'truckview';
-      
-      if (isTruckView) {
-        // Truck view: street-level, tilted, heading aligned with direction
-        mapRef.current.setCenter(newPosition);
-        mapRef.current.setZoom(18);
-        mapRef.current.setTilt(45);
-        // Set heading to match truck direction
-        if (currentBearing !== undefined) {
-          mapRef.current.setHeading(currentBearing);
-        }
-      } else {
-        // Standard follow mode
-        mapRef.current.panTo(newPosition);
-        if (mapRef.current.getZoom() < 13) {
-          mapRef.current.setZoom(14);
-        }
+      mapRef.current.panTo(newPosition);
+      if (mapRef.current.getZoom() < 13) {
+        mapRef.current.setZoom(14);
       }
     }
-  }, [progress, internalFollowMode, isTracking, mapType, currentBearing]);
+  }, [progress, internalFollowMode, isTracking]);
 
   // Toggle follow mode
   const toggleFollowMode = useCallback(() => {

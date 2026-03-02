@@ -18,7 +18,6 @@ import Terms from "./pages/Terms";
 import PropertyLookup from "./pages/PropertyLookup";
 import Auth from "./pages/Auth";
 import AgentLogin from "./pages/AgentLogin";
- import AdminIntegrations from "./pages/AdminIntegrations";
 import ScanRoom from "./pages/ScanRoom";
 import Classic from "./pages/Classic";
 import LiveTracking from "./pages/LiveTracking";
@@ -47,7 +46,6 @@ const App = () => (
             <Route path="/property-lookup" element={<PropertyLookup />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/agent-login" element={<AgentLogin />} />
-             <Route path="/admin/integrations" element={<AdminIntegrations />} />
             <Route path="/scan-room" element={<ScanRoom />} />
             <Route path="/classic" element={<Classic />} />
             <Route path="/track" element={<LiveTracking />} />
